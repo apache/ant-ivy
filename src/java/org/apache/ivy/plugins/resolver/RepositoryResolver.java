@@ -220,7 +220,8 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         String[] checksums = getChecksumAlgorithms();
         for (int i = 0; i < checksums.length; i++) {
             if (!ChecksumHelper.isKnownAlgorithm(checksums[i])) {
-                throw new IllegalArgumentException("Unknown checksum algorithm: " + checksums[i]);            }
+                throw new IllegalArgumentException("Unknown checksum algorithm: " + checksums[i]);
+            }
         }
         
         repository.put(artifact, src, dest, overwrite);

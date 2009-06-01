@@ -29,7 +29,7 @@ public class Namespace {
         SYSTEM_NAMESPACE = new Namespace();
     }
 
-    private List rules = new ArrayList();
+    private List/*<NamespaceRule>*/ rules = new ArrayList();
 
     private String name;
 

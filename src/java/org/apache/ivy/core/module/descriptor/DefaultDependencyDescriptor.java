@@ -123,7 +123,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private ModuleRevisionId dynamicRevId;
 
-    private Map confs = new LinkedHashMap();
+    private Map/*<String,List<String>>*/ confs = new LinkedHashMap();
 
     // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
     private Map dependencyArtifacts; // initialized on demand only for memory consumption reason

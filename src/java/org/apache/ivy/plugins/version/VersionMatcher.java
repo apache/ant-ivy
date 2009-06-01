@@ -25,15 +25,21 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 /**
  * This interface defines a version matcher, i.e. a class able to tell if the revision asked by a
  * module for a dependency is dynamic (i.e. need to find all revisions to find the good one among
- * them) and if a found revision matches the asked one. Two ways of matching are possible: - based
- * on the module revision only (known as ModuleRevisionId) - based on the parsed module descriptor
+ * them) and if a found revision matches the asked one.
+ * <p>
+ * Two ways of matching are possible:
+ * <ul>
+ * <li>based on the module revision only (known as ModuleRevisionId)</li>
+ * <li>based on the parsed module descriptor</li>
+ * </ul>
  * The second being much more time consuming than the first, the version matcher should tell if it
- * needs such parsing or not using the needModuleDescriptor(ModuleRevisionId askedMrid,
- * ModuleRevisionId foundMrid) method. Anyway, the first way is always used, and if a revision is
- * not accepted using the first method, the module descriptor won't be parsed. Therefore if a
- * version matcher uses only module descriptors to accept a revision or not it should always return
- * true to needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) and
- * accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid).
+ * needs such parsing or not using the
+ * {@link #needModuleDescriptor(ModuleRevisionId, ModuleRevisionId)} method. Anyway, the first way
+ * is always used, and if a revision is not accepted using the first method, the module descriptor
+ * won't be parsed. Therefore if a version matcher uses only module descriptors to accept a revision
+ * or not it should always return true to
+ * {@link #needModuleDescriptor(ModuleRevisionId, ModuleRevisionId)} and
+ * {@link #accept(ModuleRevisionId, ModuleDescriptor)}.
  */
 public interface VersionMatcher {
     /**

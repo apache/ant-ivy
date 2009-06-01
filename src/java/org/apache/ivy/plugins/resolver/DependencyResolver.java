@@ -167,7 +167,16 @@ public interface DependencyResolver {
      * </p>
      */
     String[] listTokenValues(String token, Map otherTokenValues);
-    
+
+    /**
+     * Same as {@link #listTokenValues(String, Map)} but more generic.
+     * 
+     * @param tokens
+     *            the tokens of the query
+     * @param criteria
+     *            the token which have values
+     * @return the list of token values (Map<Strin, String>[]), must not be <code>null</code>
+     */
     Map[] listTokenValues(String[] tokens, Map criteria);
 
     OrganisationEntry[] listOrganisations();

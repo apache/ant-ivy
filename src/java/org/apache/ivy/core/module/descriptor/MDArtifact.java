@@ -43,7 +43,7 @@ public class MDArtifact extends AbstractArtifact {
 
     private String ext;
 
-    private List confs = new ArrayList();
+    private List/*<String>*/ confs = new ArrayList();
 
     private Map extraAttributes = null;
 

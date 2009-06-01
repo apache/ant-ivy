@@ -56,13 +56,13 @@ public class ConfigurationResolveReport {
 
     private final ResolveOptions options;
 
-    private Map dependencyReports = new LinkedHashMap();
+    private Map/*<IvyNode, List<ArtifactDownloadReport>>*/ dependencyReports = new LinkedHashMap();
 
-    private Map dependencies = new LinkedHashMap();
+    private Map/*<ModuleRevisionId, IvyNode>*/ dependencies = new LinkedHashMap();
 
     private final ResolveEngine resolveEngine;
 
-    private Map modulesIdsMap = new LinkedHashMap();
+    private Map/*<ModuleId, Collection<IvyNode>>*/ modulesIdsMap = new LinkedHashMap();
 
     private List modulesIds;
 
