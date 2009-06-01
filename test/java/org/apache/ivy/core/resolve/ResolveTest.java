@@ -3605,6 +3605,34 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveExcludesConf() throws Exception {
+        // mod2.6 depends on mod2.3 in conf default and mod2.5 in conf exclude
+        // mod2.5 depends on mod2.3
+        // mod2.6 globally exclude mod2.3 in conf exclude
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml").toURL(),
+            getResolveOptions(new String[] {"include"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.13"), md
+                .getModuleRevisionId());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.3", "0.4")).exists());
+    }
+
+    public void testResolveExcludesConf2() throws Exception {
+        // same as testResolveExcludesConf
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml").toURL(),
+            getResolveOptions(new String[] {"exclude"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.13"), md
+                .getModuleRevisionId());
+
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.3", "0.4")).exists());
+    }
+
     public void testResolveExceptConfiguration() throws Exception {
         // mod10.2 depends on mod5.1 conf *, !A
         ivy.resolve(new File("test/repositories/2/mod10.2/ivy-2.0.xml").toURL(),

@@ -348,7 +348,7 @@ public class IvyNode implements Comparable {
             depNode.addRootModuleConfigurations(depNode.usage, rootModuleConf, confsArray);
             depNode.usage.setRequiredConfs(this, conf, confs);
 
-            depNode.addCaller(rootModuleConf, this, conf, dependencyConfigurations, dd);
+            depNode.addCaller(rootModuleConf, this, conf, requestedConf, dependencyConfigurations, dd);
             dependencies.add(depNode);
         }
         return dependencies;
@@ -1021,8 +1021,8 @@ public class IvyNode implements Comparable {
     }
 
     public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf,
-            String[] dependencyConfs, DependencyDescriptor dd) {
-        callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
+            String requestedConf, String[] dependencyConfs, DependencyDescriptor dd) {
+        callers.addCaller(rootModuleConf, callerNode, callerConf, requestedConf, dependencyConfs, dd);
         boolean isCircular = callers.getAllCallersModuleIds().contains(getId().getModuleId());
         if (isCircular) {
             IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(

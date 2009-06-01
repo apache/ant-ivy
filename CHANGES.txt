@@ -8,7 +8,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  Committers
  	Maarten Coene
  	Xavier Hanin
-	Nicolas Lalevée
+	Nicolas Lalevee
  	Gilles Scokart
   
  Contributors
@@ -95,7 +95,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: PomModuleDescriptorBuilder does not resolve ejb type dependencies to jar extension (IVY-1058) (thanks to Andrey Lomakin)
 - FIX: Ivy doesn't handle maven dependencies with type 'test-jar' correctly (IVY-1066)
 - FIX: transitive dependencies and conflict management (IVY-1083)
-	
+- FIX: exclude does not work in non-trivial conf case (IVY-983)
+
    2.1.0-rc1
 =====================================
 - IMPROVEMENT: Fail the retrieve when multiple artifacts of same module are mapped to same file (IVY-1050)
