@@ -206,6 +206,11 @@ public final class IvyPatternHelper {
     }
 
     public static String substituteTokens(String pattern, Map tokens) {
+        Map tokensCopy = new HashMap(tokens);
+        if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_KEY2)) {
+            tokensCopy.put(ORGANISATION_KEY2, tokensCopy.get(ORGANISATION_KEY));
+        }
+        
         StringBuffer buffer = new StringBuffer();
 
         char[] chars = pattern.toCharArray();
@@ -265,7 +270,7 @@ public final class IvyPatternHelper {
                     }
 
                     String token = tokenBuffer.toString();
-                    Object tokenValue = tokens.get(token);
+                    Object tokenValue = tokensCopy.get(token);
                     String value = (tokenValue == null) ? null : tokenValue.toString();
 
                     if (insideOptionalPart) {
