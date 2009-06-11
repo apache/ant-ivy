@@ -55,6 +55,7 @@ import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.CommandLineParser;
 import org.apache.ivy.util.cli.OptionBuilder;
 import org.apache.ivy.util.cli.ParseException;
+import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
@@ -96,13 +97,23 @@ public final class Main {
                     + "of the work with this as a dependency.").create())
             .addOption(new OptionBuilder("confs").arg("configurations").countArgs(false)
                 .description("resolve given configurations").create())
+            .addOption(new OptionBuilder("types").arg("types").countArgs(false)
+                .description("comma separated list of accepted artifact types").create())
+            .addOption(new OptionBuilder("mode").arg("resolvemode")
+                .description("the resolve mode to use").create())
+            .addOption(new OptionBuilder("notransitive")
+                .description("do not resolve dependencies transitively").create())
                 
             .addCategory("retrieve options")
             .addOption(new OptionBuilder("retrieve").arg("retrievepattern")
                 .description("use given pattern as retrieve pattern").create())
+            .addOption(new OptionBuilder("ivypattern").arg("pattern")
+                .description("use given pattern to copy the ivy files").create())
             .addOption(new OptionBuilder("sync")
                 .description("use sync mode for retrieve").create())
-            
+            .addOption(new OptionBuilder("symlink")
+                .description("create symbolic links").create())
+             
             .addCategory("cache path options")
             .addOption(new OptionBuilder("cachepath").arg("cachepathfile")
                 .description("outputs a classpath consisting of all dependencies in cache "
@@ -247,7 +258,12 @@ public final class Main {
                 ivy.getSettings().useDeprecatedUseOrigin();
             }
             ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs)
-                .setValidate(validate);
+                .setValidate(validate)
+                .setResolveMode(line.getOptionValue("mode"))
+                .setArtifactFilter(FilterHelper.getArtifactTypeFilter(line.getOptionValues("types")));
+            if (line.hasOption("notransitive")) {
+                resolveOptions.setTransitive(false);
+            }
             if (line.hasOption("refresh")) {
                 resolveOptions.setRefresh(true);
             }
@@ -265,9 +281,13 @@ public final class Main {
                 if (retrievePattern.indexOf("[") == -1) {
                     retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
+                String ivyPattern = settings.substitute(line.getOptionValue("ivypattern"));
                 ivy.retrieve(md.getModuleRevisionId(), retrievePattern, new RetrieveOptions()
                         .setConfs(confs).setSync(line.hasOption("sync"))
-                        .setUseOrigin(line.hasOption("useOrigin")));
+                        .setUseOrigin(line.hasOption("useOrigin"))
+                        .setDestIvyPattern(ivyPattern)
+                        .setArtifactFilter(FilterHelper.getArtifactTypeFilter(line.getOptionValues("types")))
+                        .setMakeSymlinks(line.hasOption("symlink")));
             }
             if (line.hasOption("cachepath")) {
                 outputCachePath(ivy, cache, md, confs, line.getOptionValue("cachepath",

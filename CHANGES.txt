@@ -89,6 +89,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - NEW: configuration intersections (IVY-1093)
 
+- IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
 - IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
 
 - FIX: Ivy buildnumber task does not find artifact in Sonatype Nexus repo (IVY-1069)
