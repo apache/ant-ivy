@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -244,6 +245,32 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      */
     public String[] getDependencyConfigurations(String moduleConfiguration,
             String requestedConfiguration) {
+        if (md != null) {
+            Configuration c = md.getConfiguration(moduleConfiguration);
+            if (c instanceof ConfigurationIntersection) {
+                ConfigurationIntersection intersection = (ConfigurationIntersection) c;
+                Set /*<String>*/ intersectedDepConfs = new HashSet();
+                String[] intersected = intersection.getIntersectedConfigurationNames();
+                for (int i = 0; i < intersected.length; i++) {
+                    Collection depConfs = 
+                         getDependencyConfigurationsIncludingExtending(
+                                 intersected[i], requestedConfiguration);
+                    if (intersectedDepConfs.isEmpty()) {
+                        intersectedDepConfs.addAll(depConfs);
+                    } else {
+                        intersectedDepConfs.retainAll(depConfs);
+                    }
+                }
+                if (intersectedDepConfs.isEmpty()) {
+                    List defConfs = (List) confs.get("*");
+                    if (defConfs != null && defConfs.contains("@")) {
+                        return new String[] {moduleConfiguration};
+                    }
+                }
+                return (String[]) intersectedDepConfs.toArray(new String[intersectedDepConfs.size()]);
+            }
+        }
+        
         List confsList = (List) confs.get(moduleConfiguration);
         if (confsList == null) {
             // there is no mapping defined for this configuration, add the 'other' mappings.
@@ -283,6 +310,20 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             return new String[] {r.toString()};
         }
         return (String[]) ret.toArray(new String[ret.size()]);
+    }
+
+    private Collection getDependencyConfigurationsIncludingExtending(
+            String conf, String requestedConfiguration) {
+        Set/*<String>*/ allDepConfs = new LinkedHashSet();
+        allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(conf, requestedConfiguration)));
+
+        Collection extendingConfs = Configuration.findConfigurationExtending(conf, md.getConfigurations());
+        for (Iterator it = extendingConfs.iterator(); it.hasNext();) {
+            Configuration extendingConf = (Configuration) it.next();
+            allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(
+                            extendingConf.getName(), requestedConfiguration)));
+        }
+        return allDepConfs;
     }
 
     protected static String replaceSelfFallbackPattern(final String conf,

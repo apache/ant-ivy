@@ -17,6 +17,10 @@
  */
 package org.apache.ivy.core.module.descriptor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -50,6 +54,17 @@ public class Configuration extends DefaultExtendableItem {
         public String toString() {
             return name;
         }
+    }
+    
+    public static Collection/*<Configuration>*/ findConfigurationExtending(String conf, Configuration[] confs) {
+        Collection extendingConfs = new ArrayList();
+        for (int i = 0; i < confs.length; i++) {
+            if (confs[i] != null && Arrays.asList(confs[i].getExtends()).contains(conf)) {
+                extendingConfs.add(confs[i]);
+                extendingConfs.addAll(findConfigurationExtending(confs[i].getName(), confs));
+            }
+        }
+        return extendingConfs;
     }
 
     private String name;

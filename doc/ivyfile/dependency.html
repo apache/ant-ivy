@@ -110,6 +110,12 @@ Example:
 The syntax for specifying this adds the fallback conf between parenthesis right after the required conf. 
 For instance, <code>test->runtime(default)</code> means that in the test configuration of the module the <code>runtime</code> conf of the dependency is required, but if doesn't exist, it will use the <code>default</code> conf instead. If <code>default</code> conf doesn't exist then it will be considered as an error. Note that the <code>*</code> wildcard can be used as fallback conf.
 
+<span class="since">since 2.1</span> It is also possible to define dependencies on configurations intersection. A configuration intersection is defined using a '+' sign to separate the configuration (eg 'A+B' means the intersection of configuration 'A' and 'B'). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
+
+Configuration intersections can also be used when specifying the confs to [[ant:resolve]]. 
+
+Moreover, the mapping '*->@' is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf A+B in a module which defines a dependency with mapping *->@, the mapping *->@ is interpreted as A+B->A+B so the intersection of A and B will be resolved in the dependency.
+
 <span class="since">since 1.4</span> you can add simple conditions in the dependency mapping. This is done by adding a condition between '[' and ']'. If the condition evaluates to <code>true</code>, the mapping is performed. If the condition evaluates to <code>false</code>, the mapping will be ignored. For instance, <code>test->[org=A]runtime,[org=B]default</code> means that the <code>test</code> configuration will be mapped to the <code>runtime</code> conf for the dependencies of organisation 'A' and to the <code>default</code> conf for dependencies of organisation 'B'.
 
 <li>Specify a semi-column separated list of any of the previous specs.</li> In this case, it is the union of the mapping which is kept. For instance, 'A -> B; * -> C' means that B conf is needed in A conf and C conf is need in all master conf... so both B & C dep conf are required in A master conf

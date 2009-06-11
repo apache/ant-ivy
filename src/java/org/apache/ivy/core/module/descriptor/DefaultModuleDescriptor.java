@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -388,16 +389,69 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * if not found.
      */
     public Configuration getConfiguration(String confName) {
-        return (Configuration) configurations.get(confName);
+        Configuration configuration = (Configuration) configurations.get(confName);
+        if (configuration == null && confName != null) {
+            // let's see if a configuration intersection is requested
+            String[] confs = confName.split("\\+");
+            if (confs.length <= 1) {
+                return null;
+            }
+            Map /*<String,Configuration>*/ intersectedConfs = new LinkedHashMap();
+            for (int i = 0; i < confs.length; i++) {
+                Configuration c = (Configuration) configurations.get(confs[i]);
+                if (c == null) {
+                    Message.verbose(
+                        "missing configuration '" + confs[i] 
+                        + "' from intersection " + confName + " in " + this);
+                    return null;
+                }
+                intersectedConfs.put(confs[i], c);
+            }
+            return new ConfigurationIntersection(confName, intersectedConfs);
+        }
+        return configuration;
     }
 
     public Artifact[] getArtifacts(String conf) {
         Collection artifacts = (Collection) artifactsByConf.get(conf);
         if (artifacts == null) {
-            return new Artifact[0];
+            Configuration c = getConfiguration(conf);
+            if (c instanceof ConfigurationIntersection) {
+                ConfigurationIntersection intersection = (ConfigurationIntersection) c;
+                String[] intersected = intersection.getIntersectedConfigurationNames();
+                Set/*<Artifact>*/ intersectedArtifacts = new LinkedHashSet();
+                for (int j = 0; j < intersected.length; j++) {
+                    Collection arts = getArtifactsIncludingExtending(intersected[j]);
+                    if (intersectedArtifacts.isEmpty()) {
+                        intersectedArtifacts.addAll(arts);
+                    } else {
+                        intersectedArtifacts.retainAll(arts);
+                    }
+                }
+                return (Artifact[]) intersectedArtifacts.toArray(new Artifact[intersectedArtifacts.size()]);
+            } else {
+                return new Artifact[0];
+            }
         } else {
             return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
         }
+    }
+
+    private Collection/*<Artifact>*/ getArtifactsIncludingExtending(String conf) {
+        Collection extendingConfs = Configuration.findConfigurationExtending(conf, getConfigurations());
+        Set/*<Artifact>*/ artifacts = new LinkedHashSet();
+        Collection arts = (Collection) artifactsByConf.get(conf);
+        if (arts != null) {
+            artifacts.addAll(arts);
+        }
+        for (Iterator it = extendingConfs.iterator(); it.hasNext();) {
+            Configuration extendingConf = (Configuration) it.next();
+            arts = (Collection) artifactsByConf.get(extendingConf.getName());
+            if (arts != null) {
+                artifacts.addAll(arts);
+            }
+        }
+        return artifacts;
     }
 
     public Artifact[] getAllArtifacts() {
