@@ -70,13 +70,13 @@ public final class IvyPatternHelper {
     public static String substitute(String pattern, ModuleRevisionId moduleRevision) {
         return substitute(pattern, moduleRevision.getOrganisation(), moduleRevision.getName(),
             moduleRevision.getBranch(), moduleRevision.getRevision(), "ivy", "ivy", "xml", null,
-            null, moduleRevision.getAttributes());
+            null, moduleRevision.getAttributes(), null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId moduleRevision,
             String artifact, String type, String ext) {
         return substitute(pattern, moduleRevision, new DefaultArtifact(moduleRevision, null,
-                artifact, type, ext), null);
+                artifact, type, ext));
     }
 
     public static String substitute(String pattern, Artifact artifact) {
@@ -84,60 +84,54 @@ public final class IvyPatternHelper {
     }
 
     public static String substitute(String pattern, Artifact artifact, ArtifactOrigin origin) {
-        return substitute(pattern, artifact.getModuleRevisionId(), artifact, null, origin);
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, (String) null, origin);
     }
 
     public static String substitute(String pattern, Artifact artifact, String conf) {
-        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf);
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf, (ArtifactOrigin) null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact) {
-        return substitute(pattern, mrid, artifact, null);
-    }
-
-    public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact,
-            String conf) {
-        return substitute(pattern, mrid, artifact, conf, null);
+        return substitute(pattern, mrid, artifact, (String) null, (ArtifactOrigin) null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact,
             String conf, ArtifactOrigin origin) {
-        Map attributes = new HashMap();
-        attributes.putAll(mrid.getAttributes());
-        attributes.putAll(artifact.getAttributes());
         return substitute(pattern, mrid.getOrganisation(), mrid.getName(), mrid.getBranch(), mrid
                 .getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf,
-            origin, attributes);
+            origin, mrid.getExtraAttributes(), artifact.getExtraAttributes());
     }
 
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext) {
-        return substitute(pattern, org, module, revision, artifact, type, ext, null);
+        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, (String) null, 
+                (ArtifactOrigin) null, (Map) null, (Map) null);
     }
 
     // CheckStyle:ParameterNumber OFF
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext, String conf) {
-        return substitute(pattern, org, module, revision, artifact, type, ext, conf, null);
+        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf, 
+                (ArtifactOrigin) null, (Map) null, (Map) null);
     }
 
     public static String substitute(String pattern, String org, String module, String revision,
-            String artifact, String type, String ext, String conf, Map extraAttributes) {
-        return substitute(pattern, org, module, revision, artifact, type, ext, conf, null,
-            extraAttributes);
-    }
-
-    public static String substitute(String pattern, String org, String module, String revision,
-            String artifact, String type, String ext, String conf, ArtifactOrigin origin,
-            Map extraAttributes) {
-        return substitute(pattern, org, module, null, revision, artifact, type, ext, conf, origin,
-            extraAttributes);
+            String artifact, String type, String ext, String conf, Map extraModuleAttributes, 
+            Map extraArtifactAttributes) {
+        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf, 
+                (ArtifactOrigin) null, extraModuleAttributes, extraArtifactAttributes);
     }
 
     public static String substitute(String pattern, String org, String module, String branch,
             String revision, String artifact, String type, String ext, String conf,
-            ArtifactOrigin origin, Map extraAttributes) {
-        Map tokens = new HashMap(extraAttributes == null ? Collections.EMPTY_MAP : extraAttributes);
+            ArtifactOrigin origin, Map extraModuleAttributes, Map extraArtifactAttributes) {
+        Map tokens = new HashMap();
+        if (extraModuleAttributes != null) {
+            tokens.putAll(extraModuleAttributes);
+        }
+        if (extraArtifactAttributes != null) {
+            tokens.putAll(extraArtifactAttributes);
+        }
         tokens.put(ORGANISATION_KEY, org == null ? "" : org);
         tokens.put(ORGANISATION_KEY2, org == null ? "" : org);
         tokens.put(MODULE_KEY, module == null ? "" : module);
@@ -147,9 +141,13 @@ public final class IvyPatternHelper {
         tokens.put(TYPE_KEY, type == null ? "jar" : type);
         tokens.put(EXT_KEY, ext == null ? "jar" : ext);
         tokens.put(CONF_KEY, conf == null ? "default" : conf);
-        tokens.put(ORIGINAL_ARTIFACTNAME_KEY, origin == null ? new OriginalArtifactNameValue(org,
-                module, branch, revision, artifact, type, ext) : new OriginalArtifactNameValue(
-                origin));
+        if (origin == null) {
+            tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(org,
+                module, branch, revision, artifact, type, ext, extraModuleAttributes, extraArtifactAttributes));
+        } else { 
+            tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(origin));
+        }
+                
         return substituteTokens(pattern, tokens);
     }
     // CheckStyle:ParameterNumber ON
@@ -400,18 +398,23 @@ public final class IvyPatternHelper {
 
         private String revision;
 
+        private Map extraModuleAttributes;
+        
         // artifact properties
         private String artifactName;
 
         private String artifactType;
 
         private String artifactExt;
+        
+        private Map extraArtifactAttributes;
 
         // cached origin;
         private ArtifactOrigin origin;
-
+        
         public OriginalArtifactNameValue(String org, String moduleName, String branch,
-                String revision, String artifactName, String artifactType, String artifactExt) {
+                String revision, String artifactName, String artifactType, String artifactExt, 
+                Map extraModuleAttributes, Map extraArtifactAttributes) {
             this.org = org;
             this.moduleName = moduleName;
             this.branch = branch;
@@ -419,6 +422,8 @@ public final class IvyPatternHelper {
             this.artifactName = artifactName;
             this.artifactType = artifactType;
             this.artifactExt = artifactExt;
+            this.extraModuleAttributes = extraModuleAttributes;
+            this.extraArtifactAttributes = extraArtifactAttributes;
         }
 
         /**
@@ -432,9 +437,9 @@ public final class IvyPatternHelper {
         public String toString() {
             if (origin == null) {
                 ModuleRevisionId revId = ModuleRevisionId.newInstance(org, moduleName, branch,
-                    revision);
+                    revision, extraModuleAttributes);
                 Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType,
-                        artifactExt);
+                        artifactExt, extraArtifactAttributes);
 
                 // TODO cache: see how we could know which actual cache manager to use, since this 
                 // will fail when using a resolver in a chain with a specific cache manager
