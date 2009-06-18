@@ -147,7 +147,7 @@ public class IvyConfigure extends Task {
         
         settings.setProject(getProject());
         getProject().addReference(settingsId, settings);        
-        settings.createIvyEngine();
+        settings.createIvyEngine(this);
     }
 
     private void verbose(String msg) {

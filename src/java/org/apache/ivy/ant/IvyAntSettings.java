@@ -35,6 +35,7 @@ import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.DataType;
 
@@ -107,12 +108,13 @@ public class IvyAntSettings extends DataType {
      * @param  project  TODO add text.
      * @return  An IvySetting instance.
      */
-    public static IvyAntSettings getDefaultInstance(Project project) {
+    public static IvyAntSettings getDefaultInstance(Task task) {
+        Project project = task.getProject();
         Object defaultInstanceObj = project.getReference("ivy.instance");
         if (defaultInstanceObj != null
                 && defaultInstanceObj.getClass().getClassLoader() != IvyAntSettings.class
                         .getClassLoader()) {
-            project.log("ivy.instance reference an ivy:settings defined in an other classloader.  "
+            task.log("ivy.instance reference an ivy:settings defined in an other classloader.  "
                      + "An new default one will be used in this project.", Project.MSG_WARN);
             defaultInstanceObj = null;
         }
@@ -122,13 +124,13 @@ public class IvyAntSettings extends DataType {
                     + " an not an IvyAntSettings.  Please don't use this reference id ()");
         }
         if (defaultInstanceObj == null) {
-            project.log("No ivy:settings found for the default reference 'ivy.instance'.  " 
-                    + "A default instance will be used", Project.MSG_INFO);
+            task.log("No ivy:settings found for the default reference 'ivy.instance'.  " 
+                    + "A default instance will be used", Project.MSG_VERBOSE);
             
             IvyAntSettings settings = new IvyAntSettings();
             settings.setProject(project);
             project.addReference("ivy.instance", settings);        
-            settings.createIvyEngine();
+            settings.createIvyEngine(task);
             return settings;
         } else {
             return (IvyAntSettings) defaultInstanceObj;
@@ -230,35 +232,36 @@ public class IvyAntSettings extends DataType {
      * Return the configured Ivy instance.
      * @return Returns the configured Ivy instance.
      */
-    public Ivy getConfiguredIvyInstance() {
+    public Ivy getConfiguredIvyInstance(Task task) {
         if (ivyEngine == null) {
-            createIvyEngine();
+            createIvyEngine(task);
         }
         return ivyEngine;
     }
 
-    void createIvyEngine() {
+    void createIvyEngine(final Task task) {
+        Project project = task.getProject();
         Property prop = new Property() {
             public void execute() throws BuildException {
-                addProperties(getDefaultProperties());
+                addProperties(getDefaultProperties(task));
             }
         };
-        prop.setProject(getProject());
+        prop.setProject(project);
         prop.init();
         prop.execute();
 
         
-        IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(getProject());
+        IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(project);
 
         IvySettings settings = new IvySettings(ivyAntVariableContainer);
-        settings.setBaseDir(getProject().getBaseDir());
+        settings.setBaseDir(project.getBaseDir());
         
         if (file == null && url == null) {
-            defineDefaultSettingFile(ivyAntVariableContainer);
+            defineDefaultSettingFile(ivyAntVariableContainer, task);
         }
 
         Ivy ivy = Ivy.newInstance(settings);
-        ivy.getLoggerEngine().pushLogger(new AntMessageLogger(this));
+        ivy.getLoggerEngine().pushLogger(new AntMessageLogger(task));
         Message.showInfo();
         try {
             configureURLHandler();
@@ -288,11 +291,11 @@ public class IvyAntSettings extends DataType {
         }
     }
 
-    protected Properties getDefaultProperties() {
+    protected Properties getDefaultProperties(Task task) {
         URL url = IvySettings.getDefaultPropertiesURL();
         // this is copy of loadURL code from ant Property task (not available in 1.5.1)
         Properties props = new Properties();
-        verbose("Loading " + url);
+        task.log("Loading " + url, Project.MSG_VERBOSE);
         try {
             InputStream is = url.openStream();
             try {
@@ -313,11 +316,11 @@ public class IvyAntSettings extends DataType {
      * 
      * @param variableContainer
      */
-    private void defineDefaultSettingFile(IvyVariableContainer variableContainer) {
+    private void defineDefaultSettingFile(IvyVariableContainer variableContainer, Task task) {
         String settingsFileName = variableContainer.getVariable("ivy.conf.file");
         if (settingsFileName != null 
                 && !settingsFileName.equals(variableContainer.getVariable("ivy.settings.file"))) {
-            info("DEPRECATED: 'ivy.conf.file' is deprecated, use 'ivy.settings.file' instead");
+            task.log("DEPRECATED: 'ivy.conf.file' is deprecated, use 'ivy.settings.file' instead", Project.MSG_INFO);
         } else {
             settingsFileName = variableContainer.getVariable("ivy.settings.file");
         }
@@ -329,30 +332,22 @@ public class IvyAntSettings extends DataType {
         };
         for (int i = 0; i < settingsLocations.length; i++) {
             file = settingsLocations[i];
-            verbose("searching settings file: trying " + file);
+            task.log("searching settings file: trying " + file, Project.MSG_VERBOSE);
             if (file.exists()) {
                 break;
             }
         }
         if (!file.exists()) {
             if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible")).booleanValue()) {
-                info("no settings file found, using Ivy 1.4 default...");
+                task.log("no settings file found, using Ivy 1.4 default...", Project.MSG_VERBOSE);
                 file = null;
                 url = IvySettings.getDefault14SettingsURL();
             } else {
-                info("no settings file found, using default...");
+                task.log("no settings file found, using default...", Project.MSG_VERBOSE);
                 file = null;
                 url = IvySettings.getDefaultSettingsURL();
             }
         }
-    }
-
-    private void verbose(String msg) {
-        log(msg, Project.MSG_VERBOSE);
-    }
-
-    private void info(String msg) {
-        log(msg, Project.MSG_INFO);
     }
 
     private void configureURLHandler() {

@@ -87,9 +87,9 @@ public abstract class IvyTask extends Task {
                         getLocation());
             }
         } else {
-            antIvyEngine = IvyAntSettings.getDefaultInstance(getProject());
+            antIvyEngine = IvyAntSettings.getDefaultInstance(this);
         }
-        Ivy ivy = ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance();
+        Ivy ivy = ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance(this);
         AntMessageLogger.register(this, ivy);
         return ivy;
     }

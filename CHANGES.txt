@@ -94,6 +94,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
 - IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
 
+- FIX: The Ant output wasn't always prefixed by the name of the task
 - FIX: Ivy buildnumber task does not find artifact in Sonatype Nexus repo (IVY-1069)
 - FIX: Publish with SSH (sftp or ssh) prevents enclosing java process to terminate (IVY-1075)
 - FIX: Ibiblio resolver throws IndexOutOfBoundsException when using snapshot versions with usepoms='false' (IVY-1028)
