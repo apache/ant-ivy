@@ -86,6 +86,12 @@ For an <u>IvyDE</u> release:
 
 And finally commit your changes.
 
+As soon as you ar happy with the committed artifacts, we can tag the updatesite:
+<pre>
+svn cp https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk https://svn.apache.org/repos/asf/ant/ivy/updatesite/tags/$TAGNAME
+</pre>
+with <tt>$TAGNAME</tt> the name of the release, so it would be either <tt>ivy-$VERSION</tt> or <tt>ivyde-$VERSION</tt>.
+
 <h2>Test the updatesite</h2>
 
 The updatesite is ready to be tested. You can deploy it where ever you want with the command:
@@ -98,12 +104,6 @@ Basically it is just about modifying the site.xml and remove the reference to th
 To let the developper community test the updatesite, you can setup a staging updatesite in your public_html directory on people.apache.org. So if you deploy it on people.apache.org, in the directory ~/public_html/staging, then the developpers should setup the updatesite with the URL http://people.apache.org/~LOGIN/staging/updatesite .
 
 <h1><a name="deployment"></a>Deployment of a release</h1>
-
-The release is accepted, so we can tag the updatesite:
-<pre>
-svn cp https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk https://svn.apache.org/repos/asf/ant/ivy/updatesite/tags/$TAGNAME
-</pre>
-with <tt>$TAGNAME</tt> the name of the release, so it would be either <tt>ivy-$VERSION</tt> or <tt>ivyde-$VERSION</tt>.
 
 Then backup and deploy. On people.apache.org:
 <pre>
