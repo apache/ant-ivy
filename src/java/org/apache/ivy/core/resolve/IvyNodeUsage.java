@@ -311,6 +311,9 @@ public class IvyNodeUsage {
      */
     public boolean hasTransitiveDepender(String rootModuleConf) {
         Set/*<Depender>*/ dependersSet = (Set) dependers.get(rootModuleConf);
+        if (dependersSet == null) {
+            return false;
+        }
         for (Iterator iterator = dependersSet.iterator(); iterator.hasNext();) {
             Depender depender = (Depender) iterator.next();
             if (depender.dd.isTransitive()) {
