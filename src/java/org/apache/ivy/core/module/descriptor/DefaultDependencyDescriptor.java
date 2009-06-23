@@ -46,9 +46,9 @@ import org.apache.ivy.util.Checks;
  * method.
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
-    private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+    private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\+[^\\(]+)?(\\(.*\\))?");
 
-    private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
+    private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\+[^\\(]+)?(\\(.*\\))?");
     
     /**
      * Transforms the given dependency descriptor of the given namespace and return a new dependency
@@ -258,13 +258,64 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                     if (intersectedDepConfs.isEmpty()) {
                         intersectedDepConfs.addAll(depConfs);
                     } else {
-                        intersectedDepConfs.retainAll(depConfs);
+                        if (intersectedDepConfs.contains("*")) {
+                            intersectedDepConfs.remove("*");
+                            intersectedDepConfs.addAll(depConfs);
+                        } else if (depConfs.contains("*")) {
+                            // nothing to do, intersection of 'something' 
+                            // with 'everything' is 'something'                            
+                        } else {
+                            Set /*<String>*/ intersectedDepConfsCopy = intersectedDepConfs;
+                            intersectedDepConfs = new HashSet();
+                            for (Iterator it = intersectedDepConfsCopy.iterator(); it.hasNext();) {
+                                String intersectedDepConf = (String) it.next();
+                                if (depConfs.contains(intersectedDepConf)) {
+                                    // the conf is present in both sets, 
+                                    // so it is in the intersection
+                                    intersectedDepConfs.add(intersectedDepConf);
+                                    continue;
+                                }
+                                /*
+                                we do not handle special confs like *!sg or [cond]* in right hand 
+                                confs yet: it would require supporting parenthesis grouping in 
+                                configurations intersection interpretation 
+                                 
+                                for (Iterator it2 = depConfs.iterator(); it2.hasNext();) {
+                                    String depConf = (String) it2.next();
+                                    if (depConf.startsWith("*")) {
+                                        if (intersectedDepConf
+                                                .indexOf("(" + depConf + ")") != -1) {
+                                            intersectedDepConfs.add(intersectedDepConf);
+                                        } else {
+                                            intersectedDepConfs.add(
+                                                "(" + intersectedDepConf + ")+(" + depConf + ")");
+                                        }
+                                    } else if (intersectedDepConf.startsWith("*")) {
+                                        if (depConf
+                                            .indexOf("(" + intersectedDepConf + ")") != -1) {
+                                            intersectedDepConfs.add(depConf);
+                                        } else {
+                                            intersectedDepConfs.add(
+                                                depConf + "+" + intersectedDepConf);
+                                        }
+                                    }
+                                }
+                                */
+                            }
+                        }
                     }
                 }
                 if (intersectedDepConfs.isEmpty()) {
                     List defConfs = (List) confs.get("*");
-                    if (defConfs != null && defConfs.contains("@")) {
-                        return new String[] {moduleConfiguration};
+                    if (defConfs != null) {
+                        for (Iterator it = defConfs.iterator(); it.hasNext();) {
+                            String mappedConf = (String) it.next();
+                            if (mappedConf != null && mappedConf.startsWith("@+")) {
+                                return new String[] {moduleConfiguration + mappedConf.substring(1)};
+                            } else if (mappedConf != null && mappedConf.equals("@")) {
+                                return new String[] {moduleConfiguration};
+                            }
+                        }
                     }
                 }
                 return (String[]) intersectedDepConfs.toArray(new String[intersectedDepConfs.size()]);
@@ -353,11 +404,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             final String conf, final String moduleConfiguration) {
         Matcher matcher = pattern.matcher(conf);
         if (matcher.matches()) {
+            String mappedConf = moduleConfiguration;
             if (matcher.group(1) != null) {
-                return moduleConfiguration + matcher.group(1);
-            } else {
-                return moduleConfiguration;
+                mappedConf =  mappedConf + matcher.group(1);
             }
+            if (matcher.group(2) != null) {
+                mappedConf =  mappedConf + matcher.group(2);
+            }
+            return mappedConf;
         }
         return null;
     }

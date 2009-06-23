@@ -3727,6 +3727,7 @@ public class ResolveTest extends TestCase {
         // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
         // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
         // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
+        // mod5.1;4.4 -> mod2.8;0.6 (windows,linux->@+thread+debug;A,B->*)
         ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
             getResolveOptions(new String[] {"B+linux"}));
 
@@ -3740,6 +3741,10 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21A", "jar", "jar").exists());
         assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21B", "jar", "jar").exists());
         assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21AB", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-linux-debug-thread", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-linux-debug", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-windows-debug-thread", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-windows-debug", "jar", "jar").exists());
     }
 
     public void testResolveFallbackConfiguration() throws Exception {
