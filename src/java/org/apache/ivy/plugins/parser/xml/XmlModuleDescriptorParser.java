@@ -49,6 +49,7 @@ import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediato
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
@@ -521,6 +522,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String name = settings.substitute(attributes.getValue("name"));
             String branch = settings.substitute(attributes.getValue("branch"));
             String branchConstraint = settings.substitute(attributes.getValue("branchConstraint"));
+            if (branchConstraint == null) {
+                // there was no branch constraint before, so we should
+                // set the branchConstraint to the current default branch
+                branchConstraint = settings.getDefaultBranch(ModuleId.newInstance(org, name));
+            }
+
             String rev = settings.substitute(attributes.getValue("rev"));
             String revConstraint = settings.substitute(attributes.getValue("revConstraint"));
             revConstraint = revConstraint == null ? rev : revConstraint;
