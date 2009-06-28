@@ -304,8 +304,9 @@ public class RetrieveEngine {
                     continue; // skip this artifact, the filter didn't accept it!
                 }
 
-                String destFileName = IvyPatternHelper.substitute(
-                                        destPattern, artifact.getArtifact(), conf);
+                String destFileName = IvyPatternHelper.substitute(destPattern, 
+                        artifact.getArtifact().getModuleRevisionId(), artifact.getArtifact(), 
+                        conf, artifact.getArtifactOrigin());
 
                 Set dest = (Set) artifactsToCopy.get(artifact);
                 if (dest == null) {
