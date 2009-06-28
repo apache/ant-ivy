@@ -305,20 +305,37 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                         }
                     }
                 }
+                List confsList = (List) confs.get(moduleConfiguration);
+                if (confsList != null) {
+                    intersectedDepConfs.addAll(confsList);
+                }
                 if (intersectedDepConfs.isEmpty()) {
                     List defConfs = (List) confs.get("*");
                     if (defConfs != null) {
                         for (Iterator it = defConfs.iterator(); it.hasNext();) {
                             String mappedConf = (String) it.next();
                             if (mappedConf != null && mappedConf.startsWith("@+")) {
-                                return new String[] {moduleConfiguration + mappedConf.substring(1)};
+                                return new String[] {
+                                        moduleConfiguration + mappedConf.substring(1)};
                             } else if (mappedConf != null && mappedConf.equals("@")) {
                                 return new String[] {moduleConfiguration};
                             }
                         }
                     }
                 }
-                return (String[]) intersectedDepConfs.toArray(new String[intersectedDepConfs.size()]);
+                return (String[]) intersectedDepConfs.toArray(
+                            new String[intersectedDepConfs.size()]);
+            } else if (c instanceof ConfigurationGroup) {
+                ConfigurationGroup group = (ConfigurationGroup) c;
+                Set /*<String>*/ groupDepConfs = new HashSet();
+                String[] members = group.getMembersConfigurationNames();
+                for (int i = 0; i < members.length; i++) {
+                    Collection depConfs = 
+                         getDependencyConfigurationsIncludingExtending(
+                             members[i], requestedConfiguration);
+                    groupDepConfs.addAll(depConfs);
+                }
+                return (String[]) groupDepConfs.toArray(new String[groupDepConfs.size()]);
             }
         }
         
@@ -531,6 +548,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                 throw new IllegalArgumentException("Cannot add dependency '" + revId
                     + "' to configuration '" + masterConf + "' of module "
                     + md.getModuleRevisionId() + " because this configuration doesn't exist!");
+            }
+            if (config instanceof ConfigurationGroup) {
+                ConfigurationGroup group = (ConfigurationGroup) config;
+                String[] members = group.getMembersConfigurationNames();
+                for (int i = 0; i < members.length; i++) {
+                    addDependencyConfiguration(members[i], depConf);
+                }
+                return;
             }
         }
 

@@ -33,12 +33,14 @@ Declares a dependency for this module. A dependency is described by the module o
 The revision can be given as a fixed one (1.5.2, for instance) or as a latest (or dynamic) one. Several possibilities for dynamic revisions are implemented in Ivy:
 <ul>
 <li>latest.integration</li> selects the latest revision of the dependency module.
-<li>latest.[any status]</li> selects the latest revision of the dependency module with at least the specified status. <span class="since">since 1.4</span>
+<li>latest.[any status] <span class="since">since 1.4</span></li> selects the latest revision of the dependency module with at least the specified status. 
+
 For instance latest.milestone will select the latest version being either a milestone or a release, and latest.release will only selects the latest release. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
 See also [[settings/statuses]] to see how to configure module statuses.
 <li>end the revision with a +</li> selects the latest sub-revision of the dependency module. For instance, 
 if the dependency module exists in revision 1.0.3, 1.0.7 and 1.1.2, "1.0.+" will select 1.0.7.
-<li>version ranges</li> mathematical notation for ranges can be used to match a range of version. <span class="since">since 1.4</span>  
+<li>version ranges <span class="since">since 1.4</span></li> mathematical notation for ranges can be used to match a range of version.   
+
 Examples:
 [1.0,2.0] matches all versions greater or equal to 1.0 and lower or equal to 2.0
 [1.0,2.0[ matches all versions greater or equal to 1.0 and lower than 2.0
@@ -116,7 +118,30 @@ Configuration intersections can also be used when specifying the confs to [[ant:
 
 Moreover, the mapping '*->@' is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf A+B in a module which defines a dependency with mapping *->@, the mapping *->@ is interpreted as A+B->A+B so the intersection of A and B will be resolved in the dependency.
 
-<span class="since">since 1.4</span> you can add simple conditions in the dependency mapping. This is done by adding a condition between '[' and ']'. If the condition evaluates to <code>true</code>, the mapping is performed. If the condition evaluates to <code>false</code>, the mapping will be ignored. For instance, <code>test->[org=A]runtime,[org=B]default</code> means that the <code>test</code> configuration will be mapped to the <code>runtime</code> conf for the dependencies of organisation 'A' and to the <code>default</code> conf for dependencies of organisation 'B'.
+<span class="since">since 2.1</span> you can refer to a group of configurations sharing the same value for an attribute as left side part of the dependency mapping. 
+
+The syntax is 
+<code>*[att=value]</code>
+where <em>att</em> is the name of the attribute shared by the configurations of the group, and <em>value</em is the value for this attribute that configurations must have to be part of the group. This is especially useful with extra attributes.
+
+For instance, if you have:
+<code>
+<configurations>
+	<conf name="red" e:axis="color" />
+	<conf name="blue" e:axis="color" />
+		
+	<conf name="windows" e:axis="platform" />
+	<conf name="linux" e:axis="platform"/>
+</configurations>
+</code>
+
+Then you can do:
+<code>
+<dependency org="acme" name="foo" rev="2.0" conf="*[axis=platform]->default"/>
+</code>
+To map the windows and linux configurations (the one which have the attribute axis equal to platform) to the default configuration of foo.
+
+<span class="since">since 1.4</span> you can add simple conditions in the right side of the dependency mapping. This is done by adding a condition between '[' and ']'. If the condition evaluates to <code>true</code>, the mapping is performed. If the condition evaluates to <code>false</code>, the mapping will be ignored. For instance, <code>test->[org=A]runtime,[org=B]default</code> means that the <code>test</code> configuration will be mapped to the <code>runtime</code> conf for the dependencies of organisation 'A' and to the <code>default</code> conf for dependencies of organisation 'B'.
 
 <li>Specify a semi-column separated list of any of the previous specs.</li> In this case, it is the union of the mapping which is kept. For instance, 'A -> B; * -> C' means that B conf is needed in A conf and C conf is need in all master conf... so both B & C dep conf are required in A master conf
 </ul>

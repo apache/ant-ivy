@@ -90,6 +90,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    trunk
 =====================================
 - NEW: configuration intersections (IVY-1093)
+- NEW: configuration groups (IVY-1097)
 
 - IMPROVEMENT: Added support for NTLM authentication (IVY-1094) (thanks to Mathieu Anquetin)
 - IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
