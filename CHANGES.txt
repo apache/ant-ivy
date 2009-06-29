@@ -96,6 +96,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
 - IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
 
+- FIX: Ivy didn't fail when an outdated artifact in cache couldn't get deleted
 - FIX: ivy:resolve ignores branch in "dynamic" resolve mode (IVY-1087) (thanks to Aleksey Zhukov)
 - FIX: [originalname] not expanded during retrieve when module descriptor contains extra attributes (IVY-1096)
 - FIX: The Ant output wasn't always prefixed by the name of the task
