@@ -90,10 +90,12 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
-- DOCUMENTATION: not all attirubtes of publish task are documented (IVY-963) (thanks to Jon Schneider)
+- DOCUMENTATION: not all attributes of publish task are documented (IVY-963) (thanks to Jon Schneider)
+- DOCUMENTATION: missing documentation for the 'Version Pattern Matcher' (IVY-871) (thanks to Jon Schneider)
 
 - NEW: configuration intersections (IVY-1093)
 - NEW: configuration groups (IVY-1097)
+- NEW: added built-in versionmatcher: 'Version Pattern Matcher' (IVY-871)
 
 - IMPROVEMENT: Added support for NTLM authentication (IVY-1094) (thanks to Mathieu Anquetin)
 - IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
