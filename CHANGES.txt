@@ -73,6 +73,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andreas Sahlbach
 	Brian Sanders
 	Adrian Sandor
+	Jon Schneider
 	Ruslan Shevchenko
 	John Shields
 	Simon Steiner
@@ -89,6 +90,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: not all attirubtes of publish task are documented (IVY-963) (thanks to Jon Schneider)
+
 - NEW: configuration intersections (IVY-1093)
 - NEW: configuration groups (IVY-1097)
 
