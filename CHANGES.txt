@@ -97,6 +97,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: configuration groups (IVY-1097)
 - NEW: added built-in versionmatcher: 'Version Pattern Matcher' (IVY-871)
 
+- IMPROVEMENT: Retrieve ant task doesn't support dynamic resolve mode (IVY-1085)
 - IMPROVEMENT: Added support for NTLM authentication (IVY-1094) (thanks to Mathieu Anquetin)
 - IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
 - IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
