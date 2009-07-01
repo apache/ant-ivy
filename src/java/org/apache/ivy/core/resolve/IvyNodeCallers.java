@@ -60,10 +60,12 @@ public class IvyNodeCallers {
         public void addConfiguration(String callerConf, String[] dependencyConfs) {
             updateConfs(callerConf, dependencyConfs);
             Configuration conf = md.getConfiguration(callerConf);
-            String[] confExtends = conf.getExtends();
-            if (confExtends != null) {
-                for (int i = 0; i < confExtends.length; i++) {
-                    addConfiguration(confExtends[i], dependencyConfs);
+            if (conf != null) {
+                String[] confExtends = conf.getExtends();
+                if (confExtends != null) {
+                    for (int i = 0; i < confExtends.length; i++) {
+                        addConfiguration(confExtends[i], dependencyConfs);
+                    }
                 }
             }
         }
