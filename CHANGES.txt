@@ -93,6 +93,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - DOCUMENTATION: not all attributes of publish task are documented (IVY-963) (thanks to Jon Schneider)
 - DOCUMENTATION: missing documentation for the 'Version Pattern Matcher' (IVY-871) (thanks to Jon Schneider)
 - DOCUMENTATION: added missing documentation for the 'keep' attribute on the (post)resolve Ant tasks (IVY-1091)
+- DOCUMENTATION: wrong url in installation.html (IVY-1054)
 
 - NEW: configuration intersections (IVY-1093)
 - NEW: configuration groups (IVY-1097)
