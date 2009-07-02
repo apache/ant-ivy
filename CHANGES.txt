@@ -115,6 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Ivy doesn't handle maven dependencies with type 'test-jar' correctly (IVY-1066)
 - FIX: transitive dependencies and conflict management (IVY-1083)
 - FIX: exclude does not work in non-trivial conf case (IVY-983)
+- FIX: The artifact report task is generating duplicate artifact entries (IVY-1098)
 
    2.1.0-rc1
 =====================================
