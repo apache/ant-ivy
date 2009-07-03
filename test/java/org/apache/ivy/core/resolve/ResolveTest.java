@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
@@ -101,40 +100,69 @@ public class ResolveTest extends TestCase {
 
 
     public void testResolveWithRetainingArtifactName() throws Exception {
-        ivy.pushContext();
-        try {
-            ((DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager())
+        ((DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager())
                 .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
-            ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
-            .toURL(), getResolveOptions(new String[] {"default"}));
-            assertNotNull(report);
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
+                .toURL(), getResolveOptions(new String[] {"default"}));
+        assertNotNull(report);
 
-            ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
-            .getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.1", "1.1"));
-            assertNotNull(dReports);
-            assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+        ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
+                .getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.1", "1.1"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
 
-            Artifact artifact = dReports[0].getArtifact();
-            assertNotNull(artifact);
+        Artifact artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
 
-            String cachePath = getArchivePathInCache(artifact);
-            assertTrue("artifact name has not been retained: " + cachePath, cachePath
+        String cachePath = getArchivePathInCache(artifact);
+        assertTrue("artifact name has not been retained: " + cachePath, cachePath
                 .endsWith("library.jar"));
 
-            dReports = report.getConfigurationReport("default").getDownloadReports(
+        dReports = report.getConfigurationReport("default").getDownloadReports(
                 ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"));
-            assertNotNull(dReports);
-            assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
 
-            artifact = dReports[0].getArtifact();
-            assertNotNull(artifact);
+        artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
 
-            cachePath = getArchivePathInCache(artifact);
-            assertTrue("artifact name has not been retained: " + cachePath, cachePath
+        cachePath = getArchivePathInCache(artifact);
+        assertTrue("artifact name has not been retained: " + cachePath, cachePath
                 .endsWith("mod14.1-1.1.jar"));
-        } finally {
-            ivy.popContext();
-        }
+    }
+
+    public void testResolveWithRetainingArtifactNameAndExtraAttributes() throws Exception {
+        ((DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager())
+                .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.4/ivy-1.1.xml")
+                .toURL(), getResolveOptions(new String[] {"default"}).setValidate(false));
+        assertNotNull(report);
+
+        Map extra = new HashMap();
+        extra.put("extra", "foo");
+        ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
+                .getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.3", "1.1", extra));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+
+        Artifact artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
+
+        String cachePath = getArchivePathInCache(artifact);
+        assertTrue("artifact name has not been retained: " + cachePath, cachePath
+                .endsWith("library.jar"));
+
+        dReports = report.getConfigurationReport("default").getDownloadReports(
+                ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+
+        artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
+
+        cachePath = getArchivePathInCache(artifact);
+        assertTrue("artifact name has not been retained: " + cachePath, cachePath
+                .endsWith("mod14.1-1.1.jar"));
     }
 
     public void testArtifactOrigin() throws Exception {
@@ -1992,6 +2020,26 @@ public class ResolveTest extends TestCase {
             "commons-lang", "jar", "jar").exists());
     }
 
+    public void testResolveMergeTransitiveAfterConflict() throws Exception {
+        // mod20.4 ->  mod20.3;1.0 mod20.2;1.0
+        // mod20.3;1.0 -> mod20.1;1.0
+        // mod20.2;1.0 -> mod20.1;1.1 (transitive false)
+        // mod20.1;1.0 -> mod1.2;1.0
+        // mod20.1;1.1 -> mod1.2;1.0
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org20/mod20.4/ivys/ivy-1.0.xml")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertNotNull(crr);
+        assertEquals(1, crr.getDownloadReports(ModuleRevisionId
+                .newInstance("org1", "mod1.2", "1.0")).length);
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "1.0", "mod1.2", "jar", "jar").exists());
+    }
+
     /**
      * Test IVY-618. 
      */
@@ -3585,6 +3633,34 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveExcludesConf() throws Exception {
+        // mod2.6 depends on mod2.3 in conf default and mod2.5 in conf exclude
+        // mod2.5 depends on mod2.3
+        // mod2.6 globally exclude mod2.3 in conf exclude
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml").toURL(),
+            getResolveOptions(new String[] {"include"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.13"), md
+                .getModuleRevisionId());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.3", "0.4")).exists());
+    }
+
+    public void testResolveExcludesConf2() throws Exception {
+        // same as testResolveExcludesConf
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml").toURL(),
+            getResolveOptions(new String[] {"exclude"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.13"), md
+                .getModuleRevisionId());
+
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.3", "0.4")).exists());
+    }
+
     public void testResolveExceptConfiguration() throws Exception {
         // mod10.2 depends on mod5.1 conf *, !A
         ivy.resolve(new File("test/repositories/2/mod10.2/ivy-2.0.xml").toURL(),
@@ -3592,6 +3668,110 @@ public class ResolveTest extends TestCase {
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.1", "art51A", "jar", "jar").exists());
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.1", "art51B", "jar", "jar").exists());
+    }
+
+    public void testResolveIntersectConfiguration1() throws Exception {
+        // mod5.2;3.0 -> mod5.1;4.4 (*->@)
+        // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
+        // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
+        // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+            getResolveOptions(new String[] {"A"}));
+
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "dll", "dll").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "so", "so").exists());
+    }
+
+    public void testResolveIntersectConfiguration2() throws Exception {
+        // mod5.2;3.0 -> mod5.1;4.4 (*->@)
+        // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
+        // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
+        // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+            getResolveOptions(new String[] {"B"}));
+
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "dll", "dll").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "so", "so").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21A", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21B", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21AB", "jar", "jar").exists());
+    }
+
+    public void testResolveIntersectConfiguration3() throws Exception {
+        // mod5.2;3.0 -> mod5.1;4.4 (*->@)
+        // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
+        // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
+        // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+            getResolveOptions(new String[] {"B+windows"}));
+
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "dll", "dll").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "so", "so").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21A", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21B", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21AB", "jar", "jar").exists());
+    }
+
+    public void testResolveIntersectConfiguration4() throws Exception {
+        // mod5.2;3.0 -> mod5.1;4.4 (*->@)
+        // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
+        // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
+        // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
+        // mod5.1;4.4 -> mod2.8;0.6 (windows,linux->@+thread+debug;A,B->*)
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+            getResolveOptions(new String[] {"B+linux"}));
+
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "dll", "dll").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51B", "so", "so").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21A", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21AB", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-linux-debug-thread", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-linux-debug", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-windows-debug-thread", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-windows-debug", "jar", "jar").exists());
+    }
+
+    public void testConfigurationGroups() throws Exception {
+        // mod5.2;3.1 -> mod5.1;4.5 (*->@)
+        // mod5.1;4.5 -> mod1.2;2.0 (B,*[axis=platform]->default)
+        // mod5.1;4.5 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
+        // mod5.1;4.5 -> mod2.1;0.5 (B,windows->A+B)
+        // mod5.1;4.5 -> mod2.8;0.6 (windows,linux->@+thread+debug;A,B->*)
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.1.xml").toURL(),
+            getResolveOptions(new String[] {"B+linux"}));
+
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.5", "art51A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.5", "art51B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.5", "art51B", "dll", "dll").exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.5", "art51B", "so", "so").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21A", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.5", "art21AB", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-linux-debug-thread", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-linux-debug", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-windows-debug-thread", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.8", "0.6", "art28-windows-debug", "jar", "jar").exists());
     }
 
     public void testResolveFallbackConfiguration() throws Exception {

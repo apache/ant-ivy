@@ -104,7 +104,10 @@ public class XmlReportParser {
                             realMrids.add(mrid);
                         }
                         try {
-                            pubdate = Ivy.DATE_FORMAT.parse(attributes.getValue("pubdate"));
+                            String pubDateAttr = attributes.getValue("pubdate");
+                            if (pubDateAttr != null) {
+                                pubdate = Ivy.DATE_FORMAT.parse(pubDateAttr);
+                            }
                             skip = false;
                         } catch (ParseException e) {
                             throw new IllegalArgumentException("invalid publication date for "

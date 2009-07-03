@@ -78,12 +78,12 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * This method is similar to getResource, except that the returned resource is fully initialised
+     * This method is similar to getResource, except that the returned resource is fully initialized
      * (resolved in the sftp repository), and that the given string is a full remote path
      * 
      * @param path
      *            the full remote path in the repository of the resource
-     * @return a fully initialised resource, able to answer to all its methods without needing any
+     * @return a fully initialized resource, able to answer to all its methods without needing any
      *         further connection
      */
     public Resource resolveResource(String path) {

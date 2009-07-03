@@ -57,7 +57,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private String revision = "latest.integration";
 
     private String resolveId;
-
+    
     private String type;
 
     private File file;
@@ -70,6 +70,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     
     private boolean refresh = false;
     
+    private String resolveMode = null;
+
     private String log = ResolveOptions.LOG_DEFAULT;
 
     public boolean isUseOrigin() {
@@ -296,6 +298,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         resolve.setRefresh(isRefresh());
         resolve.setLog(getLog());
         resolve.setSettingsRef(getSettingsRef());
+        resolve.setResolveMode(getResolveMode());
         return resolve;
     }
 
@@ -425,5 +428,12 @@ public abstract class IvyPostResolveTask extends IvyTask {
     public boolean isRefresh() {
         return refresh;
     }
+    
+    public String getResolveMode() {
+        return resolveMode;
+    }
 
+    public void setResolveMode(String resolveMode) {
+        this.resolveMode = resolveMode;
+    }
 }

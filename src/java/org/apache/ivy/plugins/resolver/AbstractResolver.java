@@ -69,7 +69,7 @@ public abstract class AbstractResolver
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
-     * default behaviur should be used
+     * default behavior should be used
      */
     private Boolean validate = null;
 

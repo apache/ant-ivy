@@ -33,9 +33,20 @@ public final class FilterHelper {
             return NO_FILTER;
         }
         String[] t = types.split(",");
-        List acceptedTypes = new ArrayList(t.length); 
-        for (int i = 0; i < t.length; i++) {
-            acceptedTypes.add(t[i].trim());
+        return getArtifactTypeFilter(t);
+    }
+    
+    public static Filter getArtifactTypeFilter(String[] types) {
+        if (types == null || types.length == 0) {
+            return NO_FILTER;
+        }
+        List acceptedTypes = new ArrayList(types.length); 
+        for (int i = 0; i < types.length; i++) {
+            String current = types[i].trim();
+            if ("*".equals(current)) {
+                return NO_FILTER;
+            }
+            acceptedTypes.add(current);
         }
         return new ArtifactTypeFilter(acceptedTypes);
     }

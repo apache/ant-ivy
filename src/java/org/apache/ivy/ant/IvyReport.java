@@ -297,7 +297,7 @@ public class IvyReport extends IvyTask {
         
         return IvyPatternHelper.substitute(
             outputpattern, mRevId.getOrganisation(), mRevId.getName(),
-            mRevId.getRevision(), "", "", ext, conf, mRevId.getAttributes());
+            mRevId.getRevision(), "", "", ext, conf, mRevId.getAttributes(), null);
     }
 
     private void genStyled(String[] confs, File style, String ext) throws IOException {

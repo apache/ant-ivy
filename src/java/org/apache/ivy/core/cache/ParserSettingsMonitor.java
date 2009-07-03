@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.conflict.ConflictManager;
@@ -128,6 +129,10 @@ class ParserSettingsMonitor {
         
         public File resolveFile(String filename) {
             return delegatedSettings.resolveFile(filename);
+        }
+        
+        public String getDefaultBranch(ModuleId moduleId) {
+            return delegatedSettings.getDefaultBranch(moduleId);
         }
 
         public Map substitute(Map strings) {

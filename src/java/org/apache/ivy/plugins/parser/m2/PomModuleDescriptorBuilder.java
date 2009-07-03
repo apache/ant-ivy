@@ -292,6 +292,17 @@ public class PomModuleDescriptorBuilder {
             if (dep.getType() != null) {
                 type = dep.getType();
             }
+            String ext = type;
+
+            // if type is 'test-jar', the extension is 'jar' and the classifier is 'tests'
+            // Cfr. http://maven.apache.org/guides/mini/guide-attached-tests.html
+            if ("test-jar".equals(type)) {
+                ext = "jar";
+                extraAtt.put("m:classifier", "tests");
+            } else if (JAR_PACKAGINGS.contains(type)) {
+                ext = "jar";
+            }            
+            
             // we deal with classifiers by setting an extra attribute and forcing the
             // dependency to assume such an artifact is published
             if (dep.getClassifier() != null) {
@@ -299,7 +310,7 @@ public class PomModuleDescriptorBuilder {
             }
             DefaultDependencyArtifactDescriptor depArtifact = 
                     new DefaultDependencyArtifactDescriptor(dd, dd.getDependencyId().getName(),
-                        type, type, null, extraAtt);
+                        type, ext, null, extraAtt);
             // here we have to assume a type and ext for the artifact, so this is a limitation
             // compared to how m2 behave with classifiers
             String optionalizedScope = dep.isOptional() ? "optional" : scope;

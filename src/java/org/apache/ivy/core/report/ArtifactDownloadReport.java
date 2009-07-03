@@ -154,4 +154,33 @@ public class ArtifactDownloadReport {
     public boolean isDownloaded() {
         return DownloadStatus.SUCCESSFUL == downloadStatus;
     }
+
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ArtifactDownloadReport other = (ArtifactDownloadReport) obj;
+        if (artifact == null) {
+            if (other.artifact != null) {
+                return false;
+            }
+        } else if (!artifact.equals(other.artifact)) {
+            return false;
+        }
+        return true;
+    }
+
 }

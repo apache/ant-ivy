@@ -45,6 +45,9 @@ The source artifact pattern can be specified either as an attribute on the task 
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
 </thead>
 <tbody>
+    <tr><td>organisation</td><td>the name of the organisation of the module to publish</td><td>No. Defaults to ${ivy.organisation} or the last resolved module organisation.</td></tr>
+    <tr><td>module</td><td>the name of the module to publish</td><td>No. Defaults to ${ivy.module} or the last resolved module name.</td></tr>
+    <tr><td>revision</td><td>the revision of the module to publish and also the published revision unless pubrevision is set</td><td>No. Defaults to ${ivy.revision} or the last resolve module revision.</td></tr>
     <tr><td>artifactspattern</td><td>the pattern to use to find artifacts to publish</td>
         <td>No. Defaults to ${ivy.publish.src.artifacts.pattern}</td></tr>
     <tr><td>resolver</td><td>the name of the resolver to use for publication</td>

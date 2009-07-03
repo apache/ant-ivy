@@ -50,9 +50,9 @@ public class ResolveReport {
     /**
      * the list of all dependencies resolved, ordered from the more dependent to the less dependent
      */
-    private List dependencies = new ArrayList();
+    private List/*<IvyNode>*/ dependencies = new ArrayList();
 
-    private List artifacts = new ArrayList();
+    private List/*<Artifact>*/ artifacts = new ArrayList();
 
     private long resolveTime;
 

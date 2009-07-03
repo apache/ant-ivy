@@ -122,6 +122,13 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
                 branch, revision, extraAttributes));
     }
 
+    public static ModuleRevisionId newInstance(String organisation, String name, String branch,
+            String revision, Map extraAttributes, boolean replaceNullBranchWithDefault) {
+        return intern(
+            new ModuleRevisionId(ModuleId.newInstance(organisation, name), 
+                branch, revision, extraAttributes, replaceNullBranchWithDefault));
+    }
+
     public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
         return intern(
             new ModuleRevisionId(mrid.getModuleId(), 
@@ -190,10 +197,15 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     private ModuleRevisionId(ModuleId moduleId, String branch, String revision, 
             Map extraAttributes) {
+        this(moduleId, branch, revision, extraAttributes, true);
+    }
+    
+    private ModuleRevisionId(ModuleId moduleId, String branch, String revision, 
+            Map extraAttributes, boolean replaceNullBranchWithDefault) {
         super(null, extraAttributes);
         this.moduleId = moduleId;
         IvyContext context = IvyContext.getContext();
-        this.branch = branch == null 
+        this.branch = (replaceNullBranchWithDefault && branch == null) 
             // we test if there's already an Ivy instance loaded, to avoid loading a default one 
             // just to get the default branch
             ? (context.peekIvy() == null ? null : context.getSettings().getDefaultBranch(moduleId)) 

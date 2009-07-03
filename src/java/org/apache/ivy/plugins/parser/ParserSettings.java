@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.conflict.ConflictManager;
@@ -52,5 +53,7 @@ public interface ParserSettings {
     File resolveFile(String filename);
     
     File getBaseDir();
+    
+    String getDefaultBranch(ModuleId moduleId);
 
 }

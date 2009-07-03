@@ -216,7 +216,9 @@ public class VisitNode {
      */
     public boolean isTransitive() {
         return (data.isTransitive() 
-                && node.getDependencyDescriptor(getParentNode()).isTransitive() 
+                && (
+                        node.getDependencyDescriptor(getParentNode()).isTransitive() 
+                     || node.hasAnyMergedUsageWithTransitiveDependency(rootModuleConf))
                 && isParentConfTransitive());
     }
 

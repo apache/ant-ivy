@@ -1131,7 +1131,10 @@ public class ResolveEngine {
         if (ResolveOptions.RESOLVEMODE_DYNAMIC.equals(resolveMode)
                 && !dd.getDynamicConstraintDependencyRevisionId()
                         .equals(dd.getDependencyRevisionId())) {
-            return dd.clone(dd.getDynamicConstraintDependencyRevisionId());
+            // the dynamicRevId can contain a null branch, so make sure this
+            // has been replaced by the default branch (if any!)
+            return dd.clone(ModuleRevisionId.newInstance(dd.getDynamicConstraintDependencyRevisionId(), 
+                dd.getDynamicConstraintDependencyRevisionId().getRevision()));
         } else {
             return dd;
         }

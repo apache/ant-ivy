@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -45,9 +46,9 @@ import org.apache.ivy.util.Checks;
  * method.
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
-    private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+    private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\+[^\\(]+)?(\\(.*\\))?");
 
-    private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
+    private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\+[^\\(]+)?(\\(.*\\))?");
     
     /**
      * Transforms the given dependency descriptor of the given namespace and return a new dependency
@@ -123,7 +124,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private ModuleRevisionId dynamicRevId;
 
-    private Map confs = new LinkedHashMap();
+    private Map/*<String,List<String>>*/ confs = new LinkedHashMap();
 
     // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
     private Map dependencyArtifacts; // initialized on demand only for memory consumption reason
@@ -244,6 +245,100 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      */
     public String[] getDependencyConfigurations(String moduleConfiguration,
             String requestedConfiguration) {
+        if (md != null) {
+            Configuration c = md.getConfiguration(moduleConfiguration);
+            if (c instanceof ConfigurationIntersection) {
+                ConfigurationIntersection intersection = (ConfigurationIntersection) c;
+                Set /*<String>*/ intersectedDepConfs = new HashSet();
+                String[] intersected = intersection.getIntersectedConfigurationNames();
+                for (int i = 0; i < intersected.length; i++) {
+                    Collection depConfs = 
+                         getDependencyConfigurationsIncludingExtending(
+                                 intersected[i], requestedConfiguration);
+                    if (intersectedDepConfs.isEmpty()) {
+                        intersectedDepConfs.addAll(depConfs);
+                    } else {
+                        if (intersectedDepConfs.contains("*")) {
+                            intersectedDepConfs.remove("*");
+                            intersectedDepConfs.addAll(depConfs);
+                        } else if (depConfs.contains("*")) {
+                            // nothing to do, intersection of 'something' 
+                            // with 'everything' is 'something'                            
+                        } else {
+                            Set /*<String>*/ intersectedDepConfsCopy = intersectedDepConfs;
+                            intersectedDepConfs = new HashSet();
+                            for (Iterator it = intersectedDepConfsCopy.iterator(); it.hasNext();) {
+                                String intersectedDepConf = (String) it.next();
+                                if (depConfs.contains(intersectedDepConf)) {
+                                    // the conf is present in both sets, 
+                                    // so it is in the intersection
+                                    intersectedDepConfs.add(intersectedDepConf);
+                                    continue;
+                                }
+                                /*
+                                we do not handle special confs like *!sg or [cond]* in right hand 
+                                confs yet: it would require supporting parenthesis grouping in 
+                                configurations intersection interpretation 
+                                 
+                                for (Iterator it2 = depConfs.iterator(); it2.hasNext();) {
+                                    String depConf = (String) it2.next();
+                                    if (depConf.startsWith("*")) {
+                                        if (intersectedDepConf
+                                                .indexOf("(" + depConf + ")") != -1) {
+                                            intersectedDepConfs.add(intersectedDepConf);
+                                        } else {
+                                            intersectedDepConfs.add(
+                                                "(" + intersectedDepConf + ")+(" + depConf + ")");
+                                        }
+                                    } else if (intersectedDepConf.startsWith("*")) {
+                                        if (depConf
+                                            .indexOf("(" + intersectedDepConf + ")") != -1) {
+                                            intersectedDepConfs.add(depConf);
+                                        } else {
+                                            intersectedDepConfs.add(
+                                                depConf + "+" + intersectedDepConf);
+                                        }
+                                    }
+                                }
+                                */
+                            }
+                        }
+                    }
+                }
+                List confsList = (List) confs.get(moduleConfiguration);
+                if (confsList != null) {
+                    intersectedDepConfs.addAll(confsList);
+                }
+                if (intersectedDepConfs.isEmpty()) {
+                    List defConfs = (List) confs.get("*");
+                    if (defConfs != null) {
+                        for (Iterator it = defConfs.iterator(); it.hasNext();) {
+                            String mappedConf = (String) it.next();
+                            if (mappedConf != null && mappedConf.startsWith("@+")) {
+                                return new String[] {
+                                        moduleConfiguration + mappedConf.substring(1)};
+                            } else if (mappedConf != null && mappedConf.equals("@")) {
+                                return new String[] {moduleConfiguration};
+                            }
+                        }
+                    }
+                }
+                return (String[]) intersectedDepConfs.toArray(
+                            new String[intersectedDepConfs.size()]);
+            } else if (c instanceof ConfigurationGroup) {
+                ConfigurationGroup group = (ConfigurationGroup) c;
+                Set /*<String>*/ groupDepConfs = new HashSet();
+                String[] members = group.getMembersConfigurationNames();
+                for (int i = 0; i < members.length; i++) {
+                    Collection depConfs = 
+                         getDependencyConfigurationsIncludingExtending(
+                             members[i], requestedConfiguration);
+                    groupDepConfs.addAll(depConfs);
+                }
+                return (String[]) groupDepConfs.toArray(new String[groupDepConfs.size()]);
+            }
+        }
+        
         List confsList = (List) confs.get(moduleConfiguration);
         if (confsList == null) {
             // there is no mapping defined for this configuration, add the 'other' mappings.
@@ -285,6 +380,20 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return (String[]) ret.toArray(new String[ret.size()]);
     }
 
+    private Collection getDependencyConfigurationsIncludingExtending(
+            String conf, String requestedConfiguration) {
+        Set/*<String>*/ allDepConfs = new LinkedHashSet();
+        allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(conf, requestedConfiguration)));
+
+        Collection extendingConfs = Configuration.findConfigurationExtending(conf, md.getConfigurations());
+        for (Iterator it = extendingConfs.iterator(); it.hasNext();) {
+            Configuration extendingConf = (Configuration) it.next();
+            allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(
+                            extendingConf.getName(), requestedConfiguration)));
+        }
+        return allDepConfs;
+    }
+
     protected static String replaceSelfFallbackPattern(final String conf,
             final String moduleConfiguration) {
         return replaceFallbackConfigurationPattern(
@@ -312,11 +421,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             final String conf, final String moduleConfiguration) {
         Matcher matcher = pattern.matcher(conf);
         if (matcher.matches()) {
+            String mappedConf = moduleConfiguration;
             if (matcher.group(1) != null) {
-                return moduleConfiguration + matcher.group(1);
-            } else {
-                return moduleConfiguration;
+                mappedConf =  mappedConf + matcher.group(1);
             }
+            if (matcher.group(2) != null) {
+                mappedConf =  mappedConf + matcher.group(2);
+            }
+            return mappedConf;
         }
         return null;
     }
@@ -436,6 +548,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                 throw new IllegalArgumentException("Cannot add dependency '" + revId
                     + "' to configuration '" + masterConf + "' of module "
                     + md.getModuleRevisionId() + " because this configuration doesn't exist!");
+            }
+            if (config instanceof ConfigurationGroup) {
+                ConfigurationGroup group = (ConfigurationGroup) config;
+                String[] members = group.getMembersConfigurationNames();
+                for (int i = 0; i < members.length; i++) {
+                    addDependencyConfiguration(members[i], depConf);
+                }
+                return;
             }
         }
 

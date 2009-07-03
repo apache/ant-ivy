@@ -32,7 +32,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * A repository supports the following fundamental operations
  * <ul>
  * <li>retrieving a resource from the repository.</li>
- * <li>transfering a resource to the repository.</li>
+ * <li>transferring a resource to the repository.</li>
  * <li>retrieving a listing of resources.</li>
  * </ul>
  * </p>
@@ -66,7 +66,7 @@ public interface Repository {
      *            A string identifying the resource.
      * @return The resource associated with the resource identifier.
      * @throws IOException
-     *             On error whle trying to get resource.
+     *             On error while trying to get resource.
      */
     Resource getResource(String source) throws IOException;
 
@@ -130,7 +130,7 @@ public interface Repository {
      * Determine if a given listener is attached to the repository.
      * 
      * @param listener
-     *            The listener being quireied
+     *            The listener being queried
      * @return <code>true</code> if the provided listener is attached to the repository,
      *         <code>false</code> if not.
      */

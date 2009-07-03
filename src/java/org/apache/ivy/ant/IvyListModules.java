@@ -101,19 +101,19 @@ public class IvyListModules extends IvyTask {
 
     public void doExecute() throws BuildException {
         if (organisation == null) {
-            throw new BuildException("no organisation provided for ivy findmodules");
+            throw new BuildException("no organisation provided for ivy listmodules task");
         }
         if (module == null) {
-            throw new BuildException("no module name provided for ivy findmodules");
+            throw new BuildException("no module name provided for ivy listmodules task");
         }
         if (revision == null) {
-            throw new BuildException("no revision provided for ivy findmodules");
+            throw new BuildException("no revision provided for ivy listmodules task");
         }
         if (property == null) {
-            throw new BuildException("no property provided for ivy findmodules");
+            throw new BuildException("no property provided for ivy listmodules task");
         }
         if (value == null) {
-            throw new BuildException("no value provided for ivy findmodules");
+            throw new BuildException("no value provided for ivy listmodules task");
         }
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();

@@ -39,6 +39,7 @@ import org.apache.ivy.core.event.resolve.EndResolveDependencyEvent;
 import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.ConfigurationIntersection;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -348,7 +349,7 @@ public class IvyNode implements Comparable {
             depNode.addRootModuleConfigurations(depNode.usage, rootModuleConf, confsArray);
             depNode.usage.setRequiredConfs(this, conf, confs);
 
-            depNode.addCaller(rootModuleConf, this, conf, dependencyConfigurations, dd);
+            depNode.addCaller(rootModuleConf, this, conf, requestedConf, dependencyConfigurations, dd);
             dependencies.add(depNode);
         }
         return dependencies;
@@ -1021,8 +1022,8 @@ public class IvyNode implements Comparable {
     }
 
     public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf,
-            String[] dependencyConfs, DependencyDescriptor dd) {
-        callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
+            String requestedConf, String[] dependencyConfs, DependencyDescriptor dd) {
+        callers.addCaller(rootModuleConf, callerNode, callerConf, requestedConf, dependencyConfs, dd);
         boolean isCircular = callers.getAllCallersModuleIds().contains(getId().getModuleId());
         if (isCircular) {
             IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
@@ -1263,6 +1264,32 @@ public class IvyNode implements Comparable {
 
     public IvyNodeUsage getMainUsage() {
         return usage;
+    }
+
+    /**
+     * Indicates if there is any of the merged usages of this node which has a depender with
+     * transitive dependency descriptor.
+     * <p>
+     * If at there is at least one usage from the merged usages for which there is a depender in the
+     * given root module conf which has a dependency descriptor with transitive == true, then it
+     * returns true. Otherwise it returns false.
+     * </p>
+     * 
+     * @param rootModuleConf
+     *            the root module configuration to consider
+     * @return true if there is any merged usage with transitive dd, false otherwise.
+     */
+    public boolean hasAnyMergedUsageWithTransitiveDependency(String rootModuleConf) {
+        if (mergedUsages == null) {
+            return false;
+        }
+        for (Iterator iterator = mergedUsages.values().iterator(); iterator.hasNext();) {
+            IvyNodeUsage usage = (IvyNodeUsage) iterator.next();
+            if (usage.hasTransitiveDepender(rootModuleConf)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

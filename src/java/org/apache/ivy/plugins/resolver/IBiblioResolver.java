@@ -130,8 +130,7 @@ public class IBiblioResolver extends URLResolver {
         String rev = findSnapshotVersion(mrid);
         if (rev != null) {
             // replace the revision token in file name with the resolved revision
-            String pattern = (String) getArtifactPatterns().get(0);
-            pattern = pattern.replaceFirst("\\-\\[revision\\]", "-" + rev);
+            String pattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + rev);
             return findResourceUsingPattern(mrid, pattern, artifact,
                 getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
         }
@@ -148,8 +147,7 @@ public class IBiblioResolver extends URLResolver {
             Message.verbose("[" + rev + "] " + mrid);
 
             // replace the revision token in file name with the resolved revision
-            String pattern = (String) getIvyPatterns().get(0);
-            pattern = pattern.replaceFirst("\\-\\[revision\\]", "-" + rev);
+            String pattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + rev);
             return findResourceUsingPattern(mrid, pattern,
                 DefaultArtifact.newPomArtifact(
                     mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
@@ -162,8 +160,7 @@ public class IBiblioResolver extends URLResolver {
             return null;
         }
         
-        String pattern = (String) getIvyPatterns().get(0);
-        if (shouldUseMavenMetadata(pattern)) {
+        if (shouldUseMavenMetadata(getWholePattern())) {
             InputStream metadataStream = null;
             try {
                 String metadataLocation = IvyPatternHelper.substitute(
@@ -337,40 +334,37 @@ public class IBiblioResolver extends URLResolver {
         
         // let's see if we should use maven metadata for this listing...
         if (IvyPatternHelper.REVISION_KEY.equals(token) 
-                && isM2compatible()
-                && isUseMavenMetadata()) {
-            if (((String) getIvyPatterns().get(0)).endsWith(M2_PER_MODULE_PATTERN)) {
-                // now we must use metadata if available
+                && shouldUseMavenMetadata(getWholePattern())) {
+            // now we must use metadata if available
+            /*
+             * we substitute tokens with ext token only in the m2 per module pattern, to match
+             * has has been done in the given pattern
+             */
+            String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
+                M2_PER_MODULE_PATTERN, 
+                Collections.singletonMap(IvyPatternHelper.EXT_KEY, "pom"));
+            if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
                 /*
-                 * we substitute tokens with ext token only in the m2 per module pattern, to match
-                 * has has been done in the given pattern
+                 * the given pattern already contain resolved org and module, we just have to
+                 * replace the per module pattern at the end by 'maven-metadata.xml' to have the
+                 * maven metadata file location
                  */
-                String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
-                    M2_PER_MODULE_PATTERN, 
-                    Collections.singletonMap(IvyPatternHelper.EXT_KEY, "pom"));
-                if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
-                    /*
-                     * the given pattern already contain resolved org and module, we just have to
-                     * replace the per module pattern at the end by 'maven-metadata.xml' to have the
-                     * maven metadata file location
-                     */
-                    String metadataLocation = pattern.substring(0, pattern
-                        .lastIndexOf(partiallyResolvedM2PerModulePattern))
-                        + "maven-metadata.xml";
-                    List revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
-                    if (revs != null) {
-                        return (String[]) revs.toArray(new String[revs.size()]);
-                    }
-                } else {
-                    /*
-                     * this is probably because the given pattern has been substituted with jar ext,
-                     * if this resolver has optional module descriptors. But since we have to use
-                     * maven metadata, we don't care about this case, maven metadata has already
-                     * been used when looking for revisions with the pattern substituted with
-                     * ext=xml for the "ivy" pattern.
-                     */  
-                    return new String[0];
+                String metadataLocation = pattern.substring(0, pattern
+                    .lastIndexOf(partiallyResolvedM2PerModulePattern))
+                    + "maven-metadata.xml";
+                List revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
+                if (revs != null) {
+                    return (String[]) revs.toArray(new String[revs.size()]);
                 }
+            } else {
+                /*
+                 * this is probably because the given pattern has been substituted with jar ext,
+                 * if this resolver has optional module descriptors. But since we have to use
+                 * maven metadata, we don't care about this case, maven metadata has already
+                 * been used when looking for revisions with the pattern substituted with
+                 * ext=xml for the "ivy" pattern.
+                 */  
+                return new String[0];
             }
         }
         return super.listTokenValues(pattern, token);
@@ -478,8 +472,7 @@ public class IBiblioResolver extends URLResolver {
     
     protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
-            String pattern = (String) patterns.get(0);
-            if (shouldUseMavenMetadata(pattern)) {
+            if (shouldUseMavenMetadata(getWholePattern())) {
                 List revs = listRevisionsWithMavenMetadata(getRepository(), tokenValues);
                 if (revs != null) {
                     names.addAll(filterNames(revs));

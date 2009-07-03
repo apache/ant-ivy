@@ -49,6 +49,7 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -883,6 +884,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             Message.error("impossible to acquire lock for " + mrid);
             return null;
         }
+        BackupResourceDownloader backupDownloader = new BackupResourceDownloader(downloader);
         try {
             // now let's see if we can find it in cache and if it is up to date
             ResolvedModuleRevision rmr = doFindModuleInCache(mrid, options, null);
@@ -925,7 +927,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     public ResolvedResource resolve(Artifact artifact) {
                         return mdRef;
                     }
-                }, downloader, 
+                }, backupDownloader,
                 new CacheDownloadOptions().setListener(options.getListener()).setForce(true));
             Message.verbose("\t" + report); 
 
@@ -970,7 +972,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                                 transformedArtifact, origin, false);
                             if (artFile.exists()) {
                                 Message.debug("deleting " + artFile);
-                                artFile.delete();
+                                if (!artFile.delete()) {
+                                    // Old artifacts couldn't get deleted!
+                                    // Restore the original ivy file so the next time we
+                                    // resolve the old artifacts are deleted again
+                                    backupDownloader.restore();
+                                    Message.error("Couldn't delete outdated artifact from cache: " + artFile);
+                                    return null;
+                                }
                             }
                             removeSavedArtifactOrigin(transformedArtifact);
                         }
@@ -999,6 +1008,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             }
         } finally {
             unlockMetadataArtifact(mrid);
+            backupDownloader.cleanUp();
         }
         
     }
@@ -1105,6 +1115,42 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         Message.debug("\t\tlockingStrategy: " + getLockStrategy().getName());
         Message.debug("\t\tchangingPattern: " + getChangingPattern());
         Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
+    }
+    
+    private class BackupResourceDownloader implements ResourceDownloader {
+        
+        private ResourceDownloader delegate;
+        private File backup;
+        private String originalPath;
+        
+        private BackupResourceDownloader(ResourceDownloader delegate) {
+            this.delegate = delegate;
+        }
+
+        public void download(Artifact artifact, Resource resource, File dest) throws IOException {
+            // keep a copy of the original file
+            if (dest.exists()) {
+                originalPath = dest.getAbsolutePath();
+                backup = new File(dest.getAbsolutePath() + ".backup");
+                FileUtil.copy(dest, backup, null, true);
+            }
+            delegate.download(artifact, resource, dest);
+        }
+        
+        public void restore() throws IOException {
+            if ((backup != null) && backup.exists()) {
+                File original = new File(originalPath);
+                FileUtil.copy(backup, original, null, true);
+                backup.delete();
+            }
+        }
+        
+        public void cleanUp() {
+            if ((backup != null) && backup.exists()) {
+                backup.delete();
+            }
+        }
+        
     }
 
 }

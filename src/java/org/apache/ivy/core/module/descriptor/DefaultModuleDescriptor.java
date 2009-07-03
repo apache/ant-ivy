@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -336,19 +338,27 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * @param artifact
      */
     public void addArtifact(String conf, Artifact artifact) {
-        if (!configurations.containsKey(conf)) {
+        Configuration c = getConfiguration(conf);
+        if (c == null) {
             throw new IllegalArgumentException("Cannot add artifact '" + artifact.getId().getArtifactId().getShortDescription()
                     + "' to configuration '" + conf + "' of module " + revId 
                     + " because this configuration doesn't exist!");
         }
-
-        Collection artifacts = (Collection) artifactsByConf.get(conf);
-        if (artifacts == null) {
-            artifacts = new ArrayList();
-            artifactsByConf.put(conf, artifacts);
+        if (c instanceof ConfigurationGroup) {
+            ConfigurationGroup group = (ConfigurationGroup) c;
+            String[] members = group.getMembersConfigurationNames();
+            for (int i = 0; i < members.length; i++) {
+                addArtifact(members[i], artifact);
+            }
+        } else {
+            Collection artifacts = (Collection) artifactsByConf.get(conf);
+            if (artifacts == null) {
+                artifacts = new ArrayList();
+                artifactsByConf.put(conf, artifacts);
+            }
+            artifacts.add(artifact);
+            this.artifacts.add(artifact);
         }
-        artifacts.add(artifact);
-        this.artifacts.add(artifact);
     }
 
     public ModuleRevisionId getModuleRevisionId() {
@@ -388,16 +398,105 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * if not found.
      */
     public Configuration getConfiguration(String confName) {
-        return (Configuration) configurations.get(confName);
+        Configuration configuration = (Configuration) configurations.get(confName);
+        if (configuration == null && confName != null) {
+            // let's first check if the configuration is a conf group
+            Matcher m = Pattern.compile("\\*\\[([^=]+)\\=([^\\]]+)\\]").matcher(confName);
+            if (m.matches()) {
+                String attName = m.group(1);
+                String attValue = m.group(2);
+
+                // this is a conf group, let's search for its members
+                Map /*<String,Configuration>*/ members = new LinkedHashMap();
+                for (Iterator it = configurations.values().iterator(); it.hasNext();) {
+                    Configuration conf = (Configuration) it.next();
+                    if (attValue.equals(conf.getAttribute(attName))) {
+                        members.put(conf.getName(), conf);
+                    }
+                }
+                return new ConfigurationGroup(confName, members);
+            }
+            
+            // let's see if a configuration intersection is requested
+            String[] confs = confName.split("\\+");
+            if (confs.length <= 1) {
+                return null;
+            }
+            Map /*<String,Configuration>*/ intersectedConfs = new LinkedHashMap();
+            for (int i = 0; i < confs.length; i++) {
+                Configuration c = (Configuration) configurations.get(confs[i]);
+                if (c == null) {
+                    Message.verbose(
+                        "missing configuration '" + confs[i] 
+                        + "' from intersection " + confName + " in " + this);
+                    return null;
+                }
+                intersectedConfs.put(confs[i], c);
+            }
+            return new ConfigurationIntersection(confName, intersectedConfs);
+        }
+        return configuration;
     }
 
     public Artifact[] getArtifacts(String conf) {
-        Collection artifacts = (Collection) artifactsByConf.get(conf);
-        if (artifacts == null) {
+        Configuration c = getConfiguration(conf);
+        if (c == null) {
             return new Artifact[0];
-        } else {
-            return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
         }
+        Collection artifacts = (Collection) artifactsByConf.get(conf);
+        if (c instanceof ConfigurationIntersection) {
+            ConfigurationIntersection intersection = (ConfigurationIntersection) c;
+            String[] intersected = intersection.getIntersectedConfigurationNames();
+            Set/*<Artifact>*/ intersectedArtifacts = new LinkedHashSet();
+            for (int j = 0; j < intersected.length; j++) {
+                Collection arts = getArtifactsIncludingExtending(intersected[j]);
+                if (intersectedArtifacts.isEmpty()) {
+                    intersectedArtifacts.addAll(arts);
+                } else {
+                    intersectedArtifacts.retainAll(arts);
+                }
+            }
+            if (artifacts != null) {
+                intersectedArtifacts.addAll(artifacts);
+            }
+            return (Artifact[]) intersectedArtifacts.toArray(
+                new Artifact[intersectedArtifacts.size()]);
+        } else if (c instanceof ConfigurationGroup) {
+            ConfigurationGroup group = (ConfigurationGroup) c;
+            String[] members = group.getMembersConfigurationNames();
+            Set/*<Artifact>*/ groupArtifacts = new LinkedHashSet();
+            for (int i = 0; i < members.length; i++) {
+                groupArtifacts.addAll(getArtifactsIncludingExtending(members[i]));
+            }
+            if (artifacts != null) {
+                groupArtifacts.addAll(artifacts);
+            }
+            return (Artifact[]) groupArtifacts.toArray(new Artifact[groupArtifacts.size()]);
+        } else {
+            if (artifacts == null) {
+                return new Artifact[0];
+            } else {
+                return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
+            }
+        }
+    }
+
+    private Collection/*<Artifact>*/ getArtifactsIncludingExtending(String conf) {
+        Collection extendingConfs = Configuration.findConfigurationExtending(
+                                                            conf, getConfigurations());
+        Set/*<Artifact>*/ artifacts = new LinkedHashSet();
+        Collection arts = (Collection) artifactsByConf.get(conf);
+        if (arts != null) {
+            artifacts.addAll(arts);
+        }
+        for (Iterator it = extendingConfs.iterator(); it.hasNext();) {
+            Configuration extendingConf = (Configuration) it.next();
+            arts = (Collection) artifactsByConf.get(extendingConf.getName());
+            if (arts != null) {
+                artifacts.addAll(arts);
+            }
+        }
+        return artifacts;
     }
 
     public Artifact[] getAllArtifacts() {

@@ -1,0 +1,46 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivy-module version="1.0">
+	<info organisation="org5"
+	       module="mod5.1"
+	       revision="4.4"
+	       status="integration"
+	       publication="20090401110000"
+	/>
+	<configurations>
+		<conf name="A"/>
+		<conf name="B"/>
+		
+		<conf name="windows"/>
+		<conf name="linux"/>
+		<conf name="xplatform" extends="windows,linux"/>
+	</configurations>
+	<publications>
+		<artifact name="art51A" type="jar" conf="A,xplatform"/>
+		<artifact name="art51B" type="jar" conf="B,xplatform"/>
+		<artifact name="art51B" type="dll" conf="B,windows"/>
+		<artifact name="art51B" type="so" conf="B,linux"/>
+	</publications>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0" conf="B,xplatform->default"/>
+		<dependency org="org2" name="mod2.2" rev="0.9" conf="B,windows->myconf1;B,linux->myconf2"/>
+		<dependency org="org2" name="mod2.1" rev="0.5" conf="B,windows->A+B"/>
+		<dependency org="org2" name="mod2.8" rev="0.6" conf="windows,linux->@+thread+debug;A,B->*"/>
+	</dependencies>
+</ivy-module>

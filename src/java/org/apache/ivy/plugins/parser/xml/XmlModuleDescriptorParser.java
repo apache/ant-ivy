@@ -49,6 +49,7 @@ import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediato
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
@@ -521,17 +522,40 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String name = settings.substitute(attributes.getValue("name"));
             String branch = settings.substitute(attributes.getValue("branch"));
             String branchConstraint = settings.substitute(attributes.getValue("branchConstraint"));
+            
+//            if (branchConstraint == null) {
+//                // there was no branch constraint before, so we should
+//                // set the branchConstraint to the current default branch
+//                branchConstraint = settings.getDefaultBranch(ModuleId.newInstance(org, name));
+//            }
+
             String rev = settings.substitute(attributes.getValue("rev"));
             String revConstraint = settings.substitute(attributes.getValue("revConstraint"));
-            revConstraint = revConstraint == null ? rev : revConstraint;
+            
             Map extraAttributes = ExtendableItemHelper.getExtraAttributes(
                 settings, attributes, DEPENDENCY_REGULAR_ATTRIBUTES);
-            dd = new DefaultDependencyDescriptor(
-                getMd(), 
-                ModuleRevisionId.newInstance(org, name, branch, rev, extraAttributes), 
-                ModuleRevisionId.newInstance(
-                    org, name, branchConstraint, revConstraint, extraAttributes), 
-                force, changing, transitive);
+
+            ModuleRevisionId revId = ModuleRevisionId.newInstance(org, name, branch, rev, 
+                extraAttributes);
+            ModuleRevisionId dynamicId = null;
+            if ((revConstraint == null) && (branchConstraint == null)) {
+                // no dynamic constraints defined, so dynamicId equals revId
+                dynamicId = ModuleRevisionId.newInstance(org, name, branch, rev, 
+                                extraAttributes, false);
+            } else {
+                if (branchConstraint == null) {
+                    // this situation occurs when there was no branch defined
+                    // in the original dependency descriptor. So the dynamicId
+                    // shouldn't contain a branch neither
+                    dynamicId = ModuleRevisionId.newInstance(org, name, null, revConstraint,
+                                    extraAttributes, false);
+                } else {
+                    dynamicId = ModuleRevisionId.newInstance(org, name, branchConstraint, 
+                                    revConstraint, extraAttributes);
+                }
+            }
+            
+            dd = new DefaultDependencyDescriptor(getMd(), revId, dynamicId, force, changing, transitive);
             getMd().addDependency(dd);
             String confs = settings.substitute(attributes.getValue("conf"));
             if (confs != null && confs.length() > 0) {

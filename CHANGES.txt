@@ -8,12 +8,13 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  Committers
  	Maarten Coene
  	Xavier Hanin
-	Nicolas Lalevée
+	Nicolas Lalevee
  	Gilles Scokart
   
  Contributors
  	Ingo Adler
  	alex322
+ 	Mathieu Anquetin
 	Stephane Bailliez
 	Karl Baum
 	Mikkel Bjerg
@@ -49,6 +50,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Tat Leung
 	Costin Leau
 	Antoine Levy-Lambert
+	Andrey Lomakin
 	William Lyvers
 	Sakari Maaranen
 	Jan Materne
@@ -71,6 +73,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andreas Sahlbach
 	Brian Sanders
 	Adrian Sandor
+	Jon Schneider
 	Ruslan Shevchenko
 	John Shields
 	Simon Steiner
@@ -83,7 +86,38 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
     Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
+	Aleksey Zhukov
 	
+   2.1.0-rc2
+=====================================
+- DOCUMENTATION: not all attributes of publish task are documented (IVY-963) (thanks to Jon Schneider)
+- DOCUMENTATION: missing documentation for the 'Version Pattern Matcher' (IVY-871) (thanks to Jon Schneider)
+- DOCUMENTATION: added missing documentation for the 'keep' attribute on the (post)resolve Ant tasks (IVY-1091)
+- DOCUMENTATION: wrong url in installation.html (IVY-1054)
+
+- NEW: configuration intersections (IVY-1093)
+- NEW: configuration groups (IVY-1097)
+- NEW: added built-in versionmatcher: 'Version Pattern Matcher' (IVY-871)
+
+- IMPROVEMENT: Retrieve ant task doesn't support dynamic resolve mode (IVY-1085)
+- IMPROVEMENT: Added support for NTLM authentication (IVY-1094) (thanks to Mathieu Anquetin)
+- IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
+- IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
+
+- FIX: Ivy didn't fail when an outdated artifact in cache couldn't get deleted
+- FIX: ivy:resolve ignores branch in "dynamic" resolve mode (IVY-1087) (thanks to Aleksey Zhukov)
+- FIX: [originalname] not expanded during retrieve when module descriptor contains extra attributes (IVY-1096)
+- FIX: The Ant output wasn't always prefixed by the name of the task
+- FIX: Ivy buildnumber task does not find artifact in Sonatype Nexus repo (IVY-1069)
+- FIX: Publish with SSH (sftp or ssh) prevents enclosing java process to terminate (IVY-1075)
+- FIX: Ibiblio resolver throws IndexOutOfBoundsException when using snapshot versions with usepoms='false' (IVY-1028)
+- FIX: Wrong BuildException messages (findmodules) (IVY-1056)
+- FIX: PomModuleDescriptorBuilder does not resolve ejb type dependencies to jar extension (IVY-1058) (thanks to Andrey Lomakin)
+- FIX: Ivy doesn't handle maven dependencies with type 'test-jar' correctly (IVY-1066)
+- FIX: transitive dependencies and conflict management (IVY-1083)
+- FIX: exclude does not work in non-trivial conf case (IVY-983)
+- FIX: The artifact report task is generating duplicate artifact entries (IVY-1098)
+
    2.1.0-rc1
 =====================================
 - IMPROVEMENT: Fail the retrieve when multiple artifacts of same module are mapped to same file (IVY-1050)

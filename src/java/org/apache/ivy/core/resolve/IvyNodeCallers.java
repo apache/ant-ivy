@@ -17,16 +17,19 @@
  */
 package org.apache.ivy.core.resolve;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -55,6 +58,19 @@ public class IvyNodeCallers {
         }
 
         public void addConfiguration(String callerConf, String[] dependencyConfs) {
+            updateConfs(callerConf, dependencyConfs);
+            Configuration conf = md.getConfiguration(callerConf);
+            if (conf != null) {
+                String[] confExtends = conf.getExtends();
+                if (confExtends != null) {
+                    for (int i = 0; i < confExtends.length; i++) {
+                        addConfiguration(confExtends[i], dependencyConfs);
+                    }
+                }
+            }
+        }
+
+        private void updateConfs(String callerConf, String[] dependencyConfs) {
             String[] prevDepConfs = (String[]) confs.get(callerConf);
             if (prevDepConfs != null) {
                 Set newDepConfs = new HashSet(Arrays.asList(prevDepConfs));
@@ -146,7 +162,7 @@ public class IvyNodeCallers {
      *            the dependency revision id asked by the caller
      */
     public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf,
-            String[] dependencyConfs, DependencyDescriptor dd) {
+            String requestedConf, String[] dependencyConfs, DependencyDescriptor dd) {
         ModuleDescriptor md = callerNode.getDescriptor();
         ModuleRevisionId mrid = callerNode.getResolvedId();
         if (mrid.getModuleId().equals(node.getId().getModuleId())) {
@@ -163,7 +179,7 @@ public class IvyNodeCallers {
             caller = new Caller(md, mrid, dd, callerNode.canExclude(rootModuleConf));
             callers.put(mrid, caller);
         }
-        caller.addConfiguration(callerConf, dependencyConfs);
+        caller.addConfiguration(requestedConf, dependencyConfs);
 
         IvyNode parent = callerNode.getRealNode();
         for (Iterator iter = parent.getAllCallersModuleIds().iterator(); iter.hasNext();) {

@@ -299,5 +299,28 @@ public class IvyNodeUsage {
     protected IvyNode getNode() {
         return node;
     }
+
+    /**
+     * Indicates if at least one depender has a transitive dependency descriptor for the given root
+     * module conf.
+     * 
+     * @param rootModuleConf
+     *            the root module conf to consider
+     * @return <code>true</code> if at least one depender has a transitive dependency descriptor for
+     *         the given root module conf, <code>false</code> otherwise.
+     */
+    public boolean hasTransitiveDepender(String rootModuleConf) {
+        Set/*<Depender>*/ dependersSet = (Set) dependers.get(rootModuleConf);
+        if (dependersSet == null) {
+            return false;
+        }
+        for (Iterator iterator = dependersSet.iterator(); iterator.hasNext();) {
+            Depender depender = (Depender) iterator.next();
+            if (depender.dd.isTransitive()) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 }

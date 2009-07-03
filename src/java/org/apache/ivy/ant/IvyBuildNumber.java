@@ -135,10 +135,10 @@ public class IvyBuildNumber extends IvyTask {
 
     public void doExecute() throws BuildException {
         if (organisation == null) {
-            throw new BuildException("no organisation provided for ivy findmodules");
+            throw new BuildException("no organisation provided for ivy buildnumber task");
         }
         if (module == null) {
-            throw new BuildException("no module name provided for ivy findmodules");
+            throw new BuildException("no module name provided for ivy buildnumber task");
         }
         if (prefix == null) {
             throw new BuildException("null prefix not allowed");
