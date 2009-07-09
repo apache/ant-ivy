@@ -123,6 +123,13 @@ svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
       -m "Tag release 2.0.0-beta1."
 </code>
 
+And don't forget to set the svn:external on doc/xooki to a fixed revision. Edit the svn:external property on the folder doc/xooki in the tag and set it to the revision of the commit of the tag. It should look like:
+<pre>
+xooki -r790212 https://svn.apache.org/repos/asf/ant/ivy/site/xooki/
+</pre>
+
+And commit that modification.
+
 <h3>13. Call for a vote to approve the release</h3>
 Cast a vote to approve the release on the dev@ant.apache.org mailing list.
 
