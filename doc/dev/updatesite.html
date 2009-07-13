@@ -112,25 +112,6 @@ mv updatesite ~/updatesite.backup
 svn export https://svn.apache.org/repos/asf/ant/ivy/updatesite/tags/$TAGNAME/dist updatesite
 </pre>
 
-<h2>Deprecated updatesite</h2>
-
-The updatesite needs to be also deployed in its deprecated location, in the IvyDE website.
-
-In your local svn working copy do:
-<pre>
-cp updatesite/trunk/dist/digest.zip* site/ivyde/updatesite
-cp updatesite/trunk/dist/site.xml site/ivyde/updatesite
-</pre>
-And commit the changes of the website.
-Next is the usual IvyDE website deployment:
-<pre>
-ant generate-site-ivyde
-svn ci target/ivyde/updatesite
-</pre>
-And on people.apache.org:
-<pre>
-svn up /www/ant.apache.org/ivy/ivyde/updatesite
-</pre>
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
