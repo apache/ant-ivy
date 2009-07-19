@@ -191,12 +191,15 @@ Then you can update the release notes page of the imported documentation if nece
 
 It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
 
-All site editing being done, let's generate it and deploy it:
+All site editing being done, commit your changes.
+
+And now let's generate the site and deploy it:
 <ol>
     <li>generate the part of the site for the new version:</li>
 <code>
 ant generate-history-ivy -Dhistory.version=2.0.0-beta1
 </code>
+<u>WARNING:</u> that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
     <li>generate the website with the new toc:</li>
 <code>
 ant /all generate-site-ivy
