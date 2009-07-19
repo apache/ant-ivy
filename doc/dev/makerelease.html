@@ -166,7 +166,7 @@ edit the svn properties of site/history, and in the svn:externals property, add 
 <code>
 2.0.0-beta1 https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1/doc
 </code>
-You can also change the latest-milestone and/or latest-release if necessary.
+You should also change the latest-milestone external link.
 
 You can use "svn propedit svn:externals path/to/history" to do so.
 
@@ -176,28 +176,34 @@ and add something like that:
 <code>
 {
    "title":"2.0.0-beta1",
-   "importRoot":"history/2.0.0-beta1",
-   "importNode":"index"      
+   "url":"http://ant.apache.org/ivy/history/2.0.0-beta1/index.html"
 }
 </code>
 You can also edit the title of the main documentation node pointing to latest-milestone / latest-release if necessary.
 
-<li>Add a call to init-imported-version in site/build.xml</li>
-In the init-imported-history target, add a task call like this one:
+<li>Now generate the part of the site for the new version</li>
 <code>
-<init-imported-version version="2.0.0-beta1" />
+ant generate-history-ivy -Dhistory.version=2.0.0-beta1
 </code>
 </ol>
-Then launch "ant init-imported-history" in the site directory, and check the documentation now has the released version in the history, and that this documentation can be accessed with no problem with a unified TOC.
 
 Then you can update the release notes page of the imported documentation if necessary, to include the announcement for example.
 
 It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
 
-You are now ready to commit your changes (make sure to commit changes in imported locations too), and update the online site:
+All site editing being done, let's generate it and deploy it:
+<ol>
+    <li>generate the part of the site for the new version:</li>
 <code>
-ant clean publish-site
+ant generate-history-ivy -Dhistory.version=2.0.0-beta1
 </code>
+    <li>generate the website with the new toc:</li>
+<code>
+ant /all generate-site-ivy
+</code>
+    <li>you should verify that the site generated in target is OK. And once your happy with it, commit the changes in target (some svn add might be needed !)</li>
+    <li>deploy the website: go on people.apache.org and <tt>svn up /www/ant.apache.org/ivy/</tt></li>
+</ol>
 
 <h3>16. Deploy the Eclipse updatesite</h3>
 
