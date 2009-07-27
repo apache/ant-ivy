@@ -143,7 +143,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             disconnect(conn);
         }
     }
-
+    
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
         URLConnection srcConn = null;
         try {
@@ -211,6 +211,14 @@ public class BasicURLHandler extends AbstractURLHandler {
 
     private void disconnect(URLConnection con) {
         if (con instanceof HttpURLConnection) {
+            if (!"HEAD".equals(((HttpURLConnection) con).getRequestMethod())) {
+                // We must read the response body before disconnecting!
+                // Cfr. http://java.sun.com/j2se/1.5.0/docs/guide/net/http-keepalive.html
+                // [quote]Do not abandon a connection by ignoring the response body. Doing
+                // so may results in idle TCP connections.[/quote]
+                readResponseBody((HttpURLConnection) con);
+            }
+            
             ((HttpURLConnection) con).disconnect();
         } else if (con != null
                 && "sun.net.www.protocol.file.FileURLConnection".equals(con.getClass().getName())) {
@@ -226,5 +234,30 @@ public class BasicURLHandler extends AbstractURLHandler {
             }
         }
     }
+
+    private void readResponseBody(HttpURLConnection conn) {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        
+        try {
+            InputStream inStream = conn.getInputStream();
+            while (inStream.read(buffer) > 0) {
+            }
+            inStream.close();
+        } catch (IOException e) {
+            // ignore
+        }
+        
+        InputStream errStream = ((HttpURLConnection) conn).getErrorStream();
+        if (errStream != null) {
+            try {
+                while (errStream.read(buffer) > 0) {
+                }
+                errStream.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+    }
+
 
 }
