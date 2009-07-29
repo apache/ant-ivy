@@ -113,7 +113,6 @@ public class BasicURLHandler extends AbstractURLHandler {
 
     public InputStream openStream(URL url) throws IOException {
         URLConnection conn = null;
-        InputStream inStream = null;
         try {
             url = normalizeToURL(url);
             conn = url.openConnection();
@@ -126,7 +125,7 @@ public class BasicURLHandler extends AbstractURLHandler {
                                 + " See log for more detail.");
                 }
             }
-            inStream = conn.getInputStream();
+            InputStream inStream  = conn.getInputStream();
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -136,10 +135,6 @@ public class BasicURLHandler extends AbstractURLHandler {
             }
             return new ByteArrayInputStream(outStream.toByteArray());
         } finally {
-            if (inStream != null) {
-                inStream.close();
-            }
-
             disconnect(conn);
         }
     }
@@ -238,23 +233,36 @@ public class BasicURLHandler extends AbstractURLHandler {
     private void readResponseBody(HttpURLConnection conn) {
         byte[] buffer = new byte[BUFFER_SIZE];
         
+        InputStream inStream = null;
         try {
-            InputStream inStream = conn.getInputStream();
+            inStream = conn.getInputStream();
             while (inStream.read(buffer) > 0) {
             }
-            inStream.close();
         } catch (IOException e) {
             // ignore
+        } finally {
+            if (inStream != null) {
+                try {
+                    inStream.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
         
-        InputStream errStream = ((HttpURLConnection) conn).getErrorStream();
+        InputStream errStream = conn.getErrorStream();
         if (errStream != null) {
             try {
                 while (errStream.read(buffer) > 0) {
                 }
-                errStream.close();
             } catch (IOException e) {
                 // ignore
+            } finally {
+                try {
+                    errStream.close();                
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
     }
