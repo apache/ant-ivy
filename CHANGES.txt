@@ -47,6 +47,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Matthias Kilian
 	Alexey Kiselev
 	Gregory Kisling
+	Heschi Kreinick
 	Tat Leung
 	Costin Leau
 	Antoine Levy-Lambert
@@ -89,6 +90,10 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Aleksey Zhukov
 	
    trunk
+=====================================
+- FIX: URLResource does not properly support authentication (IVY-1106) (thanks to Heschi Kreinick)
+
+   2.1.0-rc2
 =====================================
 - DOCUMENTATION: not all attributes of publish task are documented (IVY-963) (thanks to Jon Schneider)
 - DOCUMENTATION: missing documentation for the 'Version Pattern Matcher' (IVY-871) (thanks to Jon Schneider)

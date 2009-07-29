@@ -96,6 +96,6 @@ public class URLResource implements Resource {
     }
 
     public InputStream openStream() throws IOException {
-        return url.openStream();
+        return URLHandlerRegistry.getDefault().openStream(url);
     }
 }
