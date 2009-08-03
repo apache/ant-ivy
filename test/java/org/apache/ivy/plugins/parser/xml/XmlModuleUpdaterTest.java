@@ -262,8 +262,6 @@ public class XmlModuleUpdaterTest extends TestCase {
         XmlModuleDescriptorUpdater.update(settingsUrl, buffer, 
             getUpdateOptions("release", "mynewrev").setConfsToExclude(new String[] {"myconf2"}));
         
-        System.out.println(new String(buffer.toByteArray()));
-
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
         ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
             new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
