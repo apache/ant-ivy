@@ -203,18 +203,19 @@ public final class XmlModuleDescriptorUpdater {
 
         private String organisation = null;
 
-        private String defaultConfMapping = null; // defaultConfMapping of imported
+        // defaultConfMapping of imported configurations, if any
+        private String defaultConfMapping = null; 
 
-        // configurations, if any
+        // confMappingOverride of imported configurations, if any
+        private Boolean confMappingOverride = null; 
 
-        private Boolean confMappingOverride = null; // confMappingOverride of imported
-
-        // configurations, if any
-
-        private String justOpen = null; // used to know if the last open tag was empty, to
-
-        // adjust termination with /> instead of ></qName>
-
+        // used to know if the last open tag was empty, to adjust termination 
+        // with /> instead of ></qName>
+        private String justOpen = null;
+        
+        // the new value of the defaultconf attribute on the publications tag
+        private String newDefaultConf = null;
+        
         private Stack context = new Stack();
 
         private Stack buffers = new Stack();
@@ -256,8 +257,28 @@ public final class XmlModuleDescriptorUpdater {
                                 + substitute(settings, attributes.getValue(i)) + "\"");
                     }
                 }
-            } else if ("ivy-module/publications/artifact".equals(getContext())
-                    || "ivy-module/dependencies/dependency/artifact".equals(getContext())) {
+            } else if ("ivy-module/publications/artifact".equals(getContext())) {
+                ExtendedBuffer buffer = new ExtendedBuffer(getContext());
+                buffers.push(buffer);
+                confAttributeBuffers.push(buffer);
+                write("<" + qName);
+                buffer.setDefaultPrint(attributes.getValue("conf") == null
+                        && ((newDefaultConf == null) || (newDefaultConf.length() > 0)));
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    String attName = attributes.getQName(i);
+                    if ("conf".equals(attName)) {
+                        String confName = substitute(settings, attributes.getValue("conf"));
+                        String newConf = removeConfigurationsFromList(confName, confs);
+                        if (newConf.length() > 0) {
+                            write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");
+                            ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                        }
+                    } else {
+                        write(" " + attributes.getQName(i) + "=\""
+                                + substitute(settings, attributes.getValue(i)) + "\"");
+                    }
+                }
+            } else if ("ivy-module/dependencies/dependency/artifact".equals(getContext())) {
                 ExtendedBuffer buffer = new ExtendedBuffer(getContext());
                 buffers.push(buffer);
                 confAttributeBuffers.push(buffer);
@@ -277,6 +298,8 @@ public final class XmlModuleDescriptorUpdater {
                                 + substitute(settings, attributes.getValue(i)) + "\"");
                     }
                 }
+            } else if ("ivy-module/publications".equals(getContext())) {
+                startPublications(attributes);
             } else {
                 // copy
                 write("<" + qName);
@@ -342,6 +365,23 @@ public final class XmlModuleDescriptorUpdater {
             if (confMappingOverride != null
                     && attributes.getValue("confmappingoverride") == null) {
                 write(" confmappingoverride=\"" + confMappingOverride.toString() + "\"");
+            }
+        }
+        
+        private void startPublications(Attributes attributes) {
+            write("<publications");
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String attName = attributes.getQName(i);
+                if ("defaultconf".equals(attName)) {
+                    newDefaultConf = removeConfigurationsFromList(substitute(settings,
+                        attributes.getValue("defaultconf")), confs);
+                    if (newDefaultConf.length() > 0) {
+                        write(" " + attributes.getQName(i) + "=\"" + newDefaultConf + "\"");
+                    }
+                } else {
+                    write(" " + attributes.getQName(i) + "=\""
+                            + substitute(settings, attributes.getValue(i)) + "\"");
+                }
             }
         }
 

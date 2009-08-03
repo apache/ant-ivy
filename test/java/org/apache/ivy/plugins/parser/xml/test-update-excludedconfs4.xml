@@ -30,7 +30,7 @@
 		<conf name="myconf3" description="desc 3" visibility="private"/>
 		<conf name="myconf4" description="desc 4" />
 	</configurations>
-	<publications>
+	<publications defaultconf="myconf1,myconf2,myconf3">
 		<artifact name="myartifact1" type="jar"/>
 		<artifact name="myartifact2" type="jar" conf="myconf1"/>
 		<artifact name="myartifact3" type="jar" conf="myconf1, myconf2, myconf3"/>
