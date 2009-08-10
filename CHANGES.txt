@@ -94,6 +94,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: URLResource does not properly support authentication (IVY-1106) (thanks to Heschi Kreinick)
 - FIX: Excessive hits to missing URLs uses up all ports on Windows (IVY-1105)
 - FIX: ivy parse exception when using <publications defaultconf> (IVY-1102)
+- FIX: Change org.apache to commons-cli at jdbc-example (IVY-1109)
 
    2.1.0-rc2
 =====================================
