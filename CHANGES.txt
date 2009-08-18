@@ -95,6 +95,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Excessive hits to missing URLs uses up all ports on Windows (IVY-1105)
 - FIX: ivy parse exception when using <publications defaultconf> (IVY-1102)
 - FIX: Change org.apache to commons-cli at jdbc-example (IVY-1109)
+- FIX: Fixed name snapshots are not updated even if they are marked as changing and the publication date is changed in repo (IVY-938)
 
    2.1.0-rc2
 =====================================

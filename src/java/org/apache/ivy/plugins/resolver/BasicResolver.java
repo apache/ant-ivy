@@ -254,6 +254,8 @@ public abstract class BasicResolver extends AbstractResolver {
                     madr.setDownloadStatus(DownloadStatus.NO);
                     madr.setSearched(true);
                     rmr = new ResolvedModuleRevision(this, this, systemMd, madr, isForce());
+                    getRepositoryCacheManager().cacheModuleDescriptor(this, artifactRef, toSystem(dd), 
+                            systemMd.getAllArtifacts()[0], null, getCacheOptions(data));
                 }
             } else {
                 if (ivyRef instanceof MDResolvedResource) {
