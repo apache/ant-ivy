@@ -84,7 +84,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	James P. White
 	Tom Widmer
 	John Williams
-    Chris Wood
+  Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	Aleksey Zhukov
@@ -96,6 +96,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy parse exception when using <publications defaultconf> (IVY-1102)
 - FIX: Change org.apache to commons-cli at jdbc-example (IVY-1109)
 - FIX: Fixed name snapshots are not updated even if they are marked as changing and the publication date is changed in repo (IVY-938)
+
+- IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 
    2.1.0-rc2
 =====================================

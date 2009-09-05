@@ -472,7 +472,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 URL fileUrl = urlFromFileAttribute(propFilePath);
                 ivy.loadProperties(fileUrl, override);
             } catch (FileNotFoundException e) {
-                // ignore...
+                Message.verbose("Unable to find property file: " + propFilePath);
             }
         } else if (environmentPrefix != null) {
             ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
