@@ -84,6 +84,48 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
     }
 
+    public void testInstallWithAnyType() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        install.setOrganisation("org8");
+        install.setModule("mod8.1");
+        install.setRevision("1.1");
+        install.setFrom("2");
+        install.setTo("install");
+        install.setType("*");
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+    }
+    
+    public void testInstallWithMultipleType() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        install.setOrganisation("org8");
+        install.setModule("mod8.1");
+        install.setRevision("1.1");
+        install.setFrom("2");
+        install.setTo("install");
+        install.setType("unused,txt,other");
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+    }
+
+    public void testInstallWithUnusedType() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        install.setOrganisation("org8");
+        install.setModule("mod8.1");
+        install.setRevision("1.1");
+        install.setFrom("2");
+        install.setTo("install");
+        install.setType("unused");
+
+        install.execute();
+
+        assertFalse(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+    }
+    
     public void testIVY843() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-IVY843.xml");
         install.setOrganisation("org1");
