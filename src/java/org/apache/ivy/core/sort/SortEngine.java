@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;

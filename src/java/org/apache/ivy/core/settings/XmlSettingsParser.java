@@ -51,8 +51,8 @@ import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**

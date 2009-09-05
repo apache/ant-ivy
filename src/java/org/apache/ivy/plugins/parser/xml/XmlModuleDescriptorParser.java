@@ -49,7 +49,6 @@ import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediato
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;

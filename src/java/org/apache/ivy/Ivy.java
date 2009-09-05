@@ -58,6 +58,7 @@ import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.core.sort.SortOptions;
+import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;

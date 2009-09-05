@@ -20,7 +20,6 @@ package org.apache.ivy.core.module.descriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

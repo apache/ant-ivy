@@ -18,9 +18,9 @@
 package org.apache.ivy.util;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.Iterator;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
