@@ -77,7 +77,7 @@ This field is ignored when neither root neither leaf is filled.
     </ul>
     </td><td>No. Defaults to 'head'</td></tr>
     <tr><td>reverse</td><td>true to obtain the list in the reverse order, i.e. from the most dependent to the least one</td><td>No. Defaults to default false</td></tr>
-    <tr><td>restartFrom</td><td><span class="since">since 2.0</span> The name of the module which should be considered as the starting point in the buildlist. This allows for the build to be started at any point in the dependency chain. <br/></td><td>No. Defaults to no restart point (all modules are used in the build list).</td></tr>
+    <tr><td>restartFrom</td><td><span class="since">since 2.0</span> The name of the module which should be considered as the starting point in the buildlist. This allows for the build to be started at any point in the dependency chain. <br/></td><td>No. Defaults to '*' meaning no restart point (all modules are used in the build list).</td></tr>
     <tr><td>settingsRef</td><td><span class="since">since 2.0</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
 </tbody>
 </table>
