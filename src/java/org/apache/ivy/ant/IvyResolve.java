@@ -259,16 +259,15 @@ public class IvyResolve extends IvyTask {
                 // put resolved infos in ant properties and ivy variables
                 // putting them in ivy variables is important to be able to change from one resolve
                 // call to the other
-                getProject().setProperty("ivy.organisation",
-                    md.getModuleRevisionId().getOrganisation());
-                settings.setVariable(
-                    "ivy.organisation", md.getModuleRevisionId().getOrganisation());
-                getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
-                settings.setVariable("ivy.module", md.getModuleRevisionId().getName());
-                getProject().setProperty("ivy.revision",
-                    md.getResolvedModuleRevisionId().getRevision());
-                settings.setVariable(
-                    "ivy.revision", md.getResolvedModuleRevisionId().getRevision());
+                String mdOrg = md.getModuleRevisionId().getOrganisation();
+                String mdName = md.getModuleRevisionId().getName();
+                String mdRev = md.getResolvedModuleRevisionId().getRevision();
+                getProject().setProperty("ivy.organisation", mdOrg);
+                settings.setVariable("ivy.organisation", mdOrg);
+                getProject().setProperty("ivy.module", mdName);
+                settings.setVariable("ivy.module", mdName);
+                getProject().setProperty("ivy.revision", mdRev);
+                settings.setVariable("ivy.revision", mdRev);
                 Boolean hasChanged = null;
                 if (getCheckIfChanged()) {
                     hasChanged = Boolean.valueOf(report.hasChanged());
@@ -282,18 +281,12 @@ public class IvyResolve extends IvyTask {
                     settings.setVariable("ivy.resolved.file", file.getAbsolutePath());
                 }
                 if (resolveId != null) {
-                    getProject().setProperty("ivy.organisation." + resolveId,
-                        md.getModuleRevisionId().getOrganisation());
-                    settings.setVariable("ivy.organisation." + resolveId, md.getModuleRevisionId()
-                            .getOrganisation());
-                    getProject().setProperty("ivy.module." + resolveId,
-                        md.getModuleRevisionId().getName());
-                    settings.setVariable("ivy.module." + resolveId, md.getModuleRevisionId()
-                            .getName());
-                    getProject().setProperty("ivy.revision." + resolveId,
-                        md.getResolvedModuleRevisionId().getRevision());
-                    settings.setVariable("ivy.revision." + resolveId, md
-                            .getResolvedModuleRevisionId().getRevision());
+                    getProject().setProperty("ivy.organisation." + resolveId, mdOrg);
+                    settings.setVariable("ivy.organisation." + resolveId, mdOrg);
+                    getProject().setProperty("ivy.module." + resolveId, mdName);
+                    settings.setVariable("ivy.module." + resolveId, mdName);
+                    getProject().setProperty("ivy.revision." + resolveId, mdRev);
+                    settings.setVariable("ivy.revision." + resolveId, mdRev);
                     if (getCheckIfChanged()) {
                         //hasChanged has already been set earlier
                         getProject().setProperty("ivy.deps.changed." + resolveId,
