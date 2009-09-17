@@ -295,7 +295,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         Credentials c = getCredentials(url);
         if (c != null) {
             Message.debug("found credentials for " + url + ": " + c);
-            httpClient.getState().setProxyCredentials(
+            httpClient.getState().setCredentials(
                 new AuthScope(c.getHost(), AuthScope.ANY_PORT, c.getRealm()),
                 new NTCredentials(c.getUserName(), c.getPasswd(), 
                     HostUtil.getLocalHostName(), c.getRealm()));
