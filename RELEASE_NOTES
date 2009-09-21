@@ -1,4 +1,4 @@
-	                      Apache Ivy 2.1.0-rc1
+	                         Apache Ivy 2.1.0
                                Release Notes
    -----------------------------------------------------------------------
 
@@ -28,28 +28,18 @@ It is characterized by the following:
    		with Apache Ant providing a number of powerful Ant tasks ranging 
    		from dependency resolution to dependency reporting and publication.
 
-2. Status of this release 
-
-This is the first release candidate of Ivy targetting 2.1.0. 
-
-As a release candidate version, we strongly encourage the use of this version for 
-testing and validation. From now on, features are frozen until final 2.1.0 version, 
-only bug fixes may be applied before 2.1.0. If no outstanding bugs are reported 
-with this release candidate, it will promoted to 2.1.0 about two weeks after this
-release candidate. 
-
-3. How to Get Involved
+2. How to Get Involved
 
 The Apache Ivy project really needs and appreciates any contributions, 
 including documentation help, source code and feedback.  If you are interested
 in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
 
-4. How to Report Issues
+3. How to Report Issues
 
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
 issues you find at http://issues.apache.org/jira/browse/IVY
 
-5. Committers and Contributors for this Release
+4. Committers and Contributors for this Release
 
 Here is the list of people who have contributed source code and documentation
 to this release. Many thanks to all of them, and also to the whole Ivy community
@@ -57,20 +47,24 @@ contributing ideas and feedback, and promoting the use of Ivy. The list would be
 long, but Ivy couldn't be what it is without you!
 
  Committers
-	Maarten Coene
-	Xavier Hanin
-	Nicolas Lalevee
-	Gilles Scokart
+    Maarten Coene
+    Xavier Hanin
+    Nicolas Lalevee
+    Gilles Scokart
 
  Contributors
- 	Carlton Brown
- 	Martin Eigenbrodt
- 	John Gibson
- 	Randy Nott
+    Mathieu Anquetin
+    Carlton Brown
+    Martin Eigenbrodt
+    John Gibson
+    Andrey Lomakin
+    Randy Nott
+    Jon Schneider
+    Aleksey Zhukov
 
 For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
 
-6. List of Changes in this Release
+5. List of Changes in this Release
 
 For a full release history of Ivy see the file CHANGES.txt
 
@@ -78,6 +72,16 @@ For details about the following changes, check our JIRA install at
 http://issues.apache.org/jira/browse/ivy
 
 List of changes since Ivy 2.0.0:
+- DOCUMENTATION: not all attributes of publish task are documented (IVY-963) (thanks to Jon Schneider)
+- DOCUMENTATION: missing documentation for the 'Version Pattern Matcher' (IVY-871) (thanks to Jon Schneider)
+- DOCUMENTATION: added missing documentation for the 'keep' attribute on the (post)resolve Ant tasks (IVY-1091)
+- DOCUMENTATION: wrong url in installation.html (IVY-1054)
+- DOCUMENTATION: little improvement of the documentations of the ivy:buildlist and ivy:resolve Ant tasks.
+
+- NEW: configuration intersections (IVY-1093)
+- NEW: configuration groups (IVY-1097)
+- NEW: added built-in versionmatcher: 'Version Pattern Matcher' (IVY-871)
+
 - IMPROVEMENT: Fail the retrieve when multiple artifacts of same module are mapped to same file (IVY-1050)
 - IMPROVEMENT: ivy initialization shouldn't fail if properties file doesn't exist (IVY-1038)
 - IMPROVEMENT: ivy:resolve ant task does not support "branch" attribute (IVY-1035)
@@ -91,7 +95,25 @@ List of changes since Ivy 2.0.0:
 - IMPROVEMENT: support resolve refresh in command line (IVY-1013)
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 - IMPROVEMENT: catch AccessControlException on System.getProperties() (IVY-1015)
+- IMPROVEMENT: Retrieve ant task doesn't support dynamic resolve mode (IVY-1085)
+- IMPROVEMENT: Added support for NTLM authentication (IVY-1094) (thanks to Mathieu Anquetin)
+- IMPROVEMENT: Standalone runner should accept all the same parameters as ant tasks (IVY-1090)
+- IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
 
+- FIX: Credentials were not set properly for URLs that require authentication when using HttpClient
+- FIX: Ivy didn't fail when an outdated artifact in cache couldn't get deleted
+- FIX: ivy:resolve ignores branch in "dynamic" resolve mode (IVY-1087) (thanks to Aleksey Zhukov)
+- FIX: [originalname] not expanded during retrieve when module descriptor contains extra attributes (IVY-1096)
+- FIX: The Ant output wasn't always prefixed by the name of the task
+- FIX: Ivy buildnumber task does not find artifact in Sonatype Nexus repo (IVY-1069)
+- FIX: Publish with SSH (sftp or ssh) prevents enclosing java process to terminate (IVY-1075)
+- FIX: Ibiblio resolver throws IndexOutOfBoundsException when using snapshot versions with usepoms='false' (IVY-1028)
+- FIX: Wrong BuildException messages (findmodules) (IVY-1056)
+- FIX: PomModuleDescriptorBuilder does not resolve ejb type dependencies to jar extension (IVY-1058) (thanks to Andrey Lomakin)
+- FIX: Ivy doesn't handle maven dependencies with type 'test-jar' correctly (IVY-1066)
+- FIX: transitive dependencies and conflict management (IVY-1083)
+- FIX: exclude does not work in non-trivial conf case (IVY-983)
+- FIX: The artifact report task is generating duplicate artifact entries (IVY-1098)
 - FIX: Error message: "impossible to get artifacts when data has not been loaded" , on certain modules only (IVY-987)
 - FIX: Ivy doesn't handle the classifier attribute of artifacts inside dependency elements (IVY-1041)
 - FIX: Buildnumber task does not work for chained resolvers (IVY-1037)
