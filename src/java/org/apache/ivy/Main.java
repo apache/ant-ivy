@@ -267,9 +267,6 @@ public final class Main {
             if (line.hasOption("refresh")) {
                 resolveOptions.setRefresh(true);
             }
-            if (line.hasOption("refresh")) {
-                resolveOptions.setRefresh(true);
-            }
             ResolveReport report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions);
             if (report.hasError()) {
                 System.exit(1);
