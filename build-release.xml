@@ -83,7 +83,7 @@
 	<target name="snapshot-src" depends="snapshot-metadata,all-doc">
 		<mkdir dir="${distrib.dir}"/>
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-src.zip">
-			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
+			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**,**/reports/ivy/**"/>
 			<zipfileset dir="${src.dir}" prefix="${snapshot.full.name}/src/java"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}/src/etc" prefix="${snapshot.full.name}/src/etc"/>
@@ -114,7 +114,7 @@
 	
 	<target name="snapshot-bin-without-dependencies" depends="snapshot-metadata, jar, all-doc">
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin.zip">
-			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
+			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**,**/reports/ivy/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
@@ -137,7 +137,7 @@
 		<delete dir="${build.dir}/lib" />
 		<ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]" />
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin-with-deps.zip">
-			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
+			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**,**/reports/ivy/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
