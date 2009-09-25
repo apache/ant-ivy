@@ -20,6 +20,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mikkel Bjerg
 	Jeffrey Blattman
 	Jim Bonanno
+    Dave Brosius
 	Matthieu Brouillard
 	Carlton Brown
 	Mirko Bulovic
@@ -91,6 +92,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: VstfpRepository.readResponse uses bad compare logic (IVY-1119) (thanks to Dave Brosius)
 - FIX: URLResource does not properly support authentication (IVY-1106) (thanks to Heschi Kreinick)
 - FIX: Excessive hits to missing URLs uses up all ports on Windows (IVY-1105)
 - FIX: ivy parse exception when using <publications defaultconf> (IVY-1102)

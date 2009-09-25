@@ -465,7 +465,7 @@ public class VsftpRepository extends AbstractRepository {
             }
             throw new IOException("connection timeout to " + getHost());
         } else {
-            if ("Not connected.".equals(response)) {
+            if ("Not connected.".equals(response.toString())) {
                 Message.info("vsftp connection to " + getHost() + " reset");
                 closeConnection();
                 throw new IOException("not connected to " + getHost());
