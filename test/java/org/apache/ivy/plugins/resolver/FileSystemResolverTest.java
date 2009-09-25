@@ -338,7 +338,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         modify.setLastModified(pubdate.getTime());
         // no need to update new artifact timestamp cause it isn't used
 
-        // should get the new version even if checkModified is false, beacause we ask a
+        // should get the new version even if checkModified is false, because we ask a
         // latest.integration
         resolver.setCheckmodified(false);
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
