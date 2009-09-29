@@ -303,6 +303,8 @@ public class IBiblioResolver extends URLResolver {
     private void updateWholePattern() {
         if (isM2compatible() && isUsepoms()) {
             setIvyPatterns(Collections.singletonList(getWholePattern()));
+        } else {
+            setIvyPatterns(Collections.EMPTY_LIST);
         }
         setArtifactPatterns(Collections.singletonList(getWholePattern()));
     }

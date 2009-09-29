@@ -29,6 +29,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
 	Archie Cobbs
+	Flavio Coutinho da Costa
 	Martin Eigenbrodt
 	Danno Ferrin
 	Benjamin Francisoud	
@@ -92,6 +93,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: IbiblioResolver not always correctly configured when using JRE 1.5 (IVY-1124) (thanks to Flavio Coutinho da Costa)
 - FIX: VstfpRepository.readResponse uses bad compare logic (IVY-1119) (thanks to Dave Brosius)
 - FIX: URLResource does not properly support authentication (IVY-1106) (thanks to Heschi Kreinick)
 - FIX: Excessive hits to missing URLs uses up all ports on Windows (IVY-1105)
