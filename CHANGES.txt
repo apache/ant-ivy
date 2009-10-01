@@ -76,6 +76,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andreas Sahlbach
 	Brian Sanders
 	Adrian Sandor
+	Michael Scheetz
 	Jon Schneider
 	Ruslan Shevchenko
 	John Shields
@@ -86,13 +87,14 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	James P. White
 	Tom Widmer
 	John Williams
-  Chris Wood
+    Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	Aleksey Zhukov
 	
    trunk
 =====================================
+- FIX: Ivy deliver fails to replace dynamic revision when using extra attributes (IVY-1111) (thanks to Michael Scheetz)
 - FIX: IbiblioResolver not always correctly configured when using JRE 1.5 (IVY-1124) (thanks to Flavio Coutinho da Costa)
 - FIX: VstfpRepository.readResponse uses bad compare logic (IVY-1119) (thanks to Dave Brosius)
 - FIX: URLResource does not properly support authentication (IVY-1106) (thanks to Heschi Kreinick)

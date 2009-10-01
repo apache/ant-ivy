@@ -274,7 +274,10 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     public String encodeToString() {
         StringBuffer buf = new StringBuffer();
-        Map attributes = getAttributes();
+        Map attributes = new HashMap(getAttributes());
+        attributes.keySet().removeAll(getExtraAttributes().keySet());
+        attributes.putAll(getQualifiedExtraAttributes());
+
         for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
             String attName = (String) iter.next();
             String value = (String) attributes.get(attName);
