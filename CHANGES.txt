@@ -94,6 +94,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: SearchEngine.listModules returns MRID without extra attributes (IVY-1128) (thanks to Michael Scheetz)
 - FIX: IvyBuildNumber non-deterministic behaviour (IVY-1120)
 - FIX: Change spelling of 'occured' to 'occurred' (IVY-1123)
 - FIX: Ivy deliver fails to replace dynamic revision when using extra attributes (IVY-1111) (thanks to Michael Scheetz)

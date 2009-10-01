@@ -18,6 +18,8 @@
 package org.apache.ivy.core.search;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +29,9 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 
 public class SearchTest extends TestCase {
@@ -57,5 +62,32 @@ public class SearchTest extends TestCase {
         assertEquals(
             new HashSet(Arrays.asList(new String[] {"1.0","1.1","1.2"})), 
             new HashSet(Arrays.asList(revs)));
+    }
+
+    public void testListModulesWithExtraAttributes() throws ParseException, IOException {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1128/ivysettings.xml"));
+        IvySettings settings = ivy.getSettings();
+
+        Map extendedAttributes = new HashMap();
+        extendedAttributes.put("e:att1","extraatt");
+        extendedAttributes.put("e:att2","extraatt2");
+        ModuleRevisionId criteria = ModuleRevisionId.newInstance("test", "a", "*", extendedAttributes);
+
+        ModuleRevisionId[] mrids = ivy.listModules(criteria, settings.getMatcher(PatternMatcher.REGEXP));
+
+        assertEquals(2, mrids.length);
+        ModuleRevisionId mrid = mrids[0];
+        assertEquals("extraatt", mrid.getExtraAttribute("att1"));
+
+        Map extraAttributes = mrid.getExtraAttributes();
+        assertEquals(2, extraAttributes.size());
+        assertTrue(extraAttributes.toString(), extraAttributes.keySet().contains("att1"));
+        assertTrue(extraAttributes.toString(), extraAttributes.keySet().contains("att2"));
+
+        Map qualifiedExtraAttributes = mrid.getQualifiedExtraAttributes();
+        assertEquals(2, qualifiedExtraAttributes.size());
+        assertTrue(qualifiedExtraAttributes.toString(), qualifiedExtraAttributes.keySet().contains("e:att1"));
+        assertTrue(qualifiedExtraAttributes.toString(), qualifiedExtraAttributes.keySet().contains("e:att2"));
     }
 }

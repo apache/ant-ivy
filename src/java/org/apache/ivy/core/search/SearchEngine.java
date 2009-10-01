@@ -233,10 +233,9 @@ public class SearchEngine {
         addMatcher(matcher, moduleCrit.getName(), criteria, IvyPatternHelper.MODULE_KEY);
         addMatcher(matcher, moduleCrit.getBranch(), criteria, IvyPatternHelper.BRANCH_KEY);
         addMatcher(matcher, moduleCrit.getRevision(), criteria, IvyPatternHelper.REVISION_KEY);
-        
-        String[] tokensToList = new String[] {
-                IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.MODULE_KEY, 
-                IvyPatternHelper.BRANCH_KEY, IvyPatternHelper.REVISION_KEY};
+
+        String[] tokensToList = (String[]) moduleCrit.getAttributes().keySet().toArray(
+                    new String[moduleCrit.getAttributes().size()]);
 
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
@@ -246,7 +245,24 @@ public class SearchEngine {
                 String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
                 String branch = (String) moduleIdAsMap[i].get(IvyPatternHelper.BRANCH_KEY);
                 String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
-                ModuleRevisionId modRevId = ModuleRevisionId.newInstance(org, name, branch, rev);
+                
+                Map foundExtraAtts = new HashMap();
+                for (Iterator iter2 = moduleCrit.getQualifiedExtraAttributes().keySet().iterator(); iter2.hasNext(); ) {
+                    String qualifiedKey = (String) iter2.next();
+                    String value = null;
+                    int colonIndex = qualifiedKey.indexOf(':');
+                    if (colonIndex == -1) {
+                        value = (String) moduleIdAsMap[i].get(qualifiedKey);
+                    } else {
+                        value = (String) moduleIdAsMap[i].get(qualifiedKey.substring(colonIndex + 1));
+                    }
+
+                    if (value != null) {
+                        foundExtraAtts.put(qualifiedKey, value);
+                    }
+                }
+                
+                ModuleRevisionId modRevId = ModuleRevisionId.newInstance(org, name, branch, rev, foundExtraAtts);
                 ret.add(resolver.getNamespace().getToSystemTransformer().transform(modRevId));
             }
         }
@@ -274,9 +290,8 @@ public class SearchEngine {
         addMatcher(matcher, moduleCrit.getBranch(), criteria, IvyPatternHelper.BRANCH_KEY);
         addMatcher(matcher, moduleCrit.getRevision(), criteria, IvyPatternHelper.REVISION_KEY);
         
-        String[] tokensToList = new String[] {
-                IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.MODULE_KEY, 
-                IvyPatternHelper.BRANCH_KEY, IvyPatternHelper.REVISION_KEY};
+        String[] tokensToList = (String[]) moduleCrit.getAttributes().keySet().toArray(
+            new String[moduleCrit.getAttributes().size()]);
 
         Map[] moduleIdAsMap = resolver.listTokenValues(tokensToList, criteria);
         Set result = new LinkedHashSet(); // we use a Set to remove duplicates
@@ -285,8 +300,25 @@ public class SearchEngine {
             String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
             String branch = (String) moduleIdAsMap[i].get(IvyPatternHelper.BRANCH_KEY);
             String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
-            result.add(resolver.getNamespace().getToSystemTransformer().transform(
-                ModuleRevisionId.newInstance(org, name, branch, rev)));
+            
+            Map foundExtraAtts = new HashMap();
+            for (Iterator iter2 = moduleCrit.getQualifiedExtraAttributes().keySet().iterator(); iter2.hasNext(); ) {
+                String qualifiedKey = (String) iter2.next();
+                String value = null;
+                int colonIndex = qualifiedKey.indexOf(':');
+                if (colonIndex == -1) {
+                    value = (String) moduleIdAsMap[i].get(qualifiedKey);
+                } else {
+                    value = (String) moduleIdAsMap[i].get(qualifiedKey.substring(colonIndex + 1));
+                }
+
+                if (value != null) {
+                    foundExtraAtts.put(qualifiedKey, value);
+                }
+            }
+            
+            ModuleRevisionId modRevId = ModuleRevisionId.newInstance(org, name, branch, rev, foundExtraAtts);
+            result.add(resolver.getNamespace().getToSystemTransformer().transform(modRevId));
         }
         
         return (ModuleRevisionId[]) result.toArray(new ModuleRevisionId[result.size()]);
