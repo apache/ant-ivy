@@ -132,7 +132,7 @@ public class ChainResolver extends AbstractResolver {
                     mr = forcedRevision(mr);
                 }
             } catch (Exception ex) {
-                Message.verbose("problem occured while resolving " + dd + " with " + resolver
+                Message.verbose("problem occurred while resolving " + dd + " with " + resolver
                         + ": " + StringUtils.getStackTrace(ex));
                 errors.add(ex);
             } finally {
@@ -159,7 +159,7 @@ public class ChainResolver extends AbstractResolver {
                     err.append("\t").append(StringUtils.getErrorMessage(ex)).append("\n");
                 }
                 err.setLength(err.length() - 1);
-                throw new RuntimeException("several problems occured while resolving " + dd + ":\n"
+                throw new RuntimeException("several problems occurred while resolving " + dd + ":\n"
                         + err);
             }
         }

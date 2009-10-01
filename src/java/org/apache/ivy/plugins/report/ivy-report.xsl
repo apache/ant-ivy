@@ -293,7 +293,7 @@
             (<xsl:value-of select="count($searcheds)"/> searched <img src="http://ant.apache.org/ivy/images/searched.gif" alt="searched" title="module revisions which required a search with a dependency resolver to be resolved"/>,
             <xsl:value-of select="count($downloadeds)"/> downloaded <img src="http://ant.apache.org/ivy/images/downloaded.gif" alt="downloaded" title="module revisions for which ivy file was downloaded by dependency resolver"/>,
             <xsl:value-of select="count($evicteds)"/> evicted <img src="http://ant.apache.org/ivy/images/evicted.gif" alt="evicted" title="module revisions which were evicted by others"/>,
-            <xsl:value-of select="count($errors)"/> errors <img src="http://ant.apache.org/ivy/images/error.gif" alt="error" title="module revisions on which error occured"/>)</td></tr>
+            <xsl:value-of select="count($errors)"/> errors <img src="http://ant.apache.org/ivy/images/error.gif" alt="error" title="module revisions on which error occurred"/>)</td></tr>
           <tr><td class="title">Artifacts</td><td class="value"><xsl:value-of select="count($artifacts)"/> 
             (<xsl:value-of select="count($dlartifacts)"/> downloaded,
             <xsl:value-of select="count($faileds)"/> failed)</td></tr>

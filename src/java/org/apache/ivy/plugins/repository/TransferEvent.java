@@ -68,7 +68,7 @@ public class TransferEvent extends IvyEvent {
     public static final int TRANSFER_PROGRESS = 3;
 
     /**
-     * An error occured during transfer
+     * An error occurred during transfer
      */
     public static final int TRANSFER_ERROR = 4;
 

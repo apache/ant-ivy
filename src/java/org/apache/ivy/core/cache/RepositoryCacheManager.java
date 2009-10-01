@@ -127,7 +127,7 @@ public interface RepositoryCacheManager {
      * @return a {@link ResolvedModuleRevision} representing the local cached module descriptor, or
      *         null if it failed
      * @throws ParseException
-     *             if an exception occured while parsing the module descriptor
+     *             if an exception occurred while parsing the module descriptor
      */
     public ResolvedModuleRevision cacheModuleDescriptor(DependencyResolver resolver,
             ResolvedResource orginalMetadataRef, DependencyDescriptor dd, 

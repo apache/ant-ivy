@@ -148,7 +148,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         .setUpdateBranch(false)
                         .setNamespace(ns));
         } catch (SAXException e) {
-            ParseException ex = new ParseException("exception occured while parsing " + res, 0);
+            ParseException ex = new ParseException("exception occurred while parsing " + res, 0);
             ex.initCause(e);
             throw ex;
         } finally {
@@ -334,7 +334,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (ex instanceof SAXException) {
                     throw (SAXException) ex;
                 }
-                SAXException sax = new SAXException("Problem occured while parsing ivy file: "
+                SAXException sax = new SAXException("Problem occurred while parsing ivy file: "
                         + ex.getMessage(), ex);
                 sax.initCause(ex);
                 throw sax;

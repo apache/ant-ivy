@@ -40,7 +40,7 @@ public class PropertiesFile extends Properties {
                 fis = new FileInputStream(file);
                 load(fis);
             } catch (Exception ex) {
-                Message.warn("exception occured while reading properties file " + file + ": "
+                Message.warn("exception occurred while reading properties file " + file + ": "
                         + ex.getMessage());
             }
             try {
@@ -62,7 +62,7 @@ public class PropertiesFile extends Properties {
             fos = new FileOutputStream(file);
             store(fos, header);
         } catch (Exception ex) {
-            Message.warn("exception occured while writing properties file " + file + ": "
+            Message.warn("exception occurred while writing properties file " + file + ": "
                     + ex.getMessage());
         }
         try {

@@ -462,7 +462,7 @@ public class ResolveEngine {
      *            the date to which resolution must be done - may be null
      * @return an array of the resolved dependencies
      * @throws ParseException
-     *             if a parsing problem occured in the ivy file
+     *             if a parsing problem occurred in the ivy file
      * @throws IOException
      *             if an IO problem was raised during ivy file parsing
      */
@@ -1009,7 +1009,7 @@ public class ResolveEngine {
      *            the configuration of the node in which conflicts should be computed
      * @param toevict
      *            a collection of nodes which have been evicted during conflict resolution at lower
-     *            level. It may be empty if no conflict resolution has occured for this node yet, or
+     *            level. It may be empty if no conflict resolution has occurred for this node yet, or
      *            if no node has been evicted.
      * @param selectedNodes
      *            a collection of nodes selected during previous conflict resolution for the given

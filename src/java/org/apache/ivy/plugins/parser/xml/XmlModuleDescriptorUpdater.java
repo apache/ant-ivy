@@ -551,7 +551,7 @@ public final class XmlModuleDescriptorUpdater {
                     }
                 });
             } catch (Exception e) {
-                Message.warn("exception occured while importing configurations: "
+                Message.warn("exception occurred while importing configurations: "
                         + e.getMessage());
                 throw new SAXException(e);
             }

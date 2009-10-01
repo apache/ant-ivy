@@ -40,7 +40,7 @@ public final class Version {
             versions.put(module, version);
             System.out.println("--- using " + module + " v" + version);
         } catch (Exception ex) {
-            System.err.println("an error occured while registering " + module + ": "
+            System.err.println("an error occurred while registering " + module + ": "
                     + ex.getMessage());
             ex.printStackTrace();
         }

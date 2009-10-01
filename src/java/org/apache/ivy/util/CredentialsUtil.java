@@ -115,7 +115,7 @@ public final class CredentialsUtil {
                     fos = new FileOutputStream(passfile);
                     props.store(fos, "");
                 } catch (Exception e) {
-                    Message.warn("error occured while saving password file " + passfile + ": " + e);
+                    Message.warn("error occurred while saving password file " + passfile + ": " + e);
                 } finally {
                     if (fos != null) {
                         try {
@@ -148,7 +148,7 @@ public final class CredentialsUtil {
                 }
                 return new Credentials(c.getRealm(), c.getHost(), username, passwd);
             } catch (IOException e) {
-                Message.warn("error occured while loading password file " + passfile + ": " + e);
+                Message.warn("error occurred while loading password file " + passfile + ": " + e);
             } finally {
                 if (fis != null) {
                     try {
