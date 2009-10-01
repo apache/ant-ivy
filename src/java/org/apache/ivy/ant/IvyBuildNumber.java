@@ -165,9 +165,9 @@ public class IvyBuildNumber extends IvyTask {
             private PatternMatcher regexp = new ExactOrRegexpPatternMatcher();
         
             public Matcher getMatcher(String expression) {
-                if ((expression == organisation)
-                        || (expression == module)
-                        || (expression == branch)) {
+                if (expression.equals(organisation)
+                        || expression.equals(module)
+                        || expression.equals(branch)) {
                     return exact.getMatcher(expression);
                 }
                 return regexp.getMatcher(expression);
