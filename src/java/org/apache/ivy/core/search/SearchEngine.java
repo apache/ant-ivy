@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -228,11 +229,10 @@ public class SearchEngine {
         List ret = new ArrayList();
 
         Map criteria = new HashMap();
-        addMatcher(matcher, moduleCrit.getOrganisation(), 
-                   criteria, IvyPatternHelper.ORGANISATION_KEY);
-        addMatcher(matcher, moduleCrit.getName(), criteria, IvyPatternHelper.MODULE_KEY);
-        addMatcher(matcher, moduleCrit.getBranch(), criteria, IvyPatternHelper.BRANCH_KEY);
-        addMatcher(matcher, moduleCrit.getRevision(), criteria, IvyPatternHelper.REVISION_KEY);
+        for (Iterator it = moduleCrit.getAttributes().entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Entry) it.next();
+            addMatcher(matcher, (String) entry.getValue(), criteria, (String) entry.getKey());
+        }
 
         String[] tokensToList = (String[]) moduleCrit.getAttributes().keySet().toArray(
                     new String[moduleCrit.getAttributes().size()]);
@@ -284,11 +284,10 @@ public class SearchEngine {
     public ModuleRevisionId[] listModules(
             DependencyResolver resolver, ModuleRevisionId moduleCrit, PatternMatcher matcher) {
         Map criteria = new HashMap();
-        addMatcher(matcher, moduleCrit.getOrganisation(), 
-                   criteria, IvyPatternHelper.ORGANISATION_KEY);
-        addMatcher(matcher, moduleCrit.getName(), criteria, IvyPatternHelper.MODULE_KEY);
-        addMatcher(matcher, moduleCrit.getBranch(), criteria, IvyPatternHelper.BRANCH_KEY);
-        addMatcher(matcher, moduleCrit.getRevision(), criteria, IvyPatternHelper.REVISION_KEY);
+        for (Iterator it = moduleCrit.getAttributes().entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Entry) it.next();
+            addMatcher(matcher, (String) entry.getValue(), criteria, (String) entry.getKey());
+        }
         
         String[] tokensToList = (String[]) moduleCrit.getAttributes().keySet().toArray(
             new String[moduleCrit.getAttributes().size()]);
