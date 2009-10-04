@@ -5,7 +5,7 @@ Bundle-Name: Ivy
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.apache.ivy
 Bundle-Vendor: Apache Software Foundation
-Bundle-DocURL: http://incubator.apache.org/ivy
+Bundle-DocURL: http://ant.apache.org/ivy/
 Import-Package: com.jcraft.jsch;resolution:=optional,
  javax.crypto,
  javax.swing;resolution:=optional,

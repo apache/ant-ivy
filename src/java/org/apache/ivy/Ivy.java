@@ -70,7 +70,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLoggerEngine;
 
 /**
- * <a href="http://incubator.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
+ * <a href="http://ant.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
  * <p>
  * This class is the main class of Ivy, which acts as a Facade to all services offered by Ivy:
  * <ul>
