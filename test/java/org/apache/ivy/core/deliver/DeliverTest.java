@@ -41,6 +41,7 @@ public class DeliverTest extends TestCase {
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
 
         Project project = new Project();
+        project.init();
         ivyDeliver = new IvyDeliver();
         ivyDeliver.setProject(project);
     }
