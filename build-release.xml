@@ -286,6 +286,24 @@
 		</openpgp:signer>
 	</target>
 	
+	<target name="rat" depends="init-ivy">
+        <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="0.6" 
+                       inline="true" conf="default" pathid="rat.classpath" 
+                       log="download-only"/>
+		
+	    <typedef resource="org/apache/rat/anttasks/antlib.xml"
+	             uri="antlib:org.apache.rat.anttasks"
+	    	     classpathref="rat.classpath" />
+
+		<mkdir dir="${rat.report.dir}"/>
+	    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
+	      <fileset dir="${basedir}">
+	        <exclude name="build/**/*"/>
+	      </fileset>
+	    </rat:report>
+
+	</target>
+	
 	<target name="prepare-snapshot" 
 	        depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, coverage-report" />
 	<target name="snapshot" 
