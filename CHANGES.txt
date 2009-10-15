@@ -94,6 +94,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Ivy couldn't handle maven POMs that depend on theirselves
 - FIX: SearchEngine.listModules returns MRID without extra attributes (IVY-1128) (thanks to Michael Scheetz)
 - FIX: IvyBuildNumber non-deterministic behaviour (IVY-1120)
 - FIX: Change spelling of 'occured' to 'occurred' (IVY-1123)

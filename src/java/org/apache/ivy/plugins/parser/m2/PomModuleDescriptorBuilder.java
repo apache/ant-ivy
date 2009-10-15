@@ -281,6 +281,14 @@ public class PomModuleDescriptorBuilder {
         version = (version == null || version.length() == 0) ? getDefaultVersion(dep) : version;
         ModuleRevisionId moduleRevId = ModuleRevisionId.newInstance(dep.getGroupId(), dep
                 .getArtifactId(), version);
+
+        // Some POMs depend on theirselfves, don't add this dependency: Ivy doesn't allow this!
+        // Example: http://repo2.maven.org/maven2/net/jini/jsk-platform/2.1/jsk-platform-2.1.pom
+        ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
+        if ((mRevId != null) && mRevId.getModuleId().equals(moduleRevId.getModuleId())) {
+            return;
+        }
+
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ivyModuleDescriptor,
                 moduleRevId, true, false, true);
         scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
