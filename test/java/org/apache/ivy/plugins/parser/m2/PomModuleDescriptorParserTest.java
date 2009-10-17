@@ -154,7 +154,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             settings, getClass().getResource("test-ejb-type.pom"), false);
         assertNotNull(md);
 
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test-ejb-type", "1.0");
         assertEquals(mrid, md.getModuleRevisionId());
 
         DependencyDescriptor[] deps = md.getDependencies();

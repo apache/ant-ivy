@@ -20,7 +20,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache</groupId>
-  <artifactId>test</artifactId>
+  <artifactId>test-ejb-type</artifactId>
   <name>Test Module for dependencies with type</name>
   <version>1.0</version>
   <url>http://ant.apache.org/ivy</url>
