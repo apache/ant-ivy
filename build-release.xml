@@ -299,6 +299,8 @@
 	    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
 	      <fileset dir="${basedir}">
 	        <exclude name="build/**/*"/>
+	      	<exclude name="**/*.sha1"/>
+            <exclude name="**/*.md5"/>
 	      </fileset>
 	    </rat:report>
 
