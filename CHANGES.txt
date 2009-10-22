@@ -94,6 +94,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
+
 - FIX: Ivy couldn't handle maven POMs that depend on theirselves
 - FIX: SearchEngine.listModules returns MRID without extra attributes (IVY-1128) (thanks to Michael Scheetz)
 - FIX: IvyBuildNumber non-deterministic behaviour (IVY-1120)

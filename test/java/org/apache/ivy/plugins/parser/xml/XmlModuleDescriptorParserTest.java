@@ -560,6 +560,36 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 + "/" + artifact.getExt());
     }
 
+    public void testDefaultConfWithDefaultConfMapping() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-defaultconf-withdefaultconfmapping.xml"), true);
+        assertNotNull(md);
+        
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+
+        // no conf def => defaults to defaultConf: default
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("1.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd
+                .getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd
+                .getDependencyConfigurations("default")));
+
+        // confs def: *->*
+        dd = getDependency(dependencies, "mymodule2");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("2.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals(Arrays.asList(new String[] {"test"}), 
+                     Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default"}),
+            Arrays.asList(dd.getDependencyConfigurations("test")));        
+    }
+    
     public void testDefaultConf() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-defaultconf.xml"), true);

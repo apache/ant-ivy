@@ -191,7 +191,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         protected static final List ALLOWED_VERSIONS = Arrays.asList(
-            new String[] {"1.0", "1.1", "1.2", "1.3", "1.4", "2.0"});
+            new String[] {"1.0", "1.1", "1.2", "1.3", "1.4", "2.0", "2.1"});
 
         /* how and what do we have to parse */
         private ParserSettings settings;
@@ -436,9 +436,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 getMd().addConfiguration(configs[i]);
             }
             if (parser.getDefaultConfMapping() != null) {
-                Message.debug("setting default conf from imported configurations file: "
+                Message.debug("setting default conf mapping from imported configurations file: "
                         + parser.getDefaultConfMapping());
                 setDefaultConfMapping(parser.getDefaultConfMapping());
+            }
+            if (parser.getDefaultConf() != null) {
+                Message.debug("setting default conf from imported configurations file: "
+                        + parser.getDefaultConf());
+                setDefaultConf(parser.getDefaultConf());
             }
             if (parser.getMd().isMappingOverride()) {
                 Message.debug("enabling mapping-override from imported configurations" 
@@ -622,6 +627,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             state = State.CONF;
             setDefaultConfMapping(settings
                     .substitute(attributes.getValue("defaultconfmapping")));
+            setDefaultConf(settings.substitute(attributes.getValue("defaultconf")));
             getMd()
                     .setMappingOverride(Boolean.valueOf(
                         settings.substitute(attributes.getValue("confmappingoverride")))

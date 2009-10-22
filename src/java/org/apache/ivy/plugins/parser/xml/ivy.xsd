@@ -116,6 +116,7 @@
 					      		</xs:element>
 					      	</xs:choice>
 				        </xs:sequence>
+				        <xs:attribute name="defaultconf" type="xs:string"/>
 						<xs:attribute name="defaultconfmapping" type="xs:string"/>				  
 						<xs:attribute name="confmappingoverride" type="xs:boolean" />      
 			      </xs:complexType>
