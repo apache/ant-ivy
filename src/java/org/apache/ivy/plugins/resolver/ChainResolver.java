@@ -73,32 +73,8 @@ public class ChainResolver extends AbstractResolver {
 
     private boolean dual;
 
-    private Boolean checkmodified = null;
-
     public void add(DependencyResolver resolver) {
         chain.add(resolver);
-    }
-
-    /**
-     * True if this resolver should check lastmodified date to know if ivy files are up to date.
-     * 
-     * @return
-     */
-    public boolean isCheckmodified() {
-        if (checkmodified == null) {
-            if (getSettings() != null) {
-                String check = getSettings().getVariable("ivy.resolver.default.check.modified");
-                return check != null ? Boolean.valueOf(check).booleanValue() : false;
-            } else {
-                return false;
-            }
-        } else {
-            return checkmodified.booleanValue();
-        }
-    }
-
-    public void setCheckmodified(boolean check) {
-        checkmodified = Boolean.valueOf(check);
     }
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -115,9 +91,7 @@ public class ChainResolver extends AbstractResolver {
             mr = findModuleInCache(dd, data, true);
             if (mr != null) {
                 Message.verbose(getName() + ": module revision found in cache: " + mr.getId());
-                if (!isCheckmodified()) {
-                    mr = forcedRevision(mr);
-                }
+                mr = forcedRevision(mr);
             }
         }
         
