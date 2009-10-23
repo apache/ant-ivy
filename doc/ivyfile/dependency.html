@@ -70,18 +70,7 @@ The first way to declare this mapping is called the inline mapping. It is maybe 
 <li>Specify one configuration name</li> This means that in this master configuration the same dependency configuration is needed (except if a defaultconfmapping has been specified in this ivy file, see [[ivyfile/configurations configurations]] for details, or table below for examples).
 For instance, if the current module has defined a configuration named 'runtime', and the dependency too, then having an inline mapping configuration set to 'runtime' means that in the runtime master configuration the runtime dependency configuration is required.
 
-<a name="defaultconfmapping"/>More examples:
-The table below indicates how ivy interpret the conf attribute according to how [[ivyfile/configurations defaultconfmapping]] is set:<table class="ivy-attributes"><thead><tr><th>defaultconfmapping</th><th>conf</th><th>ivy interpretation</th></tr>
-</thead>
-<tbody>
-<tr><td></td><td></td><td><code>*->*</code></td></tr>
-<tr><td></td><td>runtime</td><td><code>runtime->runtime</code></td></tr>
-<tr><td></td><td>test</td><td><code>test->test</code></td></tr>
-<tr><td><code>runtime->*;test->default</code></td><td></td><td><code>runtime->*;test->default</code></td></tr>
-<tr><td><code>runtime->*;test->default</code></td><td>runtime</td><td><code>runtime->*</code></td></tr>
-<tr><td><code>runtime->*;test->default</code></td><td>test</td><td><code>test->default</code></td></tr>
-</tbody>
-</table>
+The <a href="../ivyfile/configurations.html#defaultconfmapping">examples on the dependency on the configurations page</a> explain how ivy interprets the conf attribute according to how [[ivyfile/configurations defaultconfmapping]] and [[ivyfile/configurations defaultconf]] is set.
 <br/>
 <li>Specify a configuration mapping using the '->' operator separating a comma separated list of master configurations (left operand) of a comma separated list of dependency configurations (right operand).</li>
 A good way to remember which side is for the master configuration (i.e. the configuration of the module defining the dependency) and which side is for the dependency configuration is to read the '->' as 'depends on'.
