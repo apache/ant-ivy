@@ -112,6 +112,11 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 
+   2.1.0
+=====================================
+- DOCUMENTATION: little improvement of the documentations of the ivy:buildlist and ivy:resolve Ant tasks.
+- FIX: Credentials were not set properly for URLs that require authentication when using HttpClient.
+
    2.1.0-rc2
 =====================================
 - DOCUMENTATION: not all attributes of publish task are documented (IVY-963) (thanks to Jon Schneider)
