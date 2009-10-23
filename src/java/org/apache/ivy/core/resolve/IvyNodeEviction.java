@@ -307,7 +307,7 @@ public class IvyNodeEviction {
             if (sel != null) {
                 for (Iterator iterator = sel.iterator(); iterator.hasNext();) {
                     IvyNode n = (IvyNode) iterator.next();
-                    if (n.getRealNode().equals(this)) {
+                    if (n.getRealNode().equals(node)) {
                         // yes, we are the real node for a selected one !
                         // we are no more evicted in this conf !
                         iter.remove();
