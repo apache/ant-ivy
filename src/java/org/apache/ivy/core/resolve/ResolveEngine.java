@@ -70,8 +70,6 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
-import sun.security.krb5.internal.ccache.ar;
-
 /**
  * The resolve engine which is the core of the dependency resolution mechanism used in Ivy. It
  * features several resolve methods, some very simple, like {@link #resolve(File)} and
@@ -340,133 +338,48 @@ public class ResolveEngine {
                 .toArray(new Artifact[report.getArtifacts().size()])));
 
         long totalSize = 0;
-        
-        List deps = Collections.synchronizedList(new ArrayList(Arrays.asList(dependencies)));
-        
-        DownloadThread t1 = new DownloadThread(deps, report, artifactFilter, options);
-        DownloadThread t2 = new DownloadThread(deps, report, artifactFilter, options);
-        DownloadThread t3 = new DownloadThread(deps, report, artifactFilter, options);
-        DownloadThread t4 = new DownloadThread(deps, report, artifactFilter, options);
-        DownloadThread t5 = new DownloadThread(deps, report, artifactFilter, options);
-        
-        t1.start();
-        t2.start();
-        t3.start();
-        t4.start();
-        t5.start();
-        
-        while (t1.isAlive() || t2.isAlive() || t3.isAlive() || t4.isAlive() || t5.isAlive()) {
-            // wait for all threads to finish
-        }
-        
-//        for (int i = 0; i < dependencies.length; i++) {
-//            checkInterrupted();
-//            // download artifacts required in all asked configurations
-//            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()
-//                    && dependencies[i].getModuleRevision() != null) {
-//                DependencyResolver resolver = dependencies[i].getModuleRevision()
-//                        .getArtifactResolver();
-//                Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-//                DownloadReport dReport = resolver.download(selectedArtifacts, options);
-//                ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
-//                for (int j = 0; j < adrs.length; j++) {
-//                    if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-//                        if (adrs[j].getArtifact().getExtraAttribute("ivy:merged") != null) {
-//                            Message.warn("\tmerged artifact not found: " + adrs[j].getArtifact()
-//                                + ". It was required in " 
-//                                + adrs[j].getArtifact().getExtraAttribute("ivy:merged"));
-//                        } else {
-//                            Message.warn("\t" + adrs[j]);
-//                            resolver.reportFailure(adrs[j].getArtifact());
-//                        }
-//                    } else if (adrs[j].getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
-//                        totalSize += adrs[j].getSize();
-//                    }
-//                }
-//                // update concerned reports
-//                String[] dconfs = dependencies[i].getRootModuleConfigurations();
-//                for (int j = 0; j < dconfs.length; j++) {
-//                    // the report itself is responsible to take into account only
-//                    // artifacts required in its corresponding configuration
-//                    // (as described by the Dependency object)
-//                    if (dependencies[i].isEvicted(dconfs[j]) 
-//                            || dependencies[i].isBlacklisted(dconfs[j])) {
-//                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
-//                    } else {
-//                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i],
-//                            dReport);
-//                    }
-//                }
-//            }
-//        }
-        report.setDownloadTime(System.currentTimeMillis() - start);
-        report.setDownloadSize(totalSize);
-    }
-    
-    private static class DownloadThread extends Thread {
-        
-        private List artifactsToDownload;
-        private ResolveReport report;
-        private Filter artifactFilter;
-        private DownloadOptions options;
-        
-        private boolean finished;
-        
-        public DownloadThread(List artifactsToDownload, ResolveReport report, Filter artifactFilter, DownloadOptions options) {
-            this.artifactsToDownload = artifactsToDownload;
-            this.report = report;
-            this.artifactFilter = artifactFilter;
-            this.options = options;
-        }
-        
-        public void run() {
-            while (!artifactsToDownload.isEmpty()) {
-                IvyNode dependency = (IvyNode) artifactsToDownload.remove(0);
-                
-//                System.out.println(Thread.currentThread() + "downloading " + dependency);
-
-                if (!dependency.isCompletelyEvicted() && !dependency.hasProblem()
-                        && dependency.getModuleRevision() != null) {
-                    System.out.println(Thread.currentThread() + "downloading " + dependency);
-                    DependencyResolver resolver = dependency.getModuleRevision()
-                            .getArtifactResolver();
-                    Artifact[] selectedArtifacts = dependency.getSelectedArtifacts(artifactFilter);
-                    DownloadReport dReport = resolver.download(selectedArtifacts, options);
-                    ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
-                    for (int j = 0; j < adrs.length; j++) {
-                        System.out.println(adrs[j]);
-                        if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-                            if (adrs[j].getArtifact().getExtraAttribute("ivy:merged") != null) {
-                                Message.warn("\tmerged artifact not found: " + adrs[j].getArtifact()
-                                    + ". It was required in " 
-                                    + adrs[j].getArtifact().getExtraAttribute("ivy:merged"));
-                            } else {
-                                Message.warn("\t" + adrs[j]);
-                                resolver.reportFailure(adrs[j].getArtifact());
-                            }
-                        } else if (adrs[j].getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
-//                            totalSize += adrs[j].getSize();
-                        }
-                    }
-                    // update concerned reports
-                    String[] dconfs = dependency.getRootModuleConfigurations();
-                    for (int j = 0; j < dconfs.length; j++) {
-                        // the report itself is responsible to take into account only
-                        // artifacts required in its corresponding configuration
-                        // (as described by the Dependency object)
-                        if (dependency.isEvicted(dconfs[j]) 
-                                || dependency.isBlacklisted(dconfs[j])) {
-                            report.getConfigurationReport(dconfs[j]).addDependency(dependency);
+        for (int i = 0; i < dependencies.length; i++) {
+            checkInterrupted();
+            // download artifacts required in all asked configurations
+            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()
+                    && dependencies[i].getModuleRevision() != null) {
+                DependencyResolver resolver = dependencies[i].getModuleRevision()
+                        .getArtifactResolver();
+                Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
+                DownloadReport dReport = resolver.download(selectedArtifacts, options);
+                ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
+                for (int j = 0; j < adrs.length; j++) {
+                    if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
+                        if (adrs[j].getArtifact().getExtraAttribute("ivy:merged") != null) {
+                            Message.warn("\tmerged artifact not found: " + adrs[j].getArtifact()
+                                + ". It was required in " 
+                                + adrs[j].getArtifact().getExtraAttribute("ivy:merged"));
                         } else {
-                            report.getConfigurationReport(dconfs[j]).addDependency(dependency,
-                                dReport);
+                            Message.warn("\t" + adrs[j]);
+                            resolver.reportFailure(adrs[j].getArtifact());
                         }
+                    } else if (adrs[j].getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
+                        totalSize += adrs[j].getSize();
                     }
                 }
-
-                
+                // update concerned reports
+                String[] dconfs = dependencies[i].getRootModuleConfigurations();
+                for (int j = 0; j < dconfs.length; j++) {
+                    // the report itself is responsible to take into account only
+                    // artifacts required in its corresponding configuration
+                    // (as described by the Dependency object)
+                    if (dependencies[i].isEvicted(dconfs[j]) 
+                            || dependencies[i].isBlacklisted(dconfs[j])) {
+                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
+                    } else {
+                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i],
+                            dReport);
+                    }
+                }
             }
         }
+        report.setDownloadTime(System.currentTimeMillis() - start);
+        report.setDownloadSize(totalSize);
     }
 
     /**
