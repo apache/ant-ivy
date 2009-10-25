@@ -214,10 +214,12 @@ public class ResolveData {
 
 
     public DependencyDescriptor mediate(DependencyDescriptor dd) {
+        DependencyDescriptor originalDD = dd;
+        dd = getEngine().mediate(dd, getOptions());
+        
         VisitNode current = getCurrentVisitNode();
         if (current != null) {
             // mediating dd through dependers stack
-            DependencyDescriptor originalDD = dd;
             List dependers = new ArrayList(current.getPath());
             // the returned path contains the currently visited node, we are only interested in
             // the dependers, so we remove the currently visted node from the end
@@ -231,12 +233,14 @@ public class ResolveData {
                     dd = md.mediate(dd);
                 }
             }
-            if (originalDD != dd) {
-                Message.verbose("dependency descriptor has been mediated: " 
-                    + originalDD + " => " + dd);
-            }
         }
-        return getEngine().mediate(dd, getOptions());
+        
+        if (originalDD != dd) {
+            Message.verbose("dependency descriptor has been mediated: " 
+                + originalDD + " => " + dd);
+        }
+
+        return dd;
     }
 
     /**

@@ -97,6 +97,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: <override> ignored in dynamic resolve mode (IVY-1131)
 - FIX: IvyNodeEviction.cleanEvicted has bad comparison logic (IVY-1118)
 - FIX: ChainResolver doesn't pass the specified 'checkmodified' attribute to the cache (IVY-1133)
 - FIX: Ivy couldn't handle maven POMs that depend on theirselves

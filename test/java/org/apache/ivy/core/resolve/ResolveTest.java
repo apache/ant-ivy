@@ -1654,6 +1654,55 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveTransitiveDependenciesWithOverride() throws Exception {
+        // mod2.1 depends on mod1.1 which depends on mod1.2
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.6.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.1", "0.6");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertTrue(getResolvedIvyFileInCache(mrid).exists());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "1.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    /**
+     * Testcase for IVY-1131.
+     */
+    public void testResolveTransitiveDependenciesWithOverrideAndDynamicResolveMode() throws Exception {
+        // mod2.1 depends on mod1.1 which depends on mod1.2
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.6.xml").toURL(),
+            getResolveOptions(new String[] {"*"}).setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.1", "0.6");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertTrue(getResolvedIvyFileInCache(mrid).exists());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "1.0", "mod1.2", "jar", "jar").exists());
+    }
+
     public void testResolveTransitiveDisabled() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
@@ -4828,5 +4877,4 @@ public class ResolveTest extends TestCase {
     private ResolveOptions getResolveOptions(IvySettings settings, String[] confs) {
         return new ResolveOptions().setConfs(confs);
     }
-
 }
