@@ -38,8 +38,10 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -4127,6 +4129,27 @@ public class ResolveTest extends TestCase {
         assertTrue(jarFileInCache.exists());
         File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources", null,
             "1.0", "test-sources", "source", "jar", Collections.singletonMap("classifier", "sources"));
+        assertTrue(sourceFileInCache.exists());
+        assertTrue(jarFileInCache.length() != sourceFileInCache.length());
+    }
+
+    public void testResolveMaven2GetSourcesWithSrcClassifier() throws Exception {
+        // IVY-1138
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(
+            ResolveTest.class.getResource("ivy-m2-with-src.xml"), 
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-src", "1.0")).exists());
+        File jarFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-src",
+            "1.0", "test-src", "jar", "jar");
+        assertTrue(jarFileInCache.exists());
+        File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-src", null,
+            "1.0", "test-src", "source", "jar", Collections.singletonMap("classifier", "src"));
         assertTrue(sourceFileInCache.exists());
         assertTrue(jarFileInCache.length() != sourceFileInCache.length());
     }

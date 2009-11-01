@@ -597,6 +597,12 @@ public class PomModuleDescriptorBuilder {
             null, Collections.singletonMap("m:classifier", "sources"));
     }
 
+    public Artifact getSrcArtifact() {
+        return new MDArtifact(
+            ivyModuleDescriptor, mrid.getName(), "source", "jar", 
+            null, Collections.singletonMap("m:classifier", "src"));
+    }
+
     public Artifact getJavadocArtifact() {
         return new MDArtifact(
             ivyModuleDescriptor, mrid.getName(), "javadoc", "jar", 
@@ -607,6 +613,10 @@ public class PomModuleDescriptorBuilder {
         ivyModuleDescriptor.addArtifact("sources", getSourceArtifact());
     }
     
+    public void addSrcArtifact() {
+        ivyModuleDescriptor.addArtifact("sources", getSrcArtifact());
+    }
+
     public void addJavadocArtifact() {
         ivyModuleDescriptor.addArtifact("javadoc", getJavadocArtifact());
     }

@@ -283,7 +283,16 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     Message.debug("source artifact found for " + mrid);
                     mdBuilder.addSourceArtifact();
                 } else {
-                    Message.debug("no source artifact found for " + mrid);
+                    // it seems that sometimes the 'src' classifier is used instead of 'sources'
+                    // Cfr. IVY-1138
+                    ArtifactOrigin srcArtifact = resolver.locate(mdBuilder.getSrcArtifact());
+                    if (!ArtifactOrigin.isUnknown(srcArtifact)
+                            && !srcArtifact.getLocation().equals(mainArtifactLocation)) {
+                        Message.debug("source artifact found for " + mrid);
+                        mdBuilder.addSrcArtifact();
+                    } else {
+                        Message.debug("no source artifact found for " + mrid);
+                    }
                 }
                 ArtifactOrigin javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
                 if (!ArtifactOrigin.isUnknown(javadocArtifact) 
