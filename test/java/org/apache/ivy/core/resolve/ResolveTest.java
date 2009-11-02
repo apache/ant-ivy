@@ -61,9 +61,12 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
+import org.apache.tools.ant.DefaultLogger;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -4899,5 +4902,56 @@ public class ResolveTest extends TestCase {
 
     private ResolveOptions getResolveOptions(IvySettings settings, String[] confs) {
         return new ResolveOptions().setConfs(confs);
+    }
+
+    public void testExtraAttributesForcedDependencies() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes-forceddependencies/ivysettings-filerepo-attribs.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+        
+        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-attrib-forced-dependencies.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+        
+        ivy.deliver("1.0.0", "build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml", new DeliverOptions().setResolveId(report.getResolveId()).setValidate(false).setPubdate(new Date()));
+        
+        File deliveredIvyFile = new File("build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("CAE-Visualization-Components",
+            "SGL", "MAIN", "6.2.34.7"), dds[1]
+                .getDependencyRevisionId());
+        
+
+    }
+    public void testNoAttributesForcedDependencies() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes-forceddependencies/ivysettings-filerepo-noattribs.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+        
+        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-attrib-forced-dependencies.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+        
+        ivy.deliver("1.0.0", "build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml", new DeliverOptions().setResolveId(report.getResolveId()).setValidate(false).setPubdate(new Date()));
+        
+        File deliveredIvyFile = new File("build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("CAE-Visualization-Components",
+            "SGL", "MAIN", "6.2.34.7"), dds[1]
+                .getDependencyRevisionId());
+        
+
     }
 }

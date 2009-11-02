@@ -209,6 +209,23 @@ public class ResolveData {
 
     public boolean isBlacklisted(String rootModuleConf, ModuleRevisionId mrid) {
         IvyNode node = getNode(mrid);
+        
+        if (node == null) {
+            // search again, now ignore the extra attributes
+            // TODO: maybe we should search the node that has at least the 
+            // same attributes as mrid
+            for (Iterator it = visitData.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry entry = (Entry) it.next();
+                ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
+                if (current.getModuleId().equals(mrid.getModuleId())
+                        && current.getRevision().equals(mrid.getRevision())) {
+                    VisitData data = (VisitData) entry.getValue();
+                    node = data.getNode();
+                    break;
+                }
+            }
+        }
+        
         return node != null && node.isBlacklisted(rootModuleConf);
     }
 

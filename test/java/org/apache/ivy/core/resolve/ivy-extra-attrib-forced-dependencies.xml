@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+ <info organisation="CAE-Visualization-Products" module="IG-6_2" revision="6.2.1.4" status="Development" publication="20090429165200">
+  <license name="CAE Proprietary"/>
+  <ivyauthor name="CAE Image Generator - CAE Visualization Products" url="http://www.cae.com"/>
+  <repository name="packagerep-ivy" url="http://coretech.caecorp.cae.com/packagerep" pattern="[organisation]/[module]/[revision]/ivy-[revision].xml" ivys="true" artifacts="false"/>
+  <repository name="packagerep-artifacts" url="http://coretech.caecorp.cae.com/packagerep" pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[type]" ivys="false" artifacts="true"/>
+  <description homepage="http://www.cae.com"/>
+ </info>
+ <publications/>
+ <configurations>
+  <conf name="BuildTimeDependencies"/>
+  <conf name="RunTimeDependencies"/>
+  <conf name="TestingDependencies"/>
+ </configurations>
+ <dependencies>
+  <dependency org="CAE-Visualization-Components" name="RTS" rev="6.2.1.20" conf="BuildTimeDependencies->*" force="true" branch="MAIN">
+  </dependency>
+  <dependency org="CAE-Visualization-Components" name="SGL" rev="[6.2.0,6.2.999]" conf="BuildTimeDependencies->*" force="true" branch="MAIN">
+  </dependency>
+ </dependencies>
+</ivy-module>
