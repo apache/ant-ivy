@@ -61,12 +61,9 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
-import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
-import org.apache.tools.ant.DefaultLogger;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -4908,8 +4905,6 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes-forceddependencies/ivysettings-filerepo-attribs.xml"));
         ivy.getSettings().setDefaultCache(cache);
-        
-        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
 
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-attrib-forced-dependencies.xml"),
             getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
@@ -4933,8 +4928,6 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes-forceddependencies/ivysettings-filerepo-noattribs.xml"));
         ivy.getSettings().setDefaultCache(cache);
-        
-        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
 
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-attrib-forced-dependencies.xml"),
             getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
