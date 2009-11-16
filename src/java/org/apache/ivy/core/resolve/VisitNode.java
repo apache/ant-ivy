@@ -34,7 +34,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.util.Checks;
-import org.apache.ivy.util.Message;
 
 /**
  * A visit node is an object used to represent one visit from one parent on an {@link IvyNode} of
@@ -275,12 +274,6 @@ public class VisitNode {
             rootModuleConf, getParentNode(), parentConf, conf, shouldBePublic, getUsage());
         if (loaded) {
             useRealNode();
-            
-            // check if the real node is blacklisted -> if so, skip further loading
-            if (getRealNode().isBlacklisted(rootModuleConf)) {
-                Message.debug(rootModuleConf + " is blacklisted. Skip loading");
-                return false;
-            }
             
             // if the loaded revision is different from original one
             // we now register this node on the new resolved id
