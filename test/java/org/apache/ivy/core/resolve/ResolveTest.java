@@ -4944,7 +4944,45 @@ public class ResolveTest extends TestCase {
         assertEquals(ModuleRevisionId.newInstance("CAE-Visualization-Components",
             "SGL", "MAIN", "6.2.34.7"), dds[1]
                 .getDependencyRevisionId());
-        
+    }
 
+    public void testExtraAttributesMultipleDependenciesHang() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes-multipledependencies/ivysettings-filerepo-attribs.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att-multipledependencies.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+    }
+    
+    public void testExtraAttributesMultipleDependenciesNoHang() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes-multipledependencies/ivysettings-filerepo-noattribs.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att-multipledependencies.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+    }
+
+    public void testExtraAttributesMultipleDependenciesHang2() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes-multipledependencies/ivysettings-filerepo-attribs.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att-multipledependencies2.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+    }
+    
+    public void testExtraAttributesMultipleDependenciesNoHang2() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes-multipledependencies/ivysettings-filerepo-noattribs.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att-multipledependencies2.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
     }
 }
