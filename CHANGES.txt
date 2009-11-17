@@ -98,6 +98,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Latest Compatible Conflict Manager + Extra Attributes in Dependencies' IVY files == infinite loop (IVY-956)
 - FIX: Resolve with Extra Attributes, Forced Dependencies causes invalid delivered ivy file (IVY-1079)
 - FIX: ResolveEngine.getDependencies does not work using extra attributes (IVY-1115)
 - FIX: <override> ignored in dynamic resolve mode (IVY-1131)
