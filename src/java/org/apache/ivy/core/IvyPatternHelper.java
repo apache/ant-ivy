@@ -475,6 +475,12 @@ public final class IvyPatternHelper {
         if (index == -1) {
             return pattern;
         } else {
+            // it could be that pattern is something like "lib/([optional]/)[module]"
+            // we don't want the '(' in the result
+            int optionalIndex = pattern.indexOf('(');
+            if (optionalIndex >= 0) {
+                index = Math.min(index, optionalIndex);
+            }
             return pattern.substring(0, index);
         }
     }

@@ -69,4 +69,13 @@ public class IvyPatternHelperTest extends TestCase {
             pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
+    public void testTokenRoot() {
+        String pattern = "lib/[type]/[artifact].[ext]";
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
+    }
+
+    public void testTokenRootWithOptionalFirstToken() {
+        String pattern = "lib/([type]/)[artifact].[ext]";
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
+    }
 }
