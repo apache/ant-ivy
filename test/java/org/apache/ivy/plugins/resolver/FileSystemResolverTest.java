@@ -752,6 +752,38 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    public void testPublishTransactionWithDottedOrganisation() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setM2compatible(true);
+            resolver.setSettings(settings);
+
+            resolver.addIvyPattern(
+                settings.getBaseDir() + "/test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addArtifactPattern(
+                settings.getBaseDir() + "/test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype", "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            
+            resolver.beginPublishTransaction(mrid, false);
+            
+            // files should not be available until the transaction is committed
+            resolver.publish(ivyArtifact, src, false);
+            assertFalse(new File("test/repositories/m2/org/apache/mymodule/myrevision/ivy-myrevision.xml").exists());
+            resolver.publish(artifact, src, false);
+            assertFalse(new File("test/repositories/m2/org/apache/mymodule/myrevision/myartifact-myrevision.myext").exists());
+
+            resolver.commitPublishTransaction();
+            assertTrue(new File("test/repositories/m2/org/apache/mymodule/myrevision/ivy-myrevision.xml").exists());
+            assertTrue(new File("test/repositories/m2/org/apache/mymodule/myrevision/myartifact-myrevision.myext").exists());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/m2/org/apache/mymodule"));
+        }
+    }
 
     public void testAbortTransaction() throws Exception {
         try {

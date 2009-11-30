@@ -279,13 +279,18 @@ public class FileSystemResolver extends RepositoryResolver {
     }
 
     private void initTransaction(ModuleRevisionId module) {
+        ModuleRevisionId mrid = module;
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(module);
+        }
+        
         transactionTempDir = Checks.checkAbsolute(IvyPatternHelper.substitute(
             baseTransactionPattern, 
             ModuleRevisionId.newInstance(
-                module, module.getRevision() + TRANSACTION_DESTINATION_SUFFIX)),
+                mrid, mrid.getRevision() + TRANSACTION_DESTINATION_SUFFIX)),
                 "baseTransactionPattern");
         transactionDestDir = Checks.checkAbsolute(IvyPatternHelper.substitute(
-            baseTransactionPattern, module), "baseTransactionPattern");
+            baseTransactionPattern, mrid), "baseTransactionPattern");
     }
 
     public String getTransactional() {
