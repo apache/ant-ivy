@@ -20,8 +20,10 @@ package org.apache.ivy.ant;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -42,6 +44,8 @@ public class IvyListModules extends IvyTask {
     private String property;
 
     private String value;
+    
+    private String resolver;
 
     public String getMatcher() {
         return matcher;
@@ -98,6 +102,14 @@ public class IvyListModules extends IvyTask {
     public void setBranch(String branch) {
         this.branch = branch;
     }
+    
+    public void setResolver(String resolver) {
+        this.resolver = resolver;
+    }
+    
+    public String getResolver() {
+        return resolver;
+    }
 
     public void doExecute() throws BuildException {
         if (organisation == null) {
@@ -115,10 +127,26 @@ public class IvyListModules extends IvyTask {
         if (value == null) {
             throw new BuildException("no value provided for ivy listmodules task");
         }
+
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        ModuleRevisionId[] mrids = ivy.listModules(ModuleRevisionId.newInstance(organisation,
-            module, branch, revision), settings.getMatcher(matcher));
+        
+        SearchEngine searcher = new SearchEngine(settings);
+        PatternMatcher patternMatcher = settings.getMatcher(matcher);
+        
+        ModuleRevisionId[] mrids;
+        if (resolver == null) {
+            mrids = searcher.listModules(ModuleRevisionId.newInstance(organisation,
+                module, branch, revision), patternMatcher);
+        } else {
+            DependencyResolver depResolver = settings.getResolver(resolver);
+            if (depResolver == null) {
+                throw new BuildException("Unknown resolver: " + resolver);
+            }
+            mrids = searcher.listModules(depResolver, ModuleRevisionId.newInstance(organisation,
+                module, branch, revision), patternMatcher);
+        }
+        
         for (int i = 0; i < mrids.length; i++) {
             String name = IvyPatternHelper.substitute(settings.substitute(property), mrids[i]);
             String value = IvyPatternHelper.substitute(settings.substitute(this.value), mrids[i]);
