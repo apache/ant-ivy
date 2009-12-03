@@ -95,6 +95,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Ivy doesn't support Maven 2.0.9 'import' scope (IVY-807)
 - IMPROVEMENT: resolver attribute for listmodules task (IVY-1057)
 - IMPROVEMENT: discover 'src' sources in maven repos (IVY-1138)
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)

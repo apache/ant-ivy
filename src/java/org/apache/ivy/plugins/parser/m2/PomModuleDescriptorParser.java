@@ -227,7 +227,29 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
                     PomDependencyMgt dep = (PomDependencyMgt) it.next();
-                    mdBuilder.addDependencyMgt(dep);
+                    if ("import".equals(dep.getScope())) {
+                        ModuleRevisionId importModRevID = ModuleRevisionId.newInstance(
+                            dep.getGroupId(), 
+                            dep.getArtifactId(), 
+                            dep.getVersion());
+                        ResolvedModuleRevision importModule = parseOtherPom(ivySettings, 
+                            importModRevID);
+                        if (importModule != null) {
+                            ModuleDescriptor importDescr = importModule.getDescriptor();
+                            
+                            // add dependency management info from imported module
+                            List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(importDescr);
+                            for (Iterator it2 = depMgt.iterator(); it2.hasNext();) {
+                                mdBuilder.addDependencyMgt((PomDependencyMgt) it2.next());
+                            }
+                        } else {
+                            throw new IOException("Impossible to import module for " + descriptorURL + "."
+                               + " Import=" + importModRevID);
+                        }
+                        
+                    } else {
+                        mdBuilder.addDependencyMgt(dep);
+                    }
                 }
                 
                 for (Iterator it = domReader.getDependencies().iterator(); it.hasNext();) {
