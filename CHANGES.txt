@@ -100,6 +100,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Use of a shared DocumentBuilder causes SAXException during parallel resolutions (IVY-1147)
 - FIX: metadata lock files not always deleted from cache (IVY-1145) (thanks to Jason Trump)
 - FIX: FileSystem resolver with m2compatible=true throws error when publishing modules with dotted organisation names (IVY-968)
 - FIX: ivy:retrieve sync="true" does nothing if first variable is optional (IVY-1142) (thanks to Andreas Axelsson)

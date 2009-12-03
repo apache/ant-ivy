@@ -51,8 +51,6 @@ public abstract class XMLHelper {
     static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
     private static boolean canUseSchemaValidation = true;
-
-    private static DocumentBuilder docBuilder;
     
     private static SAXParser newSAXParser(URL schema, InputStream schemaStream)
             throws ParserConfigurationException, SAXException {
@@ -206,19 +204,17 @@ public abstract class XMLHelper {
     }
 
     public static DocumentBuilder getDocBuilder(EntityResolver entityResolver) {
-        if (docBuilder == null) {
-            try {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setValidating(false);
-                docBuilder = factory.newDocumentBuilder();
-                if (entityResolver != null) {
-                    docBuilder.setEntityResolver(entityResolver);
-                }
-            } catch (ParserConfigurationException e) {
-                throw new RuntimeException(e);
-            }        
-        }
-        return docBuilder;
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setValidating(false);
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            if (entityResolver != null) {
+                docBuilder.setEntityResolver(entityResolver);
+            }
+            return docBuilder;
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }        
     }
 
 
