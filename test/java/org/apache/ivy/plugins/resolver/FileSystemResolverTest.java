@@ -971,7 +971,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
         mod = ResolverTestHelper.getEntry(mods, "mod1.2");
         revs = resolver.listRevisions(mod);
-        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.1", "2.0",
+        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"0.9", "1.0", "1.1", "2.0",
                 "2.1", "2.2"}, revs);
     }
 
