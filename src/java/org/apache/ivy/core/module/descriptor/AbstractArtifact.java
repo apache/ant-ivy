@@ -32,7 +32,7 @@ public abstract class AbstractArtifact implements Artifact {
         }
         Artifact art = (Artifact) obj;
         return getModuleRevisionId().equals(art.getModuleRevisionId())
-                && getPublicationDate() == null ? true : getPublicationDate().equals(
+                && getPublicationDate() == null ? (art.getPublicationDate() == null) : getPublicationDate().equals(
             art.getPublicationDate())
                 && getName().equals(art.getName())
                 && getExt().equals(art.getExt())
