@@ -853,12 +853,16 @@ public class IvyNode implements Comparable {
                 for (Iterator it = mergedDependencyArtifacts.iterator(); it.hasNext();) {
                     DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor) it.next();
                     Map extraAttributes = new HashMap(dad.getQualifiedExtraAttributes());
-                    // this is later used to know that this is a merged artifact
-                    extraAttributes.put("ivy:merged", 
-                        dad.getDependencyDescriptor().getParentRevisionId() 
-                        + " -> " + usage.getNode().getId()); 
-                    artifacts.add(new MDArtifact(md, dad.getName(), dad.getType(), dad.getExt(),
-                        dad.getUrl(), extraAttributes));
+                    MDArtifact artifact = new MDArtifact(md, dad.getName(), dad.getType(), dad.getExt(),
+                            dad.getUrl(), extraAttributes);
+                    
+                    if (!artifacts.contains(artifact)) {
+                        // this is later used to know that this is a merged artifact
+                        extraAttributes.put("ivy:merged", 
+                            dad.getDependencyDescriptor().getParentRevisionId() 
+                            + " -> " + usage.getNode().getId()); 
+                        artifacts.add(artifact);
+                    }
                 }
             }
         }
