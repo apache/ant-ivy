@@ -30,10 +30,12 @@ import java.util.Map;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -189,12 +191,12 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mdBuilder
                             .getModuleDescriptor(), relocation, true, false, true);
                     /* Map all public dependencies */
-                    dd.addDependencyConfiguration("compile", "compile");
-                    dd.addDependencyConfiguration("runtime", "runtime");
-                    dd.addDependencyConfiguration("default", "default");
-                    dd.addDependencyConfiguration("master", "master");
-                    dd.addDependencyConfiguration("provided", "provided");
-                    dd.addDependencyConfiguration("system", "system");
+                    Configuration[] m2Confs = PomModuleDescriptorBuilder.MAVEN2_CONFIGURATIONS;
+                    for (int i = 0; i < m2Confs.length; i++) {
+                        if (Visibility.PUBLIC.equals(m2Confs[i].getVisibility())) {
+                            dd.addDependencyConfiguration(m2Confs[i].getName(), m2Confs[i].getName());
+                        }
+                    }
                     mdBuilder.addDependency(dd);
                 }
             } else {                            
