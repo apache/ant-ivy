@@ -295,7 +295,7 @@ public class PomModuleDescriptorBuilder {
         ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map extraAtt = new HashMap();
-        if ((dep.getClassifier() != null) || (dep.getType() != null)) {
+        if ((dep.getClassifier() != null) || ((dep.getType() != null) && !"jar".equals(dep.getType()))) {
             String type = "jar";
             if (dep.getType() != null) {
                 type = dep.getType();
