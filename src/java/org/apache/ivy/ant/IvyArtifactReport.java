@@ -154,8 +154,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                             startArtifact(saxHandler, artifact.getArtifact());
 
                             writeOriginLocationIfPresent(cache, saxHandler, artifact);
-
-                            writeCacheLocation(cache, saxHandler, artifact);
+                            writeCacheLocationIfPresent(cache, saxHandler, artifact);
 
                             Set artifactDestPaths = (Set) artifactsToCopy.get(artifact);
                             for (Iterator iterator = artifactDestPaths.iterator(); iterator
@@ -243,14 +242,16 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private void writeCacheLocation(RepositoryCacheManager cache, TransformerHandler saxHandler,
+    private void writeCacheLocationIfPresent(RepositoryCacheManager cache, TransformerHandler saxHandler,
             ArtifactDownloadReport artifact) throws SAXException {
         File archiveInCache = artifact.getLocalFile();
 
-        saxHandler.startElement(null, "cache-location", "cache-location", new AttributesImpl());
-        char[] archiveInCacheAsChars = archiveInCache.getPath().replace('\\', '/').toCharArray();
-        saxHandler.characters(archiveInCacheAsChars, 0, archiveInCacheAsChars.length);
-        saxHandler.endElement(null, "cache-location", "cache-location");
+        if (archiveInCache != null) {
+            saxHandler.startElement(null, "cache-location", "cache-location", new AttributesImpl());
+            char[] archiveInCacheAsChars = archiveInCache.getPath().replace('\\', '/').toCharArray();
+            saxHandler.characters(archiveInCacheAsChars, 0, archiveInCacheAsChars.length);
+            saxHandler.endElement(null, "cache-location", "cache-location");
+        }
     }
 
     private void writeRetrieveLocation(TransformerHandler saxHandler, String artifactDestPath)

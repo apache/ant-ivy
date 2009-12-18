@@ -46,6 +46,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Scott Hebert
 	Matt Inger
 	Anders Janmyr
+	Steve Jones
 	Christer Jonsson
 	Michael Kebe
 	Matthias Kilian
@@ -101,6 +102,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Artifact report throws NPE when artifact is not in cache (IVY-1150) (thanks to Steve Jones)
 - FIX: resolve fails for transitive relocated maven modules when the type of the dependency was set to 'jar'
 - FIX: optional dependencies, sources and javadocs aren't resolved when a maven module is relocated
 - FIX: Encountered 'multiple artifacts retrieved to same file' error when module does not have multiple artifacts (IVY-1148)
