@@ -215,13 +215,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             }
             
             ((HttpURLConnection) con).disconnect();
-        } else if (con != null
-                && "sun.net.www.protocol.file.FileURLConnection".equals(con.getClass().getName())) {
-            // ugly fix for a sun jre bug:
-            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4257700
-            //
-            // getting header info on the fileurlconnection opens the connection,
-            // which opens a file input stream without closing it.
+        } else if (con != null) {
             try {
                 con.getInputStream().close();
             } catch (IOException e) {
