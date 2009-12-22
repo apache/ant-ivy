@@ -66,11 +66,11 @@ public class XmlReportOutputter implements ReportOutputter {
         File reportXsl = new File(reportParentDir, "ivy-report.xsl");
         File reportCss = new File(reportParentDir, "ivy-report.css");
         if (!reportXsl.exists()) {
-            FileUtil.copy(XmlReportOutputter.class.getResource("ivy-report.xsl"), reportXsl,
+            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.xsl"), reportXsl,
                 null);
         }
         if (!reportCss.exists()) {
-            FileUtil.copy(XmlReportOutputter.class.getResource("ivy-report.css"), reportCss,
+            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), reportCss,
                 null);
         }
     }
