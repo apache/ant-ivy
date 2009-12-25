@@ -63,6 +63,19 @@ public final class ChecksumHelper {
             int spaceIndex = csFileContent.indexOf(' ');
             if (spaceIndex != -1) {
                 expected = csFileContent.substring(0, spaceIndex);
+                
+                // IVY-1155: support some strange formats like this one:
+                // http://repo2.maven.org/maven2/org/apache/pdfbox/fontbox/0.8.0-incubator/fontbox-0.8.0-incubator.jar.md5
+                if (expected.endsWith(":")) {
+                    StringBuffer result = new StringBuffer();
+                    char[] chars = csFileContent.substring(spaceIndex + 1).toCharArray();
+                    for (int i = 0; i < chars.length; i++) {
+                        if (!Character.isWhitespace(chars[i])) {
+                            result.append(chars[i]);
+                        }
+                    }
+                    expected = result.toString();
+                }
             } else {
                 expected = csFileContent;
             }

@@ -102,6 +102,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Ivy cannot parse alternate format for Maven MD5 files (IVY-1155)
 - FIX: Ivy does not close URL connection to ivy-report.xsl properly (IVY-1152)
 - FIX: Artifact report throws NPE when artifact is not in cache (IVY-1150) (thanks to Steve Jones)
 - FIX: resolve fails for transitive relocated maven modules when the type of the dependency was set to 'jar'

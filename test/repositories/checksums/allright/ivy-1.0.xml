@@ -24,6 +24,7 @@
 	/>
 	<publications>
 		<artifact />
+        <artifact name="allright-IVY-1155" />
 		<artifact name="allright-with-path" />
 		<artifact name="allright-with-openssl" />
 	</publications>
