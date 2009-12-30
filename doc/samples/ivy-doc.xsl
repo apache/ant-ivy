@@ -252,6 +252,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <th class="dep-org">Organisation</th>
       <th class="dep-name">Name</th>
       <th class="dep-rev">Revision</th>
+      <th class="dep-conf">Configurations</th>
     </tr>
     </thead>
     <tbody>
@@ -265,6 +266,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </xsl:element>
       </td>
       <td><xsl:value-of select="@rev"/></td>
+      <td><xsl:value-of select="@conf"/></td>
     </tr>
     </xsl:for-each>
     </tbody>
