@@ -210,6 +210,7 @@ public class IvyRetrieveTest extends TestCase {
         // test case for IVY-304
         // first we do a resolve with useOrigin=true in another project
         Project project = new Project();
+        project.init();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
