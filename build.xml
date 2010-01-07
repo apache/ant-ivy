@@ -441,6 +441,8 @@
            fork="true">
             <classpath>
                 <path refid="test.classpath" />
+                <pathelement path="${ant.home}/lib/ant-nodeps.jar"/>
+                <pathelement path="${ant.home}/lib/ant-trax.jar"/>
             </classpath>
         	
         	<!-- pass the proxy properties to the forked junit process to use correct proxy -->
