@@ -95,6 +95,8 @@
                 <include name="*.jar" />
                 <exclude name="ant.jar" />
                 <exclude name="ant-launcher.jar" />
+            	<exclude name="ant-nodeps.jar"/>
+            	<exclude name="ant-trax.jar"/>
             </fileset>
             <pathelement location="${core.classes.build.dir}" />
             <pathelement location="${ant.classes.build.dir}" />
