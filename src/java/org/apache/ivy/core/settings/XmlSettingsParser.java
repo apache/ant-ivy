@@ -415,9 +415,17 @@ public class XmlSettingsParser extends DefaultHandler {
                 settingsURL = urlFromFileAttribute(propFilePath);
                 Message.verbose("including file: " + settingsURL);
                 if ("file".equals(settingsURL.getProtocol())) {
-                    ivy.setSettingsVariables(
-                        Checks.checkAbsolute(settingsURL.getPath(), 
-                        "settings include path"));
+                    try {
+                        File settingsFile = new File(new URI(settingsURL.toExternalForm()));
+                        ivy.setSettingsVariables(
+                            Checks.checkAbsolute(settingsFile, 
+                            "settings include path"));
+                    } catch (URISyntaxException e) {
+                        // try to make the best of it...
+                        ivy.setSettingsVariables(
+                            Checks.checkAbsolute(settingsURL.getPath(), 
+                            "settings include path"));
+                    }
                 } else {
                     ivy.setSettingsVariables(settingsURL);
                 }
@@ -442,14 +450,14 @@ public class XmlSettingsParser extends DefaultHandler {
         File incFile = new File(filePath);
         if (incFile.isAbsolute()) {
             if (!incFile.exists()) {
-                throw new FileNotFoundException();
+                throw new FileNotFoundException(incFile.getAbsolutePath());
             }
             return incFile.toURI().toURL();
         } else if ("file".equals(this.settings.getProtocol())) {
             try {
                 File settingsFile = new File(new URI(this.settings.toExternalForm()));
                 if (!settingsFile.exists()) {
-                    throw new FileNotFoundException();
+                    throw new FileNotFoundException(settingsFile.getAbsolutePath());
                 }
                 return new File(settingsFile.getParentFile(), filePath).toURI().toURL();
             } catch (URISyntaxException e) {
@@ -504,7 +512,7 @@ public class XmlSettingsParser extends DefaultHandler {
         configurator.typeDef(name, clazz);
     }
 
-    private void classpathStarted(Map attributes) throws MalformedURLException {
+    private void classpathStarted(Map attributes) throws IOException {
         String urlStr = (String) attributes.get("url");
         URL url = null;
         if (urlStr == null) {
@@ -513,7 +521,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 throw new IllegalArgumentException(
                         "either url or file should be given for classpath element");
             } else {
-                url = Checks.checkAbsolute(file, "classpath").toURI().toURL();
+                url = urlFromFileAttribute(file);
             }
         } else {
             url = new URL(urlStr);
