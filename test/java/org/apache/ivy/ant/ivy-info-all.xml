@@ -25,8 +25,8 @@
 	       e:myextraatt="myvalue"
 	/>
 	<configurations>
-		<conf name="default" />
-		<conf name="test" />
+		<conf name="default" description="The default dependencies" />
+		<conf name="test" description="Dependencies used for testing" />
 		<conf name="private" visibility="private"/>
 	</configurations>
 	<dependencies>

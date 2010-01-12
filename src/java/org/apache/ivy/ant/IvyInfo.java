@@ -171,8 +171,14 @@ public class IvyInfo extends IvyTask {
         Configuration[] configs = md.getConfigurations();
         List publicConfigsList = new ArrayList();
         for (int i = 0; i < configs.length; i++) {
+            String name = configs[i].getName();
             if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
-                publicConfigsList.add(configs[i].getName());
+                publicConfigsList.add(name);
+            }
+            
+            if (configs[i].getDescription() != null) {
+                getProject().setProperty(property + ".configuration." + name + ".desc",
+                                         configs[i].getDescription());
             }
         }
         String[] publicConfigs = (String[]) publicConfigsList

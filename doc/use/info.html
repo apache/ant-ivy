@@ -29,7 +29,11 @@
 The info task ease the access to some essential data contained in an ivy file without performing a dependency resolution.
 
 The information is retrieved by setting ant properties:
-<table>
+<table class="ant">
+<thead>
+    <tr><th class="ant-prop">Property</th><th class="ant-desc">Description</th></tr>
+</thead>
+<tbody>
 <tr><td>ivy.organisation</td><td>The organisation of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.module</td><td>The name of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.branch</td><td>The branch of the module if any, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
@@ -38,6 +42,8 @@ The information is retrieved by setting ant properties:
 <tr><td>ivy.extra.<i>[any extra attribute]</i></td><td>Corresponding extra attribute value, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.configurations</td><td>A comma separated list of configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 <tr><td>ivy.public.configurations</td><td>A comma separated list of public configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
+<tr><td>ivy.configuration.<i>[config name]</i>.desc</td><td>For each configuration with a description, a property is created containing this description. <span class="since">(Since 2.2)</span></td></tr>
+</tbody>
 </table>
 <br/>
 <span class="since">since 2.0</span>

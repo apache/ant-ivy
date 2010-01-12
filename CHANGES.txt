@@ -99,6 +99,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)
 
+- NEW: Make ivy.xml <conf description> available (IVY-1158)
+
 - IMPROVEMENT: Ivy doesn't support Maven 2.0.9 'import' scope (IVY-807)
 - IMPROVEMENT: resolver attribute for listmodules task (IVY-1057)
 - IMPROVEMENT: discover 'src' sources in maven repos (IVY-1138)
