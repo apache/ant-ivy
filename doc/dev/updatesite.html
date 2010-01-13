@@ -37,6 +37,8 @@ This doc is in two parts, the <a href="#setup">setup</a> of the updatesite which
 
 The update site svn location is there: https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk . You will update it so it will contain the new artifacts.
 
+Before installing the new version, you probably want to remove some deprecated version. For instance is the new release is a RC2, then the RC1 should be removed. But do keep old final release; some users might not want use to the exact same version of Ivy they use in Ant, which might not be the latest one. To do so just <tt>svn rm</tt> the jars, checksums and signatures of the features and plugins to remove.
+
 <ul><li>For an <u>Ivy</u> release:
 As you have a build jar for Ivy, just do:
 <code>ant install-ivy -Divy.jar=...../path/to/ivy.jar</code>
@@ -46,8 +48,6 @@ The zip distribution needs to be unpacked into the updatesite directory:
 <code>ant install-ivyde -Divyde.zip=...../path/to/org.apache.ivyde.feature-${VERSION}.zip</code>
 </li>
 </ul>
-
-Those previous tasks should have deleted some files, but not using the svn command: you should see some ! in your svn status log. Then do some <tt>svn rm</tt> on those files.
 
 <h2>Prepare the update site</h2>
 
