@@ -41,18 +41,18 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <link rel="stylesheet" type="text/css" href="ivy-style.css" /> 
   </head>
   <body>
-    <div id="logo"><a href="http://ivy.jayasoft.org/"><img src="http://ivy.jayasoft.org/logo.png"/></a><br/><a id="rep" href="http://ivyrep.jayasoft.org/">Ivy Repository</a></div>
+    <div id="logo"><a href="http://ant.apache.org/ivy/"><img src="http://ant.apache.org/ivy/images/logo.png"/></a><br/><a id="rep" href="http://www.jayasoft.fr/org/ivyrep/">Ivy Repository</a></div>
     <h1>
     <span id="module">
 	        <xsl:element name="a">
-	            <xsl:attribute name="href">http://ivyrep.jayasoft.org/<xsl:value-of select="info/@organisation"/>/<xsl:value-of select="info/@module"/>/</xsl:attribute>
+	            <xsl:attribute name="href">http://www.jayasoft.fr/org/ivyrep/<xsl:value-of select="info/@organisation"/>/<xsl:value-of select="info/@module"/>/</xsl:attribute>
 	            <xsl:value-of select="info/@module"/>
 	        </xsl:element>
     </span> 
     by 
     <span id="organisation">
 	        <xsl:element name="a">
-	            <xsl:attribute name="href">http://ivyrep.jayasoft.org/<xsl:value-of select="info/@organisation"/>/</xsl:attribute>
+	            <xsl:attribute name="href">http://www.jayasoft.fr/org/ivyrep/<xsl:value-of select="info/@organisation"/>/</xsl:attribute>
 	            <xsl:value-of select="info/@organisation"/>
 	        </xsl:element> 
     </span></h1>
@@ -261,7 +261,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <td><xsl:if test="not(@org)"><xsl:value-of select="/ivy-module/info/@organisation"/></xsl:if><xsl:value-of select="@org"/></td>
       <td>
         <xsl:element name="a">
-            <xsl:attribute name="href">http://ivyrep.jayasoft.org/<xsl:if test="not(@org)"><xsl:value-of select="/ivy-module/info/@organisation"/></xsl:if><xsl:value-of select="@org"/>/<xsl:value-of select="@name"/>/ivy-<xsl:value-of select="@rev"/>.xml</xsl:attribute>
+            <xsl:attribute name="href">http://www.jayasoft.fr/org/ivyrep/<xsl:if test="not(@org)"><xsl:value-of select="/ivy-module/info/@organisation"/></xsl:if><xsl:value-of select="@org"/>/<xsl:value-of select="@name"/>/ivy-<xsl:value-of select="@rev"/>.xml</xsl:attribute>
 		    <xsl:value-of select="@name"/>
         </xsl:element>
       </td>
