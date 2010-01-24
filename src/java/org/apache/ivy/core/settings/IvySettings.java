@@ -723,6 +723,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public void setDefaultResolver(String resolverName) {
         checkResolverName(resolverName);
+        if (resolverName != null && !resolverName.equals(defaultResolverName)) {
+            defaultResolver = null;
+        }
         defaultResolverName = resolverName;
     }
 
