@@ -86,8 +86,16 @@ public final class FileUtil {
 
                 throw new IOException("error symlinking " + src + " to " + dest + ":\n" + error);
             }
+            
+            // check if the creation of the symbolic link was successful
             if (!dest.exists()) {
-                throw new IOException("error symlinking " + dest + " doesn't exists"); 
+                throw new IOException("error symlinking: " + dest + " doesn't exists");
+            }
+            
+            // check if the result is a true symbolic link
+            if (dest.getAbsolutePath().equals(dest.getCanonicalPath())) {
+                overwrite = true; // just make sure we do overwrite the invalid symlink!
+                throw new IOException("error symlinking: " + dest + " isn't a symlink"); 
             }
         } catch (IOException x) {
             Message.verbose("symlink failed; falling back to copy");
