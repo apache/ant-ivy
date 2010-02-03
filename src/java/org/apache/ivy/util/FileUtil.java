@@ -94,7 +94,7 @@ public final class FileUtil {
             
             // check if the result is a true symbolic link
             if (dest.getAbsolutePath().equals(dest.getCanonicalPath())) {
-                overwrite = true; // just make sure we do overwrite the invalid symlink!
+                dest.delete(); // just make sure we do delete the invalid symlink!
                 throw new IOException("error symlinking: " + dest + " isn't a symlink"); 
             }
         } catch (IOException x) {
