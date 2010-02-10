@@ -202,10 +202,11 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     public List list(String parent) throws IOException {
         try {
             ChannelSftp c = getSftpChannel(parent);
-            Collection r = c.ls(parent);
+            String path = getPath(parent);
+            Collection r = c.ls(path);
             if (r != null) {
-                if (!parent.endsWith("/")) {
-                    parent = parent + "/";
+                if (!path.endsWith("/")) {
+                	path = parent + "/";
                 }
                 List result = new ArrayList();
                 for (Iterator iter = r.iterator(); iter.hasNext();) {
@@ -215,7 +216,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
                         if (".".equals(entry.getFilename()) || "..".equals(entry.getFilename())) {
                             continue;
                         }
-                        result.add(parent + entry.getFilename());
+                        result.add(path + entry.getFilename());
                     }
                 }
                 return result;
@@ -224,7 +225,11 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             IOException ex = new IOException("Failed to return a listing for '" + parent + "'");
             ex.initCause(e);
             throw ex;
-        }
+        } catch (URISyntaxException usex) {
+            IOException ex = new IOException("Failed to return a listing for '" + parent + "'");
+            ex.initCause(usex);
+            throw ex;
+        }            
         return null;
     }
 
