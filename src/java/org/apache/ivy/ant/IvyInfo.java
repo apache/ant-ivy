@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
@@ -147,8 +148,8 @@ public class IvyInfo extends IvyTask {
             throw new BuildException("impossible to resolve dependencies: " + e, e);
         }
     }
-    
-    private void setProperties(ModuleDescriptor md, ModuleRevisionId mrid) {        
+
+    private void setProperties(ModuleDescriptor md, ModuleRevisionId mrid) {
         getProject().setProperty(property + ".organisation", mrid.getOrganisation());
         getProject().setProperty(property + ".module", mrid.getName());
         if (mrid.getBranch() != null) {
@@ -156,16 +157,20 @@ public class IvyInfo extends IvyTask {
         }
         getProject().setProperty(property + ".revision", mrid.getRevision());
         getProject().setProperty(property + ".status", md.getStatus());
-        
+        if (md.getPublicationDate() != null) {
+            getProject().setProperty(property + ".publication",
+                                     Long.toString(md.getPublicationDate().getTime()));
+        }
+
         Map extra = mrid.getExtraAttributes();
         for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
             Entry entry = (Entry) iter.next();
             getProject().setProperty(
                 property + ".extra." + entry.getKey(), (String) entry.getValue());
         }
-        
+
         getProject().setProperty(
-            property + ".configurations", mergeConfs(md.getConfigurationsNames()));
+                property + ".configurations", mergeConfs(md.getConfigurationsNames()));
 
         // store the public configurations in a separate property
         Configuration[] configs = md.getConfigurations();
@@ -175,14 +180,31 @@ public class IvyInfo extends IvyTask {
             if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
                 publicConfigsList.add(name);
             }
-            
+
             if (configs[i].getDescription() != null) {
                 getProject().setProperty(property + ".configuration." + name + ".desc",
                                          configs[i].getDescription());
             }
         }
-        String[] publicConfigs = (String[]) publicConfigsList
-                .toArray(new String[publicConfigsList.size()]);
+        String[] publicConfigs =
+                (String[]) publicConfigsList.toArray(new String[publicConfigsList.size()]);
         getProject().setProperty(property + ".public.configurations", mergeConfs(publicConfigs));
+
+        Artifact[] artifacts = md.getAllArtifacts();
+        for (int i = 0; i < artifacts.length; i++) {
+            int id = i + 1;
+            getProject().setProperty(property + ".artifact." + id + ".name", artifacts[i].getName());
+            getProject().setProperty(property + ".artifact." + id + ".type", artifacts[i].getType());
+            getProject().setProperty(property + ".artifact." + id + ".ext", artifacts[i].getExt());
+            getProject().setProperty(property + ".artifact." + id + ".conf",
+                                     mergeConfs(artifacts[i].getConfigurations()));
+
+            Map artiExtra = artifacts[i].getExtraAttributes();
+            for (Iterator iter = artiExtra.entrySet().iterator(); iter.hasNext();) {
+                Entry entry = (Entry) iter.next();
+                getProject().setProperty(property + ".artifact." + id + ".extra." + entry.getKey(),
+                                         (String) entry.getValue());
+            }
+        }
     }
 }

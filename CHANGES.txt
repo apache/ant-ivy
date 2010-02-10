@@ -75,6 +75,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Emmanuel Pellereau
 	Roshan Punnoose
 	Jean-Baptiste Quenot
+	Carl Quinn
 	Damon Rand
 	Geoff Reedy
 	Christian Riege
@@ -102,6 +103,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - NEW: Make ivy.xml <conf description> available (IVY-1158)
 
+- IMPROVEMENT: Enhance <info/> task to access the 'publication', 'branch' and published artifacts as ant propeties (IVY-395) (thanks to Carl Quinn)
 - IMPROVEMENT: Ivy doesn't support Maven 2.0.9 'import' scope (IVY-807)
 - IMPROVEMENT: resolver attribute for listmodules task (IVY-1057)
 - IMPROVEMENT: discover 'src' sources in maven repos (IVY-1138)

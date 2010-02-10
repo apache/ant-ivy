@@ -36,7 +36,7 @@ public class IvyInfoTest extends TestCase {
     public void testSimple() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         info.execute();
-        
+
         assertEquals("apache", info.getProject().getProperty("ivy.organisation"));
         assertEquals("resolve-simple", info.getProject().getProperty("ivy.module"));
         assertEquals("1.0", info.getProject().getProperty("ivy.revision"));
@@ -47,7 +47,7 @@ public class IvyInfoTest extends TestCase {
     public void testAll() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
-        
+
         assertEquals("apache", info.getProject().getProperty("ivy.organisation"));
         assertEquals("info-all", info.getProject().getProperty("ivy.module"));
         assertEquals("1.0", info.getProject().getProperty("ivy.revision"));
@@ -56,7 +56,7 @@ public class IvyInfoTest extends TestCase {
         assertEquals("default, test", info.getProject().getProperty("ivy.public.configurations"));
         assertEquals("trunk", info.getProject().getProperty("ivy.branch"));
         assertEquals("myvalue", info.getProject().getProperty("ivy.extra.myextraatt"));
-        
+
         // test the configuration descriptions
         assertEquals("The default dependencies", info.getProject().getProperty("ivy.configuration.default.desc"));
         assertEquals("Dependencies used for testing", info.getProject().getProperty("ivy.configuration.test.desc"));
@@ -66,8 +66,30 @@ public class IvyInfoTest extends TestCase {
     public void testIVY726() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
-        
+
         assertTrue(info.getProject().getProperty("ivy.extra.branch") == null);
+    }
+
+    public void testIVY395() throws Exception {
+        info.setFile(new File("test/java/org/apache/ivy/ant/ivy-artifact-info.xml"));
+        info.execute();
+
+        assertEquals("test", info.getProject().getProperty("ivy.artifact.1.name"));
+        assertEquals("jar", info.getProject().getProperty("ivy.artifact.1.type"));
+        assertEquals("jar", info.getProject().getProperty("ivy.artifact.1.ext"));
+        assertEquals("master, alt", info.getProject().getProperty("ivy.artifact.1.conf"));
+        assertEquals("main", info.getProject().getProperty("ivy.artifact.1.extra.data"));
+
+        assertEquals("test-a", info.getProject().getProperty("ivy.artifact.2.name"));
+        assertEquals("jar", info.getProject().getProperty("ivy.artifact.2.type"));
+        assertEquals("jar", info.getProject().getProperty("ivy.artifact.2.ext"));
+        assertEquals("alt", info.getProject().getProperty("ivy.artifact.2.conf"));
+        assertEquals("client", info.getProject().getProperty("ivy.artifact.2.extra.data"));
+
+        assertEquals("stuff", info.getProject().getProperty("ivy.artifact.3.name"));
+        assertEquals("javadoc", info.getProject().getProperty("ivy.artifact.3.type"));
+        assertEquals("zip", info.getProject().getProperty("ivy.artifact.3.ext"));
+        assertEquals("doc", info.getProject().getProperty("ivy.artifact.3.conf"));
     }
 
 }

@@ -15,12 +15,12 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <html>
 <head>
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
-	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
@@ -34,15 +34,21 @@ The information is retrieved by setting ant properties:
     <tr><th class="ant-prop">Property</th><th class="ant-desc">Description</th></tr>
 </thead>
 <tbody>
-<tr><td>ivy.organisation</td><td>The organisation of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
-<tr><td>ivy.module</td><td>The name of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
-<tr><td>ivy.branch</td><td>The branch of the module if any, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
-<tr><td>ivy.revision</td><td>The revision of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
-<tr><td>ivy.status</td><td>The status of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
+<tr><td>ivy.organisation</td><td>The organisation of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed.</td></tr>
+<tr><td>ivy.module</td><td>The name of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed.</td></tr>
+<tr><td>ivy.branch</td><td>The branch of the module if any, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed.</td></tr>
+<tr><td>ivy.revision</td><td>The revision of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed.</td></tr>
+<tr><td>ivy.status</td><td>The status of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed.</td></tr>
+<tr><td>ivy.publication</td><td>The publication time of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed. <span class="since">(Since 2.2)</span></td></tr>
 <tr><td>ivy.extra.<i>[any extra attribute]</i></td><td>Corresponding extra attribute value, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.configurations</td><td>A comma separated list of configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 <tr><td>ivy.public.configurations</td><td>A comma separated list of public configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 <tr><td>ivy.configuration.<i>[config name]</i>.desc</td><td>For each configuration with a description, a property is created containing this description. <span class="since">(Since 2.2)</span></td></tr>
+<tr><td>ivy.artifact.<i>[index]</i>.name</td><td>For each published artifact, a property is created containing its name. <span class="since">(Since 2.2)</span></td></tr>
+<tr><td>ivy.artifact.<i>[index]</i>.type</td><td>For each published artifact, a property is created containing its type. <span class="since">(Since 2.2)</span></td></tr>
+<tr><td>ivy.artifact.<i>[index]</i>.ext</td><td>For each published artifact, a property is created containing its ext. <span class="since">(Since 2.2)</span></td></tr>
+<tr><td>ivy.artifact.<i>[index]</i>.conf</td><td>For each published artifact, a property is created containing its conf. <span class="since">(Since 2.2)</span></td></tr>
+<tr><td>ivy.artifact.<i>[index]</i>.extra.<i>[any extra attribute]</i></td><td>For each extra attribute of the published artifact, a property is created containing its name. <span class="since">(Since 2.2)</span></td></tr>
 </tbody>
 </table>
 <br/>
@@ -55,6 +61,10 @@ The revision pattern is what is used when declaring a <a href="../ivyfile/depend
 If no matching module is found then no property values are set.
 
 You may now also set the property attribute to change the first part of the property names that are set by this task e.g. if you set the property attribute to 'mymodule' this task will set the ant properties <i>mymodule.organisation</i>, <i>mymodule.module</i>, <i>mymodule.revision</i> etc.
+
+<span class="since">since 2.2</span>
+
+Since Ivy 2.2 this task has been enhanced to also retrieve detailed information about the module's published artifacts, as well as the publication time.
 
 <h1>Attributes</h1>
 <table class="ant">
@@ -79,7 +89,7 @@ You may now also set the property attribute to change the first part of the prop
 <h1>Examples</h1>
 Given this ivy.xml file:
 <code>
-<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra"> 
+<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
 	<info organisation="apache"
 	       module="info-all"
 	       branch="trunk"
@@ -92,6 +102,10 @@ Given this ivy.xml file:
 		<conf name="test" />
 		<conf name="private" visibility="private"/>
 	</configurations>
+	<publications>
+		<artifact name="thing1" type="jar" ext="jar" conf="default" e:data="main"/>
+		<artifact name="thing2" type="jar" ext="jar" conf="default" e:data="client"/>
+	</publications>
 	<dependencies>
 		<dependency org="org1" name="mod1.2" rev="2.0"/>
 	</dependencies>
@@ -110,6 +124,16 @@ ivy.status=release
 ivy.extra.myextraatt=myvalue
 ivy.configurations=default, test, private
 ivy.public.configurations=default, test
+ivy.artifact.1.name=thing1
+ivy.artifact.1.type=jar
+ivy.artifact.1.ext=jar
+ivy.artifact.1.conf=default
+ivy.artifact.1.extra.data=main
+ivy.artifact.2.name=thing2
+ivy.artifact.2.type=jar
+ivy.artifact.2.ext=jar
+ivy.artifact.2.conf=default
+ivy.artifact.2.extra.data=client
 </code>
 Given the same ivy module in a repository:
 <code>
@@ -129,6 +153,16 @@ infotest.status=release
 infotest.extra.myextraatt=myvalue
 infotest.configurations=default, test, private
 infotest.public.configurations=default, test
+infotest.artifact.1.name=thing1
+infotest.artifact.1.type=jar
+infotest.artifact.1.ext=jar
+infotest.artifact.1.conf=default
+infotest.artifact.1.extra.data=main
+infotest.artifact.2.name=thing2
+infotest.artifact.2.type=jar
+infotest.artifact.2.ext=jar
+infotest.artifact.2.conf=default
+infotest.artifact.2.extra.data=client
 </code>
 
 	</textarea>
