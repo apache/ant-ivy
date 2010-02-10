@@ -45,6 +45,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Ben Hale
 	Peter Hayes
 	Scott Hebert
+	Achim Huegen
 	Matt Inger
 	Anders Janmyr
 	Steve Jones
@@ -107,6 +108,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: parent.groupId is not resolved in maven 2 parser (IVY-1169) (thanks to Achim Huegen)
 - FIX: Creation of symlinks problematic in Windows with Cygwin 1.7 (IVY-1165)
 - FIX: add ability to programmatically change default resolver (IVY-1163) (thanks to Jason Trump)
 - FIX: ivy.settings.dir space escaping problem (IVY-1162)
