@@ -176,10 +176,7 @@ public class PublishEngine {
             DependencyResolver resolver, PublishOptions options) throws IOException {
         Collection missing = new ArrayList();
         Set artifactsSet = new LinkedHashSet();
-        String[] confs = options.getConfs();
-        if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
-            confs = md.getConfigurationsNames();
-        }
+        String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
         for (int i = 0; i < confs.length; i++) {
             Artifact[] artifacts = md.getArtifacts(confs[i]);
