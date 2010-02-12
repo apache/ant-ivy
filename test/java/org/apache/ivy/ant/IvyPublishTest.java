@@ -251,6 +251,28 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/apache/multi/jars/multi2-1.2.jar").exists());
     }
 
+    public void testPublishPublicConfigsByWildcard() throws Exception {
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-public.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
+        publish.setConf("*(public)");
+        File art = new File("build/test/publish/publish-public-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        publish.addArtifactspattern("build/test/publish/[artifact]-[revision].[ext]");
+        publish.execute();
+
+        // should have do the ivy delivering
+        assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
+        
+        // should have published the files with "1" resolver
+        assertTrue(new File("test/repositories/1/apache/publish-public/ivys/ivy-1.2.xml").exists());
+        assertTrue(new File("test/repositories/1/apache/publish-public/jars/publish-public-1.2.jar").exists());
+    }
+
     public void testCustom() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-custom.xml");
         IvyResolve res = new IvyResolve();
