@@ -6,24 +6,24 @@
 for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY
 
  Committers
- 	Maarten Coene
- 	Xavier Hanin
+	Maarten Coene
+	Xavier Hanin
 	Nicolas Lalevee
-    Jon Schneider
- 	Gilles Scokart
+	Jon Schneider
+	Gilles Scokart
   
  Contributors
- 	Ingo Adler
- 	alex322
- 	Mathieu Anquetin
- 	Andreas Axelsson
+	Ingo Adler
+	alex322
+	Mathieu Anquetin
+	Andreas Axelsson
 	Stephane Bailliez
 	Karl Baum
 	Mikkel Bjerg
 	Jeffrey Blattman
 	Jasper Blues
 	Jim Bonanno
-    Dave Brosius
+	Dave Brosius
 	Matthieu Brouillard
 	Carlton Brown
 	Mirko Bulovic
@@ -416,7 +416,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
-- IMPROVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom 	 
+- IMPROVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom
 
 - FIX: ivy:install task not using validate attribute (IVY-728)
 - FIX: Bad conflict resolution leads to bad "configuration(s) not found" error (IVY-729)
