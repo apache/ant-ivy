@@ -6,12 +6,12 @@
 for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY
 
  Committers
+    Matt Benson
 	Maarten Coene
 	Xavier Hanin
 	Nicolas Lalevee
 	Jon Schneider
 	Gilles Scokart
-	Matt Benson
   
  Contributors
 	Ingo Adler
