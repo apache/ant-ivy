@@ -65,6 +65,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sakari Maaranen
 	Jan Materne
 	Markus M. May
+	J. Lewis Muir
 	Stephen Nesbitt
 	Joshua Nichols
 	Bernard Niset
@@ -101,6 +102,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: Fixed several grammatical and typographic errors in documentation (IVY-1172) (thanks to J. Lewis Muir)
 - DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)
 
 - NEW: Make ivy.xml <conf description> available (IVY-1158)

@@ -47,9 +47,9 @@ The following <a name="illustration">illustration</a> shows all the key terminol
 <p><img alt="terminology illustration" src="images/ivy-terminology.png" width="587" height="1040" vspace="16"/></p>
 
 <h1><a name="organisation">Organisation</a></h1>
-An organisation is either a company, an individual, or simply any group of people that produces software. In principle, Ivy handles only a single level of organisation meaning that they have a flat namespace in Ivy module descriptors. So, with Ivy descriptors, you can only describe a tree-like organisation structure, if you use a hierarchical naming convention. The organisation name is used for keeping together software produced by the same team, just to help locate their published works.
+An organisation is either a company, an individual, or simply any group of people that produces software. In principle, Ivy handles only a single level of organisation, meaning that they have a flat namespace in Ivy module descriptors. So, with Ivy descriptors, you can only describe a tree-like organisation structure, if you use a hierarchical naming convention. The organisation name is used for keeping together software produced by the same team, just to help locate their published works.
 
-Often organisations will use their inverted domain name as their organisation name in Ivy, since domain names by definition are unique. A company whose domain name is www.example.com might want to use com.example, or if they had multiple teams all their organisation names could begin with com.example (e.g. com.example.rd, com.example.infra, com.example.services). The organisation name does neither really have to be an inverted domain name, nor even globally unique, but unique naming is highly recommended. Widely recognized trademark or trade name owners may choose to use their brand name instead.
+Often organisations will use their inverted domain name as their organisation name in Ivy, since domain names by definition are unique. A company whose domain name is www.example.com might want to use com.example, or if they had multiple teams, all their organisation names could begin with com.example (e.g. com.example.rd, com.example.infra, com.example.services). The organisation name does neither really have to be an inverted domain name, nor even globally unique, but unique naming is highly recommended. Widely recognized trademark or trade name owners may choose to use their brand name instead.
 
 <i>Examples: org.apache, ibm, jayasoft</i>
 
@@ -66,19 +66,19 @@ A <em>module descriptor</em> is a generic way of identifying what describes a mo
 
 The most common module descriptors in Ivy are [[ivyfile]], xml files with an Ivy specific syntax, and usually called ivy.xml.
 
-But since Ivy is also compatible with maven 2 metadata format (called pom, for Project Object Model), pom files falls into the category of module descriptors.
+But since Ivy is also compatible with maven 2 metadata format (called pom, for Project Object Model), pom files fall into the category of module descriptors.
 
 And because Ivy accepts pluggable module descriptor parsers, you can use almost whatever you want as module descriptors.
 <h1><a name="artifact">Artifact</a></h1>
 An artifact is <em>a single file</em> ready for delivery with the publication of a module revision, as a product of development.
 
-Compressed package formats are often preferred because they are easier to manage, transfer and storage. For the same reasons, only one or a few artifacts per module are commonly used. However, artifacts can be of any file type and any number of them can be declared in a single module.
+Compressed package formats are often preferred because they are easier to manage, transfer and store. For the same reasons, only one or a few artifacts per module are commonly used. However, artifacts can be of any file type and any number of them can be declared in a single module.
 
 In the Java world, common artifacts are Java archives or JAR files. In many cases, each revision of a module publishes only one artifact (like jakarta-log4j-1.2.6.tar.gz, for instance), but some of them publish many artifacts dependending on the use of the module (like apache-ant binary and source distributions in zip, gz and bz2 package formats, for instance).
 
 <i>Examples: ant-1.7.0-bin.zip, apache-ant-1.7.0-src.tar.gz </i>
 <h2><a name="type">Type</a> of an artifact</h2>
-The artifact type is a category of a particular kind of artifact specimen. It is a classification based on the intended purpose of an artifact or <em>why</em> is it provided, not a category of packaging format or <em>how</em> is the artifact delivered.
+The artifact type is a category of a particular kind of artifact specimen. It is a classification based on the intended purpose of an artifact or <em>why</em> it is provided, not a category of packaging format or <em>how</em> the artifact is delivered.
 
 Although the type of an artifact may (rather accidentally) imply its file format, they are two different concepts. The artifact file name extension is more closely associated with its format. For example, in the case of Java archives the artifact type "jar" indicates that it is indeed a Java archive as per the JAR File specification. The file name extension happens to be "jar" as well. On the other hand, with source code distributions, the artifact type may be "source" while the file name extensions vary from "tar.gz", "zip", "java", "c", or "xml" to pretty much anything. So, the type of an artifact is basically an abstract functional category to explain its purpose, while the artifact file name extension is a more concrete technical indication of its format and, of course, naming.
 
@@ -117,13 +117,13 @@ Three statuses are defined by default in Ivy:
 A <em>module configuration</em> is a way to use or construct a module. If the same module has different dependencies based on how it's used, those distinct dependency-sets are called its configurations in Ivy.
 
 Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server).
-Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those differents ways to use or build a module are called module configurations in ivy. 
+Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in ivy. 
 
 For more details on configurations and how they are used in ivy, please refer to the <a href="concept.html">main concepts page</a>.
 <h1><a name="settings">Ivy Settings</a></h1>
 Ivy settings files are xml files used to configure ivy to indicate where the modules can be found and how.
 <h3><i>History of settings</i></h3>
-<i>Prior to Ivy 2.0, the settings files were called configuration files and usually named ivyconf.xml. This resulted in a confusion between module configurations and Ivy configuration files, so they were renamed to settings files. If you happen to fall on an ivyconf file or something called a configuration file, most of the time it's only unupdated information (documentation, tutorial or article). Feel free to report any problem like this, if you find such inconsistencies in this documentation.</i>
+<i>Prior to Ivy 2.0, the settings files were called configuration files and usually named ivyconf.xml. This resulted in confusion between module configurations and Ivy configuration files, so they were renamed to settings files. If you happen to fall on an ivyconf file or something called a configuration file, most of the time it's only unupdated information (documentation, tutorial or article). Feel free to report any problem like this if you find such an inconsistency.</i>
 
 <h1><a name="repository">Repository</a></h1>
 What is called a <em>repository</em> in Ivy is a distribution site location where Ivy is able to find your required modules' artifacts and descriptors (i.e. Ivy files in most cases).

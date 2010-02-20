@@ -68,10 +68,10 @@ This calls ivy with default values, which might be ok in several projects. In fa
 </target>
 </code>
 
-Those 3 tasks follow the 3 main steps of ivy retrieving dependencies process:
+Those 3 tasks follow the 3 main steps of the ivy retrieving dependencies process:
 <ul>
-<li>First the configure task tells it how it can find dependencies giving it a path to an <a href="configuration.html">xml configuration file</a>.</li> 
-<li>Then the resolve task actually resolve dependencies described by an <a href="ivyfile.html">ivy file</a>, and put those dependencies in the ivy cache (a directory configured in the configuration file).</li>
+<li>First the configure task tells it how it can find dependencies giving it a path to an <a href="settings.html">xml settings file</a>.</li> 
+<li>Then the resolve task actually resolves dependencies described by an <a href="ivyfile.html">ivy file</a>, and puts those dependencies in the ivy cache (a directory configured in the settings file).</li>
 <li>Finally the retrieve task copies dependencies from the cache to anywhere you want in your file system. You can then use those dependencies to make your classpath with standard ant paths.</li>
 </ul>
 
