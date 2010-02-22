@@ -92,6 +92,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Johan Stuyts
 	Jason Trump
 	Tjeerd Verhagen
+	Sven Walter
 	James P. White
 	Tom Widmer
 	John Williams
@@ -114,6 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Authentication won't work in some situations (IVY-1168) (thanks to Sven Walter)
 - FIX: Using SFTP resolver with full pattern URL prevents use of dynamic versions (IVY-1167) (thanks to Gregory Fernandez)
 - FIX: parent.groupId is not resolved in maven 2 parser (IVY-1169) (thanks to Achim Huegen)
 - FIX: Creation of symlinks problematic in Windows with Cygwin 1.7 (IVY-1165)

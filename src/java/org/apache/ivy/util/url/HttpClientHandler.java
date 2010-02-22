@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -37,14 +38,16 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
+import org.apache.commons.httpclient.auth.AuthScheme;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
-import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
@@ -292,13 +295,9 @@ public class HttpClientHandler extends AbstractURLHandler {
                 "Apache Ivy/" + Ivy.getIvyVersion());
         }
 
-        Credentials c = getCredentials(url);
-        if (c != null) {
-            Message.debug("found credentials for " + url + ": " + c);
-            httpClient.getState().setCredentials(
-                new AuthScope(c.getHost(), AuthScope.ANY_PORT, c.getRealm()),
-                new NTCredentials(c.getUserName(), c.getPasswd(), 
-                    HostUtil.getLocalHostName(), c.getRealm()));
+        if (useAuthentication(url)) {
+            httpClient.getParams().setParameter(CredentialsProvider.PROVIDER, 
+                    new IvyCredentialsProvider()); 
         }
 
         return httpClient;
@@ -309,11 +308,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private boolean useAuthentication(URL url) {
-        return getCredentials(url) != null;
-    }
-
-    private Credentials getCredentials(URL url) {
-        return CredentialsStore.INSTANCE.getCredentials(null, url.getHost());
+        return CredentialsStore.INSTANCE.hasCredentials(url.getHost());
     }
 
     private boolean useProxyAuthentication() {
@@ -428,5 +423,23 @@ public class HttpClientHandler extends AbstractURLHandler {
         long getResponseContentLength(HttpMethodBase method);
 
         int getHttpClientMajorVersion();
+    }
+    
+    private static class IvyCredentialsProvider implements CredentialsProvider {
+
+        public Credentials getCredentials(AuthScheme scheme, String host, int port, boolean proxy)
+                throws CredentialsNotAvailableException {
+            String realm = scheme.getRealm();
+            
+            org.apache.ivy.util.Credentials c = (org.apache.ivy.util.Credentials) 
+                    CredentialsStore.INSTANCE.getCredentials(realm, host);
+            if (c != null) {
+                return new NTCredentials(c.getUserName(), c.getPasswd(), 
+                    HostUtil.getLocalHostName(), c.getRealm());
+            }
+            
+            return null;
+        }
+
     }
 }

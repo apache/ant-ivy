@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.util.url;
 
+import java.lang.reflect.Field;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
@@ -28,18 +29,36 @@ import org.apache.ivy.util.Message;
  */
 public final class IvyAuthenticator extends Authenticator {
 
+    private Authenticator original;
+    
     /**
-     * The sole instance.
+     * Private c'tor to prevent instantiation.
      */
-    public static final IvyAuthenticator INSTANCE = new IvyAuthenticator();
+    private IvyAuthenticator(Authenticator original) {
+        this.original = original;
+    }
+    
+    /**
+     * Installs an <tt>IvyAuthenticator</tt> as default <tt>Authenticator</tt>.
+     * Call this method before opening HTTP(S) connections to enable Ivy
+     * authentication.
+     */
+    public static void install() {
+        // We will try to use the original authenticator as backup authenticator. 
+        // Since there is no getter available, so try to use some reflection to 
+        // obtain it. If that doesn't work, assume there is no original authenticator
+        Authenticator original = null;
+        
+        try {
+            Field f = Authenticator.class.getDeclaredField("theAuthenticator");
+            original = (Authenticator) f.get(null);
+        } catch (Throwable t) {
+            Message.debug("Error occured while getting the original authenticator!");            
+        }
 
-    /**
-     * Private c'tor to prevent instantiation. Also installs this as the default Authenticator to
-     * use by the JVM.
-     */
-    private IvyAuthenticator() {
-        // Install this as the default Authenticator object.
-        Authenticator.setDefault(this);
+        if (!(original instanceof IvyAuthenticator)) {
+            Authenticator.setDefault(new IvyAuthenticator(original));
+        }
     }
 
     // API ******************************************************************
@@ -65,6 +84,17 @@ public final class IvyAuthenticator extends Authenticator {
                     + "'");
             if (c != null) {
                 result = new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray());
+            }
+        }
+        
+        if ((result == null) && (original != null)) {
+            Authenticator.setDefault(original);
+            try {
+                result = Authenticator.requestPasswordAuthentication(getRequestingHost(), 
+                        getRequestingSite(), getRequestingPort(), getRequestingProtocol(), 
+                        getRequestingPrompt(), getRequestingScheme());
+            } finally {
+                Authenticator.setDefault(this);
             }
         }
         
