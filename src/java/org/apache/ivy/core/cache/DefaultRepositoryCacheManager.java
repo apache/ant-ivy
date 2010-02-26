@@ -547,13 +547,29 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             Message.error("impossible to acquire lock for " + mrid);
             return null;
         }
+        
+        boolean unlock = true;
+        
         try {
             if (settings.getVersionMatcher().isDynamic(mrid)) {
                 String resolvedRevision = getResolvedRevision(mrid, options);
                 if (resolvedRevision != null) {
                     Message.verbose("found resolved revision in cache: " 
                         + mrid + " => " + resolvedRevision);
+                    
+                    // we have found another module in the cache, make sure we unlock
+                    // the original module
+                    unlockMetadataArtifact(mrid);
                     mrid = ModuleRevisionId.newInstance(mrid, resolvedRevision);
+                    
+                    // don't forget to request a lock on the new module!
+                    if (!lockMetadataArtifact(mrid)) {
+                        Message.error("impossible to acquire lock for " + mrid);
+                        
+                        // we couldn't lock the new module, so no need to unlock it
+                        unlock = false;
+                        return null;
+                    }
                 } else {
                     return null;
                 }
@@ -619,7 +635,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 Message.debug("\tno ivy file in cache for " + mrid + ": tried " + ivyFile);
             }
         } finally {
-            unlockMetadataArtifact(mrid);
+            if (unlock) {
+                unlockMetadataArtifact(mrid);
+            }
         }
         return null;
     }

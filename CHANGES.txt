@@ -115,6 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: artifact-lock strategy could hang Ivy when resolving dynamic revisions
 - FIX: Authentication won't work in some situations (IVY-1168) (thanks to Sven Walter)
 - FIX: Using SFTP resolver with full pattern URL prevents use of dynamic versions (IVY-1167) (thanks to Gregory Fernandez)
 - FIX: parent.groupId is not resolved in maven 2 parser (IVY-1169) (thanks to Achim Huegen)
