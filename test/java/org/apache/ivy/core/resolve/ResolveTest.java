@@ -2543,6 +2543,31 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveWithDynamicRevisionsAndArtifactLockStrategy() throws Exception {
+        // mod4.1 v 4.5 depends on
+        // - mod1.2 v 1+ and forces it
+        // - mod3.1 v 1.2 which depends on mod1.2 v 2+
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings-artifact-lock.xml"));
+        ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.5.xml")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+
+        List lockFiles = new ArrayList();
+        findLockFiles(cache, lockFiles);
+        assertTrue("There were lockfiles left in the cache: " + lockFiles, lockFiles.isEmpty());
+    }
+    
+    private void findLockFiles(File dir, List result) {
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isDirectory()) {
+                findLockFiles(files[i], result);
+            } else if (files[i].getName().endsWith(".lck")) {
+                result.add(files[i]);
+            }
+        }
+    }
+
     public void testResolveForceWithDynamicRevisions() throws Exception {
         // mod4.1 v 4.5 depends on
         // - mod1.2 v 1+ and forces it
