@@ -70,7 +70,16 @@ public class ApacheURLListerTest extends TestCase {
         assertNotNull(files);
         assertTrue(files.size() > 0);
     }
+    
+    public void testRetrieveArtifactoryListing() throws Exception {
+        ApacheURLLister lister = new ApacheURLLister();
 
+        List files = lister.retrieveListing(ApacheURLListerTest.class
+                .getResource("artifactory-dir-listing.html"), true, true);
+        assertNotNull(files);
+        assertEquals(1, files.size());
+    }
+    
     public void testRetrieveArchivaListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 

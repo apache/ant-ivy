@@ -49,6 +49,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Scott Hebert
 	Achim Huegen
 	Matt Inger
+	Anders Jacobsson
 	Anders Janmyr
 	Steve Jones
 	Christer Jonsson
@@ -115,6 +116,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: ApacheURLLister does not allow directories not containing a dot on Artifactory (IVY-1175) (thanks to Anders Jacobsson)
 - FIX: artifact-lock strategy could hang Ivy when resolving dynamic revisions
 - FIX: Authentication won't work in some situations (IVY-1168) (thanks to Sven Walter)
 - FIX: Using SFTP resolver with full pattern URL prevents use of dynamic versions (IVY-1167) (thanks to Gregory Fernandez)

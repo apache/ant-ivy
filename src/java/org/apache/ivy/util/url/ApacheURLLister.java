@@ -159,14 +159,19 @@ public class ApacheURLLister {
 
             // exclude those where they do not match
             // href will never be truncated, text may be truncated by apache
-            // may have a '.' from either the extension (.jar) or "..&gt;"
-            int dotIndex = text.indexOf('.');
-
-            if (((dotIndex != -1) && !href.startsWith(text.substring(0, dotIndex)))
-                    || ((dotIndex == -1) 
-                            && !href.toLowerCase(Locale.US).equals(text.toLowerCase(Locale.US)))) {
-                // the href and the text do not "match"
-                continue;
+            if (text.endsWith("..>")) {
+                // text is probably truncated, we can only check if the href starts with text
+                if (!href.startsWith(text.substring(0, text.length() - 3))) {
+                    continue;
+                }
+            } else {
+                // text is not truncated, so it must match the url after stripping optional
+                // trailing slashes
+                String strippedHref = href.endsWith("/") ? href.substring(0, href.length() - 1) : href;
+                String strippedText = text.endsWith("/") ? text.substring(0, text.length() - 1) : text;
+                if (!strippedHref.equalsIgnoreCase(strippedText)) {
+                    continue;
+                }
             }
 
             boolean directory = href.endsWith("/");
