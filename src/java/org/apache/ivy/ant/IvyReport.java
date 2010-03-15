@@ -164,7 +164,7 @@ public class IvyReport extends IvyTask {
         if (conf == null) {
             throw new BuildException(
                     "no conf provided for ivy report task: "
-                    + "It can either be set explicitely via the attribute 'conf' or"
+                    + "It can either be set explicitely via the attribute 'conf' or "
                     + "via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         if (todir == null) {
