@@ -56,17 +56,17 @@ The source artifact pattern can be specified either as an attribute on the task 
         <td>No. Defaults to the ${ivy.deliver.revision}</td></tr>
     <tr><td>pubbranch</td><td>the branch to use for the publication</td>
         <td>No. Defaults to the ${ivy.deliver.branch}</td></tr>
-    <tr><td>forcedeliver</td><td>true to force the implicit call to deliver, false to do it only if the ivy file to publish doesn't exist yet <span class="since">since 1.4</span></td>
+    <tr><td>forcedeliver</td><td>true to force the implicit call to deliver, false to do it only if the ivy file to publish doesn't exist yet <span class="since">(since 1.4)</span></td>
         <td>No. Defaults to false</td></tr>
     <tr><td>update</td><td>true to update ivy file metadata (revision, branch, publication date and status) before publishing, false otherwise. This is usually not necessary when using deliver before publish.</td>
         <td>No. Defaults to false</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
         <td>No. Defaults to default ivy value (as configured in [[settings settings file]])</td></tr>
-    <tr><td>replacedynamicrev</td><td>true to replace dynmic revisions by static ones in the delivered file, false to avoid this replacement <span class="since">since 1.3</span></td>
+    <tr><td>replacedynamicrev</td><td>true to replace dynmic revisions by static ones in the delivered file, false to avoid this replacement <span class="since">(since 1.3)</span></td>
         <td>No. Defaults to true</td></tr>
     <tr><td>publishivy</td><td>True to publish delivered ivy file, false otherwise</td>
         <td>No. Defaults to true</td></tr>
-    <tr><td>conf</td><td>A comma separated list of configurations to publish.  <span class="since">since 1.4.1</span></td>
+    <tr><td>conf</td><td>A comma separated list of configurations to publish  <span class="since">(since 1.4.1)</span>. Accepts wildcards <span class="since">(since 2.2)</span>.</td>
         <td>No. Defaults to all configurations</td></tr>
     <tr><td>overwrite</td><td>True to overwrite files in repository if the revision already exist, false to let it as is</td>
         <td>No. Defaults to false</td></tr>
@@ -74,7 +74,7 @@ The source artifact pattern can be specified either as an attribute on the task 
         <td>No. Defaults to true</td></tr>
     <tr><td>haltonmissing</td><td>True to halt build when artifacts to be published are missing</td>
         <td>No. Defaults to true</td></tr>
-    <tr><td>srcivypattern</td><td>the pattern to use to find ivy file to publish, and even deliver if necessary (<span class="since">since 1.2</span>)</td>
+    <tr><td>srcivypattern</td><td>the pattern to use to find ivy file to publish, and even deliver if necessary <span class="since">(since 1.2)</span></td>
         <td>No. Defaults to the value of artifactspattern</td></tr>
     <tr><td>pubdate</td><td>the publication date to use for the delivery, if necessary. This date should be either 'now', or a date given with the following pattern: yyyyMMddHHmmss</td>
         <td>No. Defaults to 'now'</td></tr>
