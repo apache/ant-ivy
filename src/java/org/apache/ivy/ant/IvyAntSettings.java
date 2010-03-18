@@ -250,9 +250,7 @@ public class IvyAntSettings extends DataType {
         prop.init();
         prop.execute();
 
-        
         IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(project);
-
         IvySettings settings = new IvySettings(ivyAntVariableContainer);
         settings.setBaseDir(project.getBaseDir());
         
@@ -261,9 +259,11 @@ public class IvyAntSettings extends DataType {
         }
 
         Ivy ivy = Ivy.newInstance(settings);
-        ivy.getLoggerEngine().pushLogger(new AntMessageLogger(task));
-        Message.showInfo();
         try {
+            ivy.pushContext();
+            ivy.getLoggerEngine().pushLogger(new AntMessageLogger(task));
+
+            Message.showInfo();
             configureURLHandler();
             if (file != null) {
                 if (!file.exists()) {
@@ -288,6 +288,7 @@ public class IvyAntSettings extends DataType {
                     + (file != null ? "file: " + file : "url: " + url) + " : " + e, e);
         } finally {
             ivy.getLoggerEngine().popLogger();
+            ivy.popContext();
         }
     }
 
