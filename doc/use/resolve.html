@@ -42,7 +42,7 @@ set to the comma separated list of configurations resolved
 <b>Since 1.2:</b>
 An additional property is set to true if the resolved dependencies are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code>
 <b>Since 2.0:</b>
-The property ivy.deps.changed will not be set (and not be computed) if you set the parameter <i>checkIfCompiled</i> to false. (by default it is true to keep backward compatibility).  This allow to optimize your build when you have multi-module build with multiple configurations.
+The property ivy.deps.changed will not be set (and not be computed) if you set the parameter <i>checkIfChanged</i> to false. (by default it is true to keep backward compatibility).  This allow to optimize your build when you have multi-module build with multiple configurations.
 
 <b>Since 2.0:</b>
 In addition, if the <i>resolveId</i> attribute has been set, the following properties are set as well:
