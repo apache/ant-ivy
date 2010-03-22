@@ -344,6 +344,11 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
      */
     private static String normalizeRevision(String revision) {
         if (revision.startsWith("[") && revision.endsWith("]") && revision.indexOf(',') == -1 ) {
+            if (IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY).equals(revision)) {
+                // this is the case when listing dynamic revions
+                return revision;
+            }
+            
             return revision.substring(1, revision.length() - 1);
         } else {
             return revision;
