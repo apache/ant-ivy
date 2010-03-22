@@ -210,7 +210,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             // just to get the default branch
             ? (context.peekIvy() == null ? null : context.getSettings().getDefaultBranch(moduleId)) 
             : branch;
-        this.revision = revision == null ? Ivy.getWorkingRevision() : revision;
+        this.revision = revision == null ? Ivy.getWorkingRevision() : normalizeRevision(revision);
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, this.moduleId.getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, this.moduleId.getName());
         setStandardAttribute(IvyPatternHelper.BRANCH_KEY, this.branch);
@@ -336,5 +336,17 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     public String getBranch() {
         return branch;
+    }
+    
+    /**
+     * [revision] is a valid revision in maven. This method strips the '[' and ']'
+     * characters. Cfr. http://docs.codehaus.org/x/IGU
+     */
+    private static String normalizeRevision(String revision) {
+        if (revision.startsWith("[") && revision.endsWith("]") && revision.indexOf(',') == -1 ) {
+            return revision.substring(1, revision.length() - 1);
+        } else {
+            return revision;
+        }
     }
 }
