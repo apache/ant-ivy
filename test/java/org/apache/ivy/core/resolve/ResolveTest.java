@@ -54,7 +54,6 @@ import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
-import org.apache.ivy.plugins.conflict.LatestCompatibleConflictManager;
 import org.apache.ivy.plugins.conflict.StrictConflictException;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
@@ -5016,7 +5015,7 @@ public class ResolveTest extends TestCase {
     public void testIVY956() throws Exception {
         ivy.getSettings().setDefaultConflictManager(ivy.getSettings().getConflictManager("latest-compatible"));
         try {
-            ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-956.xml"),
+            ivy.resolve(ResolveTest.class.getResource("ivy-956.xml"),
                 getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
             fail("No StrictConflictException has been thrown");
         } catch (StrictConflictException e) {
