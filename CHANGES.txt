@@ -117,6 +117,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Transitive dependencies resolutions issue when eviction is triggered (IVY-1178)
 - FIX: Can't deal with [VERSION] version pattern from Maven (IVY-1177) (thanks to Richard Vowles)
 - FIX: verbose/debug messages were not logged while running ivy:configure task
 - FIX: ApacheURLLister does not allow directories not containing a dot on Artifactory (IVY-1175) (thanks to Anders Jacobsson)

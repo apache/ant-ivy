@@ -214,11 +214,25 @@ public class VisitNode {
      * @return true if current node is transitive and the parent configuration is transitive.
      */
     public boolean isTransitive() {
-        return (data.isTransitive() 
-                && (
-                        node.getDependencyDescriptor(getParentNode()).isTransitive() 
-                     || node.hasAnyMergedUsageWithTransitiveDependency(rootModuleConf))
-                && isParentConfTransitive());
+        if (node.isRoot()) {
+            // the root node is always considered transitive!
+            return true;
+        }
+        
+        if (!data.isTransitive()) {
+            return false;
+        }
+        
+        if (!isParentConfTransitive()) {
+            return false;
+        }
+        
+        DependencyDescriptor dd = node.getDependencyDescriptor(getParentNode());
+        if ((dd != null) && dd.isTransitive()) {
+            return true;
+        }
+
+        return node.hasAnyMergedUsageWithTransitiveDependency(rootModuleConf);
     }
 
     /**
