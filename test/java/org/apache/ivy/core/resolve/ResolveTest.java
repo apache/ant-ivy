@@ -3310,6 +3310,33 @@ public class ResolveTest extends TestCase {
                 .exists());
     }
 
+    public void testIVY1178() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-1178/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-1178.xml"),
+            getResolveOptions(new String[] {"*"}));
+
+        assertNotNull(report);
+        assertNotNull(report.getUnresolvedDependencies());
+        assertEquals("Number of unresolved dependencies not correct", 0, report
+                .getUnresolvedDependencies().length);
+        
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("myorg", "modD", "1.1")).exists());
+        assertTrue(getArchiveFileInCache("myorg", "modD", "1.1", "modD", "jar", "jar").exists());
+
+        // evicted dependencies
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("myorg", "modD", "1.0")).exists());
+        assertFalse(getArchiveFileInCache("myorg", "modD", "1.0", "modD", "jar", "jar").exists());
+        
+        // transitive dependencies of modD-1.1 (must not exist: transitive="false" !)
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("myorg", "modE", "1.1")).exists());
+        assertFalse(getArchiveFileInCache("myorg", "modE", "1.1", "modE", "jar", "jar").exists());
+    }
+
     public void testIVY999() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-999/ivysettings.xml"));
