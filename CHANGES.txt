@@ -6,7 +6,7 @@
 for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY
 
  Committers
-    Matt Benson
+	Matt Benson
 	Maarten Coene
 	Xavier Hanin
 	Nicolas Lalevee
@@ -98,7 +98,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	James P. White
 	Tom Widmer
 	John Williams
-    Chris Wood
+	Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	Aleksey Zhukov
