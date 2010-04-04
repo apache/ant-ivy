@@ -73,6 +73,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private String resolveMode = null;
 
     private String log = ResolveOptions.LOG_DEFAULT;
+    
+    private boolean changing = false;
 
     public boolean isUseOrigin() {
         return useOrigin;
@@ -138,6 +140,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 resolve.setBranch(getBranch());
                 resolve.setRevision(getRevision());
                 resolve.setInline(true);
+                resolve.setChanging(isChanging());
                 resolve.setConf(conf);
                 resolve.setResolveId(resolveId);
                 resolve.setTransitive(isTransitive());
@@ -419,6 +422,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     public boolean isKeep() {
         return this.keep == null ? !isInline() : this.keep.booleanValue();
+    }
+    
+    public void setChanging(boolean changing) {
+        this.changing = changing;
+    }
+    
+    public boolean isChanging() {
+        return this.changing;
     }
 
     public void setRefresh(boolean refresh) {

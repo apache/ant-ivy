@@ -133,6 +133,8 @@ After the call to this task, a reference to the module descriptor resolved is pu
 
     <tr><td>branch</td><td>the name of the branch to resolve in inline mode <span class="since">(since 2.1.0)</span></td><td>Defaults to no branch in inline mode, nothing in standard mode.</td></tr>
 
+    <tr><td>changing</td><td>indicates that the module may change when resolving in inline mode. See <a href="../concept.html#change">cache and change management</a> for details. Ignored when resolving in standard mode. <span class="since">(since 1.4)</span></td><td>No. Defaults to false.</td></tr>
+
     <tr><td>type</td><td>comma separated list of accepted artifact types (<span class="since">since 1.2</span>)</td><td>No. defaults to ${ivy.resolve.default.type.filter}</td></tr>
 
     <tr><td>haltonfailure</td><td>true to halt the build on ivy failure, false to continue</td><td>No. Defaults to true</td></tr>

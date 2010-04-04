@@ -107,9 +107,11 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - DOCUMENTATION: Fixed several grammatical and typographic errors in documentation (IVY-1172) (thanks to J. Lewis Muir)
 - DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)
+- DOCUMENTATION: Added documentation of the 'changing' attribute on the ivy:resolve Ant task (IVY-1180)
 
 - NEW: Make ivy.xml <conf description> available (IVY-1158)
 
+- IMPROVEMENT: Support changing="true" for inline retrieve (IVY-1180)
 - IMPROVEMENT: Enhance <info/> task to access the 'publication', 'branch' and published artifacts as ant propeties (IVY-395) (thanks to Carl Quinn)
 - IMPROVEMENT: Ivy doesn't support Maven 2.0.9 'import' scope (IVY-807)
 - IMPROVEMENT: resolver attribute for listmodules task (IVY-1057)
