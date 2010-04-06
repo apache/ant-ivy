@@ -17,17 +17,13 @@
    under the License.    
 -->
 <ivysettings>
-	<settings   defaultCache="${ivy.cache.dir}/advanced"	
-            defaultResolver="my-repository"
-            defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+	<settings defaultCache="${ivy.cache.dir}/advanced"	
+              defaultResolver="my-repository"
+              defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
 
-	<!-- you can override this property to use mirrors 
-	  http://mirrors.dotsrc.org/maven2
-	  http://ftp.ggi-project.org/pub/packages/maven2
-	  http://mirrors.sunsite.dk/maven2
-	  http://public.planetmirror.com/pub/maven2
-	  http://ibiblio.lsu.edu/main/pub/packages/maven2
-	  http://www.ibiblio.net/pub/packages/maven2
+	<!-- 
+	   You can override this property to use one of the mirrors listed on
+	   http://docs.codehaus.org/display/MAVENUSER/Mirrors+Repositories
 	-->
 	<property name="ibiblio-maven2-root" value="http://repo1.maven.org/maven2/" override="false" />
 
