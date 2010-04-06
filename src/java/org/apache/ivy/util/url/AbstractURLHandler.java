@@ -17,13 +17,18 @@
  */
 package org.apache.ivy.util.url;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.regex.Pattern;
+
+import org.apache.ivy.util.CopyProgressListener;
+import org.apache.ivy.util.url.URLHandler.URLInfo;
 
 public abstract class AbstractURLHandler implements URLHandler {
     
@@ -92,8 +97,8 @@ public abstract class AbstractURLHandler implements URLHandler {
         }
         
         try {
-            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), 
-                    url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+            URI uri = new URI(url.getProtocol(), url.getAuthority(),
+                    url.getPath(), url.getQuery(), url.getRef());
             
             // it is possible that the original url was already (partial) escaped,
             // so we must unescape all '%' followed by 2 hexadecimals...
@@ -118,5 +123,4 @@ public abstract class AbstractURLHandler implements URLHandler {
         
         return new URL(normalizeToString(url));
     }
-
 }

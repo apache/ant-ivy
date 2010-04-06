@@ -46,6 +46,18 @@ public class AbstractURLHandlerTest extends TestCase {
         assertEquals("http://ant.apache.org/ivy/ivy-1.%2B.xml", normalizedUrl);
     }
 
+    public void testNormalizeToStringWithUnderscoreInHostname() throws Exception { 
+        AbstractURLHandler handler = new TestURLHandler();
+        String normalizedUrl = handler.normalizeToString(new URL("http://peat_hal.users.sourceforge.net/m2repository"));
+        assertEquals("http://peat_hal.users.sourceforge.net/m2repository", normalizedUrl);
+    }
+    
+    public void testNormalizeToStringWithUnderscoreInHostnameAndSpaceInPath() throws Exception { 
+        AbstractURLHandler handler = new TestURLHandler();
+        String normalizedUrl = handler.normalizeToString(new URL("http://peat_hal.users.sourceforge.net/m2 repository"));
+        assertEquals("http://peat_hal.users.sourceforge.net/m2%20repository", normalizedUrl);
+    }
+    
     private static class TestURLHandler extends AbstractURLHandler {
 
         public void download(URL src, File dest, CopyProgressListener l) throws IOException {
