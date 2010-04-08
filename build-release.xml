@@ -239,12 +239,10 @@
 		<ivy:settings id="sign.settingsId" file="ivysettings-signtask.xml" />
 		<ivy:cachepath organisation="org.apache.commons" settingsRef="sign.settingsId" transitive="false" log="download-only"
 				module="commons-openpgp" revision="1.0-SNAPSHOT" inline="true" pathid="openpgp.classpath"/>
-		<ivy:cachepath organisation="bouncycastle" settingsRef="sign.settingsId" log="download-only"
-				module="bcprov-jdk16" revision="140" inline="true" pathid="bouncycastle.bcprov.classpath"/>
-		
-		<!-- Didn't find the jdk1.6 bcpg dependency, using the jdk1.5 version instead -->
-		<ivy:cachepath organisation="bouncycastle" settingsRef="sign.settingsId" transitive="false" log="download-only"
-				module="bcpg-jdk15" revision="140" inline="true" pathid="bouncycastle.bcpg.classpath"/>
+		<ivy:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" log="download-only"
+				module="bcprov-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcprov.classpath"/>
+		<ivy:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" transitive="false" log="download-only"
+				module="bcpg-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcpg.classpath"/>
 		
 		<property file="${user.home}/ivybuild.properties" />
 		<input message="please enter your PGP password: " addproperty="pgp.password"/>
