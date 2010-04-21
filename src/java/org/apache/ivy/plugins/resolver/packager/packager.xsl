@@ -419,9 +419,9 @@
             <xsl:when test="$type = 'zip' or $type = 'war' or $type = 'jar'">
                 <unzip src="{$file}" dest="{$dir}">
                     <xsl:if test="$includes">
-                        <fileset dir=".">
+                        <patternset>
                             <xsl:copy-of select="$includes"/>
-                        </fileset>
+                        </patternset>
                     </xsl:if>
                 </unzip>
             </xsl:when>
@@ -438,9 +438,9 @@
                         </xsl:when>
                     </xsl:choose>
                     <xsl:if test="$includes">
-                        <fileset dir=".">
+                        <patternset>
                             <xsl:copy-of select="$includes"/>
-                        </fileset>
+                        </patternset>
                     </xsl:if>
                 </untar>
             </xsl:when>

@@ -34,6 +34,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andrea Bernardo Ciddio
 	Archie Cobbs
 	Flavio Coutinho da Costa
+	Stefan De Boey
 	Martin Eigenbrodt
 	Gregory Fernandez
 	Danno Ferrin
@@ -120,6 +121,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Packager resolver always extracts all files from archives even when the packaging instructions contains include tags (IVY-1179) (thanks to Stefan De Boey)
 - FIX: Ivy cannot connect to URLs with '_' in their hostname
 - FIX: Transitive dependencies resolutions issue when eviction is triggered (IVY-1178)
 - FIX: Can't deal with [VERSION] version pattern from Maven (IVY-1177) (thanks to Richard Vowles)

@@ -1,0 +1,34 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<packager-module version="1.0">
+
+    <property name="name" value="${ivy.packager.module}"/>
+    <property name="version" value="${ivy.packager.revision}"/>
+    <property name="archive" value="${name}-${version}"/>
+
+    <resource dest="extract" url="${packager.website.url}/dist/${archive}.zip"
+      sha1="c79d0b496dbb7f0d5affda645f3a0476f8999871">
+        <include name="${archive}/${name}.jar"/>
+    </resource>
+
+    <build>
+        <move file="extract/${archive}/${name}.jar" todir="artifacts/jars"/>
+    </build>
+
+</packager-module>

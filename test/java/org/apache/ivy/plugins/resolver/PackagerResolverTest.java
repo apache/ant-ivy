@@ -107,7 +107,6 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         try {
             // set the locale to UK as workaround for SUN bug 6240963
             Locale.setDefault(Locale.UK);
-
     
             // Create and configure resolver
             PackagerResolver resolver = new PackagerResolver();
@@ -179,6 +178,90 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     
             assertEquals(artifact, ar.getArtifact());
             assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
+    }
+    
+    public void testZipResourceInclusion() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+    
+            // Create and configure resolver
+            PackagerResolver resolver = new PackagerResolver();
+            resolver.setSettings(_settings);
+            File repoRoot = new File("test/repositories/IVY-1179/repo");
+            resolver.addIvyPattern(
+              "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setPackagerPattern(
+              "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setBuildRoot(_builddir);
+            resolver.setResourceCache(_cachedir);
+            resolver.setPreserveBuildDirectories(true);
+            resolver.setVerbose(true);
+            
+            resolver.setProperty("packager.website.url", 
+                new File("test/repositories/IVY-1179/website").getAbsoluteFile().toURL().toExternalForm());
+    
+            resolver.setName("packager");
+    
+            // Get module descriptor
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "A", "1.0");
+            ResolvedModuleRevision rmr = resolver.getDependency(
+              new DefaultDependencyDescriptor(mrid, false), _data);
+    
+            // Download artifact
+            Artifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "A", "jar", "jar");
+            resolver.download(new Artifact[] {artifact}, downloadOptions());
+            
+            // assert that the file README is not extracted from the archive
+            File readme = new File(_builddir, "org/A/1.0/extract/A-1.0/README");
+            assertFalse(readme.exists());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
+    }
+    
+    public void testTarResourceInclusion() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+
+            // Create and configure resolver
+            PackagerResolver resolver = new PackagerResolver();
+            resolver.setSettings(_settings);
+            File repoRoot = new File("test/repositories/IVY-1179/repo");
+            resolver.addIvyPattern(
+              "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setPackagerPattern(
+              "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setBuildRoot(_builddir);
+            resolver.setResourceCache(_cachedir);
+            resolver.setPreserveBuildDirectories(true);
+            resolver.setVerbose(true);
+            
+            resolver.setProperty("packager.website.url", 
+                new File("test/repositories/IVY-1179/website").getAbsoluteFile().toURL().toExternalForm());
+    
+            resolver.setName("packager");
+    
+            // Get module descriptor
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "B", "1.0");
+            ResolvedModuleRevision rmr = resolver.getDependency(
+              new DefaultDependencyDescriptor(mrid, false), _data);
+    
+            // Download artifact
+            Artifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "B", "jar", "jar");
+            resolver.download(new Artifact[] {artifact}, downloadOptions());
+            
+            // assert that the file README is not extracted from the archive
+            File readme = new File(_builddir, "org/B/1.0/extract/B-1.0/README");
+            assertFalse(readme.exists());
         } finally {
             Locale.setDefault(oldLocale);
         }
