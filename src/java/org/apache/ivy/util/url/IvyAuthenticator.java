@@ -51,9 +51,10 @@ public final class IvyAuthenticator extends Authenticator {
         
         try {
             Field f = Authenticator.class.getDeclaredField("theAuthenticator");
+            f.setAccessible(true);
             original = (Authenticator) f.get(null);
         } catch (Throwable t) {
-            Message.debug("Error occured while getting the original authenticator!");            
+            Message.debug("Error occured while getting the original authenticator: " + t.getMessage());            
         }
 
         if (!(original instanceof IvyAuthenticator)) {
