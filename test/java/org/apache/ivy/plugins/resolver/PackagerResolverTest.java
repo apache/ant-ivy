@@ -217,6 +217,10 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             Artifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "A", "jar", "jar");
             resolver.download(new Artifact[] {artifact}, downloadOptions());
             
+            // assert that the file A.jar is extracted from the archive
+            File jar = new File(_builddir, "org/A/1.0/artifacts/jars/A.jar");
+            assertTrue(jar.exists());
+            
             // assert that the file README is not extracted from the archive
             File readme = new File(_builddir, "org/A/1.0/extract/A-1.0/README");
             assertFalse(readme.exists());
@@ -258,6 +262,10 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             // Download artifact
             Artifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "B", "jar", "jar");
             resolver.download(new Artifact[] {artifact}, downloadOptions());
+            
+            // assert that the file B.jar is extracted from the archive
+            File jar = new File(_builddir, "org/B/1.0/artifacts/jars/B.jar");
+            assertTrue(jar.exists());
             
             // assert that the file README is not extracted from the archive
             File readme = new File(_builddir, "org/B/1.0/extract/B-1.0/README");
