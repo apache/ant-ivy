@@ -18,17 +18,17 @@
 -->
 <packager-module version="1.0">
 
-    <property name="name" value="${ivy.packager.module}"/>
-    <property name="version" value="${ivy.packager.revision}"/>
-    <property name="archive" value="${name}-${version}"/>
+    <property name="archive.name" value="${ivy.packager.module}"/>
+    <property name="archive.version" value="${ivy.packager.revision}"/>
+    <property name="archive" value="${archive.name}-${archive.version}"/>
 
     <resource dest="extract" url="${packager.website.url}/dist/${archive}.tar.gz"
       sha1="9cc9462ce72ad46d7dd6741d2cf97551ebec7df2">
-        <include name="${archive}/${name}.jar"/>
+        <include name="${archive}/${archive.name}.jar"/>
     </resource>
 
     <build>
-        <move file="extract/${archive}/${name}.jar" todir="artifacts/jars"/>
+        <move file="extract/${archive}/${archive.name}.jar" todir="artifacts/jars"/>
     </build>
 
 </packager-module>
