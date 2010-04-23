@@ -40,14 +40,10 @@ import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Copy;
-import org.apache.tools.ant.types.FileSet;
 
 /**
  * Tests PackagerResolver.
  */
-// junit
 public class PackagerResolverTest extends AbstractDependencyResolverTest {
 
     private IvySettings _settings;
@@ -61,7 +57,6 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     private File _workdir;
     private File _builddir;
     private File _cachedir;
-    private File _websitedir;
 
     protected void setUp() throws Exception {
         _settings = new IvySettings();
@@ -76,20 +71,10 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         _workdir = new File("build/test/PackagerResolverTest");
         _builddir = new File(_workdir, "build");
         _cachedir = new File(_workdir, "resources");
-        _websitedir = new File(_workdir, "website");
         cleanupTempDirs();
         if (!_builddir.mkdirs() || !_cachedir.mkdirs()) {
             throw new Exception("can't create directories under " + _workdir);
         }
-
-        // copy "website"
-        Copy copy = new Copy();
-        FileSet fileSet = new FileSet();
-        fileSet.setDir(new File("test/repositories/packager/website"));
-        copy.addFileset(fileSet);
-        copy.setTodir(_websitedir);
-        copy.setProject(new Project());
-        copy.execute();
     }
 
     protected void tearDown() throws Exception {
