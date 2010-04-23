@@ -46,44 +46,43 @@ import org.apache.ivy.util.Message;
  */
 public class PackagerResolverTest extends AbstractDependencyResolverTest {
 
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private ResolveEngine _engine;
+    private ResolveData data;
 
-    private ResolveData _data;
+    private File cache;
 
-    private File _cache;
-
-    private File _workdir;
-    private File _builddir;
-    private File _cachedir;
+    private File workdir;
+    private File builddir;
+    private File cachedir;
 
     protected void setUp() throws Exception {
-        _settings = new IvySettings();
         Message.setDefaultLogger(new DefaultMessageLogger(99));
-        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions());
-        _cache.mkdirs();
-        _settings.setDefaultCache(_cache);
+
+        settings = new IvySettings();
+        ResolveEngine engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+        cache = new File("build/cache");
+        data = new ResolveData(engine, new ResolveOptions());
+        cache.mkdirs();
+        settings.setDefaultCache(cache);
 
         // Create work space with build and resource cache directories
-        _workdir = new File("build/test/PackagerResolverTest");
-        _builddir = new File(_workdir, "build");
-        _cachedir = new File(_workdir, "resources");
+        workdir = new File("build/test/PackagerResolverTest");
+        builddir = new File(workdir, "build");
+        cachedir = new File(workdir, "resources");
         cleanupTempDirs();
-        if (!_builddir.mkdirs() || !_cachedir.mkdirs()) {
-            throw new Exception("can't create directories under " + _workdir);
+        if (!builddir.mkdirs() || !cachedir.mkdirs()) {
+            throw new Exception("can't create directories under " + workdir);
         }
     }
 
     protected void tearDown() throws Exception {
-        FileUtil.forceDelete(_cache);
+        FileUtil.forceDelete(cache);
         cleanupTempDirs();
     }
 
     protected void cleanupTempDirs() throws Exception {
-        FileUtil.forceDelete(_workdir);
+        FileUtil.forceDelete(workdir);
     }
 
     public void testFile() throws Exception {
@@ -95,14 +94,14 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     
             // Create and configure resolver
             PackagerResolver resolver = new PackagerResolver();
-            resolver.setSettings(_settings);
+            resolver.setSettings(settings);
             File repoRoot = new File("test/repositories/packager/repo");
             resolver.addIvyPattern(
-              "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
             resolver.setPackagerPattern(
-              "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
-            resolver.setBuildRoot(_builddir);
-            resolver.setResourceCache(_cachedir);
+                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setBuildRoot(builddir);
+            resolver.setResourceCache(cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
@@ -115,7 +114,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             // Get module descriptor
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "mod", "1.0");
             ResolvedModuleRevision rmr = resolver.getDependency(
-              new DefaultDependencyDescriptor(mrid, false), _data);
+              new DefaultDependencyDescriptor(mrid, false), data);
             assertNotNull(rmr);
     
             assertEquals(mrid, rmr.getId());
@@ -137,7 +136,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
     
             // Verify resource cache now contains the distribution archive
-            assertTrue(new File(_cachedir, "mod-1.0.tar.gz").exists());
+            assertTrue(new File(cachedir, "mod-1.0.tar.gz").exists());
     
             // Download again, should use Ivy cache this time
             report = resolver.download(new Artifact[] {artifact}, downloadOptions());
@@ -177,14 +176,14 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     
             // Create and configure resolver
             PackagerResolver resolver = new PackagerResolver();
-            resolver.setSettings(_settings);
+            resolver.setSettings(settings);
             File repoRoot = new File("test/repositories/IVY-1179/repo");
             resolver.addIvyPattern(
-              "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
             resolver.setPackagerPattern(
-              "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
-            resolver.setBuildRoot(_builddir);
-            resolver.setResourceCache(_cachedir);
+                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setBuildRoot(builddir);
+            resolver.setResourceCache(cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
@@ -196,18 +195,18 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             // Get module descriptor
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "A", "1.0");
             ResolvedModuleRevision rmr = resolver.getDependency(
-              new DefaultDependencyDescriptor(mrid, false), _data);
+              new DefaultDependencyDescriptor(mrid, false), data);
     
             // Download artifact
             Artifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "A", "jar", "jar");
             resolver.download(new Artifact[] {artifact}, downloadOptions());
             
             // assert that the file A.jar is extracted from the archive
-            File jar = new File(_builddir, "org/A/1.0/artifacts/jars/A.jar");
+            File jar = new File(builddir, "org/A/1.0/artifacts/jars/A.jar");
             assertTrue(jar.exists());
             
             // assert that the file README is not extracted from the archive
-            File readme = new File(_builddir, "org/A/1.0/extract/A-1.0/README");
+            File readme = new File(builddir, "org/A/1.0/extract/A-1.0/README");
             assertFalse(readme.exists());
         } finally {
             Locale.setDefault(oldLocale);
@@ -223,14 +222,14 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
 
             // Create and configure resolver
             PackagerResolver resolver = new PackagerResolver();
-            resolver.setSettings(_settings);
+            resolver.setSettings(settings);
             File repoRoot = new File("test/repositories/IVY-1179/repo");
             resolver.addIvyPattern(
-              "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
             resolver.setPackagerPattern(
-              "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
-            resolver.setBuildRoot(_builddir);
-            resolver.setResourceCache(_cachedir);
+                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setBuildRoot(builddir);
+            resolver.setResourceCache(cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
@@ -242,18 +241,18 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             // Get module descriptor
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "B", "1.0");
             ResolvedModuleRevision rmr = resolver.getDependency(
-              new DefaultDependencyDescriptor(mrid, false), _data);
+              new DefaultDependencyDescriptor(mrid, false), data);
     
             // Download artifact
             Artifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "B", "jar", "jar");
             resolver.download(new Artifact[] {artifact}, downloadOptions());
             
             // assert that the file B.jar is extracted from the archive
-            File jar = new File(_builddir, "org/B/1.0/artifacts/jars/B.jar");
+            File jar = new File(builddir, "org/B/1.0/artifacts/jars/B.jar");
             assertTrue(jar.exists());
             
             // assert that the file README is not extracted from the archive
-            File readme = new File(_builddir, "org/B/1.0/extract/B-1.0/README");
+            File readme = new File(builddir, "org/B/1.0/extract/B-1.0/README");
             assertFalse(readme.exists());
         } finally {
             Locale.setDefault(oldLocale);
