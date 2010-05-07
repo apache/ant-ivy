@@ -133,6 +133,8 @@ public class PublishEngine {
                                 .setBranch(options.getPubBranch())
                                 .setPubdate(options.getPubdate() == null ? new Date()
                                     : options.getPubdate())
+                                .setMerge(options.isMerge())
+                                .setMergedDescriptor(md)
                                 .setConfsToExclude((String[]) confsToRemove
                                     .toArray(new String[confsToRemove.size()])));
                         ivyFile = tmp;

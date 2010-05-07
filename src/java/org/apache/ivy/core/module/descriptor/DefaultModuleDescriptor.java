@@ -148,6 +148,15 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd.status = md.getStatus();
         nmd.publicationDate = md.getPublicationDate();
         nmd.resolvedPublicationDate = md.getResolvedPublicationDate();
+
+        ExtendsDescriptor[] ed = md.getInheritedDescriptors();
+        for (int i = 0; i < ed.length; ++i) {
+            ModuleRevisionId mrid = t.transform(ed[i].getParentRevisionId());
+            ModuleRevisionId resolvedMrid = t.transform(ed[i].getResolvedParentRevisionId());
+            nmd.inheritedDescriptors.add(new DefaultExtendsDescriptor(mrid, resolvedMrid,
+                    ed[i].getLocation(), ed[i].getExtendsTypes()));
+        }
+
         DependencyDescriptor[] dd = md.getDependencies();
         for (int i = 0; i < dd.length; i++) {
             nmd.dependencies.add(NameSpaceHelper.toSystem(dd[i], ns));
@@ -227,6 +236,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private List excludeRules = new ArrayList(); // List(ExcludeRule)
 
     private Artifact metadataArtifact;
+
+    private List inheritedDescriptors = new ArrayList(); //List(ExtendsDescriptor)
     
     private Map/*<String,String>*/ extraAttributesNamespaces = new LinkedHashMap();
 
@@ -322,6 +333,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         this.status = status;
     }
 
+    public void addInheritedDescriptor(ExtendsDescriptor descriptor) {
+        inheritedDescriptors.add(descriptor);
+    }
+
     public void addDependency(DependencyDescriptor dependency) {
         dependencies.add(dependency);
     }
@@ -371,6 +386,11 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public String getStatus() {
         return status;
+    }
+
+    public ExtendsDescriptor[] getInheritedDescriptors() {
+        return (ExtendsDescriptor[])inheritedDescriptors.toArray(
+                new ExtendsDescriptor[inheritedDescriptors.size()]);
     }
 
     public Configuration[] getConfigurations() {

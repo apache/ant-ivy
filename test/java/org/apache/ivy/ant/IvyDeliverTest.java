@@ -20,6 +20,9 @@ package org.apache.ivy.ant;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,6 +90,64 @@ public class IvyDeliverTest extends TestCase {
         del.execute();
     }
 
+    public void testMergeParent() throws IOException, ParseException {
+        //publish the parent descriptor first, so that it can be found while
+        //we are reading the child descriptor.
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        IvyPublish pubParent = new IvyPublish();
+        pubParent.setProject(project);
+        pubParent.setResolver("1");
+        pubParent.setPubrevision("1.0");
+        File art = new File("build/test/deliver/resolve-simple-1.0.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        pubParent.execute();
+        
+        //resolve and deliver the child descriptor
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+        
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/merge/ivy-[revision].xml");
+        deliver.execute();
+
+        // should have delivered the file to the specified destination
+        File delivered = new File("build/test/deliver/merge/ivy-1.2.xml");
+        assertTrue(delivered.exists());
+
+        // do a text compare, since we want to test comments as well as structure.
+        // we could do a better job of this with xmlunit
+        int lineNo = 1;
+
+        BufferedReader merged = new BufferedReader(new FileReader(delivered));
+        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
+            .getResourceAsStream("ivy-extends-merged.xml")));
+        try {
+            for (String mergeLine = merged.readLine(),
+                        expectedLine = expected.readLine(); 
+                 mergeLine != null && expectedLine != null; 
+                 mergeLine = merged.readLine(),
+                 expectedLine = expected.readLine()) {
+    
+                mergeLine = mergeLine.trim();
+                expectedLine = expectedLine.trim();
+    
+                if (!mergeLine.startsWith("<info"))
+                    assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine.trim(), mergeLine.trim());
+    
+                ++lineNo;
+            }
+        } finally {
+            merged.close();
+            expected.close();
+        }
+    }
+    
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ParserSettings;
 
@@ -53,6 +54,11 @@ public class UpdateOptions {
      * Should included information be replaced
      */
     private boolean replaceInclude = true;
+    /**
+     * Should parent descriptor be merged inline
+     */
+    private boolean merge = true;
+    private ModuleDescriptor mergedDescriptor = null;
     /**
      * Configurations to exclude during update, or <code>null</code> to keep all confs.
      */
@@ -116,6 +122,21 @@ public class UpdateOptions {
     }
     public UpdateOptions setReplaceInclude(boolean replaceInclude) {
         this.replaceInclude = replaceInclude;
+        return this;
+    }
+    public boolean isMerge() {
+        // only return true if merge is set to true and if there is something to merge!
+        return merge && (mergedDescriptor != null) && (mergedDescriptor.getInheritedDescriptors().length > 0);
+    }
+    public UpdateOptions setMerge(boolean merge) {
+        this.merge = merge;
+        return this;
+    }
+    public ModuleDescriptor getMergedDescriptor() {
+        return mergedDescriptor;
+    }
+    public UpdateOptions setMergedDescriptor(ModuleDescriptor mergedDescriptor) {
+        this.mergedDescriptor = mergedDescriptor;
         return this;
     }
     public String[] getConfsToExclude() {

@@ -40,7 +40,7 @@ import org.apache.ivy.util.extendable.ExtendableItem;
  * be used instead of the default dependency constraint when performing dependency resolution.
  * </p>
  */
-public interface DependencyDescriptor extends ExtendableItem {
+public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     ModuleId getDependencyId();
 
     /**

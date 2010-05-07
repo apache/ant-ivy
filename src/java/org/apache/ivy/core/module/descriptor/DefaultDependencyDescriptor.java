@@ -88,7 +88,13 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(
             null, transformMrid, transformDynamicMrid, 
             dd.isForce(), dd.isChanging(), dd.isTransitive());
+
         newdd.parentId = transformParentId;
+        ModuleRevisionId sourceModule = dd.getSourceModule();
+        if (sourceModule != null) {
+            newdd.sourceModule = t.transform(sourceModule);
+        }
+
         String[] moduleConfs = dd.getModuleConfigurations();
         if (moduleConfs.length == 1 && "*".equals(moduleConfs[0])) {
             if (dd instanceof DefaultDependencyDescriptor) {
@@ -159,7 +165,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private final ModuleDescriptor md;
 
     private DependencyDescriptor asSystem = this;
-
+    
+    private ModuleRevisionId sourceModule;
+    
     private DefaultDependencyDescriptor(DefaultDependencyDescriptor dd, ModuleRevisionId revision) {
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(revision, "revision");
@@ -183,8 +191,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         includeRules = dd.includeRules == null ? null : new LinkedHashMap(dd.includeRules); 
         dependencyArtifacts = dd.dependencyArtifacts == null 
                                 ? null : new LinkedHashMap(dd.dependencyArtifacts);
+        sourceModule = dd.sourceModule;
     }
-
+    
     public DefaultDependencyDescriptor(
             ModuleDescriptor md, ModuleRevisionId mrid, boolean force,
             boolean changing, boolean transitive) {
@@ -211,6 +220,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         isForce = force;
         isChanging = changing;
         isTransitive = transitive;
+        sourceModule = md == null ? null : md.getModuleRevisionId();
     }
 
     public ModuleId getDependencyId() {
@@ -698,6 +708,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return excludeRules;
     }
 
+    public ModuleRevisionId getSourceModule() {
+        return sourceModule;
+    }
+    
     public DependencyDescriptor clone(ModuleRevisionId revision) {
         return new DefaultDependencyDescriptor(this, revision);
     }

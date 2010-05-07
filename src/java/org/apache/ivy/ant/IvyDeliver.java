@@ -206,6 +206,8 @@ public class IvyDeliver extends IvyTask {
     private String pubBranch;
     
     private boolean generateRevConstraint = true;
+    
+    private boolean merge = true;
 
     public void setCache(File cache) {
         cacheAttributeNotSupported();
@@ -315,6 +317,14 @@ public class IvyDeliver extends IvyTask {
         this.generateRevConstraint = generateRevConstraint;
     }
 
+    public boolean isMerge() {
+        return merge;
+    }
+
+    public void setMerge(boolean merge) {
+        this.merge = merge;
+    }
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -394,6 +404,7 @@ public class IvyDeliver extends IvyTask {
                 drResolver, doValidate(settings), replacedynamicrev, splitConfs(conf))
                 .setResolveId(resolveId)
                 .setGenerateRevConstraint(generateRevConstraint)
+                .setMerge(merge)
                 .setPubBranch(pubBranch);
             if (mrid == null) {
                 ivy.deliver(pubRevision, deliverpattern, options);

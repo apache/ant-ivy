@@ -21,7 +21,9 @@
 	       module="resolve-simple"
 	       revision="1.0"
 	       status="release"
-	/>
+	>
+        <description>Demonstrates configuration-specific dependencies</description>
+    </info>
 	<configurations>
 		<conf name="default" />
 		<conf name="compile" />

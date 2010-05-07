@@ -192,6 +192,8 @@ public class DeliverEngine {
                         .setBranch(options.getPubBranch())
                         .setPubdate(options.getPubdate())
                         .setGenerateRevConstraint(options.isGenerateRevConstraint())
+                        .setMerge(options.isMerge())
+                        .setMergedDescriptor(md)
                         .setConfsToExclude((String[]) confsToRemove
                             .toArray(new String[confsToRemove.size()])));
         } catch (SAXException ex) {

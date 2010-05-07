@@ -72,6 +72,8 @@ public class IvyPublish extends IvyTask {
     private boolean overwrite = false;
 
     private boolean update = false;
+    
+    private boolean merge = true;
 
     private boolean replacedynamicrev = true;
 
@@ -208,6 +210,14 @@ public class IvyPublish extends IvyTask {
         this.replacedynamicrev = replacedynamicrev;
     }
 
+    public boolean isMerge() {
+        return merge;
+    }
+
+    public void setMerge(boolean merge) {
+        this.merge = merge;
+    }
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -291,6 +301,7 @@ public class IvyPublish extends IvyTask {
                 deliver.setStatus(getStatus());
                 deliver.setValidate(doValidate(settings));
                 deliver.setReplacedynamicrev(isReplacedynamicrev());
+                deliver.setMerge(merge);
                 deliver.setConf(conf);
 
                 deliver.execute();
@@ -308,6 +319,7 @@ public class IvyPublish extends IvyTask {
                     .setValidate(doValidate(settings))
                     .setOverwrite(overwrite)
                     .setUpdate(update)
+                    .setMerge(merge)
                     .setWarnOnMissing(warnonmissing)
                     .setHaltOnMissing(haltonmissing)
                     .setConfs(splitConfs(conf)));

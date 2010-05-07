@@ -52,6 +52,8 @@ public class PublishOptions {
     private boolean overwrite;
 
     private boolean update;
+    
+    private boolean merge = true;
 
     private String[] confs;
 
@@ -130,6 +132,15 @@ public class PublishOptions {
 
     public PublishOptions setUpdate(boolean update) {
         this.update = update;
+        return this;
+    }
+    
+    public boolean isMerge() {
+        return merge;
+    }
+    
+    public PublishOptions setMerge(boolean merge) {
+        this.merge = merge;
         return this;
     }
 

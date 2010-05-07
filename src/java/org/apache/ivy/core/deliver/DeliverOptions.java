@@ -46,7 +46,9 @@ public class DeliverOptions {
      * applicable, false to never generate the revConstraint attribute.
      */
     private boolean generateRevConstraint = true;
-
+    
+    /** true to merge parent descriptor elements into delivered child descriptor */
+    private boolean merge = true;
 
     /**
      * Returns an instance of DeliverOptions with options corresponding to default values taken from
@@ -237,10 +239,19 @@ public class DeliverOptions {
         return this;
     }
 
-    
+    public boolean isMerge() {
+        return merge;
+    }
+
+    public DeliverOptions setMerge(boolean merge) {
+        this.merge = merge;
+        return this;
+    }
+
     public String toString() {
         return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
                 + " resolveDynamicRevisions=" + resolveDynamicRevisions
+                + " merge=" + merge
                 + " resolveId=" + resolveId
                 + " pubBranch=" + pubBranch;
 

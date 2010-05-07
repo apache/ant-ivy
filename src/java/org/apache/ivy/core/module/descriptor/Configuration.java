@@ -21,14 +21,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.extendable.DefaultExtendableItem;
 
 /**
  * Represents a module configuration
  */
-public class Configuration extends DefaultExtendableItem {
+public class Configuration extends DefaultExtendableItem implements InheritableItem {
     public static final class Visibility {
         public static final Visibility PUBLIC = new Visibility("public");
 
@@ -77,6 +79,8 @@ public class Configuration extends DefaultExtendableItem {
     private boolean transitive = true;
     
     private String deprecated;
+    
+    private ModuleRevisionId sourceModule;
 
     /**
      * Creates a new configuration.
@@ -85,6 +89,12 @@ public class Configuration extends DefaultExtendableItem {
      */
     public Configuration(String name) {
         this(name, Visibility.PUBLIC, null, null, true, null);
+    }
+    
+    public Configuration(Configuration source, ModuleRevisionId sourceModule) {
+        this(source.getAttributes(), source.getQualifiedExtraAttributes(), source.getName(), 
+             source.getVisibility(), source.getDescription(), source.getExtends(),
+             source.isTransitive(), source.getDeprecated(), sourceModule);
     }
 
     /**
@@ -99,6 +109,14 @@ public class Configuration extends DefaultExtendableItem {
      */
     public Configuration(String name, Visibility visibility, String description, String[] ext, 
             boolean transitive, String deprecated) {
+        this(null, null, name, visibility, description, ext, transitive, deprecated, null);
+    }
+    
+    private Configuration(Map attributes, Map extraAttributes, String name, Visibility visibility,
+                String description, String[] ext, boolean transitive, String deprecated, 
+                ModuleRevisionId sourceModule) {
+        super(attributes, extraAttributes);
+        
         if (name == null) {
             throw new NullPointerException("null configuration name not allowed");
         }
@@ -118,6 +136,7 @@ public class Configuration extends DefaultExtendableItem {
         }
         this.transitive = transitive;
         this.deprecated = deprecated;
+        this.sourceModule = sourceModule;
     }
 
     /**
@@ -161,6 +180,10 @@ public class Configuration extends DefaultExtendableItem {
      */
     public final boolean isTransitive() {
         return transitive;
+    }
+    
+    public ModuleRevisionId getSourceModule() {
+        return sourceModule;
     }
 
     public String toString() {

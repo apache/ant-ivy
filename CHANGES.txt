@@ -24,6 +24,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jeffrey Blattman
 	Jasper Blues
 	Jim Bonanno
+	Jean-Louis Boudart
 	Dave Brosius
 	Matthieu Brouillard
 	Carlton Brown
@@ -111,6 +112,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)
 - DOCUMENTATION: Added documentation of the 'changing' attribute on the ivy:resolve Ant task (IVY-1180)
 
+- NEW: Support ivy.xml parent mechanism (IVY-742) (thanks to Jason Trump and Jean-Louis Boudart)
 - NEW: Make ivy.xml <conf description> available (IVY-1158)
 
 - IMPROVEMENT: Support changing="true" for inline retrieve (IVY-1180)

@@ -424,6 +424,13 @@
                           "title":"info",
                           "children": [
                               {
+                                "id":"ivyfile/extends",
+                                "title":"extends",
+                                "children": [
+
+                                  ]
+                              },
+                              {
                                 "id":"ivyfile/license",
                                 "title":"license",
                                 "children": [

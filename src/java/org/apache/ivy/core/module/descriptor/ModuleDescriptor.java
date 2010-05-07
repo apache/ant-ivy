@@ -72,6 +72,13 @@ public interface ModuleDescriptor
     void setResolvedModuleRevisionId(ModuleRevisionId revId);
 
     /**
+     * Get the list of parent descriptors imported via an &lt;extends&gt; element.
+     * Only directly imported descriptors are included; the parent's parents are
+     * not included.
+     */
+    ExtendsDescriptor[] getInheritedDescriptors();
+
+    /**
      * This method update the resolved publication date
      * 
      * @param publicationDate

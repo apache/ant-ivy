@@ -60,6 +60,15 @@
   		    <xs:element name="info">
             	<xs:complexType>
 			        <xs:sequence>
+			      		<xs:element name="extends" minOccurs="0" maxOccurs="unbounded">
+			      		<xs:complexType>
+			      			<xs:attribute name="organisation" type="xs:string" use="required"/>
+			      			<xs:attribute name="module" type="xs:string" use="required"/>
+			      			<xs:attribute name="revision" type="xs:string" use="required"/>
+			      			<xs:attribute name="location" type="xs:string" />
+			      			<xs:attribute name="extendType" type="xs:string" />
+			              	</xs:complexType>
+			      		</xs:element>
 			      		<xs:element name="license" minOccurs="0" maxOccurs="unbounded">
 			            	<xs:complexType>
 					            <xs:attribute name="name" type="xs:string" use="required"/>
@@ -91,7 +100,7 @@
 			      		</xs:element>
 			      		<xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax"/>
 			        </xs:sequence>
-		            <xs:attribute name="organisation" type="xs:string" use="required"/>
+		            <xs:attribute name="organisation" type="xs:string"/>
 		            <xs:attribute name="module" type="xs:string" use="required"/>
 		            <xs:attribute name="branch" type="xs:string"/>
 		            <xs:attribute name="revision" type="xs:string"/>

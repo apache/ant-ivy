@@ -31,7 +31,6 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
-import org.apache.ivy.core.module.descriptor.DependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -46,6 +45,8 @@ import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
+import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.XMLHelper;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
@@ -55,6 +56,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         super.setUp();
         
         this.settings = new IvySettings();
+        //prevent test from polluting local cache
+        settings.setDefaultCache(new File("build/cache"));
     }
 
     public void testSimple() throws Exception {
@@ -78,7 +81,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md.getDependencies());
         assertEquals(0, md.getDependencies().length);
     }
-
+    
     public void testNamespaces() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-namespaces.xml"), true);
@@ -1017,5 +1020,334 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         } catch (ParseException e) {
             // expected
         }
+    }
+    
+    public void testExtendsAll() throws Exception {
+        //default extends type is 'all' when no extendsType attribute is specified.
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-all.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //verify that the parent description was merged.
+        assertEquals("Parent module description.", md.getDescription());
+        
+        //verify that the parent and child configurations were merged together.
+        final Configuration[] expectedConfs = { new Configuration("default"), 
+                new Configuration("conf1"), new Configuration("conf2") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent and child dependencies were merged together.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(2, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule1", dep.getModuleId().getName());
+        assertEquals("1.0", dep.getRevision());
+
+        assertEquals(Arrays.asList(new String[]{ "conf1", "conf2" }), 
+            Arrays.asList(deps[1].getModuleConfigurations()));
+        dep = deps[1].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
+    }
+    
+    public void testExtendsDependencies() throws Exception {
+        //descriptor specifies that only parent dependencies should be included
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-dependencies.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //verify that the parent description was ignored.
+        assertEquals("", md.getDescription());
+        
+        //verify that the parent configurations were ignored.
+        final Configuration[] expectedConfs = { new Configuration("default") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent dependencies were merged.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(2, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule1", dep.getModuleId().getName());
+        assertEquals("1.0", dep.getRevision());
+        
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[1].getModuleConfigurations()));
+        dep = deps[1].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
+    }
+    
+    public void testExtendsConfigurations() throws Exception {
+        //descriptor specifies that only parent configurations should be included
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-configurations.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //verify that the parent description was ignored.
+        assertEquals("", md.getDescription());
+        
+        //verify that the parent and child configurations were merged together.
+        final Configuration[] expectedConfs = { new Configuration("default"), 
+                new Configuration("conf1"), new Configuration("conf2") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent dependencies were ignored.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(1, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "conf1", "conf2" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
+    }
+    
+    public void testExtendsDescription() throws Exception {
+        //descriptor specifies that only parent description should be included
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-description.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //verify that the parent description was merged.
+        assertEquals("Parent module description.", md.getDescription());
+        
+        //verify that the parent configurations were ignored.
+        final Configuration[] expectedConfs = { new Configuration("default") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent dependencies were ignored.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(1, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
+    }
+
+    public void testExtendsDescriptionWithOverride() throws Exception {
+        //descriptor specifies that only parent description should be included
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-description-override.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //child description should always be preferred, even if extendType="description"
+        assertEquals("Child description overrides parent.", md.getDescription());
+        
+        //verify that the parent configurations were ignored.
+        final Configuration[] expectedConfs = { new Configuration("default") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent dependencies were ignored.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(1, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
+    }
+    
+    public void testExtendsMixed() throws Exception {
+        //descriptor specifies that parent configurations and dependencies should be included
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-mixed.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //verify that the parent description was ignored.
+        assertEquals("", md.getDescription());
+        
+        //verify that the parent and child configurations were merged together.
+        final Configuration[] expectedConfs = { new Configuration("default"), 
+                new Configuration("conf1"), new Configuration("conf2") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent and child dependencies were merged together.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(2, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule1", dep.getModuleId().getName());
+        assertEquals("1.0", dep.getRevision());
+
+        assertEquals(Arrays.asList(new String[]{ "conf1", "conf2" }), 
+            Arrays.asList(deps[1].getModuleConfigurations()));
+        dep = deps[1].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
+    }
+    
+    public void testExtendsCached() throws Exception {
+        //configure a resolver to serve the parent descriptor, so that parse succeeds.
+        File resolveRoot = new File("build/tmp/xmlModuleDescriptorTest");
+        assertTrue(resolveRoot.exists() || resolveRoot.mkdirs());
+        
+        FileUtil.copy(getClass().getResource("test-extends-parent.xml"), 
+            new File(resolveRoot, "myorg/myparent/ivy.xml"), null);
+        
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setSettings(settings);
+        resolver.setName("testExtendsCached");
+        resolver.addIvyPattern(resolveRoot.getAbsolutePath() 
+            + "/[organisation]/[module]/[artifact].[ext]");
+
+        settings.addResolver(resolver);
+        settings.setDefaultResolver("testExtendsCached");
+        
+        //descriptor extends a module without a location="..." attribute, so resolver lookup
+        //must be performed.
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extends-cached.xml"), true);
+        assertNotNull(md);
+        
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+
+        //verify that the parent description was merged.
+        assertEquals("Parent module description.", md.getDescription());
+        
+        //verify that the parent and child configurations were merged together.
+        final Configuration[] expectedConfs = { new Configuration("default"), 
+                new Configuration("conf1"), new Configuration("conf2") };
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(expectedConfs), Arrays
+                .asList(md.getConfigurations()));
+
+        //verify parent and child dependencies were merged together.
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(2, deps.length);
+
+        assertEquals(Arrays.asList(new String[]{ "default" }), 
+            Arrays.asList(deps[0].getModuleConfigurations()));
+        ModuleRevisionId dep = deps[0].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule1", dep.getModuleId().getName());
+        assertEquals("1.0", dep.getRevision());
+
+        assertEquals(Arrays.asList(new String[]{ "conf1", "conf2" }), 
+            Arrays.asList(deps[1].getModuleConfigurations()));
+        dep = deps[1].getDependencyRevisionId();
+        assertEquals("myorg", dep.getModuleId().getOrganisation());
+        assertEquals("mymodule2", dep.getModuleId().getName());
+        assertEquals("2.0", dep.getRevision());
+        
+        //verify only child publications are present
+        Artifact[] artifacts = md.getAllArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("mymodule", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getType());
     }
 }
