@@ -299,6 +299,8 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
+            Message.deprecated("'checkUpToDate' is deprecated, "
+                + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings + ")");
             ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
         }
         String resolutionDir = (String) attributes.get("resolutionCacheDir");
@@ -349,7 +351,7 @@ public class XmlSettingsParser extends DefaultHandler {
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
             Message.deprecated("'checkUpToDate' is deprecated, "
-                + "use 'caches[@checkUpToDate]' instead (" + settings + ")");
+                + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings + ")");
             ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
         }
         String useRemoteConfig = (String) attributes.get("useRemoteConfig");

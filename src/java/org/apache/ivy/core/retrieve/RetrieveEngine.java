@@ -128,7 +128,7 @@ public class RetrieveEngine {
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
                     IvyContext.getContext().checkInterrupted();
                     File destFile = settings.resolveFile((String) it2.next());
-                    if (!settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
+                    if (!settings.isCheckUpToDate() || !upToDate(archive, destFile, options)) {
                         Message.verbose("\t\tto " + destFile);
                         if (this.eventManager != null) {
                             this.eventManager.fireIvyEvent(
@@ -389,11 +389,30 @@ public class RetrieveEngine {
         return artifactsToCopy;
     }
 
-    private boolean upToDate(File source, File target) {
+    private boolean upToDate(File source, File target, RetrieveOptions options) {
         if (!target.exists()) {
             return false;
         }
-        return source.lastModified() <= target.lastModified();
+        
+        String overwriteMode = options.getOverwriteMode();
+        if (RetrieveOptions.OVERWRITEMODE_ALWAYS.equals(overwriteMode)) {
+            return false;
+        }
+        
+        if (RetrieveOptions.OVERWRITEMODE_NEVER.equals(overwriteMode)) {
+            return true;
+        }
+        
+        if (RetrieveOptions.OVERWRITEMODE_NEWER.equals(overwriteMode)) {
+            return source.lastModified() <= target.lastModified();
+        }
+        
+        if (RetrieveOptions.OVERWRITEMODE_NEWER.equals(overwriteMode)) {
+            return source.lastModified() != target.lastModified();
+        }
+
+        // unknown, so just to be sure
+        return false;
     }
 
     /**

@@ -27,6 +27,11 @@ import org.apache.ivy.util.filter.FilterHelper;
  * @see RetrieveEngine
  */
 public class RetrieveOptions extends LogOptions {
+    public static String OVERWRITEMODE_NEVER = "never";
+    public static String OVERWRITEMODE_ALWAYS = "always";
+    public static String OVERWRITEMODE_NEWER = "newer";
+    public static String OVERWRITEMODE_DIFFERENT = "different";
+    
     /**
      * The names of configurations to retrieve. If the array consists only of '*', then all
      * configurations of the module will be retrieved.
@@ -50,6 +55,8 @@ public class RetrieveOptions extends LogOptions {
      * will be present in the destination directory, which means that some files may be deleted.
      */
     private boolean sync = false;
+    
+    private String overwriteMode = OVERWRITEMODE_NEWER;
 
     /**
      * True if the original files should be used insteaad of their cache copy.
@@ -82,6 +89,15 @@ public class RetrieveOptions extends LogOptions {
 
     public RetrieveOptions setConfs(String[] confs) {
         this.confs = confs;
+        return this;
+    }
+    
+    public String getOverwriteMode() {
+        return overwriteMode == null ? OVERWRITEMODE_NEWER : overwriteMode;
+    }
+    
+    public RetrieveOptions setOverwriteMode(String overwriteMode) {
+        this.overwriteMode = overwriteMode;
         return this;
     }
 

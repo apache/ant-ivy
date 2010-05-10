@@ -29,6 +29,12 @@ import org.apache.tools.ant.BuildException;
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
  */
 public class IvyRetrieve extends IvyPostResolveTask {
+    
+    private static final Collection OVERWRITEMODE_VALUES = Arrays.asList(new String[] {
+            RetrieveOptions.OVERWRITEMODE_ALWAYS, RetrieveOptions.OVERWRITEMODE_NEVER,
+            RetrieveOptions.OVERWRITEMODE_NEWER, RetrieveOptions.OVERWRITEMODE_DIFFERENT
+    });
+
     private String pattern;
 
     private String ivypattern = null;
@@ -36,6 +42,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
     private boolean sync = false;
 
     private boolean symlink = false;
+    
+    private String overwriteMode = RetrieveOptions.OVERWRITEMODE_NEWER;
 
     public String getPattern() {
         return pattern;
@@ -65,6 +73,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
                     .setDestIvyPattern(ivypattern)
                     .setArtifactFilter(artifactFilter)
                     .setSync(sync)
+                    .setOverwriteMode(getOverwriteMode())
                     .setUseOrigin(isUseOrigin())
                     .setMakeSymlinks(symlink)
                     .setResolveId(getResolveId()));
@@ -102,5 +111,17 @@ public class IvyRetrieve extends IvyPostResolveTask {
      */
     public void setSymlink(boolean symlink) {
         this.symlink = symlink;
+    }
+
+    public void setOverwriteMode(String overwriteMode) {
+        if (!OVERWRITEMODE_VALUES.contains(overwriteMode)) {
+            throw new IllegalArgumentException("invalid overwriteMode value '" + overwriteMode + "'. "
+                + "Valid values are " + OVERWRITEMODE_VALUES);
+        }
+        this.overwriteMode = overwriteMode;
+    }
+
+    public String getOverwriteMode() {
+        return overwriteMode;
     }
 }

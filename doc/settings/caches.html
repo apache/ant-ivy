@@ -58,7 +58,8 @@ cache to another place in your filesystem). Usually it is a good thing to check 
         <td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td></tr>
     <tr><td>artifactPattern</td><td>default pattern used to indicate where artifact files should be put in the repository cache(s)</td>
         <td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td></tr>
-    <tr><td>checkUpToDate</td><td>Indicates if date should be checked before retrieving artifacts from cache</td>
+    <tr><td><s>checkUpToDate</s></td><td>Indicates if date should be checked before retrieving artifacts from cache.
+    	<i>Deprecated, we recommend using overwriteMode on the [[use/retrieve]] task instead</i></td>
         <td>No, defaults to true</td></tr>
     <tr><td>useOrigin</td><td>the default value to use for useOrigin for caches in which it isn't specifically defined.
     	Use true to avoid the copy of local artifacts to the cache and use directly their original location.</td>

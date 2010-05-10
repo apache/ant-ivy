@@ -180,8 +180,7 @@ public class RetrieveTest extends TestCase {
             "mod1.2", "jar", "jar", "default")).getCanonicalFile();
         file.getParentFile().mkdirs();
         file.createNewFile();
-        ivy.getSettings().setCheckUpToDate(false);
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions().setOverwriteMode("always"));
         assertEquals(
             new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(), 
             file.lastModified());
