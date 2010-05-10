@@ -115,6 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Support ivy.xml parent mechanism (IVY-742) (thanks to Jason Trump and Jean-Louis Boudart)
 - NEW: Make ivy.xml <conf description> available (IVY-1158)
 
+- IMPROVEMENT: better diagnostics when reporting bad ivy file in cache (IVY-1190)
 - IMPROVEMENT: Support changing="true" for inline retrieve (IVY-1180)
 - IMPROVEMENT: Enhance <info/> task to access the 'publication', 'branch' and published artifacts as ant propeties (IVY-395) (thanks to Carl Quinn)
 - IMPROVEMENT: Ivy doesn't support Maven 2.0.9 'import' scope (IVY-807)

@@ -126,7 +126,7 @@ public class DeliverEngine {
             throw new RuntimeException("malformed url obtained for file " + ivyFile, e);
         } catch (ParseException e) {
             throw new RuntimeException("bad ivy file in cache for " + mrid
-                    + ": please clean and resolve again", e);
+                    + ": please clean '" + ivyFile + "' and resolve again", e);
         }
 
         // 2) parse resolvedRevisions From properties file
@@ -198,7 +198,7 @@ public class DeliverEngine {
                             .toArray(new String[confsToRemove.size()])));
         } catch (SAXException ex) {
             throw new RuntimeException("bad ivy file in cache for " + mrid
-                    + ": please clean and resolve again", ex);
+                    + ": please clean '" + ivyFile + "' and resolve again", ex);
         }
 
         Message.verbose("\tdeliver done (" + (System.currentTimeMillis() - start) + "ms)");
