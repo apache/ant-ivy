@@ -407,8 +407,8 @@ public class RetrieveEngine {
             return source.lastModified() <= target.lastModified();
         }
         
-        if (RetrieveOptions.OVERWRITEMODE_NEWER.equals(overwriteMode)) {
-            return source.lastModified() != target.lastModified();
+        if (RetrieveOptions.OVERWRITEMODE_DIFFERENT.equals(overwriteMode)) {
+            return source.lastModified() == target.lastModified();
         }
 
         // unknown, so just to be sure
