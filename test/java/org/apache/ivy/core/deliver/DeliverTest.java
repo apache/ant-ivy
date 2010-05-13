@@ -28,39 +28,36 @@ import org.apache.ivy.ant.IvyDeliver;
 import org.apache.ivy.ant.IvyResolve;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class DeliverTest extends TestCase {
     private File cache;
+    private File deliverDir;
 
     private IvyDeliver ivyDeliver;
 
     protected void setUp() throws Exception {
-        FileUtil.forceDelete(new File("build/test/publish"));
-        createCache("build/test/publish/cache");
+        cache = new File("build/cache");
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        createCache();
 
+        deliverDir = new File("build/test/deliver");
+        deliverDir.mkdirs();
+        
         Project project = new Project();
         project.init();
+        
         ivyDeliver = new IvyDeliver();
         ivyDeliver.setProject(project);
-    }
-
-    private void createCache(String filename) {
-        cache = new File(filename);
-        cache.mkdirs();
+        ivyDeliver.setDeliverpattern(deliverDir.getAbsolutePath() + "/[type]s/[artifact]-[revision](-[classifier]).[ext]");
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-        FileUtil.forceDelete(new File("build/test/publish"));
+        FileUtil.forceDelete(cache);
+        FileUtil.forceDelete(deliverDir);
     }
 
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+    private void createCache() {
+        cache.mkdirs();
     }
 
     public void testIVY1111() throws Exception {
@@ -74,7 +71,7 @@ public class DeliverTest extends TestCase {
         ivyDeliver.setReplacedynamicrev(true);
         ivyDeliver.doExecute();
 
-        String deliverContent = readFile("distrib/ivys/ivy-1.0.xml");
+        String deliverContent = readFile(deliverDir.getAbsolutePath() + "/ivys/ivy-1.0.xml");
         assertTrue(deliverContent.indexOf("rev=\"latest.integration\"") == -1);
         assertTrue(deliverContent.indexOf("name=\"b\" rev=\"1.5\"") >= 0);
     }
