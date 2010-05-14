@@ -65,6 +65,7 @@ import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
+import org.apache.tools.ant.util.FileUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -77,6 +78,7 @@ public class ResolveTest extends TestCase {
     private IvySettings settings;
 
     private File cache;
+    private File deliverDir;
 
     public ResolveTest() {
     }
@@ -85,6 +87,9 @@ public class ResolveTest extends TestCase {
         cache = new File("build/cache");
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
         createCache();
+        
+        deliverDir = new File("build/test/deliver");
+        deliverDir.mkdirs();
 
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -97,6 +102,7 @@ public class ResolveTest extends TestCase {
 
     protected void tearDown() throws Exception {
         CacheCleaner.deleteDir(cache);
+        FileUtil.forceDelete(deliverDir);
     }
 
 
@@ -4963,9 +4969,9 @@ public class ResolveTest extends TestCase {
             getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
         
-        ivy.deliver("1.0.0", "build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml", new DeliverOptions().setResolveId(report.getResolveId()).setValidate(false).setPubdate(new Date()));
+        ivy.deliver("1.0.0", deliverDir.getAbsolutePath() + "/ivy-1.0.0.xml", new DeliverOptions().setResolveId(report.getResolveId()).setValidate(false).setPubdate(new Date()));
         
-        File deliveredIvyFile = new File("build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml");
+        File deliveredIvyFile = new File(deliverDir, "ivy-1.0.0.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             ivy.getSettings(), deliveredIvyFile.toURL(), false);
@@ -4986,9 +4992,9 @@ public class ResolveTest extends TestCase {
             getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
         
-        ivy.deliver("1.0.0", "build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml", new DeliverOptions().setResolveId(report.getResolveId()).setValidate(false).setPubdate(new Date()));
+        ivy.deliver("1.0.0", deliverDir.getAbsolutePath() + "/ivy-1.0.0.xml", new DeliverOptions().setResolveId(report.getResolveId()).setValidate(false).setPubdate(new Date()));
         
-        File deliveredIvyFile = new File("build/test/extra-attributes-forceddependencies/ivy-1.0.0.xml");
+        File deliveredIvyFile = new File(deliverDir, "ivy-1.0.0.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             ivy.getSettings(), deliveredIvyFile.toURL(), false);
