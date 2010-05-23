@@ -79,7 +79,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private void configureProxy() {
-        proxyRealm = System.getProperty("http.auth.ntlm.domain", AuthScope.ANY_REALM);
+        proxyRealm = System.getProperty("http.auth.ntlm.domain");
         // no equivalent for realm in jdk proxy support ?
         proxyHost = System.getProperty("http.proxyHost");
         // TODO constant is better ...
@@ -284,7 +284,7 @@ public class HttpClientHandler extends AbstractURLHandler {
                 httpClient.getHostConfiguration().setProxy(proxyHost, proxyPort);
                 if (useProxyAuthentication()) {
                     httpClient.getState().setProxyCredentials(
-                        new AuthScope(proxyHost, proxyPort, proxyRealm),
+                        new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM),
                         new NTCredentials(proxyUserName, proxyPasswd, 
                             HostUtil.getLocalHostName(), proxyRealm));
                 }
