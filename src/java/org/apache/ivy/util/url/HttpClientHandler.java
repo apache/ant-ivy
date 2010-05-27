@@ -62,8 +62,6 @@ public class HttpClientHandler extends AbstractURLHandler {
     // proxy configuration: obtain from system properties
     private int proxyPort;
 
-    private String proxyRealm = null;
-
     private String proxyHost = null;
 
     private String proxyUserName = null;
@@ -79,8 +77,6 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private void configureProxy() {
-        proxyRealm = System.getProperty("http.auth.ntlm.domain");
-        // no equivalent for realm in jdk proxy support ?
         proxyHost = System.getProperty("http.proxyHost");
         // TODO constant is better ...
         if (useProxy()) {
@@ -285,19 +281,17 @@ public class HttpClientHandler extends AbstractURLHandler {
                 if (useProxyAuthentication()) {
                     httpClient.getState().setProxyCredentials(
                         new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM),
-                        new NTCredentials(proxyUserName, proxyPasswd, 
-                            HostUtil.getLocalHostName(), proxyRealm));
+                        createCredentials(proxyUserName, proxyPasswd));
                 }
             }
 
             // user-agent
             httpClient.getParams().setParameter("http.useragent",
                 "Apache Ivy/" + Ivy.getIvyVersion());
-        }
 
-        if (useAuthentication(url)) {
+            // authentication
             httpClient.getParams().setParameter(CredentialsProvider.PROVIDER, 
-                    new IvyCredentialsProvider()); 
+                new IvyCredentialsProvider()); 
         }
 
         return httpClient;
@@ -434,12 +428,26 @@ public class HttpClientHandler extends AbstractURLHandler {
             org.apache.ivy.util.Credentials c = (org.apache.ivy.util.Credentials) 
                     CredentialsStore.INSTANCE.getCredentials(realm, host);
             if (c != null) {
-                return new NTCredentials(c.getUserName(), c.getPasswd(), 
-                    HostUtil.getLocalHostName(), c.getRealm());
+                return createCredentials(c.getUserName(), c.getPasswd());
             }
             
             return null;
         }
-
+    }
+    
+    private static Credentials createCredentials(String username, String password) {
+        String user;
+        String domain;
+        
+        int backslashIndex = username.indexOf('\\');
+        if (backslashIndex >= 0) {
+            user = username.substring(backslashIndex + 1);
+            domain = username.substring(0, backslashIndex);
+        } else {
+            user = username;
+            domain = System.getProperty("http.auth.ntlm.domain", "");
+        }
+        
+        return new NTCredentials(user, password, HostUtil.getLocalHostName(), domain);
     }
 }
