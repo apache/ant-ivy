@@ -18,9 +18,11 @@
 package org.apache.ivy.plugins.version;
 
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.status.Status;
 import org.apache.ivy.core.module.status.StatusManager;
 
 public class LatestVersionMatcher extends AbstractVersionMatcher {
@@ -37,7 +39,10 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
     }
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
-        return !"latest.integration".equals(askedMrid.getRevision());
+        List statuses = StatusManager.getCurrent().getStatuses();
+        Status lowest = (Status) statuses.get(statuses.size() - 1);
+        String latestLowest = "latest." + lowest.getName();
+        return !latestLowest.equals(askedMrid.getRevision());
     }
 
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
