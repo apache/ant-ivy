@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
@@ -116,6 +117,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             url = normalizeToURL(url);
             conn = url.openConnection();
             conn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            conn.setRequestProperty("Accept-Encoding", "gzip");
             if (conn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) conn;
                 if (!checkStatusCode(url, httpCon)) {
@@ -124,7 +126,12 @@ public class BasicURLHandler extends AbstractURLHandler {
                                 + " See log for more detail.");
                 }
             }
-            InputStream inStream  = conn.getInputStream();
+            InputStream inStream;
+            if ("gzip".equals(conn.getContentEncoding())) {
+                inStream = new GZIPInputStream(conn.getInputStream());
+            } else {
+                inStream = conn.getInputStream();
+            }
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -147,6 +154,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             src = normalizeToURL(src);
             srcConn = src.openConnection();
             srcConn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            srcConn.setRequestProperty("Accept-Encoding", "gzip");
             if (srcConn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) srcConn;
                 if (!checkStatusCode(src, httpCon)) {
@@ -156,7 +164,15 @@ public class BasicURLHandler extends AbstractURLHandler {
                 }
             }
             int contentLength = srcConn.getContentLength();
-            FileUtil.copy(srcConn.getInputStream(), dest, l);
+
+            InputStream inStream;
+            if ("gzip".equals(srcConn.getContentEncoding())) {
+                inStream = new GZIPInputStream(srcConn.getInputStream());
+            } else {
+                inStream = srcConn.getInputStream();
+            }
+
+            FileUtil.copy(inStream, dest, l);
             if (dest.length() != contentLength && contentLength != -1) {
                 dest.delete();
                 throw new IOException(

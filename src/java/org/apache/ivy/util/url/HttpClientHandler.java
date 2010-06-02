@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -46,6 +47,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
@@ -110,7 +112,16 @@ public class HttpClientHandler extends AbstractURLHandler {
                 throw new IOException("The HTTP response code for " + src
                         + " did not indicate a success." + " See log for more detail.");
             }
-            FileUtil.copy(get.getResponseBodyAsStream(), dest, l);
+            
+            InputStream is;
+            Header[] contentEncodings = get.getResponseHeaders("Content-Encoding");
+            if ((contentEncodings.length > 0) && "gzip".equals(contentEncodings[0].getValue())) {
+                is = new GZIPInputStream(get.getResponseBodyAsStream());
+            } else {
+                is = get.getResponseBodyAsStream();
+            }
+
+            FileUtil.copy(is, dest, l);
             dest.setLastModified(getLastModified(get));
         } finally {
             get.releaseConnection();
@@ -244,6 +255,7 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         GetMethod get = new GetMethod(normalizeToString(url));
         get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
+        get.setRequestHeader("Accept-Encoding", "gzip");
         client.executeMethod(get);
         return get;
     }
@@ -286,7 +298,7 @@ public class HttpClientHandler extends AbstractURLHandler {
             }
 
             // user-agent
-            httpClient.getParams().setParameter("http.useragent",
+            httpClient.getParams().setParameter(HttpMethodParams.USER_AGENT,
                 "Apache Ivy/" + Ivy.getIvyVersion());
 
             // authentication
@@ -316,7 +328,13 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         private GETInputStream(GetMethod get) throws IOException {
             this.get = get;
-            is = get.getResponseBodyAsStream();
+            
+            Header[] contentEncodings = get.getResponseHeaders("Content-Encoding");
+            if ((contentEncodings.length > 0) && "gzip".equals(contentEncodings[0].getValue())) {
+                is = new GZIPInputStream(get.getResponseBodyAsStream());
+            } else {
+                is = get.getResponseBodyAsStream();
+            }
         }
 
         public int available() throws IOException {
