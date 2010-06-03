@@ -168,6 +168,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             InputStream inStream;
             if ("gzip".equals(srcConn.getContentEncoding())) {
                 inStream = new GZIPInputStream(srcConn.getInputStream());
+                contentLength = -1;
             } else {
                 inStream = srcConn.getInputStream();
             }
