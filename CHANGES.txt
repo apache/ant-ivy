@@ -115,7 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Support ivy.xml parent mechanism (IVY-742) (thanks to Jason Trump and Jean-Louis Boudart)
 - NEW: Make ivy.xml <conf description> available (IVY-1158)
 
-- IMPROVEMENT: added support for 'gzip' HTTP Content-Encoding (IVY-1194)
+- IMPROVEMENT: added support for 'gzip' and 'deflate' HTTP Content-Encoding (IVY-1194)
 - IMPROVEMENT: retrieve doesn't retrive files if the current one is more recent (IVY-1044)
 - IMPROVEMENT: better diagnostics when reporting bad ivy file in cache (IVY-1190)
 - IMPROVEMENT: Support changing="true" for inline retrieve (IVY-1180)

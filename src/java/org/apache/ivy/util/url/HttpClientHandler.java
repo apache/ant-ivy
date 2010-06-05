@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -101,7 +100,10 @@ public class HttpClientHandler extends AbstractURLHandler {
             throw new IOException("The HTTP response code for " + url
                     + " did not indicate a success." + " See log for more detail.");
         }
-        return new GETInputStream(get);
+        
+        Header encoding = get.getResponseHeader("Content-Encoding");
+        return getDecodingInputStream(encoding == null ? null : encoding.getValue(),
+                                      get.getResponseBodyAsStream());
     }
 
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
@@ -113,14 +115,9 @@ public class HttpClientHandler extends AbstractURLHandler {
                         + " did not indicate a success." + " See log for more detail.");
             }
             
-            InputStream is;
-            Header[] contentEncodings = get.getResponseHeaders("Content-Encoding");
-            if ((contentEncodings.length > 0) && "gzip".equals(contentEncodings[0].getValue())) {
-                is = new GZIPInputStream(get.getResponseBodyAsStream());
-            } else {
-                is = get.getResponseBodyAsStream();
-            }
-
+            Header encoding = get.getResponseHeader("Content-Encoding");
+            InputStream is = getDecodingInputStream(encoding == null ? null : encoding.getValue(),
+                                                    get.getResponseBodyAsStream());
             FileUtil.copy(is, dest, l);
             dest.setLastModified(getLastModified(get));
         } finally {
@@ -255,7 +252,7 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         GetMethod get = new GetMethod(normalizeToString(url));
         get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
-        get.setRequestHeader("Accept-Encoding", "gzip");
+        get.setRequestHeader("Accept-Encoding", "gzip,deflate");
         client.executeMethod(get);
         return get;
     }
@@ -319,72 +316,6 @@ public class HttpClientHandler extends AbstractURLHandler {
 
     private boolean useProxyAuthentication() {
         return (proxyUserName != null && proxyUserName.trim().length() > 0);
-    }
-
-    private static final class GETInputStream extends InputStream {
-        private InputStream is;
-
-        private GetMethod get;
-
-        private GETInputStream(GetMethod get) throws IOException {
-            this.get = get;
-            
-            Header[] contentEncodings = get.getResponseHeaders("Content-Encoding");
-            if ((contentEncodings.length > 0) && "gzip".equals(contentEncodings[0].getValue())) {
-                is = new GZIPInputStream(get.getResponseBodyAsStream());
-            } else {
-                is = get.getResponseBodyAsStream();
-            }
-        }
-
-        public int available() throws IOException {
-            return is.available();
-        }
-
-        public void close() throws IOException {
-            is.close();
-            get.releaseConnection();
-        }
-
-        public boolean equals(Object obj) {
-            return is.equals(obj);
-        }
-
-        public int hashCode() {
-            return is.hashCode();
-        }
-
-        public void mark(int readlimit) {
-            is.mark(readlimit);
-        }
-
-        public boolean markSupported() {
-            return is.markSupported();
-        }
-
-        public int read() throws IOException {
-            return is.read();
-        }
-
-        public int read(byte[] b, int off, int len) throws IOException {
-            return is.read(b, off, len);
-        }
-
-        public int read(byte[] b) throws IOException {
-            return is.read(b);
-        }
-
-        public void reset() throws IOException {
-            is.reset();
-        }
-
-        public long skip(long n) throws IOException {
-            return is.skip(n);
-        }
-
-        public String toString() {
-            return is.toString();
-        }
     }
 
     private static final class HttpClientHelper3x implements HttpClientHelper {

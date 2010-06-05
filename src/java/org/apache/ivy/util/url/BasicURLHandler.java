@@ -28,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
@@ -117,7 +116,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             url = normalizeToURL(url);
             conn = url.openConnection();
             conn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
-            conn.setRequestProperty("Accept-Encoding", "gzip");
+            conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             if (conn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) conn;
                 if (!checkStatusCode(url, httpCon)) {
@@ -126,12 +125,8 @@ public class BasicURLHandler extends AbstractURLHandler {
                                 + " See log for more detail.");
                 }
             }
-            InputStream inStream;
-            if ("gzip".equals(conn.getContentEncoding())) {
-                inStream = new GZIPInputStream(conn.getInputStream());
-            } else {
-                inStream = conn.getInputStream();
-            }
+            InputStream inStream = getDecodingInputStream(conn.getContentEncoding(),
+                                                          conn.getInputStream());
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -154,7 +149,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             src = normalizeToURL(src);
             srcConn = src.openConnection();
             srcConn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
-            srcConn.setRequestProperty("Accept-Encoding", "gzip");
+            srcConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             if (srcConn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) srcConn;
                 if (!checkStatusCode(src, httpCon)) {
@@ -163,23 +158,24 @@ public class BasicURLHandler extends AbstractURLHandler {
                                 + " See log for more detail.");
                 }
             }
-            int contentLength = srcConn.getContentLength();
 
-            InputStream inStream;
-            if ("gzip".equals(srcConn.getContentEncoding())) {
-                inStream = new GZIPInputStream(srcConn.getInputStream());
-                contentLength = -1;
-            } else {
-                inStream = srcConn.getInputStream();
-            }
-
+            // do the download
+            InputStream inStream = getDecodingInputStream(srcConn.getContentEncoding(),
+                                                          srcConn.getInputStream());
             FileUtil.copy(inStream, dest, l);
-            if (dest.length() != contentLength && contentLength != -1) {
-                dest.delete();
-                throw new IOException(
-                        "Downloaded file size doesn't match expected Content Length for " + src
-                                + ". Please retry.");
+
+            // check content length only if content was not encoded
+            if (srcConn.getContentEncoding() == null) {
+                int contentLength = srcConn.getContentLength();
+                if (contentLength != -1 && dest.length() != contentLength) {
+                    dest.delete();
+                    throw new IOException(
+                            "Downloaded file size doesn't match expected Content Length for " + src
+                                    + ". Please retry.");
+                }
             }
+            
+            // update modification date
             long lastModified = srcConn.getLastModified();
             if (lastModified > 0) {
                 dest.setLastModified(lastModified);

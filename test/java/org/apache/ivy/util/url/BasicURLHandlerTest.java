@@ -20,6 +20,8 @@ package org.apache.ivy.util.url;
 import java.io.File;
 import java.net.URL;
 
+import org.apache.ivy.util.FileUtil;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,8 +29,21 @@ import junit.framework.TestCase;
  */
 public class BasicURLHandlerTest extends TestCase {
     // remote.test
+    private File testDir;
+    private BasicURLHandler handler;
+    
+    protected void setUp() throws Exception {
+        testDir = new File("build/BasicURLHandlerTest");
+        testDir.mkdirs();
+        
+        handler = new BasicURLHandler();
+    }
+    
+    protected void tearDown() throws Exception {
+        FileUtil.forceDelete(testDir);
+    }
+    
     public void testIsReachable() throws Exception {
-        URLHandler handler = new BasicURLHandler();
         assertTrue(handler.isReachable(new URL("http://www.google.fr/")));
         assertFalse(handler.isReachable(new URL("http://www.google.fr/unknownpage.html")));
 
@@ -38,5 +53,20 @@ public class BasicURLHandlerTest extends TestCase {
         // to test ftp we should know of an anonymous ftp site... !
         // assertTrue(handler.isReachable(new URL("ftp://ftp.mozilla.org/pub/dir.sizes")));
         assertFalse(handler.isReachable(new URL("ftp://ftp.mozilla.org/unknown.file")));
+    }
+    
+    public void testContentEncoding() throws Exception {
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html"), new File(testDir, "gzip.txt"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on&zlib=on"), new File(testDir, "deflate-zlib.txt"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on"), new File(testDir, "deflate.txt"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps"), new File(testDir, "a5-gzip.ps"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps?deflate=on"), new File(testDir, "a5-deflate.ps"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf"), new File(testDir, "nh80-gzip.pdf"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf?deflate=on"), new File(testDir, "nh80-deflate.pdf"));
+    }
+    
+    private void assertDownloadOK(URL url, File file) throws Exception {
+        handler.download(url, file, null);
+        assertTrue(file.exists());        
     }
 }

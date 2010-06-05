@@ -17,13 +17,19 @@
  */
 package org.apache.ivy.util.url;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.regex.Pattern;
+import java.util.zip.DataFormatException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 public abstract class AbstractURLHandler implements URLHandler {
     
@@ -118,4 +124,44 @@ public abstract class AbstractURLHandler implements URLHandler {
         
         return new URL(normalizeToString(url));
     }
+    
+    protected InputStream getDecodingInputStream(String encoding, InputStream in) 
+            throws IOException {
+        InputStream result = null;
+        
+        if ("gzip".equals(encoding)) {
+            result = new GZIPInputStream(in);
+        } else if ("deflate".equals(encoding)) {
+            // There seems to be 2 variants of the "deflate"-encoding.
+            // I couldn't find a way to auto-detect which variant was
+            // used, so as (a not really good) work-around we try do
+            // decompress the first 100 bytes using the "zlib"-variant.
+            BufferedInputStream bStream = new BufferedInputStream(in);
+            bStream.mark(100);
+            byte[] bytes = new byte[100];
+            int nbBytes = bStream.read(bytes);
+            bStream.reset();
+            
+            Inflater inflater = new Inflater();
+            inflater.setInput(bytes, 0, nbBytes);
+            try {
+                inflater.inflate(new byte[1000]);
+                
+                // no error decompressing the first 100 bytes, so we
+                // assume the "zlib"-variant was used.
+                result = new InflaterInputStream(bStream);
+            } catch (DataFormatException e) {
+                // there was an error decompressing the first 100 bytes,
+                // so we assume the "gzip/raw"-variant was used.
+                result = new InflaterInputStream(bStream, new Inflater(true));
+            } finally {
+                inflater.end();
+            }
+        } else {
+            result = in;
+        }
+        
+        return result;
+    }
+
 }
