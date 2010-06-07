@@ -52,8 +52,6 @@ public interface ParserSettings {
     
     File resolveFile(String filename);
     
-    File getBaseDir();
-    
     String getDefaultBranch(ModuleId moduleId);
 
 }

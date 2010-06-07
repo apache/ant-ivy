@@ -123,10 +123,6 @@ class ParserSettingsMonitor {
             return delegatedSettings.getStatusManager();
         }
         
-        public File getBaseDir() {
-            return delegatedSettings.getBaseDir();
-        }
-        
         public File resolveFile(String filename) {
             return delegatedSettings.resolveFile(filename);
         }
