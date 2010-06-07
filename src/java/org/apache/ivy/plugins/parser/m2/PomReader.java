@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,8 +87,8 @@ public class PomReader {
     private final Element projectElement;
     private final Element parentElement;
     
-    public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
-        InputStream stream = new AddDTDFilterInputStream(descriptorURL.openStream());
+    public PomReader(Resource res) throws IOException, SAXException {
+        InputStream stream = new AddDTDFilterInputStream(res.openStream());
         try {
             Document pomDomDoc = XMLHelper.parseToDom(stream, res, new EntityResolver() {
                 public InputSource resolveEntity(String publicId, String systemId) 

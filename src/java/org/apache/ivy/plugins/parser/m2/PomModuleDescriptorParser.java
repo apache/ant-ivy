@@ -114,7 +114,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                                                                     this, res, ivySettings);
         
         try {           
-            PomReader domReader = new PomReader(descriptorURL, res);            
+            PomReader domReader = new PomReader(res);            
             domReader.setProperty("parent.version", domReader.getParentVersion());
             domReader.setProperty("parent.groupId", domReader.getParentGroupId());
             domReader.setProperty("project.parent.version", domReader.getParentVersion());
@@ -140,7 +140,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 if (parentModule != null) {
                     parentDescr = parentModule.getDescriptor();
                 } else {
-                    throw new IOException("Impossible to load parent for " + descriptorURL + "."
+                    throw new IOException("Impossible to load parent for " + res.getName() + "."
                        + " Parent=" + parentModRevID);
                 }
                 if (parentDescr != null) {
@@ -247,7 +247,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                                 mdBuilder.addDependencyMgt((PomDependencyMgt) it2.next());
                             }
                         } else {
-                            throw new IOException("Impossible to import module for " + descriptorURL + "."
+                            throw new IOException("Impossible to import module for " + res.getName() + "."
                                + " Import=" + importModRevID);
                         }
                         
