@@ -1168,7 +1168,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
     }
     
-    private class BackupResourceDownloader implements ResourceDownloader {
+    private final class BackupResourceDownloader implements ResourceDownloader {
         
         private ResourceDownloader delegate;
         private File backup;
