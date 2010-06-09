@@ -543,7 +543,8 @@
         </apply>
     </target>
     
-    <target name="checkstyle-internal" depends="jar" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
+    <!-- Checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config  -->
+    <target name="checkstyle-internal" depends="jar">
         <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="4.3"
                 inline="true" conf="default" pathid="checkstyle.classpath" transitive="true" 
         		log="download-only"/>
