@@ -193,6 +193,9 @@ public class PomModuleDescriptorBuilder {
     
     private ParserSettings parserSettings;
 
+    private static final String WRONG_NUMBER_OF_PARTS_MSG = "what seemed to be a dependency "
+            + "management extra info exclusion had the wrong number of parts (should have 2) ";
+
     
     public PomModuleDescriptorBuilder(
             ModuleDescriptorParser parser, Resource res, ParserSettings ivySettings) {
@@ -362,7 +365,7 @@ public class PomModuleDescriptorBuilder {
                                     dep.getGroupId(), dep.getArtifactId());
             ivyModuleDescriptor.addExtraInfo(scopeKey, dep.getScope());
         }
-        if(!dep.getExcludedModules().isEmpty()) {
+        if (!dep.getExcludedModules().isEmpty()) {
             final String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(
                     dep.getGroupId(), dep.getArtifactId());
             int index = 0;
@@ -488,9 +491,9 @@ public class PomModuleDescriptorBuilder {
             if (key.startsWith(exclusionPrefix)) {
                 final String full_exclusion = (String) ent.getValue();
                 final String[] exclusion_parts = full_exclusion.split(EXTRA_INFO_DELIMITER);
-                if(exclusion_parts.length != 2) {
-                    Message.error("what seemed to be a dependency management extra info exclusion " +
-                            "had the wrong number of parts (should have 2) " + exclusion_parts.length + " : " + full_exclusion);
+                if (exclusion_parts.length != 2) {
+                    Message.error(WRONG_NUMBER_OF_PARTS_MSG + exclusion_parts.length + " : "
+                            + full_exclusion);
                     continue;
                 }
                 exclusionIds.add(ModuleId.newInstance(exclusion_parts[0], exclusion_parts[1]));

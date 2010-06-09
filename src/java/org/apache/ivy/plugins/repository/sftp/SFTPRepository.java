@@ -206,7 +206,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             Collection r = c.ls(path);
             if (r != null) {
                 if (!path.endsWith("/")) {
-                	path = parent + "/";
+                    path = parent + "/";
                 }
                 List result = new ArrayList();
                 for (Iterator iter = r.iterator(); iter.hasNext();) {
