@@ -37,7 +37,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
     }
 
     public String[] getExtendsTypes() {
-        return (String[])extendsTypes.toArray(new String[extendsTypes.size()]);
+        return (String[]) extendsTypes.toArray(new String[extendsTypes.size()]);
     }
 
     public boolean isAllInherited() {

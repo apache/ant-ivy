@@ -439,7 +439,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     parent.getModuleRevisionId(),
                     parent.getResolvedModuleRevisionId(),
                     attributes.getValue("location"),
-                    (String[])extendTypes.toArray(new String[extendTypes.size()]));
+                    (String[]) extendTypes.toArray(new String[extendTypes.size()]));
             getMd().addInheritedDescriptor(ed);
 
             mergeWithOtherModuleDescriptor(extendTypes, parent);
@@ -498,7 +498,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
             descriptor.setStatus(mergeValue(parent.getStatus(), descriptor.getStatus()));
             if (descriptor.getNamespace() == null && parent instanceof DefaultModuleDescriptor) {
-                descriptor.setNamespace(((DefaultModuleDescriptor)parent).getNamespace());
+                Namespace parentNamespace = ( (DefaultModuleDescriptor) parent).getNamespace();
+                descriptor.setNamespace(parentNamespace);
             }
         }
         

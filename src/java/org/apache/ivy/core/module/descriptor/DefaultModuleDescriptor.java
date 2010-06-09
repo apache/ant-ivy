@@ -389,7 +389,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public ExtendsDescriptor[] getInheritedDescriptors() {
-        return (ExtendsDescriptor[])inheritedDescriptors.toArray(
+        return (ExtendsDescriptor[]) inheritedDescriptors.toArray(
                 new ExtendsDescriptor[inheritedDescriptors.size()]);
     }
 
