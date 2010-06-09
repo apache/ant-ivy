@@ -229,7 +229,7 @@ public class SearchEngine {
         List ret = new ArrayList();
 
         Map criteria = new HashMap();
-        for (Iterator it = moduleCrit.getAttributes().entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator it = moduleCrit.getAttributes().entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
             addMatcher(matcher, (String) entry.getValue(), criteria, (String) entry.getKey());
         }
@@ -247,7 +247,8 @@ public class SearchEngine {
                 String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
                 
                 Map foundExtraAtts = new HashMap();
-                for (Iterator iter2 = moduleCrit.getQualifiedExtraAttributes().keySet().iterator(); iter2.hasNext(); ) {
+                Set qualAttributes = moduleCrit.getQualifiedExtraAttributes().keySet();
+                for (Iterator iter2 = qualAttributes.iterator(); iter2.hasNext();) {
                     String qualifiedKey = (String) iter2.next();
                     String value = null;
                     int colonIndex = qualifiedKey.indexOf(':');
@@ -284,7 +285,7 @@ public class SearchEngine {
     public ModuleRevisionId[] listModules(
             DependencyResolver resolver, ModuleRevisionId moduleCrit, PatternMatcher matcher) {
         Map criteria = new HashMap();
-        for (Iterator it = moduleCrit.getAttributes().entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator it = moduleCrit.getAttributes().entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
             addMatcher(matcher, (String) entry.getValue(), criteria, (String) entry.getKey());
         }
@@ -301,7 +302,8 @@ public class SearchEngine {
             String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
             
             Map foundExtraAtts = new HashMap();
-            for (Iterator iter2 = moduleCrit.getQualifiedExtraAttributes().keySet().iterator(); iter2.hasNext(); ) {
+            Set qualExtraAttributes = moduleCrit.getQualifiedExtraAttributes().keySet();
+            for (Iterator iter2 = qualExtraAttributes.iterator(); iter2.hasNext();) {
                 String qualifiedKey = (String) iter2.next();
                 String value = null;
                 int colonIndex = qualifiedKey.indexOf(':');

@@ -214,7 +214,7 @@ public class ResolveData {
             // search again, now ignore the extra attributes
             // TODO: maybe we should search the node that has at least the 
             // same attributes as mrid
-            for (Iterator it = visitData.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
                 Map.Entry entry = (Entry) it.next();
                 ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
                 if (current.getModuleId().equals(mrid.getModuleId())

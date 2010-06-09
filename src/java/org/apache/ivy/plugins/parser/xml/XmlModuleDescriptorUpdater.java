@@ -746,7 +746,7 @@ public final class XmlModuleDescriptorUpdater {
                 write(" namespace=\"" + namespace + "\"");
             }
 
-            for (Iterator extras = extraAttributes.entrySet().iterator(); extras.hasNext(); ) {
+            for (Iterator extras = extraAttributes.entrySet().iterator(); extras.hasNext();) {
                 Map.Entry extra = (Map.Entry) extras.next();
                 write(" " + extra.getKey() + "=\"" + extra.getValue() +  "\"");
             }
