@@ -1,9 +1,9 @@
 package org.apache.ivy.core.module.descriptor;
 
-import org.apache.ivy.core.module.id.ModuleRevisionId;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class DefaultExtendsDescriptor implements ExtendsDescriptor {
 

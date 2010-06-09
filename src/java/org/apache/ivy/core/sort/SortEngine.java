@@ -95,7 +95,8 @@ public class SortEngine {
      *             if a circular dependency exists and circular dependency strategy decide to throw
      *             an exception
      */
-    public List sortModuleDescriptors(Collection moduleDescriptors, SortOptions options) {
+    public List sortModuleDescriptors(Collection moduleDescriptors, SortOptions options) 
+                    throws CircularDependencyException {
         Checks.checkNotNull(options, "options");
         ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors,
                 getVersionMatcher(), options.getNonMatchingVersionReporter(), 

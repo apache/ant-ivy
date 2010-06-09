@@ -28,7 +28,6 @@ import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
-import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public interface ParserSettings {
