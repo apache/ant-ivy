@@ -65,7 +65,6 @@ import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
-import org.apache.tools.ant.util.FileUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -74,8 +73,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class ResolveTest extends TestCase {
     private Ivy ivy;
-
-    private IvySettings settings;
 
     private File cache;
     private File deliverDir;
@@ -93,7 +90,6 @@ public class ResolveTest extends TestCase {
 
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        settings = ivy.getSettings();
     }
 
     private void createCache() {
@@ -105,9 +101,8 @@ public class ResolveTest extends TestCase {
         FileUtil.forceDelete(deliverDir);
     }
 
-
     public void testResolveWithRetainingArtifactName() throws Exception {
-        ((DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager())
+        ((DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager())
                 .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
                 .toURL(), getResolveOptions(new String[] {"default"}));
@@ -139,7 +134,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testResolveWithRetainingArtifactNameAndExtraAttributes() throws Exception {
-        ((DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager())
+        ((DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager())
                 .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.4/ivy-1.1.xml")
                 .toURL(), getResolveOptions(new String[] {"default"}).setValidate(false));
@@ -776,12 +771,12 @@ public class ResolveTest extends TestCase {
         resolver.setName("dual");
         FileSystemResolver r = new FileSystemResolver();
         r.setName("1");
-        r.addIvyPattern(settings.getBaseDir().getPath() 
+        r.addIvyPattern(ivy.getSettings().getBaseDir().getPath() 
             + "/build/testCache2/ivy-[module]-[revision].xml");
         resolver.add(r);
         r = new FileSystemResolver();
         r.setName("2");
-        r.addArtifactPattern(settings.getBaseDir().getPath() 
+        r.addArtifactPattern(ivy.getSettings().getBaseDir().getPath() 
             + "/build/testCache2/[artifact]-[revision].[ext]");
         resolver.add(r);
         ivy.getSettings().addResolver(resolver);
@@ -3156,17 +3151,17 @@ public class ResolveTest extends TestCase {
                 .toURL(), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        settings.setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
         report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        settings.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
         report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        settings.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
             ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
                 getResolveOptions(new String[] {"default"}));
@@ -3185,7 +3180,7 @@ public class ResolveTest extends TestCase {
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
-        settings.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
             ivy.resolve(new File("test/repositories/circular/ivy.xml").toURL(),
                 getResolveOptions(new String[] {"*"}));
@@ -3210,21 +3205,21 @@ public class ResolveTest extends TestCase {
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        settings.setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
         report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
             getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        settings.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
         report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
             getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        settings.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
             ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
                 getResolveOptions(new String[] {"default", "test"}));
@@ -3239,7 +3234,7 @@ public class ResolveTest extends TestCase {
     public void testRegularCircular() throws Exception {
         // mod11.1 depends on mod11.2 but excludes itself
         // mod11.2 depends on mod11.1
-        settings.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod11.1/ivy-1.0.xml")
                 .toURL(), getResolveOptions(new String[] {"test"}));
 
@@ -4614,7 +4609,7 @@ public class ResolveTest extends TestCase {
         // mod12.2 depends on mod12.1 1.0 which depends on mod1.2
         // mod12.1 doesn't have revision in its ivy file
 
-        ((BasicResolver) settings.getResolver("2-ivy")).setCheckconsistency(false);
+        ((BasicResolver) ivy.getSettings().getResolver("2-ivy")).setCheckconsistency(false);
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod12.2/ivy-1.0.xml")
                 .toURL(), getResolveOptions(new String[] {"*"}));
@@ -5103,4 +5098,93 @@ public class ResolveTest extends TestCase {
             // ignore
         }
     }
+    
+    public void testIVY1159_orderIsModAModB() throws Exception {
+        testIVY1159("ivy-depsorder_modA_then_modB.xml", false);
+
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "0"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "0"), dds[1].getDependencyRevisionId());
+    }
+
+    public void testIVY1159_orderIsModAModBReplaceForced() throws Exception {
+        testIVY1159("ivy-depsorder_modA_then_modB.xml", true);
+
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "1"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    public void testIVY1159_orderIsModBModA() throws Exception {
+        testIVY1159("ivy-depsorder_modB_then_modA.xml", false);
+
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "0"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "0"), dds[1].getDependencyRevisionId());
+    }
+
+    public void testIVY1159_orderIsModBModAReplaceForced() throws Exception {
+        testIVY1159("ivy-depsorder_modB_then_modA.xml", true);
+
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "1"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    private void testIVY1159(String modCIvyFile, boolean replaceForced) throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1159/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setRefresh(true);
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(
+            new File("test/repositories/IVY-1159/"+modCIvyFile).toURL(),
+            opts
+        );
+        assertFalse(report.hasError());
+
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("myorg", "modA", "1"),
+                    ModuleRevisionId.newInstance("myorg", "modB", "1")
+                                      })), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+        
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setReplaceForcedRevisions(replaceForced);
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] { "*" });
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/ivy-[revision].xml";
+        
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+    }
+
 }

@@ -34,6 +34,7 @@ public class DeliverOptions {
     private boolean validate = true;
 
     private boolean resolveDynamicRevisions = true;
+    private boolean replaceForcedRevisions = false;
 
     private String resolveId;
 
@@ -120,6 +121,15 @@ public class DeliverOptions {
 
     public DeliverOptions setResolveDynamicRevisions(boolean resolveDynamicRevisions) {
         this.resolveDynamicRevisions = resolveDynamicRevisions;
+        return this;
+    }
+    
+    public boolean isReplaceForcedRevisions() {
+        return replaceForcedRevisions;
+    }
+    
+    public DeliverOptions setReplaceForcedRevisions(boolean replaceForcedRevisions) {
+        this.replaceForcedRevisions = replaceForcedRevisions;
         return this;
     }
 

@@ -97,8 +97,10 @@ It can also be useful if you want to trigger a recursive delivery and then ensur
         <td>No. No recursive delivery is done by default</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
         <td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
-    <tr><td>replacedynamicrev</td><td>true to replace dynmic revisions by static ones in the delivered file, false to avoid this replacement <span class="since">(since 1.3)</span></td>
+    <tr><td>replacedynamicrev</td><td>true to replace dynamic revisions by static ones in the delivered file, false to avoid this replacement <span class="since">(since 1.3)</span></td>
         <td>No. Defaults to true</td></tr>
+    <tr><td>replaceForcedRev</td><td>true to replace revisions (static or dynamic) by the revision of the resolver in <a href="../settings/resolvers.html#common">forced mode</a>, false to avoid this replacement <span class="since">(since 2.2)</span></td>
+        <td>No. Defaults to false</td></tr>
     <tr><td>merge</td><td>if a descriptor <a href="../ivyfile/extends.html">extends</a> a parent, merge the inherited information directly into the delivered descriptor.  The <i>extends</i> element itself will be commented out in the delivered descriptor. <span class="since">(since 2.2)</span></td>
         <td>No. Defaults to true.</td></tr>
 	<tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td>

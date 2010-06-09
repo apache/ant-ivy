@@ -198,6 +198,8 @@ public class IvyDeliver extends IvyTask {
     private File deliveryList;
 
     private boolean replacedynamicrev = true;
+    
+    private boolean replaceForcedRev = false;
 
     private String resolveId;
 
@@ -291,6 +293,14 @@ public class IvyDeliver extends IvyTask {
 
     public void setReplacedynamicrev(boolean replacedynamicrev) {
         this.replacedynamicrev = replacedynamicrev;
+    }
+    
+    public boolean isReplaceForcedRev() {
+        return replaceForcedRev;
+    }
+    
+    public void setReplaceForcedRev(boolean replaceForcedRev) {
+        this.replaceForcedRev = replaceForcedRev;
     }
 
     public String getResolveId() {
@@ -403,6 +413,7 @@ public class IvyDeliver extends IvyTask {
             DeliverOptions options = new DeliverOptions(status, pubdate, 
                 drResolver, doValidate(settings), replacedynamicrev, splitConfs(conf))
                 .setResolveId(resolveId)
+                .setReplaceForcedRevisions(isReplaceForcedRev())
                 .setGenerateRevConstraint(generateRevConstraint)
                 .setMerge(merge)
                 .setPubBranch(pubBranch);

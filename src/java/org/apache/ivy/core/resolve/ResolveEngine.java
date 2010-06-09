@@ -27,11 +27,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -253,6 +255,14 @@ public class ResolveEngine {
                         md.getResolvedModuleRevisionId());
             Properties props = new Properties();
             if (dependencies.length > 0) {
+                Map forcedRevisions = new HashMap();
+                for (int i = 0; i < dependencies.length; i++) {
+                    if (dependencies[i].getModuleRevision() != null
+                            && dependencies[i].getModuleRevision().isForce()) {
+                        forcedRevisions.put(dependencies[i].getModuleId(), dependencies[i].getResolvedId());
+                    }
+                }
+
                 IvyNode root = dependencies[0].getRoot();
                 for (int i = 0; i < dependencies.length; i++) {
                     if (!dependencies[i].hasProblem()) {
@@ -261,6 +271,20 @@ public class ResolveEngine {
                             ModuleRevisionId depResolvedId = dependencies[i].getResolvedId();
                             ModuleDescriptor depDescriptor = dependencies[i].getDescriptor();
                             ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
+                            ModuleRevisionId forcedRevisionId = (ModuleRevisionId) 
+                                    forcedRevisions.get(dependencies[i].getModuleId());
+                            
+                            if (dependencies[i].getModuleRevision() != null
+                                    && dependencies[i].getModuleRevision().isForce()
+                                    && !depResolvedId.equals(depRevisionId)
+                                    && !settings.getVersionMatcher().isDynamic(depRevisionId)) {
+                                // if we were forced to this revision and we 
+                                // are not a dynamic revision, reset to the 
+                                // asked revision
+                                depResolvedId = depRevisionId;
+                                depDescriptor = null;
+                            }
+                            
                             if (depResolvedId == null) {
                                 throw new NullPointerException("getResolvedId() is null for " 
                                     + dependencies[i].toString());
@@ -270,10 +294,11 @@ public class ResolveEngine {
                                     + "is null for " + dd.toString());
                             }
                             String rev = depResolvedId.getRevision();
-                            // The evicted modules have no description, so we can't put their
-                            // status.
+                            String forcedRev = forcedRevisionId == null ? rev : forcedRevisionId.getRevision();
+                            
+                            // The evicted modules have no description, so we can't put the status
                             String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
-                            props.put(depRevisionId.encodeToString(), rev + " " + status);
+                            props.put(depRevisionId.encodeToString(), rev + " " + status + " " + forcedRev);
                         }
                     }
                 }
