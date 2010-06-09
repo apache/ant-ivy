@@ -162,21 +162,21 @@ public final class XmlModuleDescriptorUpdater {
     private static class UpdaterHandler extends DefaultHandler implements LexicalHandler {
 
         /** standard attributes of ivy-module/info */
-        private static final Collection stdAtts = Arrays.asList(new String[] {"organisation", "module", "branch",
-                "revision", "status", "publication", "namespace"});
+        private static final Collection STD_ATTS = Arrays.asList(new String[] {"organisation",
+                "module", "branch", "revision", "status", "publication", "namespace"});
 
         /** elements that may appear inside ivy-module, in expected order */
-        private static final List moduleElements = Arrays.asList(new String[] {
+        private static final List MODULE_ELEMENTS = Arrays.asList(new String[] {
                 "info", "configurations", "publications", "dependencies", "conflicts"
         });
         /** element position of "configurations" inside "ivy-module" */
-        private static final int CONFIGURATIONS_POSITION = moduleElements.indexOf("configurations");
+        private static final int CONFIGURATIONS_POSITION = MODULE_ELEMENTS.indexOf("configurations");
         /** element position of "dependencies" inside "ivy-module" */
-        private static final int DEPENDENCIES_POSITION = moduleElements.indexOf("dependencies");
+        private static final int DEPENDENCIES_POSITION = MODULE_ELEMENTS.indexOf("dependencies");
 
         /** elements that may appear inside of ivy-module/info */
-        private static final Collection infoElements = Arrays.asList(new String[]{
-                "extends", "ivyauthor", "license", "repository", "description" });
+        private static final Collection INFO_ELEMENTS = Arrays.asList(new String[] {"extends",
+                "ivyauthor", "license", "repository", "description"});
 
         private final ParserSettings settings;
 
@@ -354,7 +354,7 @@ public final class XmlModuleDescriptorUpdater {
                         //if the descriptor already contains a description, don't bother printing
                         //the merged version.
                         hasDescription = true;
-                    } else if (!infoElements.contains(qName)) {
+                    } else if (!INFO_ELEMENTS.contains(qName)) {
                         //according to the XSD, we should write description after all of the other
                         //standard <info> elements but before any extended elements.
                         writeInheritedDescription(merged);
@@ -699,7 +699,7 @@ public final class XmlModuleDescriptorUpdater {
                 extraAttributes = new LinkedHashMap(attributes.getLength());
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String qname = attributes.getQName(i);
-                    if (!stdAtts.contains(qname)) {
+                    if (!STD_ATTS.contains(qname)) {
                         extraAttributes.put(qname, substitute(settings, attributes.getValue(i)));
                     }
                 }
@@ -1047,8 +1047,8 @@ public final class XmlModuleDescriptorUpdater {
                 && !(mergedConfigurations && mergedDependencies)) {
 
                 //calculate the position of the element in ivy-module
-                int position = moduleElement == null ? moduleElements.size()
-                        : moduleElements.indexOf(moduleElement);
+                int position = moduleElement == null ? MODULE_ELEMENTS.size()
+                        : MODULE_ELEMENTS.indexOf(moduleElement);
 
                 ModuleDescriptor merged = options.getMergedDescriptor();
 
