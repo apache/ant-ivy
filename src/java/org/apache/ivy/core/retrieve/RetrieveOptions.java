@@ -27,10 +27,10 @@ import org.apache.ivy.util.filter.FilterHelper;
  * @see RetrieveEngine
  */
 public class RetrieveOptions extends LogOptions {
-    public static String OVERWRITEMODE_NEVER = "never";
-    public static String OVERWRITEMODE_ALWAYS = "always";
-    public static String OVERWRITEMODE_NEWER = "newer";
-    public static String OVERWRITEMODE_DIFFERENT = "different";
+    public static final String OVERWRITEMODE_NEVER = "never";
+    public static final String OVERWRITEMODE_ALWAYS = "always";
+    public static final String OVERWRITEMODE_NEWER = "newer";
+    public static final String OVERWRITEMODE_DIFFERENT = "different";
     
     /**
      * The names of configurations to retrieve. If the array consists only of '*', then all
