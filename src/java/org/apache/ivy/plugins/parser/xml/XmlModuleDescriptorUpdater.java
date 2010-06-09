@@ -679,7 +679,7 @@ public final class XmlModuleDescriptorUpdater {
                 //TODO: should namespace be added to ModuleDescriptor interface, so we don't
                 // have to do this kind of check?
                 if (merged instanceof DefaultModuleDescriptor) {
-                    Namespace ns = ( (DefaultModuleDescriptor) merged).getNamespace();
+                    Namespace ns = ((DefaultModuleDescriptor) merged).getNamespace();
                     if (ns != null) {
                         namespace = ns.getName();
                     }

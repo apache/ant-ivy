@@ -498,7 +498,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
             descriptor.setStatus(mergeValue(parent.getStatus(), descriptor.getStatus()));
             if (descriptor.getNamespace() == null && parent instanceof DefaultModuleDescriptor) {
-                Namespace parentNamespace = ( (DefaultModuleDescriptor) parent).getNamespace();
+                Namespace parentNamespace = ((DefaultModuleDescriptor) parent).getNamespace();
                 descriptor.setNamespace(parentNamespace);
             }
         }
