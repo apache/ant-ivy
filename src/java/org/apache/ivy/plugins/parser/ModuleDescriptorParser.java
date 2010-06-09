@@ -34,7 +34,7 @@ public interface ModuleDescriptorParser {
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException;
-
+    
     /**
      * Convert a module descriptor to an ivy file. This method MUST close the given input stream
      * when job is finished

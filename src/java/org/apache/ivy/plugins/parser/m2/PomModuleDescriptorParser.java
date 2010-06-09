@@ -41,6 +41,7 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
@@ -114,7 +115,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                                                                     this, res, ivySettings);
         
         try {           
-            PomReader domReader = new PomReader(res);            
+            PomReader domReader = new PomReader(descriptorURL, res);            
             domReader.setProperty("parent.version", domReader.getParentVersion());
             domReader.setProperty("parent.groupId", domReader.getParentGroupId());
             domReader.setProperty("project.parent.version", domReader.getParentVersion());
@@ -348,6 +349,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             // TODO: Throw exception here?
             return null;
         } else {
+            dd = NameSpaceHelper.toSystem(dd, ivySettings.getContextNamespace());
             ResolvedModuleRevision otherModule = resolver.getDependency(dd, data);
             return otherModule;
         }

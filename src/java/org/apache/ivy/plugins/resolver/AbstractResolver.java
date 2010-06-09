@@ -25,11 +25,13 @@ import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheDownloadOptions;
 import org.apache.ivy.core.cache.CacheMetadataOptions;
 import org.apache.ivy.core.cache.DownloadListener;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
 import org.apache.ivy.core.event.download.NeedArtifactEvent;
@@ -37,7 +39,9 @@ import org.apache.ivy.core.event.download.StartArtifactDownloadEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
@@ -51,10 +55,13 @@ import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.settings.Validatable;
+import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.resolver.ChainResolver.ResolvedModuleRevisionArtifactInfo;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
@@ -106,6 +113,10 @@ public abstract class AbstractResolver
 
     public ResolverSettings getSettings() {
         return settings;
+    }
+    
+    public ParserSettings getParserSettings() {
+        return new ResolverParserSettings();
     }
 
     public void setSettings(ResolverSettings ivy) {
@@ -551,4 +562,55 @@ public abstract class AbstractResolver
             + rmr.getResolver().getName();
     }
 
+    private class ResolverParserSettings implements ParserSettings {
+
+        public ConflictManager getConflictManager(String name) {
+            return AbstractResolver.this.getSettings().getConflictManager(name);
+        }
+
+        public Namespace getContextNamespace() {
+            return AbstractResolver.this.getNamespace();
+        }
+
+        public String getDefaultBranch(ModuleId moduleId) {
+            return AbstractResolver.this.getSettings().getDefaultBranch(moduleId);
+        }
+
+        public PatternMatcher getMatcher(String matcherName) {
+            return AbstractResolver.this.getSettings().getMatcher(matcherName);
+        }
+
+        public Namespace getNamespace(String namespace) {
+            return AbstractResolver.this.getSettings().getNamespace(namespace);
+        }
+
+        public RelativeUrlResolver getRelativeUrlResolver() {
+            return AbstractResolver.this.getSettings().getRelativeUrlResolver();
+        }
+
+        public ResolutionCacheManager getResolutionCacheManager() {
+            return AbstractResolver.this.getSettings().getResolutionCacheManager();
+        }
+
+        public DependencyResolver getResolver(ModuleRevisionId mRevId) {
+            return AbstractResolver.this.getSettings().getResolver(mRevId);
+        }
+
+        public StatusManager getStatusManager() {
+            return AbstractResolver.this.getSettings().getStatusManager();
+        }
+
+        public File resolveFile(String filename) {
+            return AbstractResolver.this.getSettings().resolveFile(filename);
+        }
+
+        public Map substitute(Map strings) {
+            return AbstractResolver.this.getSettings().substitute(strings);
+        }
+
+        public String substitute(String value) {
+            return AbstractResolver.this.getSettings().substitute(value);
+        }
+        
+    }
 }

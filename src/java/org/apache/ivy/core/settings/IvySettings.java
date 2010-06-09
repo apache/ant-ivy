@@ -1460,5 +1460,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    
+    public Namespace getContextNamespace() {
+        return Namespace.SYSTEM_NAMESPACE;
+    }
+
 }

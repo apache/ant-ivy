@@ -4305,6 +4305,54 @@ public class ResolveTest extends TestCase {
             "test3", "jar", "jar").exists());
     }
     
+    public void testResolveMaven2ParentPomWithNamespace() throws Exception {
+        // Cfr IVY-1186
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/parentPom/ivysettings-namespace.xml"));
+        
+        ResolveReport report = ivy.resolve(ModuleRevisionId.newInstance("org.apache.systemDm", "test", "1.0"),
+            getResolveOptions(new String[] {"*(public)"}), true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+//        assertEquals(mrid, md.getModuleRevisionId());
+//        assertTrue(getResolvedIvyFileInCache(mrid).exists());
+
+        //test the report to make sure the right dependencies are listed
+        List dependencies = report.getDependencies();
+        assertEquals(3, dependencies.size()); // the test module + it's 2 dependencies
+
+        IvyNode ivyNode = (IvyNode) dependencies.get(0);
+        assertNotNull(ivyNode);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.systemDm", "test", "1.0");
+        assertEquals(mrid, ivyNode.getId());
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache.systemDm", "test", "1.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.systemDm", "test", "1.0",
+            "test", "jar", "jar").exists());
+
+        ivyNode = (IvyNode) dependencies.get(1);
+        assertNotNull(ivyNode);
+        mrid = ModuleRevisionId.newInstance("org.apache.systemDm", "test2", "2.0");
+        assertEquals(mrid, ivyNode.getId());
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache.systemDm", "test2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.systemDm", "test2", "2.0",
+            "test2", "jar", "jar").exists());
+        
+        ivyNode = (IvyNode) dependencies.get(2);
+        assertNotNull(ivyNode);
+        mrid = ModuleRevisionId.newInstance("org.apache.systemDm", "test3", "1.0");
+        assertEquals(mrid, ivyNode.getId());
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache.systemDm", "test3", "1.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.systemDm", "test3", "1.0",
+            "test3", "jar", "jar").exists());
+    }
+
     public void testResolveMaven2ParentPomDualResolver() throws Exception {
         // test has a dependency on test2 but there is no version listed. test has a parent of parent(2.0) 
         // then parent2. Both parents have a dependencyManagement element for test2, and each list the version as

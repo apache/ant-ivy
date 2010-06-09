@@ -28,6 +28,7 @@ import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public interface ParserSettings {
@@ -53,5 +54,10 @@ public interface ParserSettings {
     File resolveFile(String filename);
     
     String getDefaultBranch(ModuleId moduleId);
+    
+    /**
+     * Returns the namespace context in which the current descriptor is parsed.
+     */
+    Namespace getContextNamespace();
 
 }

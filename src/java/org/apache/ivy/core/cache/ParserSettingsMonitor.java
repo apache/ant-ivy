@@ -131,6 +131,10 @@ class ParserSettingsMonitor {
             return delegatedSettings.getDefaultBranch(moduleId);
         }
 
+        public Namespace getContextNamespace() {
+            return delegatedSettings.getContextNamespace();
+        }
+        
         public Map substitute(Map strings) {
             Map substituted = new LinkedHashMap();
             for (Iterator it = strings.entrySet().iterator(); it.hasNext();) {

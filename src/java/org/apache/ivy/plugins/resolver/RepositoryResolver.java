@@ -101,7 +101,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                                 ModuleDescriptorParserRegistry.getInstance().getParser(res);
                             ModuleDescriptor md = 
                                 parser.parseDescriptor(
-                                    getSettings(), temp.toURI().toURL(), res, false);
+                                    getParserSettings(), temp.toURI().toURL(), res, false);
                             revision = md.getRevision();
                             if ((revision == null) || (revision.length() == 0)) {
                                 revision = "working@" + name;

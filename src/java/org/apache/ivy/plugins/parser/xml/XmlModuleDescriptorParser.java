@@ -44,6 +44,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
@@ -572,6 +573,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 // TODO: Throw exception here?
                 return null;
             } else {
+                dd = NameSpaceHelper.toSystem(dd, getSettings().getContextNamespace());
                 ResolvedModuleRevision otherModule = resolver.getDependency(dd, data);
                 if (otherModule == null) {
                     throw new ParseException("Unable to find " + parentMrid.toString(), 0);

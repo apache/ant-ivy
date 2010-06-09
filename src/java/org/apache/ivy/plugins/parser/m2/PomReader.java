@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.XMLHelper;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -87,8 +89,8 @@ public class PomReader {
     private final Element projectElement;
     private final Element parentElement;
     
-    public PomReader(Resource res) throws IOException, SAXException {
-        InputStream stream = new AddDTDFilterInputStream(res.openStream());
+    public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
+        InputStream stream = new AddDTDFilterInputStream(URLHandlerRegistry.getDefault().openStream(descriptorURL));
         try {
             Document pomDomDoc = XMLHelper.parseToDom(stream, res, new EntityResolver() {
                 public InputSource resolveEntity(String publicId, String systemId) 

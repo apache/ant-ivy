@@ -52,6 +52,7 @@ import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
+import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Checks;
@@ -646,14 +647,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private class MyModuleDescriptorProvider implements ModuleDescriptorProvider {
         
         private final ModuleDescriptorParser mdParser;
+        private final ParserSettings settings;
 
-        public MyModuleDescriptorProvider(ModuleDescriptorParser mdParser) {
-            this.mdParser = mdParser;            
+        public MyModuleDescriptorProvider(ModuleDescriptorParser mdParser, ParserSettings settings) {
+            this.mdParser = mdParser;
+            this.settings = settings;
         }
         
         public ModuleDescriptor provideModule(ParserSettings ivySettings, 
                 File descriptorURL, boolean validate) throws ParseException, IOException {
-            return mdParser.parseDescriptor(ivySettings, descriptorURL.toURI().toURL(), validate);
+            return mdParser.parseDescriptor(settings, descriptorURL.toURI().toURL(), validate);
         }
     }
     
@@ -661,15 +664,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             CacheMetadataOptions options, File ivyFile) 
             throws ParseException, IOException {
         ModuleDescriptorMemoryCache cache = getMemoryCache();
-        ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser); 
+        ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser, settings); 
         return cache.get(ivyFile, settings, options.isValidate(), mdProvider);
     }
 
     private ModuleDescriptor getStaledMd(ModuleDescriptorParser mdParser, 
-            CacheMetadataOptions options, File ivyFile) 
+            CacheMetadataOptions options, File ivyFile, ParserSettings parserSettings) 
             throws ParseException, IOException {
         ModuleDescriptorMemoryCache cache = getMemoryCache();
-        ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser); 
+        ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser, parserSettings); 
         return cache.getStale(ivyFile, settings, options.isValidate(), mdProvider);
     }
 
@@ -983,7 +986,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             try {
                 ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
                         .getInstance().getParser(mdRef.getResource());
-                ModuleDescriptor md = getStaledMd(parser, options, report.getLocalFile()); 
+                ParserSettings parserSettings = settings;
+                if (resolver instanceof AbstractResolver) {
+                    parserSettings = ((AbstractResolver) resolver).getParserSettings();
+                }
+                ModuleDescriptor md = getStaledMd(parser, options, report.getLocalFile(), parserSettings); 
                 if (md == null) {
                     throw new IllegalStateException(
                         "module descriptor parser returned a null module descriptor, " 
