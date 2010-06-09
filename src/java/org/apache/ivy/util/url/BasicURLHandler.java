@@ -242,6 +242,9 @@ public class BasicURLHandler extends AbstractURLHandler {
         }
     }
 
+    /** 
+     * Read and ignore the response body. 
+     */
     private void readResponseBody(HttpURLConnection conn) {
         byte[] buffer = new byte[BUFFER_SIZE];
         
@@ -249,6 +252,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             inStream = conn.getInputStream();
             while (inStream.read(buffer) > 0) {
+                //Skip content
             }
         } catch (IOException e) {
             // ignore
@@ -266,6 +270,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         if (errStream != null) {
             try {
                 while (errStream.read(buffer) > 0) {
+                    //Skip content
                 }
             } catch (IOException e) {
                 // ignore
