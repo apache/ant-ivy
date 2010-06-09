@@ -478,25 +478,25 @@ public class PomModuleDescriptorBuilder {
     }
 
     private static List /*<ModuleId>*/ getDependencyMgtExclusions(
-                                final ModuleDescriptor descriptor,
-                                final String groupId,
-                                final String artifactId) {
-        final String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(
+                                ModuleDescriptor descriptor,
+                                String groupId,
+                                String artifactId) {
+        String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(
                 groupId, artifactId);
-        final List /*<ModuleId>*/ exclusionIds = new LinkedList /*<ModuleId>*/ ();
-        final Map /*<String,String>*/ extras = descriptor.getExtraInfo();
+        List /*<ModuleId>*/ exclusionIds = new LinkedList /*<ModuleId>*/ ();
+        Map /*<String,String>*/ extras = descriptor.getExtraInfo();
         for (final Iterator entIter = extras.entrySet().iterator(); entIter.hasNext();) {
-            final Map.Entry /*<String,String>*/ ent = (Map.Entry) entIter.next();
-            final String key = (String) ent.getKey();
+            Map.Entry /*<String,String>*/ ent = (Map.Entry) entIter.next();
+            String key = (String) ent.getKey();
             if (key.startsWith(exclusionPrefix)) {
-                final String full_exclusion = (String) ent.getValue();
-                final String[] exclusion_parts = full_exclusion.split(EXTRA_INFO_DELIMITER);
-                if (exclusion_parts.length != 2) {
-                    Message.error(WRONG_NUMBER_OF_PARTS_MSG + exclusion_parts.length + " : "
-                            + full_exclusion);
+                String fullExclusion = (String) ent.getValue();
+                String[] exclusionParts = fullExclusion.split(EXTRA_INFO_DELIMITER);
+                if (exclusionParts.length != 2) {
+                    Message.error(WRONG_NUMBER_OF_PARTS_MSG + exclusionParts.length + " : "
+                            + fullExclusion);
                     continue;
                 }
-                exclusionIds.add(ModuleId.newInstance(exclusion_parts[0], exclusion_parts[1]));
+                exclusionIds.add(ModuleId.newInstance(exclusionParts[0], exclusionParts[1]));
             }
         }
 
