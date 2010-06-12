@@ -126,6 +126,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: Ant output wasn't always prefixed by the name of the Ivy task
 - FIX: Resolved Ivy properties written to cache during ivy:resolve incorrectly represents forced revisions (IVY-1159)
 - FIX: Namespace rules not properly applied to parent projects (IVY-1186)
 - FIX: LatestVersionMatcher.needModuleDescriptor() does not honor custom statuses (IVY-1170) (thanks to Carl Quinn)

@@ -261,7 +261,7 @@ public class IvyAntSettings extends DataType {
         Ivy ivy = Ivy.newInstance(settings);
         try {
             ivy.pushContext();
-            ivy.getLoggerEngine().pushLogger(new AntMessageLogger(task));
+            AntMessageLogger.register(task, ivy);
 
             Message.showInfo();
             configureURLHandler();
@@ -287,7 +287,6 @@ public class IvyAntSettings extends DataType {
             throw new BuildException("impossible to configure ivy:settings with given "
                     + (file != null ? "file: " + file : "url: " + url) + " : " + e, e);
         } finally {
-            ivy.getLoggerEngine().popLogger();
             ivy.popContext();
         }
     }

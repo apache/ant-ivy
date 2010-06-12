@@ -85,7 +85,7 @@ public class MessageLoggerEngine implements MessageLogger {
      * Returns the current logger, or the default one if there is no logger in the stack
      * @return the current logger, or the default one if there is no logger in the stack
      */
-    private MessageLogger peekLogger() {
+    public MessageLogger peekLogger() {
         if (loggerStack.isEmpty()) {
             return getDefaultLogger();
         }

@@ -20,9 +20,9 @@ package org.apache.ivy.ant;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.AbstractMessageLogger;
 import org.apache.ivy.util.Checks;
+import org.apache.ivy.util.MessageLogger;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.Task;
 
 /**
@@ -45,6 +45,18 @@ public class AntMessageLogger extends AbstractMessageLogger {
      *            the ivy instance on which the logger should be registered
      */
     public static void register(Task task, final Ivy ivy) {
+        MessageLogger current = ivy.getLoggerEngine().peekLogger();
+        if (current instanceof AntMessageLogger)  {
+            Task currentTask = ((AntMessageLogger) current).task;
+            
+            if ((currentTask.getTaskName() != null)
+                    && currentTask.getTaskName().equals(task.getTaskName())) {
+                // The current AntMessageLogger already logs with the same
+                // prefix as the given task. So we shouldn't do anything...
+                return;
+            }
+        }
+        
         AntMessageLogger logger = new AntMessageLogger(task);
         ivy.getLoggerEngine().pushLogger(logger);
         task.getProject().addBuildListener(new BuildListener() {
@@ -73,7 +85,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
                 // NB2 : Testing the identity of the task is not enought, event.getTask() return
                 // an instance of UnknownElement is wrapping the concrete instance
                 stackDepth--;
-                if (stackDepth == 0) {
+                if (stackDepth == -1) {
                     ivy.getLoggerEngine().popLogger();
                     event.getProject().removeBuildListener(this);
                 }
@@ -85,7 +97,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
         
     }
 
-    private ProjectComponent projectComponent;
+    private Task task;
 
     private long lastProgressFlush = 0;
 
@@ -98,17 +110,17 @@ public class AntMessageLogger extends AbstractMessageLogger {
      *            the ant project component this message implementation should use for logging. Must
      *            not be <code>null</code>.
      */
-    protected AntMessageLogger(ProjectComponent antProjectComponent) {
-        Checks.checkNotNull(antProjectComponent, "antProjectComponent");
-        projectComponent = antProjectComponent;
+    protected AntMessageLogger(Task task) {
+        Checks.checkNotNull(task, "task");
+        this.task = task;
     }
 
     public void log(String msg, int level) {
-        projectComponent.log(msg, level);
+        task.log(msg, level);
     }
 
     public void rawlog(String msg, int level) {
-        projectComponent.getProject().log(msg, level);
+        task.getProject().log(msg, level);
     }
 
     public void doProgress() {
@@ -118,19 +130,19 @@ public class AntMessageLogger extends AbstractMessageLogger {
         }
         // log with ant causes a new line -> we do it only once in a while
         if (System.currentTimeMillis() - lastProgressFlush > PROGRESS_LOG_PERIOD) {
-            projectComponent.log(buf.toString());
+            task.log(buf.toString());
             buf.setLength(0);
             lastProgressFlush = System.currentTimeMillis();
         }
     }
 
     public void doEndProgress(String msg) {
-        projectComponent.log(buf + msg);
+        task.log(buf + msg);
         buf.setLength(0);
         lastProgressFlush = 0;
     }
     
     public String toString() {
-        return "AntMessageLogger:" + projectComponent;
+        return "AntMessageLogger:" + task;
     }
 }
