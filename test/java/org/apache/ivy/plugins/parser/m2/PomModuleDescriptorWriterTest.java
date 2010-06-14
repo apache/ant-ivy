@@ -93,6 +93,19 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
     
+    public void testPackaging() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-packaging.pom"), false);
+        PomModuleDescriptorWriter.write(md, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-packaging.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
     private String readEntirely(String resource) throws IOException {
         return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
             PomModuleDescriptorWriterTest.class.getResource(resource).openStream())));

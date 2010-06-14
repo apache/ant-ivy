@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -84,13 +85,39 @@ public final class PomModuleDescriptorWriter {
         ModuleRevisionId mrid = md.getModuleRevisionId();
         out.println("  <groupId>" + mrid.getOrganisation() + "</groupId>");
         out.println("  <artifactId>" + mrid.getName() + "</artifactId>");
-        out.println("  <packaging>jar</packaging>");
+        
+        String type;
+        
+        Artifact artifact = findArtifact(md);
+        if (artifact == null) {
+            // no suitable artifact found, default to 'pom'
+            type = "pom";
+        } else {
+            type = artifact.getType();
+        }
+
+        out.println("  <packaging>" + type + "</packaging>");
         if (mrid.getRevision() != null) {
             out.println("  <version>" + mrid.getRevision() + "</version>");
         }
         if (md.getHomePage() != null) {
             out.println("  <url>" + md.getHomePage() + "</url>");
         }
+    }
+    
+    /**
+     * Returns the first artifact with the correct name and without a classifier.
+     */
+    private static Artifact findArtifact(ModuleDescriptor md) {
+        Artifact[] artifacts = md.getAllArtifacts();
+        for (int i = 0; i < artifacts.length; i++) {
+            if (artifacts[i].getName().equals(md.getModuleRevisionId().getName())
+                    && artifacts[i].getAttribute("classifier") == null) {
+                return artifacts[i];
+            }
+        }
+        
+        return null;
     }
 
     private static void printDependencies(
