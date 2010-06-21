@@ -58,6 +58,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
@@ -383,7 +384,8 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private void checkNotConvertedExclusionRule(ModuleDescriptor systemMd, ResolvedResource ivyRef,
             ResolveData data) {
-        if (!systemMd.isDefault() 
+        if (!getNamespace().equals(Namespace.SYSTEM_NAMESPACE)
+                && !systemMd.isDefault() 
                 && data.getSettings().logNotConvertedExclusionRule() 
                 && systemMd instanceof DefaultModuleDescriptor) {
             DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) systemMd;
