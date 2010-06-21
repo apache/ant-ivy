@@ -780,7 +780,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
     
     public ArtifactOrigin locate(Artifact artifact) {
-        ArtifactOrigin origin = getRepositoryCacheManager().getSavedArtifactOrigin(artifact);
+        ArtifactOrigin origin = getRepositoryCacheManager().getSavedArtifactOrigin(toSystem(artifact));
         if (!ArtifactOrigin.isUnknown(origin)) {
             return origin;
         }

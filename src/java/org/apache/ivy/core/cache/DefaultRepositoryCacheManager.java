@@ -1049,7 +1049,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 madr.setDownloadTimeMillis(report.getDownloadTimeMillis());
                 madr.setOriginalLocalFile(report.getLocalFile());
                 madr.setSize(report.getSize());
-                saveArtifactOrigin(md.getMetadataArtifact(), report.getArtifactOrigin());
+                
+                Artifact transformedMetadataArtifact = NameSpaceHelper.transform(
+                    md.getMetadataArtifact(), options.getNamespace().getToSystemTransformer());
+                saveArtifactOrigin(transformedMetadataArtifact, report.getArtifactOrigin());
                 
                 return new ResolvedModuleRevision(resolver, resolver, md, madr);
             } catch (IOException ex) {
