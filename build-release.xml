@@ -22,6 +22,126 @@
 		xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
 	<import file="build.xml"/>
 	
+	<macrodef name="run-tutorial">
+		<attribute name="antfile" />
+		<attribute name="output" />
+		<attribute name="target" default="" />
+		<attribute name="failonerror" default="true" />
+		<sequential>
+			<echo>Running @{antfile} @{target} > @{output}</echo>
+	        <java classname="org.apache.tools.ant.launch.Launcher"
+	              fork="true"
+	              failonerror="@{failonerror}"
+	        	logerror="true"
+	              output="@{output}">
+	            <classpath>
+	                <fileset file="${artifacts.build.dir}/jars/${final.name}" />
+	                
+	                <!-- 
+	                  We need to set the classpath like this, otherwise the invoked
+	                  build scripts are not capable of compiling sources ???
+	                  -->
+	                <path path="${java.class.path}" />
+	            </classpath>
+	        	<sysproperty key="ivy.cache.dir" value="${tutorial.cache}" />
+	        	<sysproperty key="ivy.local.default.root" value="${tutorial.local-repo}" />
+	        	<sysproperty key="skip.download" value="true" />
+	            <arg line="-f @{antfile}" />
+	        	<arg line="@{target}" />
+	        </java>
+		</sequential>
+	</macrodef>
+	
+	<target name="generate-tutorial-output" depends="jar">
+        <property name="output.dir" value="${build.dir}/output" />
+		<delete dir="${output.dir}" />
+        <mkdir dir="${output.dir}" />
+		
+		<!-- create a copy of the tutorials so we can easily get rid of the generated files -->
+		<property name="tutorial.src.dir" value="${build.dir}/examples" />
+		<delete dir="${tutorial.src.dir}" />
+		<mkdir dir="${tutorial.src.dir}" />
+		<copy todir="${tutorial.src.dir}">
+			<fileset dir="src/example" />
+		</copy>
+		
+		<!-- create a cache and local-repository for the tutorials -->
+		<property name="tutorial.build.dir" value="${build.dir}/tutorial" />
+		<property name="tutorial.cache" value="${tutorial.build.dir}/cache" />
+		<property name="tutorial.local-repo" value="${tutorial.build.dir}/local" />
+		
+		<!-- go-ivy : not logged, but run in order to check if it still run -->
+		<run-tutorial antfile="${tutorial.src.dir}/go-ivy/build.xml" output="${output.dir}/dummy.txt" />
+        <delete dir="${tutorial.build.dir}" />
+        
+        <!-- hello-ivy : Quick Start - start.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/hello-ivy/build.xml" output="${output.dir}/hello-ivy-1.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/hello-ivy/build.xml" output="${output.dir}/hello-ivy-2.txt" />
+        <delete dir="${tutorial.build.dir}" />
+		
+		<!-- multiple resolvers - multiple.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/chained-resolvers/chainedresolvers-project/build.xml" output="${output.dir}/chained-resolvers.txt" />
+        <delete dir="${tutorial.build.dir}" />
+
+		<!-- dual -->
+        <run-tutorial antfile="${tutorial.src.dir}/dual/project/build.xml" output="${output.dir}/dual.txt" />
+        <delete dir="${tutorial.build.dir}" />
+
+		<!-- Project dependencies - multi-project.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/dependence/dependee/build.xml" target="publish" output="${output.dir}/dependence-standalone.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/dependence/depender/build.xml" output="${output.dir}/dependence-depending.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/dependence/dependee/build.xml" target="publish" output="${output.dir}/dependence-standalone-2.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/dependence/depender/build.xml" output="${output.dir}/dependence-depending-2.txt" />
+        <delete dir="${tutorial.build.dir}" />
+
+		<!-- configuration - Using Ivy Configuration - conf.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/configurations/multi-projects/filter-framework/build.xml" output="${output.dir}/configurations-lib.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/configurations/multi-projects/myapp/build.xml" output="${output.dir}/configurations-runcc.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/configurations/multi-projects/myapp/build.xml" target="run-hm" output="${output.dir}/configurations-runhm.txt" />
+        <delete dir="${tutorial.build.dir}" />
+		
+		<!--Building a repository - basic.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/build-a-ivy-repository/build.xml" target="maven2" output="${output.dir}/install.txt" />
+        <pathconvert property="myrepository.content" pathsep="${line.separator}">
+            <fileset dir="${tutorial.src.dir}/build-a-ivy-repository/myrepository/no-namespace" />
+        </pathconvert>
+        <echo file="${output.dir}/myrepository-content.txt">$ find ${tutorial.src.dir}/build-a-ivy-repository/myrepository/no-namespace -type f -print${line.separator}</echo>
+        <echo file="${output.dir}/myrepository-content.txt" append="true">${myrepository.content}</echo>
+        <delete dir="${tutorial.build.dir}" />
+        <run-tutorial antfile="${tutorial.src.dir}/build-a-ivy-repository/build.xml" target="maven2-deps" output="${output.dir}/install-deps.txt" failonerror="false" />
+        <pathconvert property="myrepository.content.deps" pathsep="${line.separator}">
+            <fileset dir="${tutorial.src.dir}/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate" />
+        </pathconvert>
+        <echo file="${output.dir}/myrepository-content-deps.txt">$ find ${tutorial.src.dir}/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate -type f -print${line.separator}</echo>
+        <echo file="${output.dir}/myrepository-content-deps.txt" append="true">${myrepository.content.deps}</echo>
+        <delete dir="${tutorial.build.dir}" />
+
+	    <!--Building a repository - advanced.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/build-a-ivy-repository/build.xml" target="maven2-namespace" output="${output.dir}/install-namespace.txt" />
+        <pathconvert property="myrepository.content.namespace" pathsep="${line.separator}">
+            <fileset dir="${tutorial.src.dir}/build-a-ivy-repository/myrepository/advanced" />
+        </pathconvert>
+		<echo file="${output.dir}/myrepository-content-namespace.txt">$ find ${tutorial.src.dir}/build-a-ivy-repository/myrepository/advanced -type f -print${line.separator}</echo>
+        <echo file="${output.dir}/myrepository-content-namespace.txt" append="true">${myrepository.content.namespace}</echo>
+        <delete dir="${tutorial.build.dir}" />
+
+		<!-- Correct the location of the examples to original location -->
+		<delete file="${output.dir}/dummy.txt" />
+
+		<pathconvert property="tutorial.root" dirsep="/">
+			<identitymapper/>
+			<path location="${tutorial.src.dir}"/>
+	    </pathconvert>
+        <pathconvert property="tutorial.local" dirsep="/">
+            <identitymapper/>
+            <path location="${tutorial.local-repo}"/>
+        </pathconvert>
+		
+        <replace dir="${output.dir}" token="\" value="/" />
+		<replace dir="${output.dir}" token="${tutorial.root}" value="/ivy" />
+        <replace dir="${output.dir}" token="${tutorial.local}" value="/home/ivy/.ivy2/local" />
+	</target>
+	
 	<target name="generate-doc" depends="release-version">
 		<!-- copy documentation to temp dir to replace version tokens -->
 		<property name="doc.tmp.dir" value="${build.dir}/tempdoc" />
