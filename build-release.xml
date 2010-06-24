@@ -83,7 +83,7 @@
         <run-tutorial antfile="${tutorial.src.dir}/chained-resolvers/chainedresolvers-project/build.xml" output="${output.dir}/chained-resolvers.txt" />
         <delete dir="${tutorial.build.dir}" />
 
-		<!-- dual -->
+		<!-- dual - dual.html -->
         <run-tutorial antfile="${tutorial.src.dir}/dual/project/build.xml" output="${output.dir}/dual.txt" />
         <delete dir="${tutorial.build.dir}" />
 
@@ -123,6 +123,12 @@
         </pathconvert>
 		<echo file="${output.dir}/myrepository-content-namespace.txt">$ find ${tutorial.src.dir}/build-a-ivy-repository/myrepository/advanced -type f -print${line.separator}</echo>
         <echo file="${output.dir}/myrepository-content-namespace.txt" append="true">${myrepository.content.namespace}</echo>
+        <delete dir="${tutorial.build.dir}" />
+		
+		<!-- multi-project - multiproject.html -->
+        <run-tutorial antfile="${tutorial.src.dir}/multi-project/build.xml" target="-p" output="${output.dir}/multi-project-general-antp.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/multi-project/projects/find/build.xml" target="-p" output="${output.dir}/multi-project-find-antp.txt" />
+        <run-tutorial antfile="${tutorial.src.dir}/multi-project/build.xml" target="publish-all" output="${output.dir}/multi-project-general-publishall.txt" />
         <delete dir="${tutorial.build.dir}" />
 
 		<!-- Correct the location of the examples to original location -->
