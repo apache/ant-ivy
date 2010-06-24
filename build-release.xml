@@ -443,12 +443,27 @@
 		<mkdir dir="${rat.report.dir}"/>
 	    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
 	      <fileset dir="${basedir}">
-	        <exclude name="build/**/*"/>
-	      	<exclude name="**/*.sha1"/>
-            <exclude name="**/*.md5"/>
+	      	<exclude name=".classpath" />
+	        <exclude name="build/**/*" />
+	      	<exclude name="**/*.sha1" />
+            <exclude name="**/*.md5" />
+	      	<exclude name="**/*.txt" />
+	      	<exclude name="META-INF/MANIFEST.MF" />
+	      	<exclude name="**/*.json" />
+            <exclude name="doc/config.js" />
+            <exclude name="doc/js/jquery.pack.js" />
+            <exclude name="doc/js/jquery.treeview.js" />
+	      	<exclude name="doc/xooki/tiddly/util.js" />
 	      </fileset>
 	    </rat:report>
 
+		<fail message="Some files have missing or incorrect license information. Check RAT report for more details!">
+			<condition>
+			    <not>
+			        <resourcecontains resource="${rat.report.dir}/rat-report.txt" substring="0 Unknown Licenses" casesensitive="false" /> 
+			    </not>
+			</condition>
+		</fail>
 	</target>
 	
 	<target name="prepare-snapshot" 
