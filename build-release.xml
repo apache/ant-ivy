@@ -61,7 +61,7 @@
 		</sequential>
 	</macrodef>
 	
-	<target name="generate-tutorial-output" depends="jar">
+	<target name="generate-tutorial-output" depends="jar, generate-doc-init">
         <property name="output.dir" value="${build.dir}/output" />
 		<delete dir="${output.dir}" />
         <mkdir dir="${output.dir}" />
@@ -181,6 +181,7 @@
 	<target name="generate-doc" depends="generate-doc-init, generate-tutorial-output">
         <copy todir="${doc.build.dir}">
             <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
+            <fileset dir="${doc.tmp.dir}" includes="tutorial/log/multi-project-general-publishall.txt" />
         </copy>
 
         <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
