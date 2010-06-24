@@ -41,16 +41,14 @@ Fortunately Ivy has a very powerful answer to this kind of problem: [[settings/n
 If you look at the repository built with the [[tutorial/build-repository/basic previous tutorial]], you will see exactly what we were talking about: all apache commons module use their own name as organization.
 
 So let's see what Ivy can do using namespaces (we will dig into details later):
-<div class="shell"><pre>Z:\>ant commons-lang-1-0-ibiblio-with-namespace
-[<tutorial/log/install-namespace.txt>]</pre></div>
+<div class="shell"><pre>
+[<tutorial/log/install-namespace.txt>]
+</pre></div>
+
 Now if we look at our repository, it seems to look fine.
-<div class="shell"><pre>Z:\>dir /s /B /A:-D myrepository\advanced
-Z:\myrepository\advanced\apache\commons-lang\ivys\ivy-1.0.xml
-Z:\myrepository\advanced\apache\commons-lang\ivys\ivy-1.0.xml.md5
-Z:\myrepository\advanced\apache\commons-lang\ivys\ivy-1.0.xml.sha1
-Z:\myrepository\advanced\apache\commons-lang\jars\commons-lang-1.0.jar
-Z:\myrepository\advanced\apache\commons-lang\jars\commons-lang-1.0.jar.md5
-Z:\myrepository\advanced\apache\commons-lang\jars\commons-lang-1.0.jar.sha1</pre></div>
+<div class="shell"><pre>
+[<tutorial/log/myrepository-content-namespace>]
+</pre></div>
 We can even have a look at the commons-lang ivy file in our repo:
 <div><code type="xml">
 <?xml version="1.0" encoding="UTF-8"?>

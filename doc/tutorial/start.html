@@ -84,7 +84,6 @@ Note that in this case we define a "resolve" target and call the [[use/retrieve]
 Ok, now that we have seen the files involved, let's run the sample to see what happens. Open a shell (or command line) window, and enter the hello-ivy example directory.
 Then, at the command prompt, run 'ant':
 <div class="shell"><pre>
-I:\hello-ivy>ant
 [<tutorial/log/hello-ivy-1.txt>]
 </pre></div>
 <h1>What happened ?</h1>
@@ -92,7 +91,7 @@ Without any settings, Ivy retrieves files from the maven 2 repository. That's wh
 The resolve task has found the commons-lang and commons-cli modules in the maven 2 repository, identified that commons-cli depends on commons-logging and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a .ivy2/cache directory). Finally, the retrieve task copies the resolved jars from the ivy cache to the default library directory of the project: the lib dir (you can change this easily by setting the pattern attribute on the [[use/retrieve]] task).
 
 You might say that the task took a long time just to write out a "Hello Ivy !" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
-<div class="shell"><pre>I:\hello-ivy>ant
+<div class="shell"><pre>
 [<tutorial/log/hello-ivy-2.txt>]
 </pre></div>
 Great! the cache was used, no download was needed and the build was instantaneous.

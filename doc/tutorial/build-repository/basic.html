@@ -58,19 +58,14 @@ Let's have a look at the <em>maven2</em> target.
 Pretty simple, we call the [[ant:install] task with the settings we have loaded using [[ant:settings ivy:settings]] as usual, we provide fromResolver (source) and toResolver (destination) using properties to ease the maintenance of the script, but it's basically the name of our resolvers: 'libraries' for the source and 'my-repository' for the destination.
 
 Here is the ant call output :
-<div class="shell"><pre>Z:\>ant maven2
+<div class="shell"><pre>
 [<tutorial/log/install.txt>]
 </pre></div>
 The trace tells us that the module definition was found using the "libraries" resolver and that the corresponding artifact was downloaded from maven 2 repository. Then both were published to the filesystem repository (my-repository).
 
 Let's have a look at our repository :
-<div class="shell"><pre>Z:\>dir /s /B /A:-D myrepository
-Z:\myrepository\no-namespace\commons-lang\commons-lang\ivys\ivy-1.0.xml
-Z:\myrepository\no-namespace\commons-lang\commons-lang\ivys\ivy-1.0.xml.md5
-Z:\myrepository\no-namespace\commons-lang\commons-lang\ivys\ivy-1.0.xml.sha1
-Z:\myrepository\no-namespace\commons-lang\commons-lang\jars\commons-lang-1.0.jar
-Z:\myrepository\no-namespace\commons-lang\commons-lang\jars\commons-lang-1.0.jar.md5
-Z:\myrepository\no-namespace\commons-lang\commons-lang\jars\commons-lang-1.0.jar.sha1</pre>
+<div class="shell"><pre>
+[<tutorial/log/myrepository-content.txt>]
 </div>
 We can see that we now have the commons-lang module version 1.0 in our repository, with a generated ivy.xml file, its jar, and all the md5 and sha1 checksums for future consistency checks when developers will use this repository to resolve modules.
 
@@ -88,7 +83,7 @@ The target called is very similar to the one described above, except that we exp
 </code>
 
 If you call this target, you will see that Ivy installs not only the hibernate module but also its dependencies:
-<div class="shell"><pre>Z:\>ant maven2-deps
+<div class="shell"><pre>
 [<tutorial/log/install-deps.txt>]
 </pre>
 </div>
@@ -100,13 +95,9 @@ You may also have notice that Ivy has installed 2 different revisions of commons
 We do not want to evict any modules because we are building our own repository. Indeed if we get both commons-logging 1.0.2 and 1.0.4 it's because some modules among the transitive dependencies of hibernate depend on 1.0.2 and other on 1.0.4. If we got only 1.0.4, the module depending on 1.0.2 would be inconsistent in your own repository (depending on a version you don't have installed). Thus developers using this module directly would run into a problem.
 
 If you now have a closer look at your repository, you will probably notice that it isn't an exact replication of the original one. Let's have a look at one module content:
-<div class="shell"><pre>Z:\>dir /s /B /A:-D myrepository\no-namespace\org.hibernate\hibernate\
-Z:\myrepository\no-namespace\org.hibernate\hibernate\ivys\ivy-3.2.5.ga.xml
-Z:\myrepository\no-namespace\org.hibernate\hibernate\ivys\ivy-3.2.5.ga.xml.md5
-Z:\myrepository\no-namespace\org.hibernate\hibernate\ivys\ivy-3.2.5.ga.xml.sha1
-Z:\myrepository\no-namespace\org.hibernate\hibernate\jars\hibernate-3.2.5.ga.jar
-Z:\myrepository\no-namespace\org.hibernate\hibernate\jars\hibernate-3.2.5.ga.jar.md5
-Z:\myrepository\no-namespace\org.hibernate\hibernate\jars\hibernate-3.2.5.ga.jar.sha1</pre>
+<div class="shell"><pre>
+[<tutorial/log/myrepository-content-deps.txt>]
+</pre>
 </div>
 
 As you can see there is no pom here (pom is the module metadata format used by maven 2, available on the maven 2 repository). Instead you can see there's an ivy file, which is actually the original hibernate pom converted into an ivy file. So now you have a true Ivy repository with ivy files, where you can use the full power of Ivy if you want to adjust the module metadata (module configurations, fine grain exclusions and transitivity control, per module conflict manager, ...).
