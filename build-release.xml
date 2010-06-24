@@ -471,6 +471,6 @@
 	<target name="snapshot" 
 			depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-maven2, snapshot-checksums" 
 			description="used for nightly and integration builds"/>
-	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
+	<target name="release" depends="release-version, rat, snapshot" description="make a new release of Ivy"/>
 
 </project>
