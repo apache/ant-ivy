@@ -202,7 +202,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         protected static final List ALLOWED_VERSIONS = Arrays.asList(
-            new String[] {"1.0", "1.1", "1.2", "1.3", "1.4", "2.0", "2.1"});
+            new String[] {"1.0", "1.1", "1.2", "1.3", "1.4", "2.0", "2.1", "2.2"});
 
         /* how and what do we have to parse */
         private ParserSettings settings;
