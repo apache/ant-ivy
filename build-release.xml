@@ -160,6 +160,7 @@
         <replace dir="${output.dir}" token="${tutorial.local}" value="/home/ivy/.ivy2/local" />
         <replace dir="${output.dir}" token="${ivy.jar.location}" value="//home/ivy/ivy.jar" />
 		<replace dir="${output.dir}" token="-f build.xml " value="" />
+		<replace dir="${output.dir}" token="${ivy.revision}" value="working@apache" />
 		
 		<copy todir="${doc.tmp.dir}/tutorial/log">
 			<fileset dir="${output.dir}" />
