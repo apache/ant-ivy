@@ -43,7 +43,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         }
     }
 
-    private File _dest = new File("build/test/test-write.xml");
+    private File dest = new File("build/test/test-write.xml");
 
     public void testSimple() throws Exception {
         DefaultModuleDescriptor md = (DefaultModuleDescriptor) XmlModuleDescriptorParser
@@ -52,10 +52,10 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         md.setResolvedPublicationDate(new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime());
         md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(),
                 "NONE"));
-        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
-        assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
             "\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-simple.xml").replaceAll("\r\n", "\n").replace(
             '\r', '\n');
@@ -69,10 +69,10 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         md.setResolvedPublicationDate(new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime());
         md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(),
                 "NONE"));
-        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
-        assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
             "\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-info.xml").replaceAll("\r\n", "\n").replace(
             '\r', '\n');
@@ -83,10 +83,10 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
             XmlModuleDescriptorWriterTest.class.getResource("test-dependencies.xml"), true);
-        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
-        assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
             "\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-dependencies.xml").replaceAll("\r\n", "\n")
                 .replace('\r', '\n');
@@ -96,10 +96,10 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), false);
-        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
-        assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
             "\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-full.xml").replaceAll("\r\n", "\n").replace(
             '\r', '\n');
@@ -112,17 +112,17 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     }
 
     public void setUp() {
-        if (_dest.exists()) {
-            _dest.delete();
+        if (dest.exists()) {
+            dest.delete();
         }
-        if (!_dest.getParentFile().exists()) {
-            _dest.getParentFile().mkdirs();
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
         }
     }
 
     protected void tearDown() throws Exception {
-        if (_dest.exists()) {
-            _dest.delete();
+        if (dest.exists()) {
+            dest.delete();
         }
     }
 }
