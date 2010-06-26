@@ -80,7 +80,13 @@ public final class XmlModuleDescriptorWriter {
                 xmlNamespace.append(" xmlns:").append(ns.getKey()).append("=\"")
                             .append(ns.getValue()).append("\"");
             }
-            out.println("<ivy-module version=\"1.0\"" + xmlNamespace + ">");
+            
+            String version = "2.0";
+            if (md.getInheritedDescriptors().length > 0) {
+                version = "2.2";
+            }
+            
+            out.println("<ivy-module version=\"" + version + "\"" + xmlNamespace + ">");
             printInfoTag(md, out);
             printConfigurations(md, out);
             printPublications(md, out);

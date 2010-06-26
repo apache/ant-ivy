@@ -17,7 +17,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
 	<info organisation="myorg"
 		module="mymodule"
 		revision="myrev"
