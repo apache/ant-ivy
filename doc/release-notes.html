@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <script type="text/javascript">var xookiConfig = {level: 0};</script>   
+    <script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+    <textarea id="xooki-source">
+<h2>Announcement</h2>
+
+<pre>
+Jul 05, 2010 - The Ivy project is pleased to announce its 2.2.0-rc1 release.
+This is the first candidate release of Ivy 2.2.0.
+
+Ivy is a tool for managing (recording, tracking, resolving and
+reporting) project dependencies, characterized by flexibility,
+configurability, and tight integration with Apache Ant.
+
+This is a release candidate for 2.2.0 final, meaning that no changes 
+except bug fixes will occur between this release candidate and 2.2.0 final.
+Problems found at this phase can be fixed in the final release, so now 
+is a good time to download and use it. If no outstanding bugs are reported
+in the coming weeks, this release candidate will be promoted as the 2.2.0 
+final release.
+
+Key features of the 2.2.0 release are
+* enhanced Maven2 compatibility, with several bug fixes and more
+  pom features covered
+* new parent mechanism for Ivy files
+* numerous bug fixes as documented in Jira and in the release notes
+
+We encourage all users of Ivy to update to this new version.
+
+Issues should be reported to:
+https://issues.apache.org/jira/browse/IVY
+
+Download the 2.2.0-rc1 release at:
+http://ant.apache.org/ivy/download.cgi
+
+More information can be found on the Ivy website:
+http://ant.apache.org/ivy/
+
+Regards,
+Maarten Coene
+</pre>
+
+<h2>Release Notes</h2>
+
+CONTENTS
+1. What is Apache Ivy?
+2. Status of this release
+3. How to Get Involved
+4. How to Report Issues
+5. Committers and Contributors for this release
+6. List of Changes in this Release   
+   
+   
+<h3>1. What is Apache Ivy?</h3>
+
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+project dependencies. 
+It is characterized by the following:
+
+   1. flexibility and configurability 
+        Apache Ivy is essentially process agnostic and is not tied to any 
+        methodology or structure. 
+        Instead it provides the necessary flexibility and configurability 
+        to be adapted to a broad range of dependency management and build 
+        processes.
+   2. tight integration with Apache Ant
+        while available as a standalone tool, Apache Ivy works particularly well 
+        with Apache Ant providing a number of powerful Ant tasks ranging 
+        from dependency resolution to dependency reporting and publication.
+
+<h3>2. Status of this release</h3>
+
+This is the first release candidate of Ivy targetting 2.2.0. 
+
+As a release candidate version, we strongly encourage the use of this version for 
+testing and validation. From now on, features are frozen until final 2.2.0 version, 
+only bug fixes may be applied before 2.2.0. If no outstanding bugs are reported 
+with this release candidate, it will promoted to 2.2.0 about three weeks after this
+release candidate. 
+
+<h3>3. How to Get Involved</h3>
+
+The Apache Ivy project really needs and appreciates any contributions, 
+including documentation help, source code and feedback.  If you are interested
+in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
+
+<h3>4. How to Report Issues</h3>
+
+The Apache Ivy project uses JIRA for issue tracking.  Please report any 
+issues you find at http://issues.apache.org/jira/browse/IVY
+
+<h3>5. Committers and Contributors for this Release
+
+Here is the list of people who have contributed source code and documentation
+to this release. Many thanks to all of them, and also to the whole Ivy community
+contributing ideas and feedback, and promoting the use of Ivy. The list would be too
+long, but Ivy couldn't be what it is without you!
+
+ Committers
+    Matt Benson
+    Maarten Coene
+    Xavier Hanin
+    Nicolas Lalevee
+    Jon Schneider
+    Gilles Scokart
+
+ Contributors
+    Andreas Axelsson
+    Jasper Blues
+    Jean-Louis Boudart
+    Dave Brosius
+    Flavio Coutinho da Costa
+    Stefan De Boey
+    Gregory Fernandez
+    Aaron Hachez
+    Achim Huegen
+    Anders Jacobsson
+    Steve Jones
+    Heschi Kreinick
+    J. Lewis Muir
+    Carl Quinn
+    Michael Scheetz
+    Jason Trump
+    Richard Vowles
+    Sven Walter
+
+For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
+
+<h3>6. List of Changes in this Release</h3>
+
+For a full release history of Ivy see the file CHANGES.txt
+
+For details about the following changes, check our JIRA install at 
+http://issues.apache.org/jira/browse/ivy
+
+List of changes since Ivy 2.1.0:
+- DOCUMENTATION: Limit the width of running text in documentation (IVY-1030)
+- DOCUMENTATION: Refer to the maven wiki instead of listing some maven2 mirrors ourselfs (IVY-491)
+- DOCUMENTATION: Fixed several grammatical and typographic errors in documentation (IVY-1172) (thanks to J. Lewis Muir)
+- DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)
+- DOCUMENTATION: Added documentation of the 'changing' attribute on the ivy:resolve Ant task (IVY-1180)
+
+- NEW: Support ivy.xml parent mechanism (IVY-742) (thanks to Jason Trump and Jean-Louis Boudart)
+- NEW: Make ivy.xml <conf description> available (IVY-1158)
+
+- IMPROVEMENT: added support for 'gzip' and 'deflate' HTTP Content-Encoding (IVY-1194)
+- IMPROVEMENT: retrieve doesn't retrive files if the current one is more recent (IVY-1044)
+- IMPROVEMENT: better diagnostics when reporting bad ivy file in cache (IVY-1190)
+- IMPROVEMENT: Support changing="true" for inline retrieve (IVY-1180)
+- IMPROVEMENT: Enhance <info/> task to access the 'publication', 'branch' and published artifacts as ant propeties (IVY-395) (thanks to Carl Quinn)
+- IMPROVEMENT: Ivy doesn't support Maven 2.0.9 'import' scope (IVY-807)
+- IMPROVEMENT: resolver attribute for listmodules task (IVY-1057)
+- IMPROVEMENT: discover 'src' sources in maven repos (IVY-1138)
+- IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
+- IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
+
+- FIX: The ivy-module version used by XmlModuleDescriptorWriter is hard coded to '1.0' (IVY-1199)
+- FIX: makepom ignores artifact type in ivy.xml and hardcodes 'jar' in the output pom (IVY-736) (thanks to Aaron Hachez)
+- FIX: Ant output wasn't always prefixed by the name of the Ivy task
+- FIX: Resolved Ivy properties written to cache during ivy:resolve incorrectly represents forced revisions (IVY-1159)
+- FIX: Namespace rules not properly applied to parent projects (IVY-1186)
+- FIX: LatestVersionMatcher.needModuleDescriptor() does not honor custom statuses (IVY-1170) (thanks to Carl Quinn)
+- FIX: Proxy authentication could fail when using commons-httpclient 
+- FIX: Packager resolver always extracts all files from archives even when the packaging instructions contains include tags (IVY-1179) (thanks to Stefan De Boey)
+- FIX: Ivy cannot connect to URLs with '_' in their hostname
+- FIX: Transitive dependencies resolutions issue when eviction is triggered (IVY-1178)
+- FIX: Can't deal with [VERSION] version pattern from Maven (IVY-1177) (thanks to Richard Vowles)
+- FIX: verbose/debug messages were not logged while running ivy:configure task
+- FIX: ApacheURLLister does not allow directories not containing a dot on Artifactory (IVY-1175) (thanks to Anders Jacobsson)
+- FIX: artifact-lock strategy could hang Ivy when resolving dynamic revisions
+- FIX: Authentication won't work in some situations (IVY-1168) (thanks to Sven Walter)
+- FIX: Using SFTP resolver with full pattern URL prevents use of dynamic versions (IVY-1167) (thanks to Gregory Fernandez)
+- FIX: parent.groupId is not resolved in maven 2 parser (IVY-1169) (thanks to Achim Huegen)
+- FIX: Creation of symlinks problematic in Windows with Cygwin 1.7 (IVY-1165)
+- FIX: add ability to programmatically change default resolver (IVY-1163) (thanks to Jason Trump)
+- FIX: ivy.settings.dir space escaping problem (IVY-1162)
+- FIX: Ivy cannot parse alternate format for Maven MD5 files (IVY-1155)
+- FIX: Ivy does not close URL connection to ivy-report.xsl properly (IVY-1152)
+- FIX: Artifact report throws NPE when artifact is not in cache (IVY-1150) (thanks to Steve Jones)
+- FIX: resolve fails for transitive relocated maven modules when the type of the dependency was set to 'jar'
+- FIX: optional dependencies, sources and javadocs aren't resolved when a maven module is relocated
+- FIX: Encountered 'multiple artifacts retrieved to same file' error when module does not have multiple artifacts (IVY-1148)
+- FIX: Use of a shared DocumentBuilder causes SAXException during parallel resolutions (IVY-1147)
+- FIX: metadata lock files not always deleted from cache (IVY-1145) (thanks to Jason Trump)
+- FIX: FileSystem resolver with m2compatible=true throws error when publishing modules with dotted organisation names (IVY-968)
+- FIX: ivy:retrieve sync="true" does nothing if first variable is optional (IVY-1142) (thanks to Andreas Axelsson)
+- FIX: Latest Compatible Conflict Manager + Extra Attributes in Dependencies' IVY files == infinite loop (IVY-956)
+- FIX: Resolve with Extra Attributes, Forced Dependencies causes invalid delivered ivy file (IVY-1079)
+- FIX: ResolveEngine.getDependencies does not work using extra attributes (IVY-1115)
+- FIX: <override> ignored in dynamic resolve mode (IVY-1131)
+- FIX: IvyNodeEviction.cleanEvicted has bad comparison logic (IVY-1118)
+- FIX: ChainResolver doesn't pass the specified 'checkmodified' attribute to the cache (IVY-1133)
+- FIX: Ivy couldn't handle maven POMs that depend on theirselves
+- FIX: SearchEngine.listModules returns MRID without extra attributes (IVY-1128) (thanks to Michael Scheetz)
+- FIX: IvyBuildNumber non-deterministic behaviour (IVY-1120)
+- FIX: Change spelling of 'occured' to 'occurred' (IVY-1123)
+- FIX: Ivy deliver fails to replace dynamic revision when using extra attributes (IVY-1111) (thanks to Michael Scheetz)
+- FIX: IbiblioResolver not always correctly configured when using JRE 1.5 (IVY-1124) (thanks to Flavio Coutinho da Costa)
+- FIX: VstfpRepository.readResponse uses bad compare logic (IVY-1119) (thanks to Dave Brosius)
+- FIX: URLResource does not properly support authentication (IVY-1106) (thanks to Heschi Kreinick)
+- FIX: Excessive hits to missing URLs uses up all ports on Windows (IVY-1105)
+- FIX: ivy parse exception when using <publications defaultconf> (IVY-1102)
+- FIX: Change org.apache to commons-cli at jdbc-example (IVY-1109)
+- FIX: Fixed name snapshots are not updated even if they are marked as changing and the publication date is changed in repo (IVY-938)
+- FIX: Cannot publish wildcard configurations other than * (IVY-1171)
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
