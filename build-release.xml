@@ -446,6 +446,7 @@
 	      <fileset dir="${basedir}">
 	      	<exclude name=".classpath" />
 	        <exclude name="build/**/*" />
+	      	<exclude name="bin/**/*" />
 	      	<exclude name="**/*.sha1" />
             <exclude name="**/*.md5" />
 	      	<exclude name="**/*.txt" />
