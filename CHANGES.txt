@@ -108,6 +108,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: Limit the width of running text in documentation (IVY-1030)
 - DOCUMENTATION: Refer to the maven wiki instead of listing some maven2 mirrors ourselfs (IVY-491)
 - DOCUMENTATION: Fixed several grammatical and typographic errors in documentation (IVY-1172) (thanks to J. Lewis Muir)
 - DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)

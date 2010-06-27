@@ -152,13 +152,16 @@ pre {
 }
 
 #sidebar-left, #sidebar-right {
-  width: 200px;
+  width: 300px;
   /* padding in px not ex because IE messes up 100% width tables otherwise */
   padding: 15px 5px 75px 10px;
   vertical-align: top;
 }
 #sidebar-left li, #sidebar-right li {
   font-size: 1em;
+}
+#content {
+  table-layout:fixed;
 }
 .block h2 {
   margin: 5px 0px 0px 0px;
