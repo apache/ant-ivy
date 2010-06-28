@@ -183,6 +183,8 @@ public final class XmlModuleDescriptorUpdater {
         private final PrintWriter out;
 
         private final Map resolvedRevisions;
+        
+        private final Map resolvedBranches;
 
         private final String status;
 
@@ -209,6 +211,7 @@ public final class XmlModuleDescriptorUpdater {
             this.settings = options.getSettings();
             this.out = out;
             this.resolvedRevisions = options.getResolvedRevisions();
+            this.resolvedBranches = options.getResolvedBranches();
             this.status = options.getStatus();
             this.revision = options.getRevision();
             this.pubdate = options.getPubdate();
@@ -523,6 +526,8 @@ public final class XmlModuleDescriptorUpdater {
                 revision, extraAttributes);
             ModuleRevisionId systemMrid = ns == null ? localMrid : ns.getToSystemTransformer()
                     .transform(localMrid);
+            
+            String newBranch = (String) resolvedBranches.get(systemMrid);
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
@@ -548,7 +553,16 @@ public final class XmlModuleDescriptorUpdater {
                 } else if ("name".equals(attName)) {
                     write(" name=\"" + systemMrid.getName() + "\"");
                 } else if ("branch".equals(attName)) {
-                    write(" branch=\"" + systemMrid.getBranch() + "\"");
+                    if(newBranch != null) {                        
+                        write(" branch=\"" + newBranch + "\"");
+                    }                    
+                    else if(!resolvedBranches.containsKey(systemMrid)) {
+                        write(" branch=\"" + systemMrid.getBranch() + "\"");
+                    }
+                    else {
+                        // if resolvedBranches contains the systemMrid, but the new branch is null,
+                        // the branch attribute will be removed altogether
+                    }
                 } else if ("branchConstraint".equals(attName)) {
                     write(" branchConstraint=\"" + branchConstraint + "\"");
                 } else if ("conf".equals(attName)) {
@@ -566,10 +580,17 @@ public final class XmlModuleDescriptorUpdater {
                 }
             }
             
-            if (options.isUpdateBranch() 
-                    && systemMrid.getBranch() != null && attributes.getIndex("branch") == -1) {
-                // this dependency is on a specific branch, we set it explicitly in the updated file
-                write(" branch=\"" + systemMrid.getBranch() + "\"");
+            if(attributes.getIndex("branch") == -1)
+            {            
+                if (newBranch != null) {
+                    // erase an existing branch attribute if its new value is blank
+                    if(!newBranch.trim().equals(""))
+                        write(" branch=\"" + newBranch + "\"");
+                }            
+                else if (options.isUpdateBranch() && systemMrid.getBranch() != null) {
+                    // this dependency is on a specific branch, we set it explicitly in the updated file
+                    write(" branch=\"" + systemMrid.getBranch() + "\"");
+                }
             }
         }
 

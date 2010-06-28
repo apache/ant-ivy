@@ -61,6 +61,12 @@ public class XmlModuleUpdaterTest extends TestCase {
             "yourorg", "yourmodule2", "branch1", "2+"), "2.5");
         resolvedRevisions.put(ModuleRevisionId.newInstance(
             "yourorg", "yourmodule6", "trunk", "latest.integration"), "6.3");
+        
+        Map resolvedBranches = new HashMap();
+        resolvedBranches.put(ModuleRevisionId.newInstance("yourorg", "yourmodule3", "3.1"),
+            "branch1");        
+        resolvedBranches.put(ModuleRevisionId.newInstance(
+            "yourorg", "yourmodule2", "branch1", "2+"), null);
 
         GregorianCalendar cal = new GregorianCalendar();
         cal.set(2005, 2, 22, 14, 32, 54);
@@ -70,7 +76,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         XmlModuleDescriptorUpdater.update(
             XmlModuleUpdaterTest.class.getResource("test-update.xml"), dest, 
             getUpdateOptions(ivy.getSettings(), resolvedRevisions, 
-                "release", "mynewrev", cal.getTime()));
+                "release", "mynewrev", cal.getTime()).setResolvedBranches(resolvedBranches));
 
         assertTrue(dest.exists());
         String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
@@ -110,7 +116,13 @@ public class XmlModuleUpdaterTest extends TestCase {
             "yourorg", "yourmodule2", "branch1", "2+"), "2.5");
         resolvedRevisions.put(ModuleRevisionId.newInstance(
             "yourorg", "yourmodule6", "trunk", "latest.integration"), "6.3");
-
+        
+        Map resolvedBranches = new HashMap();
+        resolvedBranches.put(ModuleRevisionId.newInstance("yourorg", "yourmodule3", "3.1"),
+            "branch1");
+        resolvedBranches.put(ModuleRevisionId.newInstance(
+            "yourorg", "yourmodule2", "branch1", "2+"), null);
+        
         GregorianCalendar cal = new GregorianCalendar();
         cal.set(2005, 2, 22, 14, 32, 54);
 
@@ -160,7 +172,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         XmlModuleDescriptorUpdater.update(
             XmlModuleUpdaterTest.class.getResource("test-update-withvar.xml"), dest, 
             getUpdateOptions(ivy.getSettings(), resolvedRevisions, 
-                "release", "mynewrev", cal.getTime()));
+                "release", "mynewrev", cal.getTime()).setResolvedBranches(resolvedBranches));
 
         assertTrue(dest.exists());
         String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
