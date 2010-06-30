@@ -39,6 +39,10 @@ public class UpdateOptions {
      */
     private Map resolvedRevisions = Collections.EMPTY_MAP;
     /**
+     * Map from ModuleId of dependencies to new branch (as String)
+     */
+    private Map resolvedBranches = Collections.EMPTY_MAP;     
+    /**
      * the new status, <code>null</code> to keep the old one
      */
     private String status = null;
@@ -165,6 +169,13 @@ public class UpdateOptions {
     }
     public UpdateOptions setGenerateRevConstraint(boolean generateRevConstraint) {
         this.generateRevConstraint = generateRevConstraint;
+        return this;
+    }
+    public Map getResolvedBranches() {
+        return resolvedBranches;
+    }
+    public UpdateOptions setResolvedBranches(Map resolvedBranches) {
+        this.resolvedBranches = resolvedBranches;
         return this;
     }
 }
