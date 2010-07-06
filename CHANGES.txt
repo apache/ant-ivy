@@ -106,6 +106,10 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jaroslaw Wypychowski
 	Aleksey Zhukov
 	
+   2.2.0
+=====================================
+- FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
+
    2.2.0-rc1
 =====================================
 - DOCUMENTATION: Limit the width of running text in documentation (IVY-1030)

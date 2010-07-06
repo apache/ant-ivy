@@ -26,6 +26,7 @@ import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -105,6 +106,20 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
             '\r', '\n');
         assertEquals(expected, wrote);
     }
+
+	public void testExtends() throws Exception {
+		ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+		    new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-extends-all.xml"), false);
+		XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+
+		assertTrue(dest.exists());
+		String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+				.replaceAll("\r\n?", "\n");
+		String expected = readEntirely("test-write-extends.xml")
+				.replaceAll("\r\n?", "\n")
+				.replaceAll("working@localhost", Ivy.getWorkingRevision());
+		assertEquals(expected, wrote);
+	}
 
     private String readEntirely(String resource) throws IOException {
         return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
