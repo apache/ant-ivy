@@ -445,6 +445,7 @@
 	    <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
 	      <fileset dir="${basedir}">
 	      	<exclude name=".classpath" />
+	      	<exclude name=".ivy2/**/*" />
 	        <exclude name="build/**/*" />
 	      	<exclude name="**/*.sha1" />
             <exclude name="**/*.md5" />
@@ -472,6 +473,6 @@
 	<target name="snapshot" 
 			depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-maven2, snapshot-checksums" 
 			description="used for nightly and integration builds"/>
-	<target name="release" depends="release-version, rat, snapshot" description="make a new release of Ivy"/>
+	<target name="release" depends="release-version, /localivy, clean-ivy-home, clean, clean-lib, rat, snapshot" description="make a new release of Ivy"/>
 
 </project>
