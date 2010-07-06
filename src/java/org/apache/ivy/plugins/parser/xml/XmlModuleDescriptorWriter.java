@@ -476,7 +476,7 @@ public final class XmlModuleDescriptorWriter {
                 if (location != null) {
                     out.print(" location=\"" + XMLHelper.escape(location) + "\"");
                 }
-                out.print(" extendTypes=\"" + StringUtils.join(parent.getExtendsTypes(), ",") + "\"");
+                out.print(" extendType=\"" + StringUtils.join(parent.getExtendsTypes(), ",") + "\"");
                 out.println("/>");
             }
             License[] licenses = md.getLicenses();

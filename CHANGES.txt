@@ -108,6 +108,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
 
    2.2.0-rc1
 =====================================
