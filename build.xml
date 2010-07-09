@@ -592,7 +592,7 @@
                   value="http://garr.dl.sourceforge.net/sourceforge/findbugs/${findbugs.download.file}"
                   description="The download adress at a mirror of Sourceforge."/>
         <property name="findbugs.download.to"   
-                  value=".downloads"
+                  value="${build.dir}/.downloads"
                   description="Where to store the download and 'install' Findbugs."/>
         <available 
           property="findbugs.home" 
