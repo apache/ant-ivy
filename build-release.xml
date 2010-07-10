@@ -442,6 +442,7 @@
 	             uri="antlib:org.apache.rat.anttasks"
 	    	     classpathref="rat.classpath" />
 
+    <delete dir="${rat.report.dir}"/>
     <mkdir dir="${rat.report.dir}"/>
       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
         <fileset dir="${basedir}">
