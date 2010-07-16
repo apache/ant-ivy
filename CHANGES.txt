@@ -79,6 +79,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mathias Muller
 	Randy Nott
 	Peter Oxenham
+	Jesper Pedersen
 	Emmanuel Pellereau
 	Roshan Punnoose
 	Jean-Baptiste Quenot
@@ -108,6 +109,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
+
 - FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
 
    2.2.0-rc1

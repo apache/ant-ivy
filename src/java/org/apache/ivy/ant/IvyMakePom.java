@@ -59,6 +59,8 @@ public class IvyMakePom extends IvyTask {
 
     private File headerFile = null;
 
+    private String conf;
+   
     private File ivyFile = null;
 
     private Collection mappings = new ArrayList();
@@ -87,6 +89,14 @@ public class IvyMakePom extends IvyTask {
         this.headerFile = headerFile;
     }
     
+    public String getConf() {
+        return conf;
+    }
+   
+    public void setConf(String conf) {
+        this.conf = conf;
+    }
+   
     public Mapping createMapping() {
         Mapping mapping = new Mapping();
         this.mappings.add(mapping);
@@ -103,7 +113,7 @@ public class IvyMakePom extends IvyTask {
             }
             ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
                 getSettings(), ivyFile.toURI().toURL(), false);
-            PomModuleDescriptorWriter.write(md,
+            PomModuleDescriptorWriter.write(md, splitConfs(conf),
                 headerFile == null ? null : FileUtil.readEntirely(getHeaderFile()),
                 mappings.isEmpty() 
                     ? PomModuleDescriptorWriter.DEFAULT_MAPPING
