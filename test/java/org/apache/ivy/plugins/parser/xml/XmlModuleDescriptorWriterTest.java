@@ -22,13 +22,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.FileUtil;
@@ -120,6 +124,55 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
 				.replaceAll("working@localhost", Ivy.getWorkingRevision());
 		assertEquals(expected, wrote);
 	}
+
+    /**
+     * Test that the transitive attribute is written for non-transitive configurations.
+     * 
+     * <code><conf ... transitive="false" ... /></code>
+     * 
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1207">IVY-1207</a>
+     * @throws Exception
+     */
+    public void testTransitiveAttributeForNonTransitiveConfs() throws Exception {
+        // Given a ModuleDescriptor with a non-transitive configuration
+        DefaultModuleDescriptor md = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(
+                "myorg", "myname"), "1.0"), "integration", new Date());
+        Configuration conf = new Configuration("conf", Visibility.PUBLIC, "desc", null, false, null);
+        md.addConfiguration(conf);
+
+        // When the ModuleDescriptor is written
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+
+        // Then the transitive attribute must be set to false
+        String output = FileUtil.readEntirely(dest);
+        String writtenConf = output.substring(output.indexOf("<configurations>") + 16, output.indexOf("</configurations>")).trim();
+        assertTrue("Transitive attribute not set to false: " + writtenConf, writtenConf.indexOf("transitive=\"false\"") >= 0);
+    }
+
+    /**
+     * Test that the transitive attribute is not written when the configuration IS transitive.
+     * 
+     * This is the default and writing it will only add noise and cause a deviation from the known
+     * behavior (before fixing IVY-1207).
+     * 
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1207">IVY-1207</a>
+     * @throws Exception
+     */
+    public void testTransitiveAttributeNotWrittenForTransitiveConfs() throws Exception {
+        // Given a ModuleDescriptor with a transitive configuration
+        DefaultModuleDescriptor md = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(
+                "myorg", "myname"), "1.0"), "integration", new Date());
+        Configuration conf = new Configuration("conf", Visibility.PUBLIC, "desc", null, true, null);
+        md.addConfiguration(conf);
+
+        // When the ModuleDescriptor is written
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+
+        // Then the transitive attribute must NOT be written
+        String output = FileUtil.readEntirely(dest);
+        String writtenConf = output.substring(output.indexOf("<configurations>") + 16, output.indexOf("</configurations>")).trim();
+        assertFalse("Transitive attribute set: " + writtenConf, writtenConf.indexOf("transitive=") >= 0);
+    }
 
     private String readEntirely(String resource) throws IOException {
         return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
