@@ -69,6 +69,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sakari Maaranen
 	Jan Materne
 	Markus M. May
+	Abel Muino
 	J. Lewis Muir
 	Stephen Nesbitt
 	Joshua Nichols
@@ -79,6 +80,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mathias Muller
 	Randy Nott
 	Peter Oxenham
+	Jesper Pedersen
 	Emmanuel Pellereau
 	Roshan Punnoose
 	Jean-Baptiste Quenot
@@ -108,6 +110,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    2.2.0
 =====================================
+- IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
+
+- FIX: XmlModuleDescriptorWriter does not write the transitive attribute (IVY-1207) (thanks to Abel Muino)
 - FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
 
    2.2.0-rc1

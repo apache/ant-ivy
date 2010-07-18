@@ -425,6 +425,9 @@ public final class XmlModuleDescriptorWriter {
             }
             out.print("\"");
         }
+        if (!conf.isTransitive()) {
+            out.println(" transitive=\"false\"");
+        }
         if (conf.getDeprecated() != null) {
             out.print(" deprecated=\"" + XMLHelper.escape(conf.getDeprecated()) + "\"");
         }

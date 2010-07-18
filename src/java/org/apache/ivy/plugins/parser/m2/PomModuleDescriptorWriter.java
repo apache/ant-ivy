@@ -22,14 +22,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.StringUtils;
 
 public final class PomModuleDescriptorWriter {
@@ -42,12 +48,7 @@ public final class PomModuleDescriptorWriter {
     private PomModuleDescriptorWriter() {
     }
     
-    public static void write(ModuleDescriptor md, 
-            ConfigurationScopeMapping mapping, File output) throws IOException {
-        write(md, null, mapping, output);
-    }
-
-    public static void write(ModuleDescriptor md, 
+    public static void write(ModuleDescriptor md, String[] confs,
             String licenseHeader, ConfigurationScopeMapping mapping, File output)
             throws IOException {
         if (output.getParentFile() != null) {
@@ -74,7 +75,7 @@ public final class PomModuleDescriptorWriter {
                     + "http://maven.apache.org/maven-v4_0_0.xsd\">\n");
             out.println("  <modelVersion>4.0.0</modelVersion>");
             printModuleId(md, out);
-            printDependencies(md, mapping, out);
+            printDependencies(md, confs, mapping, out);
             out.println("</project>");
         } finally {
             out.close();
@@ -121,8 +122,8 @@ public final class PomModuleDescriptorWriter {
     }
 
     private static void printDependencies(
-            ModuleDescriptor md, ConfigurationScopeMapping mapping, PrintWriter out) {
-        DependencyDescriptor[] dds = md.getDependencies();
+            ModuleDescriptor md, String[] confs, ConfigurationScopeMapping mapping, PrintWriter out) {
+        DependencyDescriptor[] dds = getDependencies(md, confs);
         if (dds.length > 0) {
             out.println("  <dependencies>");
             for (int i = 0; i < dds.length; i++) {
@@ -142,6 +143,21 @@ public final class PomModuleDescriptorWriter {
             }
             out.println("  </dependencies>");
         }
+    }
+    
+    private static DependencyDescriptor[] getDependencies(ModuleDescriptor md, String[] confs) {
+        confs = ConfigurationUtils.replaceWildcards(confs, md);
+
+        List result = new ArrayList();
+        DependencyDescriptor[] dds = md.getDependencies();
+        for (int i = 0; i < dds.length; i++) {
+            String[] depConfs = dds[i].getDependencyConfigurations(confs);
+            if ((depConfs != null) && (depConfs.length > 0)) {
+                result.add(dds[i]);
+            }
+        }
+        
+        return (DependencyDescriptor[]) result.toArray(new DependencyDescriptor[result.size()]);
     }
     
     public static final ConfigurationScopeMapping DEFAULT_MAPPING 

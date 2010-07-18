@@ -44,7 +44,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testSimple() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-simple.pom"), false);
-        PomModuleDescriptorWriter.write(md, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -57,7 +57,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testSimpleDependencies() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies.pom"), false);
-        PomModuleDescriptorWriter.write(md, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -70,7 +70,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testDependenciesWithScope() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
-        PomModuleDescriptorWriter.write(md, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -83,7 +83,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-optional.pom"), false);
-        PomModuleDescriptorWriter.write(md, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -96,12 +96,64 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testPackaging() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-packaging.pom"), false);
-        PomModuleDescriptorWriter.write(md, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
             "\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-packaging.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
+    public void testWriteCompileConfigurationOnly() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
+        PomModuleDescriptorWriter.write(md, new String[] {"compile"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-compile-dependencies.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
+    public void testWriteRuntimeConfigurationOnly() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
+        PomModuleDescriptorWriter.write(md, new String[] {"runtime"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-dependencies-with-scope.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
+    public void testWriteAllConfiguration() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
+        PomModuleDescriptorWriter.write(md, new String[] {"*"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-dependencies-with-scope.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
+    public void testWriteAllExceptRuntimeConfiguration() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
+        PomModuleDescriptorWriter.write(md, new String[] {"*", "!runtime"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-compile-dependencies.xml")
             .replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
