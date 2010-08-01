@@ -31,6 +31,8 @@ public final class IvyAuthenticator extends Authenticator {
 
     private Authenticator original;
     
+    private static boolean securityWarningLogged = false;
+    
     /**
      * Private c'tor to prevent instantiation.
      */
@@ -58,7 +60,15 @@ public final class IvyAuthenticator extends Authenticator {
         }
 
         if (!(original instanceof IvyAuthenticator)) {
-            Authenticator.setDefault(new IvyAuthenticator(original));
+            try {
+                Authenticator.setDefault(new IvyAuthenticator(original));
+            } catch (SecurityException e) {
+                if (!securityWarningLogged) {
+                    securityWarningLogged = true;
+                    Message.warn("Not enough permissions to set the IvyAuthenticator. " +
+                            "HTTP(S) authentication will be disabled!");            
+                }
+            }
         }
     }
 

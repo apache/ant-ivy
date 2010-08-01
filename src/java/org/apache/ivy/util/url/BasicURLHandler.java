@@ -56,8 +56,10 @@ public class BasicURLHandler extends AbstractURLHandler {
 
     public URLInfo getURLInfo(URL url, int timeout) {
         // Install the IvyAuthenticator
-        IvyAuthenticator.install();
-
+        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+            IvyAuthenticator.install();
+        }
+        
         URLConnection con = null;
         try {
             url = normalizeToURL(url);
@@ -109,7 +111,9 @@ public class BasicURLHandler extends AbstractURLHandler {
 
     public InputStream openStream(URL url) throws IOException {
         // Install the IvyAuthenticator
-        IvyAuthenticator.install();
+        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+            IvyAuthenticator.install();
+        }
 
         URLConnection conn = null;
         try {
@@ -142,7 +146,9 @@ public class BasicURLHandler extends AbstractURLHandler {
     
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
         // Install the IvyAuthenticator
-        IvyAuthenticator.install();
+        if ("http".equals(src.getProtocol()) || "https".equals(src.getProtocol())) {
+            IvyAuthenticator.install();
+        }
 
         URLConnection srcConn = null;
         try {
@@ -186,13 +192,13 @@ public class BasicURLHandler extends AbstractURLHandler {
     }
 
     public void upload(File source, URL dest, CopyProgressListener l) throws IOException {
-        // Install the IvyAuthenticator
-        IvyAuthenticator.install();
-
         if (!"http".equals(dest.getProtocol()) && !"https".equals(dest.getProtocol())) {
             throw new UnsupportedOperationException(
                     "URL repository only support HTTP PUT at the moment");
         }
+
+        // Install the IvyAuthenticator
+        IvyAuthenticator.install();
 
         HttpURLConnection conn = null;
         try {
