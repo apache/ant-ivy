@@ -113,6 +113,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Use IvyAuthenticator only when it is really necessary (IVY-1211)
 - IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
 
+- FIX: artifactreport ant task doesn't honor log attribute (IVY-1212)
 - FIX: XmlModuleDescriptorWriter does not write the transitive attribute (IVY-1207) (thanks to Abel Muino)
 - FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
 

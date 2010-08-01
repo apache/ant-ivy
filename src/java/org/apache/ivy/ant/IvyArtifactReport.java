@@ -93,13 +93,20 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             }
             IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(
                 md,
-                new ResolveOptions().setConfs(confs).setResolveId(
-                    getResolveId()).setValidate(doValidate(getSettings())), null);
+                ((ResolveOptions) new ResolveOptions()
+                        .setLog(getLog()))
+                        .setConfs(confs)
+                        .setResolveId(getResolveId())
+                        .setValidate(doValidate(getSettings())),
+                null);
 
             Map artifactsToCopy = getIvyInstance().getRetrieveEngine().determineArtifactsToCopy(
                 ModuleRevisionId.newInstance(getOrganisation(), getModule(), getRevision()),
                 pattern,
-                new RetrieveOptions().setConfs(confs).setResolveId(getResolveId()));
+                ((RetrieveOptions) new RetrieveOptions()
+                        .setLog(getLog()))
+                        .setConfs(confs)
+                        .setResolveId(getResolveId()));
 
             Map moduleRevToArtifactsMap = new HashMap();
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
