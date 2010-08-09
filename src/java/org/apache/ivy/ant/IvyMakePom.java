@@ -18,6 +18,7 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
+import org.apache.ivy.plugins.parser.m2.PomWriterOptions;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter.ConfigurationScopeMapping;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
@@ -58,6 +60,8 @@ public class IvyMakePom extends IvyTask {
     private File pomFile = null;
 
     private File headerFile = null;
+    
+    private boolean printIvyInfo = true;
 
     private String conf;
    
@@ -89,6 +93,14 @@ public class IvyMakePom extends IvyTask {
         this.headerFile = headerFile;
     }
     
+    public boolean isPrintIvyInfo() {
+        return printIvyInfo;
+    }
+
+    public void setPrintIvyInfo(boolean printIvyInfo) {
+        this.printIvyInfo = printIvyInfo;
+    }
+
     public String getConf() {
         return conf;
     }
@@ -113,11 +125,7 @@ public class IvyMakePom extends IvyTask {
             }
             ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
                 getSettings(), ivyFile.toURI().toURL(), false);
-            PomModuleDescriptorWriter.write(md, splitConfs(conf),
-                headerFile == null ? null : FileUtil.readEntirely(getHeaderFile()),
-                mappings.isEmpty() 
-                    ? PomModuleDescriptorWriter.DEFAULT_MAPPING
-                    : new ConfigurationScopeMapping(getMappingsMap()), pomFile);
+            PomModuleDescriptorWriter.write(md, pomFile, getPomWriterOptions());
         } catch (MalformedURLException e) {
             throw new BuildException("unable to convert given ivy file to url: " + ivyFile + ": "
                     + e, e);
@@ -128,6 +136,23 @@ public class IvyMakePom extends IvyTask {
             throw new BuildException("impossible convert given ivy file to pom file: " + e
                     + " from=" + ivyFile + " to=" + pomFile, e);
         }
+    }
+    
+    private PomWriterOptions getPomWriterOptions() throws IOException {
+        PomWriterOptions options = new PomWriterOptions();
+        options.setConfs(splitConfs(conf)).setPrintIvyInfo(isPrintIvyInfo());
+        
+        if (mappings.isEmpty()) {
+            options.setMapping(PomModuleDescriptorWriter.DEFAULT_MAPPING);
+        } else {
+            options.setMapping(new ConfigurationScopeMapping(getMappingsMap()));
+        }
+        
+        if (headerFile != null) {
+            options.setLicenseHeader(FileUtil.readEntirely(getHeaderFile()));
+        }
+        
+        return options;
     }
 
     private Map getMappingsMap() {

@@ -44,7 +44,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testSimple() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-simple.pom"), false);
-        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -57,7 +57,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testSimpleDependencies() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies.pom"), false);
-        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -70,7 +70,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testDependenciesWithScope() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
-        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -83,7 +83,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-optional.pom"), false);
-        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -96,7 +96,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testPackaging() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-packaging.pom"), false);
-        PomModuleDescriptorWriter.write(md, null, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -109,7 +109,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testWriteCompileConfigurationOnly() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
-        PomModuleDescriptorWriter.write(md, new String[] {"compile"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions().setConfs(new String[] {"compile"}));
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -122,7 +122,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testWriteRuntimeConfigurationOnly() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
-        PomModuleDescriptorWriter.write(md, new String[] {"runtime"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions().setConfs(new String[] {"runtime"}));
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -135,7 +135,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testWriteAllConfiguration() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
-        PomModuleDescriptorWriter.write(md, new String[] {"*"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions().setConfs(new String[] {"*"}));
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -148,7 +148,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     public void testWriteAllExceptRuntimeConfiguration() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
-        PomModuleDescriptorWriter.write(md, new String[] {"*", "!runtime"}, LICENSE, PomModuleDescriptorWriter.DEFAULT_MAPPING, _dest);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions().setConfs(new String[] {"*", "!runtime"}));
         assertTrue(_dest.exists());
 
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
@@ -162,10 +162,12 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
             PomModuleDescriptorWriterTest.class.getResource(resource).openStream())));
     }
+    
+    private PomWriterOptions getWriterOptions() {
+        return (new PomWriterOptions()).setLicenseHeader(LICENSE).setPrintIvyInfo(false);
+    }
 
     public void setUp() {
-        // don't add ivy version to se static files for comparison
-        PomModuleDescriptorWriter.setAddIvyVersion(false);
         if (_dest.exists()) {
             _dest.delete();
         }
