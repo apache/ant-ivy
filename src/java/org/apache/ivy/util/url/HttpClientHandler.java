@@ -133,7 +133,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         FileInputStream fileStream = null;
         try {
             fileStream = new FileInputStream(src);
-            put.setRequestEntity(new InputStreamRequestEntity(fileStream));
+            put.setRequestEntity(new InputStreamRequestEntity(fileStream, src.length()));
             int statusCode = client.executeMethod(put);
             validatePutStatusCode(dest, statusCode, null);
         } finally {
