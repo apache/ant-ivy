@@ -60,6 +60,8 @@ public class IvyMakePom extends IvyTask {
     private File pomFile = null;
 
     private File headerFile = null;
+    
+    private boolean printIvyInfo = true;
 
     private String conf;
    
@@ -91,6 +93,14 @@ public class IvyMakePom extends IvyTask {
         this.headerFile = headerFile;
     }
     
+    public boolean isPrintIvyInfo() {
+        return printIvyInfo;
+    }
+
+    public void setPrintIvyInfo(boolean printIvyInfo) {
+        this.printIvyInfo = printIvyInfo;
+    }
+
     public String getConf() {
         return conf;
     }
@@ -130,7 +140,7 @@ public class IvyMakePom extends IvyTask {
     
     private PomWriterOptions getPomWriterOptions() throws IOException {
         PomWriterOptions options = new PomWriterOptions();
-        options.setConfs(splitConfs(conf));
+        options.setConfs(splitConfs(conf)).setPrintIvyInfo(isPrintIvyInfo());
         
         if (mappings.isEmpty()) {
             options.setMapping(PomModuleDescriptorWriter.DEFAULT_MAPPING);

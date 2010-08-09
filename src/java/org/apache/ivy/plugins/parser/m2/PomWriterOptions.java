@@ -25,6 +25,8 @@ public class PomWriterOptions {
     private String licenseHeader;
     
     private ConfigurationScopeMapping mapping;
+    
+    private boolean printIvyInfo = true;
 
     public String[] getConfs() {
         return confs;
@@ -45,11 +47,23 @@ public class PomWriterOptions {
     }
 
     public ConfigurationScopeMapping getMapping() {
+        if (mapping == null) {
+            return PomModuleDescriptorWriter.DEFAULT_MAPPING;
+        }
         return mapping;
     }
 
     public PomWriterOptions setMapping(ConfigurationScopeMapping mapping) {
         this.mapping = mapping;
+        return this;
+    }
+
+    public boolean isPrintIvyInfo() {
+        return printIvyInfo;
+    }
+
+    public PomWriterOptions setPrintIvyInfo(boolean printIvyInfo) {
+        this.printIvyInfo = printIvyInfo;
         return this;
     }
     

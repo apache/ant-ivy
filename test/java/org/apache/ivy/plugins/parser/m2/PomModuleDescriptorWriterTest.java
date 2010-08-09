@@ -164,12 +164,10 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     }
     
     private PomWriterOptions getWriterOptions() {
-        return (new PomWriterOptions()).setLicenseHeader(LICENSE);
+        return (new PomWriterOptions()).setLicenseHeader(LICENSE).setPrintIvyInfo(false);
     }
 
     public void setUp() {
-        // don't add ivy version to se static files for comparison
-        PomModuleDescriptorWriter.setAddIvyVersion(false);
         if (_dest.exists()) {
             _dest.delete();
         }
