@@ -34,7 +34,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DynamicAttribute;
 
 /**
  * This task allow to publish a module revision to an Ivy repository.
@@ -386,14 +385,12 @@ public class IvyPublish extends IvyTask {
         this.update = update;
     }
 
-    public class PublishArtifact implements Artifact, DynamicAttribute {
+    public class PublishArtifact implements Artifact {
         private String ext;
 
         private String name;
 
         private String type;
-        
-        private Map extra = new HashMap();
 
         public String[] getConfigurations() {
             return null;
@@ -440,23 +437,23 @@ public class IvyPublish extends IvyTask {
         }
 
         public String getAttribute(String attName) {
-            return (String) extra.get(attName);
+            return null;
         }
 
         public Map getAttributes() {
-            return extra;
+            return new HashMap();
         }
 
         public String getExtraAttribute(String attName) {
-            return (String) extra.get(attName);
+            return null;
         }
 
         public Map getExtraAttributes() {
-            return extra;
+            return new HashMap();
         }
         
         public Map getQualifiedExtraAttributes() {
-            return extra;
+            return new HashMap();
         }
 
         public String getStandardAttribute(String attName) {
@@ -469,10 +466,6 @@ public class IvyPublish extends IvyTask {
         
         public boolean isMetadata() {
             return false;
-        }
-        
-        public void setDynamicAttribute(String name, String value) {
-            extra.put(name, value);
         }
     }
 
