@@ -110,6 +110,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Handle attributes in description subelements (IVY-1214) (thanks to Jean-Louis Boudart)
 - IMPROVEMENT: Use IvyAuthenticator only when it is really necessary (IVY-1211)
 - IMPROVEMENT: ivy:makepom now has an option to disable the generation of an extra Ivy comment block in the POM
 - IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)

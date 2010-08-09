@@ -281,7 +281,15 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             try {
                 if (state == State.DESCRIPTION) {
                     // make sure we don't interpret any tag while in description tag
-                    buffer.append("<" + qName + ">");
+                    getBuffer().append("<").append(qName);
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        getBuffer().append(" ");
+                        getBuffer().append(attributes.getQName(i));
+                        getBuffer().append("=\"");
+                        getBuffer().append(attributes.getValue(i));
+                        getBuffer().append("\"");
+                    }
+                    getBuffer().append(">");
                     return;
                 } else if ("ivy-module".equals(qName)) {
                     ivyModuleStarted(attributes);
