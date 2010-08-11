@@ -24,18 +24,31 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ConfigurationScopeMapping;
+import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ExtraDependency;
 import org.apache.ivy.util.ConfigurationUtils;
-import org.apache.ivy.util.StringUtils;
 
 public final class PomModuleDescriptorWriter {
+    
+    private static final ConfigurationScopeMapping DEFAULT_MAPPING 
+            = new ConfigurationScopeMapping(new HashMap() {
+                {
+                    put("compile, runtime", "compile");
+                    put("runtime", "runtime");
+                    put("provided", "provided");
+                    put("test", "test");
+                    put("system", "system");
+                }
+            });
+
 
     private PomModuleDescriptorWriter() {
     }
@@ -65,7 +78,7 @@ public final class PomModuleDescriptorWriter {
             out.println("    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 "
                     + "http://maven.apache.org/maven-v4_0_0.xsd\">\n");
             out.println("  <modelVersion>4.0.0</modelVersion>");
-            printModuleId(md, out);
+            printModuleId(md, out, options);
             printDependencies(md, out, options);
             out.println("</project>");
         } finally {
@@ -73,22 +86,29 @@ public final class PomModuleDescriptorWriter {
         }
     }
 
-    private static void printModuleId(ModuleDescriptor md, PrintWriter out) {
+    private static void printModuleId(ModuleDescriptor md, PrintWriter out, PomWriterOptions options) {
         ModuleRevisionId mrid = md.getModuleRevisionId();
         out.println("  <groupId>" + mrid.getOrganisation() + "</groupId>");
-        out.println("  <artifactId>" + mrid.getName() + "</artifactId>");
         
-        String type;
-        
-        Artifact artifact = findArtifact(md);
-        if (artifact == null) {
-            // no suitable artifact found, default to 'pom'
-            type = "pom";
-        } else {
-            type = artifact.getType();
+        String artifactId = options.getArtifactName();
+        if (artifactId == null) {
+            artifactId = mrid.getName();
         }
-
-        out.println("  <packaging>" + type + "</packaging>");
+        
+        String packaging = options.getArtifactPackaging();
+        if (packaging == null) {
+            // find artifact to determine the packaging
+            Artifact artifact = findArtifact(md, artifactId);
+            if (artifact == null) {
+                // no suitable artifact found, default to 'pom'
+                packaging = "pom";
+            } else {
+                packaging = artifact.getType();
+            }
+        }
+        
+        out.println("  <artifactId>" + artifactId + "</artifactId>");
+        out.println("  <packaging>" + packaging + "</packaging>");
         if (mrid.getRevision() != null) {
             out.println("  <version>" + mrid.getRevision() + "</version>");
         }
@@ -100,10 +120,10 @@ public final class PomModuleDescriptorWriter {
     /**
      * Returns the first artifact with the correct name and without a classifier.
      */
-    private static Artifact findArtifact(ModuleDescriptor md) {
+    private static Artifact findArtifact(ModuleDescriptor md, String artifactName) {
         Artifact[] artifacts = md.getAllArtifacts();
         for (int i = 0; i < artifacts.length; i++) {
-            if (artifacts[i].getName().equals(md.getModuleRevisionId().getName())
+            if (artifacts[i].getName().equals(artifactName)
                     && artifacts[i].getAttribute("classifier") == null) {
                 return artifacts[i];
             }
@@ -114,10 +134,43 @@ public final class PomModuleDescriptorWriter {
 
     private static void printDependencies(ModuleDescriptor md, PrintWriter out, 
             PomWriterOptions options) {
+        List extraDeps = options.getExtraDependencies();
         DependencyDescriptor[] dds = getDependencies(md, options);
-        if (dds.length > 0) {
-            ConfigurationScopeMapping mapping = options.getMapping();
+
+        if (!extraDeps.isEmpty() || (dds.length > 0)) {
             out.println("  <dependencies>");
+
+            // print the extra dependencies first
+            for (Iterator it = extraDeps.iterator(); it.hasNext(); ) {
+                PomWriterOptions.ExtraDependency dep = (ExtraDependency) it.next();
+
+                out.println("    <dependency>");
+                String groupId = dep.getGroup();
+                if (groupId == null) {
+                    groupId = md.getModuleRevisionId().getOrganisation();
+                }
+                out.println("      <groupId>" + groupId + "</groupId>");
+                out.println("      <artifactId>" + dep.getArtifact() + "</artifactId>");
+                String version = dep.getVersion();
+                if (version == null) {
+                    version = md.getModuleRevisionId().getRevision();
+                }
+                out.println("      <version>" + version + "</version>");
+                if (dep.getScope() != null) {
+                    out.println("      <scope>" + dep.getScope() + "</scope>");
+                }
+                if (dep.isOptional()) {
+                    out.println("      <optional>true</optional>");
+                }
+                out.println("    </dependency>");
+            }
+            
+            // now print the dependencies listed in the ModuleDescriptor
+            ConfigurationScopeMapping mapping = options.getMapping();
+            if (mapping == null) {
+                mapping = DEFAULT_MAPPING;
+            }
+            
             for (int i = 0; i < dds.length; i++) {
                 ModuleRevisionId mrid = dds[i].getDependencyRevisionId();
                 out.println("    <dependency>");
@@ -151,37 +204,5 @@ public final class PomModuleDescriptorWriter {
         }
         
         return (DependencyDescriptor[]) result.toArray(new DependencyDescriptor[result.size()]);
-    }
-    
-    public static final ConfigurationScopeMapping DEFAULT_MAPPING 
-        = new ConfigurationScopeMapping(new HashMap() {
-            {
-                put("compile, runtime", "compile");
-                put("runtime", "runtime");
-                put("provided", "provided");
-                put("test", "test");
-                put("system", "system");
-            }
-        });
-
-    public static class ConfigurationScopeMapping {
-        private Map/*<String,String>*/ scopes;
-        
-        public ConfigurationScopeMapping(Map/*<String,String>*/ scopesMapping) {
-            this.scopes = new HashMap(scopesMapping);
-        }
-
-        /**
-         * Returns the scope mapped to the given configuration array.
-         * 
-         * @param confs the configurations for which the scope should be returned
-         * @return the scope to which the conf is mapped
-         */
-        public String getScope(String[] confs) {
-            return (String) scopes.get(StringUtils.join(confs, ", "));
-        }
-        public boolean isOptional(String[] confs) {
-            return getScope(confs) == null;
-        }
     }
 }

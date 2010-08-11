@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
 import org.apache.ivy.plugins.parser.m2.PomWriterOptions;
-import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter.ConfigurationScopeMapping;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
@@ -43,6 +43,7 @@ public class IvyMakePom extends IvyTask {
     public class Mapping {
         private String conf;
         private String scope;
+        
         public String getConf() {
             return conf;
         }
@@ -57,6 +58,49 @@ public class IvyMakePom extends IvyTask {
         }
     }
 
+    public class Dependency {
+        private String group = null;
+        private String artifact = null;
+        private String version = null;
+        private String scope = null;
+        private boolean optional = false;
+        
+        public String getGroup() {
+            return group;
+        }
+        public void setGroup(String group) {
+            this.group = group;
+        }
+        public String getArtifact() {
+            return artifact;
+        }
+        public void setArtifact(String artifact) {
+            this.artifact = artifact;
+        }
+        public String getVersion() {
+            return version;
+        }
+        public void setVersion(String version) {
+            this.version = version;
+        }
+        public String getScope() {
+            return scope;
+        }
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
+        public boolean getOptional() {
+            return optional;
+        }
+        public void setOptional(boolean optional) {
+            this.optional = optional;
+        }      
+    }
+            
+    private String artifactName;
+            
+    private String artifactPackaging;
+
     private File pomFile = null;
 
     private File headerFile = null;
@@ -68,6 +112,8 @@ public class IvyMakePom extends IvyTask {
     private File ivyFile = null;
 
     private Collection mappings = new ArrayList();
+    
+    private Collection dependencies = new ArrayList();
 
     public File getPomFile() {
         return pomFile;
@@ -104,15 +150,37 @@ public class IvyMakePom extends IvyTask {
     public String getConf() {
         return conf;
     }
-   
+    
     public void setConf(String conf) {
         this.conf = conf;
     }
-   
+    
+    public String getArtifactName() {
+        return artifactName;
+    }
+
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
+
+    public String getArtifactPackaging() {
+        return artifactPackaging;
+    }
+
+    public void setArtifactPackaging(String artifactPackaging) {
+        this.artifactPackaging = artifactPackaging;
+    }
+
     public Mapping createMapping() {
         Mapping mapping = new Mapping();
         this.mappings.add(mapping);
         return mapping;
+    }
+    
+    public Dependency createDependency() {
+        Dependency dependency = new Dependency();
+        this.dependencies.add(dependency);
+        return dependency;
     }
     
     public void doExecute() throws BuildException {
@@ -140,12 +208,14 @@ public class IvyMakePom extends IvyTask {
     
     private PomWriterOptions getPomWriterOptions() throws IOException {
         PomWriterOptions options = new PomWriterOptions();
-        options.setConfs(splitConfs(conf)).setPrintIvyInfo(isPrintIvyInfo());
+        options.setConfs(splitConfs(conf))
+               .setArtifactName(getArtifactName())
+               .setArtifactPackaging(getArtifactPackaging())
+               .setPrintIvyInfo(isPrintIvyInfo())
+               .setExtraDependencies(getDependencies());
         
-        if (mappings.isEmpty()) {
-            options.setMapping(PomModuleDescriptorWriter.DEFAULT_MAPPING);
-        } else {
-            options.setMapping(new ConfigurationScopeMapping(getMappingsMap()));
+        if (!mappings.isEmpty()) {
+            options.setMapping(new PomWriterOptions.ConfigurationScopeMapping(getMappingsMap()));
         }
         
         if (headerFile != null) {
@@ -162,5 +232,16 @@ public class IvyMakePom extends IvyTask {
             mappingsMap.put(mapping.getConf(), mapping.getScope());
         }
         return mappingsMap;
+    }
+    
+    private List getDependencies() {
+        List result = new ArrayList();
+        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
+            Dependency dependency = (Dependency) iter.next();
+            result.add(new PomWriterOptions.ExtraDependency(dependency.getGroup(),
+                    dependency.getArtifact(), dependency.getVersion(), dependency.getScope(),
+                    dependency.getOptional()));
+        }
+        return result;
     }
 }
