@@ -167,6 +167,10 @@ public final class PomModuleDescriptorWriter {
             
             // now print the dependencies listed in the ModuleDescriptor
             ConfigurationScopeMapping mapping = options.getMapping();
+            if (mapping == null) {
+                mapping = DEFAULT_MAPPING;
+            }
+            
             for (int i = 0; i < dds.length; i++) {
                 ModuleRevisionId mrid = dds[i].getDependencyRevisionId();
                 out.println("    <dependency>");
