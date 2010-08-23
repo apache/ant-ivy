@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.util.StringUtils;
-
 public class PomWriterOptions {
 
     private String[] confs;
@@ -117,8 +115,15 @@ public class PomWriterOptions {
          * @return the scope to which the conf is mapped
          */
         public String getScope(String[] confs) {
-            return (String) scopes.get(StringUtils.join(confs, ", "));
+            for (int i = 0; i < confs.length; i++) {
+                if (scopes.containsKey(confs[i])) {
+                    return (String) scopes.get(confs[i]);
+                }
+            }
+
+            return null;
         }
+        
         public boolean isOptional(String[] confs) {
             return getScope(confs) == null;
         }

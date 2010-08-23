@@ -41,7 +41,7 @@ public final class PomModuleDescriptorWriter {
     private static final ConfigurationScopeMapping DEFAULT_MAPPING 
             = new ConfigurationScopeMapping(new HashMap() {
                 {
-                    put("compile, runtime", "compile");
+                    put("compile", "compile");
                     put("runtime", "runtime");
                     put("provided", "provided");
                     put("test", "test");

@@ -229,7 +229,12 @@ public class IvyMakePom extends IvyTask {
         Map mappingsMap = new HashMap();
         for (Iterator iter = mappings.iterator(); iter.hasNext();) {
             Mapping mapping = (Mapping) iter.next();
-            mappingsMap.put(mapping.getConf(), mapping.getScope());
+            String[] mappingConfs = splitConfs(mapping.getConf());
+            for (int i = 0; i < mappingConfs.length; i++) {
+                if (!mappingsMap.containsKey(mappingConfs[i])) {
+                    mappingsMap.put(mappingConfs[i], mapping.getScope());
+                }
+            }
         }
         return mappingsMap;
     }
