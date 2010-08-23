@@ -34,7 +34,7 @@ The child tag used for the dependency resolver must be equal to a name of a depe
 <code type="xml">
 <resolver ref="alreadydefinedresolver"/>
 </code>
-Note that this works only if the resolver has been already defined, and not if it is defined later in the ivysettings file.
+Note that this works only if the resolver has already been defined and NOT if it is defined later in the ivysettings file.
 <h1>Child elements</h1>
 <table class="ivy-children">
 <thead>
@@ -47,11 +47,11 @@ Note that this works only if the resolver has been already defined, and not if i
 </table>
 
 <h1>Built-in Resolvers</h1>
-Ivy comes with a set of built-in dependency resolvers able to answer to the most common needs. 
+Ivy comes with a set of built-in dependency resolvers that handle most common needs.
 
-If you don't find the one you want here, you can also check if some one has not contributed it in the [[links links page]], or even <a href="../extend.html">write your own</a>.
+If you don't find the one you want here, you can also check if someone has contributed it on the [[links links page]], or even <a href="../extend.html">write your own</a>.
 
-There are basically two types of resolver in Ivy: composite and standard resolvers. A composite resolver is a resolver which delegates the work to other resolvers. The other resolvers are standard resolvers.
+There are basically two types of resolvers in Ivy: composite and standard. A composite resolver is a resolver which delegates the work to other resolvers. The other resolvers are standard resolvers.
 
 Here is the list of built-in resolvers:
 
@@ -79,13 +79,13 @@ All resolvers of the same type share some common features and attributes detaile
 <h3>validation</h3>
 All standard resolvers support several options for validation.
 
-The validate attribute is used to configure if Ivy files should be checked against the Ivy file xml schema.
+The <i>validate</i> attribute is used to configure if ivy files should be checked against the ivy file xml schema.
 
-The checkconsistency attribute allow to enable or disable consistency checking between what is expected by Ivy when it finds a module descriptor, and what the module descriptor actually contains.
+The checkconsistency attribute allows you to enable or disable consistency checking between what is expected by Ivy when it finds a module descriptor, and what the module descriptor actually contains.
 
-The descriptor attribute let one define if module descriptors are mandatory or optional.
+The descriptor attribute lets you define if module descriptors are mandatory or optional.
 
-The checksums attribute is used to define the list of checksums files to use to check the content of downloaded files has not been corrupted (eg during transfer).
+The checksums attribute is used to define the list of checksums files to use to check if the content of downloaded files has not been corrupted (eg during transfer).
 <h3>force</h3>
 Any standard resolver can be used in force mode, which is used mainly to handle local development builds. In force mode, the resolver attempts to find a dependency whatever the requested revision is (internally it replace the requested revision by 'latest.integration'), and if it finds one, it forces this revision to be returned, even when used in a chain with returnFirst=false.
 
@@ -98,7 +98,7 @@ By using such a resolver at the beginning of a chain, you can be sure that Ivy w
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th><th>Composite</th><th>Standard</th></tr>
 </thead>
 <tbody>
-    <tr><td>name</td><td>the name which identify the resolver</td>
+    <tr><td>name</td><td>the name which identifies the resolver</td>
         <td>Yes</td>
         <td>Yes</td>
         <td>Yes</td>
@@ -133,7 +133,7 @@ By using such a resolver at the beginning of a chain, you can be sure that Ivy w
         <td>No</td>
         <td>Yes</td>
     </tr>
-    <tr><td>namespace</td><td>The name of the namespace to which this resolver belong <span class="since">since 1.3</span></td>
+    <tr><td>namespace</td><td>The name of the namespace to which this resolver belons <span class="since">since 1.3</span></td>
         <td>No, defaults to 'system'</td>
         <td>Yes</td>
         <td>Yes</td>
@@ -189,7 +189,7 @@ By using such a resolver at the beginning of a chain, you can be sure that Ivy w
   </chain>
 </resolvers>
 </code>
-Defines a filesystem resolver, named '1', which is then used in two chains, the first which seconds the filesystem resolver with an ivyrep resolver, and second which seconds the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver 1 will use a cache named 'cache-1' which should have been defined under the caches element.
+Defines a filesystem resolver, named '1', which is then used in two chains, the first which combines the filesystem resolver with an ivyrep resolver, and second which combines the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver 1 will use a cache named 'cache-1' which should have been defined under the caches element.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

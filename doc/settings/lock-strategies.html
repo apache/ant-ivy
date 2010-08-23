@@ -32,12 +32,12 @@ A lock strategy is used by a cache manager to decide when and how locking should
 
 Two lock strategies are registered by default:
 <ul>
-<li><b>no-lock</b></li> This lock strategy actually performs no locking at all, and thus should not be used in environment where the cache is shared by multiple processes. 
+<li><b>no-lock</b></li> This lock strategy actually performs no locking at all, and thus should not be used in an environment where the cache is shared by multiple processes. 
 
 This strategy is implemented by ([[svn:src/java/org/apache/ivy/plugins/lock/NoLockStrategy.java NoLockStrategy]])
 
 
-<li><b>artifact-lock</b></li> This strategy acquire a lock whenever a module descriptor or an artifact is downloaded to the cache, which makes a good solution when you want to share your repository cache.
+<li><b>artifact-lock</b></li> This strategy acquires a lock whenever a module descriptor or an artifact is downloaded to the cache, which makes a good solution when you want to share your repository cache.
 
 Note that this strategy is based on file locking, performed by default using the java.io.File.createNewFile() atomicity (which is documented as atomic in the javadoc, but not recommended to perform locks). A java.nio.FileLock based implementation is also provided, but according to our tests the createNewFile based one performs better and more reliably. We heavily recommend making your own testing in your target environment before relying on this lock strategy for heavily concurrent operations.
 

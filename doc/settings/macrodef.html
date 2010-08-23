@@ -26,18 +26,18 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> macrodef
 
-<span class="tagdoc" id="ivysettings.macrodef">Defines a new dependency resolver type based upon an other one.</span> This definition is very similar to the macrodef feature of ant for defining macro tasks. <span class="since">since 1.3</span>
+<span class="tagdoc" id="ivysettings.macrodef">Defines a new dependency resolver type based upon another.</span> This definition is very similar to the macrodef feature of ant for defining macro tasks. <span class="since">since 1.3</span>
 
-This task eases the lot the process of creating new dependency resolver, because it avoid writing java code.
+This task eases the process of creating a new dependency resolver, because it avoids writing java code.
 
-It is generally used in combination with the [[settings/include]] feature to help reusing macro at several places.
+It is generally used in combination with the [[settings/include]] feature to help reuse a macro in multiple settings files.
 
-A macro is defined by writing the resolver it is equivalent to as if it were written in the resolver place, except that you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name and sometimes a default value, and are used using the following syntax: 
+A macro is defined by declaring an existing resolver within it. Then you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name, and optionally a default value, and are used using the following syntax: 
 <code>@{attributename}</code>
 <h2>Resolvers names</h2>
-Since you can use the same macro several times, and that your macro may define several resolvers (in a chain for instance), resolvers names need to be chosen carefully to avoid name conflicts (a resolver must have a unique name).
+Since you can use the same macro several times it can define several resolvers (in a chain for instance), the resolver names need to be chosen carefully to avoid name conflicts (each resolver must have a unique name).
 
-Therefore here is how Ivy deals with the names of the resolvers defined in a macro:
+Here is how Ivy deals with the names of the resolvers defined in a macro:
 <ul>
 <li>if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This is what usually should be done for the main resolver defined in the macro</li>
 <li>if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a @{name} inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash</li>

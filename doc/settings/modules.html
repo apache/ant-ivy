@@ -28,11 +28,11 @@
 
 <span class="tagdoc" id="ivysettings.modules">Defines per module or module set settings.</span>
 
-The rules are given by defining a module set, using pattern for module organisation and name, and giving some settings for the set, like the name of the corresponding resolver to use.
+The rules are given by defining a module set, using a pattern for module organisation and name, and giving some settings for the set, like the name of the corresponding resolver to use.
 
-If no rule match a given module, the default setting will be used.
+If no rules match a given module, the default setting will be used.
 
-Even if not required, because the use of a default big resolver (chain, for instance) able to resolve all dependencies can answer all the needs, the configuration of smaller resolvers used for different cases can improve performances a lot. For instance, if you have a local repository for your modules and a distant repository for third party libraries, it is a good idea to have two separate resolvers, and configure ivy to use one for all your modules and another for the rest (the default one).
+Note: You can greatly improve the performance of dependency resolution by configuring multiple smaller resolvers instead of one large resolver (i.e. chain). For instance, if you have a local repository for your modules and a remote repository for third party libraries, it is a good idea to have two separate resolvers, one for all of your modules and another for the rest (the default one).
 
 <h1>Child elements</h1>
 <table class="ivy-children">

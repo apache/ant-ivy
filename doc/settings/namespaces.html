@@ -28,18 +28,18 @@
 
 <span class="tagdoc" id="ivysettings.namespaces">Namespaces are an advanced feature of Ivy which let you use resolvers in which module names and organisations are not consistent between each other.</span>
 
-For instance, if you want to use maven2 repository and ivyrep collectively, you will face some naming issues. For example all apache commons projects are declared to be part of the organisation apache in ivyrep whereas in maven2 ibiblio repository, they are declared to be part of the organisation of the same name of the module.
+For instance, if you want to use both a maven2 repository and an ivyrep, you will face some naming issues. For example, all apache commons projects are declared to be part of the organisation <i>apache</i> in ivyrep whereas in maven2 ibiblio repository, their organisation is same as the module.
 
 So if you try to use both maven2 and ivyrep repositories, you will face some issues like:
 <quote>
-How do I declare a dependency on commons-lang ?
-I have an error while trying to resolve module xxx. It says that it depends on [commons-httpclient commons-httpclient] ant that it isn't available.
+How do I declare a dependency on commons-lang?
+I have an error while trying to resolve module xxx. It says that it depends on [commons-httpclient commons-httpclient] and that it isn't available.
 ...
 </quote>
 
-Ivy has an answer to give to this kind of troubles, and this answer is called namespaces. In short, you can affect a namespace to each dependency resolver in Ivy, and each namespace defines rules to convert names from the system namespace to the defined namespace itself, and vice versa.
+Ivy's answer to this issue is called namespaces. In short, you can attach a namespace to each dependency resolver in Ivy, and each namespace defines rules to convert names from the system namespace to the defined namespace itself, and vice versa.
 
-This very powerful feature is thoroughly used in the <a href="../tutorial/build-repository/advanced.html">build your own repository tutorial</a>, and this is a good place to have examples of what can be done with namespaces.
+This very powerful feature is thoroughly used in the <a href="../tutorial/build-repository/advanced.html">build your own repository tutorial</a>, so is the best place to see an example of what can be done with namespaces.
 
 <h1>Child elements</h1>
 <table class="ivy-children">
