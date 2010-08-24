@@ -39,7 +39,7 @@ Ivy supports 3 type of triggers out of the box:
 
 If you want to use a different trigger, you can <a href="../extend.html">implement your own</a>.
 
-The event available in Ivy are the following ones:
+The following events are available in Ivy:
 <table class="ivy-children">
 <thead>
     <tr><th>Name</th><th>Attributes</th><th>Description</th></tr>
@@ -54,7 +54,7 @@ The event available in Ivy are the following ones:
             <li>conf</li>comma separated list of configurations which will be resolved
           </ul>
         </td>
-        <td>Fired at the beginning of the resolve process, before a module dependencies and transitive dependencies are resolved.</td>
+        <td>Fired at the beginning of the resolve process, before module dependencies and transitive dependencies are resolved.</td>
     </tr>
     <tr><td>pre-resolve-dependency</td>
         <td>
@@ -186,7 +186,7 @@ The event available in Ivy are the following ones:
             <li>to</li>the absolute path to which it will be retrieved
           </ul>
         </td>
-        <td>Fired before an artifact is retrieved from cache to a local location</td>
+        <td>Fired before an artifact is retrieved from the cache to a local location</td>
     </tr>
     <tr><td>post-retrieve-artifact <br/><span class="since">since 2.1</span></td>
         <td>
@@ -203,7 +203,7 @@ The event available in Ivy are the following ones:
             <li>to</li>the absolute path to which it has just been retrieved
           </ul>
         </td>
-        <td>Fired after an artifact is retrieved from cache to a local location</td>
+        <td>Fired after an artifact is retrieved from the cache to a local location</td>
     </tr>
     <tr><td>pre-publish-artifact <br/><span class="since">since 2.0</span></td>
         <td>
@@ -236,9 +236,7 @@ The event available in Ivy are the following ones:
             <li>status</li>"successful" if the artifact published successfully; "failed" if the artifact failed to publish, or if the status is unknown
           </ul>
         </td>
-        <td>Fired after an artifact is published into a repository.  Note that this event is fired
-        whether or not the publication succeeded.  The "status" property can be checked to 
-        verify success.</td>
+        <td>Fired after an artifact is published into a repository.  Note that this event is fired whether or not the publication succeeded.  The "status" property can be checked to verify success.</td>
     </tr>
 </tbody>
 </table>
