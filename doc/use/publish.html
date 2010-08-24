@@ -86,14 +86,29 @@ The source artifact pattern can be specified either as an attribute on the task 
         <td>No. No recursive delivery is done by default</td></tr>
     <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
 </table>
+<h1>Child elements</h1>
+<table class="ivy-children">
+<thead>
+    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+</thead>
+<tbody>
+    <tr><td>artifact</td>
+        <td>Describe additional artifacts to publish<br/>These elements can have any attribute: standard artifact attributes and (since 2.2) extra attributes are supported.</td>
+        <td>0..n</td></tr>
+    <tr><td>artifacts</td>
+        <td>Specify the pattern used to find the artifact.<br/>These elements have a <i>pattern</i> attribute containing the pattern used to find the artifact.</td>
+        <td>0..n</td></tr>
+</tbody>
+</table>
+
 <h1>Examples</h1>
 <code type="xml">
 <ivy:publish resolver="local" pubrevision="1.0">
-   <artifacts pattern="1/[artifact].[ext]" />
-   <artifacts pattern="2/[artifact].[ext]" />
+   <artifacts pattern="build/artifacts/jars/[artifact].[ext]" />
+   <artifacts pattern="build/artifacts/zips/[artifact].[ext]" />
 </ivy:publish>
 </code>
-Publishes the last resolved module in the local resolver with revision 1.0, looking for artifacts in directories 1 and 2.
+Publishes the last resolved module in the local resolver with revision 1.0, looking for artifacts in directories <i>build/artifacts/jars</i> and <i>build/artifacts/zips</i>.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
