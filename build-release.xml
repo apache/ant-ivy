@@ -384,7 +384,7 @@
 	</target>
 	
 	<target name="sign" depends="init-ivy">
-		<ivy:settings id="sign.settingsId" file="ivysettings-signtask.xml" />
+		<ivy:settings id="sign.settingsId" file="ivysettings-release.xml" />
 		<ivy:cachepath organisation="org.apache.commons" settingsRef="sign.settingsId" transitive="false" log="download-only"
 				module="commons-openpgp" revision="1.0-SNAPSHOT" inline="true" pathid="openpgp.classpath"/>
 		<ivy:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" log="download-only"
@@ -433,7 +433,7 @@
 	</target>
 	
 	<target name="rat" depends="init-ivy">
-    <property name="rat.failOnError" value="true"/> 
+	    <property name="rat.failOnError" value="true"/> 
         <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="0.6" 
                        inline="true" conf="default" pathid="rat.classpath" 
                        log="download-only"/>
@@ -442,36 +442,72 @@
 	             uri="antlib:org.apache.rat.anttasks"
 	    	     classpathref="rat.classpath" />
 
-    <delete dir="${rat.report.dir}"/>
-    <mkdir dir="${rat.report.dir}"/>
-      <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
-        <fileset dir="${basedir}">
-          <exclude name=".classpath" />
-          <exclude name=".ivy2/**/*" />
-          <exclude name="build/**/*" />
-          <exclude name="**/*.sha1" />
-            <exclude name="**/*.md5" />
-          <exclude name="**/*.txt" />
-          <exclude name="META-INF/MANIFEST.MF" />
-          <exclude name="**/*.json" />
-            <exclude name="doc/config.js" />
-            <exclude name="doc/js/jquery.pack.js" />
-            <exclude name="doc/js/jquery.treeview.js" />
-          <exclude name="doc/xooki/tiddly/util.js" />
-        </fileset>
-      </rat:report>
+		<delete dir="${rat.report.dir}"/>
+        <mkdir dir="${rat.report.dir}"/>
+        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
+            <fileset dir="${basedir}">
+                <exclude name=".classpath" />
+                <exclude name=".ivy2/**/*" />
+                <exclude name="build/**/*" />
+                <exclude name="**/*.sha1" />
+                <exclude name="**/*.md5" />
+                <exclude name="**/*.txt" />
+                <exclude name="META-INF/MANIFEST.MF" />
+                <exclude name="**/*.json" />
+                <exclude name="doc/config.js" />
+                <exclude name="doc/js/jquery.pack.js" />
+                <exclude name="doc/js/jquery.treeview.js" />
+                <exclude name="doc/xooki/tiddly/util.js" />
+            </fileset>
+        </rat:report>
 
-    <fail message="Some files have missing or incorrect license information. Check RAT report for more details!">
-      <condition>
-        <and>
-          <not>
-              <resourcecontains resource="${rat.report.dir}/rat-report.txt" substring="0 Unknown Licenses" casesensitive="false" /> 
-          </not>
-          <equals arg1="${rat.failOnError}" arg2="true"/>
-        </and>
-      </condition>
-    </fail>
-  </target>	
+        <fail message="Some files have missing or incorrect license information. Check RAT report for more details!">
+            <condition>
+                <and>
+                    <not><resourcecontains resource="${rat.report.dir}/rat-report.txt" substring="0 Unknown Licenses" casesensitive="false" /></not>
+                    <equals arg1="${rat.failOnError}" arg2="true"/>
+                </and>
+            </condition>
+        </fail>
+    </target>	
+	
+    <target name="upload-nexus" depends="release-version, init-ivy">
+        <ivy:settings id="upload.settingsId" file="ivysettings-release.xml" />
+        <ivy:resolve file="${basedir}/build/artifact/ivy.xml" transitive="false" />
+        <ivy:publish organisation="org.apache.ivy"
+                     module="ivy"
+                     revision="${build.version}"
+                     srcivypattern="${basedir}/build/artifact/ivy.xml"
+                     artifactspattern="${basedir}/build/distrib/maven2/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+                     publishivy="false"
+                     conf="core"
+                     settingsRef="upload.settingsId"
+                     resolver="nexus">
+            <!-- The standard maven2 artifacts -->
+            <artifact name="ivy" ext="pom" type="ivy" />
+            <artifact name="ivy" ext="jar" type="sources" classifier="sources" />
+            <artifact name="ivy" ext="jar" type="javadoc" classifier="javadoc" />
+
+            <!-- The PGP signatures -->
+            <artifact name="ivy" ext="pom.asc" type="asc" />
+            <artifact name="ivy" ext="jar.asc" type="asc" />
+            <artifact name="ivy" ext="jar.asc" type="asc" classifier="sources" />
+            <artifact name="ivy" ext="jar.asc" type="asc" classifier="javadoc" />
+            
+            <!-- The SHA1 checksums -->
+            <artifact name="ivy" ext="pom.sha1" type="sha1" />
+            <artifact name="ivy" ext="jar.sha1" type="sha1" />
+            <artifact name="ivy" ext="jar.sha1" type="sha1" classifier="sources" />
+            <artifact name="ivy" ext="jar.sha1" type="sha1" classifier="javadoc" />
+            
+            <!-- The MD5 checksums -->
+            <artifact name="ivy" ext="pom.md5" type="md5" />
+            <artifact name="ivy" ext="jar.md5" type="md5" />
+            <artifact name="ivy" ext="jar.md5" type="md5" classifier="sources" />
+            <artifact name="ivy" ext="jar.md5" type="md5" classifier="javadoc" />
+        </ivy:publish>
+    </target>
+
 	<target name="prepare-snapshot" 
 	        depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, coverage-report" />
 	<target name="snapshot" 
