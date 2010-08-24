@@ -110,6 +110,8 @@ public class IvyMakePom extends IvyTask {
     private String conf;
    
     private File ivyFile = null;
+    
+    private String description;
 
     private Collection mappings = new ArrayList();
     
@@ -139,6 +141,14 @@ public class IvyMakePom extends IvyTask {
         this.headerFile = headerFile;
     }
     
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public boolean isPrintIvyInfo() {
         return printIvyInfo;
     }
@@ -212,6 +222,7 @@ public class IvyMakePom extends IvyTask {
                .setArtifactName(getArtifactName())
                .setArtifactPackaging(getArtifactPackaging())
                .setPrintIvyInfo(isPrintIvyInfo())
+               .setDescription(getDescription())
                .setExtraDependencies(getDependencies());
         
         if (!mappings.isEmpty()) {

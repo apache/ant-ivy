@@ -38,6 +38,8 @@ public class PomWriterOptions {
     
     private List/*<ExtraDependency>*/ extraDependencies = new ArrayList();
 
+    private String description;
+
     public String[] getConfs() {
         return confs;
     }
@@ -98,6 +100,15 @@ public class PomWriterOptions {
 
     public PomWriterOptions setArtifactPackaging(String artifactPackaging) {
         this.artifactPackaging = artifactPackaging;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public PomWriterOptions setDescription(String description) {
+        this.description = description;
         return this;
     }
 

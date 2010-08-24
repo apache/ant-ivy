@@ -112,6 +112,9 @@ public final class PomModuleDescriptorWriter {
         if (mrid.getRevision() != null) {
             out.println("  <version>" + mrid.getRevision() + "</version>");
         }
+        if (options.getDescription() != null) {
+            out.println("  <description>" + options.getDescription() + "</description>");
+        }
         if (md.getHomePage() != null) {
             out.println("  <url>" + md.getHomePage() + "</url>");
         }

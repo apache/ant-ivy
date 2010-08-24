@@ -118,6 +118,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: MakePom task handling of mulitple artifacts for Maven2 (IVY-707) (thanks to Jesper Pedersen)
 - IMPROVEMENT: ivy:makepom now has an option to disable the generation of an extra Ivy comment block in the POM
 - IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
+- IMPROVEMENT: ivy:makepom can generate a <description> element in the pom (IVY-1215) (thanks to Jesper Pedersen)
 
 - FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197)
 - FIX: artifactreport ant task doesn't honor log attribute (IVY-1212)
