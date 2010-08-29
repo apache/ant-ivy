@@ -25,21 +25,21 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In some cases it may happen that your module descriptors (Ivy files, maven pom, ...) are located at one place and module artifacts (jars, ...) at another place.
+In some cases, your module descriptions (i.e. Ivy files, maven poms) are located separately from the module artifacts (i.e. jars). So what can you do about it?
 
-Dual Resolver is used to address this kind of need, and this tutorial will show how to use it. 
+Use a Dual resolver! And this tutorial will show you how.
 
 <h1>project description</h1>
-Let's have a look at the src/example/dual directory in your ivy distribution.
+Let's have a look at the <tt>src/example/dual</tt> directory in your Ivy distribution.
 It contains a build file and 3 directories:
 <ul>
 <li>settings: contains the ivy settings file</li>
 <li>repository: a sample repository of ivy files</li>
-<li>project: the project making use of ivy with dual resolver</li>
+<li>project: the project making use of Ivy with dual resolver</li>
 </ul>
 
 <h2>the dual project</h2>
-The project is very simple and contains only one simple class: example.Hello
+The project is very simple and contains only one simple class: <tt>example.Hello</tt>
 It depends on two libraries: Apache commons-lang and Apache commons-httpclient.
 
 Here is the content of the project:
@@ -49,7 +49,7 @@ Here is the content of the project:
   <li>src\example\Hello.java: the only class of the project</li>
 </ul>
 
-Let's have a look at the <b>ivy.xml</b> file:
+Let's have a look at the <tt>ivy.xml</tt> file:
 <code>
 <ivy-module version="1.0">
     <info organisation="org.apache" module="hello-ivy"/>
@@ -60,10 +60,10 @@ Let's have a look at the <b>ivy.xml</b> file:
 </ivy-module>
 </code>
 
-As you can see, nothing special here... Indeed, it's the philosophy of ivy to keep ivy files independent of the way dependencies are resolved.
+As you can see, nothing special here... Indeed, Ivy's philosophy is to keep ivy files independent of the way dependencies are resolved.
 
 <h2>the <b>ivy</b> settings</h2>
-The ivy settings is made in the settings directory; it contains only one file: ivysettings.xml.
+The ivy settings are defined in the <tt>ivysettings.xml</tt> file located in the <tt>settings</tt> directory. Here is what it contains, followed by an explanation.
 
 <code>
 <ivysettings>
@@ -79,29 +79,30 @@ The ivy settings is made in the settings directory; it contains only one file: i
 </ivysettings>
 </code>
 
-Here we configure one resolver, the default one, which is a dual resolver. This dual resolver has two sub resolvers: the first is what is called the "ivy" or "metadata" resolver of the dual resolver, and the second one is what is called the "artifact" resolver. It is important that the dual resolver exactly has two sub resolvers in this given order.
-The metadata resolver, here a filesystem one, is used only to find module descriptors, in this case Ivy files. The settings given in this resolver says that all ivy files are in the same directory, named like that: [module]-ivy-[revision].xml. If we check the repository directory, we can confirm that it contains a file named commons-httpclient-ivy-2.0.2.xml. It fulfills the given pattern and will thus be found by this resolver.
-The artifact resolver is simply an ibiblio one, configured in m2compatible mode to use the maven 2 repository, with usepoms="false" to make sure it won't use maven 2 metadata. Note that this isn't strictly necessary, since the second resolver in a dual resolver (the artifact resolver) is never asked to find module metadata.
+Here we configured one resolver, the default one, which is a dual resolver. This dual resolver has two sub resolvers: the first is what is called the "ivy" or "metadata" resolver of the dual resolver, and the second one is what is called the "artifact" resolver. It is important that the dual resolver has exactly two sub resolvers in this given order.
+
+The metadata resolver, here a filesystem one, is used only to find module descriptors, in this case Ivy files. The setting shown here tells Ivy that all ivy files are in the <tt>repository</tt> directory, named with the pattern: <tt>[module]-ivy-[revision].xml</tt>. If we check the <tt>repository</tt> directory, we can confirm that it contains a file named <tt>commons-httpclient-ivy-2.0.2.xml</tt>. This file matches the pattern, so it will be found by the resolver.
+
+The artifact resolver is simply an ibiblio one, configured in m2compatible mode to use the maven 2 repository, with <tt>usepoms="false"</tt> to make sure it won't use maven 2 metadata. Note that this isn't necessary, since the second resolver in a dual resolver (the artifact resolver) is never asked to find module metadata.
 
 <h1>walkthrough</h1>
 <div class="step">
 <h2>step 1 : preparation</h2>
-Open a DOS or shell window, and go to the "dual" directory.
+Open a DOS or shell window, and go to the <tt>dual</tt> directory.
 </div>
 <div class="step">
 <h2>step 2 : clean up</h2>
-On the prompt type : ant<br>
-This will clean up the entire project directory tree (compiled classes and retrieved libs) and ivy cache. 
-You can do it each time you want to clean up this example.
+On the prompt type : <tt>ant</tt><br>
+This will clean up the entire project directory tree (compiled classes and retrieved libs) and the Ivy cache. You can run this each time you want to clean up this example.
 </div>
 <div class="step">
 <h2>step 3 : run the project</h2>
-Goto project directory. And simply run <b>ant</b>.
+Go to the project directory. And simply run <tt>ant</tt>.
 <div class="shell"><pre>
 [<tutorial/log/dual.txt>]
 </pre></div></div>
 <br/>
-As you can see, ivy not only downloaded commons-lang and commons-httpclient, but also commons-logging. Indeed, commons-logging is a dependency of httpclient, as we can see in the httpclient ivy file found in the repository directory:
+As you can see, Ivy not only downloaded commons-lang and commons-httpclient, but also commons-logging. Indeed, commons-logging is a dependency of httpclient, as we can see in the httpclient ivy file found in the <tt>repository</tt> directory:
 <code>
 <ivy-module version="1.0">
     <info 
@@ -116,9 +117,9 @@ As you can see, ivy not only downloaded commons-lang and commons-httpclient, but
 </ivy-module>
 </code>
 <br/>
-So everything worked well, ivy file has been found in the repository directory and artifacts have been downloaded from ibiblio. 
+So everything seemed to work. The ivy file was found in the <tt>repository</tt> directory and the artifacts have been downloaded from ibiblio. 
 
-This kind of setup can be useful if you don't want to rely on maven 2 repository for metadata, or if you want to take full advantage of Ivy files for some or all modules. Combining chain and dual resolvers can lead to very flexible settings addressing most needs.
+This kind of setup can be useful if you don't want to rely on the maven 2 repository for metadata, or if you want to take full advantage of Ivy files for some or all modules. Combining chain and dual resolvers should give you enough flexibility to meet almost any requirement.
 
 For full details about the dual resolver, have a look at the corresponding [[resolver/dual reference documentation]].
 	</textarea>

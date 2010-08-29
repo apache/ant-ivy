@@ -113,6 +113,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - DOCUMENTATION: Added missing documentation about the ivy:publish child elements.
 - DOCUMENTATION: Grammar, spelling, and clarity of Settings File documentation (IVY-1216) (thanks to Steve Miller)
+- DOCUMENTATION: Grammar, spelling, and clarity of Tutorial documentation (IVY-1222) (thanks to Steve Miller)
+
 
 - IMPROVEMENT: the <artifact> child of ivy:publish now accepts any attribute
 - IMPROVEMENT: Handle attributes in description subelements (IVY-1214) (thanks to Jean-Louis Boudart)

@@ -25,17 +25,16 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-The [[ant:install]] task let you copy a module or a set of modules from one repository to another one. This is very useful to build and maintain a enterprise or a team repository. If you don't want to give access to the public maven 2 repository to the developers in your team (to keep control over which modules are in use in your company or your team for instance), it can sometimes become tiresome to answer the developers request to add new modules or new versions by hand.
+The [[ant:install]] Ant task lets you copy a module or a set of modules from one repository to another. This is very useful to build and maintain an enterprise or team repository. If you don't want to give access to the public maven 2 repository to the developers on your team (to keep control over which modules are in use in your company or your team for instance), it can sometimes become tiresome to answer the developers request to add new modules or new versions by hand.
 
 Fortunately the [[ant:install]] task is here to help: you can use specific settings for your repository maintenance build which will be used to maintain your target enterprise repository. These settings will point to another repository (for instance the maven 2 public repository) so that you will just have to ask Ivy to install the modules you want with a simple command line.
 
-To demonstrate this we will first use some basic ivy settings files to show how it works, and then we will use the advanced [[settings/namespaces]] feature  to demonstrate how to deal with naming mismatch between the source and target repository.
+To demonstrate this, we will first use a basic ivy settings file to show how it works, and then we will use the advanced [[settings/namespaces]] features to demonstrate how to deal with naming mismatches between the source and target repository.
 
 <h1>The project used</h1>
-The project that we will use is pretty simple.
-It is composed of an ant build file, and some ivy settings files.
+The project that we will use is pretty simple. It is composed of an Ant build file, and two ivy settings files.
 
-Here are the accessible target that we will use : 
+Here are the public targets that we will use: 
 <div class="shell"><pre>
 Z:\ivy-repository>ant -p
 Buildfile: build.xml
@@ -51,7 +50,7 @@ Main targets:
 Default target: basic
 </pre></div>
 <br/><br/>
-The project is accessible in the [[svn:src/example/build-a-ivy-repository src/example/build-a-ivy-repository]]
+This project is accessible in the [[svn:src/example/build-a-ivy-repository src/example/build-a-ivy-repository]]
 
 Next steps:
 [[tutorial/build-repository/basic]]
