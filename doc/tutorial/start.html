@@ -25,7 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In this example, we will see one of the easiest way to use Ivy. With no specific settings, Ivy uses the maven 2 repository to resolve the dependencies you declare in an Ivy file. Let's have a look at the content of the files involved. 
+In this tutorial, you will see one of the simplest ways to use Ivy. With no specific settings, Ivy uses the maven 2 repository to resolve the dependencies you declare in an Ivy file. Let's have a look at the content of the files involved. 
 
 <em>You'll find this tutorial's sources in the ivy distribution in the src/example/hello-ivy directory.</em>
 
@@ -42,13 +42,13 @@ Here is the sample:
 </ivy-module>
 </code>
 
-The format of this file should pretty easy to understand, but let's give some details about what is declared here. First, the root element ivy-module, with the version attribute used to tell Ivy which version of Ivy this file use. 
+The format of this file should pretty easy to understand, but let's give some details about what is declared here. First, the root element ivy-module, with the version attribute used to tell Ivy which version of Ivy this file uses. 
 
-Then there is an info tag, which is used to give information about the module for which we are defining dependencies. Here we define only the organization and module name, you are free to choose whatever you want for them, but we recommend avoiding spaces for both of them.
+Then there is an info tag, which is used to give information about the module for which we are defining dependencies. Here we define only the organization and module name. You are free to choose whatever you want for them, but we recommend avoiding spaces for both.
 
-Finally, the dependencies section let you define dependencies. Here this module depends on two libraries: commons-lang and commons-cli. As you can see we use the org and name attribute to define the organization and module name of the dependencies we need. The rev attribute is used to specify the revision of the module you depend on. 
+Finally, the dependencies section lets you define dependencies. Here this module depends on two libraries: commons-lang and commons-cli. As you can see, we use the <tt>org</tt> and <tt>name</tt> attributes to define the organization and module name of the dependencies we need. The <tt>rev</tt> attribute is used to specify the version of the module you depend on. 
 
-To know what to put in these attributes, you need to know the exact information for the libraries you depend on. Ivy uses the maven 2 repository by default. We recommend you use <a href="http://mvnrepository.com">mvnrepository.com</a> to look for the module you want. Once you find it, you will have the details on how to declare the dependency in a maven POM. For instance:
+To know what to put in these attributes, you need to know the exact information for the libraries you depend on. Ivy uses the maven 2 repository by default, so we recommend you use <a href="http://mvnrepository.com">mvnrepository.com</a> to look for the module you want. Once you find it, you will have the details on how to declare the dependency in a maven POM. For instance:
 <code>
 <dependency>
     <groupId>commons-lang</groupId>
@@ -60,7 +60,7 @@ To convert this into an Ivy dependency declaration, all you have to do is use th
 
 If you want more details on what you can do in Ivy files, you can have a look at the [[ivyfile Ivy files reference documentation]].
 <h1>The build.xml file</h1>
-The corresponding build file contains a set of targets, allowing to resolve dependencies declared in the Ivy file, to compile and run the sample code, produce a report of dependency resolution, and clean the cache or the project.
+The corresponding build file contains a set of targets, allowing you to resolve dependencies declared in the Ivy file, to compile and run the sample code, produce a report of dependency resolution, and clean the cache or the project.
 You can use the standard "ant -p" to get the list of available targets. Feel free to have a look at the whole file, but here is the part relevant to dependency resolution:
 <code type="xml">
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="hello-ivy" default="run">
@@ -77,12 +77,12 @@ You can use the standard "ant -p" to get the list of available targets. Feel fre
 </code>
 As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly [[install installed]] is to define an XML namespace in your Ant file (xmlns:ivy="antlib:org.apache.ivy.ant"). Then all the [[ant Ivy ant tasks]] will be available in this namespace.
 
-Here we use only one task: the [[use/retrieve]] task. With no attributes, it will use default settings and look for a file named ivy.xml for dependency definition. That's exactly what we want, so we need nothing more than that.
+Here we use only one task: the [[use/retrieve]] task. With no attributes, it will use default settings and look for a file named <tt>ivy.xml</tt> for the dependency definitions. That's exactly what we want, so we need nothing more than that.
 
-Note that in this case we define a "resolve" target and call the [[use/retrieve]] task. This may sound confusing, actually the retrieve task performs a [[use/resolve]] (which resolves dependencies and downloads them to a cache) followed by a retrieve (a copy of those file in a local project directory). Check the [[principle]] page for details about that.
+Note that in this case we define a <tt>resolve</tt> target and call the <tt>[[use/retrieve]]</tt> task. This may sound confusing, actually the retrieve task performs a [[use/resolve]] (which resolves dependencies and downloads them to a cache) followed by a retrieve (a copy of those file to a local project directory). Check the [[principle]] page for details about that.
 <h1>Running the project</h1>
-Ok, now that we have seen the files involved, let's run the sample to see what happens. Open a shell (or command line) window, and enter the hello-ivy example directory.
-Then, at the command prompt, run 'ant':
+OK, now that we have seen the files involved, let's run the sample to see what happens. Open a shell (or command line) window, and enter the <tt>hello-ivy</tt> example directory.
+Then, at the command prompt, run <tt>ant</tt>:
 <div class="shell"><pre>
 [<tutorial/log/hello-ivy-1.txt>]
 </pre></div>
@@ -90,11 +90,11 @@ Then, at the command prompt, run 'ant':
 Without any settings, Ivy retrieves files from the maven 2 repository. That's what happened here. 
 The resolve task has found the commons-lang and commons-cli modules in the maven 2 repository, identified that commons-cli depends on commons-logging and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a .ivy2/cache directory). Finally, the retrieve task copies the resolved jars from the ivy cache to the default library directory of the project: the lib dir (you can change this easily by setting the pattern attribute on the [[use/retrieve]] task).
 
-You might say that the task took a long time just to write out a "Hello Ivy !" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
+You might say that the task took a long time just to write out a "Hello Ivy!" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
 <div class="shell"><pre>
 [<tutorial/log/hello-ivy-2.txt>]
 </pre></div>
-Great! the cache was used, no download was needed and the build was instantaneous.
+Great! The cache was used, so no download was needed and the build was instantaneous.
 
 And now, if you want to generate a report detailing all the dependencies of your module, you can call the report target, and check the generated file in the build directory. You should obtain something looking like <a href="../samples/apache-hello-ivy-default.html">this</a>.
 

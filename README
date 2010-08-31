@@ -53,9 +53,11 @@ code and source code.
 The following provides more details on the included cryptographic
 software:
 
-For the Ivy ssh resolver requires the JSch 
-<http://www.jcraft.com/jsch/index.html> library. 
+The Ivy ssh resolver requires the JSch library
+<http://www.jcraft.com/jsch/index.html>. 
 The sftp and https resolvers requires the Java Cryptography extensions
 <http://java.sun.com/javase/technologies/security/>.
+The PGP signature generator requires the BouncyCastle Java cryptography APIs
+<http://www.bouncycastle.org/java.html>.
 
 

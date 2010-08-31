@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+    <script type="text/javascript">var xookiConfig = {level: 1};</script>   
+    <script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+    <textarea id="xooki-source">
+<b>Tag:</b> signers
+<span class="since">since 2.2</span>
+
+<span class="tagdoc" id="ivysettings.signers">Defines a list of detached signature generators usable in ivy. Each generator is identified by its name, given as an attribute.
+The child tags used to configure the signature generator must be equal to the name of a signature generator type (either built-in or added with the typedef tag).</span>
+
+Ivy supports the following signature generator out of the box: 
+<ul>
+<li>pgp</li> generates an OpenPGP compatible ASCII armored detached signature.
+</ul>
+
+
+<h1>Child elements</h1>
+<table class="ivy-children">
+<thead>
+    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+</thead>
+<tbody>
+    <tr><td>any signature generator</td><td>adds a signature generator to the list of registered generators</td>
+        <td>1..n</td></tr>
+</tbody>
+</table>
+
+<h1>Built-in Generators</h1>
+
+<h2>PGP</h2>
+
+This generator is capable of generating an OpenPGP compatible ASCII armored detached signature.
+
+<b>Remark:</b> This generator uses the <a href="http://www.bouncycastle.org/java.html">BouncyCastle OpenPGP</a> library. Before this generator can be used, these libraries must be available on Ivy's classpath.
+
+
+<table class="ivy-attributes">
+<thead>
+    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>name</td><td>The name of the signature generator.</td>
+        <td>Yes</td>
+    </tr>
+    <tr><td>secring</td><td>The location of the secret keyring.</td>
+        <td>No, defaults to ${user.home}/.gnupg/secring.gpg</td>
+    </tr>
+    <tr><td>keyId</td><td>The identifier of the key to use. The keyword 'auto' can be used to indicate a key will be selected automatically.</td>
+        <td>No, defaults to 'auto'.</td>
+    </tr>
+    <tr><td>password</td><td>The password of the private key.</td>
+        <td>Yes</td>
+    </tr>
+</tbody>
+</table>
+
+<h1>Examples</h1>
+<code type="xml">
+<signers>
+    <pgp name="mypgp" password="my-password" />
+</signers>
+</code>
+Defines a detached signature generator with name 'mypgp' which uses the secret key ring on the default location and automatically selects a private key.
+<hr/>
+<code type="xml">
+<signers>
+    <pgp name="mypgp" password="my-password" keyId="123ABC45"/>
+</signers>
+</code>
+Same as before, but this time the key '123ABC45' is used to generate the detached signature.
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

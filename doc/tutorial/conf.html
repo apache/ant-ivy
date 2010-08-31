@@ -25,27 +25,26 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-This tutorial introduces the use of module configurations in ivy files. Ivy module configurations is indeed a very important concept. Someone even told me one day that using Ivy without using configurations is like eating a good cheese without touching the glass of Chateau Margaux 1976 you have just aside :-)
+This tutorial introduces the use of module configurations in ivy files. Ivy module configurations are indeed a very important concept. Someone even told me one day that using Ivy without using configurations is like eating a good cheese without touching the glass of Chateau Margaux 1976 you have just poured :-)
 
-More seriously, configurations in ivy can be better understood as views on your module, and you will see how they can be used efficiently here.
+More seriously, configurations in Ivy can be better understood as views on your module, and you will see how they can be used effectively here.
 
 Reference documentation on configurations can be found <a href="../terminology.html">here</a> and <a href="../ivyfile/configurations.html">here</a>.
 <h1>Introduction</h1>
-Source code available in src/example/configurations/multi-projects.
+Source code is available in <tt>src/example/configurations/multi-projects</tt>.
 We have two projects :
   - filter-framework is a library that defines an api to filter String arrays and two implementations of this api.
   - myapp is a very small app that uses filter-framework.
   
-The library produces 3 artifacts:
+The filter-framework library project produces 3 artifacts:
   - the api jar,
-  - an implementation jar with no external dependency,
-  - an other implementation that needs commons-collections to perform.
+  - an implementation jar with no external dependencies,
+  - a second implementation jar that needs commons-collections to perform.
 
-The application only need api to compile and can use any of the two implementation at runtime.
+The application only needs the api jar to compile and can use either of the two implementations at runtime.
 
 <h1>The library project</h1>
-The first project we defined in this tutorial is the filter-framework.
-In order to have a fine grained artifacts publication definition, we defined configurations to map usage other can make of our library.
+The first project we'll look at in this tutorial is filter-framework. In order to have a fine-grained artifacts publication definition, we defined several configurations, each which maps to a set of artifacts that other projects can make use of.
 <h2>The ivy.xml file</h2>
 
 <div class="ivy-file">
@@ -71,26 +70,22 @@ In order to have a fine grained artifacts publication definition, we defined con
 </code> 
 </div>
 <h2>Explanation</h2>
-As you can see we defined 3 public configurations and a private one (defined junit dependency for testing).
-The 2 implementations conf  <b>homemade-impl</b>,  <b>cc-impl</b> extends <b>api</b> configuration so artifacts defined in api will also be required in its extending conf.
-In the publications tag we defined the artifacts we produce (here it's jars) and we affect them a configuration.
-Later when others will use our library they will have a very flexible way to define what they need.
+As you can see, we defined 4 configurations, with 3 being public and 1 private. (the  junit dependency for testing).
+The 2 implementation configurations, <b>homemade-impl</b> and <b>cc-impl</b> extend the <b>api</b> configuration so that all artifacts defined in <b>api</b> will also be part of the extending configuration.
+
+In the publications tag, we defined the artifacts we produce (jars in this case) and we assign them to a configuration. When others use our library they will have a flexible way to ask for what they need.
 
 <h2>See it in action</h2>
-The library project is build using ant. Open a shell in the root directory of the project and type <b>ant</b>.
+The filter-framework project is built using Ant. Open a shell in the root directory of the project and type <tt>ant</tt>.
 <div class="shell"><pre>
 [<tutorial/log/configurations-lib.txt>]
 </pre></div>
-The ant's default target is publish. 
-This target uses ivy to publish our library binaries in a local repository. 
-As we do not specify any repository path the default one is used. ({home.dir}/.ivy2/local/org.apache/filter-framework/)
-Now we are ready to use our library.
+The Ant default target is publish. This target uses Ivy to publish our library binaries to a local repository. Since we do not specify any repository path, the default one is used. (<tt>${home.dir}/.ivy2/local/org.apache/filter-framework/</tt>) At this point, we are ready to use our library.
 
 <h1>The application project</h1>
 
-Now that we have shipped our fantastic library, we want to use it!
-The tutorial comes with a sample application called myapp.
-<h2>The ivy.xml file</h2>
+Now that we have shipped (published) our fantastic filter library, we want to use it! The tutorial comes with a sample application called myapp.
+<h2>The <tt>ivy.xml</tt> file</h2>
 
 <div class="ivy-file">
 <code type="xml">
@@ -110,21 +105,17 @@ The tutorial comes with a sample application called myapp.
 </code> 
 </div>
 <h2>Explanation</h2>
-We create 3 configurations that define the way we want to use the application.
-The build configuration defines the compile-time dependencies, and thus only needs the api conf from filter-framework.
-The other configurations define runtime dependencies. One will only use "home-made" jars, and the other will use external jars.
+We create 3 configurations that define the different ways we want to use the application. The <b>build</b> configuration defines the compile-time dependencies, and thus only needs the api conf from the filter-framework project. The other two configurations define runtime dependencies. One will only use our "home-made" jar, and the other will use an external jar.
 
-We also defined a dependency on the previous library.
-In the dependency we use configuration mapping to match ours and library configurations.
-You can found more information on configuration mapping <a href="../ivyfile/configurations.html">here</a>
+We also defined a dependency on our previously built library. In this dependency, we use configuration mappings to match ours with the dependency's configurations. You can find more information about configuration mapping <a href="../ivyfile/configurations.html">here</a>
 <ol>
-  <li><b>build->api</b> : here we tell ivy that our <b>build</b> configuration depends on the <b>api</b> configuration of the dependcy</li>
-  <li><b>noexternaljar->homemade-impl</b> : here we tell ivy that our <b>noexternaljar</b> configuration depends on the <b>homemade-impl</b> configuration of the dependcy.</li>
-  <li><b>withexternaljar->cc-impl</b> : here we tell ivy that our <b>withexternaljar</b> configuration depends on the <b>cc-impl</b> configuration of the dependcy</li>
+  <li><b>build->api</b> : here we tell Ivy that our <b>build</b> configuration depends on the <b>api</b> configuration of the dependency</li>
+  <li><b>noexternaljar->homemade-impl</b> : here we tell Ivy that our <b>noexternaljar</b> configuration depends on the <b>homemade-impl</b> configuration of the dependency.</li>
+  <li><b>withexternaljar->cc-impl</b> : here we tell Ivy that our <b>withexternaljar</b> configuration depends on the <b>cc-impl</b> configuration of the dependency</li>
 </ol>
-Note that we never declare any of the dependency artifacts we need in each configuration: it's the dependency module file which declares the published artifacts and which should be used in each configuration.
+Note that we never declare any of the dependency's artifacts we need in each configuration: it's the dependency module's ivy file which declares the published artifacts and which should be used in each configuration.
 
-In the ant buld.xml file we defined a resolve target as follow:
+In the Ant <tt>build.xml</tt> file, we defined a 'resolve' target as follow:
 
 <code type="xml">
 <target name="resolve" description="--> retreive dependencies with ivy">
@@ -132,7 +123,7 @@ In the ant buld.xml file we defined a resolve target as follow:
 </target>    
 </code> 
 
-When we call this target, Ivy will do a resolve using our ivy.xml file in the root folder and then retrieve all the artifacts. The artifacts retrieved are kept in separate folders according to the configurations they belong to. Here is how your lib directory should look like after a call to this target:
+When we call this target, Ivy will do a resolve using our <tt>ivy.xml</tt> file in the root folder and then retrieve all the artifacts. The artifacts retrieved are kept in separate folders according to the configurations they belong to. Here is how your lib directory should look after a call to this target:
 <div class="shell"><pre>
  Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib
 
@@ -158,27 +149,24 @@ When we call this target, Ivy will do a resolve using our ivy.xml file in the ro
 01/24/2006  10:53 AM             1,626 filter-ccimpl.jar
                3 fichier(s)          562,166 octets
 </pre></div>
-As you can see for each configuration we have now a set of jars.
+As you can see, for each configuration we have now a set of jars.
 
 Let's try to launch our app.
 
 <h2>See it in action</h2>
-Use ant to run the application.
-Default ant target is run-cc and will launch application using the Apache commons-collections implementation.
+Use Ant to run the application. The default Ant target is <i>run-cc</i> and will launch the application using the Apache commons-collections implementation.
 <div class="shell"><pre>
 [<tutorial/log/configurations-runcc.txt>]
 </pre></div>
-Launching application with only home made jars is straightforward.
-type ant run-hm
+Launching the application using the homemade implementation is also straightforward.
+type <tt>ant run-hm</tt>
 
 <div class="shell"><pre>
 [<tutorial/log/configurations-runhm.txt>]</pre></div>
-Nice we got the same result but we can see that implementation classes are different.
+Nice! We got the same result, but we can see that the implementation classes are different.
 
 <h1>Conclusion</h1>
-<b>You should use configurations as often as possible</b>
-Configurations are very important concept in ivy. They allow you to group artifacts by meaning.
-When you write ivy file for projects that are supposed to be reused, use configurations to allow people to get only they what they need without having to specify it by hand using artifact tag in dependency section. 
+<b>You should use configurations as often as possible.</b> Configurations are a very important concept in Ivy. They allow you to group artifacts and give the group a meaning. When you write ivy files for projects that are intended for use by others, use configurations to allow people to get only what they need, without having to specify them one by one in their own dependency list. 
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
