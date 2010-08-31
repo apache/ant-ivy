@@ -67,18 +67,18 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andrey Lomakin
 	William Lyvers
 	Sakari Maaranen
+    David Maplesden
+    Glen Marchesani
 	Jan Materne
 	Markus M. May
+    Phil Messenger
+    Steve Miller
 	Abel Muino
 	J. Lewis Muir
+    Mathias Muller
 	Stephen Nesbitt
 	Joshua Nichols
 	Bernard Niset
-	David Maplesden
-	Glen Marchesani
-	Phil Messenger
-	Steve Miller
-	Mathias Muller
 	Randy Nott
 	Peter Oxenham
 	Jesper Pedersen
