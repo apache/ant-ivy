@@ -24,6 +24,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.plugins.signer.SignatureGenerator;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 public interface ResolverSettings extends ParserSettings {
@@ -51,5 +52,7 @@ public interface ResolverSettings extends ParserSettings {
     String getResolveMode(ModuleId moduleId);
 
     void filterIgnore(Collection names);
+    
+    SignatureGenerator getSignatureGenerator(String name);
 
 }

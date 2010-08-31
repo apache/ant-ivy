@@ -50,6 +50,7 @@
 		<dependency org="oro" name="oro" rev="2.0.8" conf="default,oro->default"/>
 		<dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs->default" />
 		<dependency org="com.jcraft" name="jsch" rev="0.1.31" conf="default,sftp->default" />
+		<dependency org="org.bouncycastle" name="bcpg-jdk14" rev="1.45" conf="default" />
 
 		<!-- Test dependencies -->
 		<dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />

@@ -107,7 +107,7 @@ public class XmlSettingsParser extends DefaultHandler {
     private List configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces",
             "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers",
             "statuses", "circular-dependency-strategies", "triggers", "lock-strategies",
-            "caches"});
+            "caches", "signers"});
 
     private IvySettings ivy;
 

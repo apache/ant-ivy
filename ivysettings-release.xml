@@ -17,8 +17,13 @@
    under the License.    
 -->
 <ivysettings>
-    <property name="upload.url" value="https://repository.apache.org/service/local/staging/deploy/maven2"/>
+    <property name="upload.url" value="https://repository.apache.org/service/local/staging/deploy/maven2" />
+    <property name="pgp.keyId" value="auto" override="false" />
     <credentials host="repository.apache.org" realm="Sonatype Nexus Repository Manager" username="${upload.user}" passwd="${upload.password}"/>
+    
+    <signers>
+        <pgp name="apache-sig" secring="${user.home}/.gnupg/secring.gpg" password="${pgp.password}" keyId="${pgp.keyId}"/>
+    </signers>
 
     <settings defaultResolver="default" />
     <resolvers>
@@ -26,7 +31,7 @@
             <ibiblio name="public" m2compatible="true" />
             <ibiblio name="snapshot" m2compatible="true" root="http://people.apache.org/repo/m2-snapshot-repository" />
         </chain>
-        <url name="nexus" m2compatible="true" checksums="">
+        <url name="nexus" m2compatible="true" signer="apache-sig">
           <artifact pattern="${upload.url}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]" />
         </url>
     </resolvers>

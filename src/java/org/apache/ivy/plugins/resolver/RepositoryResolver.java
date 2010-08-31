@@ -45,6 +45,7 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolverHelper;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
+import org.apache.ivy.plugins.signer.SignatureGenerator;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.ChecksumHelper;
 import org.apache.ivy.util.FileUtil;
@@ -58,6 +59,8 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     private Repository repository;
 
     private Boolean alwaysCheckExactRevision = null;
+    
+    private String signerName = null;
 
     public RepositoryResolver() {
     }
@@ -75,6 +78,10 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         if (repository instanceof AbstractRepository) {
             ((AbstractRepository) repository).setName(name);
         }
+    }
+    
+    public void setSigner(String signerName) {
+        this.signerName = signerName;
     }
 
     protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern,
@@ -223,10 +230,14 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                 throw new IllegalArgumentException("Unknown checksum algorithm: " + checksums[i]);
             }
         }
-        
+
         repository.put(artifact, src, dest, overwrite);
         for (int i = 0; i < checksums.length; i++) {
             putChecksum(artifact, src, dest, overwrite, checksums[i]);
+        }
+
+        if (signerName != null) {
+            putSignature(artifact, src, dest, overwrite);
         }
     }
 
@@ -240,6 +251,25 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                 artifact.getExt() + "." + algorithm), csFile, dest + "." + algorithm, overwrite);
         } finally {
             csFile.delete();
+        }
+    }
+
+    protected void putSignature(Artifact artifact, File src, String dest, boolean overwrite) throws IOException {
+        SignatureGenerator gen = getSettings().getSignatureGenerator(signerName);
+        if (gen == null) {
+            throw new IllegalArgumentException("Couldn't sign the artifacts! " +
+                    "Unknown signer name: '" + signerName + "'");
+        }
+
+        File tempFile = File.createTempFile("ivytemp", gen.getExtension());
+
+        try {
+            gen.sign(src, tempFile);
+            repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, 
+                    gen.getExtension(), artifact.getExt() + "." + gen.getExtension()), 
+                    tempFile, dest + "." + gen.getExtension(), overwrite);
+        } finally {
+            tempFile.delete();
         }
     }
 

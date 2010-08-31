@@ -92,6 +92,7 @@ import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.ResolverSettings;
+import org.apache.ivy.plugins.signer.SignatureGenerator;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.ExactVersionMatcher;
@@ -155,6 +156,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     // Map (String name -> RepositoryCacheManager)
     private Map repositoryCacheManagers = new HashMap(); 
+    
+    // Map (String name -> SignatureGenerator)
+    private Map signatureGenerators = new HashMap();
 
     // List (Trigger)
     private List triggers = new ArrayList(); 
@@ -683,6 +687,19 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public void addConfigured(ModuleDescriptorParser parser) {
         ModuleDescriptorParserRegistry.getInstance().addParser(parser);
+    }
+    
+    public void addConfigured(SignatureGenerator generator) {
+        addSignatureGenerator(generator);
+    }
+    
+    public void addSignatureGenerator(SignatureGenerator generator) {
+        init(generator);
+        signatureGenerators.put(generator.getName(), generator);
+    }
+    
+    public SignatureGenerator getSignatureGenerator(String name) {
+        return (SignatureGenerator) signatureGenerators.get(name);
     }
 
     public void addResolver(DependencyResolver resolver) {

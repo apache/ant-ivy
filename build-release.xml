@@ -18,6 +18,7 @@
 -->
 <project name="IvyRelease" default="snapshot" 
 		xmlns:ivy="antlib:org.apache.ivy.ant"
+        xmlns:ivy2="antlib:org.apache.ivy.ant_2"
 		xmlns:xooki="antlib:xooki"
 		xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
 	<import file="build.xml"/>
@@ -471,10 +472,20 @@
         </fail>
     </target>	
 	
-    <target name="upload-nexus" depends="release-version, init-ivy">
-        <ivy:settings id="upload.settingsId" file="ivysettings-release.xml" />
-        <ivy:resolve file="${basedir}/build/artifact/ivy.xml" transitive="false" />
-        <ivy:publish organisation="org.apache.ivy"
+    <target name="upload-nexus" depends="release-version, init-ivy, jar">
+        <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]" />
+
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                uri="antlib:org.apache.ivy.ant_2">
+            <classpath>
+                <fileset dir="${artifacts.build.dir}/jars" includes="${final.name}" />
+                <fileset dir="${build.dir}/lib" excludes="ant-*.jar" />
+            </classpath>
+        </taskdef>
+    	
+        <ivy2:settings id="upload.settingsId" file="ivysettings-release.xml" />
+        <ivy2:resolve file="${basedir}/build/artifact/ivy.xml" transitive="false" />
+        <ivy2:publish organisation="org.apache.ivy"
                      module="ivy"
                      revision="${build.version}"
                      srcivypattern="${basedir}/build/artifact/ivy.xml"
@@ -487,25 +498,7 @@
             <artifact name="ivy" ext="pom" type="ivy" />
             <artifact name="ivy" ext="jar" type="sources" classifier="sources" />
             <artifact name="ivy" ext="jar" type="javadoc" classifier="javadoc" />
-
-            <!-- The PGP signatures -->
-            <artifact name="ivy" ext="pom.asc" type="asc" />
-            <artifact name="ivy" ext="jar.asc" type="asc" />
-            <artifact name="ivy" ext="jar.asc" type="asc" classifier="sources" />
-            <artifact name="ivy" ext="jar.asc" type="asc" classifier="javadoc" />
-            
-            <!-- The SHA1 checksums -->
-            <artifact name="ivy" ext="pom.sha1" type="sha1" />
-            <artifact name="ivy" ext="jar.sha1" type="sha1" />
-            <artifact name="ivy" ext="jar.sha1" type="sha1" classifier="sources" />
-            <artifact name="ivy" ext="jar.sha1" type="sha1" classifier="javadoc" />
-            
-            <!-- The MD5 checksums -->
-            <artifact name="ivy" ext="pom.md5" type="md5" />
-            <artifact name="ivy" ext="jar.md5" type="md5" />
-            <artifact name="ivy" ext="jar.md5" type="md5" classifier="sources" />
-            <artifact name="ivy" ext="jar.md5" type="md5" classifier="javadoc" />
-        </ivy:publish>
+        </ivy2:publish>
     </target>
 
 	<target name="prepare-snapshot" 
