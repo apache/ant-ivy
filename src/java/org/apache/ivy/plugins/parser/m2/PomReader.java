@@ -546,6 +546,8 @@ public class PomReader {
                     prefix = (xmlDecl + "\n" + DOCTYPE).getBytes();
                     bytesToSkip = xmlDecl.getBytes().length;
                 }
+            } else {
+                prefix = new byte[0];
             }
             
             this.in.reset();
