@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -46,6 +47,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
@@ -130,20 +132,11 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         PutMethod put = new PutMethod(normalizeToString(dest));
         put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
-        FileInputStream fileStream = null;
         try {
-            fileStream = new FileInputStream(src);
-            put.setRequestEntity(new InputStreamRequestEntity(fileStream, src.length()));
+            put.setRequestEntity(new FileRequestEntity(src));
             int statusCode = client.executeMethod(put);
             validatePutStatusCode(dest, statusCode, null);
         } finally {
-            if (fileStream != null) {
-                try {
-                    fileStream.close();
-                } catch (IOException e) {
-                    /* ignored */
-                }
-            }
             put.releaseConnection();
         }
     }
@@ -399,4 +392,34 @@ public class HttpClientHandler extends AbstractURLHandler {
         
         return new NTCredentials(user, password, HostUtil.getLocalHostName(), domain);
     }
+    
+    private static class FileRequestEntity implements RequestEntity {
+        private File file;
+        
+        public FileRequestEntity(File file) {
+            this.file = file;
+        }
+
+        public long getContentLength() {
+            return file.length();
+        }
+
+        public String getContentType() {
+            return null;
+        }
+
+        public boolean isRepeatable() {
+            return true;
+        }
+
+        public void writeRequest(OutputStream out) throws IOException {
+            InputStream instream = new FileInputStream(file);
+            try {
+                FileUtil.copy(instream, out, null, false);
+            } finally {
+                instream.close();
+            }
+        }            
+    }
+
 }

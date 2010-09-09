@@ -155,7 +155,12 @@ public final class FileUtil {
         copy(src, new FileOutputStream(dest), l);
     }
 
-    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l)
+    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l) 
+            throws IOException {
+        copy(src, dest, l, true);
+    }
+    
+    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l, boolean autoClose)
             throws IOException {
         CopyProgressEvent evt = null;
         if (l != null) {
@@ -191,18 +196,22 @@ public final class FileUtil {
             }
 
             // close the streams
-            src.close();
-            dest.close();
-        } finally {
-            try {
+            if (autoClose) {
                 src.close();
-            } catch (IOException ex) {
-                // ignore
-            }
-            try {
                 dest.close();
-            } catch (IOException ex) {
-                // ignore
+            }
+        } finally {
+            if (autoClose) {
+                try {
+                    src.close();
+                } catch (IOException ex) {
+                    // ignore
+                }
+                try {
+                    dest.close();
+                } catch (IOException ex) {
+                    // ignore
+                }
             }
         }
 
