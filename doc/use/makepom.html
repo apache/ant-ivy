@@ -32,6 +32,45 @@ An example of use is to publish an Ivy managed module to a maven 2 repository.
 
 <em>Note that all Ivy features are not supported by maven poms, so the converted pom may not resolve to the exact same dependencies as the original ivy file.</em>
 
+<span class="since">since 2.2</span>
+It is possible to specify a template file defining the structure of the generated POM. The following processing is done on this template:
+<ul>
+<li>properties like <i>${property.name}</i> are replaced if they are defined in Ant or by the ivy:makepom task (see below for the standard properties)</li>
+<li>lines containg the string <i>SKIP_LINE</i> are skipped.</li>
+<li>the defined dependencies will be added to the first <dependencies> element encountered in the pom template. If the template doesn't contain a <dependencies> element, it is generated a the end of the pom.
+</ul>
+
+The ivy:makepom task defines following properties that can be used in the template. <ul>
+<li><b>ivy.pom.groupId</b>: defaults to the organisation as defined in the ivy.xml file</li>
+<li><b>ivy.pom.artifactId</b>: defaults to the value of the 'atifactName' attribute of this task, or the name of the module as defined in the ivy.xml file</li>
+<li><b>ivy.pom.packaging</b>: defaults to the value of the 'artifactPackaging' attribute of this task, or the extenstion of the artifact</li>
+<li><b>ivy.pom.version</b>: defaults to the revision as defined in the ivy.xml file</li>
+<li><b>ivy.pom.name</b>: defaults to 'SKIP_LINE'</li>
+<li><b>ivy.pom.description</b>: defaults to the value of the 'description' attribute of this task, or 'SKIP_LINE' when not specified</li>
+<li><b>ivy.pom.url</b>: defaults to the homepage as defined in the ivy.xml file</li>
+<li><b>ivy.pom.license</b>: the content of the specified headerFile, or 'SKIP_LINE' if not specified</li>
+<li><b>ivy.pom.header</b>: some Ivy information, or 'SKIP_LINE' if the 'printIvyInfo' attribute is set to false.</li>
+</ul>
+Note that each property can be given a value manually in the Ant build file. In that case, Ivy will use the value specified in the build file instead of the default value.
+
+The default template that ships with Ivy looks like this:
+<code type="xml">
+${ivy.pom.license}
+${ivy.pom.header}
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>${ivy.pom.groupId}</groupId>
+  <artifactId>${ivy.pom.artifactId}</artifactId>
+  <packaging>${ivy.pom.packaging}</packaging>
+  <version>${ivy.pom.version}</version>
+  <name>${ivy.pom.name}</name>
+  <description>${ivy.pom.description}</description>
+  <url>${ivy.pom.url}</url>
+</project>
+</code>
+
 <h1>Attributes</h1>
 <table class="ant">
 <thead>

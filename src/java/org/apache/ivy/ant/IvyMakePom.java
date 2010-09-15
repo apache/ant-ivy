@@ -105,6 +105,8 @@ public class IvyMakePom extends IvyTask {
 
     private File headerFile = null;
     
+    private File templateFile = null;
+    
     private boolean printIvyInfo = true;
 
     private String conf;
@@ -139,6 +141,14 @@ public class IvyMakePom extends IvyTask {
 
     public void setHeaderFile(File headerFile) {
         this.headerFile = headerFile;
+    }
+    
+    public File getTemplateFile() {
+        return templateFile;
+    }
+    
+    public void setTemplateFile(File templateFile) {
+        this.templateFile = templateFile;
     }
     
     public String getDescription() {
@@ -223,7 +233,8 @@ public class IvyMakePom extends IvyTask {
                .setArtifactPackaging(getArtifactPackaging())
                .setPrintIvyInfo(isPrintIvyInfo())
                .setDescription(getDescription())
-               .setExtraDependencies(getDependencies());
+               .setExtraDependencies(getDependencies())
+               .setTemplate(getTemplateFile());
         
         if (!mappings.isEmpty()) {
             options.setMapping(new PomWriterOptions.ConfigurationScopeMapping(getMappingsMap()));

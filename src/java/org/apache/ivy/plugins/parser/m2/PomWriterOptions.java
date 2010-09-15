@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,17 @@ public class PomWriterOptions {
     private List/*<ExtraDependency>*/ extraDependencies = new ArrayList();
 
     private String description;
+    
+    private File template;
+    
+    public File getTemplate() {
+        return template;
+    }
+    
+    public PomWriterOptions setTemplate(File template) {
+        this.template = template;
+        return this;
+    }
 
     public String[] getConfs() {
         return confs;
@@ -55,6 +67,9 @@ public class PomWriterOptions {
 
     public PomWriterOptions setLicenseHeader(String licenseHeader) {
         this.licenseHeader = licenseHeader;
+        if (this.licenseHeader != null) {
+            this.licenseHeader = this.licenseHeader.trim();
+        }
         return this;
     }
 
