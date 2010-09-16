@@ -127,6 +127,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
 - IMPROVEMENT: ivy:makepom can generate a <description> element in the pom (IVY-1215) (thanks to Jesper Pedersen)
 
+- FIX: Ivy cannot handle Maven pom with parents depending back on theirselfs (IVY-1225)
 - FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197) (thanks to Torkild U. Resheim)
 - FIX: artifactreport ant task doesn't honor log attribute (IVY-1212)
 - FIX: XmlModuleDescriptorWriter does not write the transitive attribute (IVY-1207) (thanks to Abel Muino)

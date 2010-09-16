@@ -351,8 +351,16 @@ public class PomModuleDescriptorBuilder {
         ivyModuleDescriptor.addDependency(dd);
     }
 
-
     public void addDependency(DependencyDescriptor descriptor) {
+        // Some POMs depend on theirselfves through their parent pom, don't add this dependency
+        // since Ivy doesn't allow this!
+        // Example: http://repo2.maven.org/maven2/com/atomikos/atomikos-util/3.6.4/atomikos-util-3.6.4.pom
+        ModuleId dependencyId = descriptor.getDependencyId();
+        ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
+        if ((mRevId != null) && mRevId.getModuleId().equals(dependencyId)) {
+            return;
+        }
+        
         ivyModuleDescriptor.addDependency(descriptor);
     }
 
