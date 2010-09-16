@@ -103,6 +103,7 @@ public class CacheResolver extends FileSystemResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
+        ensureConfigured();
         clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();
         for (int i = 0; i < artifacts.length; i++) {
