@@ -112,6 +112,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: Spelling fixes on artifact description page (IVY-1230)
 - DOCUMENTATION: Added missing documentation about the ivy:publish child elements.
 - DOCUMENTATION: Grammar, spelling, and clarity of Settings File documentation (IVY-1216) (thanks to Steve Miller)
 - DOCUMENTATION: Grammar, spelling, and clarity of Tutorial documentation (IVY-1222) (thanks to Steve Miller)
