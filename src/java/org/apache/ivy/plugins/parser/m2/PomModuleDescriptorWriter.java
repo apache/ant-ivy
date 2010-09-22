@@ -118,6 +118,13 @@ public final class PomModuleDescriptorWriter {
                     continue;
                 }
                 
+                if (line.trim().length() == 0) {
+                    // empty line
+                    out.println(line);
+                    line = in.readLine();
+                    continue;
+                }
+                
                 lastIndent = indent;
                 indent = line.indexOf('<');
                 

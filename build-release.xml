@@ -298,7 +298,7 @@
 	
 			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
 
-			<zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar" />
+			<zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar,bcpg-*.jar,bcprov*.jar" />
 		</zip>
 		<tar destfile="${distrib.dir}/${snapshot.full.name}-bin-with-deps.tar.gz" 
 			compression="gzip" longfile="gnu">
