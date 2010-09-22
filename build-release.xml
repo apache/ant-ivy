@@ -319,7 +319,7 @@
 		<property name="m2.distrib.dir" value="${distrib.dir}/maven2/${build.version}" />
 		<ivy:makepom ivyfile="${artifacts.build.dir}/ivy.xml" 
 	                 pomfile="${m2.distrib.dir}/ivy-${build.version}.pom"
-                     headerfile="${basedir}/src/etc/license/license-header.xml">
+			         templatefile="${basedir}/src/etc/makepom/pom.template">
 			<mapping conf="core" scope="compile"/>
 			<mapping conf="test" scope="test"/>
 		</ivy:makepom>

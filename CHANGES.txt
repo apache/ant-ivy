@@ -116,6 +116,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - DOCUMENTATION: Grammar, spelling, and clarity of Settings File documentation (IVY-1216) (thanks to Steve Miller)
 - DOCUMENTATION: Grammar, spelling, and clarity of Tutorial documentation (IVY-1222) (thanks to Steve Miller)
 
+- NEW: the ivy:makepom Ant task can use a custom template file to generate the pom.xml
 - NEW: Ivy can now generate OpenPGP compatible ASCII armored detached signatures when publishing artifacts.
 
 - IMPROVEMENT: the <artifact> child of ivy:publish now accepts any attribute
