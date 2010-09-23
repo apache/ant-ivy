@@ -163,6 +163,11 @@ public class ApacheURLLister {
                 if (!href.startsWith(text.substring(0, text.length() - 3))) {
                     continue;
                 }
+            } else if (text.endsWith("..&gt;")) {
+                // text is probably truncated, we can only check if the href starts with text
+                if (!href.startsWith(text.substring(0, text.length() - 6))) {
+                    continue;
+                }
             } else {
                 // text is not truncated, so it must match the url after stripping optional
                 // trailing slashes
