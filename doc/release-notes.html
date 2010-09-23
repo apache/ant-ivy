@@ -28,24 +28,18 @@
 <h2>Announcement</h2>
 
 <pre>
-Jul 05, 2010 - The Ivy project is pleased to announce its 2.2.0-rc1 release.
-This is the first candidate release of Ivy 2.2.0.
+Sep 30, 2010 - The Ivy project is pleased to announce its 2.2.0 release.
 
 Ivy is a tool for managing (recording, tracking, resolving and
 reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
-This is a release candidate for 2.2.0 final, meaning that no changes 
-except bug fixes will occur between this release candidate and 2.2.0 final.
-Problems found at this phase can be fixed in the final release, so now 
-is a good time to download and use it. If no outstanding bugs are reported
-in the coming weeks, this release candidate will be promoted as the 2.2.0 
-final release.
-
 Key features of the 2.2.0 release are
 * enhanced Maven2 compatibility, with several bug fixes and more
   pom features covered
 * new parent mechanism for Ivy files
+* improved pom generation from an ivy.xml file
+* automated PGP signature generation when uploading artifacts
 * numerous bug fixes as documented in Jira and in the release notes
 
 We encourage all users of Ivy to update to this new version.
@@ -53,7 +47,7 @@ We encourage all users of Ivy to update to this new version.
 Issues should be reported to:
 https://issues.apache.org/jira/browse/IVY
 
-Download the 2.2.0-rc1 release at:
+Download the 2.2.0 release at:
 http://ant.apache.org/ivy/download.cgi
 
 More information can be found on the Ivy website:
@@ -67,11 +61,10 @@ Maarten Coene
 
 CONTENTS
 1. What is Apache Ivy?
-2. Status of this release
-3. How to Get Involved
-4. How to Report Issues
-5. Committers and Contributors for this release
-6. List of Changes in this Release   
+2. How to Get Involved
+3. How to Report Issues
+4. Committers and Contributors for this release
+5. List of Changes in this Release   
    
    
 <h3>1. What is Apache Ivy?</h3>
@@ -91,28 +84,18 @@ It is characterized by the following:
         with Apache Ant providing a number of powerful Ant tasks ranging 
         from dependency resolution to dependency reporting and publication.
 
-<h3>2. Status of this release</h3>
-
-This is the first release candidate of Ivy targetting 2.2.0. 
-
-As a release candidate version, we strongly encourage the use of this version for 
-testing and validation. From now on, features are frozen until final 2.2.0 version, 
-only bug fixes may be applied before 2.2.0. If no outstanding bugs are reported 
-with this release candidate, it will promoted to 2.2.0 about three weeks after this
-release candidate. 
-
-<h3>3. How to Get Involved</h3>
+<h3>2. How to Get Involved</h3>
 
 The Apache Ivy project really needs and appreciates any contributions, 
 including documentation help, source code and feedback.  If you are interested
 in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
 
-<h3>4. How to Report Issues</h3>
+<h3>3. How to Report Issues</h3>
 
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
 issues you find at http://issues.apache.org/jira/browse/IVY
 
-<h3>5. Committers and Contributors for this Release
+<h3>4. Committers and Contributors for this Release
 
 Here is the list of people who have contributed source code and documentation
 to this release. Many thanks to all of them, and also to the whole Ivy community
@@ -140,16 +123,20 @@ long, but Ivy couldn't be what it is without you!
     Anders Jacobsson
     Steve Jones
     Heschi Kreinick
+    Steve Miller
+    Abel Muino
     J. Lewis Muir
+    Jesper Pedersen
     Carl Quinn
     Michael Scheetz
+    John Tinetti
     Jason Trump
     Richard Vowles
     Sven Walter
 
 For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
 
-<h3>6. List of Changes in this Release</h3>
+<h3>5. List of Changes in this Release</h3>
 
 For a full release history of Ivy see the file CHANGES.txt
 
@@ -157,15 +144,28 @@ For details about the following changes, check our JIRA install at
 http://issues.apache.org/jira/browse/ivy
 
 List of changes since Ivy 2.1.0:
+- DOCUMENTATION: Spelling fixes on artifact description page (IVY-1230)
+- DOCUMENTATION: Added missing documentation about the ivy:publish child elements.
+- DOCUMENTATION: Grammar, spelling, and clarity of Settings File documentation (IVY-1216) (thanks to Steve Miller)
+- DOCUMENTATION: Grammar, spelling, and clarity of Tutorial documentation (IVY-1222) (thanks to Steve Miller)
 - DOCUMENTATION: Limit the width of running text in documentation (IVY-1030)
 - DOCUMENTATION: Refer to the maven wiki instead of listing some maven2 mirrors ourselfs (IVY-491)
 - DOCUMENTATION: Fixed several grammatical and typographic errors in documentation (IVY-1172) (thanks to J. Lewis Muir)
 - DOCUMENTATION: ivy-doc.xsl does not show configurations (IVY-1151) (thanks to Jasper Blues)
 - DOCUMENTATION: Added documentation of the 'changing' attribute on the ivy:resolve Ant task (IVY-1180)
 
+- NEW: the ivy:makepom Ant task can use a custom template file to generate the pom.xml
+- NEW: Ivy can now generate OpenPGP compatible ASCII armored detached signatures when publishing artifacts.
 - NEW: Support ivy.xml parent mechanism (IVY-742) (thanks to Jason Trump and Jean-Louis Boudart)
 - NEW: Make ivy.xml <conf description> available (IVY-1158)
 
+- IMPROVEMENT: the <artifact> child of ivy:publish now accepts any attribute
+- IMPROVEMENT: Handle attributes in description subelements (IVY-1214) (thanks to Jean-Louis Boudart)
+- IMPROVEMENT: Use IvyAuthenticator only when it is really necessary (IVY-1211)
+- IMPROVEMENT: MakePom task handling of mulitple artifacts for Maven2 (IVY-770) (thanks to Jesper Pedersen)
+- IMPROVEMENT: ivy:makepom now has an option to disable the generation of an extra Ivy comment block in the POM
+- IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
+- IMPROVEMENT: ivy:makepom can generate a <description> element in the pom (IVY-1215) (thanks to Jesper Pedersen)
 - IMPROVEMENT: added support for 'gzip' and 'deflate' HTTP Content-Encoding (IVY-1194)
 - IMPROVEMENT: retrieve doesn't retrive files if the current one is more recent (IVY-1044)
 - IMPROVEMENT: better diagnostics when reporting bad ivy file in cache (IVY-1190)
@@ -177,6 +177,11 @@ List of changes since Ivy 2.1.0:
 - IMPROVEMENT: Trace a message when a property file referenced from the settings doesn't exixts (IVY-1074)
 - IMPROVEMENT: use defaultconf in combination with defaultconfmapping (IVY-1135) (thanks to Jon Schneider)
 
+- FIX: ApacheURLLister doesn't handle some truncated linknames properly (IVY-1232) (thanks to John Tinetti)
+- FIX: Ivy cannot handle Maven pom with parents depending back on theirselfs (IVY-1225)
+- FIX: artifactreport ant task doesn't honor log attribute (IVY-1212)
+- FIX: XmlModuleDescriptorWriter does not write the transitive attribute (IVY-1207) (thanks to Abel Muino)
+- FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
 - FIX: The ivy-module version used by XmlModuleDescriptorWriter is hard coded to '1.0' (IVY-1199)
 - FIX: makepom ignores artifact type in ivy.xml and hardcodes 'jar' in the output pom (IVY-736) (thanks to Aaron Hachez)
 - FIX: Ant output wasn't always prefixed by the name of the Ivy task
