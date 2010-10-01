@@ -128,7 +128,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
-        HttpClient client = getClient(dest);
+        HttpClient client = getClient();
 
         PutMethod put = new PutMethod(normalizeToString(dest));
         put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
@@ -240,7 +240,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private GetMethod doGet(URL url, int timeout) throws IOException {
-        HttpClient client = getClient(url);
+        HttpClient client = getClient();
         client.setTimeout(timeout);
 
         GetMethod get = new GetMethod(normalizeToString(url));
@@ -251,7 +251,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private HeadMethod doHead(URL url, int timeout) throws IOException {
-        HttpClient client = getClient(url);
+        HttpClient client = getClient();
         client.setTimeout(timeout);
 
         HeadMethod head = new HeadMethod(normalizeToString(url));
@@ -260,7 +260,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return head;
     }
 
-    private HttpClient getClient(URL url) {
+    private HttpClient getClient() {
         if (httpClient == null) {
             final MultiThreadedHttpConnectionManager connManager = 
                 new MultiThreadedHttpConnectionManager();
