@@ -202,9 +202,9 @@ public class ResolveEngine {
             throws ParseException, IOException {
         DependencyResolver oldDictator = getDictatorResolver();
         IvyContext context = IvyContext.getContext();
-        if (options.isUseCacheOnly()) {
-            setDictatorResolver(new CacheResolver(settings));
-        }
+//        if (options.isUseCacheOnly()) {
+//            setDictatorResolver(new CacheResolver(settings));
+//        }
         try {
             String[] confs = options.getConfs(md);
             options.setConfs(confs);

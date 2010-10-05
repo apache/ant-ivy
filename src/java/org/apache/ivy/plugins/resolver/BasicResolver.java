@@ -217,7 +217,11 @@ public abstract class BasicResolver extends AbstractResolver {
                     return checkLatest(systemDd, checkForcedResolvedModuleRevision(rmr), data);
                 }
             }
-            
+            if (data.getOptions().isUseCacheOnly()) {
+                throw new UnresolvedDependencyException(
+                    "\t" + getName() + " (useCacheOnly) : no ivy file found for " + systemMrid, false);
+            }
+
             checkInterrupted();
             
             ResolvedResource ivyRef = findIvyFileRef(nsDd, data);
