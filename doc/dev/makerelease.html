@@ -55,9 +55,7 @@ ant -f build-release.xml release-xsd
 <h3>5. Add release note page in the documentation.</h3>
 Open the file doc/index.html with your favorite browser, and click on the plus button in the upper right. Choose "Release Notes" as title, and "release-notes" as page id. 
 
-Then edit the page (hit the first button at the upper right), and copy the content of the RELEASE_NOTES file.
-
-You can also add the announcement for the release if it's already ready. If this is an incubator version, add the usual incubator disclaimer too.
+Then edit the page (hit the first button at the upper right), and copy the content of the RELEASE_NOTES file. You can also add the announcement for the release if it's already ready.
 
 Move the page up in the TOC using the arrow button in the toolbar at the upper right, so that it's the first child page under the "Documentation" page.
 
@@ -180,11 +178,6 @@ and add something like that:
 }
 </code>
 You can also edit the title of the main documentation node pointing to latest-milestone / latest-release if necessary.
-
-<li>Now generate the part of the site for the new version</li>
-<code>
-ant generate-history-ivy -Dhistory.version=2.0.0-beta1
-</code>
 </ol>
 
 Then you can update the release notes page of the imported documentation if necessary, to include the announcement for example.
