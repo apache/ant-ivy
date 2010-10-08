@@ -113,6 +113,11 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)
+- FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197) (thanks to Torkild U. Resheim)
+
+   2.2.0
+=====================================
 - DOCUMENTATION: Spelling fixes on artifact description page (IVY-1230)
 - DOCUMENTATION: Added missing documentation about the ivy:publish child elements.
 - DOCUMENTATION: Grammar, spelling, and clarity of Settings File documentation (IVY-1216) (thanks to Steve Miller)
@@ -129,10 +134,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:makepom now accepts a list of configurations to include (IVY-1005) (thanks to Jesper Pedersen)
 - IMPROVEMENT: ivy:makepom can generate a <description> element in the pom (IVY-1215) (thanks to Jesper Pedersen)
 
-- FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)
 - FIX: ApacheURLLister doesn't handle some truncated linknames properly (IVY-1232) (thanks to John Tinetti)
 - FIX: Ivy cannot handle Maven pom with parents depending back on theirselfs (IVY-1225)
-- FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197) (thanks to Torkild U. Resheim)
 - FIX: artifactreport ant task doesn't honor log attribute (IVY-1212)
 - FIX: XmlModuleDescriptorWriter does not write the transitive attribute (IVY-1207) (thanks to Abel Muino)
 - FIX: Ivy info/extends/extendsType attribute is misspelled by XmlModuleDescriptorWriter (IVY-1203) (thanks to Jason Trump)
