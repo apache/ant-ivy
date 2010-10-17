@@ -37,7 +37,7 @@
 
 		<description homepage="http://www.my.org/mymodule/">	       
 	This module is <b>great</b> !<br/>
-	You can use it especially with myconf1 and myconf2, and myconf4 is not too bad too.
+	You can use it especially with myconf1 &amp; myconf2, and myconf4 is not too bad too.
 		</description>
 	</info>
 	<configurations>

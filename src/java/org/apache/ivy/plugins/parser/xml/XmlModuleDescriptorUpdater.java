@@ -857,7 +857,7 @@ public final class XmlModuleDescriptorUpdater {
                 write(">");
                 justOpen = null;
             }
-            write(String.valueOf(ch, start, length));
+            write(XMLHelper.escape(String.valueOf(ch, start, length)));
             
             //examine characters for current indent level, keeping in mind
             //that our indent might be split across multiple calls to characters()
