@@ -113,6 +113,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Can not use a v[revision] in an artifact pattern of a filesystem resolver (IVY-1238)
 - FIX: Cached ivy.xml is invalid if the description contains the ampersand entity (&amp;) (IVY-1237)
 - FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)
 - FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197) (thanks to Torkild U. Resheim)

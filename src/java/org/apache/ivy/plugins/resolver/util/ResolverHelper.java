@@ -73,13 +73,11 @@ public final class ResolverHelper {
                         namePattern = pattern.substring(slashIndex + 1);
                     }
                     namePattern = namePattern.replaceAll("\\.", "\\\\.");
-                    String acceptNamePattern = ".*?"
-                            + IvyPatternHelper.substituteToken(namePattern, token, "([^" + fileSep
-                                    + "]+)") + "($|" + fileSep + ".*)";
-                    Pattern p = Pattern.compile(acceptNamePattern);
+                    namePattern = IvyPatternHelper.substituteToken(namePattern, token, "(.+)");
+                    Pattern p = Pattern.compile(namePattern);
                     for (Iterator iter = all.iterator(); iter.hasNext();) {
                         String path = (String) iter.next();
-                        Matcher m = p.matcher(path);
+                        Matcher m = p.matcher(path.substring(root.length() + 1));
                         if (m.matches()) {
                             String value = m.group(1);
                             ret.add(value);
