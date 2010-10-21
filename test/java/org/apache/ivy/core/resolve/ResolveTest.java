@@ -3629,6 +3629,24 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveMultipleSameDependency() throws Exception {
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/multiple-same-deps/mod1/ivys/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+
+        assertTrue(getArchiveFileInCache("multiple-same-deps", "mod31", "1.0", "mod31", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("multiple-same-deps", "mod32", "1.0", "mod32", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("multiple-same-deps", "mod33", "1.0", "mod33", "jar", "jar").exists());
+
+        ConfigurationResolveReport runtimeReport = report.getConfigurationReport("runtime");
+        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod31;1.0"));
+        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod32;1.0"));
+        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod33;1.0"));
+        ConfigurationResolveReport compileReport = report.getConfigurationReport("compile");
+        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod31;1.0"));
+        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod32;1.0"));
+        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod33;1.0"));
+    }
+
     public void testResolveTransitiveExcludesSimple() throws Exception {
         // mod2.5 depends on mod2.3 and excludes one artifact from mod2.1
         // mod2.3 depends on mod2.1

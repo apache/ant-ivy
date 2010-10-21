@@ -312,7 +312,7 @@ public class IvyNode implements Comparable {
                     "impossible to get dependencies when data has not been loaded");
         }
         DependencyDescriptor[] dds = md.getDependencies();
-        Collection dependencies = new LinkedHashSet(); // it's important to respect order
+        Map dependencies = new LinkedHashMap(); // it's important to respect order
         for (int i = 0; i < dds.length; i++) {
             DependencyDescriptor dd = data.mediate(dds[i]);
             String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
@@ -328,9 +328,12 @@ public class IvyNode implements Comparable {
                 Message.verbose("excluding " + dd + " in " + conf);
                 continue;
             }
-            IvyNode depNode = data.getNode(
-                requestedDependencyRevisionId);
-            
+
+            IvyNode depNode = (IvyNode) dependencies.get(requestedDependencyRevisionId);
+            if (depNode == null) {
+                depNode = data.getNode(requestedDependencyRevisionId);
+            }
+
             if (depNode == null) {
                 depNode = new IvyNode(data, this, dd);
             } else {
@@ -349,9 +352,9 @@ public class IvyNode implements Comparable {
             depNode.usage.setRequiredConfs(this, conf, confs);
 
             depNode.addCaller(rootModuleConf, this, conf, requestedConf, dependencyConfigurations, dd);
-            dependencies.add(depNode);
+            dependencies.put(requestedDependencyRevisionId, depNode);
         }
-        return dependencies;
+        return dependencies.values();
     }
 
     private void addDependencyDescriptor(IvyNode parent, DependencyDescriptor dd) {

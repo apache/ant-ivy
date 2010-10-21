@@ -117,6 +117,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Cached ivy.xml is invalid if the description contains the ampersand entity (&amp;) (IVY-1237)
 - FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)
 - FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197) (thanks to Torkild U. Resheim)
+- FIX: Only the last dependency descriptor is taken into account on the same module (IVY-1240)
 
    2.2.0
 =====================================
