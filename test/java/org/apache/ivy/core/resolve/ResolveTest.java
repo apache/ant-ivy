@@ -18,6 +18,8 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,6 +59,8 @@ import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.conflict.StrictConflictException;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+import org.apache.ivy.plugins.repository.AbstractRepository;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
@@ -76,6 +80,7 @@ public class ResolveTest extends TestCase {
 
     private File cache;
     private File deliverDir;
+    private File workDir;
 
     public ResolveTest() {
     }
@@ -88,6 +93,9 @@ public class ResolveTest extends TestCase {
         deliverDir = new File("build/test/deliver");
         deliverDir.mkdirs();
 
+        workDir = new File("build/test/work");
+        workDir.mkdirs();
+
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
     }
@@ -99,6 +107,7 @@ public class ResolveTest extends TestCase {
     protected void tearDown() throws Exception {
         CacheCleaner.deleteDir(cache);
         FileUtil.forceDelete(deliverDir);
+        FileUtil.forceDelete(workDir);
     }
 
     public void testResolveWithRetainingArtifactName() throws Exception {
@@ -5205,4 +5214,62 @@ public class ResolveTest extends TestCase {
         ivy.deliver(pubrev, deliveryPattern, dopts);
     }
 
+    public void testUseCacheOnly() throws Exception {
+        ResolveOptions option = getResolveOptions(new String[] {"*"}).setValidate(false);
+        URL url = new File("test/repositories/1/usecacheonly/mod1/ivys/ivy-1.0.xml").toURI()
+                .toURL();
+
+        // normal resolve, the file goes in the cache
+        ResolveReport report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+
+        option.setUseCacheOnly(true);
+
+        // use cache only, hit the cache
+        report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+
+        CacheCleaner.deleteDir(cache);
+        createCache();
+
+        // no more in the cache, missed
+        report = ivy.resolve(url, option);
+        assertTrue(report.hasError());
+
+        option.setUseCacheOnly(false);
+
+        // try with use origin: should fail as the cache is empty
+        ivy.getSettings().setDefaultUseOrigin(true);
+        option.setUseCacheOnly(true);
+        report = ivy.resolve(url, option);
+        assertTrue(report.hasError());
+
+        // populate the cache
+        option.setUseCacheOnly(false);
+        report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+
+        // use origin should now work
+        option.setUseCacheOnly(true);
+        report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+
+        // ensure that we hit only the cache and never try to hit in the repository
+        FileSystemResolver resolver = (FileSystemResolver) ivy.getSettings().getResolver("1");
+        resolver.setRepository(new AbstractRepository() {
+            public List list(String parent) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+            
+            public Resource getResource(String source) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+            
+            public void get(String source, File destination) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+        });
+        report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+    }
 }
