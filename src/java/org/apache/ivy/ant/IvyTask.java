@@ -186,7 +186,7 @@ public abstract class IvyTask extends Task {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    protected Date getPubDate(String date, Date def) {
+    protected static Date getPubDate(String date, Date def) {
         if (date != null) {
             if ("now".equals(date.toLowerCase(Locale.US))) {
                 return new Date();

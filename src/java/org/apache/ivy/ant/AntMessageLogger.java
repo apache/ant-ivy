@@ -23,6 +23,7 @@ import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.MessageLogger;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.Task;
 
 /**
@@ -44,13 +45,14 @@ public class AntMessageLogger extends AbstractMessageLogger {
      * @param ivy
      *            the ivy instance on which the logger should be registered
      */
-    public static void register(Task task, final Ivy ivy) {
+    public static void register(ProjectComponent task, final Ivy ivy) {
         MessageLogger current = ivy.getLoggerEngine().peekLogger();
-        if (current instanceof AntMessageLogger)  {
-            Task currentTask = ((AntMessageLogger) current).task;
+        if (current instanceof AntMessageLogger && task instanceof Task
+                && ((AntMessageLogger) current).task instanceof Task)  {
+            Task currentTask = (Task) ((AntMessageLogger) current).task;
             
             if ((currentTask.getTaskName() != null)
-                    && currentTask.getTaskName().equals(task.getTaskName())) {
+                    && currentTask.getTaskName().equals(((Task) task).getTaskName())) {
                 // The current AntMessageLogger already logs with the same
                 // prefix as the given task. So we shouldn't do anything...
                 return;
@@ -97,7 +99,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
         
     }
 
-    private Task task;
+    private ProjectComponent task;
 
     private long lastProgressFlush = 0;
 
@@ -110,7 +112,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
      *            the ant project component this message implementation should use for logging. Must
      *            not be <code>null</code>.
      */
-    protected AntMessageLogger(Task task) {
+    protected AntMessageLogger(ProjectComponent task) {
         Checks.checkNotNull(task, "task");
         this.task = task;
     }

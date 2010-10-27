@@ -737,6 +737,13 @@
                             ]
                         },
                         {
+                          "id":"use/resources",
+                          "title":"resources",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/retrieve",
                           "title":"retrieve",
                           "children": [

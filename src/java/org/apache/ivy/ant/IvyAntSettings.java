@@ -35,7 +35,7 @@ import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.DataType;
 
@@ -108,7 +108,7 @@ public class IvyAntSettings extends DataType {
      * @param  project  TODO add text.
      * @return  An IvySetting instance.
      */
-    public static IvyAntSettings getDefaultInstance(Task task) {
+    public static IvyAntSettings getDefaultInstance(ProjectComponent task) {
         Project project = task.getProject();
         Object defaultInstanceObj = project.getReference("ivy.instance");
         if (defaultInstanceObj != null
@@ -232,14 +232,14 @@ public class IvyAntSettings extends DataType {
      * Return the configured Ivy instance.
      * @return Returns the configured Ivy instance.
      */
-    public Ivy getConfiguredIvyInstance(Task task) {
+    public Ivy getConfiguredIvyInstance(ProjectComponent task) {
         if (ivyEngine == null) {
             createIvyEngine(task);
         }
         return ivyEngine;
     }
 
-    void createIvyEngine(final Task task) {
+    void createIvyEngine(final ProjectComponent task) {
         Project project = task.getProject();
         Property prop = new Property() {
             public void execute() throws BuildException {
@@ -291,7 +291,7 @@ public class IvyAntSettings extends DataType {
         }
     }
 
-    protected Properties getDefaultProperties(Task task) {
+    protected Properties getDefaultProperties(ProjectComponent task) {
         URL url = IvySettings.getDefaultPropertiesURL();
         // this is copy of loadURL code from ant Property task (not available in 1.5.1)
         Properties props = new Properties();
@@ -316,7 +316,7 @@ public class IvyAntSettings extends DataType {
      * 
      * @param variableContainer
      */
-    private void defineDefaultSettingFile(IvyVariableContainer variableContainer, Task task) {
+    private void defineDefaultSettingFile(IvyVariableContainer variableContainer, ProjectComponent task) {
         String settingsFileName = variableContainer.getVariable("ivy.conf.file");
         if (settingsFileName != null 
                 && !settingsFileName.equals(variableContainer.getVariable("ivy.settings.file"))) {
