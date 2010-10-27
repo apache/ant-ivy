@@ -208,7 +208,7 @@ public class IvyResources extends BaseResourceCollectionWrapper {
             throw new BuildException(e);
         }
 
-        List/* <> */resources = new ArrayList();
+        List/* <FileResource> */resources = new ArrayList();
 
         if (report.hasError()) {
             throw new BuildException("resolve failed - see output for details");
