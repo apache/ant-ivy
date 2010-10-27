@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -46,6 +47,10 @@ public class IvyResources extends BaseResourceCollectionWrapper {
 
     private List/* <IvyDependency> */dependencies = new ArrayList();
 
+    private List/* <IvyExclude> */excludes = new ArrayList();
+
+    private List/* <IvyConflict> */conflicts = new ArrayList();
+
     private String type = null;
 
     private String pubdate = null;
@@ -63,6 +68,24 @@ public class IvyResources extends BaseResourceCollectionWrapper {
     private String log = ResolveOptions.LOG_DEFAULT;
 
     private Reference antIvyEngineRef;
+
+    public IvyDependency createDependency() {
+        IvyDependency dep = new IvyDependency();
+        dependencies.add(dep);
+        return dep;
+    }
+
+    public IvyExclude createExclude() {
+        IvyExclude ex = new IvyExclude();
+        excludes.add(ex);
+        return ex;
+    }
+
+    public IvyConflict createConflict() {
+        IvyConflict c = new IvyConflict();
+        conflicts.add(c);
+        return c;
+    }
 
     public void setType(String type) {
         this.type = type;
@@ -104,10 +127,6 @@ public class IvyResources extends BaseResourceCollectionWrapper {
         antIvyEngineRef = ref;
     }
 
-    public void addDependency(IvyDependency dependency) {
-        dependencies.add(dependency);
-    }
-
     public boolean isFilesystemOnly() {
         return true;
     }
@@ -145,17 +164,30 @@ public class IvyResources extends BaseResourceCollectionWrapper {
                     + ". Available options are " + getAllowedLogOptions());
         }
 
+        Ivy ivy = getIvyInstance();
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "", "");
         DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(mrid, null);
 
         Iterator itDeps = dependencies.iterator();
         while (itDeps.hasNext()) {
             IvyDependency dep = (IvyDependency) itDeps.next();
-            DependencyDescriptor dd = dep.asDependencyDescriptor(md, "default");
+            DependencyDescriptor dd = dep.asDependencyDescriptor(md, "default", ivy.getSettings());
             md.addDependency(dd);
         }
 
-        Ivy ivy = getIvyInstance();
+        Iterator itExcludes = excludes.iterator();
+        while (itExcludes.hasNext()) {
+            IvyExclude exclude = (IvyExclude) itExcludes.next();
+            DefaultExcludeRule rule = exclude.asRule(ivy.getSettings());
+            md.addExcludeRule(rule);
+        }
+
+        Iterator itConflicts = conflicts.iterator();
+        while (itConflicts.hasNext()) {
+            IvyConflict conflict = (IvyConflict) itConflicts.next();
+            conflict.addConflict(md, ivy.getSettings());
+        }
 
         ResolveOptions options = new ResolveOptions();
         options.setConfs(new String[] {"default"});
