@@ -180,6 +180,7 @@ public class IvyResources extends BaseResourceCollectionWrapper {
         while (itExcludes.hasNext()) {
             IvyExclude exclude = (IvyExclude) itExcludes.next();
             DefaultExcludeRule rule = exclude.asRule(ivy.getSettings());
+            rule.addConfiguration("default");
             md.addExcludeRule(rule);
         }
 
