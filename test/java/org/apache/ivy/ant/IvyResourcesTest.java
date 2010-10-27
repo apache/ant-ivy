@@ -82,11 +82,10 @@ public class IvyResourcesTest extends TestCase {
     }
 
     public void testSimple() throws Exception {
-        IvyDependency dependency = new IvyDependency();
+        IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
         dependency.setRev("2.0");
-        resources.addDependency(dependency);
 
         resources.iterator();
 
@@ -96,17 +95,15 @@ public class IvyResourcesTest extends TestCase {
     }
 
     public void testMultiple() throws Exception {
-        IvyDependency dependency = new IvyDependency();
+        IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
         dependency.setRev("2.0");
-        resources.addDependency(dependency);
 
-        dependency = new IvyDependency();
+        dependency = resources.createDependency();
         dependency.setOrg("org2");
         dependency.setName("mod2.3");
         dependency.setRev("0.7");
-        resources.addDependency(dependency);
 
         resources.iterator();
 
@@ -129,18 +126,16 @@ public class IvyResourcesTest extends TestCase {
     }
 
     public void testMultipleWithConf() throws Exception {
-        IvyDependency dependency = new IvyDependency();
+        IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
         dependency.setRev("2.0");
-        resources.addDependency(dependency);
 
-        dependency = new IvyDependency();
+        dependency = resources.createDependency();
         dependency.setOrg("org2");
         dependency.setName("mod2.2");
         dependency.setRev("0.10");
         dependency.setConf("A");
-        resources.addDependency(dependency);
 
         resources.iterator();
 
@@ -159,18 +154,16 @@ public class IvyResourcesTest extends TestCase {
     }
 
     public void testMultipleWithConf2() throws Exception {
-        IvyDependency dependency = new IvyDependency();
+        IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
         dependency.setRev("2.0");
-        resources.addDependency(dependency);
 
-        dependency = new IvyDependency();
+        dependency = resources.createDependency();
         dependency.setOrg("org2");
         dependency.setName("mod2.2");
         dependency.setRev("0.10");
         dependency.setConf("B");
-        resources.addDependency(dependency);
 
         resources.iterator();
 
@@ -189,13 +182,11 @@ public class IvyResourcesTest extends TestCase {
     }
 
     public void testFail() throws Exception {
-        IvyDependency dependency = new IvyDependency();
-
+        IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("noexisting");
         dependency.setRev("2.0");
 
-        resources.addDependency(dependency);
         try {
             resources.iterator();
             fail("A fail resolved should have raised a build exception");
