@@ -18,16 +18,19 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.apache.tools.ant.types.resources.FileResource;
 
 public class IvyResourcesTest extends TestCase {
 
@@ -66,11 +69,6 @@ public class IvyResourcesTest extends TestCase {
         del.execute();
     }
 
-    private File getIvyFileInCache(String organisation, String module, String revision) {
-        ModuleRevisionId id = ModuleRevisionId.newInstance(organisation, module, revision);
-        return TestHelper.getRepositoryCacheManager(getIvy(), id).getIvyFileInCache(id);
-    }
-
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
         return TestHelper.getArchiveFileInCache(getIvy(), organisation, module, revision, artifact,
@@ -81,17 +79,27 @@ public class IvyResourcesTest extends TestCase {
         return resources.getIvyInstance();
     }
 
+    private List asList(IvyResources ivyResources) {
+        List resources = new ArrayList();
+        Iterator it = ivyResources.iterator();
+        while (it.hasNext()) {
+            Object r = it.next();
+            assertTrue(r instanceof FileResource);
+            resources.add(((FileResource) r).getFile());
+        }
+        return resources;
+    }
+
     public void testSimple() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
         dependency.setRev("2.0");
 
-        resources.iterator();
-
-        // dependencies
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(1, files.size());
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar"),
+            files.get(0));
     }
 
     public void testMultiple() throws Exception {
@@ -105,24 +113,18 @@ public class IvyResourcesTest extends TestCase {
         dependency.setName("mod2.3");
         dependency.setRev("0.7");
 
-        resources.iterator();
-
-        // dependencies
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.3", "0.7").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.3", "0.7", "mod2.3", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.1", "0.3").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org1", "mod1.1", "1.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(5, files.size());
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.3", "0.7", "mod2.3", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar",
+            "jar")));
     }
 
     public void testMultipleWithConf() throws Exception {
@@ -137,20 +139,14 @@ public class IvyResourcesTest extends TestCase {
         dependency.setRev("0.10");
         dependency.setConf("A");
 
-        resources.iterator();
-
-        // dependencies
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.2", "0.10").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.1", "0.7").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
-
-        assertFalse(getIvyFileInCache("org1", "mod1.1", "1.0").exists());
-        assertFalse(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(3, files.size());
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar",
+            "jar")));
     }
 
     public void testMultipleWithConf2() throws Exception {
@@ -165,20 +161,16 @@ public class IvyResourcesTest extends TestCase {
         dependency.setRev("0.10");
         dependency.setConf("B");
 
-        resources.iterator();
-
-        // dependencies
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.2", "0.10").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.1", "0.7").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org1", "mod1.1", "1.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(4, files.size());
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar",
+            "jar")));
     }
 
     public void testExclude() throws Exception {
@@ -197,19 +189,14 @@ public class IvyResourcesTest extends TestCase {
         exclude.setOrg("org1");
         exclude.setModule("mod1.1");
 
-        resources.iterator();
-
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.2", "0.10").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.1", "0.7").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
-
-        assertFalse(getIvyFileInCache("org1", "mod1.1", "1.0").exists());
-        assertFalse(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(3, files.size());
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar",
+            "jar")));
     }
 
     public void testDependencyExclude() throws Exception {
@@ -227,19 +214,14 @@ public class IvyResourcesTest extends TestCase {
         IvyDependencyExclude exclude = dependency.createExclude();
         exclude.setOrg("org1");
 
-        resources.iterator();
-
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.2", "0.10").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.1", "0.7").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
-
-        assertFalse(getIvyFileInCache("org1", "mod1.1", "1.0").exists());
-        assertFalse(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(3, files.size());
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar",
+            "jar")));
     }
 
     public void testDependencyInclude() throws Exception {
@@ -256,14 +238,12 @@ public class IvyResourcesTest extends TestCase {
         IvyDependencyInclude include = dependency.createInclude();
         include.setName("art22-1");
 
-        resources.iterator();
-
-        assertTrue(getIvyFileInCache("org1", "mod1.2", "2.0").exists());
-        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-
-        assertTrue(getIvyFileInCache("org2", "mod2.2", "0.9").exists());
-        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
-        assertFalse(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-2", "jar", "jar").exists());
+        List files = asList(resources);
+        assertEquals(2, files.size());
+        assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar")));
+        assertTrue(files.contains(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar",
+            "jar")));
     }
 
     public void testFail() throws Exception {
