@@ -25,6 +25,7 @@ public class CacheMetadataOptions extends CacheDownloadOptions {
     private Boolean isCheckmodified = null;
     private String changingMatcherName = null;
     private String changingPattern = null;
+    private boolean checkTTL = true;
     
     public Namespace getNamespace() {
         return namespace;
@@ -60,5 +61,12 @@ public class CacheMetadataOptions extends CacheDownloadOptions {
     public CacheMetadataOptions setChangingPattern(String changingPattern) {
         this.changingPattern  = changingPattern;
         return this;
+    }
+    public CacheMetadataOptions setCheckTTL(boolean checkTTL) {
+        this.checkTTL = checkTTL;
+        return this;
+    }
+    public boolean isCheckTTL() {
+        return checkTTL;
     }
 }

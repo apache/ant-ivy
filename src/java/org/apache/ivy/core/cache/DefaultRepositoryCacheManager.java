@@ -701,12 +701,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     + ": inconsistent or old cache: no cached resolved time for " + mrid);
                 saveResolvedRevision(mrid, resolvedRevision);
                 return resolvedRevision;
-            } 
-            long expiration = Long.parseLong(resolvedTime) + getTTL(mrid);
-            if (expiration > 0 // negative expiration means that Long.MAX_VALUE has been exceeded
-                    && System.currentTimeMillis() > expiration) {
-                Message.verbose(getName() + ": cached resolved revision expired for " + mrid);
-                return null;
+            }
+            if (options.isCheckTTL()) {
+                long expiration = Long.parseLong(resolvedTime) + getTTL(mrid);
+                if (expiration > 0 // negative expiration means that Long.MAX_VALUE has been exceeded
+                        && System.currentTimeMillis() > expiration) {
+                    Message.verbose(getName() + ": cached resolved revision expired for " + mrid);
+                    return null;
+                }
             }
             return resolvedRevision;
         } finally {

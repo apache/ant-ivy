@@ -436,6 +436,7 @@ public abstract class AbstractResolver
         return (CacheMetadataOptions) new CacheMetadataOptions()
             .setChangingMatcherName(getChangingMatcherName())
             .setChangingPattern(getChangingPattern())
+            .setCheckTTL(!data.getOptions().isUseCacheOnly())
             .setCheckmodified(data.getOptions().isUseCacheOnly() ? Boolean.FALSE : checkmodified)
             .setValidate(doValidate(data))
             .setNamespace(getNamespace())
