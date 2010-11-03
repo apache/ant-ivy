@@ -18,9 +18,11 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -76,6 +78,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     
     private boolean changing = false;
 
+    private IvyResolve resolve = new IvyResolve();
+
     public boolean isUseOrigin() {
         return useOrigin;
     }
@@ -90,6 +94,18 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     public void setLog(String log) {
         this.log = log;
+    }
+
+    public IvyDependency createDependency() {
+        return resolve.createDependency();
+    }
+
+    public IvyExclude createExclude() {
+        return resolve.createExclude();
+    }
+
+    public IvyConflict createConflict() {
+        return resolve.createConflict();
     }
 
     protected void prepareAndCheck() {
@@ -134,7 +150,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 Message.verbose("using inline mode to resolve " + getOrganisation() + " "
                         + getModule() + " " + getRevision() + " ("
                         + StringUtils.join(toResolve, ", ") + ")");
-                IvyResolve resolve = createResolve(isHaltonfailure(), isUseOrigin());
+                IvyResolve resolve = setupResolve(isHaltonfailure(), isUseOrigin());
                 resolve.setOrganisation(getOrganisation());
                 resolve.setModule(getModule());
                 resolve.setBranch(getBranch());
@@ -209,7 +225,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         }
 
         if (confs.length > 0) {
-            IvyResolve resolve = createResolve(isHaltonfailure(), isUseOrigin());
+            IvyResolve resolve = setupResolve(isHaltonfailure(), isUseOrigin());
             resolve.setFile(getFile());
             resolve.setTransitive(isTransitive());
             resolve.setConf(StringUtils.join(confs, ", "));
@@ -289,9 +305,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     }
 
-    protected IvyResolve createResolve(boolean haltOnFailure, boolean useOrigin) {
+    protected IvyResolve setupResolve(boolean haltOnFailure, boolean useOrigin) {
         Message.verbose("no resolved descriptor found: launching default resolve");
-        IvyResolve resolve = new IvyResolve();
         resolve.setTaskName(getTaskName());
         resolve.setProject(getProject());
         resolve.setHaltonfailure(haltOnFailure);

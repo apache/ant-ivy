@@ -18,6 +18,7 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -435,6 +436,155 @@ public class IvyResolveTest extends TestCase {
 
     private Ivy getIvy() {
         return resolve.getIvyInstance();
+    }
+
+    public void testChildsSimple() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testChildsMultiple() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        dependency = resolve.createDependency();
+        dependency.setOrg("org2");
+        dependency.setName("mod2.3");
+        dependency.setRev("0.7");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.3", "0.7", "mod2.3", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+    }
+
+    public void testChildsMultipleWithConf() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        dependency = resolve.createDependency();
+        dependency.setOrg("org2");
+        dependency.setName("mod2.2");
+        dependency.setRev("0.10");
+        dependency.setConf("A");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
+    }
+
+    public void testChildsMultipleWithConf2() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        dependency = resolve.createDependency();
+        dependency.setOrg("org2");
+        dependency.setName("mod2.2");
+        dependency.setRev("0.10");
+        dependency.setConf("B");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+    }
+
+    public void testChildsExclude() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        dependency = resolve.createDependency();
+        dependency.setOrg("org2");
+        dependency.setName("mod2.2");
+        dependency.setRev("0.10");
+        dependency.setConf("B");
+
+        IvyExclude exclude = resolve.createExclude();
+        exclude.setOrg("org1");
+        exclude.setModule("mod1.1");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
+    }
+
+    public void testChildsDependencyExclude() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        dependency = resolve.createDependency();
+        dependency.setOrg("org2");
+        dependency.setName("mod2.2");
+        dependency.setRev("0.10");
+        dependency.setConf("B");
+
+        IvyDependencyExclude exclude = dependency.createExclude();
+        exclude.setOrg("org1");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.10", "mod2.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.7", "mod2.1", "jar", "jar").exists());
+    }
+
+    public void testChildsDependencyInclude() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("mod1.2");
+        dependency.setRev("2.0");
+
+        dependency = resolve.createDependency();
+        dependency.setOrg("org2");
+        dependency.setName("mod2.2");
+        dependency.setRev("0.9");
+
+        IvyDependencyInclude include = dependency.createInclude();
+        include.setName("art22-1");
+
+        resolve.execute();
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
+    }
+
+    public void testChildsFail() throws Exception {
+        IvyDependency dependency = resolve.createDependency();
+        dependency.setOrg("org1");
+        dependency.setName("noexisting");
+        dependency.setRev("2.0");
+
+        try {
+            resolve.execute();
+            fail("A fail resolved should have raised a build exception");
+        } catch (BuildException e) {
+            // ok
+        }
     }
 
 }

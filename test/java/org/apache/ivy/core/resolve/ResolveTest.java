@@ -5272,4 +5272,25 @@ public class ResolveTest extends TestCase {
         report = ivy.resolve(url, option);
         assertFalse(report.hasError());
     }
+
+    public void testUseCacheOnlyWithRange() throws Exception {
+        ResolveOptions option = getResolveOptions(new String[] {"*"});
+        option.setValidate(false);
+
+        ivy.getSettings().setDefaultUseOrigin(true);
+        ivy.getSettings().setDefaultResolveMode("dynamic");
+
+        URL url = new File("test/repositories/1/usecacheonly/mod3/ivys/ivy-1.0.xml").toURI()
+                .toURL();
+
+        // normal resolve, the file goes in the cache
+        ResolveReport report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+
+        option.setUseCacheOnly(true);
+
+        // use cache only, hit the cache
+        report = ivy.resolve(url, option);
+        assertFalse(report.hasError());
+    }
 }

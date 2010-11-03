@@ -24,84 +24,62 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<span class="since">(since 2.3)</span>
-<span class="since">(Ant 1.7 required)</span>
+<b><i>(since 2.3) (Ant 1.7 required)</i></b>
 <tt>ivy:resources</tt> is an Ant <a href="http://ant.apache.org/manual/Types/resources.html#collection">resource collection</a>, which files are based on an Ivy resolve, and then can be used with any task which is working with resources like <tt>copy</tt> or <tt>import</tt>.
 
-This datatype is a sort of clone and merge of both the Ivy <a hef="resolve.html">resolve task</a> and the <a href="../ivyfile/dependencies.html">dependencies</a> element of an ivy.xml file. So most of the attributes and xml elements are the same and have the same semantic.
-
-There is one important difference: there is no master configuration to handle here. There is actually only one, the one on which the resolve will run.
-
-<h1>Attributes</h1>
-<table class="ant">
-<thead>
-    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
-</thead>
-<tbody>
-    <tr><td>refresh</td><td>true to force Ivy to resolve dynamic revision in this resolve process, false to use cached resolved revision</td><td>No. defaults to false</td></tr>
-
-    <tr><td>resolveMode</td><td>the resolve mode to use for this dependency resolution process</td><td>No. defaults to using the resolve mode set in the [[settings settings]]</td></tr>
-
-    <tr><td>changing</td><td>indicates that the module may change when resolving in inline mode. See <a href="../concept.html#change">cache and change management</a> for details. Ignored when resolving in standard mode.</td><td>No. Defaults to false.</td></tr>
-
-    <tr><td>type</td><td>comma separated list of accepted artifact types</td><td>No. defaults to ${ivy.resolve.default.type.filter}</td></tr>
-
-    <tr><td>transitive</td><td>true to resolve dependencies transitively, false otherwise</td><td>No. Defaults to true</td></tr>
-
-    <tr><td>showprogress</td><td>true to show dots while downloading, false otherwise</td><td>No. Defaults to true</td></tr>
-
-    <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td><td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
-
-    <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
-
-    <tr><td>resolveId</td><td>An id which can be used later to refer to the results of this resolve</td><td>No, defaults to '[org]-[module]'.</td></tr>
-
-    <tr><td>log</td><td>the log setting to use during the resolve process.<br/>
-Available options are:
-<ul><li>default</li> the default log settings, where all usual messages are output to the console
-<li>download-only</li> disable all usual messages but download ones. A resolve with everything in cache won't output any message.
-<li>quiet</li> disable all usual messages, making the whole resolve process quiet unless errors occur
-</ul></td><td>No, defaults to 'default'.</td></tr>
-
-     <tr><td>checkIfChanged</td><td>When set to true, the resolve will compare the result with the last resolution done on this module, with those configurations in order to define the property ivy.deps.changed.  Put it to false may provides slightly better performance.</td><td>No, default to 'true'</td></tr>
-</tbody>
-</table>
-
-<h1>Child elements</h1>
-<table class="ant">
-<thead>
-    <tr><th class="ant-att">Element</th><th class="ant-desc">Element</th><th class="ant-req">Element</th></tr>
-</thead>
-<tbody>
-    <tr><td><a href="../ivyfile/dependency.html">dependency</a></td><td>declares a dependency to resolve</td>
-        <td>0..n</td></tr>
-    <tr><td><a href="../ivyfile/exclude.html">exclude</a></td><td>excludes artifacts, modules or whole organizations from the set of dependencies to resolve</td>
-        <td>0..n</td></tr>
-    <tr><td><a href="../ivyfile/override.html">override</a></td><td>specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency <span class="since">since 2.0</span></td>
-        <td>0..n</td></tr>
-    <tr><td><a href="../ivyfile/conflict.html">conflict</a></td><td>specify a a conflict manager for one or several dependencies <span class="since">since 2.0</span></td>
-</tbody>
-</table>
+This datatype share the same attributes, child elements and behaviour of a [[ant:postresolvetask post resolve task]]. It is not expected to be used as an Ant task though, only as a resource collection.
 
 <h1>Examples</h1>
-<h2>Simplest resolved resources</h2>
-<code><ivy:resources>
-    <dependency org="org.apache.ivy" name="ivy" rev="2.2.0" />
+<code type="xml">
+<ivy:resources file="path/to/ivy.xml"/>
+</code>
+Build a resource collection of every artifacts of all dependencies declared in path/to/ivy.xml file.
+
+<hr/>
+
+<code type="xml">
+<ivy:resources file="path/to/ivy.xml" transitive="false" />
+</code>
+Same as above, but with transitive dependencies disabled.
+
+<hr/>
+
+<code type="xml">
+<ivy:resources file="path/to/ivy.xml" conf="default, test"/>
+</code>
+Build a resource collection of every artifacts of the dependencies declared in the configuration default and test of the path/to/ivy.xml file.
+
+<hr/>
+
+<code type="xml">
+<ivy:resources file="path/to/ivy.xml" type="jar"/>
+</code>
+Build a resource collection of every jar artifact of all dependencies declared in path/to/ivy.xml file.
+
+<hr/>
+<code type="xml">
+<ivy:resources organisation="apache" module="commons-lang" revision="2+" inline="true" />
+</code>
+Build a resource collection of every artifacts of commons-lang module revision 2+ from the repository, with its dependencies.
+
+<hr/>
+<code type="xml">
+<ivy:resources>
+    <dependency org="apache" module="commons-lang" rev="2+" />
+    <dependency org="apache" module="commons-logging" rev="1.1" />
+    <exclude org="apache" module="log4j" />
 </ivy:resources>
 </code>
-<h2>Specific resolved configuration</h2>
-<code><ivy:resources>
-    <dependency org="org.apache.ant" name="ant" rev="1.8.0" conf="core,launcher" />
-    <dependency org="org.apache.ivy" name="ivy" rev="2.2.0" conf="runtime" />
+Build a resource collection of every artifacts of both commons lang and commons logging, with their dependencies but not log4j.
+
+<hr/>
+<code type="xml">
+<ivy:resources>
+    <dependency org="org.slf4j" module="slf4j" rev="1.6" conf="api,log4j" />
 </ivy:resources>
 </code>
-<h2>Filtering to jars only and excluding a dependency</h2>
-<code><ivy:resources type="jar">
-    <dependency org="org.apache.ant" name="ant" rev="1.8.0" conf="core,launcher" />
-    <dependency org="org.apache.ivy" name="ivy" rev="2.2.0" conf="runtime" />
-    <exclude org="org.apache.commons" module="commons-loging" />
-</ivy:resources>
-</code>
+Build a resource collection of every artifacts of the configurations "api" and "log4j" of "slf4j".
+
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

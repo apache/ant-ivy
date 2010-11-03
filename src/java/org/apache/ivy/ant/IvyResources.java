@@ -17,219 +17,102 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.core.LogOptions;
-import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
-import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
-import org.apache.ivy.core.report.ConfigurationResolveReport;
-import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.util.filter.Filter;
-import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
+import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.BaseResourceCollectionWrapper;
 import org.apache.tools.ant.types.resources.FileResource;
 
-public class IvyResources extends BaseResourceCollectionWrapper {
+public class IvyResources extends IvyCacheTask implements ResourceCollection {
 
-    private List/* <IvyDependency> */dependencies = new ArrayList();
+    /**
+     * Delegate for the implementation of the resource collection
+     */
+    private class IvyBaseResourceCollectionWrapper extends BaseResourceCollectionWrapper {
 
-    private List/* <IvyExclude> */excludes = new ArrayList();
+        protected Collection getCollection() {
+            return resolveResources(null);
+        }
 
-    private List/* <IvyConflict> */conflicts = new ArrayList();
-
-    private String type = null;
-
-    private String pubdate = null;
-
-    private boolean useCacheOnly = false;
-
-    private boolean transitive = true;
-
-    private boolean refresh = false;
-
-    private String resolveMode = null;
-
-    private String resolveId = null;
-
-    private String log = ResolveOptions.LOG_DEFAULT;
-
-    private Reference antIvyEngineRef;
-
-    public IvyDependency createDependency() {
-        IvyDependency dep = new IvyDependency();
-        dependencies.add(dep);
-        return dep;
     }
 
-    public IvyExclude createExclude() {
-        IvyExclude ex = new IvyExclude();
-        excludes.add(ex);
-        return ex;
+    private IvyBaseResourceCollectionWrapper wrapper = new IvyBaseResourceCollectionWrapper();
+
+    // delegate the ProjectComponent API on the wrapper
+
+    public void setLocation(Location location) {
+        super.setLocation(location);
+        wrapper.setLocation(location);
     }
 
-    public IvyConflict createConflict() {
-        IvyConflict c = new IvyConflict();
-        conflicts.add(c);
-        return c;
+    public void setProject(Project project) {
+        super.setProject(project);
+        wrapper.setProject(project);
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDescription(String desc) {
+        super.setDescription(desc);
+        wrapper.setDescription(desc);
     }
 
-    public void setDate(String pubdate) {
-        this.pubdate = pubdate;
+    // delegate the DataType API on the wrapper
+
+    public void setRefid(Reference ref) {
+        wrapper.setRefid(ref);
     }
 
-    public void setPubdate(String pubdate) {
-        this.pubdate = pubdate;
+    // delegate the AbstractResourceCollectionWrapper API on the wrapper
+
+    public void setCache(boolean b) {
+        wrapper.setCache(b);
     }
 
-    public void setUseCacheOnly(boolean useCacheOnly) {
-        this.useCacheOnly = useCacheOnly;
-    }
-
-    public void setTransitive(boolean transitive) {
-        this.transitive = transitive;
-    }
-
-    public void setRefresh(boolean refresh) {
-        this.refresh = refresh;
-    }
-
-    public void setResolveMode(String resolveMode) {
-        this.resolveMode = resolveMode;
-    }
-
-    public void setResolveId(String resolveId) {
-        this.resolveId = resolveId;
-    }
-
-    public void setLog(String log) {
-        this.log = log;
-    }
-
-    public void setSettingsRef(Reference ref) {
-        antIvyEngineRef = ref;
-    }
+    // implementation of the Resource Collection API
 
     public boolean isFilesystemOnly() {
         return true;
     }
 
-    protected Collection/* <String> */getAllowedLogOptions() {
-        return Arrays.asList(new String[] {LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
-                LogOptions.LOG_QUIET});
+    public Iterator iterator() {
+        return wrapper.iterator();
     }
 
-    protected Ivy getIvyInstance() {
-        Object antIvyEngine;
-        if (antIvyEngineRef != null) {
-            antIvyEngine = antIvyEngineRef.getReferencedObject(getProject());
-            if (!antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
-                throw new BuildException(antIvyEngineRef.getRefId()
-                        + " doesn't reference an ivy:settings", getLocation());
-            }
-            if (!(antIvyEngine instanceof IvyAntSettings)) {
-                throw new BuildException(antIvyEngineRef.getRefId()
-                        + " has been defined in a different classloader.  "
-                        + "Please use the same loader when defining your task, or "
-                        + "redeclare your ivy:settings in this classloader", getLocation());
-            }
-        } else {
-            antIvyEngine = IvyAntSettings.getDefaultInstance(this);
-        }
-        Ivy ivy = ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance(this);
-        AntMessageLogger.register(this, ivy);
-        return ivy;
+    public int size() {
+        return wrapper.size();
     }
 
-    protected Collection getCollection() {
-        if (!getAllowedLogOptions().contains(log)) {
-            throw new BuildException("invalid option for 'log': " + log
-                    + ". Available options are " + getAllowedLogOptions());
-        }
+    // convert the ivy reports into an Ant Resource collection
 
-        Ivy ivy = getIvyInstance();
-
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "", "");
-        DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(mrid, null);
-
-        Iterator itDeps = dependencies.iterator();
-        while (itDeps.hasNext()) {
-            IvyDependency dep = (IvyDependency) itDeps.next();
-            DependencyDescriptor dd = dep.asDependencyDescriptor(md, "default", ivy.getSettings());
-            md.addDependency(dd);
-        }
-
-        Iterator itExcludes = excludes.iterator();
-        while (itExcludes.hasNext()) {
-            IvyExclude exclude = (IvyExclude) itExcludes.next();
-            DefaultExcludeRule rule = exclude.asRule(ivy.getSettings());
-            rule.addConfiguration("default");
-            md.addExcludeRule(rule);
-        }
-
-        Iterator itConflicts = conflicts.iterator();
-        while (itConflicts.hasNext()) {
-            IvyConflict conflict = (IvyConflict) itConflicts.next();
-            conflict.addConflict(md, ivy.getSettings());
-        }
-
-        ResolveOptions options = new ResolveOptions();
-        options.setConfs(new String[] {"default"});
-        options.setDate(IvyTask.getPubDate(pubdate, null));
-        options.setUseCacheOnly(useCacheOnly);
-        options.setRefresh(refresh);
-        options.setTransitive(transitive);
-        options.setResolveMode(resolveMode);
-        options.setResolveId(resolveId);
-
-        ResolveReport report;
+    private Collection resolveResources(String id) throws BuildException {
+        prepareAndCheck();
         try {
-            report = ivy.resolve(md, options);
-        } catch (ParseException e) {
-            throw new BuildException(e);
-        } catch (IOException e) {
-            throw new BuildException(e);
-        }
-
-        List/* <FileResource> */resources = new ArrayList();
-
-        if (report.hasError()) {
-            throw new BuildException("resolve failed - see output for details");
-        } else {
-            Filter artifactTypeFilter = FilterHelper.getArtifactTypeFilter(type);
-
-            ConfigurationResolveReport configurationReport = report
-                    .getConfigurationReport("default");
-            Set revisions = configurationReport.getModuleRevisionIds();
-            for (Iterator it = revisions.iterator(); it.hasNext();) {
-                ModuleRevisionId revId = (ModuleRevisionId) it.next();
-                ArtifactDownloadReport[] aReports = configurationReport.getDownloadReports(revId);
-                for (int i = 0; i < aReports.length; i++) {
-                    if (artifactTypeFilter.accept(aReports[i].getArtifact())) {
-                        resources.add(new FileResource(aReports[i].getLocalFile()));
-                    }
-                }
+            List/* <FileResource> */resources = new ArrayList();
+            if (id != null) {
+                getProject().addReference(id, this);
             }
+            for (Iterator iter = getArtifactReports().iterator(); iter.hasNext();) {
+                ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
+                resources.add(new FileResource(a.getLocalFile()));
+            }
+            return resources;
+        } catch (Exception ex) {
+            throw new BuildException("impossible to build ivy resources: " + ex, ex);
         }
+    }
 
-        return resources;
+    // implementation of the IvyPostResolveTask API
+
+    public void doExecute() throws BuildException {
+        // TODO : maybe there is a way to implement it ?
+        throw new BuildException("ivy:resources should not be used as a Ant Task");
     }
 
 }

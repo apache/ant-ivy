@@ -113,6 +113,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- NEW: New Ant datatype ivy:resources, an Ant resource collection like ivy:cachepath or ivy:cachefileset (IVY-334)
+- NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
+
 - FIX: Can not use a v[revision] in an artifact pattern of a filesystem resolver (IVY-1238)
 - FIX: Cached ivy.xml is invalid if the description contains the ampersand entity (&amp;) (IVY-1237)
 - FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)

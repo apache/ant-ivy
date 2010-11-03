@@ -18,13 +18,20 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
@@ -81,6 +88,12 @@ public class IvyResolve extends IvyTask {
     private String log = ResolveOptions.LOG_DEFAULT;
     
     private boolean checkIfChanged = true; //for backward compatibility
+
+    private List/* <IvyDependency> */dependencies = new ArrayList();
+
+    private List/* <IvyExclude> */excludes = new ArrayList();
+
+    private List/* <IvyConflict> */conflicts = new ArrayList();
 
     public boolean isUseOrigin() {
         return useOrigin;
@@ -195,6 +208,24 @@ public class IvyResolve extends IvyTask {
         return failureProperty;
     }
 
+    public IvyDependency createDependency() {
+        IvyDependency dep = new IvyDependency();
+        dependencies.add(dep);
+        return dep;
+    }
+
+    public IvyExclude createExclude() {
+        IvyExclude ex = new IvyExclude();
+        excludes.add(ex);
+        return ex;
+    }
+
+    public IvyConflict createConflict() {
+        IvyConflict c = new IvyConflict();
+        conflicts.add(c);
+        return c;
+    }
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -203,8 +234,53 @@ public class IvyResolve extends IvyTask {
             type = getProperty(type, settings, "ivy.resolve.default.type.filter");
             String[] confs = splitConfs(conf);
 
+            boolean childs = !dependencies.isEmpty() || !excludes.isEmpty() || !conflicts.isEmpty();
+
             ResolveReport report;
-            if (isInline()) {
+            if (childs) {
+                if (isInline()) {
+                    throw new BuildException("the inline mode is incompatible with child elements");
+                }
+                if (organisation != null) {
+                    throw new BuildException("'organisation' is not allowed with child elements");
+                }
+                if (module != null) {
+                    throw new BuildException("'module' is not allowed with child elements");
+                }
+                if (file != null) {
+                    throw new BuildException("'file' not allowed with child elements");
+                }
+                if (!getAllowedLogOptions().contains(log)) {
+                    throw new BuildException("invalid option for 'log': " + log 
+                        + ". Available options are " + getAllowedLogOptions());
+                }
+
+                ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "", Ivy.getWorkingRevision());
+                DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(mrid, null);
+
+                Iterator itDeps = dependencies.iterator();
+                while (itDeps.hasNext()) {
+                    IvyDependency dep = (IvyDependency) itDeps.next();
+                    DependencyDescriptor dd = dep.asDependencyDescriptor(md, "default", settings);
+                    md.addDependency(dd);
+                }
+
+                Iterator itExcludes = excludes.iterator();
+                while (itExcludes.hasNext()) {
+                    IvyExclude exclude = (IvyExclude) itExcludes.next();
+                    DefaultExcludeRule rule = exclude.asRule(settings);
+                    rule.addConfiguration("default");
+                    md.addExcludeRule(rule);
+                }
+
+                Iterator itConflicts = conflicts.iterator();
+                while (itConflicts.hasNext()) {
+                    IvyConflict conflict = (IvyConflict) itConflicts.next();
+                    conflict.addConflict(md, settings);
+                }
+
+                report = ivy.resolve(md, getResolveOptions(ivy, new String[] {"default"}, settings));
+            } else if (isInline()) {
                 if (organisation == null) {
                     throw new BuildException("'organisation' is required when using inline mode");
                 }
@@ -229,7 +305,7 @@ public class IvyResolve extends IvyTask {
                 report = ivy.resolve(ModuleRevisionId
                         .newInstance(organisation, module, branch, revision), 
                         getResolveOptions(ivy, confs, settings), changing);
-
+                
             } else {
                 if (organisation != null) {
                     throw new BuildException(
