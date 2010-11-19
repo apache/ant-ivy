@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.osgi.ant;
+package org.apache.ivy.ant;
 
 import java.io.File;
 import java.io.FileNotFoundException;
