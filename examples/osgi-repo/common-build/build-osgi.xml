@@ -1,0 +1,67 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<project name="common-build" xmlns:ivy="ivy">
+
+    <dirname property="commondir" file="${ant.file.common-build}" />
+
+    <!-- Load Ivy ant tasks -->
+    <path id="antlib.classpath">
+        <fileset dir="${commondir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+    <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml" classpathref="antlib.classpath" />
+
+    <target name="clean" description="Clean the build directory">
+        <delete dir="${basedir}/target" />
+    </target>
+
+    <target name="ivy:configure">
+        <!-- classical ivy configuration -->
+        <ivy:configure file="${commondir}/ivysettings.xml" />
+    </target>
+
+    <target name="ivy:resolve" depends="ivy:configure">
+        <!-- the ivy file here is the manifest -->
+        <ivy:resolve file="META-INF/MANIFEST.MF" conf="*" />
+        <ivy:cachepath pathid="compile.classpath" conf="default" useOrigin="true" />
+    </target>
+
+    <target name="compile" depends="ivy:resolve" description="Compile the OSGi bundle">
+        <mkdir dir="${basedir}/target/classes" />
+        <!-- simple javac (WARNING: contrary to the JDT, javac doesn't understand OSGi's accessibility (private packages)) -->
+        <javac srcdir="${basedir}/src" classpathref="compile.classpath" destdir="${basedir}/target/classes" debug="true" includeAntRuntime="false" />
+        <copy todir="${basedir}/target/classes">
+            <fileset dir="${basedir}/src">
+                <include name="**" />
+                <exclude name="**/*.java" />
+                <exclude name="**/package.html" />
+            </fileset>
+            <fileset dir="${basedir}">
+                <include name="plugin.xml" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build" depends="compile" description="Build the Eclipse plugin">
+        <!-- simple jaring -->
+        <jar basedir="${basedir}/target/classes" destfile="${basedir}/target/${ant.project.name}.jar" manifest="META-INF/MANIFEST.MF" />
+    </target>
+
+</project>

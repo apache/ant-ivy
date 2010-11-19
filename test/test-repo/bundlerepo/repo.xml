@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->org.apache.ivy.osgi
+<repository>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle" version="1.2.3" uri="org.apache.ivy.osgi.testbundle_1.2.3.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle" />
+            <p n="version" v="1.2.3" />
+        </capability>
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.util" />
+            <p n="version" v="1.2.3" />
+        </capability>
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing_3.2.1.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing" />
+        </capability>
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle)" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.optional" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing.optional_3.2.1.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing.optional" />
+        </capability>
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle)" optional="true" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.transitiveoptional" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing.transitiveoptional_3.2.1.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing.transitiveoptional" />
+        </capability>
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle.importing.optional)" optional="true" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.version" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing.version_3.2.1.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing.version" />
+        </capability>
+        <require name="package" filter="(&amp;(package=org.apache.ivy.osgi.testbundle)(version&gt;=1.2.3))" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.rangeversion" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing.rangeversion_3.2.1.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing.rangeversion" />
+        </capability>
+        <require name="package" filter="(&amp;(package=org.apache.ivy.osgi.testbundle)(version&gt;=1.0.0)(version&lt;2.0.0))" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.use" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing.use_3.2.1.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing.use" />
+        </capability>
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle.use)" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.require" version="1.1.1" uri="org.apache.ivy.osgi.testbundle.require_1.1.1.jar">
+        <require name="bundle" filter="(&amp;(symbolicname=org.apache.ivy.osgi.testbundle.importing.version)(version&gt;=3.2.1))" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.use" version="2.2.2" uri="org.apache.ivy.osgi.testbundle.use_2.2.2.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.use" />
+            <p n="version" v="2.2.2" />
+            <p n="uses" v="org.apache.ivy.osgi.testbundle.importing" />
+        </capability>
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle.importing)" optional="true" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.exporting.ambiguity" version="3.3.3"
+        uri="org.apache.ivy.osgi.testbundle.exporting.ambiguity_3.3.3.jar">
+        <capability name="package">
+            <p n="package" v="org.apache.ivy.osgi.testbundle.importing.version" />
+        </capability>
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.ambiguity" version="3.2.1"
+        uri="org.apache.ivy.osgi.testbundle.importing.ambiguity_3.2.1.jar">
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle.importing.version)" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.require.ambiguity" version="1.1.1"
+        uri="org.apache.ivy.osgi.testbundle.require.ambiguity_1.1.1.jar">
+        <require name="bundle" filter="(&amp;(symbolicname=org.apache.ivy.osgi.testbundle.importing.version)(version&gt;=3.2.1))" />
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle.importing.version)" />
+    </resource>
+</repository>

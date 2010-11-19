@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.apache.ivy.osgi.testbundle.importing.rangeversion
+Bundle-Version: 3.2.1
+Import-Package: org.apache.ivy.osgi.testbundle;version="[1.0.0,2.0.0)"
+Export-Package: org.apache.ivy.osgi.testbundle.importing.rangeversion

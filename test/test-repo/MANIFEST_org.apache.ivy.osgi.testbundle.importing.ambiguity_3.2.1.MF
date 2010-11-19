@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.apache.ivy.osgi.testbundle.importing.ambiguity
+Bundle-Version: 3.2.1
+Import-Package: org.apache.ivy.osgi.testbundle.importing.version

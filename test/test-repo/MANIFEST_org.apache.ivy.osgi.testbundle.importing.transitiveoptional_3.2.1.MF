@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.apache.ivy.osgi.testbundle.importing.transitiveoptional
+Bundle-Version: 3.2.1
+Import-Package: org.apache.ivy.osgi.testbundle.importing.optional;resolution:="optional"
+Export-Package: org.apache.ivy.osgi.testbundle.importing.transitiveoptional

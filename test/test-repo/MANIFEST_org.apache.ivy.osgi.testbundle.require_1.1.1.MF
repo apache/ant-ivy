@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.apache.ivy.osgi.testbundle.require
+Bundle-Version: 1.1.1
+Require-Bundle: org.apache.ivy.osgi.testbundle.importing.version;bundle-version="3.2.1"

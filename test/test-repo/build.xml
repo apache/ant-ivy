@@ -1,0 +1,56 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<project basedir="." default="generate-bundles" name="ivy-osgi-test-repo">
+
+	<echo message="${basedir}"/>
+	
+    <!-- Need ant contrib ! -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    	<classpath location="${basedir}/../../lib/test/ant-contrib.jar"/>
+   	</taskdef>
+
+    <target name="generate-bundles">
+        <foreach target="generate-bundle" param="manifest">
+            <path>
+                <fileset dir="${basedir}">
+                    <include name="MANIFEST*.MF" />
+                </fileset>
+            </path>
+        </foreach>
+    </target>
+
+    <target name="generate-bundle">
+        <propertyregex property="bundle.name" input="${manifest}" regexp="MANIFEST_(.*)_(.*).MF" select="\1" casesensitive="false" />
+        <propertyregex property="module.name.dotted" input="${bundle.name}" regexp="org\.apache\.ivy\.osgi\.(.*)" select="\1" casesensitive="false" />
+        <propertyregex property="module.name" input="${module.name.dotted}" regexp="\." replace="-" global="true" defaultValue="${module.name.dotted}" />
+        <propertyregex property="bundle.version" input="${manifest}" regexp="MANIFEST_(.*)_(.*).MF" select="\2" casesensitive="false" />
+        <jar destfile="bundlerepo/${bundle.name}_${bundle.version}.jar" manifest="${manifest}" />
+        <mkdir dir="ivyrepo/org.apache.ivy.osgi/${module.name}/${bundle.version}/jars/" />
+        <copy file="bundlerepo/${bundle.name}_${bundle.version}.jar" tofile="ivyrepo/org.apache.ivy.osgi/${module.name}/${bundle.version}/jars/${module.name}-${bundle.version}.jar" />
+        <echoxml file="ivyrepo/org.apache.ivy.osgi/${module.name}/${bundle.version}/ivy.xml">
+            <ivy-module version="1.0">
+                <info organisation="org.apache.ivy.osgi" module="${module.name}" revision="${bundle.version}" />
+                <publications>
+                    <artifact name="${module.name}" type="jar" ext="jar" />
+                </publications>
+            </ivy-module>
+        </echoxml>
+    </target>
+
+</project>
