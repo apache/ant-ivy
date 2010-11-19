@@ -49,14 +49,11 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.util.Message;
-import org.apache.tools.ant.types.resources.FileResource;
 
 /**
  * An parser for OSGi Manifest descriptor.
- * 
- * @author jerome@benois.fr
- * @author alex@radeski.net
  */
 public class OsgiManifestParser extends AbstractModuleDescriptorParser {
 
@@ -122,7 +119,7 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
 
         public void parse(Resource res, boolean useExports) throws IOException {
             Manifest manifest;
-            if ((res instanceof FileResource) && ((FileResource) res).isDirectory()) {
+            if ((res instanceof FileResource) && ((FileResource) res).getFile().isDirectory()) {
                 manifest = new Manifest(
                         new FileInputStream(res.getName() + "/META-INF/MANIFEST.MF"));
             } else if (res.getName().toUpperCase().endsWith(".JAR")) {
