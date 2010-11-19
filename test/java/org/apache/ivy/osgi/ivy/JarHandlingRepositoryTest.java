@@ -27,7 +27,7 @@ public class JarHandlingRepositoryTest extends TestCase {
 
     public void test() throws IOException {
         final JarEntryResource resource = new JarEntryResource(
-                "java/test-bundles/jars/com.acme.alpha-1.0.0.20080101.jar!META-INF/MANIFEST.MF");
+                "test/test-bundles/jars/com.acme.alpha-1.0.0.20080101.jar!META-INF/MANIFEST.MF");
         assertNotNull(resource.openStream());
         assertTrue(resource.isLocal());
         assertTrue(resource.exists());

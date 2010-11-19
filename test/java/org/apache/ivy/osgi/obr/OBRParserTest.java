@@ -31,7 +31,7 @@ public class OBRParserTest extends TestCase {
 
     public void testParse() throws Exception {
         BundleRepo repo = OBRXMLParser
-                .parse(new FileInputStream(new File("java/test-obr/obr.xml")));
+                .parse(new FileInputStream(new File("test/test-obr/obr.xml")));
         assertNotNull(repo);
         System.out.println(repo.getBundles().size() + " bundles successfully parsed, "
                 + Message.getProblems().size() + " errors");

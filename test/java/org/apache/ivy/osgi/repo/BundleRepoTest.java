@@ -42,24 +42,24 @@ import org.xml.sax.SAXException;
 public class BundleRepoTest extends TestCase {
 
     public void testFS() throws Exception {
-        FSManifestIterable it = new FSManifestIterable(new File("java/test-repo/bundlerepo"), "");
+        FSManifestIterable it = new FSManifestIterable(new File("test/test-repo/bundlerepo"), "");
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 
         BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
-                "java/test-repo/bundlerepo/repo.xml"));
+                "test/test-repo/bundlerepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }
 
     public void testFileRepo() throws Exception {
         RepositoryManifestIterable it = new RepositoryManifestIterable(new FileRepository(new File(
-                "java/test-repo/bundlerepo")));
+                "test/test-repo/bundlerepo")));
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 
         BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
-                "java/test-repo/bundlerepo/repo.xml"));
+                "test/test-repo/bundlerepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }
@@ -67,7 +67,7 @@ public class BundleRepoTest extends TestCase {
     public void testResolver() throws Exception {
         FileSystemResolver fileSystemResolver = new FileSystemResolver();
         fileSystemResolver.setName("test");
-        File ivyrepo = new File("java/test-repo/ivyrepo");
+        File ivyrepo = new File("test/test-repo/ivyrepo");
         fileSystemResolver.addIvyPattern(ivyrepo.getAbsolutePath()
                 + "/[organisation]/[module]/[revision]/ivy.xml");
         fileSystemResolver.addArtifactPattern(ivyrepo.getAbsolutePath()
@@ -78,13 +78,13 @@ public class BundleRepoTest extends TestCase {
         repo.populate(it);
 
         BundleRepo repo2 = OBRXMLParser
-                .parse(new FileInputStream("java/test-repo/ivyrepo/repo.xml"));
+                .parse(new FileInputStream("test/test-repo/ivyrepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }
 
     public void testXMLSerialisation() throws SAXException, ParseException, IOException {
-        FSManifestIterable it = new FSManifestIterable(new File("java/test-repo/bundlerepo"), "");
+        FSManifestIterable it = new FSManifestIterable(new File("test/test-repo/bundlerepo"), "");
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 

@@ -71,6 +71,7 @@
         <property name="bundle.bin" value="${bundle.dir}/bin" />
         <property name="bundle.manifest" value="${bundle.dir}/META-INF/MANIFEST.MF" />
 
+    	<mkdir dir="${bundle.bin}" />
         <javac destdir="${bundle.bin}" srcdir="${bundle.src}" />
 
         <jar destfile="${jars.dir}/com.acme.${bundle.name}-${bundle.version}.jar" basedir="${bundle.bin}" manifest="${bundle.manifest}" />
@@ -85,13 +86,14 @@
 
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
         <classpath>
-            <pathelement location="${basedir}/../../lib/ivy*.jar"/>
+            <pathelement location="${basedir}/../../build/classes/core" />
+            <pathelement location="${basedir}/../../build/classes/bootstrap" />
         </classpath>
     </taskdef>
 
     <target name="ivy">
         <ivy:settings file="${basedir}/../test-ivy/acme-ivysettings.xml" />
         <ivy:resolve file="${basedir}/../test-ivy/acme-ivy.xml" />
-        <ivy:retrieve pattern="${basedir}/../../target/test-data/bundles/[artifact]-[revision].[ext]"/>
+        <ivy:retrieve pattern="${basedir}/../../build/test-data/bundles/[artifact]-[revision].[ext]"/>
     </target>
 </project>

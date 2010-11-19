@@ -426,8 +426,13 @@
             </fileset>
         </copy>
     </target>
-    
-    <target name="test-internal" depends="build-test, init-tests" unless="skip.test">
+
+	<target name="prepare-test" depends="resolve" unless="skip.test">
+        <ant dir="${basedir}/test/test-repo" target="generate-bundles" />
+        <ant dir="${basedir}/test/test-bundles" target="build-all" />
+	</target>
+
+	<target name="test-internal" depends="build-test, init-tests" unless="skip.test">
         <mkdir dir="${test.xml.dir}" />
     	
         <junit 

@@ -34,10 +34,10 @@ public class OsgiIvyParserTest extends TestCase {
 
     public void testSimple() throws Exception {
         IvySettings settings = new IvySettings();
-        settings.load(new File("java/test-ivy/include/ivysettings.xml"));
+        settings.load(new File("test/test-ivy/include/ivysettings.xml"));
 
         URLResource includingResource = new URLResource(
-                new File("java/test-ivy/include/ivy.xml").toURL());
+                new File("test/test-ivy/include/ivy.xml").toURL());
         ModuleDescriptorParser includingParser = ModuleDescriptorParserRegistry.getInstance()
                 .getParser(includingResource);
         assertTrue(includingParser instanceof OsgiIvyParser);
@@ -47,7 +47,7 @@ public class OsgiIvyParserTest extends TestCase {
         assertNotNull(includingMd);
 
         URLResource resultResource = new URLResource(new File(
-                "java/test-ivy/include/ivy-result.xml").toURL());
+                "test/test-ivy/include/ivy-result.xml").toURL());
         ModuleDescriptorParser resultParser = ModuleDescriptorParserRegistry.getInstance()
                 .getParser(resultResource);
         ModuleDescriptor resultMd = resultParser.parseDescriptor(settings, resultResource.getURL(),

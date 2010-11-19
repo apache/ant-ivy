@@ -37,7 +37,7 @@ import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
 public class IvyIntegrationTest extends AbstractModuleDescriptorParserTester {
 
     private URL getTestResource(String resource) throws MalformedURLException {
-        return new File("java/test-ivy/" + resource).toURI().toURL();
+        return new File("test/test-ivy/" + resource).toURI().toURL();
     }
 
     public void testAcmeResolveAlpha() throws Exception {

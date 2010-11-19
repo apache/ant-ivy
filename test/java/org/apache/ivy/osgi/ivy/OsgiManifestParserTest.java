@@ -42,7 +42,7 @@ import org.apache.ivy.util.FileUtil;
 public class OsgiManifestParserTest extends AbstractModuleDescriptorParserTester {
 
     private URL getTestResource(String resource) throws MalformedURLException {
-        return new File("java/test-ivy/" + resource).toURI().toURL();
+        return new File("test/test-ivy/" + resource).toURI().toURL();
     }
 
     public void testAccept() throws Exception {

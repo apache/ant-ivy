@@ -18,11 +18,9 @@
 -->
 <project basedir="." default="generate-bundles" name="ivy-osgi-test-repo">
 
-	<echo message="${basedir}"/>
-	
     <!-- Need ant contrib ! -->
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-    	<classpath location="${basedir}/../../lib/test/ant-contrib.jar"/>
+    	<classpath location="${basedir}/../../lib/ant-contrib.jar"/>
    	</taskdef>
 
     <target name="generate-bundles">

@@ -93,14 +93,14 @@ public class BundleRepoResolverTest extends TestCase {
         settings = new IvySettings();
 
         bundleResolver = new BundleRepoResolver();
-        bundleResolver.setRepoXmlFile(new File("java/test-repo/bundlerepo/repo.xml")
+        bundleResolver.setRepoXmlFile(new File("test/test-repo/bundlerepo/repo.xml")
                 .getAbsolutePath());
         bundleResolver.setName("bundle");
         bundleResolver.setSettings(settings);
         settings.addResolver(bundleResolver);
 
         bundleUrlResolver = new BundleRepoResolver();
-        bundleUrlResolver.setRepoXmlURL(new File("java/test-repo/bundlerepo/repo.xml").toURI()
+        bundleUrlResolver.setRepoXmlURL(new File("test/test-repo/bundlerepo/repo.xml").toURI()
                 .toURL().toExternalForm());
         bundleUrlResolver.setName("bundleurl");
         bundleUrlResolver.setSettings(settings);
@@ -108,12 +108,12 @@ public class BundleRepoResolverTest extends TestCase {
 
         dualResolver = new DualResolver();
         BundleRepoResolver resolver = new BundleRepoResolver();
-        resolver.setRepoXmlFile("java/test-repo/ivyrepo/repo.xml");
+        resolver.setRepoXmlFile("test/test-repo/ivyrepo/repo.xml");
         resolver.setName("dual-bundle");
         resolver.setSettings(settings);
         dualResolver.add(resolver);
         dualResolver.setName("dual");
-        File ivyrepo = new File("java/test-repo/ivyrepo");
+        File ivyrepo = new File("test/test-repo/ivyrepo");
         FileSystemResolver fileSystemResolver = new FileSystemResolver();
         fileSystemResolver.addIvyPattern(ivyrepo.getAbsolutePath()
                 + "/[organisation]/[module]/[revision]/ivy.xml");
@@ -270,7 +270,7 @@ public class BundleRepoResolverTest extends TestCase {
 
     private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids)
             throws Exception {
-        JarInputStream in = new JarInputStream(new FileInputStream("java/test-repo/bundlerepo/"
+        JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo, null);
@@ -291,7 +291,7 @@ public class BundleRepoResolverTest extends TestCase {
     }
 
     private void genericTestFailingResolve(String jarName, String conf) throws Exception {
-        JarInputStream in = new JarInputStream(new FileInputStream("java/test-repo/bundlerepo/"
+        JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo, null);
