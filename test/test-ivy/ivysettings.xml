@@ -24,14 +24,14 @@
         <osgi-parser />
     </parsers>
     <caches default="localcache">
-        <cache name="localcache" basedir="target/test-data/cache">            
+        <cache name="localcache" basedir="${ivy.settings.dir}/../../build/test-data/cache">            
             <ttl duration="0d" />            
         </cache>
     </caches>
     <resolvers>
         <osgi-file-resolver name="osgi-rep">
-            <ivy pattern="java/test-ivy/osgi/eclipse/plugins/[organisation].[module]" />
-            <ivy pattern="java/test-ivy/osgi/eclipse/features/[organisation].[module]" />
+            <ivy pattern="test/test-ivy/osgi/eclipse/plugins/[organisation].[module]" />
+            <ivy pattern="test/test-ivy/osgi/eclipse/features/[organisation].[module]" />
         </osgi-file-resolver>
     </resolvers>
 </ivysettings>

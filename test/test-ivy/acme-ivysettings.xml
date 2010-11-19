@@ -25,19 +25,19 @@
         <osgi-parser />
     </parsers>
     <caches default="localcache">
-        <cache name="localcache" basedir="target/test-data/cache">
+        <cache name="localcache" basedir="${ivy.settings.dir}/../../build/test-data/cache">
             <ttl duration="0d" />
         </cache>
     </caches>
     <resolvers>
         <chain name="default" returnFirst="true">
             <osgi-file-resolver name="repo1">
-                <ivy pattern="java/test-bundles/dirs/[organisation].[module]-[revision]" />
-                <artifact pattern="java/test-bundles/dirs/[organisation].[module]-[revision]" />
+                <ivy pattern="test/test-bundles/dirs/[organisation].[module]-[revision]" />
+                <artifact pattern="test/test-bundles/dirs/[organisation].[module]-[revision]" />
             </osgi-file-resolver>
             <osgi-file-resolver name="repo2">
-                <ivy pattern="java/test-bundles/jars/[organisation].[module]-[revision].jar" />
-                <artifact pattern="java/test-bundles/jars/[organisation].[module]-[revision].jar" />
+                <ivy pattern="test/test-bundles/jars/[organisation].[module]-[revision].jar" />
+                <artifact pattern="test/test-bundles/jars/[organisation].[module]-[revision].jar" />
             </osgi-file-resolver>
         </chain>
     </resolvers>
