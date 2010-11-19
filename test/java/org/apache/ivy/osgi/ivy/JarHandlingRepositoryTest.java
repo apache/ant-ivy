@@ -17,20 +17,17 @@
  */
 package org.apache.ivy.osgi.ivy;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.osgi.ivy.internal.JarEntryResource;
-import org.junit.Test;
 
+public class JarHandlingRepositoryTest extends TestCase {
 
-public class JarHandlingRepositoryTest {
-
-    @Test
     public void test() throws IOException {
-        final JarEntryResource resource = new JarEntryResource("java/test-bundles/jars/com.acme.alpha-1.0.0.20080101.jar!META-INF/MANIFEST.MF");
+        final JarEntryResource resource = new JarEntryResource(
+                "java/test-bundles/jars/com.acme.alpha-1.0.0.20080101.jar!META-INF/MANIFEST.MF");
         assertNotNull(resource.openStream());
         assertTrue(resource.isLocal());
         assertTrue(resource.exists());

@@ -17,14 +17,14 @@
  */
 package org.apache.ivy.osgi.ivy.internal;
 
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -36,9 +36,6 @@ import org.apache.ivy.osgi.util.VersionComparator;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
-
-
-import static org.apache.ivy.osgi.ivy.OsgiManifestParser.PACKAGE;
 
 public class PackageRegistry {
 
@@ -52,7 +49,7 @@ public class PackageRegistry {
 
     private final OsgiManifestParser osgiManifestParser = new OsgiManifestParser();
 
-    private final Set<String> processedEntries = new HashSet<String>();
+    private final Set/* <String> */processedEntries = new HashSet/* <String> */();
 
     private File cacheDir;
 
@@ -75,23 +72,26 @@ public class PackageRegistry {
             e.printStackTrace();
             return;
         }
-        
-        if(md == null) {
+
+        if (md == null) {
             return;
         }
 
         final ModuleRevisionId mrid = md.getResolvedModuleRevisionId();
 
-        final File pkgRootDir = new File(cacheDir, PACKAGE);
+        final File pkgRootDir = new File(cacheDir, OsgiManifestParser.PACKAGE);
         pkgRootDir.mkdirs();
 
-        for (DependencyDescriptor dep : md.getDependencies()) {
+        DependencyDescriptor[] deps = md.getDependencies();
+        for (int i = 0; i < deps.length; i++) {
+            DependencyDescriptor dep = deps[i];
             final ModuleRevisionId depMrid = dep.getDependencyRevisionId();
-            if (depMrid.getOrganisation().equalsIgnoreCase(PACKAGE)) {
-                final File pkgDir = new File(pkgRootDir, (depMrid.getName().replace('.', '/') + "/"));
+            if (depMrid.getOrganisation().equalsIgnoreCase(OsgiManifestParser.PACKAGE)) {
+                final File pkgDir = new File(pkgRootDir,
+                        (depMrid.getName().replace('.', '/') + "/"));
                 pkgDir.mkdirs();
                 final File file = new File(pkgDir, mrid + PKGREF);
-                if(!file.exists()) {
+                if (!file.exists()) {
                     Message.debug("\t\tWriting pkg ref: " + file);
                     file.createNewFile();
                 }
@@ -102,14 +102,18 @@ public class PackageRegistry {
     }
 
     public ModuleRevisionId processImports(final String pkgName, final VersionRange importRange) {
-        final File pkgRootDir = new File(cacheDir, PACKAGE);
+        final File pkgRootDir = new File(cacheDir, OsgiManifestParser.PACKAGE);
         if (!pkgRootDir.canRead() || !pkgRootDir.isDirectory()) {
             return null;
         }
 
         final File pkgDir = new File(pkgRootDir, pkgName.replace('.', '/') + "/");
-        
-        final TreeMap<Version, ModuleRevisionId> pkgMrids = new TreeMap<Version, ModuleRevisionId>(VersionComparator.DESCENDING);
+
+        final TreeMap/* <Version, ModuleRevisionId> */pkgMrids = new TreeMap/*
+                                                                             * <Version,
+                                                                             * ModuleRevisionId>
+                                                                             */(
+                VersionComparator.DESCENDING);
         pkgDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 if (name.endsWith(PKGREF)) {
@@ -117,20 +121,24 @@ public class PackageRegistry {
                     final int hashIdx = baseName.indexOf('#');
                     final int semicolIdx = baseName.indexOf(';');
                     final String mridOrg = baseName.substring(0, hashIdx);
-                    final String[] tokens = baseName.substring(hashIdx + 1, semicolIdx).split("[#]");
+                    final String[] tokens = baseName.substring(hashIdx + 1, semicolIdx)
+                            .split("[#]");
                     final String mridName = tokens[0];
                     final String mridBranch = (tokens.length > 1 ? tokens[1] : null);
                     final String mridRev = baseName.substring(semicolIdx + 1);
-                    pkgMrids.put(new Version(mridRev), new ModuleRevisionId(new ModuleId(mridOrg, mridName), mridBranch, mridRev));
+                    pkgMrids.put(new Version(mridRev), new ModuleRevisionId(new ModuleId(mridOrg,
+                            mridName), mridBranch, mridRev));
                 }
                 return false;
             }
         });
 
         ModuleRevisionId matchingMrid = null;
-        for (Entry<Version, ModuleRevisionId> entry : pkgMrids.entrySet()) {
-            if (importRange == null || importRange.contains(entry.getKey())) {
-                matchingMrid = entry.getValue();
+        Iterator itMrid = pkgMrids.entrySet().iterator();
+        while (itMrid.hasNext()) {
+            Entry/* <Version, ModuleRevisionId> */entry = (Entry) itMrid.next();
+            if (importRange == null || importRange.contains((String) entry.getKey())) {
+                matchingMrid = (ModuleRevisionId) entry.getValue();
                 break;
             }
         }

@@ -40,22 +40,20 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable {
         this.repo = repo;
     }
 
-    @Override
     protected InputStream getInputStream(String f) throws IOException {
         return repo.getResource(f).openStream();
     }
 
-    @Override
-    protected List<String> listBundleFiles(String dir) throws IOException {
+    protected List/* <String> */listBundleFiles(String dir) throws IOException {
         return asList(ResolverHelper.listAll(repo, dir));
     }
 
-    @Override
-    protected List<String> listDirs(String dir) throws IOException {
+    protected List/* <String> */listDirs(String dir) throws IOException {
         return asList(ResolverHelper.listAll(repo, dir));
     }
 
-    private List<String> asList(String[] array) {
-        return array == null ? Collections.<String> emptyList() : Arrays.<String> asList(array);
+    private List/* <String> */asList(String[] array) {
+        return array == null ? Collections./* <String> */emptyList() : Arrays
+                ./* <String> */asList(array);
     }
 }

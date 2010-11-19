@@ -29,7 +29,6 @@ public abstract class UniOperatorFilter extends RequirementFilter {
 
     abstract protected char operator();
 
-    @Override
     public void append(StringBuilder builder) {
         builder.append("(");
         builder.append(operator());
@@ -41,7 +40,6 @@ public abstract class UniOperatorFilter extends RequirementFilter {
         return subFilter;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -49,7 +47,6 @@ public abstract class UniOperatorFilter extends RequirementFilter {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

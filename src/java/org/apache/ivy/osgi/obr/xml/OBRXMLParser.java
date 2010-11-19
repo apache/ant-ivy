@@ -34,7 +34,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-
 public class OBRXMLParser {
 
     static final String REPOSITORY = "repository";
@@ -96,7 +95,7 @@ public class OBRXMLParser {
         return handler.repo;
     }
 
-    private static class RepositoryHandler extends DelegetingHandler<DelegetingHandler<?>> {
+    private static class RepositoryHandler extends DelegetingHandler/* <DelegetingHandler<?>> */{
 
         BundleRepo repo;
 
@@ -105,7 +104,6 @@ public class OBRXMLParser {
             new ResourceHandler(this);
         }
 
-        @Override
         protected void handleAttributes(Attributes atts) {
             repo = new BundleRepo();
 
@@ -115,13 +113,14 @@ public class OBRXMLParser {
             try {
                 repo.setLastModified(Long.valueOf(lastModified));
             } catch (NumberFormatException e) {
-                printWarning(this, "Incorrect last modified timestamp : " + lastModified + ". It will be ignored.");
+                printWarning(this, "Incorrect last modified timestamp : " + lastModified
+                        + ". It will be ignored.");
             }
 
         }
     }
 
-    private static class ResourceHandler extends DelegetingHandler<RepositoryHandler> {
+    private static class ResourceHandler extends DelegetingHandler/* <RepositoryHandler> */{
 
         BundleInfo bundleInfo;
 
@@ -135,7 +134,6 @@ public class OBRXMLParser {
             new RequireHandler(this);
         }
 
-        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String symbolicname = atts.getValue(RESOURCE_SYMBOLIC_NAME);
             if (symbolicname == null) {
@@ -152,8 +150,8 @@ public class OBRXMLParser {
                 try {
                     version = new Version(v);
                 } catch (NumberFormatException e) {
-                    printError(this, "Incorrect resource version: " + v + ". The resource " + symbolicname
-                            + " is then ignored.");
+                    printError(this, "Incorrect resource version: " + v + ". The resource "
+                            + symbolicname + " is then ignored.");
                     skip();
                     return;
                 }
@@ -165,72 +163,68 @@ public class OBRXMLParser {
             bundleInfo.setId(atts.getValue(RESOURCE_ID));
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            getParent().repo.addBundle(bundleInfo);
+            ((RepositoryHandler) getParent()).repo.addBundle(bundleInfo);
         }
 
     }
 
-    private static class ResourceDescriptionHandler extends DelegetingHandler<ResourceHandler> {
+    private static class ResourceDescriptionHandler extends DelegetingHandler/* <ResourceHandler> */{
 
         public ResourceDescriptionHandler(ResourceHandler resourceHandler) {
             super("description", resourceHandler);
             setBufferingChar(true);
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            getParent().bundleInfo.setDescription(getBufferedChars().trim());
+            ((ResourceHandler) getParent()).bundleInfo.setDescription(getBufferedChars().trim());
         }
     }
 
-    private static class ResourceDocumentationHandler extends DelegetingHandler<ResourceHandler> {
+    private static class ResourceDocumentationHandler extends DelegetingHandler/* <ResourceHandler> */{
 
         public ResourceDocumentationHandler(ResourceHandler resourceHandler) {
             super("documentation", resourceHandler);
             setBufferingChar(true);
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            getParent().bundleInfo.setDocumentation(getBufferedChars().trim());
+            ((ResourceHandler) getParent()).bundleInfo.setDocumentation(getBufferedChars().trim());
         }
     }
 
-    private static class ResourceLicenseHandler extends DelegetingHandler<ResourceHandler> {
+    private static class ResourceLicenseHandler extends DelegetingHandler/* <ResourceHandler> */{
 
         public ResourceLicenseHandler(ResourceHandler resourceHandler) {
             super("license", resourceHandler);
             setBufferingChar(true);
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            getParent().bundleInfo.setLicense(getBufferedChars().trim());
+            ((ResourceHandler) getParent()).bundleInfo.setLicense(getBufferedChars().trim());
         }
     }
 
-    private static class ResourceSizeHandler extends DelegetingHandler<ResourceHandler> {
+    private static class ResourceSizeHandler extends DelegetingHandler/* <ResourceHandler> */{
 
         public ResourceSizeHandler(ResourceHandler resourceHandler) {
             super("size", resourceHandler);
             setBufferingChar(true);
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
             String size = getBufferedChars().trim();
             try {
-                getParent().bundleInfo.setSize(Integer.valueOf(size));
+                ((ResourceHandler) getParent()).bundleInfo.setSize(Integer.valueOf(size));
             } catch (NumberFormatException e) {
-                printWarning(this, "Invalid size for the bundle" + getParent().bundleInfo.getSymbolicName() + ": "
+                printWarning(this, "Invalid size for the bundle"
+                        + ((ResourceHandler) getParent()).bundleInfo.getSymbolicName() + ": "
                         + size + ". This size is then ignored.");
             }
         }
     }
 
-    private static class CapabilityHandler extends DelegetingHandler<ResourceHandler> {
+    private static class CapabilityHandler extends DelegetingHandler/* <ResourceHandler> */{
 
         Capability capability;
 
@@ -239,7 +233,6 @@ public class OBRXMLParser {
             new CapabilityPropertyHandler(this);
         }
 
-        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String name = atts.getValue(CAPABILITY_NAME);
             if (name == null) {
@@ -250,43 +243,41 @@ public class OBRXMLParser {
             capability = new Capability(name);
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
             try {
-                CapabilityAdapter.adapt(getParent().bundleInfo, capability);
+                CapabilityAdapter.adapt(((ResourceHandler) getParent()).bundleInfo, capability);
             } catch (ParseException e) {
                 skipResourceOnError(this, "Invalid capability: " + e.getMessage());
             }
         }
     }
 
-    private static class CapabilityPropertyHandler extends DelegetingHandler<CapabilityHandler> {
+    private static class CapabilityPropertyHandler extends DelegetingHandler/* <CapabilityHandler> */{
 
         public CapabilityPropertyHandler(CapabilityHandler capabilityHandler) {
             super(CAPABILITY_PROPERTY, capabilityHandler);
         }
 
-        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String name = atts.getValue(CAPABILITY_PROPERTY_NAME);
             if (name == null) {
                 skipResourceOnError(this, "Capability property with no name on a capability "
-                        + getParent().capability.getName());
+                        + ((CapabilityHandler) getParent()).capability.getName());
                 return;
             }
             String value = atts.getValue(CAPABILITY_PROPERTY_VALUE);
             if (value == null) {
                 skipResourceOnError(this, "Capability property with no value on a capability "
-                        + getParent().capability.getName());
+                        + ((CapabilityHandler) getParent()).capability.getName());
                 return;
             }
             String type = atts.getValue(CAPABILITY_PROPERTY_TYPE);
 
-            getParent().capability.addProperty(name, value, type);
+            ((CapabilityHandler) getParent()).capability.addProperty(name, value, type);
         }
     }
 
-    private static class RequireHandler extends DelegetingHandler<ResourceHandler> {
+    private static class RequireHandler extends DelegetingHandler/* <ResourceHandler> */{
 
         private Requirement requirement;
 
@@ -294,7 +285,6 @@ public class OBRXMLParser {
             super(REQUIRE, resourceHandler);
         }
 
-        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String name = atts.getValue(REQUIRE_NAME);
             if (name == null) {
@@ -317,7 +307,8 @@ public class OBRXMLParser {
             try {
                 optional = parseBoolean(atts, REQUIRE_OPTIONAL);
             } catch (ParseException e) {
-                skipResourceOnError(this, "Requirement with unrecognised optional: " + e.getMessage());
+                skipResourceOnError(this,
+                    "Requirement with unrecognised optional: " + e.getMessage());
                 return;
             }
 
@@ -325,7 +316,8 @@ public class OBRXMLParser {
             try {
                 multiple = parseBoolean(atts, REQUIRE_MULTIPLE);
             } catch (ParseException e) {
-                skipResourceOnError(this, "Requirement with unrecognised multiple: " + e.getMessage());
+                skipResourceOnError(this,
+                    "Requirement with unrecognised multiple: " + e.getMessage());
                 return;
             }
 
@@ -349,14 +341,14 @@ public class OBRXMLParser {
             }
         }
 
-        @Override
         protected void doEndElement(String uri, String localName, String name) throws SAXException {
             try {
-                RequirementAdapter.adapt(getParent().bundleInfo, requirement);
+                RequirementAdapter.adapt(((ResourceHandler) getParent()).bundleInfo, requirement);
             } catch (UnsupportedFilterException e) {
                 skipResourceOnError(this, "Unsupported requirement filter: " + e.getMessage());
             } catch (ParseException e) {
-                skipResourceOnError(this, "Error in the requirement filter on the bundle: " + e.getMessage());
+                skipResourceOnError(this,
+                    "Error in the requirement filter on the bundle: " + e.getMessage());
             }
         }
     }
@@ -367,29 +359,30 @@ public class OBRXMLParser {
             return null;
         }
         if (TRUE.equalsIgnoreCase(v)) {
-            return true;
+            return Boolean.TRUE;
         } else if (FALSE.equalsIgnoreCase(v)) {
-            return false;
+            return Boolean.FALSE;
         } else {
             throw new ParseException("Unparsable boolean value: " + v, 0);
         }
     }
 
-    private static void skipResourceOnError(DelegetingHandler<?> handler, String message) {
-        DelegetingHandler<?> resourceHandler = handler;
+    private static void skipResourceOnError(DelegetingHandler/* <?> */handler, String message) {
+        DelegetingHandler/* <?> */resourceHandler = handler;
         while (!(resourceHandler instanceof ResourceHandler)) {
             resourceHandler = resourceHandler.getParent();
         }
         BundleInfo bundleInfo = ((ResourceHandler) resourceHandler).bundleInfo;
-        printError(handler, message + ". The resource " + bundleInfo.getSymbolicName() + " is then ignored.");
+        printError(handler, message + ". The resource " + bundleInfo.getSymbolicName()
+                + " is then ignored.");
         resourceHandler.skip();
     }
 
-    private static void printError(DelegetingHandler<?> handler, String message) {
+    private static void printError(DelegetingHandler/* <?> */handler, String message) {
         Message.error(getLocation(handler.getLocator()) + message);
     }
 
-    private static void printWarning(DelegetingHandler<?> handler, String message) {
+    private static void printWarning(DelegetingHandler/* <?> */handler, String message) {
         Message.warn(getLocation(handler.getLocator()) + message);
     }
 

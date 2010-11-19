@@ -34,15 +34,10 @@ import junit.framework.TestCase;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.obr.xml.OBRXMLWriter;
-import org.apache.ivy.osgi.repo.BundleRepo;
-import org.apache.ivy.osgi.repo.FSManifestIterable;
-import org.apache.ivy.osgi.repo.RepositoryManifestIterable;
-import org.apache.ivy.osgi.repo.ResolverManifestIterable;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.tools.ant.BuildException;
 import org.xml.sax.SAXException;
-
 
 public class BundleRepoTest extends TestCase {
 
@@ -51,7 +46,8 @@ public class BundleRepoTest extends TestCase {
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 
-        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream("java/test-repo/bundlerepo/repo.xml"));
+        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
+                "java/test-repo/bundlerepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }
@@ -62,7 +58,8 @@ public class BundleRepoTest extends TestCase {
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 
-        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream("java/test-repo/bundlerepo/repo.xml"));
+        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
+                "java/test-repo/bundlerepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }
@@ -71,7 +68,8 @@ public class BundleRepoTest extends TestCase {
         FileSystemResolver fileSystemResolver = new FileSystemResolver();
         fileSystemResolver.setName("test");
         File ivyrepo = new File("java/test-repo/ivyrepo");
-        fileSystemResolver.addIvyPattern(ivyrepo.getAbsolutePath() + "/[organisation]/[module]/[revision]/ivy.xml");
+        fileSystemResolver.addIvyPattern(ivyrepo.getAbsolutePath()
+                + "/[organisation]/[module]/[revision]/ivy.xml");
         fileSystemResolver.addArtifactPattern(ivyrepo.getAbsolutePath()
                 + "/[organisation]/[module]/[revision]/[type]s/[artifact]-[revision].[ext]");
         fileSystemResolver.setSettings(new IvySettings());
@@ -79,7 +77,8 @@ public class BundleRepoTest extends TestCase {
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 
-        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream("java/test-repo/ivyrepo/repo.xml"));
+        BundleRepo repo2 = OBRXMLParser
+                .parse(new FileInputStream("java/test-repo/ivyrepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }

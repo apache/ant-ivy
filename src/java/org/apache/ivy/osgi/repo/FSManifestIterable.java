@@ -34,12 +34,12 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
     /**
      * List of directory name that usually contains jars but are not bundles
      */
-    public static final Set<String> NON_BUNDLE_DIRS = new HashSet<String>(Arrays.asList("source", "sources", "javadoc",
-            "javadocs", "doc", "docs"));
+    public static final Set/* <String> */NON_BUNDLE_DIRS = new HashSet/* <String> */(
+            Arrays.asList(new String[] {"source", "sources", "javadoc", "javadocs", "doc", "docs"}));
 
     /**
-     * Default directory filter that doesn't select .svn directories, neither the directories that match
-     * {@link #NON_BUNDLE_DIRS}.
+     * Default directory filter that doesn't select .svn directories, neither the directories that
+     * match {@link #NON_BUNDLE_DIRS}.
      */
     public static final FilenameFilter DEFAULT_DIR_FILTER = new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -93,18 +93,15 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
         this.bundleFilter = bundleFilter;
     }
 
-    @Override
     protected String createBundleLocation(String location) {
         return basePath + location;
     }
 
-    @Override
     protected InputStream getInputStream(String f) throws FileNotFoundException {
         return new FileInputStream(new File(root, f));
     }
 
-    @Override
-    protected List<String> listBundleFiles(String dir) {
+    protected List/* <String> */listBundleFiles(String dir) {
         return fileArray2pathList(new File(root, dir).listFiles(new FileFilter() {
             public boolean accept(File f) {
                 if (!f.isFile()) {
@@ -115,16 +112,15 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
         }));
     }
 
-    private List<String> fileArray2pathList(File[] files) {
-        ArrayList<String> list = new ArrayList<String>(files.length);
+    private List/* <String> */fileArray2pathList(File[] files) {
+        ArrayList/* <String> */list = new ArrayList/* <String> */(files.length);
         for (int i = 0; i < files.length; i++) {
             list.add(files[i].getAbsolutePath().substring(root.length() + 1));
         }
         return list;
     }
 
-    @Override
-    protected List<String> listDirs(String dir) {
+    protected List/* <String> */listDirs(String dir) {
         return fileArray2pathList(new File(root, dir).listFiles(new FileFilter() {
             public boolean accept(File f) {
                 if (!f.isDirectory()) {

@@ -26,16 +26,17 @@ import java.util.List;
 public class ParseUtil {
 
     /**
-     * Parses delimited string and returns an array containing the tokens. This parser obeys quotes, so the delimiter
-     * character will be ignored if it is inside of a quote. This method assumes that the quote character is not
-     * included in the set of delimiter characters.
+     * Parses delimited string and returns an array containing the tokens. This parser obeys quotes,
+     * so the delimiter character will be ignored if it is inside of a quote. This method assumes
+     * that the quote character is not included in the set of delimiter characters.
      * 
-     * @param value the delimited string to parse.
-     * @param delim the characters delimiting the tokens.
+     * @param value
+     *            the delimited string to parse.
+     * @param delim
+     *            the characters delimiting the tokens.
      * @return an array of string tokens or null if there were no tokens.
      */
     // method largely inspired by Apache Felix 1.0.4 ManifestParser method
-    @SuppressWarnings("unchecked")
     public static String[] parseDelimitedString(String value, String delim) {
         if (value == null) {
             value = "";

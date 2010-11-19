@@ -32,14 +32,20 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 public class OsgiRevisionStrategy extends ComparatorLatestStrategy {
 
     private static final Pattern ALPHA_NUM_REGEX = Pattern.compile("([a-zA-Z])(\\d)");
+
     private static final Pattern NUM_ALPHA_REGEX = Pattern.compile("(\\d)([a-zA-Z])");
+
     private static final Pattern LABEL_REGEX = Pattern.compile("[_\\-\\+]");
 
     /**
-     * Compares two ModuleRevisionId by their revision. Revisions are compared using an algorithm inspired by PHP
-     * version_compare one.
+     * Compares two ModuleRevisionId by their revision. Revisions are compared using an algorithm
+     * inspired by PHP version_compare one.
      */
-    final class MridComparator implements Comparator<ModuleRevisionId> {
+    final class MridComparator implements Comparator/* <ModuleRevisionId> */{
+
+        public int compare(Object o1, Object o2) {
+            return compare((ModuleRevisionId) o1, (ModuleRevisionId) o2);
+        }
 
         public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
             String rev1 = o1.getRevision();
@@ -80,9 +86,9 @@ public class OsgiRevisionStrategy extends ComparatorLatestStrategy {
                         return Long.valueOf(innerParts1[j]).compareTo(Long.valueOf(innerParts2[j]));
                     }
                     // both are strings, we compare them taking into account special meaning
-                    Map<String, Integer> meanings = getSpecialMeanings();
-                    Integer sm1 = meanings.get(innerParts1[j].toLowerCase(Locale.US));
-                    Integer sm2 = meanings.get(innerParts2[j].toLowerCase(Locale.US));
+                    Map/* <String, Integer> */meanings = getSpecialMeanings();
+                    Integer sm1 = (Integer) meanings.get(innerParts1[j].toLowerCase(Locale.US));
+                    Integer sm2 = (Integer) meanings.get(innerParts2[j].toLowerCase(Locale.US));
                     if (sm1 != null) {
                         sm2 = sm2 == null ? new Integer(0) : sm2;
                         return sm1.compareTo(sm2);
@@ -115,20 +121,26 @@ public class OsgiRevisionStrategy extends ComparatorLatestStrategy {
     }
 
     /**
-     * Compares two ArtifactInfo by their revision. Revisions are compared using an algorithm inspired by PHP
-     * version_compare one, unless a dynamic revision is given, in which case the version matcher is used to perform the
-     * comparison.
+     * Compares two ArtifactInfo by their revision. Revisions are compared using an algorithm
+     * inspired by PHP version_compare one, unless a dynamic revision is given, in which case the
+     * version matcher is used to perform the comparison.
      */
-    final class ArtifactInfoComparator implements Comparator<ArtifactInfo> {
+    final class ArtifactInfoComparator implements Comparator/* <ArtifactInfo> */{
+
+        public int compare(Object o1, Object o2) {
+            return compare((ArtifactInfo) o1, (ArtifactInfo) o2);
+        }
+
         public int compare(ArtifactInfo o1, ArtifactInfo o2) {
             String rev1 = o1.getRevision();
             String rev2 = o2.getRevision();
 
             /*
-             * The revisions can still be not resolved, so we use the current version matcher to know if one revision is
-             * dynamic, and in this case if it should be considered greater or lower than the other one. Note that if
-             * the version matcher compare method returns 0, it's because it's not possible to know which revision is
-             * greater. In this case we consider the dynamic one to be greater, because most of the time it will then be
+             * The revisions can still be not resolved, so we use the current version matcher to
+             * know if one revision is dynamic, and in this case if it should be considered greater
+             * or lower than the other one. Note that if the version matcher compare method returns
+             * 0, it's because it's not possible to know which revision is greater. In this case we
+             * consider the dynamic one to be greater, because most of the time it will then be
              * actually resolved and a real comparison will occur.
              */
             VersionMatcher vmatcher = IvyContext.getContext().getSettings().getVersionMatcher();
@@ -177,19 +189,19 @@ public class OsgiRevisionStrategy extends ComparatorLatestStrategy {
         }
     }
 
-    private static final Map<String, Integer> DEFAULT_SPECIAL_MEANINGS;
+    private static final Map/* <String, Integer> */DEFAULT_SPECIAL_MEANINGS;
     static {
-        DEFAULT_SPECIAL_MEANINGS = new HashMap<String, Integer>();
+        DEFAULT_SPECIAL_MEANINGS = new HashMap/* <String, Integer> */();
         DEFAULT_SPECIAL_MEANINGS.put("dev", new Integer(-1));
         DEFAULT_SPECIAL_MEANINGS.put("rc", new Integer(1));
         DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
     }
 
-    private final Comparator<ModuleRevisionId> mridComparator = new MridComparator();
+    private final Comparator/* <ModuleRevisionId> */mridComparator = new MridComparator();
 
-    private final Comparator<ArtifactInfo> artifactInfoComparator = new ArtifactInfoComparator();
+    private final Comparator/* <ArtifactInfo> */artifactInfoComparator = new ArtifactInfoComparator();
 
-    private Map<String, Integer> specialMeanings = null;
+    private Map/* <String, Integer> */specialMeanings = null;
 
     private boolean usedefaultspecialmeanings = true;
 
@@ -203,9 +215,9 @@ public class OsgiRevisionStrategy extends ComparatorLatestStrategy {
         getSpecialMeanings().put(meaning.getName().toLowerCase(Locale.US), meaning.getValue());
     }
 
-    public synchronized Map<String, Integer> getSpecialMeanings() {
+    public synchronized Map/* <String, Integer> */getSpecialMeanings() {
         if (specialMeanings == null) {
-            specialMeanings = new HashMap<String, Integer>();
+            specialMeanings = new HashMap/* <String, Integer> */();
             if (isUsedefaultspecialmeanings()) {
                 specialMeanings.putAll(DEFAULT_SPECIAL_MEANINGS);
             }

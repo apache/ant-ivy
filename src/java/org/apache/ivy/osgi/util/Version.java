@@ -17,16 +17,17 @@
  */
 package org.apache.ivy.osgi.util;
 
-import static java.lang.Integer.parseInt;
-
 /**
  * Provides OSGi version support.
  */
-public class Version implements Comparable<Version> {
+public class Version implements Comparable/* <Version> */{
 
     private final int major;
+
     private final int minor;
+
     private final int patch;
+
     private final String qualifier;
 
     public Version(String versionStr, String qualifier) throws NumberFormatException {
@@ -35,9 +36,9 @@ public class Version implements Comparable<Version> {
 
     public Version(String versionStr) throws NumberFormatException {
         final String[] tmp = versionStr.split("[\\.]");
-        major = parseInt(tmp[0]);
-        minor = tmp.length >= 2 ? parseInt(tmp[1]) : 0;
-        patch = tmp.length >= 3 ? parseInt(tmp[2]) : 0;
+        major = Integer.parseInt(tmp[0]);
+        minor = tmp.length >= 2 ? Integer.parseInt(tmp[1]) : 0;
+        patch = tmp.length >= 3 ? Integer.parseInt(tmp[2]) : 0;
         qualifier = tmp.length == 4 ? tmp[3] : null;
     }
 
@@ -48,12 +49,10 @@ public class Version implements Comparable<Version> {
         this.qualifier = qualifier;
     }
 
-    @Override
     public String toString() {
         return numbersAsString() + (qualifier == null ? "" : "." + qualifier);
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -64,7 +63,6 @@ public class Version implements Comparable<Version> {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -125,6 +123,10 @@ public class Version implements Comparable<Version> {
             return diff;
         }
         return 0;
+    }
+
+    public int compareTo(Object obj) {
+        return compareTo((Version) obj);
     }
 
     public int compareTo(Version other) {

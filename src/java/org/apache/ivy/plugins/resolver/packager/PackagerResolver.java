@@ -196,7 +196,7 @@ public class PackagerResolver extends URLResolver {
     }
 
     // @Override
-    protected synchronized ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+    public synchronized ResolvedResource findArtifactRef(Artifact artifact, Date date) {
 
         // For our special packager.xml file, defer to superclass
         if (PACKAGER_ARTIFACT_NAME.equals(artifact.getName())

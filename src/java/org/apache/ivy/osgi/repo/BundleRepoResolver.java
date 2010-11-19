@@ -32,10 +32,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -65,7 +66,6 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
-
 public class BundleRepoResolver extends BasicResolver {
 
     private Repository repository = null;
@@ -78,11 +78,22 @@ public class BundleRepoResolver extends BasicResolver {
 
     private ExecutionEnvironmentProfileProvider profileProvider;
 
-    public enum RequirementStrategy {
+    public static class RequirementStrategy {
         // take the first matching
-        first,
+        public static RequirementStrategy first = new RequirementStrategy();
+
         // if there are any ambiguity, fail to resolve
-        noambiguity
+        public static RequirementStrategy noambiguity = new RequirementStrategy();
+
+        public static RequirementStrategy valueOf(String strategy) {
+            if (strategy.equals("first")) {
+                return first;
+            }
+            if (strategy.equals("noambiguity")) {
+                return noambiguity;
+            }
+            throw new IllegalStateException();
+        }
     }
 
     private RequirementStrategy requirementStrategy = RequirementStrategy.noambiguity;
@@ -133,16 +144,16 @@ public class BundleRepoResolver extends BasicResolver {
                 repoDescriptor = OBRXMLParser.parse(in);
             } catch (ParseException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile + " is incorrectly formed ("
-                        + e.getMessage() + ")");
+                        + " couldn't be configured: the file " + repoXmlFile
+                        + " is incorrectly formed (" + e.getMessage() + ")");
             } catch (IOException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile + " could not be read (" + e.getMessage()
-                        + ")");
+                        + " couldn't be configured: the file " + repoXmlFile
+                        + " could not be read (" + e.getMessage() + ")");
             } catch (SAXException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile + " has incorrect XML (" + e.getMessage()
-                        + ")");
+                        + " couldn't be configured: the file " + repoXmlFile
+                        + " has incorrect XML (" + e.getMessage() + ")");
             }
             try {
                 in.close();
@@ -166,9 +177,11 @@ public class BundleRepoResolver extends BasicResolver {
             try {
                 baseUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), basePath);
             } catch (MalformedURLException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the base url couldn'd be extracted from the url " + url + " ("
-                        + e.getMessage() + ")");
+                throw new RuntimeException(
+                        "The osgi repository resolver "
+                                + getName()
+                                + " couldn't be configured: the base url couldn'd be extracted from the url "
+                                + url + " (" + e.getMessage() + ")");
             }
             repository = new RelativeURLRepository(baseUrl);
             InputStream in;
@@ -176,23 +189,23 @@ public class BundleRepoResolver extends BasicResolver {
                 in = url.openStream();
             } catch (IOException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL + " couldn't be read (" + e.getMessage()
-                        + ")");
+                        + " couldn't be configured: the file " + repoXmlURL + " couldn't be read ("
+                        + e.getMessage() + ")");
             }
             try {
                 repoDescriptor = OBRXMLParser.parse(in);
             } catch (ParseException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL + " is incorrectly formed ("
-                        + e.getMessage() + ")");
+                        + " couldn't be configured: the file " + repoXmlURL
+                        + " is incorrectly formed (" + e.getMessage() + ")");
             } catch (IOException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL + " could not be read (" + e.getMessage()
-                        + ")");
+                        + " couldn't be configured: the file " + repoXmlURL
+                        + " could not be read (" + e.getMessage() + ")");
             } catch (SAXException e) {
                 throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL + " has incorrect XML (" + e.getMessage()
-                        + ")");
+                        + " couldn't be configured: the file " + repoXmlURL
+                        + " has incorrect XML (" + e.getMessage() + ")");
             }
             try {
                 in.close();
@@ -212,8 +225,8 @@ public class BundleRepoResolver extends BasicResolver {
         return repoDescriptor;
     }
 
-    @Override
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+            throws ParseException {
         DefaultModuleDescriptor md = getDependencyMD(dd, data);
         if (md == null) {
             // not found, so let's return the mrid resolved by a previous resolver
@@ -229,7 +242,7 @@ public class BundleRepoResolver extends BasicResolver {
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
 
         String osgiAtt = mrid.getAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
-        Map<String, Set<BundleCapabilityAndLocation>> bundleCapabilities = getRepoDescriptor()
+        Map/* <String, Set<BundleCapabilityAndLocation>> */bundleCapabilities = (Map) getRepoDescriptor()
                 .getBundleByCapabilities().get(osgiAtt);
         if (bundleCapabilities == null) {
             Message.verbose("\t Not an OSGi dependency: " + mrid);
@@ -237,21 +250,26 @@ public class BundleRepoResolver extends BasicResolver {
         }
 
         String id = mrid.getName();
-        Set<BundleCapabilityAndLocation> bundleReferences = bundleCapabilities.get(id);
+        Set/* <BundleCapabilityAndLocation> */bundleReferences = (Set) bundleCapabilities.get(id);
         if (bundleReferences == null || bundleReferences.isEmpty()) {
             Message.verbose("\t " + id + " not found.");
             return null;
         }
 
-        List<BundleCandidate> ret = new ArrayList<BundleCandidate>();
-        for (BundleCapabilityAndLocation bundleCapability : bundleReferences) {
+        List/* <BundleCandidate> */ret = new ArrayList/* <BundleCandidate> */();
+        Iterator itBundle = bundleReferences.iterator();
+        while (itBundle.hasNext()) {
+            BundleCapabilityAndLocation bundleCapability = (BundleCapabilityAndLocation) itBundle
+                    .next();
             BundleInfo bundleInfo = bundleCapability.getBundleInfo();
             if (!bundleCapability.getType().equals(BundleInfo.BUNDLE_TYPE)) {
-                ModuleRevisionId foundMrid = ModuleRevisionId.newInstance("", bundleInfo.getSymbolicName(), bundleInfo
-                        .getVersion().toString(), BundleInfoAdapter.OSGI_BUNDLE);
+                ModuleRevisionId foundMrid = ModuleRevisionId.newInstance("",
+                    bundleInfo.getSymbolicName(), bundleInfo.getVersion().toString(),
+                    BundleInfoAdapter.OSGI_BUNDLE);
                 if (data.getVisitData(foundMrid) != null) {
                     // already resolved import, no need to go further
-                    DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo, profileProvider);
+                    DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo,
+                        profileProvider);
                     md.setPublicationDate(new Date(0));
                     return md;
                 }
@@ -285,17 +303,22 @@ public class BundleRepoResolver extends BasicResolver {
 
     }
 
-    public DefaultModuleDescriptor selectResource(List<BundleCandidate> rress, ModuleRevisionId mrid, Date date) {
+    public DefaultModuleDescriptor selectResource(List/* <BundleCandidate> */rress,
+            ModuleRevisionId mrid, Date date) {
         VersionMatcher versionMatcher = getSettings().getVersionMatcher();
 
-        List<BundleCandidate> founds = new ArrayList<BundleCandidate>();
-        List<BundleCandidate> sorted = getLatestStrategy().sort(rress.toArray(new BundleCandidate[rress.size()]));
-        List<String> rejected = new ArrayList<String>();
-        List<ModuleRevisionId> foundBlacklisted = new ArrayList<ModuleRevisionId>();
+        List/* <BundleCandidate> */founds = new ArrayList/* <BundleCandidate> */();
+        List/* <BundleCandidate> */sorted = getLatestStrategy().sort(
+            (ArtifactInfo[]) rress.toArray(new BundleCandidate[rress.size()]));
+        List/* <String> */rejected = new ArrayList/* <String> */();
+        List/* <ModuleRevisionId> */foundBlacklisted = new ArrayList/* <ModuleRevisionId> */();
         IvyContext context = IvyContext.getContext();
 
-        for (BundleCandidate rres : sorted) {
-            if (filterNames(new ArrayList<String>(Collections.singleton(rres.getRevision()))).isEmpty()) {
+        Iterator itBundle = sorted.iterator();
+        while (itBundle.hasNext()) {
+            BundleCandidate rres = (BundleCandidate) itBundle.next();
+            if (filterNames(new ArrayList/* <String> */(Collections.singleton(rres.getRevision())))
+                    .isEmpty()) {
                 Message.debug("\t" + getName() + ": filtered by name: " + rres);
                 continue;
             }
@@ -341,7 +364,7 @@ public class BundleRepoResolver extends BasicResolver {
             return null;
         }
 
-        BundleCandidate found = founds.get(0);
+        BundleCandidate found = (BundleCandidate) founds.get(0);
 
         String osgiAtt = mrid.getAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
         // for non bundle requirement : log the selected bundle
@@ -349,78 +372,93 @@ public class BundleRepoResolver extends BasicResolver {
             // several candidates with different symbolic name : make an warning about the ambiguity
             if (founds.size() != 1) {
                 // several candidates with different symbolic name ?
-                Map<String, List<BundleCandidate>> matching = new HashMap<String, List<BundleCandidate>>();
-                for (BundleCandidate c : founds) {
+                Map/* <String, List<BundleCandidate>> */matching = new HashMap/*
+                                                                               * <String,
+                                                                               * List<BundleCandidate
+                                                                               * >>
+                                                                               */();
+                Iterator itBundle2 = founds.iterator();
+                while (itBundle2.hasNext()) {
+                    BundleCandidate c = (BundleCandidate) itBundle2.next();
                     String name = c.bundleInfo.getSymbolicName();
-                    List<BundleCandidate> list = matching.get(name);
+                    List/* <BundleCandidate> */list = (List) matching.get(name);
                     if (list == null) {
-                        list = new ArrayList<BundleCandidate>();
+                        list = new ArrayList/* <BundleCandidate> */();
                         matching.put(name, list);
                     }
                     list.add(c);
                 }
                 if (matching.keySet().size() != 1) {
-                    switch (requirementStrategy) {
-                    case first:
-                        Message.warn("Ambiguity for the '" + osgiAtt + "' requirement " + mrid.getName() + ";version="
-                                + mrid.getRevision());
-                        for (Entry<String, List<BundleCandidate>> entry : matching.entrySet()) {
+                    if (requirementStrategy == RequirementStrategy.first) {
+                        Message.warn("Ambiguity for the '" + osgiAtt + "' requirement "
+                                + mrid.getName() + ";version=" + mrid.getRevision());
+                        Iterator itMatching = matching.entrySet().iterator();
+                        while (itMatching.hasNext()) {
+                            Entry/* <String, List<BundleCandidate>> */entry = (Entry) itMatching
+                                    .next();
                             Message.warn("\t" + entry.getKey());
-                            for (BundleCandidate c : entry.getValue()) {
-                                Message.warn("\t\t" + c.getRevision() + (found == c ? " (selected)" : ""));
+                            Iterator itB = ((List) entry.getValue()).iterator();
+                            while (itB.hasNext()) {
+                                BundleCandidate c = (BundleCandidate) itB.next();
+                                Message.warn("\t\t" + c.getRevision()
+                                        + (found == c ? " (selected)" : ""));
                             }
                         }
-                        break;
-                    case noambiguity:
-                    default:
-                        Message.error("Ambiguity for the '" + osgiAtt + "' requirement " + mrid.getName() + ";version="
-                                + mrid.getRevision());
-                        for (Entry<String, List<BundleCandidate>> entry : matching.entrySet()) {
+                    } else if (requirementStrategy == RequirementStrategy.noambiguity) {
+                        Message.error("Ambiguity for the '" + osgiAtt + "' requirement "
+                                + mrid.getName() + ";version=" + mrid.getRevision());
+                        Iterator itMatching = matching.entrySet().iterator();
+                        while (itMatching.hasNext()) {
+                            Entry/* <String, List<BundleCandidate>> */entry = (Entry) itMatching
+                                    .next();
                             Message.error("\t" + entry.getKey());
-                            for (BundleCandidate c : entry.getValue()) {
-                                Message.error("\t\t" + c.getRevision() + (found == c ? " (best match)" : ""));
+                            Iterator itB = ((List) entry.getValue()).iterator();
+                            while (itB.hasNext()) {
+                                BundleCandidate c = (BundleCandidate) itB.next();
+                                Message.error("\t\t" + c.getRevision()
+                                        + (found == c ? " (best match)" : ""));
                             }
                         }
                         return null;
                     }
                 }
             }
-            Message.info("'" + osgiAtt + "' requirement " + mrid.getName() + ";version=" + mrid.getRevision()
-                    + " satisfied by " + found.bundleInfo.getSymbolicName() + ";" + found.getRevision());
+            Message.info("'" + osgiAtt + "' requirement " + mrid.getName() + ";version="
+                    + mrid.getRevision() + " satisfied by " + found.bundleInfo.getSymbolicName()
+                    + ";" + found.getRevision());
         }
 
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(found.bundleInfo, profileProvider);
+        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(found.bundleInfo,
+            profileProvider);
         md.setPublicationDate(new Date(found.getLastModified()));
         return md;
     }
 
-    @Override
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+    public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         try {
-            return new ResolvedResource(getRepository().getResource(artifact.getUrl().getFile()), artifact
-                    .getModuleRevisionId().getRevision());
+            return new ResolvedResource(getRepository().getResource(artifact.getUrl().getFile()),
+                    artifact.getModuleRevisionId().getRevision());
         } catch (IOException e) {
-            throw new RuntimeException(getName() + ": unable to get resource for " + mrid + ": res="
-                    + artifact.getName() + ": " + e.getMessage(), e);
+            throw new RuntimeException(getName() + ": unable to get resource for " + mrid
+                    + ": res=" + artifact.getName() + ": " + e.getMessage(), e);
         }
     }
 
-    protected Collection<String> filterNames(Collection<String> names) {
+    protected Collection/* <String> */filterNames(Collection/* <String> */names) {
         getSettings().filterIgnore(names);
         return names;
     }
 
-    @Override
     protected Collection findNames(Map tokenValues, String token) {
         if (BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME.equals(token)) {
-            return Arrays.asList(new String[] { BundleInfo.BUNDLE_TYPE, BundleInfo.PACKAGE_TYPE,
-                    BundleInfo.SERVICE_TYPE });
+            return Arrays.asList(new String[] {BundleInfo.BUNDLE_TYPE, BundleInfo.PACKAGE_TYPE,
+                    BundleInfo.SERVICE_TYPE});
         }
 
         String osgiAtt = (String) tokenValues.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
 
-        Map<String, Set<BundleCapabilityAndLocation>> bundleCapabilityMap = getRepoDescriptor()
+        Map/* <String, Set<BundleCapabilityAndLocation>> */bundleCapabilityMap = (Map) getRepoDescriptor()
                 .getBundleByCapabilities().get(osgiAtt);
         if (bundleCapabilityMap == null || bundleCapabilityMap.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -436,10 +474,14 @@ public class BundleRepoResolver extends BasicResolver {
 
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
-            List<String> versions = new ArrayList<String>();
-            Set<BundleCapabilityAndLocation> bundleCapabilities = bundleCapabilityMap.get(name);
+            List/* <String> */versions = new ArrayList/* <String> */();
+            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = (Set) bundleCapabilityMap
+                    .get(name);
             if (bundleCapabilities != null) {
-                for (BundleCapabilityAndLocation bundleCapability : bundleCapabilities) {
+                Iterator itBundle = bundleCapabilities.iterator();
+                while (itBundle.hasNext()) {
+                    BundleCapabilityAndLocation bundleCapability = (BundleCapabilityAndLocation) itBundle
+                            .next();
                     versions.add(bundleCapability.getVersion().toString());
                 }
             }
@@ -454,7 +496,8 @@ public class BundleRepoResolver extends BasicResolver {
             if (osgiAtt.equals(BundleInfo.PACKAGE_TYPE)) {
                 return Collections.singletonList(BundleInfoAdapter.CONF_USE_PREFIX + name);
             }
-            Set<BundleCapabilityAndLocation> bundleCapabilities = bundleCapabilityMap.get(name);
+            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = (Set) bundleCapabilityMap
+                    .get(name);
             if (bundleCapabilities == null) {
                 return Collections.EMPTY_LIST;
             }
@@ -469,7 +512,10 @@ public class BundleRepoResolver extends BasicResolver {
                 return Collections.EMPTY_LIST;
             }
             BundleCapabilityAndLocation found = null;
-            for (BundleCapabilityAndLocation bundleCapability : bundleCapabilities) {
+            Iterator itBundle = bundleCapabilities.iterator();
+            while (itBundle.hasNext()) {
+                BundleCapabilityAndLocation bundleCapability = (BundleCapabilityAndLocation) itBundle
+                        .next();
                 if (bundleCapability.getVersion().equals(v)) {
                     found = bundleCapability;
                 }
@@ -477,9 +523,12 @@ public class BundleRepoResolver extends BasicResolver {
             if (found == null) {
                 return Collections.EMPTY_LIST;
             }
-            DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(found.getBundleInfo(), profileProvider);
-            List<String> confs = new ArrayList<String>();
-            for (Configuration conf : md.getConfigurations()) {
+            DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
+                found.getBundleInfo(), profileProvider);
+            List/* <String> */confs = new ArrayList/* <String> */();
+            Configuration[] configurations = md.getConfigurations();
+            for (int i = 0; i < configurations.length; i++) {
+                Configuration conf = configurations[i];
                 confs.add(conf.getName());
             }
             return confs;
@@ -487,59 +536,63 @@ public class BundleRepoResolver extends BasicResolver {
         return Collections.EMPTY_LIST;
     }
 
-    @Override
     public Map[] listTokenValues(String[] tokens, Map criteria) {
-        Set<String> tokenSet = new HashSet<String>(Arrays.asList(tokens));
-        Set<Map<String, String>> listTokenValues = listTokenValues(tokenSet, criteria);
-        return listTokenValues.toArray(new Map[listTokenValues.size()]);
+        Set/* <String> */tokenSet = new HashSet/* <String> */(Arrays.asList(tokens));
+        Set/* <Map<String, String>> */listTokenValues = listTokenValues(tokenSet, criteria);
+        return (Map[]) listTokenValues.toArray(new Map[listTokenValues.size()]);
     }
 
-    private Set<Map<String, String>> listTokenValues(Set<String> tokens, Map<String, String> criteria) {
+    private Set/* <Map<String, String>> */listTokenValues(Set/* <String> */tokens, Map/*
+                                                                                       * <String,
+                                                                                       * String>
+                                                                                       */criteria) {
         if (tokens.isEmpty()) {
-            return Collections.<Map<String, String>> singleton(criteria);
+            return Collections./* <Map<String, String>> */singleton(criteria);
         }
 
-        Set<String> tokenSet = new HashSet<String>(tokens);
+        Set/* <String> */tokenSet = new HashSet/* <String> */(tokens);
 
-        Map<String, String> values = new HashMap<String, String>();
+        Map/* <String, String> */values = new HashMap/* <String, String> */();
 
         tokenSet.remove(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
-        String osgiAtt = criteria.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        String osgiAtt = (String) criteria.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
         if (osgiAtt == null) {
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
-            Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
+            Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
             newCriteria.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, BundleInfo.BUNDLE_TYPE);
             tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
-            newCriteria = new HashMap<String, String>(criteria);
+            newCriteria = new HashMap/* <String, String> */(criteria);
             newCriteria.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, BundleInfo.PACKAGE_TYPE);
             tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
-            newCriteria = new HashMap<String, String>(criteria);
+            newCriteria = new HashMap/* <String, String> */(criteria);
             newCriteria.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, BundleInfo.SERVICE_TYPE);
             tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             return tokenValues;
         }
         values.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, osgiAtt);
 
-        Map<String, Set<BundleCapabilityAndLocation>> bundleCapabilityMap = getRepoDescriptor()
+        Map/* <String, Set<BundleCapabilityAndLocation>> */bundleCapabilityMap = (Map) getRepoDescriptor()
                 .getBundleByCapabilities().get(osgiAtt);
         if (bundleCapabilityMap == null || bundleCapabilityMap.isEmpty()) {
-            return Collections.<Map<String, String>> emptySet();
+            return Collections./* <Map<String, String>> */emptySet();
         }
 
         tokenSet.remove(IvyPatternHelper.ORGANISATION_KEY);
-        String org = criteria.get(IvyPatternHelper.ORGANISATION_KEY);
+        String org = (String) criteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (org != null && org.length() != 0) {
-            return Collections.<Map<String, String>> emptySet();
+            return Collections./* <Map<String, String>> */emptySet();
         }
         values.put(IvyPatternHelper.ORGANISATION_KEY, "");
 
         tokenSet.remove(IvyPatternHelper.MODULE_KEY);
-        String module = criteria.get(IvyPatternHelper.MODULE_KEY);
+        String module = (String) criteria.get(IvyPatternHelper.MODULE_KEY);
         if (module == null) {
-            Set<String> names = bundleCapabilityMap.keySet();
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
-            for (String name : names) {
-                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+            Set/* <String> */names = bundleCapabilityMap.keySet();
+            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
+            Iterator itNames = names.iterator();
+            while (itNames.hasNext()) {
+                String name = (String) itNames.next();
+                Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
                 newCriteria.put(IvyPatternHelper.MODULE_KEY, name);
                 tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             }
@@ -548,15 +601,19 @@ public class BundleRepoResolver extends BasicResolver {
         values.put(IvyPatternHelper.MODULE_KEY, module);
 
         tokenSet.remove(IvyPatternHelper.REVISION_KEY);
-        String rev = criteria.get(IvyPatternHelper.REVISION_KEY);
+        String rev = (String) criteria.get(IvyPatternHelper.REVISION_KEY);
         if (rev == null) {
-            Set<BundleCapabilityAndLocation> bundleCapabilities = bundleCapabilityMap.get(module);
+            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = (Set) bundleCapabilityMap
+                    .get(module);
             if (bundleCapabilities == null) {
-                return Collections.<Map<String, String>> emptySet();
+                return Collections./* <Map<String, String>> */emptySet();
             }
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
-            for (BundleCapabilityAndLocation capability : bundleCapabilities) {
-                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
+            Iterator itBundle = bundleCapabilities.iterator();
+            while (itBundle.hasNext()) {
+                BundleCapabilityAndLocation capability = (BundleCapabilityAndLocation) itBundle
+                        .next();
+                Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
                 newCriteria.put(IvyPatternHelper.REVISION_KEY, capability.getVersion().toString());
                 tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             }
@@ -565,35 +622,42 @@ public class BundleRepoResolver extends BasicResolver {
         values.put(IvyPatternHelper.REVISION_KEY, rev);
 
         tokenSet.remove(IvyPatternHelper.CONF_KEY);
-        String conf = criteria.get(IvyPatternHelper.CONF_KEY);
+        String conf = (String) criteria.get(IvyPatternHelper.CONF_KEY);
         if (conf == null) {
             if (osgiAtt.equals(BundleInfo.PACKAGE_TYPE)) {
                 values.put(IvyPatternHelper.CONF_KEY, BundleInfoAdapter.CONF_USE_PREFIX + module);
-                return Collections.<Map<String, String>> singleton(values);
+                return Collections./* <Map<String, String>> */singleton(values);
             }
-            Set<BundleCapabilityAndLocation> bundleCapabilities = bundleCapabilityMap.get(module);
+            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = (Set) bundleCapabilityMap
+                    .get(module);
             if (bundleCapabilities == null) {
-                return Collections.<Map<String, String>> emptySet();
+                return Collections./* <Map<String, String>> */emptySet();
             }
             Version v;
             try {
                 v = new Version(rev);
             } catch (NumberFormatException e) {
-                return Collections.<Map<String, String>> emptySet();
+                return Collections./* <Map<String, String>> */emptySet();
             }
             BundleCapabilityAndLocation found = null;
-            for (BundleCapabilityAndLocation bundleCapability : bundleCapabilities) {
+            Iterator itBundle = bundleCapabilities.iterator();
+            while (itBundle.hasNext()) {
+                BundleCapabilityAndLocation bundleCapability = (BundleCapabilityAndLocation) itBundle
+                        .next();
                 if (bundleCapability.getVersion().equals(v)) {
                     found = bundleCapability;
                 }
             }
             if (found == null) {
-                return Collections.<Map<String, String>> emptySet();
+                return Collections./* <Map<String, String>> */emptySet();
             }
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
-            DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(found.getBundleInfo(), profileProvider);
-            for (Configuration c : md.getConfigurations()) {
-                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
+            DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
+                found.getBundleInfo(), profileProvider);
+            Configuration[] configurations = md.getConfigurations();
+            for (int i = 0; i < configurations.length; i++) {
+                Configuration c = configurations[i];
+                Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
                 newCriteria.put(IvyPatternHelper.CONF_KEY, c.getName());
                 tokenValues.add(newCriteria);
             }
@@ -601,10 +665,9 @@ public class BundleRepoResolver extends BasicResolver {
         }
         values.put(IvyPatternHelper.CONF_KEY, conf);
 
-        return Collections.<Map<String, String>> singleton(values);
+        return Collections./* <Map<String, String>> */singleton(values);
     }
 
-    @Override
     protected long get(Resource resource, File dest) throws IOException {
         Message.verbose("\t" + getName() + ": downloading " + resource.getName());
         Message.debug("\t\tto " + dest);
@@ -615,7 +678,6 @@ public class BundleRepoResolver extends BasicResolver {
         return dest.length();
     }
 
-    @Override
     protected Resource getResource(String source) throws IOException {
         return getRepository().getResource(source);
     }

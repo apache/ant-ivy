@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.obr.xml;
 
 public abstract class RequirementFilter {
 
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         append(builder);

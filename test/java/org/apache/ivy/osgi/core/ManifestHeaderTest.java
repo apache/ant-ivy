@@ -19,12 +19,7 @@ package org.apache.ivy.osgi.core;
 
 import java.text.ParseException;
 
-import org.apache.ivy.osgi.core.ManifestHeaderElement;
-import org.apache.ivy.osgi.core.ManifestHeaderValue;
-
-
 import junit.framework.TestCase;
-
 
 public class ManifestHeaderTest extends TestCase {
 
@@ -92,7 +87,8 @@ public class ManifestHeaderTest extends TestCase {
     public void testReflexivity() throws Exception {
         genericTestEquals("value1;value2", "value2;value1");
         genericTestEquals("value1,value2", "value2,value1");
-        genericTestEquals("value1;resolution:=mandatory;color:=red", "value1;color:=red;resolution:=mandatory");
+        genericTestEquals("value1;resolution:=mandatory;color:=red",
+            "value1;color:=red;resolution:=mandatory");
         genericTestEquals("value1;version=1.2.3;color=red", "value1;color=red;version=1.2.3");
         genericTestEquals("value1;version=1.2.3;color:=red", "value1;color:=red;version=1.2.3");
     }

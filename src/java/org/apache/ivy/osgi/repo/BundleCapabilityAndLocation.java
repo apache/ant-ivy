@@ -20,7 +20,6 @@ package org.apache.ivy.osgi.repo;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.util.Version;
 
-
 public class BundleCapabilityAndLocation {
 
     private final String name;
@@ -31,7 +30,8 @@ public class BundleCapabilityAndLocation {
 
     private final String type;
 
-    public BundleCapabilityAndLocation(String type, String name, Version version, BundleInfo bundleInfo) {
+    public BundleCapabilityAndLocation(String type, String name, Version version,
+            BundleInfo bundleInfo) {
         this.type = type;
         this.name = name;
         this.version = version;

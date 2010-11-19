@@ -52,12 +52,11 @@ public class BundleRequirement {
         return resolution;
     }
 
-    @Override
     public String toString() {
-        return name + (version == null ? "" : ";" + version) + (resolution == null ? "" : " (" + resolution + ")");
+        return name + (version == null ? "" : ";" + version)
+                + (resolution == null ? "" : " (" + resolution + ")");
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -68,7 +67,6 @@ public class BundleRequirement {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

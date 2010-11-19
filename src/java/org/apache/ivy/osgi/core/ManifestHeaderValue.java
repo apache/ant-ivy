@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class ManifestHeaderValue {
 
-    private List<ManifestHeaderElement> elements = new ArrayList<ManifestHeaderElement>();
+    private List/* <ManifestHeaderElement> */elements = new ArrayList/* <ManifestHeaderElement> */();
 
     ManifestHeaderValue() {
         // just for unit testing
@@ -52,7 +52,7 @@ public class ManifestHeaderValue {
         }
     }
 
-    public List<ManifestHeaderElement> getElements() {
+    public List/* <ManifestHeaderElement> */getElements() {
         return elements;
     }
 
@@ -60,19 +60,22 @@ public class ManifestHeaderValue {
         if (elements.isEmpty()) {
             return null;
         }
-        List<String> values = getElements().iterator().next().getValues();
+        List/* <String> */values = ((ManifestHeaderElement) getElements().iterator().next())
+                .getValues();
         if (values.isEmpty()) {
             return null;
         }
-        return values.iterator().next();
+        return (String) values.iterator().next();
     }
 
-    public List<String> getValues() {
+    public List/* <String> */getValues() {
         if (elements.isEmpty()) {
             return Collections.emptyList();
         }
-        List<String> list = new ArrayList<String>();
-        for (ManifestHeaderElement element : getElements()) {
+        List/* <String> */list = new ArrayList/* <String> */();
+        Iterator itElements = getElements().iterator();
+        while (itElements.hasNext()) {
+            ManifestHeaderElement element = (ManifestHeaderElement) itElements.next();
             list.addAll(element.getValues());
         }
         return list;
@@ -190,34 +193,34 @@ public class ManifestHeaderValue {
             boolean end = false;
             do {
                 switch (readNext()) {
-                case '\0':
-                    break;
-                case ';':
-                case ',':
-                    endValue();
-                    return;
-                case ':':
-                case '=':
-                    endParameterName();
-                    parseSeparator();
-                    parseParameterValue();
-                    return;
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\r':
-                    if (start) {
-                        end = true;
-                    }
-                    break;
-                default:
-                    if (end) {
-                        error("Expecting the end of a value or of an parameter name");
-                        // try to recover: restart the parsing of the value or parameter
-                        end = false;
-                    }
-                    start = true;
-                    buffer.append(c);
+                    case '\0':
+                        break;
+                    case ';':
+                    case ',':
+                        endValue();
+                        return;
+                    case ':':
+                    case '=':
+                        endParameterName();
+                        parseSeparator();
+                        parseParameterValue();
+                        return;
+                    case ' ':
+                    case '\t':
+                    case '\n':
+                    case '\r':
+                        if (start) {
+                            end = true;
+                        }
+                        break;
+                    default:
+                        if (end) {
+                            error("Expecting the end of a value or of an parameter name");
+                            // try to recover: restart the parsing of the value or parameter
+                            end = false;
+                        }
+                        start = true;
+                        buffer.append(c);
                 }
             } while (pos < length);
             endValue();
@@ -270,61 +273,61 @@ public class ManifestHeaderValue {
             boolean doubleQuoted = false;
             do {
                 switch (readNext()) {
-                case '\0':
-                    break;
+                    case '\0':
+                        break;
 
-                case ',':
-                case ';':
-                    endParameterValue();
-                    return;
-                case '=':
-                case ':':
-                    error("Illegal character '" + c + "' in parameter value of " + paramName);
-                    // try to recover: ignore that parameter
-                    paramName = null;
-                    break;
-                case '\"':
-                    doubleQuoted = true;
-                case '\'':
-                    if (end && paramName != null) {
-                        error("Expecting the end of a parameter value");
+                    case ',':
+                    case ';':
+                        endParameterValue();
+                        return;
+                    case '=':
+                    case ':':
+                        error("Illegal character '" + c + "' in parameter value of " + paramName);
                         // try to recover: ignore that parameter
                         paramName = null;
-                    }
-                    if (start) {
-                        // quote in the middle of the value, just add it as a quote
-                        buffer.append(c);
-                    } else {
+                        break;
+                    case '\"':
+                        doubleQuoted = true;
+                    case '\'':
+                        if (end && paramName != null) {
+                            error("Expecting the end of a parameter value");
+                            // try to recover: ignore that parameter
+                            paramName = null;
+                        }
+                        if (start) {
+                            // quote in the middle of the value, just add it as a quote
+                            buffer.append(c);
+                        } else {
+                            start = true;
+                            appendQuoted(doubleQuoted);
+                            end = true;
+                        }
+                        break;
+                    case '\\':
+                        if (end && paramName != null) {
+                            error("Expecting the end of a parameter value");
+                            // try to recover: ignore that parameter
+                            paramName = null;
+                        }
                         start = true;
-                        appendQuoted(doubleQuoted);
-                        end = true;
-                    }
-                    break;
-                case '\\':
-                    if (end && paramName != null) {
-                        error("Expecting the end of a parameter value");
-                        // try to recover: ignore that parameter
-                        paramName = null;
-                    }
-                    start = true;
-                    appendEscaped();
-                    break;
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\r':
-                    if (start) {
-                        end = true;
-                    }
-                    break;
-                default:
-                    if (end && paramName != null) {
-                        error("Expecting the end of a parameter value");
-                        // try to recover: ignore that parameter
-                        paramName = null;
-                    }
-                    start = true;
-                    buffer.append(c);
+                        appendEscaped();
+                        break;
+                    case ' ':
+                    case '\t':
+                    case '\n':
+                    case '\r':
+                        if (start) {
+                            end = true;
+                        }
+                        break;
+                    default:
+                        if (end && paramName != null) {
+                            error("Expecting the end of a parameter value");
+                            // try to recover: ignore that parameter
+                            paramName = null;
+                        }
+                        start = true;
+                        buffer.append(c);
                 }
             } while (pos < length);
             endParameterValue();
@@ -353,24 +356,24 @@ public class ManifestHeaderValue {
         private void appendQuoted(boolean doubleQuoted) {
             do {
                 switch (readNext()) {
-                case '\0':
-                    break;
-                case '\"':
-                    if (doubleQuoted) {
-                        return;
-                    }
-                    buffer.append(c);
-                    break;
-                case '\'':
-                    if (!doubleQuoted) {
-                        return;
-                    }
-                    buffer.append(c);
-                    break;
-                case '\\':
-                    break;
-                default:
-                    buffer.append(c);
+                    case '\0':
+                        break;
+                    case '\"':
+                        if (doubleQuoted) {
+                            return;
+                        }
+                        buffer.append(c);
+                        break;
+                    case '\'':
+                        if (!doubleQuoted) {
+                            return;
+                        }
+                        buffer.append(c);
+                        break;
+                    case '\\':
+                        break;
+                    default:
+                        buffer.append(c);
                 }
             } while (pos < length);
         }
@@ -384,7 +387,6 @@ public class ManifestHeaderValue {
         }
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ManifestHeaderValue)) {
             return false;
@@ -393,7 +395,9 @@ public class ManifestHeaderValue {
         if (other.elements.size() != elements.size()) {
             return false;
         }
-        for (ManifestHeaderElement element : elements) {
+        Iterator itElements = elements.iterator();
+        while (itElements.hasNext()) {
+            ManifestHeaderElement element = (ManifestHeaderElement) itElements.next();
             if (!other.elements.contains(element)) {
                 return false;
             }
@@ -401,10 +405,9 @@ public class ManifestHeaderValue {
         return true;
     }
 
-    @Override
     public String toString() {
         String string = "";
-        Iterator<ManifestHeaderElement> it = elements.iterator();
+        Iterator/* <ManifestHeaderElement> */it = elements.iterator();
         while (it.hasNext()) {
             string = string.concat(it.next().toString());
             if (it.hasNext()) {

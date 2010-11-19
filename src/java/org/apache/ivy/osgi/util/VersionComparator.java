@@ -19,15 +19,20 @@ package org.apache.ivy.osgi.util;
 
 import java.util.Comparator;
 
-public class VersionComparator implements Comparator<Version> {
+public class VersionComparator implements Comparator/* <Version> */{
 
-    public static final Comparator<Version> ASCENDING = new VersionComparator(false);
-    public static final Comparator<Version> DESCENDING = new VersionComparator(true);
+    public static final Comparator/* <Version> */ASCENDING = new VersionComparator(false);
+
+    public static final Comparator/* <Version> */DESCENDING = new VersionComparator(true);
 
     public final boolean reverse;
 
     private VersionComparator(boolean reverse) {
         this.reverse = reverse;
+    }
+
+    public int compare(Object o1, Object o2) {
+        return compare((Version) o1, (Version) o1);
     }
 
     public int compare(Version objA, Version objB) {

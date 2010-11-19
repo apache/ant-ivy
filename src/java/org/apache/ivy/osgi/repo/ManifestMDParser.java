@@ -33,7 +33,6 @@ import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 
-
 public class ManifestMDParser extends AbstractModuleDescriptorParser {
 
     private ExecutionEnvironmentProfileProvider profileProvider;
@@ -49,15 +48,15 @@ public class ManifestMDParser extends AbstractModuleDescriptorParser {
         return res.getName().toUpperCase().endsWith("MANIFEST.MF");
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, Resource res,
-            boolean validate) throws ParseException, IOException {
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
+            Resource res, boolean validate) throws ParseException, IOException {
         Manifest m = new Manifest(res.openStream());
         BundleInfo bundleInfo = ManifestParser.parseManifest(m);
         return BundleInfoAdapter.toModuleDescriptor(bundleInfo, profileProvider);
     }
 
-    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException,
-            IOException {
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
+            throws ParseException, IOException {
         try {
             XmlModuleDescriptorWriter.write(md, destFile);
         } finally {

@@ -17,59 +17,47 @@
  */
 package org.apache.ivy.osgi.util;
 
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
-import org.apache.ivy.osgi.util.NameUtil;
 import org.apache.ivy.osgi.util.NameUtil.OrgAndName;
-import org.junit.*;
 
+public class NameUtilTest extends TestCase {
 
-public class NameUtilTest {
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    @Test
     public void testAsOrgAndName() {
         OrgAndName oan;
-        
+
         oan = NameUtil.instance().asOrgAndName("foo");
         assertEquals("foo", oan.org);
         assertEquals("foo", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("java.foo");
         assertEquals("java", oan.org);
         assertEquals("foo", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("java.foo.bar");
         assertEquals("java", oan.org);
         assertEquals("foo.bar", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("javax.foo");
         assertEquals("javax", oan.org);
         assertEquals("foo", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("javax.foo.bar");
         assertEquals("javax", oan.org);
         assertEquals("foo.bar", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("org.eclipse.foo");
         assertEquals("org.eclipse", oan.org);
         assertEquals("foo", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("org.eclipse.foo.bar");
         assertEquals("org.eclipse", oan.org);
         assertEquals("foo.bar", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("com.eclipse.foo.bar");
         assertEquals("com.eclipse", oan.org);
         assertEquals("foo.bar", oan.name);
-        
+
         oan = NameUtil.instance().asOrgAndName("net.eclipse.foo.bar");
         assertEquals("net.eclipse", oan.org);
         assertEquals("foo.bar", oan.name);

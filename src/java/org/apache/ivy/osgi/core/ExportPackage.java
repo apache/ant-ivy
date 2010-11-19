@@ -22,10 +22,9 @@ import java.util.Set;
 
 import org.apache.ivy.osgi.util.Version;
 
-
 public class ExportPackage extends BundleCapability {
 
-    private final Set<String> uses = new HashSet<String>();
+    private final Set/* <String> */uses = new HashSet/* <String> */();
 
     public ExportPackage(String name, Version version) {
         super(BundleInfo.PACKAGE_TYPE, name, version);
@@ -35,16 +34,14 @@ public class ExportPackage extends BundleCapability {
         uses.add(pkg);
     }
 
-    @Override
     public Version getVersion() {
         return super.getVersion() == null ? BundleInfo.DEFAULT_VERSION : super.getVersion();
     }
 
-    public Set<String> getUses() {
+    public Set/* <String> */getUses() {
         return uses;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -52,7 +49,6 @@ public class ExportPackage extends BundleCapability {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

@@ -17,15 +17,10 @@
  */
 package org.apache.ivy.osgi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import junit.framework.TestCase;
 
-import org.apache.ivy.osgi.util.Version;
-import org.junit.Test;
+public class VersionTest extends TestCase {
 
-public class VersionTest {
-
-    @Test
     public void testParsing() {
         Version v;
 
@@ -46,7 +41,6 @@ public class VersionTest {
         assertEquals("abc", v.qualifier());
     }
 
-    @Test
     public void testCompareTo() {
         assertTrue(new Version("1.2.3").compareTo(new Version("1.2.3")) == 0);
 

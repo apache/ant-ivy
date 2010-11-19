@@ -25,11 +25,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class ManifestHeaderElement {
-    private List<String> values = new ArrayList<String>();
-    private Map<String, String> attributes = new HashMap<String, String>();
-    private Map<String, String> directives = new HashMap<String, String>();
+    private List/* <String> */values = new ArrayList/* <String> */();
 
-    public List<String> getValues() {
+    private Map/* <String, String> */attributes = new HashMap/* <String, String> */();
+
+    private Map/* <String, String> */directives = new HashMap/* <String, String> */();
+
+    public List/* <String> */getValues() {
         return values;
     }
 
@@ -37,7 +39,7 @@ public class ManifestHeaderElement {
         values.add(value);
     }
 
-    public Map<String, String> getAttributes() {
+    public Map/* <String, String> */getAttributes() {
         return attributes;
     }
 
@@ -45,7 +47,7 @@ public class ManifestHeaderElement {
         attributes.put(name, value);
     }
 
-    public Map<String, String> getDirectives() {
+    public Map/* <String, String> */getDirectives() {
         return directives;
     }
 
@@ -53,7 +55,6 @@ public class ManifestHeaderElement {
         directives.put(name, value);
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ManifestHeaderElement)) {
             return false;
@@ -62,7 +63,9 @@ public class ManifestHeaderElement {
         if (other.values.size() != values.size()) {
             return false;
         }
-        for (String value : values) {
+        Iterator itValues = values.iterator();
+        while (itValues.hasNext()) {
+            String value = (String) itValues.next();
             if (!other.values.contains(value)) {
                 return false;
             }
@@ -70,7 +73,9 @@ public class ManifestHeaderElement {
         if (other.directives.size() != directives.size()) {
             return false;
         }
-        for (Entry<String, String> directive : directives.entrySet()) {
+        Iterator itDirectives = directives.entrySet().iterator();
+        while (itDirectives.hasNext()) {
+            Entry/* <String, String> */directive = (Entry) itDirectives.next();
             if (!directive.getValue().equals(other.directives.get(directive.getKey()))) {
                 return false;
             }
@@ -78,7 +83,9 @@ public class ManifestHeaderElement {
         if (other.attributes.size() != attributes.size()) {
             return false;
         }
-        for (Entry<String, String> attribute : attributes.entrySet()) {
+        Iterator itAttributes = attributes.entrySet().iterator();
+        while (itAttributes.hasNext()) {
+            Entry/* <String, String> */attribute = (Entry) itAttributes.next();
             if (!attribute.getValue().equals(other.attributes.get(attribute.getKey()))) {
                 return false;
             }
@@ -86,27 +93,30 @@ public class ManifestHeaderElement {
         return true;
     }
 
-    @Override
     public String toString() {
         String string = "";
-        Iterator<String> itValues = values.iterator();
+        Iterator/* <String> */itValues = values.iterator();
         while (itValues.hasNext()) {
-            string = string.concat(itValues.next());
+            string = string.concat((String) itValues.next());
             if (itValues.hasNext()) {
                 string = string.concat(";");
             }
         }
-        for (Entry<String, String> directive : directives.entrySet()) {
+        Iterator itDirectives = directives.entrySet().iterator();
+        while (itDirectives.hasNext()) {
+            Entry/* <String, String> */directive = (Entry) itDirectives.next();
             string = string.concat(";");
-            string = string.concat(directive.getKey());
+            string = string.concat((String) directive.getKey());
             string = string.concat(":=");
-            string = string.concat(directive.getValue());
+            string = string.concat((String) directive.getValue());
         }
-        for (Entry<String, String> attribute : attributes.entrySet()) {
+        Iterator itAttributes = attributes.entrySet().iterator();
+        while (itAttributes.hasNext()) {
+            Entry/* <String, String> */attribute = (Entry) itAttributes.next();
             string = string.concat(";");
-            string = string.concat(attribute.getKey());
+            string = string.concat((String) attribute.getKey());
             string = string.concat("=");
-            string = string.concat(attribute.getValue());
+            string = string.concat((String) attribute.getValue());
         }
         return string;
     }

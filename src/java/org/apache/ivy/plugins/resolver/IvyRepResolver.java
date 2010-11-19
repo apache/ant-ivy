@@ -277,7 +277,7 @@ public class IvyRepResolver extends URLResolver {
         return super.getDependency(dd, data);
     }
 
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+    public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ensureArtifactConfigured(getSettings());
         return super.findArtifactRef(artifact, date);
     }

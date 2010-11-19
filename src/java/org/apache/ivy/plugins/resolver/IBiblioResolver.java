@@ -108,7 +108,7 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+    public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ensureConfigured(getSettings());
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (isM2compatible()) {

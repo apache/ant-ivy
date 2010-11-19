@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 public class ExecutionEnvironmentProfile {
 
-    private Set<String> pkgNames = new TreeSet<String>();
+    private Set/* <String> */pkgNames = new TreeSet/* <String> */();
 
     private final String name;
 
@@ -40,11 +40,10 @@ public class ExecutionEnvironmentProfile {
         }
     }
 
-    public Set<String> getPkgNames() {
+    public Set/* <String> */getPkgNames() {
         return pkgNames;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -53,7 +52,6 @@ public class ExecutionEnvironmentProfile {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

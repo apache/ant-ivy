@@ -21,25 +21,30 @@ import org.apache.ivy.osgi.obr.xml.RequirementFilter;
 
 public class CompareFilter extends RequirementFilter {
 
-    public enum Operator {
-        EQUALS, LOWER_THAN, LOWER_OR_EQUAL, GREATER_THAN, GREATER_OR_EQUAL;
+    // enum 1.5 wrote in java 1.4
+    public static class Operator {
 
-        @Override
+        public static Operator EQUALS = new Operator();
+
+        public static Operator LOWER_THAN = new Operator();
+
+        public static Operator LOWER_OR_EQUAL = new Operator();
+
+        public static Operator GREATER_THAN = new Operator();
+
+        public static Operator GREATER_OR_EQUAL = new Operator();
+
         public String toString() {
-            switch (this) {
-            case EQUALS:
+            if (this == EQUALS)
                 return "=";
-            case GREATER_THAN:
+            if (this == GREATER_THAN)
                 return ">";
-            case GREATER_OR_EQUAL:
+            if (this == GREATER_OR_EQUAL)
                 return ">=";
-            case LOWER_THAN:
+            if (this == LOWER_THAN)
                 return "<";
-            case LOWER_OR_EQUAL:
+            if (this == LOWER_OR_EQUAL)
                 return "<=";
-            default:
-                break;
-            }
             return super.toString();
         }
     }
@@ -68,7 +73,6 @@ public class CompareFilter extends RequirementFilter {
         return rightValue;
     }
 
-    @Override
     public void append(StringBuilder builder) {
         builder.append("(");
         builder.append(leftValue);
@@ -77,7 +81,6 @@ public class CompareFilter extends RequirementFilter {
         builder.append(")");
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -87,7 +90,6 @@ public class CompareFilter extends RequirementFilter {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.osgi.ivy;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +25,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -53,7 +52,6 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.types.resources.FileResource;
 
-
 /**
  * An parser for OSGi Manifest descriptor.
  * 
@@ -78,13 +76,14 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
             return false;
         }
         return res.getName().toUpperCase().endsWith("META-INF/MANIFEST.MF")
-                || res.getName().toUpperCase().endsWith(".JAR") || res.getName().toUpperCase().endsWith(".PKGREF");
+                || res.getName().toUpperCase().endsWith(".JAR")
+                || res.getName().toUpperCase().endsWith(".PKGREF");
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, Resource res,
-            boolean validate) throws ParseException, IOException {
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
+            Resource res, boolean validate) throws ParseException, IOException {
 
-        Message.debug(format("\tparse descriptor: resource=%s", res));
+        Message.debug("\tparse descriptor: resource=" + res);
 
         final InternalParser parser = new InternalParser(this);
         parser.parse(res, ivySettings);
@@ -93,15 +92,15 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
 
     public ModuleDescriptor parseExports(Resource res) throws ParseException, IOException {
 
-        Message.debug(format("\tparse descriptor: resource=%s", res));
+        Message.debug("\tparse descriptor: resource=" + res);
 
         final InternalParser parser = new InternalParser(this);
         parser.parse(res, true);
         return parser.getModuleDescriptor();
     }
 
-    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException,
-            IOException {
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
+            throws ParseException, IOException {
         try {
             XmlModuleDescriptorWriter.write(md, destFile);
         } finally {
@@ -124,7 +123,8 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
         public void parse(Resource res, boolean useExports) throws IOException {
             Manifest manifest;
             if ((res instanceof FileResource) && ((FileResource) res).isDirectory()) {
-                manifest = new Manifest(new FileInputStream(res.getName() + "/META-INF/MANIFEST.MF"));
+                manifest = new Manifest(
+                        new FileInputStream(res.getName() + "/META-INF/MANIFEST.MF"));
             } else if (res.getName().toUpperCase().endsWith(".JAR")) {
                 manifest = new JarInputStream(res.openStream()).getManifest();
             } else {
@@ -148,8 +148,8 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
 
             // Set Info
             OrgAndName orgAndName = NameUtil.instance().asOrgAndName(info.getSymbolicName());
-            final ModuleRevisionId mrid = ModuleRevisionId.newInstance(orgAndName.org, orgAndName.name, info
-                    .getVersion().toString());
+            final ModuleRevisionId mrid = ModuleRevisionId.newInstance(orgAndName.org,
+                orgAndName.name, info.getVersion().toString());
 
             getMd().setDescription(info.getDescription());
             getMd().setResolvedPublicationDate(new Date(res.getLastModified()));
@@ -158,49 +158,60 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
             getMd().addConfiguration(new Configuration("optional"));
             getMd().addConfiguration(new Configuration("source"));
             getMd().setStatus("release");
-            getMd().addArtifact("default",
-                    new DefaultArtifact(mrid, getDefaultPubDate(), info.getSymbolicName(), "jar", "jar"));
-            getMd().addArtifact("source",
-                    new DefaultArtifact(mrid, getDefaultPubDate(), info.getSymbolicName() + ".source", "src", "jar"));
+            getMd().addArtifact(
+                "default",
+                new DefaultArtifact(mrid, getDefaultPubDate(), info.getSymbolicName(), "jar", "jar"));
+            getMd().addArtifact(
+                "source",
+                new DefaultArtifact(mrid, getDefaultPubDate(), info.getSymbolicName() + ".source",
+                        "src", "jar"));
 
             if (useExports) {
                 addExports(getMd(), info.getExports());
             } else {
-                Set<ModuleRevisionId> processedDeps = new HashSet<ModuleRevisionId>();
+                Set/* <ModuleRevisionId> */processedDeps = new HashSet/* <ModuleRevisionId> */();
                 processedDeps.add(mrid);
 
                 addRequiredBundles(getMd(), info.getRequires(), processedDeps);
                 addImports(getMd(), info.getImports(), processedDeps);
             }
 
-            Message.debug(format("\t\tparse: bundle info: %s", info.toString()));
+            Message.debug("\t\tparse: bundle info: " + info);
         }
 
-        protected void addExports(DefaultModuleDescriptor parent, Set<ExportPackage> bundleDependencies) {
-            for (final ExportPackage dep : bundleDependencies) {
+        protected void addExports(DefaultModuleDescriptor parent,
+                Set/* <ExportPackage> */bundleDependencies) {
+            Iterator itDeps = bundleDependencies.iterator();
+            while (itDeps.hasNext()) {
+                ExportPackage dep = (ExportPackage) itDeps.next();
                 String rev = "";
                 if (dep.getVersion() != null) {
                     rev = dep.getVersion().toString();
                 }
 
-                final ModuleRevisionId depMrid = ModuleRevisionId.newInstance(PACKAGE, dep.getName(), rev);
-                final DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(parent, depMrid, false, false,
-                        true);
+                final ModuleRevisionId depMrid = ModuleRevisionId.newInstance(PACKAGE,
+                    dep.getName(), rev);
+                final DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(parent,
+                        depMrid, false, false, true);
                 dd.addDependencyConfiguration("default", "default");
                 parent.addDependency(dd);
             }
         }
 
-        protected void addRequiredBundles(DefaultModuleDescriptor parent, Set<BundleRequirement> bundleDependencies,
-                Set<ModuleRevisionId> processedDeps) {
-            for (final BundleRequirement dep : bundleDependencies) {
+        protected void addRequiredBundles(DefaultModuleDescriptor parent,
+                Set/* <BundleRequirement> */bundleDependencies,
+                Set/* <ModuleRevisionId> */processedDeps) {
+            Iterator itDeps = bundleDependencies.iterator();
+            while (itDeps.hasNext()) {
+                BundleRequirement dep = (BundleRequirement) itDeps.next();
                 String rev = "";
                 if (dep.getVersion() != null) {
                     rev = dep.getVersion().toIvyRevision();
                 }
 
                 OrgAndName orgAndName = NameUtil.instance().asOrgAndName(dep.getName());
-                final ModuleRevisionId depMrid = ModuleRevisionId.newInstance(orgAndName.org, orgAndName.name, rev);
+                final ModuleRevisionId depMrid = ModuleRevisionId.newInstance(orgAndName.org,
+                    orgAndName.name, rev);
 
                 if (processedDeps.contains(depMrid)) {
                     return;
@@ -208,8 +219,8 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
 
                 processedDeps.add(depMrid);
 
-                final DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(parent, depMrid, false, false,
-                        true);
+                final DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(parent,
+                        depMrid, false, false, true);
                 if (dep.getResolution() == null) {
                     dd.addDependencyConfiguration("default", "default");
                 } else {
@@ -220,10 +231,14 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
 
         }
 
-        protected void addImports(DefaultModuleDescriptor parent, Set<BundleRequirement> bundleDependencies,
-                Set<ModuleRevisionId> processedDeps) {
-            for (final BundleRequirement dep : bundleDependencies) {
-                final ModuleRevisionId pkgMrid = PackageRegistry.getInstance().processImports(dep.getName(), dep.getVersion());
+        protected void addImports(DefaultModuleDescriptor parent,
+                Set/* <BundleRequirement> */bundleDependencies,
+                Set/* <ModuleRevisionId> */processedDeps) {
+            Iterator itDeps = bundleDependencies.iterator();
+            while (itDeps.hasNext()) {
+                BundleRequirement dep = (BundleRequirement) itDeps.next();
+                final ModuleRevisionId pkgMrid = PackageRegistry.getInstance().processImports(
+                    dep.getName(), dep.getVersion());
 
                 if (processedDeps.contains(pkgMrid)) {
                     return;
@@ -232,8 +247,8 @@ public class OsgiManifestParser extends AbstractModuleDescriptorParser {
                 processedDeps.add(pkgMrid);
 
                 if (pkgMrid != null) {
-                    final DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(parent, pkgMrid, false,
-                            false, true);
+                    final DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(parent,
+                            pkgMrid, false, false, true);
                     if (dep.getResolution() == null) {
                         dd.addDependencyConfiguration("default", "default");
                     } else {

@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.osgi.ivy;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,32 +38,26 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
-
 /**
  * An OSGi file system resolver.
- * 
- * @author alex@radeski.net
  */
 public class OsgiFileResolver extends FileSystemResolver {
-    
+
     private final FilePackageScanner packageScanner = new FilePackageScanner();
 
     public OsgiFileResolver() {
         setRepository(new JarFileRepository());
     }
 
-    @Override
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
-        Message.debug(format("\tfind artifact ref: artifact=%s, date=%s", artifact, date));
+    public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+        Message.debug("\tfind artifact ref: artifact=" + artifact + ", date=" + date);
 
         final ModuleRevisionId newMrid = artifact.getModuleRevisionId();
         ResolvedResource resolvedResource = findResourceUsingPatterns(newMrid,
-                getArtifactPatterns(),
-                artifact,
-                getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()),
-                date);
+            getArtifactPatterns(), artifact, getDefaultRMDParser(artifact.getModuleRevisionId()
+                    .getModuleId()), date);
 
-        Message.debug(format("\t\tfind artifact ref: mrid=%s, resource=%s", newMrid, resolvedResource));
+        Message.debug("\t\tfind artifact ref: mrid=" + newMrid + ", resource=" + resolvedResource);
 
         if (resolvedResource == null) {
             Message.debug("\t\tfind artifact file ref: resource was null");
@@ -79,9 +71,11 @@ public class OsgiFileResolver extends FileSystemResolver {
                 final File bundleZipFile = File.createTempFile("ivy-osgi-" + newMrid, ".zip");
                 ZipUtil.zip(dirResource.getFile(), new FileOutputStream(bundleZipFile));
                 Message.debug("\t\tfind artifact ref: zip file=" + bundleZipFile);
-                return new ResolvedResource(new FileResource(dirResource.getRepository(), bundleZipFile), resolvedResource.getRevision());
+                return new ResolvedResource(new FileResource(dirResource.getRepository(),
+                        bundleZipFile), resolvedResource.getRevision());
             } catch (IOException e) {
-                throw new IllegalStateException("Failed to create temp zip file for bundle:" + newMrid);
+                throw new IllegalStateException("Failed to create temp zip file for bundle:"
+                        + newMrid);
             }
         }
 
@@ -89,20 +83,15 @@ public class OsgiFileResolver extends FileSystemResolver {
         return resolvedResource;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         packageScanner.scanAllPackageExportHeaders(getIvyPatterns(), getSettings());
-        
-        Message.debug(format("\tfind ivy file ref: dd=%s, data=%s", dd, data));
+
+        Message.debug("\tfind ivy file ref: dd=" + dd + ", data=" + data);
 
         final ModuleRevisionId newMrid = dd.getDependencyRevisionId();
         final ResolvedResource bundleResolvedResource = findResourceUsingPatterns(newMrid,
-                getIvyPatterns(),
-                DefaultArtifact.newIvyArtifact(newMrid, data.getDate()),
-                getRMDParser(dd, data),
-                data.getDate());
-
+            getIvyPatterns(), DefaultArtifact.newIvyArtifact(newMrid, data.getDate()),
+            getRMDParser(dd, data), data.getDate());
 
         if (bundleResolvedResource == null) {
             Message.debug("\tfind ivy file ref: resource was null");
@@ -112,35 +101,21 @@ public class OsgiFileResolver extends FileSystemResolver {
         final Resource bundleResource = bundleResolvedResource.getResource();
 
         Resource res = null;
-        if ((bundleResource instanceof FileResource) && ((FileResource) bundleResource).getFile().isDirectory()) {
+        if ((bundleResource instanceof FileResource)
+                && ((FileResource) bundleResource).getFile().isDirectory()) {
             final FileResource fileResource = (FileResource) bundleResource;
-            res = new FileResource((FileRepository) getRepository(), new File(fileResource.getFile(), "META-INF/MANIFEST.MF"));
+            res = new FileResource((FileRepository) getRepository(), new File(
+                    fileResource.getFile(), "META-INF/MANIFEST.MF"));
         } else if (bundleResource.getName().toUpperCase().endsWith(".JAR")) {
             res = new JarEntryResource(bundleResource, "META-INF/MANIFEST.MF");
         }
 
-        ResolvedResource resolvedResource = new ResolvedResource(res, bundleResolvedResource.getRevision());
+        ResolvedResource resolvedResource = new ResolvedResource(res,
+                bundleResolvedResource.getRevision());
 
-        Message.debug(format("\tfind ivy file ref: resource=%s", bundleResolvedResource));
+        Message.debug("\tfind ivy file ref: resource=" + bundleResolvedResource);
 
         return resolvedResource;
     }
-
-
-//    protected ModuleRevisionId modifyModuleRevisionId(final ModuleRevisionId oldMrid) {
-//        String revision = oldMrid.getRevision();
-//        try {
-//            VersionRange versionRange = new VersionRange(oldMrid.getRevision());
-//            revision = versionRange.toIvyRevision();
-//        } catch (ParseException nfe) {
-//            // Do nothing as we fallback to default behaviour
-//        }
-//        final ModuleRevisionId newMrid = ModuleRevisionId.newInstance(oldMrid.getOrganisation(),
-//                oldMrid.getName(),
-//                oldMrid.getBranch(),
-//                revision,
-//                oldMrid.getExtraAttributes());
-//        return newMrid;
-//    }
 
 }

@@ -24,27 +24,23 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 
 /**
- * A file repository that handles extracting jar file entries using the bang(!) notation to separate the internal
- * entry name.
- * 
- * @author alex@radeski.net
+ * A file repository that handles extracting jar file entries using the bang(!) notation to separate
+ * the internal entry name.
  */
 public class JarFileRepository extends FileRepository {
 
     private final RepositoryJarHandler jarHandler = new RepositoryJarHandler();
 
-    @Override
     public void get(String source, File destination) throws IOException {
-        if(jarHandler.canHandle(source)) {
+        if (jarHandler.canHandle(source)) {
             this.jarHandler.get(source, destination);
             return;
         }
         super.get(source, destination);
     }
 
-    @Override
     public Resource getResource(String source) throws IOException {
-        if(jarHandler.canHandle(source)) {
+        if (jarHandler.canHandle(source)) {
             return this.jarHandler.getResource(source);
         }
         return super.getResource(source);

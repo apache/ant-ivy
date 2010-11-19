@@ -20,6 +20,7 @@ package org.apache.ivy.osgi.repo;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,22 +30,33 @@ import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 
-
 public class BundleRepo {
 
     private String name;
 
     private Long lastModified;
 
-    private final Set<BundleInfo> bundles = new HashSet<BundleInfo>();
+    private final Set/* <BundleInfo> */bundles = new HashSet/* <BundleInfo> */();
 
-    private final Map<String, Map<String, Set<BundleCapabilityAndLocation>>> bundleByCapabilities = new HashMap<String, Map<String, Set<BundleCapabilityAndLocation>>>();
+    private final Map/* <String, Map<String, Set<BundleCapabilityAndLocation>>> */bundleByCapabilities = new HashMap/*
+                                                                                                                     * <
+                                                                                                                     * String
+                                                                                                                     * ,
+                                                                                                                     * Map
+                                                                                                                     * <
+                                                                                                                     * String
+                                                                                                                     * ,
+                                                                                                                     * Set
+                                                                                                                     * <
+                                                                                                                     * BundleCapabilityAndLocation
+                                                                                                                     * >>>
+                                                                                                                     */();
 
     public BundleRepo() {
         // default constructor
     }
 
-    public BundleRepo(Iterable<ManifestAndLocation> it) {
+    public BundleRepo(Iterable/* <ManifestAndLocation> */it) {
         populate(it);
     }
 
@@ -64,35 +76,44 @@ public class BundleRepo {
         return lastModified;
     }
 
-    public void populate(Iterable<ManifestAndLocation> it) {
-        for (ManifestAndLocation manifestAndLocation : it) {
+    public void populate(Iterable/* <ManifestAndLocation> */it) {
+        Iterator iterator = it.iterator();
+        while (iterator.hasNext()) {
+            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) iterator.next();
             try {
-                BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
+                BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation
+                        .getManifest());
                 bundleInfo.setUri(manifestAndLocation.getLocation());
                 addBundle(bundleInfo);
             } catch (ParseException e) {
-                Message.error("Rejected " + manifestAndLocation.getLocation() + ": " + e.getMessage());
+                Message.error("Rejected " + manifestAndLocation.getLocation() + ": "
+                        + e.getMessage());
             }
         }
     }
 
     public void addBundle(BundleInfo bundleInfo) {
         bundles.add(bundleInfo);
-        populateCapabilities(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), bundleInfo.getVersion(), bundleInfo);
-        for (BundleCapability capability : bundleInfo.getCapabilities()) {
-            populateCapabilities(capability.getType(), capability.getName(), capability.getVersion(), bundleInfo);
+        populateCapabilities(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(),
+            bundleInfo.getVersion(), bundleInfo);
+        Iterator itCapability = bundleInfo.getCapabilities().iterator();
+        while (itCapability.hasNext()) {
+            BundleCapability capability = (BundleCapability) itCapability.next();
+            populateCapabilities(capability.getType(), capability.getName(),
+                capability.getVersion(), bundleInfo);
         }
     }
 
     private void populateCapabilities(String type, String n, Version version, BundleInfo bundleInfo) {
-        Map<String, Set<BundleCapabilityAndLocation>> map = bundleByCapabilities.get(type);
+        Map/* <String, Set<BundleCapabilityAndLocation>> */map = (Map) bundleByCapabilities
+                .get(type);
         if (map == null) {
-            map = new HashMap<String, Set<BundleCapabilityAndLocation>>();
+            map = new HashMap/* <String, Set<BundleCapabilityAndLocation>> */();
             bundleByCapabilities.put(type, map);
         }
-        Set<BundleCapabilityAndLocation> bundleReferences = map.get(n);
+        Set/* <BundleCapabilityAndLocation> */bundleReferences = (Set) map.get(n);
         if (bundleReferences == null) {
-            bundleReferences = new HashSet<BundleCapabilityAndLocation>();
+            bundleReferences = new HashSet/* <BundleCapabilityAndLocation> */();
             map.put(n, bundleReferences);
         }
         if (!bundleReferences.add(new BundleCapabilityAndLocation(type, n, version, bundleInfo))) {
@@ -100,20 +121,18 @@ public class BundleRepo {
         }
     }
 
-    public Set<BundleInfo> getBundles() {
+    public Set/* <BundleInfo> */getBundles() {
         return bundles;
     }
 
-    public Map<String, Map<String, Set<BundleCapabilityAndLocation>>> getBundleByCapabilities() {
+    public Map/* <String, Map<String, Set<BundleCapabilityAndLocation>>> */getBundleByCapabilities() {
         return bundleByCapabilities;
     }
 
-    @Override
     public String toString() {
         return bundles.toString();
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -121,7 +140,6 @@ public class BundleRepo {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

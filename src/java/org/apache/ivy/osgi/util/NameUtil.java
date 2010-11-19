@@ -26,8 +26,6 @@ import java.util.Set;
 
 /**
  * Provides a bundle name conversion utility.
- * 
- * @author alex@radeski.net
  */
 public class NameUtil {
 
@@ -37,10 +35,11 @@ public class NameUtil {
         return instance;
     }
 
-    private final Set<String> tlds = new HashSet<String>();
+    private final Set/* <String> */tlds = new HashSet/* <String> */();
 
     private NameUtil() {
-        final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("orgs.list");
+        final InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream("orgs.list");
         if (inputStream == null) {
             throw new IllegalStateException("Unable to find required file in classpath: orgs.list");
         }
@@ -80,7 +79,8 @@ public class NameUtil {
         }
 
         if (org == null || name == null) {
-            throw new IllegalStateException("Null org/name: org=" + org + ", name=" + name + ", qname=" + qname);
+            throw new IllegalStateException("Null org/name: org=" + org + ", name=" + name
+                    + ", qname=" + qname);
         }
 
         return new OrgAndName(org, name);
@@ -101,6 +101,7 @@ public class NameUtil {
 
     public static class OrgAndName {
         public final String org;
+
         public final String name;
 
         private OrgAndName(String org, String name) {

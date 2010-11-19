@@ -25,8 +25,11 @@ import java.text.ParseException;
 public class VersionRange {
 
     private boolean startExclusive;
+
     private Version startVersion;
+
     private boolean endExclusive;
+
     private Version endVersion;
 
     public VersionRange(String versionStr) throws ParseException {
@@ -115,26 +118,26 @@ public class VersionRange {
         private boolean parseStart() {
             skipWhiteSpace();
             switch (readNext()) {
-            case '[':
-                startExclusive = false;
-                return true;
-            case '(':
-                startExclusive = true;
-                return true;
-            default:
-                unread();
-                return false;
+                case '[':
+                    startExclusive = false;
+                    return true;
+                case '(':
+                    startExclusive = true;
+                    return true;
+                default:
+                    unread();
+                    return false;
             }
         }
 
         private void skipWhiteSpace() {
             do {
                 switch (readNext()) {
-                case ' ':
-                    continue;
-                default:
-                    unread();
-                    return;
+                    case ' ':
+                        continue;
+                    default:
+                        unread();
+                        return;
                 }
             } while (pos < length);
         }
@@ -144,23 +147,23 @@ public class VersionRange {
             if (major == null) {
                 return null;
             }
-            Integer minor = 0;
-            Integer patch = 0;
+            Integer minor = Integer.valueOf(0);
+            Integer patch = Integer.valueOf(0);
             String qualififer = null;
             if (parseNumberSeparator()) {
                 minor = parseNumber();
                 if (minor == null) {
-                    minor = 0;
+                    minor = Integer.valueOf(0);
                 } else if (parseNumberSeparator()) {
                     patch = parseNumber();
                     if (patch == null) {
-                        patch = 0;
+                        patch = Integer.valueOf(0);
                     } else if (parseNumberSeparator()) {
                         qualififer = parseQualifier();
                     }
                 }
             }
-            return new Version(major, minor, patch, qualififer);
+            return new Version(major.intValue(), minor.intValue(), patch.intValue(), qualififer);
         }
 
         private Integer parseNumber() {
@@ -168,23 +171,23 @@ public class VersionRange {
             Integer n = null;
             do {
                 switch (readNext()) {
-                case '\0':
-                    return n;
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    n = (n == null ? 0 : n * 10) + c - '0';
-                    break;
-                default:
-                    unread();
-                    return n;
+                    case '\0':
+                        return n;
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        n = Integer.valueOf((n == null ? 0 : n.intValue() * 10) + c - '0');
+                        break;
+                    default:
+                        unread();
+                        return n;
                 }
             } while (pos < length);
             return n;
@@ -192,22 +195,22 @@ public class VersionRange {
 
         private boolean parseNumberSeparator() {
             switch (readNext()) {
-            case '.':
-                return true;
-            default:
-                unread();
-                return false;
+                case '.':
+                    return true;
+                default:
+                    unread();
+                    return false;
             }
         }
 
         private boolean parseVersionSeparator() {
             skipWhiteSpace();
             switch (readNext()) {
-            case ',':
-                return true;
-            default:
-                unread();
-                return false;
+                case ',':
+                    return true;
+                default:
+                    unread();
+                    return false;
             }
         }
 
@@ -215,7 +218,8 @@ public class VersionRange {
             StringBuilder q = new StringBuilder();
             do {
                 readNext();
-                if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '-' || c == '_') {
+                if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9'
+                        || c == '-' || c == '_') {
                     q.append(c);
                 } else {
                     unread();
@@ -231,30 +235,30 @@ public class VersionRange {
         private void parseEnd() throws ParseException {
             skipWhiteSpace();
             switch (readNext()) {
-            case ']':
-                endExclusive = false;
-                break;
-            case ')':
-                endExclusive = true;
-                break;
-            default:
-                unread();
-                throw new ParseException("Expexting ] or )", pos);
+                case ']':
+                    endExclusive = false;
+                    break;
+                case ')':
+                    endExclusive = true;
+                    break;
+                default:
+                    unread();
+                    throw new ParseException("Expexting ] or )", pos);
             }
         }
     }
 
-    public VersionRange(boolean startExclusive, Version startVersion, boolean endExclusive, Version endVersion) {
+    public VersionRange(boolean startExclusive, Version startVersion, boolean endExclusive,
+            Version endVersion) {
         this.startExclusive = startExclusive;
         this.startVersion = startVersion;
         this.endExclusive = endExclusive;
         this.endVersion = endVersion;
     }
 
-    @Override
     public String toString() {
-        return (startExclusive ? "(" : "[") + startVersion + "," + (endVersion == null ? "" : endVersion)
-                + (endExclusive ? ")" : "]");
+        return (startExclusive ? "(" : "[") + startVersion + ","
+                + (endVersion == null ? "" : endVersion.toString()) + (endExclusive ? ")" : "]");
     }
 
     public String toIvyRevision() {
@@ -300,20 +304,20 @@ public class VersionRange {
     }
 
     public boolean contains(Version version) {
-        if (startExclusive ? version.compareUnqualified(startVersion) <= 0
-                : version.compareUnqualified(startVersion) < 0) {
+        if (startExclusive ? version.compareUnqualified(startVersion) <= 0 : version
+                .compareUnqualified(startVersion) < 0) {
             return false;
         }
         if (endVersion == null) {
             return true;
         }
-        if (endExclusive ? version.compareUnqualified(endVersion) >= 0 : version.compareUnqualified(endVersion) > 0) {
+        if (endExclusive ? version.compareUnqualified(endVersion) >= 0 : version
+                .compareUnqualified(endVersion) > 0) {
             return false;
         }
         return true;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -324,7 +328,6 @@ public class VersionRange {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

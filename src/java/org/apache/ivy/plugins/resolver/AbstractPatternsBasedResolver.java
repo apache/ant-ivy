@@ -73,7 +73,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             data.getDate()), getRMDParser(dd, data), data.getDate());
     }
 
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+    public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);

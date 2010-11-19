@@ -40,17 +40,16 @@ public class RelativeURLRepository extends URLRepository {
         this.baseUrl = baseUrl;
     }
 
-    private Map<String, Resource> resourcesCache = new HashMap<String, Resource>();
+    private Map/* <String, Resource> */resourcesCache = new HashMap/* <String, Resource> */();
 
-    @Override
     public Resource getResource(String source) throws IOException {
         source = encode(source);
-        Resource res = resourcesCache.get(source);
+        Resource res = (Resource) resourcesCache.get(source);
         if (res == null) {
             if (baseUrl == null) {
                 res = new URLResource(new URL(source));
             } else {
-                res = new URLResource(new URL(baseUrl + source));                
+                res = new URLResource(new URL(baseUrl + source));
             }
             resourcesCache.put(source, res);
         }

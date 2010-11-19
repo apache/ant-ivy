@@ -17,17 +17,10 @@
  */
 package org.apache.ivy.osgi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import junit.framework.TestCase;
 
-import org.apache.ivy.osgi.util.ArtifactTokens;
-import org.junit.Test;
+public class ArtifactTokensTest extends TestCase {
 
-public class ArtifactTokensTest {
-
-    @Test
     public void testGoodMatching() {
         final String repoResource = "java/test-ivy/osgi/eclipse/plugins/org.eclipse.datatools.connectivity.ui_1.0.1.v200808121010";
         final ArtifactTokens tokens = new ArtifactTokens(repoResource);
@@ -38,7 +31,6 @@ public class ArtifactTokensTest {
         assertFalse(tokens.isJar);
     }
 
-    @Test
     public void testGoodMatching2() {
         final String repoResource = "java/test-ivy/osgi/eclipse/plugins/org.eclipse.datatools.connectivity.ui_1.0.1";
         final ArtifactTokens tokens = new ArtifactTokens(repoResource);
@@ -49,7 +41,6 @@ public class ArtifactTokensTest {
         assertFalse(tokens.isJar);
     }
 
-    @Test
     public void testGoodMatching3() {
         final String repoResource = "java/test-ivy/osgi/eclipse/plugins/org.myorg.module.one_3.21.100.v20070530";
         final ArtifactTokens tokens = new ArtifactTokens(repoResource);
@@ -60,10 +51,10 @@ public class ArtifactTokensTest {
         assertFalse(tokens.isJar);
     }
 
-    @Test
     public void testGoodMatching4() {
         final String repoResource = "java/test-ivy/osgi/eclipse/plugins/org.eclipse.mylyn.tasks.ui_3.0.1.v20080721-2100-e33.jar";
-        // String repoResource = "java/test-ivy/osgi/eclipse/plugins/org.eclipse.mylyn.tasks.ui_3.0.1.v20080721.jar";
+        // String repoResource =
+        // "java/test-ivy/osgi/eclipse/plugins/org.eclipse.mylyn.tasks.ui_3.0.1.v20080721.jar";
         final ArtifactTokens tokens = new ArtifactTokens(repoResource);
         assertEquals("java/test-ivy/osgi/eclipse/plugins/", tokens.prefix);
         assertEquals("org.eclipse.mylyn.tasks.ui", tokens.module);
@@ -72,7 +63,6 @@ public class ArtifactTokensTest {
         assertTrue(tokens.isJar);
     }
 
-    @Test
     public void testBadMatching() {
         final String repoResource = "java/test-ivy/osgi/eclipse/plugins/fake";
         final ArtifactTokens tokens = new ArtifactTokens(repoResource);

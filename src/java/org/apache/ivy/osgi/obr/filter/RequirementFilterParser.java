@@ -22,7 +22,6 @@ import java.text.ParseException;
 import org.apache.ivy.osgi.obr.filter.CompareFilter.Operator;
 import org.apache.ivy.osgi.obr.xml.RequirementFilter;
 
-
 public class RequirementFilterParser {
 
     public static RequirementFilter parse(String text) throws ParseException {
@@ -95,15 +94,15 @@ public class RequirementFilterParser {
                 throw new ParseException("Expecting '(' as the start of the filter", pos);
             }
             switch (readNext()) {
-            case '&':
-                return parseAnd();
-            case '|':
-                return parseOr();
-            case '!':
-                return parseNot();
-            default:
-                unread();
-                return parseCompare();
+                case '&':
+                    return parseAnd();
+                case '|':
+                    return parseOr();
+                case '!':
+                    return parseNot();
+                default:
+                    unread();
+                    return parseCompare();
             }
         }
 
@@ -138,22 +137,22 @@ public class RequirementFilterParser {
 
         private Operator parseCompareOperator() throws ParseException {
             switch (readNext()) {
-            case '=':
-                return Operator.EQUALS;
-            case '>':
-                if (readNext() == '=') {
-                    return Operator.GREATER_OR_EQUAL;
-                }
-                unread();
-                return Operator.GREATER_THAN;
-            case '<':
-                if (readNext() == '=') {
-                    return Operator.LOWER_OR_EQUAL;
-                }
-                unread();
-                return Operator.LOWER_THAN;
-            default:
-                break;
+                case '=':
+                    return Operator.EQUALS;
+                case '>':
+                    if (readNext() == '=') {
+                        return Operator.GREATER_OR_EQUAL;
+                    }
+                    unread();
+                    return Operator.GREATER_THAN;
+                case '<':
+                    if (readNext() == '=') {
+                        return Operator.LOWER_OR_EQUAL;
+                    }
+                    unread();
+                    return Operator.LOWER_THAN;
+                default:
+                    break;
             }
             throw new ParseException("Expecting an operator: =, <, <=, > or >=", pos);
         }
@@ -197,11 +196,11 @@ public class RequirementFilterParser {
         private void skipWhiteSpace() {
             do {
                 switch (readNext()) {
-                case ' ':
-                    continue;
-                default:
-                    unread();
-                    return;
+                    case ' ':
+                        continue;
+                    default:
+                        unread();
+                        return;
                 }
             } while (pos < length);
         }

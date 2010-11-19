@@ -17,34 +17,29 @@
  */
 package org.apache.ivy.osgi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import junit.framework.TestCase;
 
-import org.apache.ivy.osgi.util.Version;
-import org.apache.ivy.osgi.util.VersionRange;
-import org.junit.Test;
+public class VersionRangeTest extends TestCase {
 
-public class VersionRangeTest {
-
-    @Test
     public void testParse() throws Exception {
-        assertEquals(new VersionRange(false, new Version("1.0.0"), false, null), new VersionRange("1.0.0"));
-        assertEquals(new VersionRange(false, new Version("1.0.0"), false, null), new VersionRange(" 1.0.0 "));
+        assertEquals(new VersionRange(false, new Version("1.0.0"), false, null), new VersionRange(
+                "1.0.0"));
+        assertEquals(new VersionRange(false, new Version("1.0.0"), false, null), new VersionRange(
+                " 1.0.0 "));
 
-        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")), new VersionRange(
-                "[1.0.0,2.0.0]"));
-        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")), new VersionRange(
-                "[1.0.0 , 2.0.0]"));
-        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")), new VersionRange(
-                " [1.0.0,2.0.0] "));
-        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")), new VersionRange(
-                "[ 1.0.0,2.0.0 ]"));
+        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")),
+            new VersionRange("[1.0.0,2.0.0]"));
+        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")),
+            new VersionRange("[1.0.0 , 2.0.0]"));
+        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")),
+            new VersionRange(" [1.0.0,2.0.0] "));
+        assertEquals(new VersionRange(false, new Version("1.0.0"), false, new Version("2.0.0")),
+            new VersionRange("[ 1.0.0,2.0.0 ]"));
 
-        assertEquals(new VersionRange(false, new Version("1.0.0.A"), false, null), new VersionRange("1.0.0.A"));
+        assertEquals(new VersionRange(false, new Version("1.0.0.A"), false, null),
+            new VersionRange("1.0.0.A"));
     }
 
-    @Test
     public void testContains() throws Exception {
         assertFalse(new VersionRange("1").contains("0.9"));
         assertTrue(new VersionRange("1").contains("1"));

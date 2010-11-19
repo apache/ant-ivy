@@ -20,18 +20,16 @@ package org.apache.ivy.osgi.obr;
 import java.text.ParseException;
 
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.apache.ivy.osgi.obr.filter.AndFilter;
 import org.apache.ivy.osgi.obr.filter.CompareFilter;
-import org.apache.ivy.osgi.obr.filter.RequirementFilterParser;
 import org.apache.ivy.osgi.obr.filter.CompareFilter.Operator;
+import org.apache.ivy.osgi.obr.filter.RequirementFilterParser;
 import org.apache.ivy.osgi.obr.xml.RequirementFilter;
-import org.junit.Test;
 
+public class RequirementFilterTest extends TestCase {
 
-public class RequirementFilterTest {
-
-    @Test
     public void testParser() throws Exception {
         assertParseFail("c>2");
         assertParseFail("");
@@ -40,11 +38,13 @@ public class RequirementFilterTest {
         checkParse(cgt2, "(c>2)");
         RequirementFilter twoeqd = new CompareFilter("2", Operator.EQUALS, "d");
         checkParse(twoeqd, "(2=d)");
-        RequirementFilter foodorbarge0dot0 = new CompareFilter("foo.bar", Operator.GREATER_OR_EQUAL, "0.0");
+        RequirementFilter foodorbarge0dot0 = new CompareFilter("foo.bar",
+                Operator.GREATER_OR_EQUAL, "0.0");
         checkParse(foodorbarge0dot0, "(foo.bar>=0.0)");
-        RequirementFilter and = new AndFilter(foodorbarge0dot0);
+        RequirementFilter and = new AndFilter(new RequirementFilter[] {foodorbarge0dot0});
         checkParse(and, "(&(foo.bar>=0.0))");
-        RequirementFilter and2 = new AndFilter(cgt2, twoeqd, foodorbarge0dot0);
+        RequirementFilter and2 = new AndFilter(new RequirementFilter[] {cgt2, twoeqd,
+                foodorbarge0dot0});
         checkParse(and2, "(&(c>2)(2=d)(foo.bar>=0.0))");
     }
 

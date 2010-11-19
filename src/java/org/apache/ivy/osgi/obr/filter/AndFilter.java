@@ -25,11 +25,10 @@ public class AndFilter extends MultiOperatorFilter {
         super();
     }
 
-    public AndFilter(RequirementFilter... filters) {
+    public AndFilter(RequirementFilter[] filters) {
         super(filters);
     }
 
-    @Override
     protected char operator() {
         return '&';
     }

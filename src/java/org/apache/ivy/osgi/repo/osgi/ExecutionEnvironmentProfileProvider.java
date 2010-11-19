@@ -29,7 +29,6 @@ import java.util.Properties;
 import org.apache.ivy.osgi.repo.ExecutionEnvironmentProfile;
 import org.apache.ivy.util.Message;
 
-
 /**
  * Load profiles provided by the <tt>org.eclipse.osgi</tt> bundle.
  */
@@ -45,7 +44,7 @@ public class ExecutionEnvironmentProfileProvider {
 
     private static final String PROFILE_LIST = "java.profiles";
 
-    private Map<String, ExecutionEnvironmentProfile> profileList;
+    private Map/* <String, ExecutionEnvironmentProfile> */profileList;
 
     // private static final String BOOT_DELEGATION = "org.osgi.framework.bootdelegation";
 
@@ -56,26 +55,36 @@ public class ExecutionEnvironmentProfileProvider {
     }
 
     public ExecutionEnvironmentProfile getProfile(String profile) {
-        return profileList.get(profile);
+        return (ExecutionEnvironmentProfile) profileList.get(profile);
     }
 
-    public static Map<String, ExecutionEnvironmentProfile> loadDefaultProfileList() throws IOException {
+    public static Map/* <String, ExecutionEnvironmentProfile> */loadDefaultProfileList()
+            throws IOException {
         ClassLoader loader = ExecutionEnvironmentProfileProvider.class.getClassLoader();
-        InputStream profileListFile = loader.getResourceAsStream(PACKAGE_PREFIX + PROFILE_LIST_FILE);
+        InputStream profileListFile = loader
+                .getResourceAsStream(PACKAGE_PREFIX + PROFILE_LIST_FILE);
         if (profileListFile == null) {
-            throw new FileNotFoundException(PACKAGE_PREFIX + PROFILE_LIST_FILE + " not found in the classpath");
+            throw new FileNotFoundException(PACKAGE_PREFIX + PROFILE_LIST_FILE
+                    + " not found in the classpath");
         }
         Properties props = new Properties();
         props.load(profileListFile);
         String[] profileList = props.getProperty(PROFILE_LIST).split(",");
         Message.debug("Loading profiles " + profileList);
-        Map<String, ExecutionEnvironmentProfile> map = new HashMap<String, ExecutionEnvironmentProfile>();
-        for (String profileFile : profileList) {
+        Map/* <String, ExecutionEnvironmentProfile> */map = new HashMap/*
+                                                                        * <String,
+                                                                        * ExecutionEnvironmentProfile
+                                                                        * >
+                                                                        */();
+        for (int i = 0; i < profileList.length; i++) {
+            String profileFile = profileList[i];
             String p = profileFile.trim();
             if (p.length() != 0) {
-                ExecutionEnvironmentProfile profile = load(loader.getResourceAsStream(PACKAGE_PREFIX + p));
+                ExecutionEnvironmentProfile profile = load(loader
+                        .getResourceAsStream(PACKAGE_PREFIX + p));
                 if (profile != null) {
-                    Message.verbose("Execution environment profile " + profile.getName() + " loaded");
+                    Message.verbose("Execution environment profile " + profile.getName()
+                            + " loaded");
                     map.put(profile.getName(), profile);
                 } else {
                     Message.warn("Unable to load the environement profile " + PACKAGE_PREFIX + p);
@@ -96,14 +105,17 @@ public class ExecutionEnvironmentProfileProvider {
     }
 
     public static ExecutionEnvironmentProfile load(Properties properties) {
-        ExecutionEnvironmentProfile profile = new ExecutionEnvironmentProfile(properties.getProperty(PROFILE_NAME));
+        ExecutionEnvironmentProfile profile = new ExecutionEnvironmentProfile(
+                properties.getProperty(PROFILE_NAME));
         String packagesList = properties.getProperty(SYSTEM_PACKAGES);
         if (packagesList == null) {
-            Message.warn("The profile " + profile.getName() + " doesn't have any system package definition");
+            Message.warn("The profile " + profile.getName()
+                    + " doesn't have any system package definition");
             return null;
         }
         String[] packages = packagesList.split(",");
-        for (String pkg : packages) {
+        for (int i = 0; i < packages.length; i++) {
+            String pkg = packages[i];
             profile.addPkgName(pkg.trim());
         }
         return profile;

@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
@@ -39,24 +40,29 @@ public class IvyIntegrationTest extends AbstractModuleDescriptorParserTester {
         return new File("java/test-ivy/" + resource).toURI().toURL();
     }
 
-    @SuppressWarnings("unchecked")
     public void testAcmeResolveAlpha() throws Exception {
         final Ivy ivy = Ivy.newInstance();
         ivy.configure(getTestResource("acme-ivysettings.xml"));
 
-        final ModuleRevisionId mrid = new ModuleRevisionId(new ModuleId("com.acme", "alpha"), "1.0+");
-        // final ModuleRevisionId mrid = new ModuleRevisionId(new ModuleId("com.acme", "delta"), "4+");
-        // final ModuleRevisionId mrid = new ModuleRevisionId(new ModuleId("com.acme", "echo"), "5+");
+        final ModuleRevisionId mrid = new ModuleRevisionId(new ModuleId("com.acme", "alpha"),
+                "1.0+");
+        // final ModuleRevisionId mrid = new ModuleRevisionId(new ModuleId("com.acme", "delta"),
+        // "4+");
+        // final ModuleRevisionId mrid = new ModuleRevisionId(new ModuleId("com.acme", "echo"),
+        // "5+");
         final ResolveOptions options = new ResolveOptions();
-        options.setConfs(new String[] { "default" });
+        options.setConfs(new String[] {"default"});
 
         final ResolveReport report = ivy.resolve(mrid, options, false);
         assertEquals(5, report.getDependencies().size());
 
-        final String[] names = new String[] { "com.acme#alpha;1.0.0.20080101", "com.acme#bravo;2.0.0.20080202",
-                "com.acme#charlie;3.0.0.20080303", "com.acme#delta;4.0.0", "com.acme#echo;5.0.0" };
-        final Set<String> nodeNames = new HashSet<String>(Arrays.asList(names));
-        for (IvyNode node : (Collection<IvyNode>) report.getDependencies()) {
+        final String[] names = new String[] {"com.acme#alpha;1.0.0.20080101",
+                "com.acme#bravo;2.0.0.20080202", "com.acme#charlie;3.0.0.20080303",
+                "com.acme#delta;4.0.0", "com.acme#echo;5.0.0"};
+        final Set/* <String> */nodeNames = new HashSet/* <String> */(Arrays.asList(names));
+        Iterator itNode = ((Collection/* <IvyNode> */) report.getDependencies()).iterator();
+        while (itNode.hasNext()) {
+            IvyNode node = (IvyNode) itNode.next();
             assertTrue(" Contains: " + node, nodeNames.contains(node.toString()));
         }
     }

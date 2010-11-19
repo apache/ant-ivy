@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -50,7 +51,6 @@ public class OsgiIvyParser extends XmlModuleDescriptorParser {
             super(parser, ivySettings);
         }
 
-        @Override
         protected void infoStarted(Attributes attributes) {
             String manifest = attributes.getValue("manifest");
             if (manifest != null) {
@@ -73,34 +73,35 @@ public class OsgiIvyParser extends XmlModuleDescriptorParser {
             }
             URL includedUrl;
             try {
-                includedUrl = getSettings().getRelativeUrlResolver().getURL(getDescriptorURL(), manifest);
+                includedUrl = getSettings().getRelativeUrlResolver().getURL(getDescriptorURL(),
+                    manifest);
             } catch (MalformedURLException e) {
-                SAXException pe = new SAXException("Incorrect relative url of the include in '" + getDescriptorURL()
-                        + "' (" + e.getMessage() + ")");
+                SAXException pe = new SAXException("Incorrect relative url of the include in '"
+                        + getDescriptorURL() + "' (" + e.getMessage() + ")");
                 pe.initCause(e);
                 throw pe;
             }
             URLResource includeResource = new URLResource(includedUrl);
-            ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(includeResource);
+            ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(
+                includeResource);
             ModuleDescriptor manifestMd;
             try {
-                manifestMd = parser.parseDescriptor(getSettings(), includeResource.getURL(), includeResource,
-                        isValidate());
+                manifestMd = parser.parseDescriptor(getSettings(), includeResource.getURL(),
+                    includeResource, isValidate());
             } catch (ParseException e) {
-                SAXException pe = new SAXException("Incorrect included md '" + includeResource + "' in '"
-                        + getDescriptorURL() + "' (" + e.getMessage() + ")");
+                SAXException pe = new SAXException("Incorrect included md '" + includeResource
+                        + "' in '" + getDescriptorURL() + "' (" + e.getMessage() + ")");
                 pe.initCause(e);
                 throw pe;
             } catch (IOException e) {
-                SAXException pe = new SAXException("Unreadable included md '" + includeResource + "' in '"
-                        + getDescriptorURL() + "' (" + e.getMessage() + ")");
+                SAXException pe = new SAXException("Unreadable included md '" + includeResource
+                        + "' in '" + getDescriptorURL() + "' (" + e.getMessage() + ")");
                 pe.initCause(e);
                 throw pe;
             }
             return manifestMd;
         }
 
-        @Override
         public void endDocument() throws SAXException {
             if (manifestMD != null) {
                 includeMdDepedencies(getMd(), manifestMD);
@@ -108,7 +109,6 @@ public class OsgiIvyParser extends XmlModuleDescriptorParser {
         }
     }
 
-    @Override
     protected Parser newParser(ParserSettings ivySettings) {
         return new OsgiParser(this, ivySettings);
     }
@@ -144,10 +144,12 @@ public class OsgiIvyParser extends XmlModuleDescriptorParser {
             md.setStatus(status);
         }
 
-        Map<String, String> extraInfo = include.getExtraInfo();
+        Map/* <String, String> */extraInfo = include.getExtraInfo();
         if (extraInfo != null) {
-            for (Entry<String, String> info : extraInfo.entrySet()) {
-                md.addExtraInfo(info.getKey(), info.getValue());
+            Iterator itInfo = extraInfo.entrySet().iterator();
+            while (itInfo.hasNext()) {
+                Entry/* <String, String> */info = (Entry) itInfo.next();
+                md.addExtraInfo((String) info.getKey(), (String) info.getValue());
             }
         }
 

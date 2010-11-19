@@ -34,7 +34,6 @@ import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.obr.xml.OBRXMLWriter;
 import org.apache.ivy.osgi.repo.FSManifestIterable;
-import org.apache.ivy.osgi.repo.ManifestAndLocation;
 import org.apache.ivy.osgi.repo.ResolverManifestIterable;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -43,7 +42,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
 
 public class BuildBundleRepoDescriptorTask extends IvyTask {
 
@@ -95,20 +93,18 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
         this.quiet = quiet;
     }
 
-    @Override
     protected void prepareTask() {
         if (baseDir == null) {
             super.prepareTask();
         }
     }
 
-    @Override
     public void doExecute() throws BuildException {
         if (file == null) {
             throw new BuildException("No output file specified: use the attribute 'out'");
         }
 
-        Iterable<ManifestAndLocation> it;
+        Iterable/* <ManifestAndLocation> */it;
         if (resolverName != null) {
             if (baseDir != null) {
                 throw new BuildException("specify only one of 'resolver' or 'baseDir'");
@@ -126,8 +122,8 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
                 throw new BuildException("the resolver '" + resolverName + "' was not found");
             }
             if (!(resolver instanceof BasicResolver)) {
-                throw new BuildException("the type of resolver '" + resolver.getClass().getCanonicalName()
-                        + "' is not supported.");
+                throw new BuildException("the type of resolver '"
+                        + resolver.getClass().getCanonicalName() + "' is not supported.");
             }
             it = new ResolverManifestIterable((BasicResolver) resolver);
         } else if (baseDir != null) {
@@ -140,16 +136,18 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             it = new FSManifestIterable(baseDir, basePath);
         } else if (cacheName != null) {
             Ivy ivy = getIvyInstance();
-            RepositoryCacheManager cacheManager = ivy.getSettings().getRepositoryCacheManager(cacheName);
+            RepositoryCacheManager cacheManager = ivy.getSettings().getRepositoryCacheManager(
+                cacheName);
             if (!(cacheManager instanceof DefaultRepositoryCacheManager)) {
-                throw new BuildException("the type of cache '" + cacheManager.getClass().getCanonicalName()
-                        + "' is not supported.");
+                throw new BuildException("the type of cache '"
+                        + cacheManager.getClass().getCanonicalName() + "' is not supported.");
             }
             File basedir = ((DefaultRepositoryCacheManager) cacheManager).getBasedir();
             it = new FSManifestIterable(basedir, basedir.getAbsolutePath() + File.separator);
         } else {
-            throw new BuildException("No resolver, cache or basedir specified: "
-                    + "please provide one of them through the attribute 'resolver', 'cache' or 'dir'");
+            throw new BuildException(
+                    "No resolver, cache or basedir specified: "
+                            + "please provide one of them through the attribute 'resolver', 'cache' or 'dir'");
         }
 
         OutputStream out;

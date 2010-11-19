@@ -18,13 +18,13 @@
 package org.apache.ivy.osgi.obr.xml;
 
 import java.text.ParseException;
+import java.util.Iterator;
 
 import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExportPackage;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
-
 
 public class CapabilityAdapter {
 
@@ -39,15 +39,19 @@ public class CapabilityAdapter {
             BundleCapability service = getOSGiService(bundleInfo, capability);
             bundleInfo.addCapability(service);
         } else {
-            Message.warn("Unsupported capability '" + name + "' on the bundle '" + bundleInfo.getSymbolicName() + "'");
+            Message.warn("Unsupported capability '" + name + "' on the bundle '"
+                    + bundleInfo.getSymbolicName() + "'");
         }
     }
 
-    private static ExportPackage getExportPackage(BundleInfo bundleInfo, Capability capability) throws ParseException {
+    private static ExportPackage getExportPackage(BundleInfo bundleInfo, Capability capability)
+            throws ParseException {
         String pkgName = null;
         Version version = null;
         String uses = null;
-        for (CapabilityProperty property : capability.getProperties()) {
+        Iterator itCapability = capability.getProperties().iterator();
+        while (itCapability.hasNext()) {
+            CapabilityProperty property = (CapabilityProperty) itCapability.next();
             String propName = property.getName();
             if ("package".equals(propName)) {
                 pkgName = property.getValue();
@@ -56,7 +60,8 @@ public class CapabilityAdapter {
             } else if ("uses".equals(propName)) {
                 uses = property.getValue();
             } else {
-                Message.warn("Unsupported property '" + propName + "' on the 'package' capability of the bundle '"
+                Message.warn("Unsupported property '" + propName
+                        + "' on the 'package' capability of the bundle '"
                         + bundleInfo.getSymbolicName() + "'");
             }
         }
@@ -66,25 +71,30 @@ public class CapabilityAdapter {
         ExportPackage exportPackage = new ExportPackage(pkgName, version);
         if (uses != null) {
             String[] split = uses.trim().split(",");
-            for (String u : split) {
+            for (int i = 0; i < split.length; i++) {
+                String u = split[i];
                 exportPackage.addUse(u.trim());
             }
         }
         return exportPackage;
     }
 
-    private static BundleCapability getOSGiService(BundleInfo bundleInfo, Capability capability) throws ParseException {
+    private static BundleCapability getOSGiService(BundleInfo bundleInfo, Capability capability)
+            throws ParseException {
         String name = null;
         Version version = null;
 
-        for (CapabilityProperty property : capability.getProperties()) {
+        Iterator itCapability = capability.getProperties().iterator();
+        while (itCapability.hasNext()) {
+            CapabilityProperty property = (CapabilityProperty) itCapability.next();
             String propName = property.getName();
             if ("service".equals(propName)) {
                 name = property.getValue();
             } else if ("version".equals(propName)) {
                 version = new Version(property.getValue());
             } else {
-                Message.warn("Unsupported property '" + propName + "' on the 'package' capability of the bundle '"
+                Message.warn("Unsupported property '" + propName
+                        + "' on the 'package' capability of the bundle '"
                         + bundleInfo.getSymbolicName() + "'");
             }
         }

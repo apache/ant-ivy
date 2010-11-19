@@ -39,24 +39,24 @@ import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.resolver.BasicResolver;
-import org.apache.ivy.plugins.resolver.BasicResolverWrapper;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
-public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
+public class ResolverManifestIterable implements Iterable/* <ManifestAndLocation> */{
 
-    // We should support the interface DependencyResolver, but the API is not convenient to get references to artifact
-    private final BasicResolverWrapper resolver;
+    // We should support the interface DependencyResolver, but the API is not convenient to get
+    // references to artifact
+    private final BasicResolver resolver;
 
     public ResolverManifestIterable(BasicResolver resolver) {
-        this.resolver = new BasicResolverWrapper(resolver);
+        this.resolver = resolver;
     }
 
-    public Iterator<ManifestAndLocation> iterator() {
+    public Iterator/* <ManifestAndLocation> */iterator() {
         return new ResolverManifestIterator();
     }
 
-    class ResolverManifestIterator implements Iterator<ManifestAndLocation> {
+    class ResolverManifestIterator implements Iterator/* <ManifestAndLocation> */{
 
         private OrganisationEntry[] organisations;
 
@@ -91,7 +91,8 @@ public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
         public ResolverManifestIterator() {
             organisations = resolver.listOrganisations();
             IvySettings settings = new IvySettings();
-            ResolveEngine engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+            ResolveEngine engine = new ResolveEngine(settings, new EventManager(), new SortEngine(
+                    settings));
             data = new ResolveData(engine, new ResolveOptions());
         }
 
@@ -122,8 +123,8 @@ public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
                         continue;
                     }
                     revision = revisions[indexRevision++];
-                    mrid = ModuleRevisionId.newInstance(organisation.getOrganisation(), module.getModule(), revision
-                            .getRevision());
+                    mrid = ModuleRevisionId.newInstance(organisation.getOrganisation(),
+                        module.getModule(), revision.getRevision());
                     DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mrid, false);
                     ResolvedModuleRevision dependency;
                     try {
@@ -159,7 +160,8 @@ public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
                 try {
                     in = new JarInputStream(resource.getResource().openStream());
                 } catch (IOException e) {
-                    Message.warn("Unreadable jar " + resource.getResource().getName() + " (" + e.getMessage() + ")");
+                    Message.warn("Unreadable jar " + resource.getResource().getName() + " ("
+                            + e.getMessage() + ")");
                     artifact = null;
                     continue;
                 }
@@ -184,7 +186,7 @@ public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
             return true;
         }
 
-        public ManifestAndLocation next() {
+        public Object next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }

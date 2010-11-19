@@ -18,9 +18,9 @@
 package org.apache.ivy.osgi.util;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.ivy.util.cli.ParseException;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -29,13 +29,18 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHandler, ContentHandler, ErrorHandler {
+public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements DTDHandler,
+        ContentHandler, ErrorHandler {
 
-    private DelegetingHandler<?> delegate = null;
+    private DelegetingHandler/* <?> */delegate = null;
 
-    private P parent;
+    private/* P */DelegetingHandler parent;
 
-    private final Map<String, DelegetingHandler<?>> mapping = new HashMap<String, DelegetingHandler<?>>();
+    private final Map/* <String, DelegetingHandler<?>> */mapping = new HashMap/*
+                                                                               * <String,
+                                                                               * DelegetingHandler
+                                                                               * <?>>
+                                                                               */();
 
     private final String tagName;
 
@@ -49,7 +54,7 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
 
     private Locator locator;
 
-    public DelegetingHandler(String name, P parent) {
+    public DelegetingHandler(String name, /* P */DelegetingHandler parent) {
         this.tagName = name;
         this.parent = parent;
         if (parent != null) {
@@ -62,7 +67,7 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
         return tagName;
     }
 
-    public P getParent() {
+    public/* P */DelegetingHandler getParent() {
         return parent;
     }
 
@@ -80,7 +85,9 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
 
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
-        for (DelegetingHandler<?> subHandler : mapping.values()) {
+        Iterator itHandler = mapping.values().iterator();
+        while (itHandler.hasNext()) {
+            DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.setDocumentLocator(locator);
         }
     }
@@ -91,7 +98,9 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
 
     public void skip() {
         skip = true;
-        for (DelegetingHandler<?> subHandler : mapping.values()) {
+        Iterator itHandler = mapping.values().iterator();
+        while (itHandler.hasNext()) {
+            DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.reset();
         }
     }
@@ -101,7 +110,9 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
         skip = false;
         started = false;
         charBuffer.setLength(0);
-        for (DelegetingHandler<?> subHandler : mapping.values()) {
+        Iterator itHandler = mapping.values().iterator();
+        while (itHandler.hasNext()) {
+            DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.reset();
         }
     }
@@ -142,7 +153,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
         // by default do nothing
     }
 
-    public final void startElement(String uri, String localName, String n, Attributes atts) throws SAXException {
+    public final void startElement(String uri, String localName, String n, Attributes atts)
+            throws SAXException {
         if (delegate != null) {
             delegate.startElement(uri, localName, n, atts);
         } else {
@@ -160,7 +172,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
                     return;
                 }
                 if (mapping != null) {
-                    DelegetingHandler<?> delegetingHandler = mapping.get(localName);
+                    DelegetingHandler/* <?> */delegetingHandler = (DelegetingHandler) mapping
+                            .get(localName);
                     if (delegetingHandler != null) {
                         delegate = delegetingHandler;
                     }
@@ -189,7 +202,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
     /**
      * @throws SAXException
      */
-    protected void doStartElement(String uri, String localName, String name, Attributes atts) throws SAXException {
+    protected void doStartElement(String uri, String localName, String name, Attributes atts)
+            throws SAXException {
         // by default do nothing
     }
 
@@ -287,7 +301,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
         // by default do nothing
     }
 
-    public final void notationDecl(String name, String publicId, String systemId) throws SAXException {
+    public final void notationDecl(String name, String publicId, String systemId)
+            throws SAXException {
         if (skip) {
             return;
         }
@@ -301,7 +316,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
     /**
      * @throws SAXException
      */
-    protected void doNotationDecl(String name, String publicId, String systemId) throws SAXException {
+    protected void doNotationDecl(String name, String publicId, String systemId)
+            throws SAXException {
         // by default do nothing
     }
 
@@ -344,8 +360,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
     /**
      * @throws SAXException
      */
-    public final void unparsedEntityDecl(String name, String publicId, String systemId, String notationName)
-            throws SAXException {
+    public final void unparsedEntityDecl(String name, String publicId, String systemId,
+            String notationName) throws SAXException {
         if (skip) {
             return;
         }
@@ -359,8 +375,8 @@ public class DelegetingHandler<P extends DelegetingHandler<?>> implements DTDHan
     /**
      * @throws SAXException
      */
-    protected void doUnparsedEntityDecl(String name, String publicId, String systemId, String notationName)
-            throws SAXException {
+    protected void doUnparsedEntityDecl(String name, String publicId, String systemId,
+            String notationName) throws SAXException {
         // by default do nothing
     }
 

@@ -25,11 +25,10 @@ public class OrFilter extends MultiOperatorFilter {
         super();
     }
 
-    public OrFilter(RequirementFilter... filters) {
+    public OrFilter(RequirementFilter[] filters) {
         super(filters);
     }
 
-    @Override
     protected char operator() {
         return '|';
     }

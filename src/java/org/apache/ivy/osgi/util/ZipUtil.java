@@ -40,7 +40,8 @@ public class ZipUtil {
         cpZipOutputStream.close();
     }
 
-    private static void zipFiles(File rootDir, File currDir, ZipOutputStream zos) throws IOException {
+    private static void zipFiles(File rootDir, File currDir, ZipOutputStream zos)
+            throws IOException {
         if (currDir.isDirectory()) {
             final File[] files = currDir.listFiles();
             for (int i = 0; i < files.length; i++) {
@@ -48,13 +49,14 @@ public class ZipUtil {
             }
         } else {
             final String strAbsPath = currDir.getPath();
-            final String strZipEntryName = strAbsPath.substring(rootDir.getPath().length() + 1, strAbsPath.length());
+            final String strZipEntryName = strAbsPath.substring(rootDir.getPath().length() + 1,
+                strAbsPath.length());
 
             final byte[] b = new byte[(int) (currDir.length())];
             final FileInputStream fis = new FileInputStream(currDir);
             fis.read(b);
             fis.close();
-            
+
             final ZipEntry entry = new ZipEntry(strZipEntryName);
             zos.putNextEntry(entry);
             zos.write(b, 0, (int) currDir.length());

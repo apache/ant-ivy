@@ -22,16 +22,17 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -46,7 +47,6 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 
-
 public class BundleInfoAdapter {
 
     public static final String CONF_NAME_DEFAULT = "default";
@@ -55,26 +55,28 @@ public class BundleInfoAdapter {
 
     public static final String CONF_NAME_OPTIONAL = "optional";
 
-    public static final Configuration CONF_OPTIONAL = new Configuration(CONF_NAME_OPTIONAL, Visibility.PUBLIC,
-            "Optional dependencies", new String[] { CONF_NAME_DEFAULT }, true, null);
+    public static final Configuration CONF_OPTIONAL = new Configuration(CONF_NAME_OPTIONAL,
+            Visibility.PUBLIC, "Optional dependencies", new String[] {CONF_NAME_DEFAULT}, true,
+            null);
 
     public static final String CONF_NAME_TRANSITIVE_OPTIONAL = "transitive-optional";
 
-    public static final Configuration CONF_TRANSITIVE_OPTIONAL = new Configuration(CONF_NAME_TRANSITIVE_OPTIONAL,
-            Visibility.PUBLIC, "Optional dependencies", new String[] { CONF_NAME_OPTIONAL }, true, null);
+    public static final Configuration CONF_TRANSITIVE_OPTIONAL = new Configuration(
+            CONF_NAME_TRANSITIVE_OPTIONAL, Visibility.PUBLIC, "Optional dependencies",
+            new String[] {CONF_NAME_OPTIONAL}, true, null);
 
     public static final String CONF_USE_PREFIX = "use_";
 
     public static final String EXTRA_ATTRIBUTE_NAME = "osgi";
 
-    public static final Map<String, String> OSGI_BUNDLE = Collections.singletonMap(EXTRA_ATTRIBUTE_NAME,
-            BundleInfo.BUNDLE_TYPE);
+    public static final Map/* <String, String> */OSGI_BUNDLE = Collections.singletonMap(
+        EXTRA_ATTRIBUTE_NAME, BundleInfo.BUNDLE_TYPE);
 
-    public static final Map<String, String> OSGI_PACKAGE = Collections.singletonMap(EXTRA_ATTRIBUTE_NAME,
-            BundleInfo.PACKAGE_TYPE);
+    public static final Map/* <String, String> */OSGI_PACKAGE = Collections.singletonMap(
+        EXTRA_ATTRIBUTE_NAME, BundleInfo.PACKAGE_TYPE);
 
-    public static final Map<String, String> OSGI_SERVICE = Collections.singletonMap(EXTRA_ATTRIBUTE_NAME,
-            BundleInfo.SERVICE_TYPE);
+    public static final Map/* <String, String> */OSGI_SERVICE = Collections.singletonMap(
+        EXTRA_ATTRIBUTE_NAME, BundleInfo.SERVICE_TYPE);
 
     public static DefaultModuleDescriptor toModuleDescriptor(BundleInfo bundle,
             ExecutionEnvironmentProfileProvider profileProvider) throws ProfileNotFoundException {
@@ -87,17 +89,22 @@ public class BundleInfoAdapter {
         md.addConfiguration(CONF_OPTIONAL);
         md.addConfiguration(CONF_TRANSITIVE_OPTIONAL);
 
-        Set<String> exportedPkgNames = new HashSet<String>(bundle.getExports().size());
-        for (ExportPackage exportPackage : bundle.getExports()) {
+        Set/* <String> */exportedPkgNames = new HashSet/* <String> */(bundle.getExports().size());
+        Iterator itExport = bundle.getExports().iterator();
+        while (itExport.hasNext()) {
+            ExportPackage exportPackage = (ExportPackage) itExport.next();
             exportedPkgNames.add(exportPackage.getName());
             String[] confDependencies = new String[exportPackage.getUses().size() + 1];
             int i = 0;
-            for (String use : exportPackage.getUses()) {
+            Iterator itUse = exportPackage.getUses().iterator();
+            while (itUse.hasNext()) {
+                String use = (String) itUse.next();
                 confDependencies[i++] = CONF_USE_PREFIX + use;
             }
             confDependencies[i] = CONF_NAME_DEFAULT;
-            md.addConfiguration(new Configuration(CONF_USE_PREFIX + exportPackage.getName(), Visibility.PUBLIC,
-                    "Exported package " + exportPackage.getName(), confDependencies, true, null));
+            md.addConfiguration(new Configuration(CONF_USE_PREFIX + exportPackage.getName(),
+                    Visibility.PUBLIC, "Exported package " + exportPackage.getName(),
+                    confDependencies, true, null));
         }
 
         requirementAsDependency(md, bundle, exportedPkgNames);
@@ -116,7 +123,8 @@ public class BundleInfoAdapter {
                             + StringUtils.getStackTrace(e));
                 }
                 if (url != null) {
-                    artifact = new DefaultArtifact(mrid, null, bundle.getSymbolicName(), "jar", "jar", url, null);
+                    artifact = new DefaultArtifact(mrid, null, bundle.getSymbolicName(), "jar",
+                            "jar", url, null);
                 }
             }
             if (artifact != null) {
@@ -125,16 +133,22 @@ public class BundleInfoAdapter {
         }
 
         if (profileProvider != null) {
-            for (String env : bundle.getExecutionEnvironments()) {
+            Iterator itEnv = bundle.getExecutionEnvironments().iterator();
+            while (itEnv.hasNext()) {
+                String env = (String) itEnv.next();
                 ExecutionEnvironmentProfile profile = profileProvider.getProfile(env);
                 if (profile == null) {
-                    throw new ProfileNotFoundException("Execution environment profile " + env + " not found");
+                    throw new ProfileNotFoundException("Execution environment profile " + env
+                            + " not found");
                 }
-                for (String pkg : profile.getPkgNames()) {
-                    ArtifactId id = new ArtifactId(ModuleId.newInstance("", pkg), PatternMatcher.ANY_EXPRESSION,
-                            PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION);
-                    DefaultExcludeRule rule = new DefaultExcludeRule(id, ExactOrRegexpPatternMatcher.INSTANCE,
-                            OSGI_PACKAGE);
+                Iterator itPkg = profile.getPkgNames().iterator();
+                while (itPkg.hasNext()) {
+                    String pkg = (String) itPkg.next();
+                    ArtifactId id = new ArtifactId(ModuleId.newInstance("", pkg),
+                            PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
+                            PatternMatcher.ANY_EXPRESSION);
+                    DefaultExcludeRule rule = new DefaultExcludeRule(id,
+                            ExactOrRegexpPatternMatcher.INSTANCE, OSGI_PACKAGE);
                     String[] confs = md.getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
                         rule.addConfiguration(confs[i]);
@@ -149,12 +163,12 @@ public class BundleInfoAdapter {
 
     public static String encodeIvyLocation(Artifact artifact) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
-        return encodeIvyLocation(mrid.getOrganisation(), mrid.getName(), mrid.getBranch(), mrid.getRevision(), artifact
-                .getType(), artifact.getName(), artifact.getExt());
+        return encodeIvyLocation(mrid.getOrganisation(), mrid.getName(), mrid.getBranch(),
+            mrid.getRevision(), artifact.getType(), artifact.getName(), artifact.getExt());
     }
 
-    private static String encodeIvyLocation(String org, String name, String branch, String rev, String type,
-            String art, String ext) {
+    private static String encodeIvyLocation(String org, String name, String branch, String rev,
+            String type, String art, String ext) {
         StringBuilder builder = new StringBuilder();
         builder.append("ivy://");
         builder.append(org);
@@ -209,7 +223,8 @@ public class BundleInfoAdapter {
         uri = uri.substring(i + 1);
 
         String[] parameters = uri.split("&");
-        for (String parameter : parameters) {
+        for (int j = 0; j < parameters.length; j++) {
+            String parameter = parameters[j];
             String[] nameAndValue = parameter.split("=");
             if (nameAndValue.length != 2) {
                 throw new IllegalArgumentException("Malformed query string in the ivy uri: " + uri);
@@ -235,8 +250,10 @@ public class BundleInfoAdapter {
     }
 
     private static void requirementAsDependency(DefaultModuleDescriptor md, BundleInfo bundleInfo,
-            Set<String> exportedPkgNames) {
-        for (BundleRequirement requirement : bundleInfo.getRequirements()) {
+            Set/* <String> */exportedPkgNames) {
+        Iterator itReq = bundleInfo.getRequirements().iterator();
+        while (itReq.hasNext()) {
+            BundleRequirement requirement = (BundleRequirement) itReq.next();
             String type = requirement.getType();
             String name = requirement.getName();
 
@@ -245,7 +262,7 @@ public class BundleInfoAdapter {
                 continue;
             }
 
-            Map<String, String> osgiAtt = Collections.singletonMap(EXTRA_ATTRIBUTE_NAME, type);
+            Map/* <String, String> */osgiAtt = Collections.singletonMap(EXTRA_ATTRIBUTE_NAME, type);
             ModuleRevisionId ddmrid = asMrid(name, requirement.getVersion(), osgiAtt);
             DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ddmrid, false);
 
@@ -253,14 +270,15 @@ public class BundleInfoAdapter {
             if (type.equals(BundleInfo.PACKAGE_TYPE)) {
                 // declare the configuration for the package
                 conf = CONF_USE_PREFIX + name;
-                md.addConfiguration(new Configuration(CONF_USE_PREFIX + name, Visibility.PUBLIC, "Exported package "
-                        + name, new String[] { CONF_NAME_DEFAULT }, true, null));
+                md.addConfiguration(new Configuration(CONF_USE_PREFIX + name, Visibility.PUBLIC,
+                        "Exported package " + name, new String[] {CONF_NAME_DEFAULT}, true, null));
                 dd.addDependencyConfiguration(conf, conf);
             }
 
             if ("optional".equals(requirement.getResolution())) {
                 dd.addDependencyConfiguration(CONF_NAME_OPTIONAL, conf);
-                dd.addDependencyConfiguration(CONF_NAME_TRANSITIVE_OPTIONAL, CONF_NAME_TRANSITIVE_OPTIONAL);
+                dd.addDependencyConfiguration(CONF_NAME_TRANSITIVE_OPTIONAL,
+                    CONF_NAME_TRANSITIVE_OPTIONAL);
             } else {
                 dd.addDependencyConfiguration(CONF_NAME_DEFAULT, conf);
             }
@@ -270,11 +288,16 @@ public class BundleInfoAdapter {
 
     }
 
-    private static ModuleRevisionId asMrid(String symbolicNAme, Version v, Map<String, String> extraAttr) {
-        return ModuleRevisionId.newInstance("", symbolicNAme, v == null ? null : v.toString(), extraAttr);
+    private static ModuleRevisionId asMrid(String symbolicNAme, Version v,
+            Map/* <String, String> */extraAttr) {
+        return ModuleRevisionId.newInstance("", symbolicNAme, v == null ? null : v.toString(),
+            extraAttr);
     }
 
-    private static ModuleRevisionId asMrid(String symbolicNAme, VersionRange v, Map<String, String> extraAttr) {
+    private static ModuleRevisionId asMrid(String symbolicNAme, VersionRange v, Map/*
+                                                                                    * <String,
+                                                                                    * String>
+                                                                                    */extraAttr) {
         String revision;
         if (v == null) {
             revision = "[0,)";

@@ -33,7 +33,6 @@ import org.apache.ivy.osgi.repo.osgi.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.tools.ant.BuildException;
 
-
 public class ConvertManifestTask extends IvyTask {
 
     private File manifest = null;
@@ -54,7 +53,6 @@ public class ConvertManifestTask extends IvyTask {
         this.ivyFile = ivyFile;
     }
 
-    @Override
     public void doExecute() throws BuildException {
         if (ivyFile == null) {
             throw new BuildException("destination ivy file is required for convertmanifest task");

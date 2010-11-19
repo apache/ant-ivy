@@ -25,7 +25,6 @@ public class NotFilter extends UniOperatorFilter {
         super(subFilter);
     }
 
-    @Override
     protected char operator() {
         return '!';
     }

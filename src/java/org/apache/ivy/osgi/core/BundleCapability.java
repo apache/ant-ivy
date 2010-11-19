@@ -49,12 +49,10 @@ public class BundleCapability {
         return version;
     }
 
-    @Override
     public String toString() {
         return name + (version == null ? "" : ";" + version);
     }
- 
-    @Override
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -63,7 +61,6 @@ public class BundleCapability {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

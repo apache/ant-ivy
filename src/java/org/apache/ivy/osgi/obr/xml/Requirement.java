@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.osgi.obr.xml;
 
-
 public class Requirement {
 
     private final String name;

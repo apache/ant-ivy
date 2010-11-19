@@ -28,14 +28,13 @@ import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.repository.file.FileResource;
 
 /**
- * A resource decorator that handles extracting jar file entries using the bang(!) notation to separate the internal
- * entry name.
- * 
- * @author alex@radeski.net
+ * A resource decorator that handles extracting jar file entries using the bang(!) notation to
+ * separate the internal entry name.
  */
 public class JarEntryResource implements Resource {
 
     private final String entryName;
+
     private final Resource resource;
 
     public JarEntryResource(String name) {
@@ -50,7 +49,6 @@ public class JarEntryResource implements Resource {
         this.entryName = entryName;
     }
 
-    @Override
     public String toString() {
         return "resource:" + resource + ", jarEntry=" + entryName;
     }
@@ -88,7 +86,8 @@ public class JarEntryResource implements Resource {
             }
         }
         if (entry == null) {
-            throw new IllegalStateException("Jar entry: " + entryName + ", not in resource:" + resource);
+            throw new IllegalStateException("Jar entry: " + entryName + ", not in resource:"
+                    + resource);
         }
         return zis;
     }
