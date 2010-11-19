@@ -21,8 +21,6 @@ package org.apache.ivy.plugins.resolver;
  * This custom resolver is only used to test custom classpath, and has absolutely
  * no interest in itself
  * 
- * @author Xavier Hanin
- *
  */
 public class CustomResolver extends IBiblioResolver {
 

@@ -20,8 +20,6 @@ package org.apache.ivy.core.settings;
 
 /**
  * Store and provide access to the ivy variables.
- * 
- * @author gscokart
  */
 public interface IvyVariableContainer extends Cloneable {
 

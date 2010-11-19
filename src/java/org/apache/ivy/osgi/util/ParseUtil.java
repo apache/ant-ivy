@@ -20,9 +20,6 @@ package org.apache.ivy.osgi.util;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author jerome@benois.fr
- */
 public class ParseUtil {
 
     /**
