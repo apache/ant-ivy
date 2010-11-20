@@ -146,6 +146,55 @@ public class IvyPublishTest extends TestCase {
         }
     }
     
+    public void testMergeParentWithoutPublishingParent() throws IOException, ParseException {
+        //here we directly publish a module extending ivy-multiconf.xml, 
+        //the module parent is not published not yet in cache
+        //See : IVY-1248
+        
+        //update=true implies merge=true
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        publish.setResolver("1");
+        publish.setUpdate(true);
+        publish.setOrganisation("apache");
+        publish.setModule("resolve-extends");
+        publish.setRevision("1.0");
+        publish.setPubrevision("1.2");
+        publish.setStatus("release");
+        publish.addArtifactspattern("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        publish.execute();
+
+        // should have published the files with "1" resolver
+        File published = new File("test/repositories/1/apache/resolve-extends/ivys/ivy-1.2.xml");
+        assertTrue(published.exists());
+
+        // do a text compare, since we want to test comments as well as structure.
+        // we could do a better job of this with xmlunit
+
+        int lineNo = 1;
+
+        BufferedReader merged = new BufferedReader(new FileReader(published));
+        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
+            .getResourceAsStream("ivy-extends-merged.xml")));
+        for (String mergeLine = merged.readLine(),
+                    expectedLine = expected.readLine(); 
+            mergeLine != null && expectedLine != null; 
+            mergeLine = merged.readLine(),
+            expectedLine = expected.readLine()) {
+
+            //strip timestamps for the comparison
+            if (mergeLine.indexOf("<info") >= 0) {
+                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
+            }
+            //discard whitespace-only lines
+            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+            }
+
+            ++lineNo;
+        }
+    }
+
+    
     public void testMinimalMerge() throws IOException, ParseException {
         //publish the parent descriptor first, so that it can be found while
         //we are reading the child descriptor.

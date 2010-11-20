@@ -124,6 +124,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: UseCacheOnly doesn't respect the cache configuration in the ivysettings (IVY-1227)
 - FIX: UseCacheOnly is influenced by the TTL on cached metadata (IVY-1243)
 - FIX: ConcurrentModificationException on ivy settings loading (IVY-1250)
+- FIX: Module inheritance sometimes fails to locate parent descriptor in deliver process (IVY-1248) (thanks to Jean-Louis Boudart)
 
    2.2.0
 =====================================

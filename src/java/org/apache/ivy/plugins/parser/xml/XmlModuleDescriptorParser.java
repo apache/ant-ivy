@@ -362,14 +362,30 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
+        /**
+         * Default parent location to check (for dev ONLY) 
+         * @return a relative path to a parent module descriptor
+         */
         protected String getDefaultParentLocation() {
             return "../ivy.xml";
         }
 
+        /**
+         * Handle extends elements.
+         * It checks :
+         *  <ul>
+         *      <li>filesystem based on location attribute, if no one is specified it will check the default parent location</li>
+         *      <li>cache to find a resolved parent descriptor</li>
+         *      <li>ask repositories to retrieve the parent module descriptor</li>
+         *  </ul>
+         * @param attributes 
+         * @throws ParseException 
+         */
         protected void extendsStarted(Attributes attributes) throws ParseException {
             String parentOrganisation = attributes.getValue("organisation");
             String parentModule = attributes.getValue("module");
-            String parentRevision = attributes.getValue("revision");
+            String parentRevision = attributes.getValue("revision") != null ? attributes
+                    .getValue("revision") : Ivy.getWorkingRevision();
             String location = attributes.getValue("location") != null ? attributes
                     .getValue("location") : getDefaultParentLocation();
             ModuleDescriptor parent = null;
@@ -378,17 +394,19 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 "extendType").toLowerCase() : "all";
 
             List/* <String> */extendTypes = Arrays.asList(extendType.split(","));
+            ModuleId parentMid = new ModuleId(parentOrganisation, parentModule);
+            ModuleRevisionId parentMrid = new ModuleRevisionId(parentMid, parentRevision);
 
+
+            //check on filesystem based on location attribute (for dev ONLY)
             try {
-                Message.debug("Trying to parse included ivy file :" + location);
                 parent = parseOtherIvyFileOnFileSystem(location);
 
                 //verify that the parsed descriptor is the correct parent module.
-                ModuleId expected = new ModuleId(parentOrganisation, parentModule);
                 ModuleId pid = parent.getModuleRevisionId().getModuleId();
-                if (!expected.equals(pid)) {
+                if (!parentMid.equals(pid)) {
                     Message.verbose("Ignoring parent Ivy file " + location + "; expected "
-                        + expected + " but found " + pid);
+                        + parentMrid + " but found " + pid);
                     parent = null;
                 }
                 
@@ -399,32 +417,28 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 Message.warn("Unable to parse included ivy file " + location + ": " 
                     + e.getMessage());
             }
-
-            // if the included ivy file is not found on file system, tries to resolve using
-            // repositories
-            if (parent == null) {
-                try {
-                    Message.debug(
-                        "Trying to parse included ivy file by asking repository for module :"
-                                    + parentOrganisation
-                                    + "#"
-                                    + parentModule
-                                    + ";"
-                                    + parentRevision);
-                    parent = parseOtherIvyFile(parentOrganisation, parentModule, parentRevision);
-                } catch (ParseException e) {
-                    Message.warn("Unable to parse included ivy file for " + parentOrganisation
-                            + "#" + parentModule + ";" + parentRevision);
-                }
+            
+            // if not found on file system, check in the cache
+            if (parent ==null) {
+                parent = parseOtherIvyFileInCache(parentMrid);
             }
 
+            // if not found, tries to resolve using repositories
+            if (parent == null) {
+                try {
+                    parent = parseOtherIvyFile(parentMrid);
+                } catch (ParseException e) {
+                    Message.warn("Unable to parse included ivy file for " + parentMrid.toString());
+                }
+            }
+            
+            // if still not found throw an exception
             if (parent == null) {
                 throw new ParseException("Unable to parse included ivy file for "
-                        + parentOrganisation + "#" + parentModule + ";" + parentRevision, 0);
+                        + parentMrid.toString(), 0);
             }
 
             ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
-
             File ivyFileInCache = cacheManager.getResolvedIvyFileInCache(parent
                     .getResolvedModuleRevisionId());
             //Generate the parent cache file if necessary
@@ -434,11 +448,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     parent.toIvyFile(ivyFileInCache);
                 } catch (ParseException e) {
                     throw new ParseException("Unable to create cache file for "
-                            + parentOrganisation + "#" + parentModule + ";" + parentRevision
+                            + parentMrid.toString()
                             + " Reason:" + e.getLocalizedMessage(), 0);
                 } catch (IOException e) {
                     throw new ParseException("Unable to create cache file for "
-                            + parentOrganisation + "#" + parentModule + ";" + parentRevision
+                            + parentMrid.toString()
                             + " Reason :" + e.getLocalizedMessage(), 0);
                 }
             }
@@ -453,6 +467,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             mergeWithOtherModuleDescriptor(extendTypes, parent);
         }
 
+        /**
+         * Merge current module with a given module descriptor and specify what should be inherited through extendTypes argument
+         * @param extendTypes specify what should be inherited
+         * @param parent a given parent module descriptor
+         */
         protected void mergeWithOtherModuleDescriptor(List/* <String> */extendTypes,
                 ModuleDescriptor parent) {
 
@@ -478,6 +497,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         }
 
+        /**
+         * Merge everything from a given parent
+         * @param parent a given parent module desciptor
+         */
         protected void mergeAll(ModuleDescriptor parent) {
             ModuleRevisionId sourceMrid = parent.getModuleRevisionId();
             mergeInfo(parent);
@@ -485,7 +508,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             mergeDependencies(parent.getDependencies());
             mergeDescription(parent.getDescription());
         }
-        
+
+        /**
+         * Explain how to inherit metadatas related to info element
+         * @param parent a given parent module decriptor
+         */
         protected void mergeInfo(ModuleDescriptor parent) {
             ModuleRevisionId parentMrid = parent.getModuleRevisionId();
 
@@ -522,6 +549,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             return dup;
         }
 
+        /**
+         * Describes how to merge configurations elements
+         * @param sourceMrid the source module revision id
+         * @param configurations array of configurations to be inherited 
+         */
         protected void mergeConfigurations(ModuleRevisionId sourceMrid, Configuration[] configurations) {
             DefaultModuleDescriptor md = getMd();
             for (int i = 0; i < configurations.length; i++) {
@@ -532,6 +564,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
+        /**
+         * Describes how dependencies should be inherited
+         * @param dependencies array of dependencies to inherit
+         */
         protected void mergeDependencies(DependencyDescriptor[] dependencies) {
             DefaultModuleDescriptor md = getMd();
             for (int i = 0; i < dependencies.length; i++) {
@@ -542,6 +578,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
+        /**
+         * Describes how to merge description
+         * @param description description going to be inherited
+         */
         protected void mergeDescription(String description) {
             String current = getMd().getDescription();
             if (current == null || current.trim().length() == 0) {
@@ -549,12 +589,20 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
+        /**
+         * Describes how to parse another ivy file on filesystem 
+         * @param location a given location
+         * @return a {@link ModuleDescriptor} if found. Return null if no {@link ModuleDescriptor} was found
+         * @throws ParseException
+         * @throws IOException
+         */
         protected ModuleDescriptor parseOtherIvyFileOnFileSystem(String location)
                 throws ParseException, IOException {
             URL url = null;
             ModuleDescriptor parent = null;
             url = getSettings().getRelativeUrlResolver().getURL(descriptorURL, location);
-            Message.debug("Trying to load included ivy file from " + url.toString());
+            Message.debug("Trying to load included ivy file from " + url.toString() + " location was " + location);
+
             URLResource res = new URLResource(url);
             ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(
                 res);
@@ -563,27 +611,16 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             return parent;
         }
 
-        protected ModuleDescriptor parseOtherIvyFile(String parentOrganisation,
-                String parentModule, String parentRevision) throws ParseException {
-            ModuleId parentModuleId = new ModuleId(parentOrganisation, parentModule);
-            ModuleRevisionId parentMrid = new ModuleRevisionId(parentModuleId, parentRevision);
-
-            // try to load parent module in cache
-            File cacheFile = settings.getResolutionCacheManager().getResolvedIvyFileInCache(
-                ModuleRevisionId.newInstance(parentMrid, Ivy.getWorkingRevision()));
-            if (cacheFile.exists() && cacheFile.length() > 0) {
-                ModuleDescriptor md;
-                try {
-                    Message.debug("Trying to load included ivy file from cache");
-                    URL parentUrl = cacheFile.toURI().toURL();
-                    md = parseOtherIvyFileOnFileSystem(parentUrl.toString());
-                    return md;
-                } catch (IOException e) {
-                    // do nothing
-                    Message.error(e.getLocalizedMessage());
-                }
-            }
-
+        /**
+         * Describe how to parse a {@link ModuleDescriptor} by asking repositories
+         * @param parentMrid a given {@link ModuleRevisionId} to find
+         * @return a {@link ModuleDescriptor} if found. Return null if no {@link ModuleDescriptor} was found
+         * @throws ParseException
+         */
+        protected ModuleDescriptor parseOtherIvyFile(ModuleRevisionId parentMrid) throws ParseException {
+            Message.debug(
+                "Trying to parse included ivy file by asking repository for module :"
+                            + parentMrid.toString());
             DependencyDescriptor dd = new DefaultDependencyDescriptor(parentMrid, true);
             ResolveData data = IvyContext.getContext().getResolveData();
             if (data == null) {
@@ -606,6 +643,30 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 return otherModule.getDescriptor();
             }
 
+        }
+
+        /**
+         * Describes how to parse ivy file from cache
+         * @param parentMrid a given {@link ModuleRevisionId} to find
+         * @return a {@link ModuleDescriptor} if found. Return null if no {@link ModuleDescriptor} was found
+         * @throws ParseException
+         */
+        protected ModuleDescriptor parseOtherIvyFileInCache(ModuleRevisionId parentMrid) throws ParseException {
+            // try to load parent module in cache
+            File cacheFile = settings.getResolutionCacheManager().getResolvedIvyFileInCache(parentMrid);
+            if (cacheFile.exists() && cacheFile.length() > 0) {
+                ModuleDescriptor md;
+                try {
+                    Message.debug("Trying to load included ivy file from cache " + cacheFile.getAbsolutePath());
+                    URL parentUrl = cacheFile.toURI().toURL();
+                    md = parseOtherIvyFileOnFileSystem(parentUrl.toString());
+                    return md;
+                } catch (IOException e) {
+                    // do nothing
+                    Message.error(e.getLocalizedMessage());
+                }
+            }
+            return null;
         }
 
         protected void publicationsStarted(Attributes attributes) {
