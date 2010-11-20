@@ -297,7 +297,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private void addSystemProperties() {
         try {
-            addAllVariables(System.getProperties());
+            addAllVariables((Map) System.getProperties().clone());
         } catch (AccessControlException ex) {
             Message.verbose(
                 "access denied to getting all system properties: they won't be available as Ivy variables."
