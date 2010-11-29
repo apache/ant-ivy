@@ -79,4 +79,8 @@ public class ExecutionEnvironmentProfile {
         }
         return true;
     }
+
+    public String toString() {
+        return name + ":" + pkgNames;
+    }
 }

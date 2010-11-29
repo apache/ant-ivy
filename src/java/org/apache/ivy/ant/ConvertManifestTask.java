@@ -27,9 +27,9 @@ import java.util.jar.Manifest;
 import org.apache.ivy.ant.IvyTask;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.core.BundleInfo;
+import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.osgi.repo.BundleInfoAdapter;
-import org.apache.ivy.osgi.repo.osgi.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.tools.ant.BuildException;
 
@@ -59,6 +59,13 @@ public class ConvertManifestTask extends IvyTask {
         }
         if (manifest == null) {
             throw new BuildException("source manifest file is required for convertmanifest task");
+        }
+        if (profileProvider == null) {
+            try {
+                profileProvider = new ExecutionEnvironmentProfileProvider();
+            } catch (IOException e) {
+                throw new BuildException("Enable to load the default environment profiles");
+            }
         }
 
         Manifest m;
