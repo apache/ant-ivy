@@ -16,7 +16,7 @@
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
    under the License.    
--->org.apache.ivy.osgi
+-->
 <repository>
     <resource symbolicname="org.apache.ivy.osgi.testbundle" version="1.2.3" uri="org.apache.ivy.osgi.testbundle_1.2.3.jar">
         <capability name="package">

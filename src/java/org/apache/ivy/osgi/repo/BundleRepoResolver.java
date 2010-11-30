@@ -18,12 +18,7 @@
 package org.apache.ivy.osgi.repo;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,10 +65,6 @@ public class BundleRepoResolver extends BasicResolver {
 
     private Repository repository = null;
 
-    private String repoXmlURL;
-
-    private String repoXmlFile;
-
     private BundleRepo repoDescriptor = null;
 
     private ExecutionEnvironmentProfileProvider profileProvider;
@@ -106,112 +97,22 @@ public class BundleRepoResolver extends BasicResolver {
         setImportPackageStrategy(RequirementStrategy.valueOf(strategy));
     }
 
-    public void setRepoXmlFile(String repositoryXmlFile) {
-        this.repoXmlFile = repositoryXmlFile;
-    }
-
-    public void setRepoXmlURL(String repositoryXmlURL) {
-        this.repoXmlURL = repositoryXmlURL;
-    }
-
     public void add(ExecutionEnvironmentProfileProvider pp) {
         this.profileProvider = pp;
     }
 
-    private void ensureInit() {
-        if (repoDescriptor != null && repository != null) {
-            return;
-        }
+    protected void setRepository(Repository repository) {
+        this.repository = repository;
+    }
+
+    protected void setRepoDescriptor(BundleRepo repoDescriptor) {
+        this.repoDescriptor = repoDescriptor;
+    }
+
+    protected void ensureInit() {
         if (repoDescriptor != null || repository != null) {
             throw new IllegalStateException("The osgi repository resolver " + getName()
                     + " wasn't correctly configured, see previous error in the logs");
-        }
-        if (repoXmlFile != null && repoXmlURL != null) {
-            throw new RuntimeException("The osgi repository resolver " + getName()
-                    + " couldn't be configured: repoXmlFile and repoXmlUrl cannot be set both");
-        }
-        if (repoXmlFile != null) {
-            File f = new File(repoXmlFile);
-            repository = new FileRepository(f.getParentFile());
-            FileInputStream in;
-            try {
-                in = new FileInputStream(f);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile + " was not found");
-            }
-            try {
-                repoDescriptor = OBRXMLParser.parse(in);
-            } catch (ParseException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile
-                        + " is incorrectly formed (" + e.getMessage() + ")");
-            } catch (IOException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile
-                        + " could not be read (" + e.getMessage() + ")");
-            } catch (SAXException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile
-                        + " has incorrect XML (" + e.getMessage() + ")");
-            }
-            try {
-                in.close();
-            } catch (IOException e) {
-                // don't care
-            }
-        } else {
-            URL url;
-            try {
-                url = new URL(repoXmlURL);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: repoXmlURL '" + repoXmlURL + "' is not an URL");
-            }
-            URL baseUrl;
-            String basePath = "/";
-            int i = url.getPath().lastIndexOf("/");
-            if (i > 0) {
-                basePath = url.getPath().substring(0, i + 1);
-            }
-            try {
-                baseUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), basePath);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(
-                        "The osgi repository resolver "
-                                + getName()
-                                + " couldn't be configured: the base url couldn'd be extracted from the url "
-                                + url + " (" + e.getMessage() + ")");
-            }
-            repository = new RelativeURLRepository(baseUrl);
-            InputStream in;
-            try {
-                in = url.openStream();
-            } catch (IOException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL + " couldn't be read ("
-                        + e.getMessage() + ")");
-            }
-            try {
-                repoDescriptor = OBRXMLParser.parse(in);
-            } catch (ParseException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL
-                        + " is incorrectly formed (" + e.getMessage() + ")");
-            } catch (IOException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL
-                        + " could not be read (" + e.getMessage() + ")");
-            } catch (SAXException e) {
-                throw new RuntimeException("The osgi repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL
-                        + " has incorrect XML (" + e.getMessage() + ")");
-            }
-            try {
-                in.close();
-            } catch (IOException e) {
-                // don't care
-            }
         }
     }
 

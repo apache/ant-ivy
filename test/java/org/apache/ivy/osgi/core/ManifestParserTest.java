@@ -29,8 +29,8 @@ public class ManifestParserTest extends TestCase {
     public void testParseManifest() throws Exception {
         BundleInfo bundleInfo;
 
-        bundleInfo = ManifestParser.parseJarManifest(getClass().getClassLoader()
-                .getResourceAsStream("com.acme.alpha-1.0.0.20080101.jar"));
+        bundleInfo = ManifestParser.parseJarManifest(getClass().getResourceAsStream(
+            "com.acme.alpha-1.0.0.20080101.jar"));
         assertEquals("com.acme.alpha", bundleInfo.getSymbolicName());
         assertEquals("1.0.0", bundleInfo.getVersion().numbersAsString());
         assertEquals("20080101", bundleInfo.getVersion().qualifier());
@@ -49,8 +49,8 @@ public class ManifestParserTest extends TestCase {
         assertTrue(importsList.contains("com.acme.bravo"));
         assertTrue(importsList.contains("com.acme.delta"));
 
-        bundleInfo = ManifestParser.parseJarManifest(getClass().getClassLoader()
-                .getResourceAsStream("com.acme.bravo-2.0.0.20080202.jar"));
+        bundleInfo = ManifestParser.parseJarManifest(getClass().getResourceAsStream(
+            "com.acme.bravo-2.0.0.20080202.jar"));
         assertNotNull(bundleInfo);
         assertEquals("com.acme.bravo", bundleInfo.getSymbolicName());
         assertEquals("2.0.0", bundleInfo.getVersion().numbersAsString());

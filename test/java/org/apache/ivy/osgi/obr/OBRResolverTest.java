@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.osgi.repo;
+package org.apache.ivy.osgi.obr;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,15 +46,17 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ManifestParser;
+import org.apache.ivy.osgi.obr.OBRResolver;
+import org.apache.ivy.osgi.repo.BundleInfoAdapter;
 import org.apache.ivy.osgi.repo.BundleRepoResolver.RequirementStrategy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 
-public class BundleRepoResolverTest extends TestCase {
+public class OBRResolverTest extends TestCase {
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE = ModuleRevisionId.newInstance("",
-        "org.apache.ivy.osgitestbundle", "1.2.3", BundleInfoAdapter.OSGI_BUNDLE);
+        "org.apache.ivy.osgi.testbundle", "1.2.3", BundleInfoAdapter.OSGI_BUNDLE);
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE_IMPORTING = ModuleRevisionId
             .newInstance("", "org.apache.ivy.osgi.testbundle.importing", "3.2.1",
@@ -83,23 +85,23 @@ public class BundleRepoResolverTest extends TestCase {
 
     private Ivy ivy;
 
-    private BundleRepoResolver bundleResolver;
+    private OBRResolver bundleResolver;
 
-    private BundleRepoResolver bundleUrlResolver;
+    private OBRResolver bundleUrlResolver;
 
     private DualResolver dualResolver;
 
     public void setUp() throws Exception {
         settings = new IvySettings();
 
-        bundleResolver = new BundleRepoResolver();
+        bundleResolver = new OBRResolver();
         bundleResolver.setRepoXmlFile(new File("test/test-repo/bundlerepo/repo.xml")
                 .getAbsolutePath());
         bundleResolver.setName("bundle");
         bundleResolver.setSettings(settings);
         settings.addResolver(bundleResolver);
 
-        bundleUrlResolver = new BundleRepoResolver();
+        bundleUrlResolver = new OBRResolver();
         bundleUrlResolver.setRepoXmlURL(new File("test/test-repo/bundlerepo/repo.xml").toURI()
                 .toURL().toExternalForm());
         bundleUrlResolver.setName("bundleurl");
@@ -107,8 +109,8 @@ public class BundleRepoResolverTest extends TestCase {
         settings.addResolver(bundleUrlResolver);
 
         dualResolver = new DualResolver();
-        BundleRepoResolver resolver = new BundleRepoResolver();
-        resolver.setRepoXmlFile("test/test-repo/ivyrepo/repo.xml");
+        OBRResolver resolver = new OBRResolver();
+        resolver.setRepoXmlFile(new File("test/test-repo/ivyrepo/repo.xml").getAbsolutePath());
         resolver.setName("dual-bundle");
         resolver.setSettings(settings);
         dualResolver.add(resolver);
