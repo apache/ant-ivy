@@ -363,6 +363,13 @@
                                 "children": [
 
                                   ]
+                              },
+                              {
+                                "id":"resolver/obr",
+                                "title":"OSGi Bundle Repository",
+                                "children": [
+
+                                  ]
                               }
                             ]
                         },
@@ -784,6 +791,40 @@
                     "title":"Using standalone",
                     "children": [
 
+                      ]
+                  },
+                  {
+                    "id":"osgi",
+                    "title":"OSGi",
+                    "children": [
+                        {
+                          "id":"osgi/osgi-mapping",
+                          "title":"OSGi mapping",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"osgi/eclipse-plugin",
+                          "title":"Building an Eclipse plugin",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"osgi/standard-osgi",
+                          "title":"Building a standard OSGi bundle",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"osgi/target-platform",
+                          "title":"Managing a target platform",
+                          "children": [
+
+                            ]
+                        }
                       ]
                   }
                 ]

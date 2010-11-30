@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+
+Since Apache Ivy&#153; 2.3, some support for OSGi&#153; dependency management has been introduced.
+
+So with a standard ivy.xml, you can express some dependency on some OSGi bundle and every of their trasitive dependencies will be resolved. You can also declare in your ivy.xml some OSGi dependency, like a <tt>Require-Bundle</tt>, an <tt>Import-Package</tt> or an <tt>Import-Service</tt>, miming an OSGi MANIFEST.MF.
+
+<h2>Note on the implementation</h2>
+
+With OSGi we can declare different kind of capabilites of a bundle which can match different kind of requirements of some other bundles (<tt>Require-Bundle</tt>/<tt>Bundle-SymbolicName</tt>, <tt>Import-Package</tt>/<tt>Export-Package</tt>, <tt>Import-Service</tt>/<tt>Export-Service</tt>). In Ivy we only have one kind of requirement and one kind of capability: the symbolic name of the bundle. Due to that restriction Ivy may not resolve exactly how we would expect with OSGi.  The runtime of Ivy won't be as smart as a pure OSGi dependency manager. But we think that the mapping is working for most of the use cases involing OSGi dependencies management.
+
+Details on the mapping of the OSGi dependency model into Ivy's one can be found in that <a href="osgi/osgi-mapping.html">page<a>.
+
+<h2>Repository descriptor based resolvers</h2>
+
+Since the nature of the OSGi dependencies, resolving against a repository cannot be started before acquiring the metadata of every bundle of the repository. To resolve an <tt>Import-Package</tt>, Ivy has to find every bundle which has the proper <tt>Export-Package</tt>. So unlike the usual Ivy resolvers, the OSGi capable ones have to get the descriptor before starting a resolve.
+
+The descriptor probably being not instantanly downloaded, the descriptor is put in cache. (FIXME not implemented)
+
+<h2>Use cases</h2>
+
+Here are different use case of using the OSGi capabilities of Ivy:
+<ul>
+    <li>building an Eclipse&#153; plugin</li>
+    <li>building a standard OSGi bundle</li>
+    <li>managing a "target" platform</li>
+</ul>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
