@@ -639,6 +639,13 @@
                             ]
                         },
                         {
+                          "id":"use/buildobr",
+                          "title":"buildobr",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/buildnumber",
                           "title":"buildnumber",
                           "children": [
@@ -669,6 +676,13 @@
                         {
                           "id":"use/configure",
                           "title":"configure",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"use/convertmanifest",
+                          "title":"convertmanifest",
                           "children": [
 
                             ]
