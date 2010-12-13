@@ -845,6 +845,13 @@
                           "children": [
 
                             ]
+                        },
+                        {
+                          "id":"osgi/sigil",
+                          "title":"Apache Felix Sigil",
+                          "children": [
+
+                            ]
                         }
                       ]
                   }

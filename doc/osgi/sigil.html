@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+
+Another initiative to manage OSGi&#153; dependencies with Ivy is the project <a href="http://felix.apache.org/site/apache-felix-sigil.html">Apache Felix Sigil&#153;</a>. We will try to explain here the different approach taken there compared to the build-in OSGi capabilities of Ivy.
+
+<h1>A different approach</h1>
+
+The difference between the build-in OSGi resolver and the Sigil one is about the "engine" used to resolve dependencies.
+
+The build-in OSGi resolver is <i>obviously</i> using the Ivy engine to do the resolution of the dependencies. The OSGi capability of Ivy is mainly due to the dependency parser implemented to understand the OSGi metadata in a MANIFEST.MF.
+
+On the other hand, Sigil is using a separate "engine" to do the resolution, an engine which is dedicated to understand the OSGi metadata and their semantics.
+
+The immediate consequence of this difference is that the build-in resolver is probably less accurate than the Sigil one as to understand the OSGi dependencies semantics. As explained in this <a href="osgi-mapping.html">page</a>, the OSGi model doesn't fit well into the Ivy one.
+
+
+<b>TO BE CONFIRMED</b>But then the drawback of Sigil is that it is less integrated with Ivy, and once the resolution happens in its dedicated enine, no conflit resolver and no resolver chaining can happen.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
