@@ -67,7 +67,11 @@ Nota Bene: to be resolved correctly Ivy is relying on the aggregated metadata of
 
 When building an Eclipse plugin, we are relying on a "target platform", the Eclipse installation we want our plugin to be eventually installed into. For Ivy, this will represent the repository of artifacts.
 
-Ivy needs an aggragation of the OSGi metadata in order to resolve a such repository. The Ant task <a href="../use/buildobr.html">buildobr</a> build a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". This is building a file in <tt>target/</tt>
+Ivy needs an aggragation of the OSGi metadata in order to resolve a such repository. The Ant task <a href="../use/buildobr.html">buildobr</a> build a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". In the above exemple, the file is build in <tt>target/repo-eclipse.xml</tt>.
+
+The plugin to be build has then a ivy.xml file describing its depedencies to be used by Ivy. Since the actual depedencies are in the MANIFEST.MF file, in the ivy.xml file we specify that it extends <tt>META-INF/MANIFEST.MF</tt>. So there not much dependencies specified in the ivy.xml. But as Ivy doesn't support the <tt>Bundle-Fragment</tt> OSGi feature, the ivy.xml can help specify the missing dependencies. 
+
+Having this setup, it is then a standard Ant+Ivy build. Ivy computes the classpath to be then used by the <tt>javac</tt> tasks. Note that <tt>javac</tt> is not aware of the OSGi metadata and is then incapable of failing to compile if private packages are accessed.
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
