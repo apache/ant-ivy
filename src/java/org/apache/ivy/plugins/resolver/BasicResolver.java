@@ -949,7 +949,11 @@ public abstract class BasicResolver extends AbstractResolver {
         }
     }
 
-    public abstract ResolvedResource findArtifactRef(Artifact artifact, Date date);
+    public ResolvedResource doFindArtifactRef(Artifact artifact, Date date) {
+        return findArtifactRef(artifact, date);
+    }
+
+    protected abstract ResolvedResource findArtifactRef(Artifact artifact, Date date);
 
     protected abstract long get(Resource resource, File dest) throws IOException;
 

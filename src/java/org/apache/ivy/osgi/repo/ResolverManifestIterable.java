@@ -152,7 +152,7 @@ public class ResolverManifestIterable implements Iterable/* <ManifestAndLocation
                     }
                     artifact = artifacts[indexArtifact++];
                 }
-                ResolvedResource resource = resolver.findArtifactRef(artifact, null);
+                ResolvedResource resource = resolver.doFindArtifactRef(artifact, null);
                 if (resource == null) {
                     artifact = null;
                     continue;
