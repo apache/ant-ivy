@@ -17,8 +17,10 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="2.0">
-    <info organisation="com.acme" module="myplugin" manifest="META-INF/MANIFEST.MF" />
+<ivy-module version="2.2">
+    <info organisation="com.acme" module="myplugin">
+        <extends location="META-INF/MANIFEST.MF" />
+    </info>
     <configurations>
         <conf name="compile"  extends="default,embedded" description="Dependencies for the compilation" />
         <conf name="embedded"                            description="Dependencies embedded into the plugin's jar" />

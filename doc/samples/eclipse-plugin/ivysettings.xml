@@ -21,8 +21,6 @@
     <properties file="ivysettings.properties" />
 
     <!-- We need some custom types -->
-    <!-- The parser of MANIFEST.MF -->
-    <typedef name="osgi-parser" classname="org.apache.ivy.osgi.repo.ManifestMDParser" />
     <!-- The parser of ivy.xml that can reference a MANIFEST.MF-->
     <typedef name="osgi-ivyparser" classname="org.apache.ivy.osgi.ivy.OsgiIvyParser" />
     <!-- The Ivy Osgi repo resolver -->
@@ -39,10 +37,7 @@
 
     <!-- We will use Ivy Osgi's parsers -->
     <parsers>
-        <osgi-ivyparser />
-        <osgi-parser>
-            <osgi-profileProvider />
-        </osgi-parser>
+        <osgi-manifest-parser />
     </parsers>
 
     <!-- We need to define the Ivy Osgi latest strategy as the default one -->
@@ -55,9 +50,9 @@
 
     <!-- We just need to define our Ivy OSGi resolver -->
     <resolvers>
-        <osgi-repo name="eclipse" repoXmlFile="${ivy.settings.dir}/repo-eclipse.xml">
+        <obr name="eclipse" repoXmlFile="${ivy.settings.dir}/target/repo-eclipse.xml">
             <osgi-profileProvider />
-        </osgi-repo>
+        </obr>
     </resolvers>
 
 </ivysettings>
