@@ -26,7 +26,7 @@
 <body>
 	<textarea id="xooki-source">
 
-This page is a description of how OSGi&#153; dependencies are mapped into Apacge Ivy&#153; ones
+This page is a description of how OSGi&#153; dependencies are mapped into Apache Ivy&#153; ones
 
 <u>Goal:</u> the purpose of this mapping is to transform an OSGi manifest into an ivy.xml, so Ivy can understand OSGi bundles and resolve them. We don't want to do the reverse here.
 
@@ -220,6 +220,13 @@ The OSGi <tt>Bundle-RequiredExecutionEnvironment</tt> manifest attribute is spec
 </td>
 </tr>
 </table>
+
+<h2>Bundle Fragment</h2>
+
+Ivy doesn't support the header <tt>Fragment-Host</tt>.
+
+The work around is to manually specify as dependencies in the ivy.xml the bundles which would fit to be the extensions of the host bundle.
+
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
