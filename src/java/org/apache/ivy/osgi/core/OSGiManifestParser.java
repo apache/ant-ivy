@@ -15,25 +15,23 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.osgi.repo;
+package org.apache.ivy.osgi.core;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Locale;
 import java.util.jar.Manifest;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.osgi.core.BundleInfo;
-import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 
-public class ManifestMDParser extends AbstractModuleDescriptorParser {
+public class OSGiManifestParser extends AbstractModuleDescriptorParser {
 
     private ExecutionEnvironmentProfileProvider profileProvider;
 
@@ -45,7 +43,7 @@ public class ManifestMDParser extends AbstractModuleDescriptorParser {
         if (res == null || res.getName() == null || res.getName().trim().equals("")) {
             return false;
         }
-        return res.getName().toUpperCase().endsWith("MANIFEST.MF");
+        return res.getName().toUpperCase(Locale.US).endsWith("MANIFEST.MF");
     }
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,

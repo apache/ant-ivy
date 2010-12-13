@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.osgi.repo;
+package org.apache.ivy.osgi.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,10 +36,7 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.osgi.core.BundleInfo;
-import org.apache.ivy.osgi.core.BundleRequirement;
-import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-import org.apache.ivy.osgi.core.ExportPackage;
+import org.apache.ivy.osgi.repo.ExecutionEnvironmentProfile;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
