@@ -26,9 +26,22 @@
 <body>
 	<textarea id="xooki-source">
 
-This page describes how to build an OSGi&#153; webapp with with Apache Ivy&#153;.
+This page describes how to build an OSGi&#153; bundle with Apache Ivy&#153;. In this use case, we just basically want to compute a classpath to compile, optionaly one for testing too, and then publish our bundle in a OSGi aware repository.
 
-TODO
+In oder to produce OSGi metadata of suffient quality and to avoid maintaining them manually, the <a href="http://www.aqute.biz/Code/Bnd">bnd</a> tool will be used. The approach taken is then an "Ivy file first" approach. The dependencies will be specified in the ivy.xml file, the MANIFEST.MF being generated from the computed classpath.
+
+
+<h1>Quick setup</h1>
+
+In few steps, we will setup a build to compile and publish an OSGi bundle.
+
+<ol>
+<li>download this <a href="../samples/standard-osgi/ivy.xml">ivy.xml<a>, this <a href="../samples/standard-osgi/ivysettings.xml">ivysettings.xml</a>, this <a href="../samples/standard-osgi/build.xml">build.xml</a>, this <a href="../samples/standard-osgi/org.apache.ivy.sample.standard-osgi.bnd">bnd file</a>, and put them into your project folder;</li>
+<li>in the ivysettings.properties, specify the location of the plugins folder of your Eclipse target;</li>
+<li><i>(optional)</i> by default the build.xml is expecting the sources to be in the <tt>src</tt> folder. You may want to edit it if it is not the case</li>
+<li><i>(optional)</i> if Ivy is not in Ant's classpath, get the jar of <a href="../download.html">Apache Ivy</a> and edit the build.xml accordingly (see the comments at the begining of the file)</li>
+</ol>
+
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
