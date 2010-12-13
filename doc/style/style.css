@@ -233,6 +233,13 @@ pre {
   font-size: 85%;
 }
 
+.footer {
+  text-align: center;
+  margin-top: 3pt;
+  margin-bottom: 3pt;
+  font-size: 85%;
+}
+
 .comparison td, .comparison th {
     text-align: center;
 }
