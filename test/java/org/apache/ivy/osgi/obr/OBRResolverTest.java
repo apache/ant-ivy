@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarInputStream;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
@@ -254,7 +255,8 @@ public class OBRResolverTest extends TestCase {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.ambiguity_3.2.1.jar";
         bundleResolver.setImportPackageStrategy(RequirementStrategy.first);
         genericTestResolve(jarName, "default",
-            new ModuleRevisionId[] {MRID_TEST_BUNDLE_EXPORTING_AMBIGUITY});
+            new ModuleRevisionId[] {MRID_TEST_BUNDLE_EXPORTING_AMBIGUITY}, new ModuleRevisionId[] {
+                    MRID_TEST_BUNDLE, MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }
 
     public void testResolveImportNoAmbiguity() throws Exception {
@@ -272,6 +274,11 @@ public class OBRResolverTest extends TestCase {
 
     private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids)
             throws Exception {
+        genericTestResolve(jarName, conf, expectedMrids, null);
+    }
+
+    private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids,
+            ModuleRevisionId[] expected2Mrids) throws Exception {
         JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
@@ -287,8 +294,17 @@ public class OBRResolverTest extends TestCase {
             Artifact artfact = (Artifact) itArtfact.next();
             actual.add(artfact.getModuleRevisionId());
         }
-        Set/* <ModuleRevisionId> */expected = new HashSet/* <ModuleRevisionId> */(
-                Arrays.asList(expectedMrids));
+        Set/* <ModuleRevisionId> */expected = new HashSet(Arrays.asList(expectedMrids));
+        if (expected2Mrids != null) {
+            // in this use case, we have two choices, let's try the second one
+            try {
+                Set/* <ModuleRevisionId> */expected2 = new HashSet(Arrays.asList(expected2Mrids));
+                assertEquals(expected2, actual);
+                return; // test passed
+            } catch (AssertionFailedError e) {
+                // too bad, let's continue
+            }
+        }
         assertEquals(expected, actual);
     }
 
