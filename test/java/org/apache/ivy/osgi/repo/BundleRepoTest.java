@@ -54,7 +54,7 @@ public class BundleRepoTest extends TestCase {
 
     public void testFileRepo() throws Exception {
         RepositoryManifestIterable it = new RepositoryManifestIterable(new FileRepository(new File(
-                "test/test-repo/bundlerepo")));
+                "test/test-repo/bundlerepo").getAbsoluteFile()));
         BundleRepo repo = new BundleRepo();
         repo.populate(it);
 

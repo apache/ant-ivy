@@ -119,7 +119,7 @@ public class OBRXMLWriter {
             BundleCapability capability = (BundleCapability) itCapabilities.next();
             saxCapability(capability, handler);
         }
-        Iterator itRequirement = bundleInfo.getCapabilities().iterator();
+        Iterator itRequirement = bundleInfo.getRequirements().iterator();
         while (itRequirement.hasNext()) {
             BundleRequirement requirement = (BundleRequirement) itRequirement.next();
             saxRequirement(requirement, handler);
