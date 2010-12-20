@@ -17,18 +17,23 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="2.2">
-    <info organisation="com.acme" module="myplugin">
-        <extends location="META-INF/MANIFEST.MF" />
+<ivy-module version="2.2" xmlns:o="http://ant.apache.org/ivy/osgi">
+    <info organisation="" module="myplugin">
+        <extends organisation="" module="myplugin" revision="1.0.0.qualifier" location="META-INF/MANIFEST.MF" />
     </info>
     <configurations>
         <conf name="compile"  extends="default,embedded" description="Dependencies for the compilation" />
         <conf name="embedded"                            description="Dependencies embedded into the plugin's jar" />
+        <conf name="win32"    extends="compile"          description="To run on Microsoft Windows" />
+        <conf name="macos"    extends="compile"          description="To run on Mac OS X" />
+        <conf name="gtk"      extends="compile"          description="To run on Linux" />
     </configurations>
     <dependencies>
         <!-- exemple of a dependency that we can't declare in the MANIFEST.MF because we want it to be embedded -->
         <!--dependency osgi="bundle" org="" module="org.apache.commons.httpcore" rev="4.1.0" conf="embedded->default" /-->
         <!-- Ivy-Osgi doesn't understand bundle fragment -->
-        <dependency osgi="bundle" org="" name="org.eclipse.swt.cocoa.macosx" rev="3.+" />
+        <dependency o:type="bundle" org="" name="org.eclipse.swt.win32.win32.x86" rev="3.+" conf="win32->default" />
+        <dependency o:type="bundle" org="" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="3.+" conf="macos->default" />
+        <dependency o:type="bundle" org="" name="org.eclipse.swt.gtk.linux.x86" rev="3.+" conf="linux->default" />
      </dependencies>
 </ivy-module>

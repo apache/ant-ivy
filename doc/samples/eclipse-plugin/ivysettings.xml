@@ -20,28 +20,8 @@
     <!-- Load the properties where is defined the eclipse location -->
     <properties file="ivysettings.properties" />
 
-    <!-- We need some custom types -->
-    <!-- The parser of ivy.xml that can reference a MANIFEST.MF-->
-    <typedef name="osgi-ivyparser" classname="org.apache.ivy.osgi.ivy.OsgiIvyParser" />
-    <!-- The Ivy Osgi repo resolver -->
-    <typedef name="osgi-repo" classname="org.apache.ivy.osgi.repo.BundleRepoResolver" />
-    <!-- Ivy Osgi's latest startegy -->
-    <typedef name="osgi-latest" classname="org.apache.ivy.osgi.ivy.OsgiRevisionStrategy" />
-    <!-- Ivy's default provider of OSGi execution environement profiles -->
-    <typedef name="osgi-profileProvider" classname="org.apache.ivy.osgi.repo.osgi.ExecutionEnvironmentProfileProvider" />
-
-    <!-- We will use Ivy Osgi's latest strategy -->
-    <latest-strategies>
-        <osgi-latest name="osgi-latest-revision" />
-    </latest-strategies>
-
-    <!-- We will use Ivy Osgi's parsers -->
-    <parsers>
-        <osgi-manifest-parser />
-    </parsers>
-
     <!-- We need to define the Ivy Osgi latest strategy as the default one -->
-    <settings defaultResolver="eclipse" defaultLatestStrategy="osgi-latest-revision" />
+    <settings defaultResolver="eclipse" defaultLatestStrategy="latest-osgi" />
 
     <!-- These are usual cache setup -->
     <caches resolutionCacheDir="${ivy.settings.dir}/cache/resolution" useOrigin="true">
@@ -50,9 +30,7 @@
 
     <!-- We just need to define our Ivy OSGi resolver -->
     <resolvers>
-        <obr name="eclipse" repoXmlFile="${ivy.settings.dir}/target/repo-eclipse.xml">
-            <osgi-profileProvider />
-        </obr>
+        <obr name="eclipse" repoXmlFile="${ivy.settings.dir}/target/repo-eclipse.xml" />
     </resolvers>
 
 </ivysettings>

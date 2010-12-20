@@ -50,7 +50,7 @@
     <target name="ivy:resolve" depends="ivy:configure">
         <!-- classical resolve and cache-path -->
         <ivy:resolve file="ivy.xml" conf="*" />
-        <ivy:cachepath pathid="compile.classpath" conf="default" useOrigin="true" />
+        <ivy:cachepath pathid="compile.classpath" conf="compile" useOrigin="true" />
     </target>
 
     <target name="compile" depends="ivy:resolve" description="Compile the Eclipse plugin">
