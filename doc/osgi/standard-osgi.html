@@ -26,6 +26,10 @@
 <body>
 	<textarea id="xooki-source">
 
+<div class="notice">
+This documentation is describing the <b>experimental</b> OSGi capability of Ivy. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
+</div>
+
 This page describes how to build an OSGi&#153; bundle with Apache Ivy&#153;. In this use case, we just basically want to compute a classpath to compile, optionaly one for testing too, and then publish our bundle in a OSGi aware repository.
 
 In oder to produce OSGi metadata of suffient quality and to avoid maintaining them manually, the <a href="http://www.aqute.biz/Code/Bnd">bnd</a> tool will be used. The approach taken is then an "Ivy file first" approach. The dependencies will be specified in the ivy.xml file, the MANIFEST.MF being generated from the computed classpath.

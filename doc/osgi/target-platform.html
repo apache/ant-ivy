@@ -26,6 +26,10 @@
 <body>
 	<textarea id="xooki-source">
 
+<div class="notice">
+This documentation is describing the <b>experimental</b> OSGi capability of Ivy. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
+</div>
+
 Building an OSGi&#153; bundle with standard tools like <tt>javac</tt> and a classpath computed by Apache Ivy&#153; can be erroneous as these tools doesn't take into account the package visibility enforced by the OSGi metadata. Then switching to OSGi dedicated tools like the Eclipse&#153; JTD can be prefered. This kind of tools still need a "target platform", a set of jars against to compile and then later run. A target platform can be easily managed with Ivy and its OSGi capabilities.
 
 TODO

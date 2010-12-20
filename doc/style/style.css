@@ -304,3 +304,9 @@ tr.homeitems a:hover {
 }
 .home img { border-width:0; }
 
+.notice {
+    padding: 5px;
+    border: 1px;
+    background-color: #FFFFCE;
+    margin: 10px;
+}

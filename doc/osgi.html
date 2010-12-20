@@ -28,13 +28,17 @@
 
 Since Apache Ivy&#153; 2.3, some support for OSGi&#153; dependency management has been introduced.
 
+<div class="notice">
+    Note that this feature is considered as <b>experimental</b>. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
+</div>
+
 So with a standard ivy.xml, you can express some dependency on some OSGi bundle and every of their trasitive dependencies will be resolved. You can also declare in your ivy.xml some OSGi dependency, like a <tt>Require-Bundle</tt>, an <tt>Import-Package</tt> or an <tt>Import-Service</tt>, miming an OSGi MANIFEST.MF.
 
 <h2>Note on the implementation</h2>
 
 With OSGi we can declare different kind of capabilites of a bundle which can match different kind of requirements of some other bundles (<tt>Require-Bundle</tt>/<tt>Bundle-SymbolicName</tt>, <tt>Import-Package</tt>/<tt>Export-Package</tt>, <tt>Import-Service</tt>/<tt>Export-Service</tt>). In Ivy we only have one kind of requirement and one kind of capability: the symbolic name of the bundle. Due to that restriction Ivy may not resolve exactly how we would expect with OSGi.  The runtime of Ivy won't be as smart as a pure OSGi dependency manager. But we think that the mapping is working for most of the use cases involing OSGi dependencies management.
 
-Details on the mapping of the OSGi dependency model into Ivy's one can be found in that <a href="osgi/osgi-mapping.html">page<a>.
+Details on the mapping of the OSGi dependency model into Ivy's one can be found in that <a href="osgi/osgi-mapping.html">page</a>.
 
 <h2>Repository descriptor based resolvers</h2>
 
