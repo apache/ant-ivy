@@ -110,11 +110,13 @@ public class OBRXMLParser {
             repo.setName(atts.getValue(REPOSITORY_NAME));
 
             String lastModified = atts.getValue(REPOSITORY_LASTMODIFIED);
-            try {
-                repo.setLastModified(Long.valueOf(lastModified));
-            } catch (NumberFormatException e) {
-                printWarning(this, "Incorrect last modified timestamp : " + lastModified
-                        + ". It will be ignored.");
+            if (lastModified != null) {
+                try {
+                    repo.setLastModified(Long.valueOf(lastModified));
+                } catch (NumberFormatException e) {
+                    printWarning(this, "Incorrect last modified timestamp : " + lastModified
+                            + ". It will be ignored.");
+                }
             }
 
         }
