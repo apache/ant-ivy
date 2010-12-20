@@ -18,6 +18,8 @@
 package org.apache.ivy.osgi.repo;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +48,14 @@ public class RelativeURLRepository extends URLRepository {
         source = encode(source);
         Resource res = (Resource) resourcesCache.get(source);
         if (res == null) {
-            if (baseUrl == null) {
+            URI uri;
+            try {
+                uri = new URI(source);
+            } catch (URISyntaxException e) {
+                // very wierd URL, let's assume it is absolute
+                uri = null;
+            }
+            if (uri == null || uri.isAbsolute()) {
                 res = new URLResource(new URL(source));
             } else {
                 res = new URLResource(new URL(baseUrl + source));
