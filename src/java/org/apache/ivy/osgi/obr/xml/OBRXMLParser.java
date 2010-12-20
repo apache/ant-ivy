@@ -283,6 +283,8 @@ public class OBRXMLParser {
 
         private Requirement requirement;
 
+        private RequirementFilter filter;
+
         public RequireHandler(ResourceHandler resourceHandler) {
             super(REQUIRE, resourceHandler);
         }
@@ -295,7 +297,7 @@ public class OBRXMLParser {
             }
 
             String filterText = atts.getValue(REQUIRE_FILTER);
-            RequirementFilter filter = null;
+            filter = null;
             if (filterText != null) {
                 try {
                     filter = RequirementFilterParser.parse(filterText);
@@ -347,7 +349,8 @@ public class OBRXMLParser {
             try {
                 RequirementAdapter.adapt(((ResourceHandler) getParent()).bundleInfo, requirement);
             } catch (UnsupportedFilterException e) {
-                skipResourceOnError(this, "Unsupported requirement filter: " + e.getMessage());
+                skipResourceOnError(this,
+                    "Unsupported requirement filter: " + filter + " (" + e.getMessage() + ")");
             } catch (ParseException e) {
                 skipResourceOnError(this,
                     "Error in the requirement filter on the bundle: " + e.getMessage());
@@ -375,8 +378,8 @@ public class OBRXMLParser {
             resourceHandler = resourceHandler.getParent();
         }
         BundleInfo bundleInfo = ((ResourceHandler) resourceHandler).bundleInfo;
-        printError(handler, message + ". The resource " + bundleInfo.getSymbolicName()
-                + " is then ignored.");
+        printError(handler, message + ". The resource " + bundleInfo.getSymbolicName() + "/"
+                + bundleInfo.getVersion() + " is then ignored.");
         resourceHandler.skip();
     }
 
