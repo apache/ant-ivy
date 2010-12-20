@@ -18,33 +18,8 @@
 -->
 <ivysettings>
 
-    <!-- We need some custom types -->
-    <!-- The parser of MANIFEST.MF -->
-    <typedef name="osgi-parser" classname="org.apache.ivy.osgi.repo.ManifestMDParser" />
-    <!-- The parser of ivy.xml that can reference a MANIFEST.MF-->
-    <typedef name="osgi-ivyparser" classname="org.apache.ivy.osgi.ivy.OsgiIvyParser" />
-    <!-- The Ivy Osgi repo resolver -->
-    <typedef name="osgi-repo" classname="org.apache.ivy.osgi.repo.BundleRepoResolver" />
-    <!-- Ivy Osgi's latest startegy -->
-    <typedef name="osgi-latest" classname="org.apache.ivy.osgi.ivy.OsgiRevisionStrategy" />
-    <!-- Ivy's default provider of OSGi execution environement profiles -->
-    <typedef name="osgi-profileProvider" classname="org.apache.ivy.osgi.repo.osgi.ExecutionEnvironmentProfileProvider" />
-
-    <!-- We will use Ivy Osgi's latest strategy -->
-    <latest-strategies>
-        <osgi-latest name="osgi-latest-revision" />
-    </latest-strategies>
-
-    <!-- We will use Ivy Osgi's parsers -->
-    <parsers>
-        <osgi-ivyparser />
-        <osgi-parser>
-            <osgi-profileProvider />
-        </osgi-parser>
-    </parsers>
-
     <!-- We need to define the Ivy Osgi latest strategy as the default one -->
-    <settings defaultResolver="osgi-bundles" defaultLatestStrategy="osgi-latest-revision" />
+    <settings defaultResolver="osgi-bundles" defaultLatestStrategy="latest-osgi" />
 
     <!-- These are usual cache setup -->
     <caches resolutionCacheDir="${ivy.settings.dir}/cache/resolution" useOrigin="true">
@@ -53,9 +28,7 @@
 
     <!-- We just need to define our Ivy Osgi resolver -->
     <resolvers>
-        <osgi-repo name="osgi-bundles" repoXmlFile="${ivy.settings.dir}/../repo/repo.xml">
-            <osgi-profileProvider />
-        </osgi-repo>
+        <obr name="osgi-bundles" repoXmlFile="${ivy.settings.dir}/../repo/repo.xml" />
     </resolvers>
 
 </ivysettings>
