@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
@@ -64,7 +65,7 @@ public class BundleInfoAdapter {
 
     public static final String CONF_USE_PREFIX = "use_";
 
-    public static final String EXTRA_ATTRIBUTE_NAME = "osgi";
+    public static final String EXTRA_ATTRIBUTE_NAME = "o:type";
 
     public static final Map/* <String, String> */OSGI_BUNDLE = Collections.singletonMap(
         EXTRA_ATTRIBUTE_NAME, BundleInfo.BUNDLE_TYPE);
@@ -78,6 +79,7 @@ public class BundleInfoAdapter {
     public static DefaultModuleDescriptor toModuleDescriptor(BundleInfo bundle,
             ExecutionEnvironmentProfileProvider profileProvider) throws ProfileNotFoundException {
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(null, null);
+        md.addExtraAttributeNamespace("o", Ivy.getIvyHomeURL() + "osgi");
         ModuleRevisionId mrid = asMrid(bundle.getSymbolicName(), bundle.getVersion(), OSGI_BUNDLE);
         md.setResolvedPublicationDate(new Date());
         md.setModuleRevisionId(mrid);

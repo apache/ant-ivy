@@ -62,7 +62,7 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
-public class BundleRepoResolver extends BasicResolver {
+public abstract class BundleRepoResolver extends BasicResolver {
 
     private Repository repository = null;
 
@@ -111,11 +111,12 @@ public class BundleRepoResolver extends BasicResolver {
     }
 
     protected void ensureInit() {
-        if (repoDescriptor != null || repository != null) {
-            throw new IllegalStateException("The osgi repository resolver " + getName()
-                    + " wasn't correctly configured, see previous error in the logs");
+        if (repoDescriptor == null || repository == null) {
+            init();
         }
     }
+
+    abstract protected void init();
 
     public Repository getRepository() {
         ensureInit();
@@ -143,7 +144,7 @@ public class BundleRepoResolver extends BasicResolver {
     private DefaultModuleDescriptor getDependencyMD(DependencyDescriptor dd, ResolveData data) {
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
 
-        String osgiAtt = mrid.getAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        String osgiAtt = mrid.getExtraAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
         Map/* <String, Set<BundleCapabilityAndLocation>> */bundleCapabilities = (Map) getRepoDescriptor()
                 .getBundleByCapabilities().get(osgiAtt);
         if (bundleCapabilities == null) {
@@ -268,7 +269,7 @@ public class BundleRepoResolver extends BasicResolver {
 
         BundleCandidate found = (BundleCandidate) founds.get(0);
 
-        String osgiAtt = mrid.getAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        String osgiAtt = mrid.getExtraAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
         // for non bundle requirement : log the selected bundle
         if (!BundleInfo.BUNDLE_TYPE.equals(osgiAtt)) {
             // several candidates with different symbolic name : make an warning about the ambiguity

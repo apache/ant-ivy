@@ -46,7 +46,7 @@ public class OBRResolver extends BundleRepoResolver {
         this.repoXmlURL = repositoryXmlURL;
     }
 
-    protected void ensureInit() {
+    protected void init() {
         if (repoXmlFile != null && repoXmlURL != null) {
             throw new RuntimeException("The OBR repository resolver " + getName()
                     + " couldn't be configured: repoXmlFile and repoXmlUrl cannot be set both");
