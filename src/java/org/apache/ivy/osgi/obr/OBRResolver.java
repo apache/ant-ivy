@@ -21,15 +21,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 
+import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheDownloadOptions;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoResolver;
 import org.apache.ivy.osgi.repo.RelativeURLRepository;
+import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.file.FileRepository;
+import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXException;
 
 public class OBRResolver extends BundleRepoResolver {
@@ -54,41 +65,17 @@ public class OBRResolver extends BundleRepoResolver {
         if (repoXmlFile != null) {
             File f = new File(repoXmlFile);
             setRepository(new FileRepository(f.getParentFile()));
-            FileInputStream in;
-            try {
-                in = new FileInputStream(f);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile + " was not found");
-            }
-            try {
-                setRepoDescriptor(OBRXMLParser.parse(in));
-            } catch (ParseException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile
-                        + " is incorrectly formed (" + e.getMessage() + ")");
-            } catch (IOException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile
-                        + " could not be read (" + e.getMessage() + ")");
-            } catch (SAXException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlFile
-                        + " has incorrect XML (" + e.getMessage() + ")");
-            }
-            try {
-                in.close();
-            } catch (IOException e) {
-                // don't care
-            }
+            loadRepoFromFile(f, repoXmlFile);
         } else if (repoXmlURL != null) {
-            URL url;
+            final URL url;
             try {
                 url = new URL(repoXmlURL);
             } catch (MalformedURLException e) {
                 throw new RuntimeException("The OBR repository resolver " + getName()
                         + " couldn't be configured: repoXmlURL '" + repoXmlURL + "' is not an URL");
             }
+
+            // compute the base URL
             URL baseUrl;
             String basePath = "/";
             int i = url.getPath().lastIndexOf("/");
@@ -105,37 +92,68 @@ public class OBRResolver extends BundleRepoResolver {
                                 + url + " (" + e.getMessage() + ")");
             }
             setRepository(new RelativeURLRepository(baseUrl));
-            InputStream in;
-            try {
-                in = url.openStream();
-            } catch (IOException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL + " couldn't be read ("
-                        + e.getMessage() + ")");
-            }
-            try {
-                setRepoDescriptor(OBRXMLParser.parse(in));
-            } catch (ParseException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL
-                        + " is incorrectly formed (" + e.getMessage() + ")");
-            } catch (IOException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL
-                        + " could not be read (" + e.getMessage() + ")");
-            } catch (SAXException e) {
-                throw new RuntimeException("The OBR repository resolver " + getName()
-                        + " couldn't be configured: the file " + repoXmlURL
-                        + " has incorrect XML (" + e.getMessage() + ")");
-            }
-            try {
-                in.close();
-            } catch (IOException e) {
-                // don't care
-            }
+
+            // get the obr descriptor into the cache
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("_obr_cache_", getName(),
+                Ivy.getWorkingRevision());
+            Artifact artifact = new DefaultArtifact(mrid, null, "obr", "obr", "xml");
+            CacheDownloadOptions options = new CacheDownloadOptions();
+            ArtifactDownloadReport report = getRepositoryCacheManager().download(artifact,
+                new ArtifactResourceResolver() {
+                    public ResolvedResource resolve(Artifact artifact) {
+                        return new ResolvedResource(new URLResource(url), Ivy.getWorkingRevision());
+                    }
+                }, new ResourceDownloader() {
+                    public void download(Artifact artifact, Resource resource, File dest)
+                            throws IOException {
+                        if (dest.exists()) {
+                            dest.delete();
+                        }
+                        File part = new File(dest.getAbsolutePath() + ".part");
+                        FileUtil.copy(url, part, null);
+                        if (!part.renameTo(dest)) {
+                            throw new IOException(
+                                    "impossible to move part file to definitive one: " + part
+                                            + " -> " + dest);
+                        }
+                    }
+                }, options);
+
+            loadRepoFromFile(report.getLocalFile(), repoXmlURL);
+
         } else {
             throw new RuntimeException("The OBR repository resolver " + getName()
-                + " couldn't be configured: repoXmlFile or repoXmlUrl is missing");
+                    + " couldn't be configured: repoXmlFile or repoXmlUrl is missing");
+        }
+    }
+
+    private void loadRepoFromFile(File repoFile, String sourceLocation) {
+        FileInputStream in;
+        try {
+            in = new FileInputStream(repoFile);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("The OBR repository resolver " + getName()
+                    + " couldn't be configured: the file " + sourceLocation + " was not found");
+        }
+        try {
+            setRepoDescriptor(OBRXMLParser.parse(in));
+        } catch (ParseException e) {
+            throw new RuntimeException("The OBR repository resolver " + getName()
+                    + " couldn't be configured: the file " + sourceLocation
+                    + " is incorrectly formed (" + e.getMessage() + ")");
+        } catch (IOException e) {
+            throw new RuntimeException("The OBR repository resolver " + getName()
+                    + " couldn't be configured: the file " + sourceLocation
+                    + " could not be read (" + e.getMessage() + ")");
+        } catch (SAXException e) {
+            throw new RuntimeException("The OBR repository resolver " + getName()
+                    + " couldn't be configured: the file " + sourceLocation
+                    + " has incorrect XML (" + e.getMessage() + ")");
+        }
+        try {
+            in.close();
+        } catch (IOException e) {
+            // don't care
         }
     }
 }
