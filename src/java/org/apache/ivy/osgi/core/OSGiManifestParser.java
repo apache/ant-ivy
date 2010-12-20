@@ -22,16 +22,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Locale;
 import java.util.jar.Manifest;
 
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.url.URLResource;
 
-public class OSGiManifestParser extends AbstractModuleDescriptorParser {
+public class OSGiManifestParser implements ModuleDescriptorParser {
+
+    private static final OSGiManifestParser INSTANCE = new OSGiManifestParser();
+
+    public static OSGiManifestParser getInstance() {
+        return INSTANCE;
+    }
 
     private ExecutionEnvironmentProfileProvider profileProvider;
 
@@ -64,4 +75,21 @@ public class OSGiManifestParser extends AbstractModuleDescriptorParser {
         }
     }
 
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
+            boolean validate) throws ParseException, IOException {
+        URLResource resource = new URLResource(descriptorURL);
+        return parseDescriptor(ivySettings, descriptorURL, resource, validate);
+    }
+
+    public String getType() {
+        return "manifest";
+    }
+
+    public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res) {
+        return DefaultArtifact.newIvyArtifact(mrid, new Date(res.getLastModified()));
+    }
+
+    public String toString() {
+        return "manifest parser";
+    }
 }
