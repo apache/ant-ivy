@@ -101,11 +101,11 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
         Iterator itHandler = mapping.values().iterator();
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
-            subHandler.reset();
+            subHandler.stopDelegating();
         }
     }
 
-    protected void reset() {
+    protected void stopDelegating() {
         parent.delegate = null;
         skip = false;
         started = false;
@@ -113,7 +113,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
         Iterator itHandler = mapping.values().iterator();
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
-            subHandler.reset();
+            subHandler.stopDelegating();
         }
     }
 
@@ -156,32 +156,28 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
     public final void startElement(String uri, String localName, String n, Attributes atts)
             throws SAXException {
         if (delegate != null) {
+            // we are already delegating, let's continue
             delegate.startElement(uri, localName, n, atts);
         } else {
-            if (!started) {
-                if (localName.equals(tagName)) {
-                    handleAttributes(atts);
-                    started = true;
-                } else if (parent == null) {
+            if (!started) { // first time called ?
+                // just for the root, check the expected element name
+                // not need to check the delegated as the mapping is already taking care of it
+                if (parent == null && !localName.equals(tagName)) {
                     // we are at the root and the saxed element doesn't match
                     throw new SAXException("The root element of the parsed document '" + localName
                             + "' didn't matched the expected one: '" + tagName + "'");
                 }
+                handleAttributes(atts);
+                started = true;
             } else {
                 if (skip) {
+                    // we con't care anymore about that part of the xml tree
                     return;
                 }
-                if (mapping != null) {
-                    DelegetingHandler/* <?> */delegetingHandler = (DelegetingHandler) mapping
-                            .get(localName);
-                    if (delegetingHandler != null) {
-                        delegate = delegetingHandler;
-                    }
-                }
+                // time now to delegate for a new element
+                delegate = (DelegetingHandler) mapping.get(localName);
                 if (delegate != null) {
                     delegate.startElement(uri, localName, n, atts);
-                } else {
-                    doStartElement(uri, localName, localName, atts);
                 }
             }
         }
@@ -209,13 +205,15 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
 
     public final void endElement(String uri, String localName, String n) throws SAXException {
         if (delegate != null) {
+            // we are already delegating, let's continue
             delegate.endElement(uri, localName, n);
         } else {
             if (!skip) {
                 doEndElement(uri, localName, n);
             }
             if (parent != null && tagName.equals(localName)) {
-                reset();
+                // the current element is closed, let's tell the parent to stop delegating
+                stopDelegating();
             }
         }
     }
