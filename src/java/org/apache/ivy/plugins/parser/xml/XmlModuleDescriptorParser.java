@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -391,7 +392,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             ModuleDescriptor parent = null;
 
             String extendType = attributes.getValue("extendType") != null ? attributes.getValue(
-                "extendType").toLowerCase() : "all";
+                "extendType").toLowerCase(Locale.US) : "all";
 
             List/* <String> */extendTypes = Arrays.asList(extendType.split(","));
             ModuleId parentMid = new ModuleId(parentOrganisation, parentModule);
