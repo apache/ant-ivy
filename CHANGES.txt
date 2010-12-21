@@ -117,6 +117,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
 - NEW: Import Bushel into Ivy core (IVY-1241)
 
+- FIX: ivy.xml that contains UTF-8 encoded umlauts cannot be bigger than 10000 bytes (IVY-1253)
 - FIX: Can not use a v[revision] in an artifact pattern of a filesystem resolver (IVY-1238)
 - FIX: Cached ivy.xml is invalid if the description contains the ampersand entity (&amp;) (IVY-1237)
 - FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)

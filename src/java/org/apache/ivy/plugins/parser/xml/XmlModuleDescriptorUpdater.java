@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1208,9 +1207,9 @@ public final class XmlModuleDescriptorUpdater {
             OutputStream outStream, final UpdateOptions options) 
             throws IOException, SAXException {
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(outStream, "UTF-8"));
-        final BufferedInputStream in = new BufferedInputStream(inStream);
+        final BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
 
-        in.mark(MAX_HEADER_LENGTH); // assume the header is never larger than 10000 bytes.
+        in.mark(MAX_HEADER_LENGTH); // assume the header is never larger than 10000 characters.
         copyHeader(in, out);
         in.reset(); // reposition the stream at the beginning
 
@@ -1234,13 +1233,8 @@ public final class XmlModuleDescriptorUpdater {
      * <ivy-module to out, except if <ivy-module is not found, in which case nothing is copied. The
      * prolog <?xml version="..." encoding="...."?> is also replaced by <?xml version="1.0"
      * encoding="UTF-8"?> if it was present.
-     * 
-     * @param in
-     * @param out
-     * @throws IOException
      */
-    private static void copyHeader(InputStream in, PrintWriter out) throws IOException {
-        BufferedReader r = new BufferedReader(new InputStreamReader(in));
+    private static void copyHeader(BufferedReader r, PrintWriter out) throws IOException {
         String line = r.readLine();
         if (line != null && line.startsWith("<?xml ")) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
