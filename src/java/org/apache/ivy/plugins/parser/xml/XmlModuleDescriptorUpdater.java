@@ -17,12 +17,11 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -1156,6 +1155,15 @@ public final class XmlModuleDescriptorUpdater {
             out.flush();
             out.close();
         }
+        
+        public void processingInstruction(String target, String data) throws SAXException {
+            write("<?");
+            write(target);
+            write(" ");
+            write(data);
+            write("?>");
+            write(LINE_SEPARATOR);
+        }
 
         public void warning(SAXParseException e) throws SAXException {
             throw e;
@@ -1183,12 +1191,15 @@ public final class XmlModuleDescriptorUpdater {
                 write(">");
                 justOpen = null;
             }
-            if (!inHeader) {
-                StringBuffer comment = new StringBuffer();
-                comment.append(ch, start, length);
-                write("<!--");
-                write(comment.toString());
-                write("-->");
+
+            StringBuffer comment = new StringBuffer();
+            comment.append(ch, start, length);
+            write("<!--");
+            write(comment.toString());
+            write("-->");
+
+            if (inHeader) {
+                write(LINE_SEPARATOR);
             }
         }
 
@@ -1207,15 +1218,12 @@ public final class XmlModuleDescriptorUpdater {
             OutputStream outStream, final UpdateOptions options) 
             throws IOException, SAXException {
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(outStream, "UTF-8"));
-        final BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
-
-        in.mark(MAX_HEADER_LENGTH); // assume the header is never larger than 10000 characters.
-        copyHeader(in, out);
-        in.reset(); // reposition the stream at the beginning
-
+        out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        out.write(LINE_SEPARATOR);
+        
         try {
             UpdaterHandler updaterHandler = new UpdaterHandler(inStreamCtx, out, options);
-            InputSource inSrc = new InputSource(in);
+            InputSource inSrc = new InputSource(new BufferedInputStream(inStream));
             if (inStreamCtx != null) {
                 inSrc.setSystemId(inStreamCtx.toExternalForm());
             }
@@ -1226,31 +1234,6 @@ public final class XmlModuleDescriptorUpdater {
             ise.initCause(e);
             throw ise;
         }
-    }
-
-    /**
-     * Copy xml header from src url ivy file to given printwriter In fact, copies everything before
-     * <ivy-module to out, except if <ivy-module is not found, in which case nothing is copied. The
-     * prolog <?xml version="..." encoding="...."?> is also replaced by <?xml version="1.0"
-     * encoding="UTF-8"?> if it was present.
-     */
-    private static void copyHeader(BufferedReader r, PrintWriter out) throws IOException {
-        String line = r.readLine();
-        if (line != null && line.startsWith("<?xml ")) {
-            out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            line = line.substring(line.indexOf(">") + 1, line.length());
-        }
-        for (; line != null; line = r.readLine()) {
-            int index = line.indexOf("<ivy-module");
-            if (index == -1) {
-                out.write(line);
-                out.write(LINE_SEPARATOR);
-            } else {
-                out.write(line.substring(0, index));
-                break;
-            }
-        }
-        // r.close();
     }
 
     private static class ExtendedBuffer {
