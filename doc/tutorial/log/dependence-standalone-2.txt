@@ -1,0 +1,39 @@
+[ivy@apache:/ivy/dependence/dependee]$ ant publish
+Buildfile: /ivy/dependence/dependee/build.xml
+
+resolve:
+[ivy:retrieve] :: Ivy 2.2.0 - 20100923230623 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = /ivy/dependence/settings/ivysettings.xml
+[ivy:retrieve] DEPRECATED: 'defaultCache' is deprecated, use 'caches[@defaultCacheDir]' instead (file://ivy/dependence/settings/ivysettings.xml)
+[ivy:retrieve] :: resolving dependencies :: org.apache#dependee;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found commons-lang#commons-lang;2.0 in libraries
+[ivy:retrieve] :: resolution report :: resolve 109ms :: artifacts dl 0ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#dependee
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	0 artifacts copied, 1 already retrieved (0kB/0ms)
+
+compile:
+    [javac] /ivy/dependence/dependee/build.xml:60: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+jar:
+[propertyfile] Updating property file: /ivy/dependence/dependee/build/classes/version.properties
+      [jar] Building jar: /ivy/dependence/dependee/build/dependee.jar
+
+publish:
+   [delete] Deleting: /ivy/dependence/dependee/build/ivy.xml
+[ivy:publish] :: delivering :: org.apache#dependee;working@apache :: 2 :: release :: Thu Sep 23 23:15:56 CEST 2010
+[ivy:publish] 	delivering ivy file to /ivy/dependence/dependee/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache#dependee
+[ivy:publish] 	published dependee to /ivy/dependence/settings/repository/dependee-2.jar
+[ivy:publish] 	published ivy to /ivy/dependence/settings/repository/dependee-2.xml
+     [echo] project dependee released with version 2
+
+BUILD SUCCESSFUL
+Total time: 1 second

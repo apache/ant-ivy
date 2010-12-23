@@ -1,0 +1,31 @@
+[ivy@apache:/ivy/hello-ivy]$ ant 
+Buildfile: /ivy/hello-ivy/build.xml
+
+resolve:
+[ivy:retrieve] :: Ivy 2.2.0 - 20100923230623 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: url = jar:file:///home/ivy/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#hello-ivy;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found commons-lang#commons-lang;2.0 in public
+[ivy:retrieve] 	found commons-cli#commons-cli;1.0 in public
+[ivy:retrieve] 	found commons-logging#commons-logging;1.0 in public
+[ivy:retrieve] :: resolution report :: resolve 343ms :: artifacts dl 16ms
+[ivy:retrieve] 	:: evicted modules:
+[ivy:retrieve] 	commons-lang#commons-lang;1.0 by [commons-lang#commons-lang;2.0] in [default]
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   4   |   0   |   0   |   1   ||   7   |   0   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#hello-ivy
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	0 artifacts copied, 7 already retrieved (0kB/15ms)
+
+run:
+    [javac] /ivy/hello-ivy/build.xml:53: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+     [java] standard message : hello ivy !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
+
+BUILD SUCCESSFUL
+Total time: 1 second
