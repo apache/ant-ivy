@@ -309,9 +309,11 @@ public final class FileUtil {
         }
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (!forceDelete(files[i])) {
-                    return false;
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    if (!forceDelete(files[i])) {
+                        return false;
+                    }
                 }
             }
         }
