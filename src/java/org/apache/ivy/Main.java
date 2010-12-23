@@ -195,7 +195,7 @@ public final class Main {
             }
             
             if (line.hasOption("version")) {
-                System.out.println("Ivy " + Ivy.getIvyVersion() + " - "
+                System.out.println("Apache Ivy " + Ivy.getIvyVersion() + " - "
                     + Ivy.getIvyDate() + " :: " + Ivy.getIvyHomeURL());
                 return;
             }

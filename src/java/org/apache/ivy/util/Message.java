@@ -77,7 +77,7 @@ public final class Message {
 
     public static void showInfo() {
         if (!showedInfo) {
-            info(":: Ivy " + Ivy.getIvyVersion() + " - "
+            info(":: Apache Ivy " + Ivy.getIvyVersion() + " - "
                    + Ivy.getIvyDate() + " :: " + Ivy.getIvyHomeURL() + " ::");
             showedInfo = true;
         }
