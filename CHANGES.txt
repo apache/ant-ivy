@@ -1,4 +1,4 @@
-				Ivy 
+				Apache Ivy (TM) 
 				- The agile open source dependency manager
 				- http://ant.apache.org/ivy
 				============================================
