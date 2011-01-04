@@ -54,25 +54,27 @@ public abstract class XMLHelper {
     
     private static SAXParser newSAXParser(URL schema, InputStream schemaStream)
             throws ParserConfigurationException, SAXException {
-        if (!canUseSchemaValidation || schema == null) {
-            return SAXParserFactory.newInstance().newSAXParser();
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        parserFactory.setNamespaceAware(true);
+        parserFactory.setValidating(canUseSchemaValidation && (schema != null));
+        SAXParser parser = parserFactory.newSAXParser();
+        
+        if (canUseSchemaValidation && (schema != null)) {
+            try {
+                parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
+                parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
+            } catch (SAXNotRecognizedException ex) {
+                System.err.println(
+                    "WARNING: problem while setting JAXP validating property on SAXParser... "
+                    + "XML validation will not be done: " + ex.getMessage());
+                canUseSchemaValidation = false;
+                parserFactory.setValidating(false);
+                parser = parserFactory.newSAXParser();
+            }
         }
-        try {
-            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-            parserFactory.setNamespaceAware(true);
-            parserFactory.setValidating(true);
-            SAXParser parser = parserFactory.newSAXParser();
-            parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
-            parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
-            parser.getXMLReader().setFeature(XML_NAMESPACE_PREFIXES, true);
-            return parser;
-        } catch (SAXNotRecognizedException ex) {
-            System.err.println(
-                "WARNING: problem while setting JAXP validating property on SAXParser... "
-                + "XML validation will not be done: " + ex.getMessage());
-            canUseSchemaValidation = false;
-            return SAXParserFactory.newInstance().newSAXParser();
-        }
+        
+        parser.getXMLReader().setFeature(XML_NAMESPACE_PREFIXES, true);
+        return parser;
     }
 
     // IMPORTANT: validation errors are only notified to the given handler, and
