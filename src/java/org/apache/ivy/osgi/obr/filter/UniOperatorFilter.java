@@ -29,7 +29,7 @@ public abstract class UniOperatorFilter extends RequirementFilter {
 
     abstract protected char operator();
 
-    public void append(StringBuilder builder) {
+    public void append(StringBuffer builder) {
         builder.append("(");
         builder.append(operator());
         builder.append(subFilter.toString());

@@ -51,7 +51,7 @@ public class BundleInfo {
 
     private Set/* <BundleCapability> */capabilities = new LinkedHashSet/* <BundleCapability> */();
 
-    private List/* <String> */executionEnvironments = Collections.emptyList();
+    private List/* <String> */executionEnvironments = Collections.EMPTY_LIST;
 
     private String description;
 
@@ -69,7 +69,7 @@ public class BundleInfo {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuffer builder = new StringBuffer();
         builder.append("BundleInfo [executionEnvironments=");
         builder.append(executionEnvironments);
         builder.append(", capabilities=");

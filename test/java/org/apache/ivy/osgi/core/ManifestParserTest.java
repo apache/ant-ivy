@@ -46,8 +46,8 @@ public class ManifestParserTest extends TestCase {
         assertEquals(2, bundleInfo.getImports().size());
 
         final String importsList = bundleInfo.getImports().toString();
-        assertTrue(importsList.contains("com.acme.bravo"));
-        assertTrue(importsList.contains("com.acme.delta"));
+        assertTrue(importsList.indexOf("com.acme.bravo") != -1);
+        assertTrue(importsList.indexOf("com.acme.delta") != -1);
 
         bundleInfo = ManifestParser.parseJarManifest(getClass().getResourceAsStream(
             "com.acme.bravo-2.0.0.20080202.jar"));
@@ -61,8 +61,8 @@ public class ManifestParserTest extends TestCase {
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.charlie",
                 new VersionRange("3.0.0"), null));
         assertEquals(1, bundleInfo.getExports().size());
-        assertTrue(bundleInfo.getExports().toString().contains("com.acme.bravo"));
+        assertTrue(bundleInfo.getExports().toString().indexOf("com.acme.bravo") != -1);
         assertEquals(1, bundleInfo.getImports().size());
-        assertTrue(bundleInfo.getImports().toString().contains("com.acme.charlie"));
+        assertTrue(bundleInfo.getImports().toString().indexOf("com.acme.charlie") != -1);
     }
 }

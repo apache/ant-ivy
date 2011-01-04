@@ -477,13 +477,13 @@ public abstract class BundleRepoResolver extends BasicResolver {
         Map/* <String, Set<BundleCapabilityAndLocation>> */bundleCapabilityMap = (Map) getRepoDescriptor()
                 .getBundleByCapabilities().get(osgiAtt);
         if (bundleCapabilityMap == null || bundleCapabilityMap.isEmpty()) {
-            return Collections./* <Map<String, String>> */emptySet();
+            return Collections.EMPTY_SET;
         }
 
         tokenSet.remove(IvyPatternHelper.ORGANISATION_KEY);
         String org = (String) criteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (org != null && org.length() != 0) {
-            return Collections./* <Map<String, String>> */emptySet();
+            return Collections.EMPTY_SET;
         }
         values.put(IvyPatternHelper.ORGANISATION_KEY, "");
 
@@ -509,7 +509,7 @@ public abstract class BundleRepoResolver extends BasicResolver {
             Set/* <BundleCapabilityAndLocation> */bundleCapabilities = (Set) bundleCapabilityMap
                     .get(module);
             if (bundleCapabilities == null) {
-                return Collections./* <Map<String, String>> */emptySet();
+                return Collections.EMPTY_SET;
             }
             Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
             Iterator itBundle = bundleCapabilities.iterator();
@@ -534,13 +534,13 @@ public abstract class BundleRepoResolver extends BasicResolver {
             Set/* <BundleCapabilityAndLocation> */bundleCapabilities = (Set) bundleCapabilityMap
                     .get(module);
             if (bundleCapabilities == null) {
-                return Collections./* <Map<String, String>> */emptySet();
+                return Collections.EMPTY_SET;
             }
             Version v;
             try {
                 v = new Version(rev);
             } catch (NumberFormatException e) {
-                return Collections./* <Map<String, String>> */emptySet();
+                return Collections.EMPTY_SET;
             }
             BundleCapabilityAndLocation found = null;
             Iterator itBundle = bundleCapabilities.iterator();
@@ -552,7 +552,7 @@ public abstract class BundleRepoResolver extends BasicResolver {
                 }
             }
             if (found == null) {
-                return Collections./* <Map<String, String>> */emptySet();
+                return Collections.EMPTY_SET;
             }
             Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
             DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(

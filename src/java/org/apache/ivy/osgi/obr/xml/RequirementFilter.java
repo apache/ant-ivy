@@ -20,11 +20,11 @@ package org.apache.ivy.osgi.obr.xml;
 public abstract class RequirementFilter {
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuffer builder = new StringBuffer();
         append(builder);
         return builder.toString();
     }
 
-    public abstract void append(StringBuilder builder);
+    public abstract void append(StringBuffer builder);
 
 }

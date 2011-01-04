@@ -70,7 +70,7 @@ public class ManifestHeaderValue {
 
     public List/* <String> */getValues() {
         if (elements.isEmpty()) {
-            return Collections.emptyList();
+            return Collections.EMPTY_LIST;
         }
         List/* <String> */list = new ArrayList/* <String> */();
         Iterator itElements = getElements().iterator();
@@ -100,7 +100,7 @@ public class ManifestHeaderValue {
         /**
          * buffer
          */
-        private StringBuilder buffer = new StringBuilder();
+        private StringBuffer buffer = new StringBuffer();
 
         /**
          * position in the source

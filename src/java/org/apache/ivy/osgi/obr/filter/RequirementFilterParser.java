@@ -118,7 +118,7 @@ public class RequirementFilterParser {
         }
 
         private String parseCompareValue() {
-            StringBuilder builder = new StringBuilder();
+            StringBuffer builder = new StringBuffer();
             do {
                 readNext();
                 if (!isOperator(c) && c != ')' && c != '(') {

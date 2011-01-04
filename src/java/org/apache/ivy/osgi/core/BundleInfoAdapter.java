@@ -168,7 +168,7 @@ public class BundleInfoAdapter {
 
     private static String encodeIvyLocation(String org, String name, String branch, String rev,
             String type, String art, String ext) {
-        StringBuilder builder = new StringBuilder();
+        StringBuffer builder = new StringBuffer();
         builder.append("ivy://");
         builder.append(org);
         builder.append('/');

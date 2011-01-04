@@ -40,7 +40,7 @@ public abstract class MultiOperatorFilter extends RequirementFilter {
 
     abstract protected char operator();
 
-    public void append(StringBuilder builder) {
+    public void append(StringBuffer builder) {
         builder.append('(');
         builder.append(operator());
         Iterator itSubFilters = subFilters.iterator();

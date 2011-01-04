@@ -73,7 +73,7 @@ public class CompareFilter extends RequirementFilter {
         return rightValue;
     }
 
-    public void append(StringBuilder builder) {
+    public void append(StringBuffer builder) {
         builder.append("(");
         builder.append(leftValue);
         builder.append(operator.toString());
