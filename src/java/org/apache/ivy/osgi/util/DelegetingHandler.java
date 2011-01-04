@@ -163,9 +163,9 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
             if (!started) { // first time called ?
                 // just for the root, check the expected element name
                 // not need to check the delegated as the mapping is already taking care of it
-                if (parent == null && !n.equals(tagName)) {
+                if (parent == null && !localName.equals(tagName)) {
                     // we are at the root and the saxed element doesn't match
-                    throw new SAXException("The root element of the parsed document '" + n
+                    throw new SAXException("The root element of the parsed document '" + localName
                             + "' didn't matched the expected one: '" + tagName + "'");
                 }
                 handleAttributes(atts);
@@ -176,7 +176,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
                     return;
                 }
                 // time now to delegate for a new element
-                delegate = (DelegetingHandler) mapping.get(n);
+                delegate = (DelegetingHandler) mapping.get(localName);
                 if (delegate != null) {
                     delegate.startElement(uri, localName, n, atts);
                 }
@@ -212,7 +212,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
             if (!skip) {
                 doEndElement(uri, localName, n);
             }
-            if (parent != null && tagName.equals(n)) {
+            if (parent != null && tagName.equals(localName)) {
                 // the current element is closed, let's tell the parent to stop delegating
                 stopDelegating();
             }
