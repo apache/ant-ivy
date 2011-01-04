@@ -28,8 +28,9 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
-public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements DTDHandler,
+public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends DefaultHandler implements DTDHandler,
         ContentHandler, ErrorHandler {
 
     private DelegetingHandler/* <?> */delegate = null;
@@ -48,7 +49,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
 
     private boolean skip = false;
 
-    private StringBuilder charBuffer = new StringBuilder();
+    private StringBuffer charBuffer = new StringBuffer();
 
     private boolean bufferingChar = false;
 
@@ -162,9 +163,9 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
             if (!started) { // first time called ?
                 // just for the root, check the expected element name
                 // not need to check the delegated as the mapping is already taking care of it
-                if (parent == null && !localName.equals(tagName)) {
+                if (parent == null && !n.equals(tagName)) {
                     // we are at the root and the saxed element doesn't match
-                    throw new SAXException("The root element of the parsed document '" + localName
+                    throw new SAXException("The root element of the parsed document '" + n
                             + "' didn't matched the expected one: '" + tagName + "'");
                 }
                 handleAttributes(atts);
@@ -175,7 +176,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
                     return;
                 }
                 // time now to delegate for a new element
-                delegate = (DelegetingHandler) mapping.get(localName);
+                delegate = (DelegetingHandler) mapping.get(n);
                 if (delegate != null) {
                     delegate.startElement(uri, localName, n, atts);
                 }
@@ -211,7 +212,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */implements D
             if (!skip) {
                 doEndElement(uri, localName, n);
             }
-            if (parent != null && tagName.equals(localName)) {
+            if (parent != null && tagName.equals(n)) {
                 // the current element is closed, let's tell the parent to stop delegating
                 stopDelegating();
             }

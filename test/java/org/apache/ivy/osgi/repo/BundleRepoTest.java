@@ -44,7 +44,7 @@ public class BundleRepoTest extends TestCase {
     public void testFS() throws Exception {
         FSManifestIterable it = new FSManifestIterable(new File("test/test-repo/bundlerepo"), "");
         BundleRepo repo = new BundleRepo();
-        repo.populate(it);
+        repo.populate(it.iterator());
 
         BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
                 "test/test-repo/bundlerepo/repo.xml"));
@@ -56,7 +56,7 @@ public class BundleRepoTest extends TestCase {
         RepositoryManifestIterable it = new RepositoryManifestIterable(new FileRepository(new File(
                 "test/test-repo/bundlerepo").getAbsoluteFile()));
         BundleRepo repo = new BundleRepo();
-        repo.populate(it);
+        repo.populate(it.iterator());
 
         BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
                 "test/test-repo/bundlerepo/repo.xml"));
@@ -75,7 +75,7 @@ public class BundleRepoTest extends TestCase {
         fileSystemResolver.setSettings(new IvySettings());
         ResolverManifestIterable it = new ResolverManifestIterable(fileSystemResolver);
         BundleRepo repo = new BundleRepo();
-        repo.populate(it);
+        repo.populate(it.iterator());
 
         BundleRepo repo2 = OBRXMLParser
                 .parse(new FileInputStream("test/test-repo/ivyrepo/repo.xml"));
@@ -86,7 +86,7 @@ public class BundleRepoTest extends TestCase {
     public void testXMLSerialisation() throws SAXException, ParseException, IOException {
         FSManifestIterable it = new FSManifestIterable(new File("test/test-repo/bundlerepo"), "");
         BundleRepo repo = new BundleRepo();
-        repo.populate(it);
+        repo.populate(it.iterator());
 
         SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
         TransformerHandler hd;
@@ -100,7 +100,7 @@ public class BundleRepoTest extends TestCase {
         StreamResult stream = new StreamResult(out);
         hd.setResult(stream);
 
-        OBRXMLWriter.writeBundles(repo.getBundles(), hd);
+        OBRXMLWriter.writeBundles(repo.getBundles().iterator(), hd);
 
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
         BundleRepo repo2 = OBRXMLParser.parse(in);

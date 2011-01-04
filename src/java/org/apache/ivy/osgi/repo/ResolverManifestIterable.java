@@ -43,7 +43,7 @@ import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
-public class ResolverManifestIterable implements Iterable/* <ManifestAndLocation> */{
+public class ResolverManifestIterable { //implements Iterable/* <ManifestAndLocation> */{
 
     // We should support the interface DependencyResolver, but the API is not convenient to get
     // references to artifact

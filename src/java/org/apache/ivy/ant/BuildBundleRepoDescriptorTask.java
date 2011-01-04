@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -104,7 +105,7 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             throw new BuildException("No output file specified: use the attribute 'out'");
         }
 
-        Iterable/* <ManifestAndLocation> */it;
+        Iterator/* <ManifestAndLocation> */it;
         if (resolverName != null) {
             if (baseDir != null) {
                 throw new BuildException("specify only one of 'resolver' or 'baseDir'");
@@ -123,9 +124,9 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             }
             if (!(resolver instanceof BasicResolver)) {
                 throw new BuildException("the type of resolver '"
-                        + resolver.getClass().getCanonicalName() + "' is not supported.");
+                        + resolver.getClass().getName() + "' is not supported.");
             }
-            it = new ResolverManifestIterable((BasicResolver) resolver);
+            it = new ResolverManifestIterable((BasicResolver) resolver).iterator();
         } else if (baseDir != null) {
             if (cacheName != null) {
                 throw new BuildException("specify only one of 'baseDir' or 'cache'");
@@ -133,17 +134,17 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             if (!baseDir.isDirectory()) {
                 throw new BuildException(baseDir + " is not a directory");
             }
-            it = new FSManifestIterable(baseDir, basePath);
+            it = new FSManifestIterable(baseDir, basePath).iterator();
         } else if (cacheName != null) {
             Ivy ivy = getIvyInstance();
             RepositoryCacheManager cacheManager = ivy.getSettings().getRepositoryCacheManager(
                 cacheName);
             if (!(cacheManager instanceof DefaultRepositoryCacheManager)) {
                 throw new BuildException("the type of cache '"
-                        + cacheManager.getClass().getCanonicalName() + "' is not supported.");
+                        + cacheManager.getClass().getName() + "' is not supported.");
             }
             File basedir = ((DefaultRepositoryCacheManager) cacheManager).getBasedir();
-            it = new FSManifestIterable(basedir, basedir.getAbsolutePath() + File.separator);
+            it = new FSManifestIterable(basedir, basedir.getAbsolutePath() + File.separator).iterator();
         } else {
             throw new BuildException(
                     "No resolver, cache or basedir specified: "

@@ -57,7 +57,7 @@ public class OBRXMLWriter {
         return hd;
     }
 
-    public static void writeManifests(Iterable/* <ManifestAndLocation> */it,
+    public static void writeManifests(Iterator/* <ManifestAndLocation> */it,
             ContentHandler handler, boolean quiet) throws SAXException {
         int level = quiet ? Message.MSG_DEBUG : Message.MSG_WARN;
         handler.startDocument();
@@ -65,9 +65,8 @@ public class OBRXMLWriter {
         handler.startElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY, atts);
         int nbOk = 0;
         int nbRejected = 0;
-        Iterator iterator = it.iterator();
-        while (iterator.hasNext()) {
-            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) iterator.next();
+        while (it.hasNext()) {
+            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) it.next();
             BundleInfo bundleInfo;
             try {
                 bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
@@ -91,14 +90,13 @@ public class OBRXMLWriter {
                 + (nbRejected > 1 ? "s" : "") + " rejected.");
     }
 
-    public static void writeBundles(Iterable/* <BundleInfo> */it, ContentHandler handler)
+    public static void writeBundles(Iterator/* <BundleInfo> */it, ContentHandler handler)
             throws SAXException {
         handler.startDocument();
         AttributesImpl atts = new AttributesImpl();
         handler.startElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY, atts);
-        Iterator iterator = it.iterator();
-        while (iterator.hasNext()) {
-            BundleInfo bundleInfo = (BundleInfo) iterator.next();
+        while (it.hasNext()) {
+            BundleInfo bundleInfo = (BundleInfo) it.next();
             saxBundleInfo(bundleInfo, handler);
         }
         handler.endElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY);
@@ -144,7 +142,7 @@ public class OBRXMLWriter {
             }
             Set/* <String> */uses = ((ExportPackage) capability).getUses();
             if (uses != null && !uses.isEmpty()) {
-                StringBuilder builder = new StringBuilder();
+                StringBuffer builder = new StringBuffer();
                 Iterator itUse = uses.iterator();
                 while (itUse.hasNext()) {
                     String use = (String) itUse.next();
@@ -201,7 +199,7 @@ public class OBRXMLWriter {
     }
 
     private static String buildFilter(BundleRequirement requirement) {
-        StringBuilder filter = new StringBuilder();
+        StringBuffer filter = new StringBuffer();
         VersionRange v = requirement.getVersion();
         if (v != null) {
             appendVersion(filter, v);
@@ -217,7 +215,7 @@ public class OBRXMLWriter {
         return filter.toString();
     }
 
-    private static void appendVersion(StringBuilder filter, VersionRange v) {
+    private static void appendVersion(StringBuffer filter, VersionRange v) {
         filter.append("(&");
         Version start = v.getStartVersion();
         if (start != null) {

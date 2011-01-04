@@ -147,17 +147,17 @@ public class VersionRange {
             if (major == null) {
                 return null;
             }
-            Integer minor = Integer.valueOf(0);
-            Integer patch = Integer.valueOf(0);
+            Integer minor = new Integer(0);
+            Integer patch = new Integer(0);
             String qualififer = null;
             if (parseNumberSeparator()) {
                 minor = parseNumber();
                 if (minor == null) {
-                    minor = Integer.valueOf(0);
+                    minor = new Integer(0);
                 } else if (parseNumberSeparator()) {
                     patch = parseNumber();
                     if (patch == null) {
-                        patch = Integer.valueOf(0);
+                        patch = new Integer(0);
                     } else if (parseNumberSeparator()) {
                         qualififer = parseQualifier();
                     }
@@ -183,7 +183,7 @@ public class VersionRange {
                     case '7':
                     case '8':
                     case '9':
-                        n = Integer.valueOf((n == null ? 0 : n.intValue() * 10) + c - '0');
+                        n = new Integer((n == null ? 0 : n.intValue() * 10) + c - '0');
                         break;
                     default:
                         unread();
@@ -215,7 +215,7 @@ public class VersionRange {
         }
 
         private String parseQualifier() {
-            StringBuilder q = new StringBuilder();
+            StringBuffer q = new StringBuffer();
             do {
                 readNext();
                 if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9'
@@ -262,7 +262,7 @@ public class VersionRange {
     }
 
     public String toIvyRevision() {
-        StringBuilder buffer = new StringBuilder();
+        StringBuffer buffer = new StringBuffer();
         buffer.append(startExclusive ? "(" : "[");
         buffer.append(startVersion);
         if (endVersion == null) {

@@ -30,7 +30,7 @@ import java.util.jar.Manifest;
 
 import org.apache.ivy.util.Message;
 
-public abstract class AbstractFSManifestIterable implements Iterable/* <ManifestAndLocation> */{
+public abstract class AbstractFSManifestIterable { //implements Iterable/* <ManifestAndLocation> */{
 
     public Iterator/* <ManifestAndLocation> */iterator() {
         return new FSManifestIterator();
@@ -116,7 +116,7 @@ public abstract class AbstractFSManifestIterable implements Iterable/* <Manifest
                         dirs.add(listDirs(currentDir).iterator());
                     } catch (IOException e) {
                         Message.warn("Unlistable dir: " + currentDir + " (" + e + ")");
-                        dirs.add(Collections./* <String> */emptyList().iterator());
+                        dirs.add(Collections.EMPTY_LIST.iterator());
                     }
                     currentDir = null;
                 }

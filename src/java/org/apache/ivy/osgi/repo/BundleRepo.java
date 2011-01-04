@@ -56,7 +56,7 @@ public class BundleRepo {
         // default constructor
     }
 
-    public BundleRepo(Iterable/* <ManifestAndLocation> */it) {
+    public BundleRepo(Iterator/* <ManifestAndLocation> */it) {
         populate(it);
     }
 
@@ -76,10 +76,9 @@ public class BundleRepo {
         return lastModified;
     }
 
-    public void populate(Iterable/* <ManifestAndLocation> */it) {
-        Iterator iterator = it.iterator();
-        while (iterator.hasNext()) {
-            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) iterator.next();
+    public void populate(Iterator/* <ManifestAndLocation> */it) {
+        while (it.hasNext()) {
+            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) it.next();
             try {
                 BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation
                         .getManifest());
