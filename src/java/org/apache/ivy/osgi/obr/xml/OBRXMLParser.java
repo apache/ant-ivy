@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.obr.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,12 +31,8 @@ import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class OBRXMLParser {
 
