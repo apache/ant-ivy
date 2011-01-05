@@ -3347,6 +3347,24 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("myorg", "modE", "1.1", "modE", "jar", "jar").exists());
     }
 
+    public void testIVY1236() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-1236/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1236/ivy.xml").toURI().toURL(),
+            getResolveOptions(new String[] {"*"}));
+        
+        assertNotNull(report);
+        assertNotNull(report.getUnresolvedDependencies());
+        assertEquals("Number of unresolved dependencies not correct", 0, report
+                .getUnresolvedDependencies().length);
+        
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("myorg", "modB", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("myorg", "modB", "1.0", "modB", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("myorg", "modB", "1.0", "modB-A", "jar", "jar").exists());
+    }
+
     public void testIVY999() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-999/ivysettings.xml"));

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 
 public class IvyNodeEviction {
@@ -227,8 +228,16 @@ public class IvyNodeEviction {
             Collection resolvedRevs = new HashSet();
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
                 IvyNode node = (IvyNode) iter.next();
+                ModuleRevisionId resolvedId = node.getResolvedId();
                 resolvedRevs.add(node.getId());
-                resolvedRevs.add(node.getResolvedId());
+                resolvedRevs.add(resolvedId);
+                
+                // in case there are extra attributes on the resolved module we also add the 
+                // the module without these extra attributes (cfr. IVY-1236)
+                if (!resolvedId.getExtraAttributes().isEmpty()) {
+                    resolvedRevs.add(ModuleRevisionId.newInstance(resolvedId.getOrganisation(), 
+                        resolvedId.getName(), resolvedId.getBranch(), resolvedId.getRevision()));
+                }
             }
             return resolvedRevs;
         }
@@ -274,14 +283,18 @@ public class IvyNodeEviction {
 
     public boolean isEvicted(String rootModuleConf) {
         cleanEvicted();
+        if (node.isRoot()) {
+            return false;
+        }
+        EvictionData evictedData = getEvictedData(rootModuleConf);
+        if (evictedData == null) {
+            return false;
+        }
         IvyNode root = node.getRoot();
         ModuleId moduleId = node.getId().getModuleId();
         Collection resolvedRevisions = root.getResolvedRevisions(moduleId, rootModuleConf);
-        EvictionData evictedData = getEvictedData(rootModuleConf);
-        return root != node && evictedData != null 
-            && (!resolvedRevisions.contains(node.getResolvedId())
-                || evictedData.isTransitivelyEvicted()
-               );
+        return !resolvedRevisions.contains(node.getResolvedId())
+                       || evictedData.isTransitivelyEvicted();
     }
 
     public boolean isCompletelyEvicted() {
