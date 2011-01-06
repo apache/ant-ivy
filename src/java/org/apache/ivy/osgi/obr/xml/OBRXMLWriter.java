@@ -35,6 +35,11 @@ import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
 import org.apache.ivy.osgi.core.ExportPackage;
 import org.apache.ivy.osgi.core.ManifestParser;
+import org.apache.ivy.osgi.obr.xml.OBRXMLParser.CapabilityHandler;
+import org.apache.ivy.osgi.obr.xml.OBRXMLParser.CapabilityPropertyHandler;
+import org.apache.ivy.osgi.obr.xml.OBRXMLParser.RepositoryHandler;
+import org.apache.ivy.osgi.obr.xml.OBRXMLParser.RequireHandler;
+import org.apache.ivy.osgi.obr.xml.OBRXMLParser.ResourceHandler;
 import org.apache.ivy.osgi.repo.ManifestAndLocation;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
@@ -62,7 +67,7 @@ public class OBRXMLWriter {
         int level = quiet ? Message.MSG_DEBUG : Message.MSG_WARN;
         handler.startDocument();
         AttributesImpl atts = new AttributesImpl();
-        handler.startElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY, atts);
+        handler.startElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY, atts);
         int nbOk = 0;
         int nbRejected = 0;
         while (it.hasNext()) {
@@ -84,7 +89,7 @@ public class OBRXMLWriter {
             }
             saxBundleInfo(bundleInfo, handler);
         }
-        handler.endElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY);
+        handler.endElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY);
         handler.endDocument();
         Message.info(nbOk + " bundle" + (nbOk > 1 ? "s" : "") + " added, " + nbRejected + " bundle"
                 + (nbRejected > 1 ? "s" : "") + " rejected.");
@@ -94,24 +99,24 @@ public class OBRXMLWriter {
             throws SAXException {
         handler.startDocument();
         AttributesImpl atts = new AttributesImpl();
-        handler.startElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY, atts);
+        handler.startElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY, atts);
         while (it.hasNext()) {
             BundleInfo bundleInfo = (BundleInfo) it.next();
             saxBundleInfo(bundleInfo, handler);
         }
-        handler.endElement("", OBRXMLParser.REPOSITORY, OBRXMLParser.REPOSITORY);
+        handler.endElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY);
         handler.endDocument();
     }
 
     private static void saxBundleInfo(BundleInfo bundleInfo, ContentHandler handler)
             throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        addAttr(atts, OBRXMLParser.RESOURCE_SYMBOLIC_NAME, bundleInfo.getSymbolicName());
-        addAttr(atts, OBRXMLParser.RESOURCE_VERSION, bundleInfo.getRawVersion());
+        addAttr(atts, ResourceHandler.SYMBOLIC_NAME, bundleInfo.getSymbolicName());
+        addAttr(atts, ResourceHandler.VERSION, bundleInfo.getRawVersion());
         if (bundleInfo.getUri() != null) {
-            addAttr(atts, OBRXMLParser.RESOURCE_URI, bundleInfo.getUri());
+            addAttr(atts, ResourceHandler.URI, bundleInfo.getUri());
         }
-        handler.startElement("", OBRXMLParser.RESOURCE, OBRXMLParser.RESOURCE, atts);
+        handler.startElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE, atts);
         Iterator itCapabilities = bundleInfo.getCapabilities().iterator();
         while (itCapabilities.hasNext()) {
             BundleCapability capability = (BundleCapability) itCapabilities.next();
@@ -122,7 +127,7 @@ public class OBRXMLWriter {
             BundleRequirement requirement = (BundleRequirement) itRequirement.next();
             saxRequirement(requirement, handler);
         }
-        handler.endElement("", OBRXMLParser.RESOURCE, OBRXMLParser.RESOURCE);
+        handler.endElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE);
         handler.characters("\n".toCharArray(), 0, 1);
     }
 
@@ -130,8 +135,8 @@ public class OBRXMLWriter {
             throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         String type = capability.getType();
-        addAttr(atts, OBRXMLParser.CAPABILITY_NAME, type);
-        handler.startElement("", OBRXMLParser.CAPABILITY, OBRXMLParser.CAPABILITY, atts);
+        addAttr(atts, CapabilityHandler.NAME, type);
+        handler.startElement("", CapabilityHandler.CAPABILITY, CapabilityHandler.CAPABILITY, atts);
         if (type.equals(BundleInfo.BUNDLE_TYPE)) {
             // nothing to do, already handled with the resource tag
         } else if (type.equals(BundleInfo.PACKAGE_TYPE)) {
@@ -162,7 +167,7 @@ public class OBRXMLWriter {
         } else {
             // oups
         }
-        handler.endElement("", OBRXMLParser.CAPABILITY, OBRXMLParser.CAPABILITY);
+        handler.endElement("", CapabilityHandler.CAPABILITY, CapabilityHandler.CAPABILITY);
         handler.characters("\n".toCharArray(), 0, 1);
     }
 
@@ -174,27 +179,28 @@ public class OBRXMLWriter {
     private static void saxCapabilityProperty(String n, String t, String v, ContentHandler handler)
             throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        addAttr(atts, OBRXMLParser.CAPABILITY_PROPERTY_NAME, n);
+        addAttr(atts, CapabilityPropertyHandler.NAME, n);
         if (t != null) {
-            addAttr(atts, OBRXMLParser.CAPABILITY_PROPERTY_TYPE, t);
+            addAttr(atts, CapabilityPropertyHandler.TYPE, t);
         }
-        addAttr(atts, OBRXMLParser.CAPABILITY_PROPERTY_VALUE, v);
-        handler.startElement("", OBRXMLParser.CAPABILITY_PROPERTY,
-            OBRXMLParser.CAPABILITY_PROPERTY, atts);
-        handler.endElement("", OBRXMLParser.CAPABILITY_PROPERTY, OBRXMLParser.CAPABILITY_PROPERTY);
+        addAttr(atts, CapabilityPropertyHandler.VALUE, v);
+        handler.startElement("", CapabilityPropertyHandler.CAPABILITY_PROPERTY,
+            CapabilityPropertyHandler.CAPABILITY_PROPERTY, atts);
+        handler.endElement("", CapabilityPropertyHandler.CAPABILITY_PROPERTY,
+            CapabilityPropertyHandler.CAPABILITY_PROPERTY);
         handler.characters("\n".toCharArray(), 0, 1);
     }
 
     private static void saxRequirement(BundleRequirement requirement, ContentHandler handler)
             throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        addAttr(atts, OBRXMLParser.REQUIRE_NAME, requirement.getType());
+        addAttr(atts, RequireHandler.NAME, requirement.getType());
         if ("optional".equals(requirement.getResolution())) {
-            addAttr(atts, OBRXMLParser.REQUIRE_OPTIONAL, OBRXMLParser.TRUE);
+            addAttr(atts, RequireHandler.OPTIONAL, OBRXMLParser.TRUE);
         }
-        addAttr(atts, OBRXMLParser.REQUIRE_FILTER, buildFilter(requirement));
-        handler.startElement("", OBRXMLParser.REQUIRE, OBRXMLParser.REQUIRE, atts);
-        handler.endElement("", OBRXMLParser.REQUIRE, OBRXMLParser.REQUIRE);
+        addAttr(atts, RequireHandler.FILTER, buildFilter(requirement));
+        handler.startElement("", RequireHandler.REQUIRE, RequireHandler.REQUIRE, atts);
+        handler.endElement("", RequireHandler.REQUIRE, RequireHandler.REQUIRE);
         handler.characters("\n".toCharArray(), 0, 1);
     }
 

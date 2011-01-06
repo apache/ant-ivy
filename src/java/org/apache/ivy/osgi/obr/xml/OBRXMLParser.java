@@ -37,48 +37,6 @@ import org.xml.sax.SAXException;
 
 public class OBRXMLParser {
 
-    static final String REPOSITORY = "repository";
-
-    static final String REPOSITORY_LASTMODIFIED = "lastmodified";
-
-    static final String REPOSITORY_NAME = "name";
-
-    static final String RESOURCE = "resource";
-
-    static final String RESOURCE_ID = "id";
-
-    static final String RESOURCE_PRESENTATION_NAME = "presentationname";
-
-    static final String RESOURCE_SYMBOLIC_NAME = "symbolicname";
-
-    static final String RESOURCE_URI = "uri";
-
-    static final String RESOURCE_VERSION = "version";
-
-    static final String CAPABILITY = "capability";
-
-    static final String CAPABILITY_NAME = "name";
-
-    static final String CAPABILITY_PROPERTY = "p";
-
-    static final String CAPABILITY_PROPERTY_NAME = "n";
-
-    static final String CAPABILITY_PROPERTY_VALUE = "v";
-
-    static final String CAPABILITY_PROPERTY_TYPE = "t";
-
-    static final String REQUIRE = "require";
-
-    static final String REQUIRE_NAME = "name";
-
-    static final String REQUIRE_OPTIONAL = "optional";
-
-    static final String REQUIRE_MULTIPLE = "multiple";
-
-    static final String REQUIRE_EXTEND = "extend";
-
-    static final String REQUIRE_FILTER = "filter";
-
     static final String TRUE = "true";
 
     static final String FALSE = "false";
@@ -96,7 +54,13 @@ public class OBRXMLParser {
         return handler.repo;
     }
 
-    private static class RepositoryHandler extends DelegetingHandler {
+    static class RepositoryHandler extends DelegetingHandler {
+
+        static final String REPOSITORY = "repository";
+
+        static final String LASTMODIFIED = "lastmodified";
+
+        static final String NAME = "name";
 
         BundleRepoDescriptor repo;
 
@@ -112,9 +76,9 @@ public class OBRXMLParser {
         protected void handleAttributes(Attributes atts) {
             repo = new BundleRepoDescriptor(ExecutionEnvironmentProfileProvider.getInstance());
 
-            repo.setName(atts.getValue(REPOSITORY_NAME));
+            repo.setName(atts.getValue(NAME));
 
-            String lastModified = atts.getValue(REPOSITORY_LASTMODIFIED);
+            String lastModified = atts.getValue(LASTMODIFIED);
             if (lastModified != null) {
                 try {
                     repo.setLastModified(Long.valueOf(lastModified));
@@ -127,7 +91,19 @@ public class OBRXMLParser {
         }
     }
 
-    private static class ResourceHandler extends DelegetingHandler {
+    static class ResourceHandler extends DelegetingHandler {
+
+        static final String RESOURCE = "resource";
+
+        static final String ID = "id";
+
+        static final String PRESENTATION_NAME = "presentationname";
+
+        static final String SYMBOLIC_NAME = "symbolicname";
+
+        static final String URI = "uri";
+
+        static final String VERSION = "version";
 
         BundleInfo bundleInfo;
 
@@ -189,14 +165,14 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String symbolicname = atts.getValue(RESOURCE_SYMBOLIC_NAME);
+            String symbolicname = atts.getValue(SYMBOLIC_NAME);
             if (symbolicname == null) {
                 printError(this, "Resource with no symobilc name, skipping it.");
                 skip();
                 return;
             }
 
-            String v = atts.getValue(RESOURCE_VERSION);
+            String v = atts.getValue(VERSION);
             Version version;
             if (v == null) {
                 version = new Version(1, 0, 0, null);
@@ -212,14 +188,14 @@ public class OBRXMLParser {
             }
 
             bundleInfo = new BundleInfo(symbolicname, version);
-            bundleInfo.setPresentationName(atts.getValue(RESOURCE_PRESENTATION_NAME));
-            bundleInfo.setUri(atts.getValue(RESOURCE_URI));
-            bundleInfo.setId(atts.getValue(RESOURCE_ID));
+            bundleInfo.setPresentationName(atts.getValue(PRESENTATION_NAME));
+            bundleInfo.setUri(atts.getValue(URI));
+            bundleInfo.setId(atts.getValue(ID));
         }
 
     }
 
-    private static class ResourceDescriptionHandler extends DelegetingHandler {
+    static class ResourceDescriptionHandler extends DelegetingHandler {
 
         public ResourceDescriptionHandler() {
             super("description");
@@ -228,7 +204,7 @@ public class OBRXMLParser {
 
     }
 
-    private static class ResourceDocumentationHandler extends DelegetingHandler {
+    static class ResourceDocumentationHandler extends DelegetingHandler {
 
         public ResourceDocumentationHandler() {
             super("documentation");
@@ -236,7 +212,7 @@ public class OBRXMLParser {
         }
     }
 
-    private static class ResourceLicenseHandler extends DelegetingHandler {
+    static class ResourceLicenseHandler extends DelegetingHandler {
 
         public ResourceLicenseHandler() {
             super("license");
@@ -245,7 +221,7 @@ public class OBRXMLParser {
 
     }
 
-    private static class ResourceSizeHandler extends DelegetingHandler {
+    static class ResourceSizeHandler extends DelegetingHandler {
 
         public ResourceSizeHandler() {
             super("size");
@@ -253,7 +229,11 @@ public class OBRXMLParser {
         }
     }
 
-    private static class CapabilityHandler extends DelegetingHandler {
+    static class CapabilityHandler extends DelegetingHandler {
+
+        static final String CAPABILITY = "capability";
+
+        static final String NAME = "name";
 
         Capability capability;
 
@@ -285,7 +265,7 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String name = atts.getValue(CAPABILITY_NAME);
+            String name = atts.getValue(NAME);
             if (name == null) {
                 skipResourceOnError(this, "Capability with no name");
                 return;
@@ -296,7 +276,15 @@ public class OBRXMLParser {
 
     }
 
-    private static class CapabilityPropertyHandler extends DelegetingHandler {
+    static class CapabilityPropertyHandler extends DelegetingHandler {
+
+        static final String CAPABILITY_PROPERTY = "p";
+
+        static final String NAME = "n";
+
+        static final String VALUE = "v";
+
+        static final String TYPE = "t";
 
         String name;
 
@@ -309,13 +297,25 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            name = atts.getValue(CAPABILITY_PROPERTY_NAME);
-            value = atts.getValue(CAPABILITY_PROPERTY_VALUE);
-            type = atts.getValue(CAPABILITY_PROPERTY_TYPE);
+            name = atts.getValue(NAME);
+            value = atts.getValue(VALUE);
+            type = atts.getValue(TYPE);
         }
     }
 
-    private static class RequireHandler extends DelegetingHandler {
+    static class RequireHandler extends DelegetingHandler {
+
+        static final String REQUIRE = "require";
+
+        static final String NAME = "name";
+
+        static final String OPTIONAL = "optional";
+
+        static final String MULTIPLE = "multiple";
+
+        static final String EXTEND = "extend";
+
+        static final String FILTER = "filter";
 
         private Requirement requirement;
 
@@ -326,13 +326,13 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String name = atts.getValue(REQUIRE_NAME);
+            String name = atts.getValue(NAME);
             if (name == null) {
                 skipResourceOnError(this, "Requirement with no name");
                 return;
             }
 
-            String filterText = atts.getValue(REQUIRE_FILTER);
+            String filterText = atts.getValue(FILTER);
             filter = null;
             if (filterText != null) {
                 try {
@@ -345,7 +345,7 @@ public class OBRXMLParser {
 
             Boolean optional = null;
             try {
-                optional = parseBoolean(atts, REQUIRE_OPTIONAL);
+                optional = parseBoolean(atts, OPTIONAL);
             } catch (ParseException e) {
                 skipResourceOnError(this,
                     "Requirement with unrecognised optional: " + e.getMessage());
@@ -354,7 +354,7 @@ public class OBRXMLParser {
 
             Boolean multiple = null;
             try {
-                multiple = parseBoolean(atts, REQUIRE_MULTIPLE);
+                multiple = parseBoolean(atts, MULTIPLE);
             } catch (ParseException e) {
                 skipResourceOnError(this,
                     "Requirement with unrecognised multiple: " + e.getMessage());
@@ -363,7 +363,7 @@ public class OBRXMLParser {
 
             Boolean extend = null;
             try {
-                extend = parseBoolean(atts, REQUIRE_EXTEND);
+                extend = parseBoolean(atts, EXTEND);
             } catch (ParseException e) {
                 skipResourceOnError(this, "Requirement with unrecognised extend: " + e.getMessage());
                 return;
