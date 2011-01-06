@@ -111,14 +111,12 @@ public class OBRXMLParser {
             super(RESOURCE);
             addChild(new ResourceDescriptionHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setDescription(child
-                            .getBufferedChars().trim());
+                    bundleInfo.setDescription(child.getBufferedChars().trim());
                 }
             });
             addChild(new ResourceDocumentationHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setDocumentation(child
-                            .getBufferedChars().trim());
+                    bundleInfo.setDocumentation(child.getBufferedChars().trim());
                 }
             });
             addChild(new ResourceLicenseHandler(), new ChildElementHandler() {
