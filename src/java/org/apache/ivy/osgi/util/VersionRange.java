@@ -256,6 +256,13 @@ public class VersionRange {
         this.endVersion = endVersion;
     }
 
+    public VersionRange(Version startVersion) {
+        this.startExclusive = false;
+        this.startVersion = startVersion;
+        this.endExclusive = true;
+        this.endVersion = null;
+    }
+
     public String toString() {
         return (startExclusive ? "(" : "[") + startVersion + ","
                 + (endVersion == null ? "" : endVersion.toString()) + (endExclusive ? ")" : "]");
