@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.ivy.osgi.repo.ExecutionEnvironmentProfile;
 import org.apache.ivy.util.Message;
 
 public class ExecutionEnvironmentProfileProvider {
@@ -36,6 +35,20 @@ public class ExecutionEnvironmentProfileProvider {
     private static final String PACKAGE_PREFIX = "org/apache/ivy/osgi/core/";
 
     private Map/* <String, ExecutionEnvironmentProfile> */profileList;
+
+    private static final ExecutionEnvironmentProfileProvider INSTANCE;
+
+    static {
+        try {
+            INSTANCE = new ExecutionEnvironmentProfileProvider();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ExecutionEnvironmentProfileProvider getInstance() {
+        return INSTANCE;
+    }
 
     public ExecutionEnvironmentProfileProvider() throws IOException {
         profileList = loadDefaultProfileList();
@@ -76,10 +89,10 @@ public class ExecutionEnvironmentProfileProvider {
     }
 
     private static ExecutionEnvironmentProfile loadProfile(Properties props, Map/*
-                                                                                * <String,
-                                                                                * ExecutionEnvironmentProfile
-                                                                                * >
-                                                                                */profiles,
+                                                                                 * <String,
+                                                                                 * ExecutionEnvironmentProfile
+                                                                                 * >
+                                                                                 */profiles,
             String name) {
 
         ExecutionEnvironmentProfile profile = new ExecutionEnvironmentProfile(name);

@@ -32,8 +32,8 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
-import org.apache.ivy.osgi.repo.BundleRepoResolver;
 import org.apache.ivy.osgi.repo.RelativeURLRepository;
+import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
@@ -43,7 +43,7 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXException;
 
-public class OBRResolver extends BundleRepoResolver {
+public class OBRResolver extends RepoDescriptorBasedResolver {
 
     private String repoXmlURL;
 

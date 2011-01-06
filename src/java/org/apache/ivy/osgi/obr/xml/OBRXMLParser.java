@@ -24,8 +24,9 @@ import java.text.ParseException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.osgi.core.BundleInfo;
+import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.obr.filter.RequirementFilterParser;
-import org.apache.ivy.osgi.repo.BundleRepo;
+import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.util.DelegetingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
@@ -82,7 +83,8 @@ public class OBRXMLParser {
 
     static final String FALSE = "false";
 
-    public static BundleRepo parse(InputStream in) throws ParseException, IOException, SAXException {
+    public static BundleRepoDescriptor parse(InputStream in) throws ParseException, IOException,
+            SAXException {
         RepositoryHandler handler = new RepositoryHandler();
         try {
             XMLHelper.parse(in, null, handler, null);
@@ -96,7 +98,7 @@ public class OBRXMLParser {
 
     private static class RepositoryHandler extends DelegetingHandler/* <DelegetingHandler<?>> */{
 
-        BundleRepo repo;
+        BundleRepoDescriptor repo;
 
         public RepositoryHandler() {
             super(REPOSITORY, null);
@@ -104,7 +106,7 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) {
-            repo = new BundleRepo();
+            repo = new BundleRepoDescriptor(ExecutionEnvironmentProfileProvider.getInstance());
 
             repo.setName(atts.getValue(REPOSITORY_NAME));
 

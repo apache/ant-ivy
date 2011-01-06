@@ -24,16 +24,16 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
-import org.apache.ivy.osgi.repo.BundleRepo;
+import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.util.Message;
 
 public class OBRParserTest extends TestCase {
 
     public void testParse() throws Exception {
-        BundleRepo repo = OBRXMLParser
+        BundleRepoDescriptor repo = OBRXMLParser
                 .parse(new FileInputStream(new File("test/test-obr/obr.xml")));
         assertNotNull(repo);
-        System.out.println(repo.getBundles().size() + " bundles successfully parsed, "
+        System.out.println(repo.getModules().size() + " bundles successfully parsed, "
                 + Message.getProblems().size() + " errors");
         Iterator itPb = Message.getProblems().iterator();
         while (itPb.hasNext()) {

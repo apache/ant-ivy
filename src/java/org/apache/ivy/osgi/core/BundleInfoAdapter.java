@@ -37,7 +37,6 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.osgi.repo.ExecutionEnvironmentProfile;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
@@ -197,7 +196,7 @@ public class BundleInfoAdapter {
         return builder.toString();
     }
 
-    private static DefaultArtifact decodeIvyLocation(String uri) {
+    private static DefaultArtifact decodeIvyLocation(final String uri) {
         String org = null;
         String name = null;
         String branch = null;
@@ -206,24 +205,27 @@ public class BundleInfoAdapter {
         String type = null;
         String ext = null;
 
-        uri = uri.substring(6);
-        int i = uri.indexOf('/');
+        String u = uri.substring(6);
+        int i = u.indexOf('/');
         if (i < 0) {
             throw new IllegalArgumentException("Expecting an organisation in the ivy uri: " + uri);
         }
-        org = uri.substring(0, i);
-        uri = uri.substring(i + 1);
+        org = u.substring(0, i);
+        u = u.substring(i + 1);
 
-        i = uri.indexOf('?');
+        i = u.indexOf('?');
         if (i < 0) {
             throw new IllegalArgumentException("Expecting an module name in the ivy uri: " + uri);
         }
-        name = uri.substring(0, i);
-        uri = uri.substring(i + 1);
+        name = u.substring(0, i);
+        u = u.substring(i + 1);
 
-        String[] parameters = uri.split("&");
+        String[] parameters = u.split("&");
         for (int j = 0; j < parameters.length; j++) {
             String parameter = parameters[j];
+            if (parameter.length() == 0) {
+                continue;
+            }
             String[] nameAndValue = parameter.split("=");
             if (nameAndValue.length != 2) {
                 throw new IllegalArgumentException("Malformed query string in the ivy uri: " + uri);

@@ -114,100 +114,6 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
     protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid,
             String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
 
-    public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
-            ModuleRevisionId mrid, Date date) {
-        String name = getName();
-        VersionMatcher versionMatcher = getSettings().getVersionMatcher();
-        
-        ResolvedResource found = null;
-        List sorted = getLatestStrategy().sort(rress);
-        List rejected = new ArrayList();
-        List foundBlacklisted = new ArrayList();
-        IvyContext context = IvyContext.getContext();
-        
-        for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
-            ResolvedResource rres = (ResolvedResource) iter.previous();
-            // we start by filtering based on information already available,
-            // even though we don't even know if the resource actually exist.
-            // But checking for existence is most of the time more costly than checking 
-            // name, blacklisting and first level version matching
-            if (filterNames(new ArrayList(Collections.singleton(rres.getRevision()))).isEmpty()) {
-                Message.debug("\t" + name + ": filtered by name: " + rres);
-                continue;
-            }
-            ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
-            
-            ResolveData data = context.getResolveData();
-            if (data != null
-                    && data.getReport() != null 
-                    && data.isBlacklisted(data.getReport().getConfiguration(), foundMrid)) {
-                Message.debug("\t" + name + ": blacklisted: " + rres);
-                rejected.add(rres.getRevision() + " (blacklisted)");
-                foundBlacklisted.add(foundMrid);
-                continue;
-            }
-            
-            if (!versionMatcher.accept(mrid, foundMrid)) {
-                Message.debug("\t" + name + ": rejected by version matcher: " + rres);
-                rejected.add(rres.getRevision());
-                continue;
-            }
-            if (!rres.getResource().exists()) {
-                Message.debug("\t" + name + ": unreachable: " + rres 
-                    + "; res=" + rres.getResource());
-                rejected.add(rres.getRevision() + " (unreachable)");
-                continue;
-            }
-            if ((date != null && rres.getLastModified() > date.getTime())) {
-                Message.verbose("\t" + name + ": too young: " + rres);
-                rejected.add(rres.getRevision() + " (" + rres.getLastModified() + ")");
-                continue;
-            }
-            if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
-                ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
-                if (r == null) {
-                    Message.debug("\t" + name 
-                        + ": impossible to get module descriptor resource: " + rres);
-                    rejected.add(rres.getRevision() + " (no or bad MD)");
-                    continue;
-                }
-                ModuleDescriptor md = ((MDResolvedResource) r).getResolvedModuleRevision()
-                        .getDescriptor();
-                if (md.isDefault()) {
-                    Message.debug("\t" + name + ": default md rejected by version matcher" 
-                            + "requiring module descriptor: " + rres);
-                    rejected.add(rres.getRevision() + " (MD)");
-                    continue;
-                } else if (!versionMatcher.accept(mrid, md)) {
-                    Message.debug("\t" + name + ": md rejected by version matcher: " + rres);
-                    rejected.add(rres.getRevision() + " (MD)");
-                    continue;
-                } else {
-                    found = r;
-                }
-            } else {
-                found = rres;
-            }
-
-            if (found != null) {
-                break;
-            }
-        }
-        if (found == null && !rejected.isEmpty()) {
-            logAttempt(rejected.toString());
-        }
-        if (found == null && !foundBlacklisted.isEmpty()) {
-            // all acceptable versions have been blacklisted, this means that an unsolvable conflict
-            // has been found
-            DependencyDescriptor dd = context.getDependencyDescriptor();
-            IvyNode parentNode = context.getResolveData().getNode(dd.getParentRevisionId());
-            ConflictManager cm = parentNode.getConflictManager(mrid.getModuleId());
-            cm.handleAllBlacklistedRevisions(dd, foundBlacklisted);
-        }
-
-        return found;
-    }
-
     protected Collection findNames(Map tokenValues, String token) {
         Collection names = new HashSet();
         names.addAll(findIvyNames(tokenValues, token));
@@ -355,21 +261,6 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
     protected abstract String[] listTokenValues(String pattern, String token);
     
     protected abstract boolean exist(String path);
-
-    /**
-     * Filters names before returning them in the findXXXNames or findTokenValues method.
-     * <p>
-     * Remember to call the super implementation when overriding this method.
-     * </p>
-     * 
-     * @param names
-     *            the list to filter.
-     * @return the filtered list
-     */
-    protected Collection filterNames(Collection names) {
-        getSettings().filterIgnore(names);
-        return names;
-    }
 
     protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
         //to be overridden by subclasses wanting to have listing features

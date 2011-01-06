@@ -20,7 +20,6 @@ package org.apache.ivy.osgi.core;
 import java.util.Map;
 
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-import org.apache.ivy.osgi.repo.ExecutionEnvironmentProfile;
 
 import junit.framework.TestCase;
 

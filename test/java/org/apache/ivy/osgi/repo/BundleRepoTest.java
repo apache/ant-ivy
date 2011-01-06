@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 import junit.framework.TestCase;
 
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.obr.xml.OBRXMLWriter;
 import org.apache.ivy.plugins.repository.file.FileRepository;
@@ -43,10 +44,11 @@ public class BundleRepoTest extends TestCase {
 
     public void testFS() throws Exception {
         FSManifestIterable it = new FSManifestIterable(new File("test/test-repo/bundlerepo"), "");
-        BundleRepo repo = new BundleRepo();
+        BundleRepoDescriptor repo = new BundleRepoDescriptor(
+                ExecutionEnvironmentProfileProvider.getInstance());
         repo.populate(it.iterator());
 
-        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
+        BundleRepoDescriptor repo2 = OBRXMLParser.parse(new FileInputStream(
                 "test/test-repo/bundlerepo/repo.xml"));
 
         assertEquals(repo, repo2);
@@ -55,10 +57,11 @@ public class BundleRepoTest extends TestCase {
     public void testFileRepo() throws Exception {
         RepositoryManifestIterable it = new RepositoryManifestIterable(new FileRepository(new File(
                 "test/test-repo/bundlerepo").getAbsoluteFile()));
-        BundleRepo repo = new BundleRepo();
+        BundleRepoDescriptor repo = new BundleRepoDescriptor(
+                ExecutionEnvironmentProfileProvider.getInstance());
         repo.populate(it.iterator());
 
-        BundleRepo repo2 = OBRXMLParser.parse(new FileInputStream(
+        BundleRepoDescriptor repo2 = OBRXMLParser.parse(new FileInputStream(
                 "test/test-repo/bundlerepo/repo.xml"));
 
         assertEquals(repo, repo2);
@@ -74,18 +77,20 @@ public class BundleRepoTest extends TestCase {
                 + "/[organisation]/[module]/[revision]/[type]s/[artifact]-[revision].[ext]");
         fileSystemResolver.setSettings(new IvySettings());
         ResolverManifestIterable it = new ResolverManifestIterable(fileSystemResolver);
-        BundleRepo repo = new BundleRepo();
+        BundleRepoDescriptor repo = new BundleRepoDescriptor(
+                ExecutionEnvironmentProfileProvider.getInstance());
         repo.populate(it.iterator());
 
-        BundleRepo repo2 = OBRXMLParser
-                .parse(new FileInputStream("test/test-repo/ivyrepo/repo.xml"));
+        BundleRepoDescriptor repo2 = OBRXMLParser.parse(new FileInputStream(
+                "test/test-repo/ivyrepo/repo.xml"));
 
         assertEquals(repo, repo2);
     }
 
     public void testXMLSerialisation() throws SAXException, ParseException, IOException {
         FSManifestIterable it = new FSManifestIterable(new File("test/test-repo/bundlerepo"), "");
-        BundleRepo repo = new BundleRepo();
+        BundleRepoDescriptor repo = new BundleRepoDescriptor(
+                ExecutionEnvironmentProfileProvider.getInstance());
         repo.populate(it.iterator());
 
         SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
@@ -100,10 +105,10 @@ public class BundleRepoTest extends TestCase {
         StreamResult stream = new StreamResult(out);
         hd.setResult(stream);
 
-        OBRXMLWriter.writeBundles(repo.getBundles().iterator(), hd);
+        OBRXMLWriter.writeManifests(it.iterator(), hd, false);
 
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        BundleRepo repo2 = OBRXMLParser.parse(in);
+        BundleRepoDescriptor repo2 = OBRXMLParser.parse(in);
 
         assertEquals(repo, repo2);
     }

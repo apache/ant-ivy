@@ -49,7 +49,7 @@ import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.osgi.obr.OBRResolver;
-import org.apache.ivy.osgi.repo.BundleRepoResolver.RequirementStrategy;
+import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver.RequirementStrategy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
@@ -285,7 +285,7 @@ public class OBRResolverTest extends TestCase {
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo, null);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
-        assertFalse("resolve failed " + resolveReport.getProblemMessages(),
+        assertFalse("resolve failed " + resolveReport.getAllProblemMessages(),
             resolveReport.hasError());
         Set/* <ModuleRevisionId> */actual = new HashSet/* <ModuleRevisionId> */();
         List/* <Artifact> */artifacts = resolveReport.getArtifacts();

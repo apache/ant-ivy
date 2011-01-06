@@ -65,9 +65,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public static DefaultModuleDescriptor newCallerInstance(ModuleRevisionId mrid, String[] confs,
             boolean transitive, boolean changing) {
-        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(ModuleRevisionId
-                .newInstance(mrid.getOrganisation(), mrid.getName() + "-caller", "working"),
-                "integration", null, true);
+        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(
+                ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName() + "-caller",
+                    "working"), "integration", null, true);
         for (int i = 0; i < confs.length; i++) {
             moduleDescriptor.addConfiguration(new Configuration(confs[i]));
         }
@@ -84,8 +84,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public static DefaultModuleDescriptor newCallerInstance(ModuleRevisionId[] mrid,
             boolean transitive, boolean changing) {
-        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(ModuleRevisionId
-                .newInstance("caller", "all-caller", "working"), "integration", null, true);
+        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(
+                ModuleRevisionId.newInstance("caller", "all-caller", "working"), "integration",
+                null, true);
         moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));
         moduleDescriptor.setLastModified(System.currentTimeMillis());
         for (int i = 0; i < mrid.length; i++) {
@@ -105,9 +106,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));
         if (artifacts != null && artifacts.length > 0) {
             for (int i = 0; i < artifacts.length; i++) {
-                moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(
-                        moduleDescriptor, artifacts[i].getName(), artifacts[i].getType(),
-                        artifacts[i].getExt(), artifacts[i].getUrl(), artifacts[i].getExtraAttributes()));
+                moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION,
+                    new MDArtifact(moduleDescriptor, artifacts[i].getName(),
+                            artifacts[i].getType(), artifacts[i].getExt(), artifacts[i].getUrl(),
+                            artifacts[i].getExtraAttributes()));
             }
         } else {
             moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(moduleDescriptor,
@@ -122,8 +124,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(mrid, "release",
                 publicationDate, false);
         moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));
-        moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(moduleDescriptor, mrid
-                .getName(), "jar", "jar"));
+        moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION,
+            new MDArtifact(moduleDescriptor, mrid.getName(), "jar", "jar"));
         return moduleDescriptor;
     }
 
@@ -153,8 +155,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         for (int i = 0; i < ed.length; ++i) {
             ModuleRevisionId mrid = t.transform(ed[i].getParentRevisionId());
             ModuleRevisionId resolvedMrid = t.transform(ed[i].getResolvedParentRevisionId());
-            nmd.inheritedDescriptors.add(new DefaultExtendsDescriptor(mrid, resolvedMrid,
-                    ed[i].getLocation(), ed[i].getExtendsTypes()));
+            nmd.inheritedDescriptors.add(new DefaultExtendsDescriptor(mrid, resolvedMrid, ed[i]
+                    .getLocation(), ed[i].getExtendsTypes()));
         }
 
         DependencyDescriptor[] dd = md.getDependencies();
@@ -173,12 +175,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (md instanceof DefaultModuleDescriptor) {
             DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
             nmd.conflictManagers = (ModuleRules) dmd.conflictManagers.clone();
-            nmd.dependencyDescriptorMediators = 
-                (ModuleRules) dmd.dependencyDescriptorMediators.clone();
+            nmd.dependencyDescriptorMediators = (ModuleRules) dmd.dependencyDescriptorMediators
+                    .clone();
         } else {
-            Message.warn(
-                "transformed module descriptor is not a default module descriptor: "
-                + "impossible to copy conflict manager and version mediation configuration: " + md);
+            Message.warn("transformed module descriptor is not a default module descriptor: "
+                    + "impossible to copy conflict manager and version mediation configuration: "
+                    + md);
         }
         nmd.licenses.addAll(Arrays.asList(md.getLicenses()));
         nmd.homePage = md.getHomePage();
@@ -207,15 +209,16 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private Map artifactsByConf = new HashMap(); // Map (String conf -> Collection(Artifact))
 
-    private Collection artifacts = new LinkedHashSet(); // Collection(Artifact) 
+    private Collection artifacts = new LinkedHashSet(); // Collection(Artifact)
+
     // all artifacts could also be found in the artifactsByConf map, but here we can
     // preserve the order
 
     private boolean isDefault = false;
 
-    private ModuleRules conflictManagers = new ModuleRules(); 
-    
-    private ModuleRules dependencyDescriptorMediators = new ModuleRules(); 
+    private ModuleRules conflictManagers = new ModuleRules();
+
+    private ModuleRules dependencyDescriptorMediators = new ModuleRules();
 
     private List licenses = new ArrayList(); // List(License)
 
@@ -232,16 +235,16 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private ModuleDescriptorParser parser;
 
     private Resource resource;
-    
+
     private List excludeRules = new ArrayList(); // List(ExcludeRule)
 
     private Artifact metadataArtifact;
 
-    private List inheritedDescriptors = new ArrayList(); //List(ExtendsDescriptor)
-    
-    private Map/*<String,String>*/ extraAttributesNamespaces = new LinkedHashMap();
+    private List inheritedDescriptors = new ArrayList(); // List(ExtendsDescriptor)
 
-    private Map/*<String,String>*/ extraInfo = new HashMap();
+    private Map/* <String,String> */extraAttributesNamespaces = new LinkedHashMap();
+
+    private Map/* <String,String> */extraInfo = new HashMap();
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -272,15 +275,15 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         this.parser = parser;
         resource = res;
     }
-    
+
     public Artifact getMetadataArtifact() {
         if (metadataArtifact == null) {
-            metadataArtifact = DefaultArtifact.newIvyArtifact(
-                resolvedRevId, resolvedPublicationDate);
+            metadataArtifact = DefaultArtifact.newIvyArtifact(resolvedRevId,
+                resolvedPublicationDate);
         }
         return metadataArtifact;
     }
-    
+
     public void setModuleArtifact(Artifact moduleArtifact) {
         this.metadataArtifact = moduleArtifact;
     }
@@ -310,7 +313,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public Date getResolvedPublicationDate() {
         return resolvedPublicationDate;
     }
-    
+
     public String getRevision() {
         return getResolvedModuleRevisionId().getRevision();
     }
@@ -355,8 +358,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public void addArtifact(String conf, Artifact artifact) {
         Configuration c = getConfiguration(conf);
         if (c == null) {
-            throw new IllegalArgumentException("Cannot add artifact '" + artifact.getId().getArtifactId().getShortDescription()
-                    + "' to configuration '" + conf + "' of module " + revId 
+            throw new IllegalArgumentException("Cannot add artifact '"
+                    + artifact.getId().getArtifactId().getShortDescription()
+                    + "' to configuration '" + conf + "' of module " + revId
                     + " because this configuration doesn't exist!");
         }
         if (c instanceof ConfigurationGroup) {
@@ -389,8 +393,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public ExtendsDescriptor[] getInheritedDescriptors() {
-        return (ExtendsDescriptor[]) inheritedDescriptors.toArray(
-                new ExtendsDescriptor[inheritedDescriptors.size()]);
+        return (ExtendsDescriptor[]) inheritedDescriptors
+                .toArray(new ExtendsDescriptor[inheritedDescriptors.size()]);
     }
 
     public Configuration[] getConfigurations() {
@@ -427,7 +431,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
                 String attValue = m.group(2);
 
                 // this is a conf group, let's search for its members
-                Map /*<String,Configuration>*/ members = new LinkedHashMap();
+                Map /* <String,Configuration> */members = new LinkedHashMap();
                 for (Iterator it = configurations.values().iterator(); it.hasNext();) {
                     Configuration conf = (Configuration) it.next();
                     if (attValue.equals(conf.getAttribute(attName))) {
@@ -436,19 +440,18 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
                 }
                 return new ConfigurationGroup(confName, members);
             }
-            
+
             // let's see if a configuration intersection is requested
             String[] confs = confName.split("\\+");
             if (confs.length <= 1) {
                 return null;
             }
-            Map /*<String,Configuration>*/ intersectedConfs = new LinkedHashMap();
+            Map /* <String,Configuration> */intersectedConfs = new LinkedHashMap();
             for (int i = 0; i < confs.length; i++) {
                 Configuration c = (Configuration) configurations.get(confs[i]);
                 if (c == null) {
-                    Message.verbose(
-                        "missing configuration '" + confs[i] 
-                        + "' from intersection " + confName + " in " + this);
+                    Message.verbose("missing configuration '" + confs[i] + "' from intersection "
+                            + confName + " in " + this);
                     return null;
                 }
                 intersectedConfs.put(confs[i], c);
@@ -467,7 +470,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (c instanceof ConfigurationIntersection) {
             ConfigurationIntersection intersection = (ConfigurationIntersection) c;
             String[] intersected = intersection.getIntersectedConfigurationNames();
-            Set/*<Artifact>*/ intersectedArtifacts = new LinkedHashSet();
+            Set/* <Artifact> */intersectedArtifacts = new LinkedHashSet();
             for (int j = 0; j < intersected.length; j++) {
                 Collection arts = getArtifactsIncludingExtending(intersected[j]);
                 if (intersectedArtifacts.isEmpty()) {
@@ -479,12 +482,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             if (artifacts != null) {
                 intersectedArtifacts.addAll(artifacts);
             }
-            return (Artifact[]) intersectedArtifacts.toArray(
-                new Artifact[intersectedArtifacts.size()]);
+            return (Artifact[]) intersectedArtifacts.toArray(new Artifact[intersectedArtifacts
+                    .size()]);
         } else if (c instanceof ConfigurationGroup) {
             ConfigurationGroup group = (ConfigurationGroup) c;
             String[] members = group.getMembersConfigurationNames();
-            Set/*<Artifact>*/ groupArtifacts = new LinkedHashSet();
+            Set/* <Artifact> */groupArtifacts = new LinkedHashSet();
             for (int i = 0; i < members.length; i++) {
                 groupArtifacts.addAll(getArtifactsIncludingExtending(members[i]));
             }
@@ -501,10 +504,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         }
     }
 
-    private Collection/*<Artifact>*/ getArtifactsIncludingExtending(String conf) {
-        Collection extendingConfs = Configuration.findConfigurationExtending(
-                                                            conf, getConfigurations());
-        Set/*<Artifact>*/ artifacts = new LinkedHashSet();
+    private Collection/* <Artifact> */getArtifactsIncludingExtending(String conf) {
+        Collection extendingConfs = Configuration.findConfigurationExtending(conf,
+            getConfigurations());
+        Set/* <Artifact> */artifacts = new LinkedHashSet();
         Collection arts = (Collection) artifactsByConf.get(conf);
         if (arts != null) {
             artifacts.addAll(arts);
@@ -524,8 +527,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public DependencyDescriptor[] getDependencies() {
-        return (DependencyDescriptor[]) dependencies
-                .toArray(new DependencyDescriptor[dependencies.size()]);
+        return (DependencyDescriptor[]) dependencies.toArray(new DependencyDescriptor[dependencies
+                .size()]);
     }
 
     public boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md) {
@@ -548,6 +551,34 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         } else {
             XmlModuleDescriptorWriter.write(this, destFile);
         }
+    }
+
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((revId == null) ? 0 : revId.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DefaultModuleDescriptor other = (DefaultModuleDescriptor) obj;
+        if (revId == null) {
+            if (other.revId != null) {
+                return false;
+            }
+        } else if (!revId.equals(other.revId)) {
+            return false;
+        }
+        return true;
     }
 
     public String toString() {
@@ -576,13 +607,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public ConflictManager getConflictManager(ModuleId moduleId) {
         return (ConflictManager) conflictManagers.getRule(moduleId);
     }
-    
+
     public void addDependencyDescriptorMediator(ModuleId moduleId, PatternMatcher matcher,
             DependencyDescriptorMediator ddm) {
-        dependencyDescriptorMediators.defineRule(
-            new MapMatcher(moduleId.getAttributes(), matcher), ddm);
+        dependencyDescriptorMediators.defineRule(new MapMatcher(moduleId.getAttributes(), matcher),
+            ddm);
     }
-    
+
     public DependencyDescriptor mediate(DependencyDescriptor dd) {
         Object[] mediators = dependencyDescriptorMediators.getRules(dd.getDependencyId());
         for (int i = 0; i < mediators.length; i++) {
@@ -591,7 +622,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return dd;
     }
 
-    public ModuleRules/*<DependencyDescriptorMediator>*/ getAllDependencyDescriptorMediators() {
+    public ModuleRules/* <DependencyDescriptorMediator> */getAllDependencyDescriptorMediators() {
         return (ModuleRules) dependencyDescriptorMediators.clone();
     }
 
@@ -610,11 +641,11 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public void setHomePage(String homePage) {
         this.homePage = homePage;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -646,8 +677,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     /**
-     * Throws an exception if the module descriptor is inconsistent 
-     * For the moment, only extended configurations existence and cycles are checked
+     * Throws an exception if the module descriptor is inconsistent For the moment, only extended
+     * configurations existence and cycles are checked
      */
     public void check() {
         Stack confs = new Stack();
@@ -670,8 +701,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
                 cycle.append(confs.get(index)).append(" => ");
             }
             cycle.append(confName);
-            throw new IllegalStateException(
-                "illegal cycle detected in configuration extension: " + cycle);
+            throw new IllegalStateException("illegal cycle detected in configuration extension: "
+                    + cycle);
         }
         Configuration conf = getConfiguration(confName);
         if (conf == null) {
@@ -714,8 +745,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return resolvedRevId.getQualifiedExtraAttributes();
     }
 
-
-
     public ModuleDescriptorParser getParser() {
         return parser;
     }
@@ -738,8 +767,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      */
     public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
         if (namespace != null) {
-            artifactId = NameSpaceHelper.transform(artifactId, namespace
-                    .getFromSystemTransformer());
+            artifactId = NameSpaceHelper
+                    .transform(artifactId, namespace.getFromSystemTransformer());
         }
         ExcludeRule[] rules = getExcludeRules(moduleConfigurations);
         for (int i = 0; i < rules.length; i++) {
@@ -769,7 +798,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private boolean containsAny(String[] arr1, String[] arr2) {
         return new ArrayList(Arrays.asList(arr1)).removeAll(Arrays.asList(arr2));
     }
-    
+
     public Map getExtraAttributesNamespaces() {
         return extraAttributesNamespaces;
     }
@@ -778,12 +807,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         extraAttributesNamespaces.put(prefix, namespace);
     }
 
-   
-    
     public void addExtraInfo(String infoKey, String value) {
         extraInfo.put(infoKey, value);
     }
-    
+
     public Map getExtraInfo() {
         return extraInfo;
     }

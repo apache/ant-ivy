@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.osgi.repo;
+package org.apache.ivy.osgi.core;
 
 import java.util.Set;
 import java.util.TreeSet;
