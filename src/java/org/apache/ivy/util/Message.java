@@ -49,13 +49,13 @@ public final class Message {
     /** Message priority of "debug". */
     public static final int MSG_DEBUG = 4;
 
-
     private static boolean showedInfo = false;
 
     private static MessageLogger defaultLogger = new DefaultMessageLogger(Message.MSG_INFO);
 
     /**
      * Returns the current default logger.
+     * 
      * @return the current default logger; is never <code>null</code>.
      */
     public static MessageLogger getDefaultLogger() {
@@ -64,7 +64,9 @@ public final class Message {
 
     /**
      * Change the default logger used when no other logger is currently configured
-     * @param logger the new default logger, must not be <code>null</code>
+     * 
+     * @param logger
+     *            the new default logger, must not be <code>null</code>
      */
     public static void setDefaultLogger(MessageLogger logger) {
         Checks.checkNotNull(logger, "logger");
@@ -109,6 +111,28 @@ public final class Message {
 
     public static void error(String msg) {
         getLogger().error(msg);
+    }
+
+    public static void log(int logLevel, String msg) {
+        switch (logLevel) {
+            case MSG_DEBUG:
+                debug(msg);
+                break;
+            case MSG_VERBOSE:
+                verbose(msg);
+                break;
+            case MSG_INFO:
+                info(msg);
+                break;
+            case MSG_WARN:
+                warn(msg);
+                break;
+            case MSG_ERR:
+                error(msg);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown log level " + logLevel);
+        }
     }
 
     public static List getProblems() {
