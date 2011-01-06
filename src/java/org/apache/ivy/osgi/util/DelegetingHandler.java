@@ -19,8 +19,10 @@ package org.apache.ivy.osgi.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.ivy.util.Message;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -29,8 +31,10 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+import com.sun.xml.internal.rngom.ast.util.LocatorImpl;
 
-public class DelegetingHandler extends DefaultHandler implements DTDHandler, ContentHandler, ErrorHandler {
+
+public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandler {
 
     private DelegetingHandler/* <?> */delegate = null;
 
@@ -45,6 +49,8 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
     private boolean started = false;
 
     private boolean skip = false;
+
+    private boolean skipOnError = false;
 
     private StringBuffer charBuffer = new StringBuffer();
 
@@ -75,6 +81,10 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         this.bufferingChar = bufferingChar;
     }
 
+    public void setSkipOnError(boolean skipOnError) {
+        this.skipOnError = skipOnError;
+    }
+
     public boolean isBufferingChar() {
         return bufferingChar;
     }
@@ -96,6 +106,16 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         return locator;
     }
 
+    /**
+     * Return an sort of identifier of the current element being parsed. It will only be used for
+     * logging purpose.
+     * 
+     * @return an empty string by default
+     */
+    protected String getCurrentElementIdentifier() {
+        return "";
+    }
+
     public void skip() {
         skip = true;
         Iterator itHandler = saxHandlerMapping.values().iterator();
@@ -114,6 +134,30 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.stopDelegating();
+        }
+    }
+
+    private interface SkipOnErrorCallback {
+        public void call() throws SAXException;
+    }
+
+    private void skipOnError(SkipOnErrorCallback callback) throws SAXException {
+        try {
+            callback.call();
+        } catch (SAXException e) {
+            if (skipOnError) {
+                skip();
+                Locator locator;
+                if (e instanceof SAXParseException) {
+                    locator = new LocatorImpl(null, ((SAXParseException) e).getLineNumber(),
+                            ((SAXParseException) e).getColumnNumber());
+                } else {
+                    locator = getLocator();
+                }
+                log(Message.MSG_ERR, locator, e.getMessage());
+            } else {
+                throw e;
+            }
         }
     }
 
@@ -153,11 +197,15 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
-    public final void startElement(String uri, String localName, String n, Attributes atts)
-            throws SAXException {
+    public final void startElement(final String uri, final String localName, final String n,
+            final Attributes atts) throws SAXException {
         if (delegate != null) {
             // we are already delegating, let's continue
-            delegate.startElement(uri, localName, n, atts);
+            skipOnError(new SkipOnErrorCallback() {
+                public void call() throws SAXException {
+                    delegate.startElement(uri, localName, n, atts);
+                }
+            });
         } else {
             if (!started) { // first time called ?
                 // just for the root, check the expected element name
@@ -167,7 +215,11 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
                     throw new SAXException("The root element of the parsed document '" + localName
                             + "' didn't matched the expected one: '" + tagName + "'");
                 }
-                handleAttributes(atts);
+                skipOnError(new SkipOnErrorCallback() {
+                    public void call() throws SAXException {
+                        handleAttributes(atts);
+                    }
+                });
                 started = true;
             } else {
                 if (skip) {
@@ -177,7 +229,11 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
                 // time now to delegate for a new element
                 delegate = (DelegetingHandler) saxHandlerMapping.get(localName);
                 if (delegate != null) {
-                    delegate.startElement(uri, localName, n, atts);
+                    skipOnError(new SkipOnErrorCallback() {
+                        public void call() throws SAXException {
+                            delegate.startElement(uri, localName, n, atts);
+                        }
+                    });
                 }
             }
         }
@@ -203,17 +259,26 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
-    public final void endElement(String uri, String localName, String n) throws SAXException {
+    public final void endElement(final String uri, final String localName, final String n)
+            throws SAXException {
         if (delegate != null) {
-            DelegetingHandler savedDelegate = delegate;
+            final DelegetingHandler savedDelegate = delegate;
             // we are already delegating, let's continue
-            delegate.endElement(uri, localName, n);
+            skipOnError(new SkipOnErrorCallback() {
+                public void call() throws SAXException {
+                    delegate.endElement(uri, localName, n);
+                }
+            });
             if (delegate == null) {
                 // we just stopped delegating, it means that the child has ended
-                ChildElementHandler childHandler = (ChildElementHandler) childHandlerMapping
+                final ChildElementHandler childHandler = (ChildElementHandler) childHandlerMapping
                         .get(localName);
                 if (childHandler != null) {
-                    childHandler.childHanlded(savedDelegate);
+                    skipOnError(new SkipOnErrorCallback() {
+                        public void call() throws SAXException {
+                            childHandler.childHanlded(savedDelegate);
+                        }
+                    });
                 }
             }
         } else {
@@ -236,7 +301,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
 
     public static interface ChildElementHandler/* <DH extends DelegatingHandler> */{
 
-        public void childHanlded(/* DH */DelegetingHandler child);
+        public void childHanlded(/* DH */DelegetingHandler child) throws SAXParseException;
 
     }
 
@@ -449,4 +514,133 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    // //////////////////////
+    // Functions related to error handling
+    // //////////////////////
+
+    protected void log(int logLevel, String message) {
+        log(logLevel, getLocator(), message);
+    }
+
+    protected void log(int logLevel, Locator/* <?> */locator, String message) {
+        Message.log(logLevel, getLocation(locator) + message);
+    }
+
+    protected static String getLocation(Locator locator) {
+        if (locator == null) {
+            return "";
+        }
+        return "[line " + locator.getLineNumber() + " col. " + locator.getColumnNumber() + "] ";
+    }
+
+    private void skipOnError(DelegetingHandler/* <?> */currentHandler, Class/*
+                                                                             * <? extends
+                                                                             * delegatingHandler>
+                                                                             */handlerClassToSkip,
+            String message) {
+        DelegetingHandler/* <?> */handlerToSkip = currentHandler;
+        while (!(handlerClassToSkip.isAssignableFrom(handlerToSkip.getClass()))) {
+            handlerToSkip = handlerToSkip.getParent();
+        }
+        log(Message.MSG_ERR, getLocator(), message + ". The '" + handlerToSkip.getName()
+                + "' element " + getCurrentElementIdentifier() + " is then ignored.");
+        handlerToSkip.skip();
+    }
+
+    // //////////////////////
+    // Helpers to parse the attributes
+    // //////////////////////
+
+    protected String getRequiredAttribute(Attributes atts, String name) throws SAXParseException {
+        String value = atts.getValue(name);
+        if (value == null) {
+            throw new SAXParseException("Required attribute '" + name + "' not found", getLocator());
+        }
+        return value;
+    }
+
+    protected String getOptionalAttribute(Attributes atts, String name, String defaultValue) {
+        String value = atts.getValue(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    protected int getRequiredIntAttribute(Attributes atts, String name, Integer logLevel)
+            throws SAXParseException {
+        return parseInt(name, getRequiredAttribute(atts, name));
+    }
+
+    protected Integer getOptionalIntAttribute(Attributes atts, String name, Integer defaultValue)
+            throws SAXParseException {
+        String value = atts.getValue(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Integer.valueOf(parseInt(name, value));
+    }
+
+    private int parseInt(String name, String value) throws SAXParseException {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new SAXParseException("Attribute '" + name
+                    + "' is expected to be an integer but was '" + value + "' (" + e.getMessage()
+                    + ")", getLocator());
+        }
+    }
+
+    protected long getRequiredLongAttribute(Attributes atts, String name) throws SAXParseException {
+        return parseLong(name, getRequiredAttribute(atts, name));
+    }
+
+    protected Long getOptionalLongAttribute(Attributes atts, String name, Long defaultValue)
+            throws SAXParseException {
+        String value = atts.getValue(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Long.valueOf(parseLong(name, value));
+    }
+
+    private long parseLong(String name, String value) throws SAXParseException {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new SAXParseException("Attribute '" + name
+                    + "' is expected to be an long but was '" + value + "' (" + e.getMessage()
+                    + ")", getLocator());
+        }
+    }
+
+    protected boolean getRequiredBooleanAttribute(Attributes atts, String name)
+            throws SAXParseException {
+        return parseBoolean(name, getRequiredAttribute(atts, name));
+    }
+
+    protected Boolean getOptionalBooleanAttribute(Attributes atts, String name, Boolean defaultValue)
+            throws SAXParseException {
+        String value = atts.getValue(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Boolean.valueOf(parseBoolean(name, value));
+    }
+
+    static final String TRUE = Boolean.TRUE.toString().toLowerCase(Locale.US);
+
+    static final String FALSE = Boolean.FALSE.toString().toLowerCase(Locale.US);
+
+    private boolean parseBoolean(String name, String value) throws SAXParseException {
+        String lowerValue = value.toLowerCase(Locale.US);
+        if (lowerValue.equals(TRUE)) {
+            return true;
+        }
+        if (lowerValue.equals(FALSE)) {
+            return false;
+        }
+        throw new SAXParseException("Attribute '" + name
+                + "' is expected to be a boolean but was '" + value + "'", getLocator());
+    }
 }

@@ -32,14 +32,14 @@ import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public class OBRXMLParser {
-
-    static final String TRUE = "true";
-
-    static final String FALSE = "false";
 
     public static BundleRepoDescriptor parse(InputStream in) throws ParseException, IOException,
             SAXException {
@@ -78,20 +78,19 @@ public class OBRXMLParser {
 
             repo.setName(atts.getValue(NAME));
 
-            String lastModified = atts.getValue(LASTMODIFIED);
-            if (lastModified != null) {
-                try {
-                    repo.setLastModified(Long.valueOf(lastModified));
-                } catch (NumberFormatException e) {
-                    printWarning(this, "Incorrect last modified timestamp : " + lastModified
-                            + ". It will be ignored.");
-                }
+            try {
+                Long lastModified = getOptionalLongAttribute(atts, LASTMODIFIED, null);
+                repo.setLastModified(lastModified);
+            } catch (SAXParseException e) {
+                log(Message.MSG_WARN, e.getMessage() + ". It will be ignored.");
             }
 
         }
     }
 
     static class ResourceHandler extends DelegetingHandler {
+
+        private static final String DEFAULT_VERSION = "1.0.0";
 
         static final String RESOURCE = "resource";
 
@@ -109,6 +108,10 @@ public class OBRXMLParser {
 
         public ResourceHandler() {
             super(RESOURCE);
+
+            setSkipOnError(true); // if anything bad happen in any children, just ignore the
+                                  // resource
+
             addChild(new ResourceDescriptionHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     bundleInfo.setDescription(child.getBufferedChars().trim());
@@ -130,32 +133,35 @@ public class OBRXMLParser {
                     try {
                         bundleInfo.setSize(Integer.valueOf(size));
                     } catch (NumberFormatException e) {
-                        printWarning(child,
+                        log(Message.MSG_WARN,
                             "Invalid size for the bundle" + bundleInfo.getSymbolicName() + ": "
                                     + size + ". This size is then ignored.");
                     }
                 }
             });
             addChild(new CapabilityHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+                public void childHanlded(DelegetingHandler child) throws SAXParseException {
 
                     try {
                         CapabilityAdapter.adapt(bundleInfo, ((CapabilityHandler) child).capability);
                     } catch (ParseException e) {
-                        skipResourceOnError(child, "Invalid capability: " + e.getMessage());
+                        throw new SAXParseException("Invalid capability: " + e.getMessage(), child
+                                .getLocator());
                     }
                 }
             });
             addChild(new RequireHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+                public void childHanlded(DelegetingHandler child) throws SAXParseException {
                     try {
                         RequirementAdapter.adapt(bundleInfo, ((RequireHandler) child).requirement);
                     } catch (UnsupportedFilterException e) {
-                        skipResourceOnError(child, "Unsupported requirement filter: "
-                                + ((RequireHandler) child).filter + " (" + e.getMessage() + ")");
+                        throw new SAXParseException("Unsupported requirement filter: "
+                                + ((RequireHandler) child).filter + " (" + e.getMessage() + ")",
+                                getLocator());
                     } catch (ParseException e) {
-                        skipResourceOnError(child,
-                            "Error in the requirement filter on the bundle: " + e.getMessage());
+                        throw new SAXParseException(
+                                "Error in the requirement filter on the bundle: " + e.getMessage(),
+                                getLocator());
                     }
                 }
             });
@@ -164,24 +170,20 @@ public class OBRXMLParser {
         protected void handleAttributes(Attributes atts) throws SAXException {
             String symbolicname = atts.getValue(SYMBOLIC_NAME);
             if (symbolicname == null) {
-                printError(this, "Resource with no symobilc name, skipping it.");
+                log(Message.MSG_ERR, "Resource with no symobilc name, skipping it.");
                 skip();
                 return;
             }
 
-            String v = atts.getValue(VERSION);
+            String v = getOptionalAttribute(atts, VERSION, DEFAULT_VERSION);
             Version version;
-            if (v == null) {
-                version = new Version(1, 0, 0, null);
-            } else {
-                try {
-                    version = new Version(v);
-                } catch (NumberFormatException e) {
-                    printError(this, "Incorrect resource version: " + v + ". The resource "
-                            + symbolicname + " is then ignored.");
-                    skip();
-                    return;
-                }
+            try {
+                version = new Version(v);
+            } catch (NumberFormatException e) {
+                log(Message.MSG_ERR, "Incorrect resource version: " + v + ". The resource "
+                        + symbolicname + " is then ignored.");
+                skip();
+                return;
             }
 
             bundleInfo = new BundleInfo(symbolicname, version);
@@ -190,12 +192,18 @@ public class OBRXMLParser {
             bundleInfo.setId(atts.getValue(ID));
         }
 
+        protected String getCurrentElementIdentifier() {
+            return bundleInfo.getSymbolicName() + "/" + bundleInfo.getVersion();
+        }
+
     }
 
     static class ResourceDescriptionHandler extends DelegetingHandler {
 
+        static final String DESCRIPTION = "description";
+
         public ResourceDescriptionHandler() {
-            super("description");
+            super(DESCRIPTION);
             setBufferingChar(true);
         }
 
@@ -203,16 +211,20 @@ public class OBRXMLParser {
 
     static class ResourceDocumentationHandler extends DelegetingHandler {
 
+        static final String DOCUMENTATION = "documentation";
+
         public ResourceDocumentationHandler() {
-            super("documentation");
+            super(DOCUMENTATION);
             setBufferingChar(true);
         }
     }
 
     static class ResourceLicenseHandler extends DelegetingHandler {
 
+        static final String LICENSE = "license";
+
         public ResourceLicenseHandler() {
-            super("license");
+            super(LICENSE);
             setBufferingChar(true);
         }
 
@@ -220,8 +232,10 @@ public class OBRXMLParser {
 
     static class ResourceSizeHandler extends DelegetingHandler {
 
+        static final String SIZE = "size";
+
         public ResourceSizeHandler() {
-            super("size");
+            super(SIZE);
             setBufferingChar(true);
         }
     }
@@ -239,21 +253,7 @@ public class OBRXMLParser {
             addChild(new CapabilityPropertyHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     String name = ((CapabilityPropertyHandler) child).name;
-                    if (name == null) {
-                        skipResourceOnError(
-                            child,
-                            "Capability property with no name on a capability "
-                                    + capability.getName());
-                        return;
-                    }
                     String value = ((CapabilityPropertyHandler) child).value;
-                    if (value == null) {
-                        skipResourceOnError(
-                            child,
-                            "Capability property with no value on a capability "
-                                    + capability.getName());
-                        return;
-                    }
                     String type = ((CapabilityPropertyHandler) child).type;
 
                     capability.addProperty(name, value, type);
@@ -262,12 +262,7 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String name = atts.getValue(NAME);
-            if (name == null) {
-                skipResourceOnError(this, "Capability with no name");
-                return;
-            }
-
+            String name = getRequiredAttribute(atts, NAME);
             capability = new Capability(name);
         }
 
@@ -294,8 +289,8 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            name = atts.getValue(NAME);
-            value = atts.getValue(VALUE);
+            name = getRequiredAttribute(atts, NAME);
+            value = getRequiredAttribute(atts, VALUE);
             type = atts.getValue(TYPE);
         }
     }
@@ -323,11 +318,7 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String name = atts.getValue(NAME);
-            if (name == null) {
-                skipResourceOnError(this, "Requirement with no name");
-                return;
-            }
+            String name = getRequiredAttribute(atts, NAME);
 
             String filterText = atts.getValue(FILTER);
             filter = null;
@@ -335,36 +326,14 @@ public class OBRXMLParser {
                 try {
                     filter = RequirementFilterParser.parse(filterText);
                 } catch (ParseException e) {
-                    skipResourceOnError(this, "Requirement with illformed filter: " + filterText);
-                    return;
+                    throw new SAXParseException("Requirement with illformed filter: " + filterText,
+                            getLocator());
                 }
             }
 
-            Boolean optional = null;
-            try {
-                optional = parseBoolean(atts, OPTIONAL);
-            } catch (ParseException e) {
-                skipResourceOnError(this,
-                    "Requirement with unrecognised optional: " + e.getMessage());
-                return;
-            }
-
-            Boolean multiple = null;
-            try {
-                multiple = parseBoolean(atts, MULTIPLE);
-            } catch (ParseException e) {
-                skipResourceOnError(this,
-                    "Requirement with unrecognised multiple: " + e.getMessage());
-                return;
-            }
-
-            Boolean extend = null;
-            try {
-                extend = parseBoolean(atts, EXTEND);
-            } catch (ParseException e) {
-                skipResourceOnError(this, "Requirement with unrecognised extend: " + e.getMessage());
-                return;
-            }
+            Boolean optional = getOptionalBooleanAttribute(atts, OPTIONAL, null);
+            Boolean multiple = getOptionalBooleanAttribute(atts, MULTIPLE, null);
+            Boolean extend = getOptionalBooleanAttribute(atts, EXTEND, null);
 
             requirement = new Requirement(name, filter);
             if (optional != null) {
@@ -380,43 +349,4 @@ public class OBRXMLParser {
 
     }
 
-    private static Boolean parseBoolean(Attributes atts, String name) throws ParseException {
-        String v = atts.getValue(name);
-        if (v == null) {
-            return null;
-        }
-        if (TRUE.equalsIgnoreCase(v)) {
-            return Boolean.TRUE;
-        } else if (FALSE.equalsIgnoreCase(v)) {
-            return Boolean.FALSE;
-        } else {
-            throw new ParseException("Unparsable boolean value: " + v, 0);
-        }
-    }
-
-    private static void skipResourceOnError(DelegetingHandler/* <?> */handler, String message) {
-        DelegetingHandler/* <?> */resourceHandler = handler;
-        while (!(resourceHandler instanceof ResourceHandler)) {
-            resourceHandler = resourceHandler.getParent();
-        }
-        BundleInfo bundleInfo = ((ResourceHandler) resourceHandler).bundleInfo;
-        printError(handler, message + ". The resource " + bundleInfo.getSymbolicName() + "/"
-                + bundleInfo.getVersion() + " is then ignored.");
-        resourceHandler.skip();
-    }
-
-    private static void printError(DelegetingHandler/* <?> */handler, String message) {
-        Message.error(getLocation(handler.getLocator()) + message);
-    }
-
-    private static void printWarning(DelegetingHandler/* <?> */handler, String message) {
-        Message.warn(getLocation(handler.getLocator()) + message);
-    }
-
-    private static String getLocation(Locator locator) {
-        if (locator == null) {
-            return "";
-        }
-        return "[line " + locator.getLineNumber() + " col. " + locator.getColumnNumber() + "] ";
-    }
 }

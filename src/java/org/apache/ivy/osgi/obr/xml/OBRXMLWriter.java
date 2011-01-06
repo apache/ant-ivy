@@ -196,7 +196,7 @@ public class OBRXMLWriter {
         AttributesImpl atts = new AttributesImpl();
         addAttr(atts, RequireHandler.NAME, requirement.getType());
         if ("optional".equals(requirement.getResolution())) {
-            addAttr(atts, RequireHandler.OPTIONAL, OBRXMLParser.TRUE);
+            addAttr(atts, RequireHandler.OPTIONAL, Boolean.TRUE.toString());
         }
         addAttr(atts, RequireHandler.FILTER, buildFilter(requirement));
         handler.startElement("", RequireHandler.REQUIRE, RequireHandler.REQUIRE, atts);
