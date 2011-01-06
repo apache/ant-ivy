@@ -111,25 +111,24 @@ public class OBRXMLParser {
             super(RESOURCE);
             addChild(new ResourceDescriptionHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setDescription(((ResourceDescriptionHandler) child)
+                    bundleInfo.setDescription(child
                             .getBufferedChars().trim());
                 }
             });
             addChild(new ResourceDocumentationHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setDocumentation(((ResourceDocumentationHandler) child)
+                    bundleInfo.setDocumentation(child
                             .getBufferedChars().trim());
                 }
             });
             addChild(new ResourceLicenseHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setLicense(((ResourceLicenseHandler) child).getBufferedChars()
-                            .trim());
+                    bundleInfo.setLicense(child.getBufferedChars().trim());
                 }
             });
             addChild(new ResourceSizeHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    String size = ((ResourceSizeHandler) child).getBufferedChars().trim();
+                    String size = child.getBufferedChars().trim();
                     try {
                         bundleInfo.setSize(Integer.valueOf(size));
                     } catch (NumberFormatException e) {
