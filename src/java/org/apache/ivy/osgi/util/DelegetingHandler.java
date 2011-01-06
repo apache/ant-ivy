@@ -31,10 +31,9 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-import com.sun.xml.internal.rngom.ast.util.LocatorImpl;
 
-
-public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandler {
+public class DelegetingHandler extends DefaultHandler implements DTDHandler, ContentHandler,
+        ErrorHandler {
 
     private DelegetingHandler/* <?> */delegate = null;
 
@@ -147,14 +146,7 @@ public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandl
         } catch (SAXException e) {
             if (skipOnError) {
                 skip();
-                Locator locator;
-                if (e instanceof SAXParseException) {
-                    locator = new LocatorImpl(null, ((SAXParseException) e).getLineNumber(),
-                            ((SAXParseException) e).getColumnNumber());
-                } else {
-                    locator = getLocator();
-                }
-                log(Message.MSG_ERR, locator, e.getMessage());
+                log(Message.MSG_ERR, e.getMessage());
             } else {
                 throw e;
             }
@@ -519,11 +511,7 @@ public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandl
     // //////////////////////
 
     protected void log(int logLevel, String message) {
-        log(logLevel, getLocator(), message);
-    }
-
-    protected void log(int logLevel, Locator/* <?> */locator, String message) {
-        Message.log(logLevel, getLocation(locator) + message);
+        Message.log(logLevel, getLocation(getLocator()) + message);
     }
 
     protected static String getLocation(Locator locator) {
@@ -542,8 +530,8 @@ public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandl
         while (!(handlerClassToSkip.isAssignableFrom(handlerToSkip.getClass()))) {
             handlerToSkip = handlerToSkip.getParent();
         }
-        log(Message.MSG_ERR, getLocator(), message + ". The '" + handlerToSkip.getName()
-                + "' element " + getCurrentElementIdentifier() + " is then ignored.");
+        log(Message.MSG_ERR, message + ". The '" + handlerToSkip.getName() + "' element "
+                + getCurrentElementIdentifier() + " is then ignored.");
         handlerToSkip.skip();
     }
 
@@ -578,7 +566,7 @@ public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandl
         if (value == null) {
             return defaultValue;
         }
-        return Integer.valueOf(parseInt(name, value));
+        return new Integer(parseInt(name, value));
     }
 
     private int parseInt(String name, String value) throws SAXParseException {
@@ -601,7 +589,7 @@ public class DelegetingHandler implements DTDHandler, ContentHandler, ErrorHandl
         if (value == null) {
             return defaultValue;
         }
-        return Long.valueOf(parseLong(name, value));
+        return new Long(parseLong(name, value));
     }
 
     private long parseLong(String name, String value) throws SAXParseException {
