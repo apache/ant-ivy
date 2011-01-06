@@ -30,18 +30,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends DefaultHandler implements DTDHandler,
-        ContentHandler, ErrorHandler {
+public class DelegetingHandler extends DefaultHandler implements DTDHandler, ContentHandler, ErrorHandler {
 
     private DelegetingHandler/* <?> */delegate = null;
 
-    private/* P */DelegetingHandler parent;
+    private DelegetingHandler/* <?> */parent;
 
-    private final Map/* <String, DelegetingHandler<?>> */mapping = new HashMap/*
-                                                                               * <String,
-                                                                               * DelegetingHandler
-                                                                               * <?>>
-                                                                               */();
+    private final Map/* <String, DelegetingHandler<?>> */saxHandlerMapping = new HashMap();
+
+    private final Map/* <String, ChildElementHandler<?>> */childHandlerMapping = new HashMap();
 
     private final String tagName;
 
@@ -55,20 +52,22 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
 
     private Locator locator;
 
-    public DelegetingHandler(String name, /* P */DelegetingHandler parent) {
+    public DelegetingHandler(String name) {
         this.tagName = name;
-        this.parent = parent;
-        if (parent != null) {
-            parent.mapping.put(name, this);
-        }
         charBuffer.setLength(0);
+    }
+
+    protected void addChild(DelegetingHandler saxHandler, ChildElementHandler elementHandler) {
+        saxHandlerMapping.put(saxHandler.getName(), saxHandler);
+        childHandlerMapping.put(saxHandler.getName(), elementHandler);
+        saxHandler.parent = this;
     }
 
     public String getName() {
         return tagName;
     }
 
-    public/* P */DelegetingHandler getParent() {
+    public DelegetingHandler getParent() {
         return parent;
     }
 
@@ -86,7 +85,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
 
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
-        Iterator itHandler = mapping.values().iterator();
+        Iterator itHandler = saxHandlerMapping.values().iterator();
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.setDocumentLocator(locator);
@@ -99,7 +98,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
 
     public void skip() {
         skip = true;
-        Iterator itHandler = mapping.values().iterator();
+        Iterator itHandler = saxHandlerMapping.values().iterator();
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.stopDelegating();
@@ -111,7 +110,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
         skip = false;
         started = false;
         charBuffer.setLength(0);
-        Iterator itHandler = mapping.values().iterator();
+        Iterator itHandler = saxHandlerMapping.values().iterator();
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
             subHandler.stopDelegating();
@@ -176,7 +175,7 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
                     return;
                 }
                 // time now to delegate for a new element
-                delegate = (DelegetingHandler) mapping.get(localName);
+                delegate = (DelegetingHandler) saxHandlerMapping.get(localName);
                 if (delegate != null) {
                     delegate.startElement(uri, localName, n, atts);
                 }
@@ -206,8 +205,17 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
 
     public final void endElement(String uri, String localName, String n) throws SAXException {
         if (delegate != null) {
+            DelegetingHandler savedDelegate = delegate;
             // we are already delegating, let's continue
             delegate.endElement(uri, localName, n);
+            if (delegate == null) {
+                // we just stopped delegating, it means that the child has ended
+                ChildElementHandler childHandler = (ChildElementHandler) childHandlerMapping
+                        .get(localName);
+                if (childHandler != null) {
+                    childHandler.childHanlded(savedDelegate);
+                }
+            }
         } else {
             if (!skip) {
                 doEndElement(uri, localName, n);
@@ -224,6 +232,12 @@ public class DelegetingHandler/* <P extends DelegetingHandler<?>> */ extends Def
      */
     protected void doEndElement(String uri, String localName, String name) throws SAXException {
         // by default do nothing
+    }
+
+    public static interface ChildElementHandler/* <DH extends DelegatingHandler> */{
+
+        public void childHanlded(/* DH */DelegetingHandler child);
+
     }
 
     public final void characters(char[] ch, int start, int length) throws SAXException {

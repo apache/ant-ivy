@@ -96,13 +96,17 @@ public class OBRXMLParser {
         return handler.repo;
     }
 
-    private static class RepositoryHandler extends DelegetingHandler/* <DelegetingHandler<?>> */{
+    private static class RepositoryHandler extends DelegetingHandler {
 
         BundleRepoDescriptor repo;
 
         public RepositoryHandler() {
-            super(REPOSITORY, null);
-            new ResourceHandler(this);
+            super(REPOSITORY);
+            addChild(new ResourceHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    repo.addBundle(((ResourceHandler) child).bundleInfo);
+                }
+            });
         }
 
         protected void handleAttributes(Attributes atts) {
@@ -123,18 +127,65 @@ public class OBRXMLParser {
         }
     }
 
-    private static class ResourceHandler extends DelegetingHandler/* <RepositoryHandler> */{
+    private static class ResourceHandler extends DelegetingHandler {
 
         BundleInfo bundleInfo;
 
-        public ResourceHandler(RepositoryHandler repositoryHandler) {
-            super(RESOURCE, repositoryHandler);
-            new ResourceDescriptionHandler(this);
-            new ResourceDocumentationHandler(this);
-            new ResourceLicenseHandler(this);
-            new ResourceSizeHandler(this);
-            new CapabilityHandler(this);
-            new RequireHandler(this);
+        public ResourceHandler() {
+            super(RESOURCE);
+            addChild(new ResourceDescriptionHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    bundleInfo.setDescription(((ResourceDescriptionHandler) child)
+                            .getBufferedChars().trim());
+                }
+            });
+            addChild(new ResourceDocumentationHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    bundleInfo.setDocumentation(((ResourceDocumentationHandler) child)
+                            .getBufferedChars().trim());
+                }
+            });
+            addChild(new ResourceLicenseHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    bundleInfo.setLicense(((ResourceLicenseHandler) child).getBufferedChars()
+                            .trim());
+                }
+            });
+            addChild(new ResourceSizeHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    String size = ((ResourceSizeHandler) child).getBufferedChars().trim();
+                    try {
+                        bundleInfo.setSize(Integer.valueOf(size));
+                    } catch (NumberFormatException e) {
+                        printWarning(child,
+                            "Invalid size for the bundle" + bundleInfo.getSymbolicName() + ": "
+                                    + size + ". This size is then ignored.");
+                    }
+                }
+            });
+            addChild(new CapabilityHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+
+                    try {
+                        CapabilityAdapter.adapt(bundleInfo, ((CapabilityHandler) child).capability);
+                    } catch (ParseException e) {
+                        skipResourceOnError(child, "Invalid capability: " + e.getMessage());
+                    }
+                }
+            });
+            addChild(new RequireHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    try {
+                        RequirementAdapter.adapt(bundleInfo, ((RequireHandler) child).requirement);
+                    } catch (UnsupportedFilterException e) {
+                        skipResourceOnError(child, "Unsupported requirement filter: "
+                                + ((RequireHandler) child).filter + " (" + e.getMessage() + ")");
+                    } catch (ParseException e) {
+                        skipResourceOnError(child,
+                            "Error in the requirement filter on the bundle: " + e.getMessage());
+                    }
+                }
+            });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -166,74 +217,71 @@ public class OBRXMLParser {
             bundleInfo.setId(atts.getValue(RESOURCE_ID));
         }
 
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            ((RepositoryHandler) getParent()).repo.addBundle(bundleInfo);
-        }
-
     }
 
-    private static class ResourceDescriptionHandler extends DelegetingHandler/* <ResourceHandler> */{
+    private static class ResourceDescriptionHandler extends DelegetingHandler {
 
-        public ResourceDescriptionHandler(ResourceHandler resourceHandler) {
-            super("description", resourceHandler);
+        public ResourceDescriptionHandler() {
+            super("description");
             setBufferingChar(true);
         }
 
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            ((ResourceHandler) getParent()).bundleInfo.setDescription(getBufferedChars().trim());
+    }
+
+    private static class ResourceDocumentationHandler extends DelegetingHandler {
+
+        public ResourceDocumentationHandler() {
+            super("documentation");
+            setBufferingChar(true);
         }
     }
 
-    private static class ResourceDocumentationHandler extends DelegetingHandler/* <ResourceHandler> */{
+    private static class ResourceLicenseHandler extends DelegetingHandler {
 
-        public ResourceDocumentationHandler(ResourceHandler resourceHandler) {
-            super("documentation", resourceHandler);
+        public ResourceLicenseHandler() {
+            super("license");
             setBufferingChar(true);
         }
 
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            ((ResourceHandler) getParent()).bundleInfo.setDocumentation(getBufferedChars().trim());
-        }
     }
 
-    private static class ResourceLicenseHandler extends DelegetingHandler/* <ResourceHandler> */{
+    private static class ResourceSizeHandler extends DelegetingHandler {
 
-        public ResourceLicenseHandler(ResourceHandler resourceHandler) {
-            super("license", resourceHandler);
+        public ResourceSizeHandler() {
+            super("size");
             setBufferingChar(true);
         }
-
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            ((ResourceHandler) getParent()).bundleInfo.setLicense(getBufferedChars().trim());
-        }
     }
 
-    private static class ResourceSizeHandler extends DelegetingHandler/* <ResourceHandler> */{
-
-        public ResourceSizeHandler(ResourceHandler resourceHandler) {
-            super("size", resourceHandler);
-            setBufferingChar(true);
-        }
-
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            String size = getBufferedChars().trim();
-            try {
-                ((ResourceHandler) getParent()).bundleInfo.setSize(Integer.valueOf(size));
-            } catch (NumberFormatException e) {
-                printWarning(this, "Invalid size for the bundle"
-                        + ((ResourceHandler) getParent()).bundleInfo.getSymbolicName() + ": "
-                        + size + ". This size is then ignored.");
-            }
-        }
-    }
-
-    private static class CapabilityHandler extends DelegetingHandler/* <ResourceHandler> */{
+    private static class CapabilityHandler extends DelegetingHandler {
 
         Capability capability;
 
-        public CapabilityHandler(ResourceHandler resourceHandler) {
-            super(CAPABILITY, resourceHandler);
-            new CapabilityPropertyHandler(this);
+        public CapabilityHandler() {
+            super(CAPABILITY);
+            addChild(new CapabilityPropertyHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    String name = ((CapabilityPropertyHandler) child).name;
+                    if (name == null) {
+                        skipResourceOnError(
+                            child,
+                            "Capability property with no name on a capability "
+                                    + capability.getName());
+                        return;
+                    }
+                    String value = ((CapabilityPropertyHandler) child).value;
+                    if (value == null) {
+                        skipResourceOnError(
+                            child,
+                            "Capability property with no value on a capability "
+                                    + capability.getName());
+                        return;
+                    }
+                    String type = ((CapabilityPropertyHandler) child).type;
+
+                    capability.addProperty(name, value, type);
+                }
+            });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -246,48 +294,35 @@ public class OBRXMLParser {
             capability = new Capability(name);
         }
 
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            try {
-                CapabilityAdapter.adapt(((ResourceHandler) getParent()).bundleInfo, capability);
-            } catch (ParseException e) {
-                skipResourceOnError(this, "Invalid capability: " + e.getMessage());
-            }
-        }
     }
 
-    private static class CapabilityPropertyHandler extends DelegetingHandler/* <CapabilityHandler> */{
+    private static class CapabilityPropertyHandler extends DelegetingHandler {
 
-        public CapabilityPropertyHandler(CapabilityHandler capabilityHandler) {
-            super(CAPABILITY_PROPERTY, capabilityHandler);
+        String name;
+
+        String value;
+
+        String type;
+
+        public CapabilityPropertyHandler() {
+            super(CAPABILITY_PROPERTY);
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String name = atts.getValue(CAPABILITY_PROPERTY_NAME);
-            if (name == null) {
-                skipResourceOnError(this, "Capability property with no name on a capability "
-                        + ((CapabilityHandler) getParent()).capability.getName());
-                return;
-            }
-            String value = atts.getValue(CAPABILITY_PROPERTY_VALUE);
-            if (value == null) {
-                skipResourceOnError(this, "Capability property with no value on a capability "
-                        + ((CapabilityHandler) getParent()).capability.getName());
-                return;
-            }
-            String type = atts.getValue(CAPABILITY_PROPERTY_TYPE);
-
-            ((CapabilityHandler) getParent()).capability.addProperty(name, value, type);
+            name = atts.getValue(CAPABILITY_PROPERTY_NAME);
+            value = atts.getValue(CAPABILITY_PROPERTY_VALUE);
+            type = atts.getValue(CAPABILITY_PROPERTY_TYPE);
         }
     }
 
-    private static class RequireHandler extends DelegetingHandler/* <ResourceHandler> */{
+    private static class RequireHandler extends DelegetingHandler {
 
         private Requirement requirement;
 
         private RequirementFilter filter;
 
-        public RequireHandler(ResourceHandler resourceHandler) {
-            super(REQUIRE, resourceHandler);
+        public RequireHandler() {
+            super(REQUIRE);
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -346,17 +381,6 @@ public class OBRXMLParser {
             }
         }
 
-        protected void doEndElement(String uri, String localName, String name) throws SAXException {
-            try {
-                RequirementAdapter.adapt(((ResourceHandler) getParent()).bundleInfo, requirement);
-            } catch (UnsupportedFilterException e) {
-                skipResourceOnError(this,
-                    "Unsupported requirement filter: " + filter + " (" + e.getMessage() + ")");
-            } catch (ParseException e) {
-                skipResourceOnError(this,
-                    "Error in the requirement filter on the bundle: " + e.getMessage());
-            }
-        }
     }
 
     private static Boolean parseBoolean(Attributes atts, String name) throws ParseException {
