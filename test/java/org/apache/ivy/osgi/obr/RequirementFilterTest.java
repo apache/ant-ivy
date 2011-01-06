@@ -46,6 +46,8 @@ public class RequirementFilterTest extends TestCase {
         RequirementFilter and2 = new AndFilter(new RequirementFilter[] {cgt2, twoeqd,
                 foodorbarge0dot0});
         checkParse(and2, "(&(c>2)(2=d)(foo.bar>=0.0))");
+        RequirementFilter spaceAfterAnd = new AndFilter(new RequirementFilter[] {twoeqd});
+        checkParse(spaceAfterAnd, "(& (2=d))");
     }
 
     private void assertParseFail(String toParse) {

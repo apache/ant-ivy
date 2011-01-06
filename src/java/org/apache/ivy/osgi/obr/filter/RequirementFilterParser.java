@@ -171,6 +171,7 @@ public class RequirementFilterParser {
 
         private void parseMultiOperator(MultiOperatorFilter filter) throws ParseException {
             do {
+                skipWhiteSpace();
                 readNext();
                 if (c == '(') {
                     unread();
@@ -180,7 +181,7 @@ public class RequirementFilterParser {
                 }
             } while (pos < length);
             if (filter.getSubFilters().size() == 0) {
-                throw new ParseException("Expecting at least on sub filter", pos);
+                throw new ParseException("Expecting at least one sub filter", pos);
             }
         }
 
