@@ -19,10 +19,16 @@ package org.apache.ivy.osgi.repo;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.osgi.core.BundleCapability;
+import org.apache.ivy.osgi.core.BundleInfo;
+import org.apache.ivy.osgi.core.BundleInfoAdapter;
+import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.util.Message;
 
 public class RepoDescriptor {
@@ -30,6 +36,12 @@ public class RepoDescriptor {
     private final Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapbilities = new HashMap();
 
     private final Set/* <ModuleDescriptor> */modules = new HashSet();
+
+    private final ExecutionEnvironmentProfileProvider profileProvider;
+
+    public RepoDescriptor(ExecutionEnvironmentProfileProvider profileProvider) {
+        this.profileProvider = profileProvider;
+    }
 
     public Set getModules() {
         return modules;
@@ -67,6 +79,17 @@ public class RepoDescriptor {
         }
         if (!bundleReferences.add(md)) {
             Message.warn("The repo did already contains " + md);
+        }
+    }
+
+    public void addBundle(BundleInfo bundleInfo) {
+        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo,
+            profileProvider);
+        add(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), md);
+        Iterator itCapability = bundleInfo.getCapabilities().iterator();
+        while (itCapability.hasNext()) {
+            BundleCapability capability = (BundleCapability) itCapability.next();
+            add(capability.getType(), capability.getName(), md);
         }
     }
 

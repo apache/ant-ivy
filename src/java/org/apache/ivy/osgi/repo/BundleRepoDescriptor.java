@@ -20,10 +20,7 @@ package org.apache.ivy.osgi.repo;
 import java.text.ParseException;
 import java.util.Iterator;
 
-import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
-import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
-import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.util.Message;
@@ -34,10 +31,8 @@ public class BundleRepoDescriptor extends RepoDescriptor {
 
     private Long lastModified;
 
-    private final ExecutionEnvironmentProfileProvider profileProvider;
-
     public BundleRepoDescriptor(ExecutionEnvironmentProfileProvider profileProvider) {
-        this.profileProvider = profileProvider;
+        super(profileProvider);
     }
 
     public void setName(String name) {
@@ -68,17 +63,6 @@ public class BundleRepoDescriptor extends RepoDescriptor {
                 Message.error("Rejected " + manifestAndLocation.getLocation() + ": "
                         + e.getMessage());
             }
-        }
-    }
-
-    public void addBundle(BundleInfo bundleInfo) {
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo,
-            profileProvider);
-        add(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), md);
-        Iterator itCapability = bundleInfo.getCapabilities().iterator();
-        while (itCapability.hasNext()) {
-            BundleCapability capability = (BundleCapability) itCapability.next();
-            add(capability.getType(), capability.getName(), md);
         }
     }
 
