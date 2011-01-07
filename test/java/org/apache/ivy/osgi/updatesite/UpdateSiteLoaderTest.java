@@ -32,11 +32,5 @@ public class UpdateSiteLoaderTest extends TestCase {
         RepoDescriptor site = loader.load("http://www.apache.org/dist/ant/ivyde/updatesite/");
         assertEquals(13, site.getModules().size());
     }
-    
 
-    public void testEclipse() throws IOException, ParseException, SAXException {
-        UpdateSiteLoader loader = new UpdateSiteLoader();
-        RepoDescriptor site = loader.load("http://download.eclipse.org/releases/helios/");
-        assertEquals(13, site.getModules().size());
-    }
 }

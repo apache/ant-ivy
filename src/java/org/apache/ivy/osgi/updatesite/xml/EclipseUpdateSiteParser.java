@@ -82,6 +82,8 @@ public class EclipseUpdateSiteParser {
         }
 
         protected void handleAttributes(Attributes atts) {
+            updatesite = new UpdateSite();
+
             String url = atts.getValue(URL);
             if (url != null && !("".equals(url.trim()))) {
                 if (!url.endsWith("/") && !url.endsWith(File.separator)) {
