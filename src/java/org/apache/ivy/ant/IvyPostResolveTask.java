@@ -18,11 +18,9 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
