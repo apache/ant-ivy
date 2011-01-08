@@ -24,27 +24,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.ivy.osgi.util.DelegetingHandler;
 import org.apache.ivy.osgi.util.Version;
+import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class FeatureParser {
 
     public static EclipseFeature parse(InputStream in) throws ParseException, IOException,
             SAXException {
-        XMLReader reader;
-        try {
-            reader = XMLReaderFactory.createXMLReader();
-        } catch (SAXException e) {
-            throw new ParseException(e.getMessage(), 0);
-        }
         FeatureHandler handler = new FeatureHandler();
-        reader.setContentHandler(handler);
-        reader.parse(new InputSource(in));
+        try {
+            XMLHelper.parse(in, null, handler, null);
+        } catch (ParserConfigurationException e) {
+            throw new SAXException(e);
+        }
         return handler.feature;
     }
 

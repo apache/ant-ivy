@@ -32,12 +32,8 @@ import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class OBRXMLParser {
 
@@ -47,9 +43,7 @@ public class OBRXMLParser {
         try {
             XMLHelper.parse(in, null, handler, null);
         } catch (ParserConfigurationException e) {
-            ParseException exc = new ParseException(e.getMessage(), 0);
-            exc.initCause(e);
-            throw exc;
+            throw new SAXException(e);
         }
         return handler.repo;
     }

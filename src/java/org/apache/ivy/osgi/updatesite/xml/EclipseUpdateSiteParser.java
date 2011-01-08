@@ -21,23 +21,24 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.osgi.util.DelegetingHandler;
 import org.apache.ivy.osgi.util.Version;
+import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class EclipseUpdateSiteParser {
 
     public static UpdateSite parse(InputStream in) throws ParseException, IOException, SAXException {
-        XMLReader reader = XMLReaderFactory.createXMLReader();
         SiteHandler handler = new SiteHandler();
-        reader.setContentHandler(handler);
-        reader.parse(new InputSource(in));
+        try {
+            XMLHelper.parse(in, null, handler, null);
+        } catch (ParserConfigurationException e) {
+            throw new SAXException(e);
+        }
         return handler.updatesite;
     }
 
