@@ -37,6 +37,8 @@ import org.apache.ivy.osgi.updatesite.xml.EclipseUpdateSiteParser;
 import org.apache.ivy.osgi.updatesite.xml.FeatureParser;
 import org.apache.ivy.osgi.updatesite.xml.UpdateSite;
 import org.apache.ivy.osgi.updatesite.xml.UpdateSiteDigestParser;
+import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.SAXException;
 
 public class UpdateSiteLoader {
@@ -73,42 +75,52 @@ public class UpdateSiteLoader {
 
     private boolean readJarOrXml(String url, String baseName, XMLInputParser reader)
             throws IOException, ParseException, SAXException {
-        URL contentUrl = new URL(url + baseName + ".jar");
-        InputStream in;
         InputStream readIn = null; // the input stream from which the xml should be read
-        try {
-            in = contentUrl.openStream();
-        } catch (FileNotFoundException e) {
+
+        URL contentUrl = new URL(url + baseName + ".jar");
+        URLResource res = new URLResource(contentUrl);
+        if (!res.exists()) {
             // no jar file, try the xml one
             contentUrl = new URL(url + baseName + ".xml");
-            try {
-                in = contentUrl.openStream();
-            } catch (FileNotFoundException e2) {
+            res = new URLResource(contentUrl);
+            
+            if (!res.exists()) {
                 // no xml either
                 return false;
             }
+            
             // we will then read directly from that input stream
-            readIn = in;
-        }
-        try {
-            if (readIn == null) {
+            readIn = res.openStream();
+        } else {
+            InputStream in = res.openStream();
+
+            try {
                 // compressed, let's get the pointer on the actual xml
                 readIn = findEntry(in, baseName + ".xml");
                 if (readIn == null) {
+                    in.close();
                     return false;
                 }
+            } catch (IOException e) {
+                in.close();
+                throw e;
             }
-            reader.parse(readIn);
-            return true;
-        } finally {
-            in.close();
+            
         }
+        
+        try {
+            reader.parse(readIn);
+        } finally {
+            readIn.close();
+        }
+        
+        return true;
     }
 
     private UpdateSite loadSite(String url) throws IOException, ParseException, SAXException {
         String siteUrl = normalizeSiteUrl(url, null);
         URL u = new URL(siteUrl + "site.xml");
-        InputStream in = u.openStream();
+        InputStream in = URLHandlerRegistry.getDefault().openStream(u);
         try {
             UpdateSite site = EclipseUpdateSiteParser.parse(in);
             site.setUrl(normalizeSiteUrl(site.getUrl(), siteUrl));
@@ -153,7 +165,7 @@ public class UpdateSiteLoader {
         URL digest = new URL(digestUrl);
         InputStream in;
         try {
-            in = digest.openStream();
+            in = URLHandlerRegistry.getDefault().openStream(digest);
         } catch (FileNotFoundException e) {
             return null;
         }
@@ -177,7 +189,7 @@ public class UpdateSiteLoader {
         while (itFeatures.hasNext()) {
             EclipseFeature feature = (EclipseFeature) itFeatures.next();
             URL url = new URL(site.getUrl() + feature.getUrl());
-            InputStream in = url.openStream();
+            InputStream in = URLHandlerRegistry.getDefault().openStream(url);
             try {
                 ZipInputStream zipped = findEntry(in, "feature.xml");
                 if (zipped == null) {
