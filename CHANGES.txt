@@ -117,6 +117,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
 - NEW: Import Bushel into Ivy core (IVY-1241)
 
+- IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
+
 - FIX: Dynamic version resolution result can be incorrect when ivy metadata contains extra attributes (IVY-1236)
 - FIX: NullPointerException in FileUtil#forceDelete.
 - FIX: XmlModuleDescriptorUpdater is a mess that produces broken xmls in many cases (IVY-1010)

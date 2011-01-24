@@ -31,6 +31,9 @@ public class RetrieveOptions extends LogOptions {
     public static final String OVERWRITEMODE_ALWAYS = "always";
     public static final String OVERWRITEMODE_NEWER = "newer";
     public static final String OVERWRITEMODE_DIFFERENT = "different";
+
+    public static final String DIRMODE_FLAT = "flat";
+    public static final String DIRMODE_TREE = "tree";
     
     /**
      * The names of configurations to retrieve. If the array consists only of '*', then all
@@ -69,10 +72,21 @@ public class RetrieveOptions extends LogOptions {
      */
     private boolean makeSymlinks = false;
 
+    private String dirMode = DIRMODE_FLAT;
+
     /**
      * The id used to store the resolve information.
      */
     private String resolveId;
+
+    public String getDirMode() {
+        return dirMode == null ? DIRMODE_FLAT : dirMode;
+    }
+
+    public RetrieveOptions setDirMode(String dirMode) {
+        this.dirMode = dirMode;
+        return this;
+    }
 
     public Filter getArtifactFilter() {
         return artifactFilter;
