@@ -54,12 +54,18 @@ root: lib
         <td>No. Defaults to false</td></tr>
     <tr><td>type</td><td>comma separated list of accepted artifact types <span class="since">since 1.4</span></td>
         <td>No. All artifact types are accepted by default.</td></tr>
-    <tr><td>overwriteMode</td><td>option to configure when the destination file should be overwritten if it exist <span class="since">(since 2.2.0)</span>. Possible values are:
+    <tr><td>overwriteMode</td><td>option to configure when the destination file should be overwritten if it exist <span class="since">(since 2.2.0)</span>.
+Possible values are:
 <ul><li><b>newer</b> (default)</li> overwrite the destination file if a more recent one is available (based on timestamp)
 <li><b>different</b></li> overwrite the destination file if the timestamp is different
 <li><b>always</b></li> always overwrite the destination file
 <li><b>never</b></li> never overwrite the destination file
 </ul></td><td>No. Defaults to 'newer'.</td></tr>
+    <tr><td>dirMode</td><td>option to configure how the [organisation] token in the patterns will be replaced <span class="since">(since 2.3.0)</span>.
+Possible values are:
+<ul><li><b>flat</b> (default)</li> don't convert the organisation name, the token will get exactly the same value as the organisation
+<li><b>tree</b></li> replace the '.' within the organisation name with '/'
+</ul>See the examples below.</td><td>No. Defaults to 'flat'.</td></tr>
     <tr><td>symlink</td><td>true to create symbolic links, false to copy the artifacts. The destination of the symbolic links depends on the value of the useOrigin attribute <span class="since">(since 2.0)</span></td><td>No. Defaults to false</td></tr>
     <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
     <tr><td>log</td><td>the log setting to use during the resolve and retrieve process. <span class="since">(since 2.0)</span><br/>
@@ -129,6 +135,33 @@ lib
     looks-1.1.zip
 </code>
 
+<hr/>
+<code type="xml">
+<ivy:retrieve pattern="${lib.dir}/[organisation]/[artifact]-[revision].[ext]" dirMode="flat"/>
+</code>
+Retrieves all dependencies of the last resolve call to a lib directory. The [organisation] token will get the unmodified organisation value. The resulting lib dir could look like this:
+<code>
+lib
+  org.apache
+    commons-lang-1.0.jar
+  org.junit
+    junit-4.1.jar
+    junit-4.1.zip
+</code>
+
+<code type="xml">
+<ivy:retrieve pattern="${lib.dir}/[organisation]/[artifact]-[revision].[ext]" dirMode="tree"/>
+</code>
+Retrieves all dependencies of the last resolve call to a lib directory. The [organisation] token will get a tree structure. The resulting lib dir could look like this:
+<code>
+lib
+  org
+    apache
+      commons-lang-1.0.jar
+    junit
+      junit-4.1.jar
+      junit-4.1.zip
+</code>
 
 <hr/>
 <code type="xml">
