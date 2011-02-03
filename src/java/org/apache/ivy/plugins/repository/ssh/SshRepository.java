@@ -170,8 +170,10 @@ public class SshRepository extends AbstractSshBasedRepository {
         URI parentUri = null;
         try {
             parentUri = new URI(parent);
-        } catch (URISyntaxException e1) {
-            // failed earlier
+        } catch (URISyntaxException e) {
+            IOException ioe = new IOException("The uri '" + parent + "' is not valid!");
+            ioe.initCause(e);
+            throw ioe;
         }
         String fullCmd = replaceArgument(listCommand, parentUri.getPath());
         channel.setCommand(fullCmd);
@@ -234,13 +236,17 @@ public class SshRepository extends AbstractSshBasedRepository {
     public void put(File source, String destination, boolean overwrite) throws IOException {
         Message.debug("SShRepository:put called: " + destination);
         Session session = getSession(destination);
+
+        URI destinationUri = null;
         try {
-            URI destinationUri = null;
-            try {
-                destinationUri = new URI(destination);
-            } catch (URISyntaxException e) {
-                // failed earlier in getSession()
-            }
+            destinationUri = new URI(destination);
+        } catch (URISyntaxException e) {
+            IOException ioe = new IOException("The uri '" + destination + "' is not valid!");
+            ioe.initCause(e);
+            throw ioe;
+        }
+
+        try {
             String filePath = destinationUri.getPath();
             int lastSep = filePath.lastIndexOf(fileSeparator);
             String path;
@@ -342,17 +348,17 @@ public class SshRepository extends AbstractSshBasedRepository {
             destination.getParentFile().mkdirs();
         }
         Session session = getSession(source);
+
+        URI sourceUri = null;
         try {
-            URI sourceUri = null;
-            try {
-                sourceUri = new URI(source);
-            } catch (URISyntaxException e) {
-                // fails earlier
-            }
-            if (sourceUri == null) {
-                Message.error("could not parse URI " + source);
-                return;
-            }
+            sourceUri = new URI(source);
+        } catch (URISyntaxException e) {
+            IOException ioe = new IOException("The uri '" + source + "' is not valid!");
+            ioe.initCause(e);
+            throw ioe;
+        }
+
+        try {
             Scp myCopy = new Scp(session);
             myCopy.get(sourceUri.getPath(), destination.getCanonicalPath());
         } catch (IOException e) {

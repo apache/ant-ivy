@@ -136,8 +136,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
             return uri;
         } catch (URISyntaxException e) {
             Message.error(e.getMessage());
-            Message.error("The uri is in the wrong format.");
-            Message.error("Please use scheme://user:pass@hostname/path/to/repository");
+            Message.error("The uri '" + source + "' is in the wrong format.");
+            Message.error("Please use " + getRepositoryScheme() + "://user:pass@hostname/path/to/repository");
             return null;
         }
     }
