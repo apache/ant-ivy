@@ -73,9 +73,20 @@ public class RetrieveEngine {
      * localCacheDirectory to determine an ivy report file, used as input for the copy If such a
      * file does not exist for any conf (resolve has not been called before ?) then an
      * IllegalStateException is thrown and nothing is copied.
+     *
+     * @deprecated Use {@link #retrieve(org.apache.ivy.core.module.id.ModuleRevisionId, RetrieveOptions)} instead
      */
-    public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
-            throws IOException {
+    public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws IOException {
+        RetrieveOptions retieveOptions = new RetrieveOptions(options);
+        retieveOptions.setDestArtifactPattern(destFilePattern);
+
+        RetrieveReport result = retrieve(mrid, retieveOptions);
+        return result.getNbrArtifactsCopied();
+    }
+
+    public RetrieveReport retrieve(ModuleRevisionId mrid, RetrieveOptions options) throws IOException {
+        RetrieveReport report = new RetrieveReport();
+
         ModuleId moduleId = mrid.getModuleId();
         if (LogOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info(":: retrieving :: " + moduleId + (options.isSync() ? " [sync]" : ""));
@@ -85,10 +96,8 @@ public class RetrieveEngine {
         Message.verbose("\tcheckUpToDate=" + settings.isCheckUpToDate());
         long start = System.currentTimeMillis();
 
-        destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, settings
-                .getVariables());
-        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(),
-            settings.getVariables());
+        String destFilePattern = IvyPatternHelper.substituteVariables(options.getDestArtifactPattern(), settings.getVariables());
+        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), settings.getVariables());
 
         String[] confs = getConfs(mrid, options);
         if (LogOptions.LOG_DEFAULT.equals(options.getLog())) {
@@ -104,7 +113,8 @@ public class RetrieveEngine {
             Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
             File fileRetrieveRoot = settings.resolveFile(
                 IvyPatternHelper.getTokenRoot(destFilePattern));
-            File ivyRetrieveRoot = destIvyPattern == null 
+            report.setRetrieveRoot(fileRetrieveRoot);
+            File ivyRetrieveRoot = destIvyPattern == null
                 ? null : settings.resolveFile(IvyPatternHelper.getTokenRoot(destIvyPattern));
             Collection targetArtifactsStructure = new HashSet(); // Set(File) set of all paths
             // which should be present at
@@ -113,8 +123,6 @@ public class RetrieveEngine {
             Collection targetIvysStructure = new HashSet(); // same for ivy files
 
             // do retrieve
-            int targetsCopied = 0;
-            int targetsUpToDate = 0;
             long totalCopiedSize = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
@@ -144,11 +152,12 @@ public class RetrieveEngine {
                                 new EndRetrieveArtifactEvent(artifact, destFile));
                         }
                         totalCopiedSize += destFile.length();
-                        targetsCopied++;
+                        report.addCopiedFile(destFile);
                     } else {
                         Message.verbose("\t\tto " + destFile + " [NOT REQUIRED]");
-                        targetsUpToDate++;
+                        report.addUpToDateFile(destFile);
                     }
+
                     if ("ivy".equals(artifact.getType())) {
                         targetIvysStructure
                                 .addAll(FileUtil.getPathFiles(ivyRetrieveRoot, destFile));
@@ -184,9 +193,9 @@ public class RetrieveEngine {
             }
             long elapsedTime = System.currentTimeMillis() - start;
             String msg = "\t"
-                + targetsCopied
+                + report.getNbrArtifactsCopied()
                 + " artifacts copied"
-                + (settings.isCheckUpToDate() ? (", " + targetsUpToDate + " already retrieved")
+                + (settings.isCheckUpToDate() ? (", " + report.getNbrArtifactsUpToDate() + " already retrieved")
                         : "")
                 + " (" + (totalCopiedSize / KILO) + "kB/" + elapsedTime + "ms)";
             if (LogOptions.LOG_DEFAULT.equals(options.getLog())) {
@@ -197,11 +206,11 @@ public class RetrieveEngine {
             Message.verbose("\tretrieve done (" + (elapsedTime) + "ms)");
             if (this.eventManager != null) {
                 this.eventManager.fireIvyEvent(new EndRetrieveEvent(
-                    mrid, confs, elapsedTime, targetsCopied, targetsUpToDate, totalCopiedSize, 
+                    mrid, confs, elapsedTime, report.getNbrArtifactsCopied(), report.getNbrArtifactsUpToDate(), totalCopiedSize,
                     options));
             }
 
-            return targetsCopied;
+            return report;
         } catch (Exception ex) {
             throw new RuntimeException("problem during retrieve of " + moduleId + ": " + ex, ex);
         }

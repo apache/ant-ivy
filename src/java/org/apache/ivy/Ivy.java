@@ -51,6 +51,7 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveEngine;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.core.retrieve.RetrieveReport;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
@@ -538,6 +539,16 @@ public class Ivy {
         pushContext();
         try {
             return retrieveEngine.retrieve(mrid, destFilePattern, options);
+        } finally {
+            popContext();
+        }
+    }
+
+    public RetrieveReport retrieve(ModuleRevisionId mrid, RetrieveOptions options)
+            throws IOException {
+        pushContext();
+        try {
+            return retrieveEngine.retrieve(mrid, options);
         } finally {
             popContext();
         }

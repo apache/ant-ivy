@@ -17,13 +17,19 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.core.retrieve.RetrieveReport;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.PatternSet;
 
 /**
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
@@ -51,12 +57,32 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     private String dirMode = RetrieveOptions.DIRMODE_FLAT;
 
+    private String pathId = null;
+
+    private String setId = null;
+
     public String getPattern() {
         return pattern;
     }
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    public String getPathId() {
+        return pathId;
+    }
+
+    public void setPathId(String pathId) {
+        this.pathId = pathId;
+    }
+
+    public String getSetId() {
+        return setId;
+    }
+
+    public void setSetId(String setId) {
+        this.setId = setId;
     }
 
     public void doExecute() throws BuildException {
@@ -70,23 +96,47 @@ public class IvyRetrieve extends IvyPostResolveTask {
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
             Filter artifactFilter = getArtifactFilter();
-            int targetsCopied = getIvyInstance().retrieve(
-                getResolvedMrid(),
-                pattern,
-                ((RetrieveOptions) new RetrieveOptions()
-                    .setLog(getLog()))
-                    .setConfs(splitConfs(getConf()))
-                    .setDestIvyPattern(ivypattern)
-                    .setArtifactFilter(artifactFilter)
-                    .setSync(sync)
-                    .setOverwriteMode(getOverwriteMode())
-                    .setDirMode(getDirMode())
-                    .setUseOrigin(isUseOrigin())
-                    .setMakeSymlinks(symlink)
-                    .setResolveId(getResolveId()));
+            RetrieveReport report = getIvyInstance().retrieve(
+                    getResolvedMrid(),
+                    ((RetrieveOptions) new RetrieveOptions()
+                            .setLog(getLog()))
+                            .setConfs(splitConfs(getConf()))
+                            .setDestArtifactPattern(pattern)
+                            .setDestIvyPattern(ivypattern)
+                            .setArtifactFilter(artifactFilter)
+                            .setSync(sync)
+                            .setOverwriteMode(getOverwriteMode())
+                            .setDirMode(getDirMode())
+                            .setUseOrigin(isUseOrigin())
+                            .setMakeSymlinks(symlink)
+                            .setResolveId(getResolveId()));
+
+            int targetsCopied = report.getNbrArtifactsCopied();
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
+
+            if (getPathId() != null) {
+                Path path = new Path(getProject());
+                getProject().addReference(getPathId(), path);
+
+                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext(); ) {
+                    path.createPathElement().setLocation((File) iter.next());
+                }
+            }
+
+            if (getSetId() != null) {
+                FileSet fileset = new FileSet();
+                fileset.setProject(getProject());
+                getProject().addReference(getSetId(), fileset);
+
+                fileset.setDir(report.getRetrieveRoot());
+
+                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext(); ) {
+                    PatternSet.NameEntry ne = fileset.createInclude();
+                    ne.setName(getPath(report.getRetrieveRoot(), (File) iter.next()));
+                }
+            }
         } catch (Exception ex) {
             throw new BuildException("impossible to ivy retrieve: " + ex, ex);
         }
@@ -143,4 +193,26 @@ public class IvyRetrieve extends IvyPostResolveTask {
     public String getDirMode() {
         return dirMode;
     }
+
+    /**
+     * Returns the path of the file relative to the given base directory.
+     *
+     * @param base the parent directory to which the file must be evaluated.
+     * @param file the file for which the path should be returned
+     * @return the path of the file relative to the given base directory.
+     */
+    private String getPath(File base, File file) {
+        String absoluteBasePath = base.getAbsolutePath();
+
+        int beginIndex = absoluteBasePath.length();
+
+        // checks if the basePath ends with the file separator (which can for instance
+        // happen if the basePath is the root on unix)
+        if (!absoluteBasePath.endsWith(File.separator)) {
+            beginIndex++; // skip the seperator char as well
+        }
+
+        return file.getAbsolutePath().substring(beginIndex);
+    }
+    
 }

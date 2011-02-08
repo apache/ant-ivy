@@ -73,6 +73,10 @@ Available options are the same as for [[ant:resolve]] when used to trigger resol
 <ul><li><b>default</b></li> the default log settings, where all usual messages are output to the console
 <li><b>quiet</b></li> disable all usual messages, making the whole retrieve process quiet unless errors occur
 </ul></td><td>No, defaults to 'default'.</td></tr>
+    <tr><td>pathId</td><td>the id of the path to create containing the retrieved artifacts. <span class="since">since 2.3.0</span></td>
+        <td>No. No path is created by default.</td></tr>
+    <tr><td>setId</td><td>the id of the fileset to create containing the retrieved artifacts. <span class="since">since 2.3.0</span></td>
+        <td>No. No fileset is created by default.</td></tr>
 </table>
 <h1>Examples</h1>
 <code type="xml">

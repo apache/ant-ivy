@@ -48,6 +48,11 @@ public class RetrieveOptions extends LogOptions {
     private String destIvyPattern = null;
 
     /**
+     * The pattern to which artifacts should be retrieved.
+     */
+    private String destArtifactPattern = null;
+
+    /**
      * The filter to apply before retrieving artifacts.
      */
     private Filter artifactFilter = FilterHelper.NO_FILTER;
@@ -78,6 +83,32 @@ public class RetrieveOptions extends LogOptions {
      * The id used to store the resolve information.
      */
     private String resolveId;
+
+    public RetrieveOptions() {
+    }
+
+    public RetrieveOptions(RetrieveOptions options) {
+        super(options);
+        this.confs = options.confs;
+        this.destIvyPattern = options.destIvyPattern;
+        this.destArtifactPattern = options.destArtifactPattern;
+        this.artifactFilter = options.artifactFilter;
+        this.sync = options.sync;
+        this.overwriteMode = options.overwriteMode;
+        this.useOrigin = options.useOrigin;
+        this.makeSymlinks = options.makeSymlinks;
+        this.dirMode = options.dirMode;
+        this.resolveId = options.resolveId;
+    }
+
+    public String getDestArtifactPattern() {
+        return destArtifactPattern;
+    }
+
+    public RetrieveOptions setDestArtifactPattern(String destArtifactPattern) {
+        this.destArtifactPattern = destArtifactPattern;
+        return this;
+    }
 
     public String getDirMode() {
         return dirMode == null ? DIRMODE_FLAT : dirMode;
