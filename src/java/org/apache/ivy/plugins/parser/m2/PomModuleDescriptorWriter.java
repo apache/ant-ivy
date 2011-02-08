@@ -233,6 +233,14 @@ public final class PomModuleDescriptorWriter {
                 }
                 indent(out, indent * 3);
                 out.println("<version>" + version + "</version>");
+                if (dep.getType() != null) {
+                    indent(out, indent * 3);
+                    out.println("<type>" + dep.getType() + "</type>");
+                }
+                if (dep.getClassifier() != null) {
+                    indent(out, indent * 3);
+                    out.println("<classifier>" + dep.getClassifier() + "</classifier>");
+                }
                 if (dep.getScope() != null) {
                     indent(out, indent * 3);
                     out.println("<scope>" + dep.getScope() + "</scope>");

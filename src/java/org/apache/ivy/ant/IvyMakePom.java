@@ -63,6 +63,8 @@ public class IvyMakePom extends IvyTask {
         private String artifact = null;
         private String version = null;
         private String scope = null;
+        private String type = null;
+        private String classifier = null;
         private boolean optional = false;
         
         public String getGroup() {
@@ -88,6 +90,18 @@ public class IvyMakePom extends IvyTask {
         }
         public void setScope(String scope) {
             this.scope = scope;
+        }
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+        public String getClassifier() {
+            return classifier;
+        }
+        public void setClassifier(String classifier) {
+            this.classifier = classifier;
         }
         public boolean getOptional() {
             return optional;
@@ -267,7 +281,7 @@ public class IvyMakePom extends IvyTask {
             Dependency dependency = (Dependency) iter.next();
             result.add(new PomWriterOptions.ExtraDependency(dependency.getGroup(),
                     dependency.getArtifact(), dependency.getVersion(), dependency.getScope(),
-                    dependency.getOptional()));
+                    dependency.getType(), dependency.getClassifier(), dependency.getOptional()));
         }
         return result;
     }

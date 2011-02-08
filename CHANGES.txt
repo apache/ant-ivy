@@ -118,6 +118,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
 - NEW: Import Bushel into Ivy core (IVY-1241)
 
+- IMPROVEMENT: ivy:makepom child element dependency should support the type and classifier attributes (IVY-1262)
 - IMPROVEMENT: ivy:retrieve can now create a path or fileset containing the retrieved artifacts (IVY-1235)
 - IMPROVEMENT: Improve diagnostics in ssh resolver (IVY-1267) (thanks to Stepan Koltsov)
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.

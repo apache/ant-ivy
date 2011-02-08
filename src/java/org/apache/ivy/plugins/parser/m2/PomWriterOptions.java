@@ -160,13 +160,18 @@ public class PomWriterOptions {
             private String artifact;
             private String version;
             private String scope;
+            private String type;
+            private String classifier;
             private boolean optional;
             
-            public ExtraDependency(String group, String artifact, String version, String scope, boolean optional) {
+            public ExtraDependency(String group, String artifact, String version, String scope, 
+                    String type, String classifier, boolean optional) {
                 this.group = group;
                 this.artifact = artifact;
                 this.version = version;
                 this.scope = scope;
+                this.type = type;
+                this.classifier = classifier;
                 this.optional = optional;
             }
             
@@ -181,6 +186,12 @@ public class PomWriterOptions {
             }
             public String getScope() {
                 return scope;
+            }
+            public String getType() {
+                return type;
+            }
+            public String getClassifier() {
+                return classifier;
             }
             public boolean isOptional() {
                 return optional;

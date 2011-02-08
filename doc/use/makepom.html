@@ -109,7 +109,7 @@ ${ivy.pom.header}
         <td>describes the mapping from an Ivy module configuration to a Maven POM scope.<br/>These elements takes two attributes: <ul><li>conf</li> the configuration to map<li>scope</li>the scope to which it should be mapped</ul></td>
         <td>0..n</td></tr>
     <tr><td>dependency</td>
-        <td>describes extra dependencies that should be added to the generated Maven POM file.<br/>These elements takes the following attributes: <ul><li>group</li> the groupId. Default <i>organisation</i> as defined in <i>info</i><li>artifact</li> the name of the artifact<li>version</li> the version. Default <i>revision</i> as defined in <i>info</i><li>scope</li> the scope<li>optional</li> is the artifact optional. Default <i>false</i></ul></td>
+        <td>describes extra dependencies that should be added to the generated Maven POM file.<br/>These elements takes the following attributes: <ul><li>group</li> the groupId. Default <i>organisation</i> as defined in <i>info</i><li>artifact</li> the name of the artifact<li>version</li> the version. Default <i>revision</i> as defined in <i>info</i><li>type <span class="since">(since 2.3)</span></li> the type<li>classifier <span class="since">(since 2.3)</span></li> the classifier<li>scope</li> the scope<li>optional</li> is the artifact optional. Default <i>false</i></ul></td>
         <td>0..n</td></tr>
 </tbody>
 </table>
