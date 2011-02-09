@@ -20,12 +20,17 @@ package org.apache.ivy.core.retrieve;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 
 public class RetrieveReport {
 
     private Collection/*<File>*/ upToDateFiles = new HashSet();
     private Collection/*<File>*/ copiedFiles = new HashSet();
+    private Map/*<File, ArtifactDownloadReport>*/ downloadReport = new HashMap();
 
     private File retrieveRoot;
 
@@ -48,12 +53,14 @@ public class RetrieveReport {
         return upToDateFiles.size();
     }
 
-    public void addCopiedFile(File file) {
+    public void addCopiedFile(File file, ArtifactDownloadReport report) {
         copiedFiles.add(file);
+        downloadReport.put(file, report);
     }
 
-    public void addUpToDateFile(File file) {
+    public void addUpToDateFile(File file, ArtifactDownloadReport report) {
         upToDateFiles.add(file);
+        downloadReport.put(file, report);
     }
 
     /**
@@ -81,4 +88,10 @@ public class RetrieveReport {
         return result;
     }
 
+    /**
+     * Get the mapping between the copied files and their corresponding download report
+     */
+    public Map getDownloadReport() {
+        return downloadReport;
+    }
 }

@@ -152,10 +152,10 @@ public class RetrieveEngine {
                                 new EndRetrieveArtifactEvent(artifact, destFile));
                         }
                         totalCopiedSize += destFile.length();
-                        report.addCopiedFile(destFile);
+                        report.addCopiedFile(destFile, artifact);
                     } else {
                         Message.verbose("\t\tto " + destFile + " [NOT REQUIRED]");
-                        report.addUpToDateFile(destFile);
+                        report.addUpToDateFile(destFile, artifact);
                     }
 
                     if ("ivy".equals(artifact.getType())) {
