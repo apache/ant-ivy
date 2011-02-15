@@ -874,6 +874,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 originalFileInCache, 
                 mdFileInCache);
 
+            getMemoryCache().putInCache(mdFileInCache, new ParserSettingsMonitor(settings), true, md);
             saveResolvers(md, resolver.getName(), resolver.getName());
             
             if (!md.isDefault()) {
