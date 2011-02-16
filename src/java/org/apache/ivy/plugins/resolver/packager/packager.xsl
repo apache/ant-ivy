@@ -22,6 +22,7 @@
 
     <xsl:param name="resourceURL"/>
     <xsl:param name="restricted"/>
+    <xsl:param name="quiet"/>
 
     <xsl:variable name="maven2repo" select="'http://repo1.maven.org/maven2/'"/>
 
@@ -362,7 +363,7 @@
         <!-- Attempt download using this URL; allow download to fail if this is not the last URL -->
         <target name="download.{$index}.{generate-id()}" depends="checkdownload.{$index - 1}.{generate-id()}"
           unless="alreadydownloaded.{generate-id()}">
-            <get src="{$url}" dest="{$destfile}" verbose="true" ignoreerrors="{string(not($isLastURL))}"/>
+            <get src="{$url}" dest="{$destfile}" verbose="{string($quiet = 'false')}" ignoreerrors="{string(not($isLastURL))}"/>
         </target>
 
         <!-- Check whether download attempt was successful -->

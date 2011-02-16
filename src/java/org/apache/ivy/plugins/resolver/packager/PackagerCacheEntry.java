@@ -146,6 +146,7 @@ public class PackagerCacheEntry {
             project.setUserProperty("ivy.packager.validate", "true");
         }
         project.setUserProperty("ivy.packager.restricted", "" + this.restricted);
+        project.setUserProperty("ivy.packager.quiet", String.valueOf(quiet));
         if (properties != null) {
             for (Iterator it = properties.entrySet().iterator(); it.hasNext();) {
                 Entry entry = (Entry) it.next();

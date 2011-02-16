@@ -123,6 +123,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Improve diagnostics in ssh resolver (IVY-1267) (thanks to Stepan Koltsov)
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 
+- FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)
 - FIX: Dynamic version resolution result can be incorrect when ivy metadata contains extra attributes (IVY-1236)
 - FIX: NullPointerException in FileUtil#forceDelete.
 - FIX: XmlModuleDescriptorUpdater is a mess that produces broken xmls in many cases (IVY-1010)
