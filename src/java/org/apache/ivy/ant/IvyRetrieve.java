@@ -28,8 +28,10 @@ import org.apache.ivy.core.retrieve.RetrieveReport;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
+import org.apache.tools.ant.util.FileNameMapper;
 
 /**
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
@@ -60,6 +62,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
     private String pathId = null;
 
     private String setId = null;
+    
+    private Mapper mapper = null;
 
     public String getPattern() {
         return pattern;
@@ -109,7 +113,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
                             .setDirMode(getDirMode())
                             .setUseOrigin(isUseOrigin())
                             .setMakeSymlinks(symlink)
-                            .setResolveId(getResolveId()));
+                            .setResolveId(getResolveId())
+                            .setMapper(mapper == null ? null : new MapperAdapter(mapper)));
 
             int targetsCopied = report.getNbrArtifactsCopied();
             boolean haveTargetsBeenCopied = targetsCopied > 0;
@@ -192,6 +197,28 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     public String getDirMode() {
         return dirMode;
+    }
+    
+    /**
+     * Add a mapper to convert the file names.
+     *
+     * @param mapper a <code>Mapper</code> value.
+     */
+    public void addMapper(Mapper mapper) {
+        if (this.mapper != null) {
+            throw new IllegalArgumentException("Cannot define more than one mapper");
+        }
+        this.mapper = mapper;
+    }
+
+    /**
+     * Add a nested filenamemapper.
+     * @param fileNameMapper the mapper to add.
+     */
+    public void add(FileNameMapper fileNameMapper) {
+        Mapper m = new Mapper(getProject());
+        m.add(fileNameMapper);
+        addMapper(m);
     }
 
     /**

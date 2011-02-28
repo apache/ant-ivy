@@ -38,6 +38,7 @@ Example:
 pattern: lib/[conf]/[artifact].[ext]
 root: lib
 
+<span class="since">since 2.3</span> A nested <a href="http://ant.apache.org/manual/Types/mapper.html">mapper</a> element can be used to specify more complex filename transformations of the retrieved files. See the examples below.
 
 <table class="ant">
 <thead>
@@ -172,6 +173,16 @@ lib
 <ivy:retrieve organisation="foo" module="bar" inline="true" pattern="${my.install.dir}/[artifact].[ext]"/>
 </code>
 Resolves and retrieve the latest version of the module bar and its dependencies in the directory pointed by ${my.install.dir}.
+<hr/>
+<code type="xml">
+<ivy:retrieve pattern="lib/[artifact]-[revision].[ext]">
+    <firstmatchmapper>
+        <globmapper from="lib/*-SNAPSHOT.jar" to="lib/snapshots/*-SNAPSHOT.jar" />
+        <globmapper from="lib/*" to="lib/releases/*"/>
+    </firstmatchmapper>
+</ivy:retrieve>
+</code>
+Retrieves all dependencies of the last resolve call to a lib directory. The jar files with a version equal to 'SNAPSHOT' are retrieved in a 'snapshots' directory. The other ones are retrieved in a 'releases' directory.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

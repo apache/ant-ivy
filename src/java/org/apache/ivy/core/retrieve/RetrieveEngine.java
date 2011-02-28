@@ -307,7 +307,7 @@ public class RetrieveEngine {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
                 String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern
                         : destFilePattern;
-
+                
                 if (!"ivy".equals(artifact.getType())
                         && !options.getArtifactFilter().accept(artifact.getArtifact())) {
                     continue; // skip this artifact, the filter didn't accept it!
@@ -327,33 +327,41 @@ public class RetrieveEngine {
                 } else {
                     throw new IllegalArgumentException("Unsupported dirMode: " + options.getDirMode());
                 }
-
+                
                 Set dest = (Set) artifactsToCopy.get(artifact);
                 if (dest == null) {
                     dest = new HashSet();
                     artifactsToCopy.put(artifact, dest);
                 }
                 String copyDest = settings.resolveFile(destFileName).getAbsolutePath();
-                dest.add(copyDest);
 
-                Set conflicts = (Set) conflictsMap.get(copyDest);
-                Set conflictsReports = (Set) conflictsReportsMap.get(copyDest);
-                Set conflictsConf = (Set) conflictsConfMap.get(copyDest);
-                if (conflicts == null) {
-                    conflicts = new HashSet();
-                    conflictsMap.put(copyDest, conflicts);
+                String[] destinations = new String[] {copyDest};
+                if (options.getMapper() != null) {
+                    destinations = options.getMapper().mapFileName(copyDest);
                 }
-                if (conflictsReports == null) {
-                    conflictsReports = new HashSet();
-                    conflictsReportsMap.put(copyDest, conflictsReports);
-                }
-                if (conflictsConf == null) {
-                    conflictsConf = new HashSet();
-                    conflictsConfMap.put(copyDest, conflictsConf);
-                }
-                if (conflicts.add(artifact.getArtifact().getId())) {
-                    conflictsReports.add(artifact);
-                    conflictsConf.add(conf);
+
+                for (int j = 0; j < destinations.length; j++) {
+                    dest.add(destinations[j]);
+
+                    Set conflicts = (Set) conflictsMap.get(destinations[j]);
+                    Set conflictsReports = (Set) conflictsReportsMap.get(destinations[j]);
+                    Set conflictsConf = (Set) conflictsConfMap.get(destinations[j]);
+                    if (conflicts == null) {
+                        conflicts = new HashSet();
+                        conflictsMap.put(destinations[j], conflicts);
+                    }
+                    if (conflictsReports == null) {
+                        conflictsReports = new HashSet();
+                        conflictsReportsMap.put(destinations[j], conflictsReports);
+                    }
+                    if (conflictsConf == null) {
+                        conflictsConf = new HashSet();
+                        conflictsConfMap.put(destinations[j], conflictsConf);
+                    }
+                    if (conflicts.add(artifact.getArtifact().getId())) {
+                        conflictsReports.add(artifact);
+                        conflictsConf.add(conf);
+                    }
                 }
             }
         }

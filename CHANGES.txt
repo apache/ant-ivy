@@ -122,6 +122,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now create a path or fileset containing the retrieved artifacts (IVY-1235)
 - IMPROVEMENT: Improve diagnostics in ssh resolver (IVY-1267) (thanks to Stepan Koltsov)
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
+- IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
 - FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)
 - FIX: Dynamic version resolution result can be incorrect when ivy metadata contains extra attributes (IVY-1236)

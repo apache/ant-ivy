@@ -83,6 +83,8 @@ public class RetrieveOptions extends LogOptions {
      * The id used to store the resolve information.
      */
     private String resolveId;
+    
+    private FileNameMapper mapper;
 
     public RetrieveOptions() {
     }
@@ -99,6 +101,7 @@ public class RetrieveOptions extends LogOptions {
         this.makeSymlinks = options.makeSymlinks;
         this.dirMode = options.dirMode;
         this.resolveId = options.resolveId;
+        this.mapper = options.mapper;
     }
 
     public String getDestArtifactPattern() {
@@ -191,4 +194,13 @@ public class RetrieveOptions extends LogOptions {
         return this;
     }
 
+    public FileNameMapper getMapper() {
+        return mapper;
+    }
+
+    public RetrieveOptions setMapper(FileNameMapper mapper) {
+        this.mapper = mapper;
+        return this;
+    }
+    
 }
