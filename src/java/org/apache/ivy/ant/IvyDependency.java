@@ -49,6 +49,12 @@ public class IvyDependency {
     private String branch;
 
     private String conf;
+    
+    private boolean changing;
+    
+    private boolean force;
+    
+    private boolean transitive = true;
 
     public IvyDependencyConf createConf() {
         IvyDependencyConf c = new IvyDependencyConf();
@@ -113,6 +119,30 @@ public class IvyDependency {
     public void setConf(String conf) {
         this.conf = conf;
     }
+    
+    public boolean isChanging() {
+        return changing;
+    }
+    
+    public void setChanging(boolean changing) {
+        this.changing = changing;
+    }
+    
+    public boolean isForce() {
+        return force;
+    }
+    
+    public void setForce(boolean force) {
+        this.force = force;
+    }
+    
+    public boolean isTransitive() {
+        return transitive;
+    }
+    
+    public void setTransitive(boolean transitive) {
+        this.transitive = transitive;
+    }
 
     DependencyDescriptor asDependencyDescriptor(ModuleDescriptor md, String masterConf, IvySettings settings) {
         if (org == null) {
@@ -122,8 +152,8 @@ public class IvyDependency {
             throw new BuildException("'name' is required when using inline mode");
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(org, name, branch, rev);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false,
-                true);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, force, changing,
+                transitive);
         if (conf != null) {
             dd.addDependencyConfiguration(masterConf, conf);
         } else {
