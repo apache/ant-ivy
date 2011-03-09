@@ -98,6 +98,7 @@ public class IvyCacheFilesetTest extends TestCase {
         assertTrue(ref instanceof FileSet);
         FileSet fs = (FileSet) ref;
         DirectoryScanner directoryScanner = fs.getDirectoryScanner(project);
+        directoryScanner.scan();
         assertEquals(0, directoryScanner.getIncludedFiles().length);
     }
 

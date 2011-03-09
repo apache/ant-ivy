@@ -21,9 +21,12 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 
@@ -57,10 +60,6 @@ public class IvyCacheFileset extends IvyCacheTask {
             throw new BuildException("setid is required in ivy cachefileset");
         }
         try {
-            FileSet fileset = new FileSet();
-            fileset.setProject(getProject());
-            getProject().addReference(setid, fileset);
-
             List paths = getArtifactReports();
             File base = null;
             for (Iterator iter = paths.iterator(); iter.hasNext();) {
@@ -69,11 +68,12 @@ public class IvyCacheFileset extends IvyCacheTask {
                     base = getBaseDir(base, a.getLocalFile());
                 }
             }
+
+            FileSet fileset;
             if (base == null) {
-                fileset.setDir(new File("."));
-                NameEntry ne = fileset.createExclude();
-                ne.setName("**/*");
+                fileset = new EmptyFileSet();
             } else {
+                fileset = new FileSet();
                 fileset.setDir(base);
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
                     ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
@@ -83,6 +83,9 @@ public class IvyCacheFileset extends IvyCacheTask {
                     }
                 }
             }
+
+            fileset.setProject(getProject());
+            getProject().addReference(setid, fileset);
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy cache fileset: " + ex, ex);
         }
@@ -152,4 +155,48 @@ public class IvyCacheFileset extends IvyCacheTask {
         return r;
     }
 
+    private static class EmptyFileSet extends FileSet {
+
+        private DirectoryScanner ds = new EmptyDirectoryScanner();
+
+        public Iterator iterator() {
+            return new EmptyIterator();
+        }
+        
+        public Object clone() {
+            return new EmptyFileSet();
+        }
+
+        public int size() {
+            return 0;
+        }
+
+        public DirectoryScanner getDirectoryScanner(Project project) {
+            return ds;
+        }
+    }
+
+    private static class EmptyIterator implements Iterator {
+
+        public boolean hasNext() {
+            return false;
+        }
+
+        public Object next() {
+            throw new NoSuchElementException("EmptyFileSet Iterator");
+        }
+
+        public void remove() {
+            throw new IllegalStateException("EmptyFileSet Iterator");
+        }
+
+    }
+
+    private static class EmptyDirectoryScanner extends DirectoryScanner {
+
+        public String[] getIncludedFiles() {
+            return new String[0];
+        }
+
+    }
 }
