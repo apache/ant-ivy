@@ -253,11 +253,6 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                     // was already contained in the rest of the stack, the circle is closed, nothing
                     // else to do
                 } else {
-                    if (callerNode == null) {
-                        // we have reached the root without finding a way to change the blacklist a
-                        // caller in a particular path, this is a strict conflict
-                        return null;
-                    }
                     callerStack.push(callerNode);
                     Collection sub = blackListIncompatibleCaller(
                         versionMatcher, conflictParent, selectedNode, evictedNode, callerStack);
