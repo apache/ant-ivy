@@ -33,6 +33,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvyPattern;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.util.Checks;
+import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 /**
@@ -302,22 +303,24 @@ public class FileSystemResolver extends RepositoryResolver {
     }
 
     public void addConfiguredIvy(IvyPattern p) {
-        Checks.checkAbsolute(p.getPattern(), "ivy pattern");
+        File file = Checks.checkAbsolute(p.getPattern(), "ivy pattern");
+        p.setPattern(file.getAbsolutePath());
         super.addConfiguredIvy(p);
     }
     
     public void addIvyPattern(String pattern) {
-        Checks.checkAbsolute(pattern, "ivy pattern");
-        super.addIvyPattern(pattern);
+        File file = Checks.checkAbsolute(pattern, "ivy pattern");
+        super.addIvyPattern(file.getAbsolutePath());
     }
     
     public void addConfiguredArtifact(IvyPattern p) {
-        Checks.checkAbsolute(p.getPattern(), "artifact pattern");
+        File file = Checks.checkAbsolute(p.getPattern(), "artifact pattern");
+        p.setPattern(file.getAbsolutePath());
         super.addConfiguredArtifact(p);
     }
     
     public void addArtifactPattern(String pattern) {
-        Checks.checkAbsolute(pattern, "artifact pattern");
-        super.addArtifactPattern(pattern);
+        File file = Checks.checkAbsolute(pattern, "artifact pattern");
+        super.addArtifactPattern(file.getAbsolutePath());
     }
 }

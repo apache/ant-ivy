@@ -47,7 +47,7 @@ public final class Checks {
         if (!f.isAbsolute()) {
             throw new IllegalArgumentException(fileName + " must be absolute: " + f.getPath());
         }
-        return f;
+        return FileUtil.normalize(f.getPath());
     }
     
     public static File checkAbsolute(String path, String fileName) {
@@ -56,6 +56,6 @@ public final class Checks {
         if (!f.isAbsolute()) {
             throw new IllegalArgumentException(fileName + " must be absolute: " + path);
         }
-        return f;
+        return FileUtil.normalize(f.getPath());
     }
 }

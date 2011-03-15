@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
@@ -372,15 +374,117 @@ public final class FileUtil {
     }
 
     public static File resolveFile(File file, String filename) {
-        /*
-         * very simple resolveFile algorithm compared to what is done in Ant. It must be enough in
-         * most common cases though.
-         */
-        File f = new File(filename);
-        if (f.isAbsolute()) {
-            return f;
+        File result = new File(filename);
+        if (!result.isAbsolute()) {
+            result = new File(file, filename);
         }
-        return new File(file, filename);
+        
+        return normalize(result.getPath());
     }
+    
+    //////////////////////////////////////////////
+    // The following code comes from Ant FileUtils
+    //////////////////////////////////////////////
+    
+   /**
+    * &quot;Normalize&quot; the given absolute path.
+    *
+    * <p>This includes:
+    * <ul>
+    *   <li>Uppercase the drive letter if there is one.</li>
+    *   <li>Remove redundant slashes after the drive spec.</li>
+    *   <li>Resolve all ./, .\, ../ and ..\ sequences.</li>
+    *   <li>DOS style paths that start with a drive letter will have
+    *     \ as the separator.</li>
+    * </ul>
+    * Unlike {@link File#getCanonicalPath()} this method
+    * specifically does not resolve symbolic links.
+    *
+    * @param path the path to be normalized.
+    * @return the normalized version of the path.
+    *
+    * @throws java.lang.NullPointerException if path is null.
+    */
+    public static File normalize(final String path) {
+       Stack s = new Stack();
+       String[] dissect = dissect(path);
+       s.push(dissect[0]);
+
+       StringTokenizer tok = new StringTokenizer(dissect[1], File.separator);
+       while (tok.hasMoreTokens()) {
+           String thisToken = tok.nextToken();
+           if (".".equals(thisToken)) {
+               continue;
+           }
+           if ("..".equals(thisToken)) {
+               if (s.size() < 2) {
+                   // Cannot resolve it, so skip it.
+                   return new File(path);
+               }
+               s.pop();
+           } else { // plain component
+               s.push(thisToken);
+           }
+       }
+       StringBuffer sb = new StringBuffer();
+       for (int i = 0; i < s.size(); i++) {
+           if (i > 1) {
+               // not before the filesystem root and not after it, since root
+               // already contains one
+               sb.append(File.separatorChar);
+           }
+           sb.append(s.elementAt(i));
+       }
+       return new File(sb.toString());
+   }
+    
+    /**
+     * Dissect the specified absolute path.
+     * @param path the path to dissect.
+     * @return String[] {root, remaining path}.
+     * @throws java.lang.NullPointerException if path is null.
+     * @since Ant 1.7
+     */
+    private static String[] dissect(String path) {
+        char sep = File.separatorChar;
+        path = path.replace('/', sep).replace('\\', sep);
+
+//        // make sure we are dealing with an absolute path
+//        if (!isAbsolutePath(path)) {
+//            throw new BuildException(path + " is not an absolute path");
+//        }
+        String root = null;
+        int colon = path.indexOf(':');
+        if (colon > 0) { // && (ON_DOS || ON_NETWARE)) {
+
+            int next = colon + 1;
+            root = path.substring(0, next);
+            char[] ca = path.toCharArray();
+            root += sep;
+            //remove the initial separator; the root has it.
+            next = (ca[next] == sep) ? next + 1 : next;
+
+            StringBuffer sbPath = new StringBuffer();
+            // Eliminate consecutive slashes after the drive spec:
+            for (int i = next; i < ca.length; i++) {
+                if (ca[i] != sep || ca[i - 1] != sep) {
+                    sbPath.append(ca[i]);
+                }
+            }
+            path = sbPath.toString();
+        } else if (path.length() > 1 && path.charAt(1) == sep) {
+            // UNC drive
+            int nextsep = path.indexOf(sep, 2);
+            nextsep = path.indexOf(sep, nextsep + 1);
+            root = (nextsep > 2) ? path.substring(0, nextsep + 1) : path;
+            path = path.substring(root.length());
+        } else {
+            root = File.separator;
+            path = path.substring(1);
+        }
+        return new String[] {root, path};
+    }
+ 
+
 
 }

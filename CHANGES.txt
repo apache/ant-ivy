@@ -124,6 +124,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: Valid Path does not work for Filesystem Resolver (IVY-1268)
 - FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)
 - FIX: Dynamic version resolution result can be incorrect when ivy metadata contains extra attributes (IVY-1236)
 - FIX: NullPointerException in FileUtil#forceDelete.
