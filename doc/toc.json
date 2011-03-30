@@ -401,6 +401,13 @@
                             ]
                         },
                         {
+                          "id":"settings/signers",
+                          "title":"signers",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"settings/statuses",
                           "title":"statuses",
                           "children": [
