@@ -117,6 +117,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: New Ant datatype ivy:resources, an Ant resource collection like ivy:cachepath or ivy:cachefileset (IVY-334)
 - NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
 - NEW: Import Bushel into Ivy core (IVY-1241)
+- NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories
 
 - IMPROVEMENT: ivy:makepom child element dependency should support the type and classifier attributes (IVY-1262)
 - IMPROVEMENT: ivy:retrieve can now create a path or fileset containing the retrieved artifacts (IVY-1235)

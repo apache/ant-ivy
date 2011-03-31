@@ -370,6 +370,13 @@
                                 "children": [
 
                                   ]
+                              },
+                              {
+                                "id":"resolver/mirrored",
+                                "title":"Mirrored Resolver",
+                                "children": [
+
+                                  ]
                               }
                             ]
                         },
