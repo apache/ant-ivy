@@ -19,9 +19,11 @@ package org.apache.ivy.osgi.updatesite;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.xml.sax.SAXException;
 
@@ -31,6 +33,18 @@ public class UpdateSiteLoaderTest extends TestCase {
         UpdateSiteLoader loader = new UpdateSiteLoader();
         RepoDescriptor site = loader.load("http://www.apache.org/dist/ant/ivyde/updatesite/");
         assertEquals(13, site.getModules().size());
+    }
+
+    public void testM2Eclipse() throws IOException, ParseException, SAXException {
+        UpdateSiteLoader loader = new UpdateSiteLoader();
+        RepoDescriptor site = loader.load("http://m2eclipse.sonatype.org/sites/m2e/");
+        assertTrue(site.getModules().size() > 70);
+        Iterator itModules = site.getModules().iterator();
+        while (itModules.hasNext()) {
+            ModuleDescriptor md = (ModuleDescriptor) itModules.next();
+            String name = md.getModuleRevisionId().getName();
+            assertTrue(name, name.indexOf("org.maven") != -1);
+        }
     }
 
 }

@@ -28,6 +28,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.p2.P2ArtifactParser;
+import org.apache.ivy.osgi.p2.P2CompositeParser;
 import org.apache.ivy.osgi.p2.P2Descriptor;
 import org.apache.ivy.osgi.p2.P2MetadataParser;
 import org.apache.ivy.osgi.p2.XMLInputParser;
@@ -51,6 +52,9 @@ public class UpdateSiteLoader {
         }
         // then try the old update site
         UpdateSite site = loadSite(url);
+        if (site == null) {
+            return null;
+        }
         repo = loadFromDigest(site);
         if (repo != null) {
             return repo;
@@ -61,16 +65,33 @@ public class UpdateSiteLoader {
     private P2Descriptor loadP2(String url) throws IOException, ParseException, SAXException {
         P2Descriptor p2Descriptor = new P2Descriptor(
                 ExecutionEnvironmentProfileProvider.getInstance());
+        if (!populateP2Descriptor(url, p2Descriptor)) {
+            return null;
+        }
+        return p2Descriptor;
+    }
+
+    private boolean populateP2Descriptor(String url, P2Descriptor p2Descriptor) throws IOException,
+            ParseException, SAXException {
+        P2CompositeParser p2CompositeParser = new P2CompositeParser();
+
+        if (readJarOrXml(url, "compositeContent", p2CompositeParser)) {
+            Iterator itChildLocation = p2CompositeParser.getChildLocations().iterator();
+            boolean populated = false;
+            while (itChildLocation.hasNext()) {
+                String childLocation = (String) itChildLocation.next();
+                populated |= populateP2Descriptor(url + childLocation + "/", p2Descriptor);
+            }
+            return populated;
+        }
 
         if (!readJarOrXml(url, "artifacts", new P2ArtifactParser(p2Descriptor))) {
-            return null;
+            return false;
         }
-
         if (!readJarOrXml(url, "content", new P2MetadataParser(p2Descriptor))) {
-            return null;
+            return false;
         }
-
-        return p2Descriptor;
+        return true;
     }
 
     private boolean readJarOrXml(String url, String baseName, XMLInputParser reader)
@@ -83,12 +104,12 @@ public class UpdateSiteLoader {
             // no jar file, try the xml one
             contentUrl = new URL(url + baseName + ".xml");
             res = new URLResource(contentUrl);
-            
+
             if (!res.exists()) {
                 // no xml either
                 return false;
             }
-            
+
             // we will then read directly from that input stream
             readIn = res.openStream();
         } else {
@@ -105,22 +126,27 @@ public class UpdateSiteLoader {
                 in.close();
                 throw e;
             }
-            
+
         }
-        
+
         try {
             reader.parse(readIn);
         } finally {
             readIn.close();
         }
-        
+
         return true;
     }
 
     private UpdateSite loadSite(String url) throws IOException, ParseException, SAXException {
         String siteUrl = normalizeSiteUrl(url, null);
         URL u = new URL(siteUrl + "site.xml");
-        InputStream in = URLHandlerRegistry.getDefault().openStream(u);
+        InputStream in;
+        try {
+            in = URLHandlerRegistry.getDefault().openStream(u);
+        } catch (IOException e) {
+            return null;
+        }
         try {
             UpdateSite site = EclipseUpdateSiteParser.parse(in);
             site.setUrl(normalizeSiteUrl(site.getUrl(), siteUrl));

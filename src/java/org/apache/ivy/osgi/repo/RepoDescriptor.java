@@ -43,7 +43,7 @@ public class RepoDescriptor {
         this.profileProvider = profileProvider;
     }
 
-    public Set getModules() {
+    public Set/* <ModuleDescriptor> */ getModules() {
         return modules;
     }
 
