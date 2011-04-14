@@ -47,4 +47,10 @@ public class UpdateSiteLoaderTest extends TestCase {
         }
     }
 
+    public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException {
+        UpdateSiteLoader loader = new UpdateSiteLoader();
+        RepoDescriptor site = loader.load("http://download.eclipse.org/releases/helios/");
+        assertTrue(site.getModules().size() > 900);
+    }
+
 }

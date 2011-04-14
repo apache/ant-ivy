@@ -20,6 +20,7 @@ package org.apache.ivy.osgi.updatesite;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Iterator;
@@ -39,17 +40,20 @@ import org.apache.ivy.osgi.updatesite.xml.FeatureParser;
 import org.apache.ivy.osgi.updatesite.xml.UpdateSite;
 import org.apache.ivy.osgi.updatesite.xml.UpdateSiteDigestParser;
 import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.SAXException;
 
 public class UpdateSiteLoader {
 
     public RepoDescriptor load(String url) throws IOException, ParseException, SAXException {
+        Message.verbose("Loading the update site " + url);
         // first look for a p2 repository
         RepoDescriptor repo = loadP2(url);
         if (repo != null) {
             return repo;
         }
+        Message.verbose("\tNo P2 artifacts, falling back on the old fashioned updatesite");
         // then try the old update site
         UpdateSite site = loadSite(url);
         if (site == null) {
@@ -73,25 +77,38 @@ public class UpdateSiteLoader {
 
     private boolean populateP2Descriptor(String url, P2Descriptor p2Descriptor) throws IOException,
             ParseException, SAXException {
-        P2CompositeParser p2CompositeParser = new P2CompositeParser();
+        boolean exist = false;
 
-        if (readJarOrXml(url, "compositeContent", p2CompositeParser)) {
+        exist |= readComposite(url, "compositeContent", p2Descriptor);
+
+        exist |= readComposite(url, "compositeArtifacts", p2Descriptor);
+
+        exist |= readJarOrXml(url, "artifacts", new P2ArtifactParser(p2Descriptor));
+
+        exist |= readJarOrXml(url, "content", new P2MetadataParser(p2Descriptor));
+
+        return exist;
+    }
+
+    private boolean readComposite(String url, String name, P2Descriptor p2Descriptor)
+            throws IOException, ParseException, SAXException {
+        P2CompositeParser p2CompositeParser = new P2CompositeParser();
+        boolean exist = readJarOrXml(url, name, p2CompositeParser);
+        if (exist) {
             Iterator itChildLocation = p2CompositeParser.getChildLocations().iterator();
-            boolean populated = false;
             while (itChildLocation.hasNext()) {
                 String childLocation = (String) itChildLocation.next();
-                populated |= populateP2Descriptor(url + childLocation + "/", p2Descriptor);
+                String childUrl = url + childLocation + "/";
+                try {
+                    URL u = new URL(childLocation);
+                    childUrl = u.toExternalForm();
+                } catch (MalformedURLException e) {
+                    // not an url, keep the relative location one
+                }
+                populateP2Descriptor(childUrl, p2Descriptor);
             }
-            return populated;
         }
-
-        if (!readJarOrXml(url, "artifacts", new P2ArtifactParser(p2Descriptor))) {
-            return false;
-        }
-        if (!readJarOrXml(url, "content", new P2MetadataParser(p2Descriptor))) {
-            return false;
-        }
-        return true;
+        return exist;
     }
 
     private boolean readJarOrXml(String url, String baseName, XMLInputParser reader)
@@ -110,9 +127,11 @@ public class UpdateSiteLoader {
                 return false;
             }
 
+            Message.verbose("\tReading " + res);
             // we will then read directly from that input stream
             readIn = res.openStream();
         } else {
+            Message.verbose("\t\tReading " + res);
             InputStream in = res.openStream();
 
             try {
@@ -141,6 +160,7 @@ public class UpdateSiteLoader {
     private UpdateSite loadSite(String url) throws IOException, ParseException, SAXException {
         String siteUrl = normalizeSiteUrl(url, null);
         URL u = new URL(siteUrl + "site.xml");
+        Message.verbose("\tReading " + url);
         InputStream in;
         try {
             in = URLHandlerRegistry.getDefault().openStream(u);
@@ -189,6 +209,7 @@ public class UpdateSiteLoader {
             digestUrl = baseUrl + "/digest.zip";
         }
         URL digest = new URL(digestUrl);
+        Message.verbose("\tReading " + digest);
         InputStream in;
         try {
             in = URLHandlerRegistry.getDefault().openStream(digest);
