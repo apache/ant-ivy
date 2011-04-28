@@ -495,8 +495,11 @@ public class ResolveEngine {
 
     /**
      * Resolve the dependencies of a module without downloading corresponding artifacts. The module
-     * to resolve is given by its module descriptor.This method requires appropriate configuration
+     * to resolve is given by its module descriptor. This method requires appropriate configuration
      * of the ivy instance, especially resolvers.
+     * <p>
+     * The <code>IvyNode</code>s are ordered from the most dependent to the less dependent, so that
+     * an IvyNode is always found in the list after all IvyNode depending directly on it.
      * 
      * @param md
      *            the descriptor of the module for which we want to get dependencies - must not be
