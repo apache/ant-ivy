@@ -37,7 +37,7 @@ Moreover, the fact that it is the responsibility of the resolver to find ivy fil
 
 As you see, a dependency resolver can be thought of as a class responsible for describing a repository.
 
-If you want to see which resolvers are available in ivy, you can go to the corresponding <a href="configuration/resolvers.html">configuration section</a>.
+If you want to see which resolvers are available in ivy, you can go to the <a href="settings/resolvers.html">resolvers configuration page</a>.
 
 <h1><a name="configurations">Module configurations explained</a></h1>
 Module configurations are described in the terminology page as <em>a way to use or construct a module</em>. Configurations being a central part of Ivy, they need more explanations as a concept.
@@ -137,7 +137,7 @@ This algorithm takes into account special meanings of some text. For instance, w
 <li>latest-lexico</li> This compares the revisions as strings, using lexicographic order (the one used by the Java string comparison).
 </ul>
 
-See also how to configure new latest strategies <a href="configuration/latest-strategies.html">here</a>.
+See also how to configure new latest strategies <a href="settings/latest-strategies.html">here</a>.
 
 <h1><a name="conflict">Conflict Manager</a></h1>
 A conflict manager is able to select, among a list of module revisions in conflict, a list of revisions to keep.
@@ -146,7 +146,7 @@ But in some cases you will need to keep several revisions, and load in separate 
 
 A list of revisions is said to be in conflict if they correspond to the same module, i.e. the same organisation/module name couple.
 
-The list of available conflict managers is available on the <a href="configuration/conflict-managers.html">conflict manager configuration page</a>.
+The list of available conflict managers is available on the <a href="settings/conflict-managers.html">conflict manager configuration page</a>.
 
 For more details on how to setup your conflict managers by module, see the <a href="ivyfile/conflicts.html">conflicts</a> section in the ivy file reference.
 
@@ -194,7 +194,7 @@ ${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
 
 Note that in patterns you must use the unqualified attribute name (no namespace prefix).
 
-If you don't want to use xml namespaces, it's possible but you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="configuration/conf.html">settings documentation</a> to see how to disable validation.
+If you don't want to use xml namespaces, it's possible but you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="settings/settings.html">settings documentation</a> to see how to disable validation.
 <h1><a name="checksum">Checksums</a></h1>
 <span class="since">since 1.4</span>
 Ivy allows the use of checksums, also known as digests, to verify the correctness of a downloaded file.
@@ -219,7 +219,7 @@ When Ivy performs the dependency resolution and some other tasks, it fires event
 
 This is a particularly powerful and flexible feature which allows, for example, you to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accuratly, and so on.
 
-For more details about events and triggers, see the <a href="configuration/triggers.html">triggers</a> documentation page in the configuration section of this documentation.
+For more details about events and triggers, see the <a href="settings/triggers.html">triggers</a> documentation page in the configuration section of this documentation.
 
 <h1><a name="circular">Circular Dependencies</a></h1>
 <span class="since">since 1.4</span>
@@ -234,7 +234,7 @@ Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy
 <li>error</li> halt the dependency resolution when a circular dependency is found
 </ul>
 
-See the <a href="configuration/conf.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
+See the <a href="settings/settings.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
 
 <h1>Cache and Change Management</h1>
 Ivy heavily relies on local caching to avoid accessing remote repositories too often, thus saving a lot of network bandwidth and time. 
