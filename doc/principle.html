@@ -36,7 +36,7 @@ Ivy needs to be configured to be able to resolve your dependencies. This configu
 
 The configuration is also responsible for indicating which resolver should be used to resolve which module. This configuration is dependent only on your environment, i.e. where the modules and artifacts can be found. 
 
-A default configuration is used by ivy when none is given. This configuration uses ivyrep to resolve all modules.
+A default configuration is used by ivy when none is given. This configuration uses an <a href="resolver/ibiblio.html">ibiblio resolver</a> pointing to http://repo1.maven.org/maven2/ to resolve all modules.
 <h1>Resolve</h1>
 The resolve time is the moment when ivy actually resolves the dependencies of one module. It first needs to access the ivy file of the module for which it resolves the dependencies. 
 

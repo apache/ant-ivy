@@ -114,6 +114,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: wrong default resolver documented on the 'How does it work' page (IVY-1265)
 - DOCUMENTATION: Correct outdated links to configuration pages (IVY-1266)
 
 - NEW: New Ant datatype ivy:resources, an Ant resource collection like ivy:cachepath or ivy:cachefileset (IVY-334)
