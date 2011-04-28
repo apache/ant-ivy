@@ -25,22 +25,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheDownloadOptions;
-import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.cache.CacheResourceOptions;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.RelativeURLRepository;
 import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver;
-import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
 import org.apache.ivy.plugins.repository.Resource;
-import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
-import org.apache.ivy.plugins.resolver.util.ResolvedResource;
-import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXException;
 
 public class OBRResolver extends RepoDescriptorBasedResolver {
@@ -91,33 +84,24 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
                                 + " couldn't be configured: the base url couldn'd be extracted from the url "
                                 + url + " (" + e.getMessage() + ")");
             }
-            setRepository(new RelativeURLRepository(baseUrl));
+            RelativeURLRepository repo = new RelativeURLRepository(baseUrl);
+            setRepository(repo);
 
-            // get the obr descriptor into the cache
-            ModuleRevisionId mrid = ModuleRevisionId.newInstance("_obr_cache_", getName(),
-                Ivy.getWorkingRevision());
-            Artifact artifact = new DefaultArtifact(mrid, null, "obr", "obr", "xml");
-            CacheDownloadOptions options = new CacheDownloadOptions();
-            ArtifactDownloadReport report = getRepositoryCacheManager().download(artifact,
-                new ArtifactResourceResolver() {
-                    public ResolvedResource resolve(Artifact artifact) {
-                        return new ResolvedResource(new URLResource(url), Ivy.getWorkingRevision());
-                    }
-                }, new ResourceDownloader() {
-                    public void download(Artifact artifact, Resource resource, File dest)
-                            throws IOException {
-                        if (dest.exists()) {
-                            dest.delete();
-                        }
-                        File part = new File(dest.getAbsolutePath() + ".part");
-                        FileUtil.copy(url, part, null);
-                        if (!part.renameTo(dest)) {
-                            throw new IOException(
-                                    "impossible to move part file to definitive one: " + part
-                                            + " -> " + dest);
-                        }
-                    }
-                }, options);
+            ArtifactDownloadReport report;
+            EventManager eventManager = getEventManager();
+            try {
+                if (eventManager != null) {
+                    getRepository().addTransferListener(eventManager);
+                }
+                Resource obrResource = new URLResource(url);
+                CacheResourceOptions options = new CacheResourceOptions();
+                report = getRepositoryCacheManager().downloadRepositoryResource(obrResource, "obr",
+                    "obr", "xml", options, repo);
+            } finally {
+                if (eventManager != null) {
+                    getRepository().removeTransferListener(eventManager);
+                }
+            }
 
             loadRepoFromFile(report.getLocalFile(), repoXmlURL);
 

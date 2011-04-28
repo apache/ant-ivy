@@ -28,20 +28,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheDownloadOptions;
-import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.repo.RelativeURLRepository;
-import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
-import org.apache.ivy.plugins.repository.Resource;
-import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.url.ChainedRepository;
+import org.apache.ivy.plugins.repository.url.URLRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
-import org.apache.ivy.plugins.resolver.util.ResolvedResource;
-import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 public class MirroredURLResolver extends RepositoryResolver {
@@ -85,30 +77,14 @@ public class MirroredURLResolver extends RepositoryResolver {
     }
 
     private File downloadMirrorList() {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("_mirror_list_cache_", getName(),
-            Ivy.getWorkingRevision());
-        Artifact artifact = new DefaultArtifact(mrid, null, "mirrorlist", "text", "txt");
-        CacheDownloadOptions options = new CacheDownloadOptions();
-        ArtifactDownloadReport report = getRepositoryCacheManager().download(artifact,
-            new ArtifactResourceResolver() {
-                public ResolvedResource resolve(Artifact artifact) {
-                    return new ResolvedResource(new URLResource(mirrorListUrl), Ivy
-                            .getWorkingRevision());
-                }
-            }, new ResourceDownloader() {
-                public void download(Artifact artifact, Resource resource, File dest)
-                        throws IOException {
-                    if (dest.exists()) {
-                        dest.delete();
-                    }
-                    File part = new File(dest.getAbsolutePath() + ".part");
-                    FileUtil.copy(mirrorListUrl, part, null);
-                    if (!part.renameTo(dest)) {
-                        throw new IOException("impossible to move part file to definitive one: "
-                                + part + " -> " + dest);
-                    }
-                }
-            }, options);
+        URLRepository urlRepository = new URLRepository();
+        if (getEventManager() != null) {
+            urlRepository.addTransferListener(getEventManager());
+        }
+        URLResource mirrorResource = new URLResource(mirrorListUrl);
+        CacheResourceOptions options = new CacheResourceOptions();
+        ArtifactDownloadReport report = getRepositoryCacheManager().downloadRepositoryResource(
+            mirrorResource, "mirrorlist", "text", "txt", options, urlRepository);
         return report.getLocalFile();
     }
 

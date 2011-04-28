@@ -19,11 +19,15 @@ package org.apache.ivy.core.cache;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -49,6 +53,7 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
@@ -57,6 +62,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.HexEncoder;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
@@ -71,6 +77,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         "[organisation]/[module](/[branch])/ivy-[revision].xml";
     
     private static final int DEFAULT_MEMORY_CACHE_SIZE = 150;
+    
+    private static MessageDigest SHA_DIGEST;
+    static {
+        try {
+            SHA_DIGEST = MessageDigest.getInstance("SHA1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("The SHA1 algorithm is not available in your classpath", e);
+        }
+    }
     
     private IvySettings settings;
     
@@ -444,6 +459,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
         cdf.setProperty(getIsLocalKey(artifact), String.valueOf(origin.isLocal()));
         cdf.setProperty(getLocationKey(artifact), origin.getLocation());
+        if (origin.getLastChecked() != null) {
+            cdf.setProperty(getLastCheckedKey(artifact), origin.getLastChecked().toString());
+        }
+        cdf.setProperty(getExistsKey(artifact), Boolean.toString(origin.isExists()));
         cdf.save();
     }
 
@@ -452,6 +471,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
         cdf.remove(getLocationKey(artifact));
         cdf.remove(getIsLocalKey(artifact));
+        cdf.remove(getLastCheckedKey(artifact));
         cdf.save();
     }
 
@@ -465,6 +485,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
             String location = cdf.getProperty(getLocationKey(artifact));
             String local = cdf.getProperty(getIsLocalKey(artifact));
+            String lastChecked = cdf.getProperty(getLastCheckedKey(artifact));
+            String exists = cdf.getProperty(getExistsKey(artifact));
+
             boolean isLocal = Boolean.valueOf(local).booleanValue();
 
             if (location == null) {
@@ -472,7 +495,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 return ArtifactOrigin.unkwnown(artifact);
             }
 
-            return new ArtifactOrigin(artifact, isLocal, location);
+            ArtifactOrigin origin = new ArtifactOrigin(artifact, isLocal, location);
+            if (lastChecked != null) {
+                origin.setLastChecked(Long.valueOf(lastChecked));
+            }
+            if (exists != null) {
+                origin.setExist(Boolean.valueOf(exists).booleanValue());
+            }
+
+            return origin;
         } finally {
             unlockMetadataArtifact(mrid);
         }
@@ -510,11 +541,35 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * 
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
-     * @return the key to be used to reference the artifact location.
+     * @return the key to be used to reference the artifact locality.
      */
     private String getIsLocalKey(Artifact artifact) {
         String prefix = getPrefixKey(artifact);
         return prefix + ".is-local";
+    }
+
+    /**
+     * Returns the key used to identify the last time the artifact was checked to be up to date.
+     * 
+     * @param artifact
+     *            the artifact to generate the key from. Cannot be null.
+     * @return the key to be used to reference the artifact's last check date.
+     */
+    private String getLastCheckedKey(Artifact artifact) {
+        String prefix = getPrefixKey(artifact);
+        return prefix + ".lastchecked";
+    }
+
+    /**
+     * Returns the key used to identify the existence of the remote artifact.
+     * 
+     * @param artifact
+     *            the artifact to generate the key from. Cannot be null.
+     * @return the key to be used to reference the existence of the artifact.
+     */
+    private String getExistsKey(Artifact artifact) {
+        String prefix = getPrefixKey(artifact);
+        return prefix + ".exists";
     }
 
     private PropertiesFile getCachedDataFile(ModuleDescriptor md) {
@@ -854,7 +909,149 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             unlockMetadataArtifact(mrid);
         }
     }
-    
+
+    public ArtifactDownloadReport downloadRepositoryResource(final Resource resource, String name,
+            String type, String extension, CacheResourceOptions options, Repository repository) {
+
+        String hash = computeResourceNameHash(resource);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("_repository_metadata_", hash,
+            Ivy.getWorkingRevision());
+        Artifact artifact = new DefaultArtifact(mrid, null, name, type, extension);
+        final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
+        boolean useOrigin = isUseOrigin();
+
+        try {
+            DownloadListener listener = options.getListener();
+            if (listener != null) {
+                listener.needArtifact(this, artifact);
+            }
+            ArtifactOrigin savedOrigin = getSavedArtifactOrigin(artifact);
+            File archiveFile = getArchiveFileInCache(artifact, savedOrigin, useOrigin);
+
+            ArtifactOrigin origin = new ArtifactOrigin(artifact, resource.isLocal(), resource.getName());
+
+            if (!options.isForce()
+                    // if the local file has been checked to be up to date enough recently, don't download
+                    && checkCacheUptodate(archiveFile, resource, savedOrigin, origin, options.getTtl())) {
+                if (archiveFile.exists()) {
+                    saveArtifactOrigin(artifact, origin);
+                    adr.setDownloadStatus(DownloadStatus.NO);
+                    adr.setSize(archiveFile.length());
+                    adr.setArtifactOrigin(savedOrigin);
+                    adr.setLocalFile(archiveFile);
+                } else {
+                    // we trust the cache to says that the resource doesn't exist
+                    adr.setDownloadStatus(DownloadStatus.FAILED);
+                    adr.setDownloadDetails("Remote resource is known to not exist");
+                }
+            } else {
+                long start = System.currentTimeMillis();
+                origin.setLastChecked(new Long(start));
+                try {
+                    ResolvedResource artifactRef = new ResolvedResource(resource,
+                            Ivy.getWorkingRevision());
+                    if (useOrigin && resource.isLocal()) {
+                        saveArtifactOrigin(artifact, origin);
+                        archiveFile = getArchiveFileInCache(artifact, origin);
+                        adr.setDownloadStatus(DownloadStatus.NO);
+                        adr.setSize(archiveFile.length());
+                        adr.setArtifactOrigin(origin);
+                        adr.setLocalFile(archiveFile);
+                    } else { 
+                        if (listener != null) {
+                            listener.startArtifactDownload(this, artifactRef, artifact, origin);
+                        }
+
+                        // actual download
+                        if (archiveFile.exists()) {
+                            archiveFile.delete();
+                        }
+                        File part = new File(archiveFile.getAbsolutePath() + ".part");
+                        repository.get(resource.getName(), part);
+                        if (!part.renameTo(archiveFile)) {
+                            throw new IOException(
+                                    "impossible to move part file to definitive one: " + part
+                                            + " -> " + archiveFile);
+                        }
+
+                        adr.setSize(archiveFile.length());
+                        saveArtifactOrigin(artifact, origin);
+                        adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
+                        adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+                        adr.setArtifactOrigin(origin);
+                        adr.setLocalFile(archiveFile);
+                    }
+                } catch (Exception ex) {
+                    origin.setExist(false);
+                    saveArtifactOrigin(artifact, origin);
+                    adr.setDownloadStatus(DownloadStatus.FAILED);
+                    adr.setDownloadDetails(ex.getMessage());
+                    adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
+                }
+            }
+            if (listener != null) {
+                listener.endArtifactDownload(this, artifact, adr, archiveFile);
+            }
+            return adr;
+        } finally {
+            unlockMetadataArtifact(mrid);
+        }
+    }
+
+    /**
+     * Compute a SHA1 of the resource name, encoded in base64, so we can use it as a file name.
+     * 
+     * @param resource
+     *            the resource which name will be hashed
+     * @return the hash
+     */
+    private String computeResourceNameHash(Resource resource) {
+        byte[] shaDigest;
+        try {
+            shaDigest = SHA_DIGEST.digest(resource.getName().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not supported", e);
+        }
+        return HexEncoder.encode(shaDigest);
+    }
+
+    /**
+     * Check that a cached file can be considered up to date and thus not downloaded
+     * 
+     * @param archiveFile
+     *            the file in the cache
+     * @param resource
+     *            the remote resource to check
+     * @param savedOrigin
+     *            the saved origin which contains that last checked date
+     * @param origin
+     *            the origin in which to store the new last checked date
+     * @param ttl
+     *            the time to live to consider the cache up to date
+     * @return <code>true</code> if the cache is considered up to date
+     */
+    private boolean checkCacheUptodate(File archiveFile, Resource resource,
+            ArtifactOrigin savedOrigin, ArtifactOrigin origin, long ttl) {
+        long time = System.currentTimeMillis();
+        if (savedOrigin.getLastChecked() != null
+                && (time - savedOrigin.getLastChecked().longValue()) < ttl) {
+            // still in the ttl period, no need to check, trust the cache
+            if (!archiveFile.exists()) {
+                // but if the local archive doesn't exist, trust the cache only if the cached origin
+                // says that the remote resource doesn't exist either
+                return !savedOrigin.isExists();
+            }
+            return true;
+        }
+        if (!archiveFile.exists()) {
+            // the the file doesn't exist in the cache, obviously not up to date
+            return false;
+        }
+        origin.setLastChecked(new Long(time));
+        // check if the local resource is up to date regarding the remote one
+        return archiveFile.lastModified() >= resource.getLastModified();
+    }
+
     public void originalToCachedModuleDescriptor(
             DependencyResolver resolver, ResolvedResource orginalMetadataRef,
             Artifact requestedMetadataArtifact,
@@ -1173,7 +1370,12 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         Message.debug("\t\tchangingPattern: " + getChangingPattern());
         Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
     }
-    
+
+    /**
+     * Resource downloader which makes a copy of the previously existing file before overriding it.
+     * <p>
+     * The backup file can be restored or cleanuped later
+     */
     private final class BackupResourceDownloader implements ResourceDownloader {
         
         private ResourceDownloader delegate;

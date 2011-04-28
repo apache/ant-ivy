@@ -17,7 +17,7 @@
  */
 package org.apache.ivy.osgi.updatesite;
 
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -27,6 +27,11 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.ivy.core.cache.CacheResourceOptions;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.p2.P2ArtifactParser;
 import org.apache.ivy.osgi.p2.P2CompositeParser;
@@ -39,12 +44,27 @@ import org.apache.ivy.osgi.updatesite.xml.EclipseUpdateSiteParser;
 import org.apache.ivy.osgi.updatesite.xml.FeatureParser;
 import org.apache.ivy.osgi.updatesite.xml.UpdateSite;
 import org.apache.ivy.osgi.updatesite.xml.UpdateSiteDigestParser;
+import org.apache.ivy.plugins.repository.url.URLRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.SAXException;
 
 public class UpdateSiteLoader {
+
+    private final RepositoryCacheManager repositoryCacheManager;
+
+    private final URLRepository urlRepository = new URLRepository();
+
+    private final CacheResourceOptions options;
+
+    public UpdateSiteLoader(RepositoryCacheManager repositoryCacheManager,
+            EventManager eventManager, CacheResourceOptions options) {
+        this.repositoryCacheManager = repositoryCacheManager;
+        this.options = options;
+        if (eventManager != null) {
+            urlRepository.addTransferListener(eventManager);
+        }
+    }
 
     public RepoDescriptor load(String url) throws IOException, ParseException, SAXException {
         Message.verbose("Loading the update site " + url);
@@ -117,22 +137,26 @@ public class UpdateSiteLoader {
 
         URL contentUrl = new URL(url + baseName + ".jar");
         URLResource res = new URLResource(contentUrl);
-        if (!res.exists()) {
+
+        ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
+            baseName, baseName, "jar", options, urlRepository);
+
+        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             // no jar file, try the xml one
             contentUrl = new URL(url + baseName + ".xml");
             res = new URLResource(contentUrl);
 
-            if (!res.exists()) {
+            report = repositoryCacheManager.downloadRepositoryResource(res,
+                baseName, baseName, "xml", options, urlRepository);
+
+            if (report.getDownloadStatus() == DownloadStatus.FAILED) {
                 // no xml either
                 return false;
             }
 
-            Message.verbose("\tReading " + res);
-            // we will then read directly from that input stream
-            readIn = res.openStream();
+            readIn = new FileInputStream(report.getLocalFile());
         } else {
-            Message.verbose("\t\tReading " + res);
-            InputStream in = res.openStream();
+            InputStream in = new FileInputStream(report.getLocalFile());
 
             try {
                 // compressed, let's get the pointer on the actual xml
@@ -160,13 +184,14 @@ public class UpdateSiteLoader {
     private UpdateSite loadSite(String url) throws IOException, ParseException, SAXException {
         String siteUrl = normalizeSiteUrl(url, null);
         URL u = new URL(siteUrl + "site.xml");
-        Message.verbose("\tReading " + url);
-        InputStream in;
-        try {
-            in = URLHandlerRegistry.getDefault().openStream(u);
-        } catch (IOException e) {
+
+        URLResource res = new URLResource(u);
+        ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
+            "site", "updatesite", "xml", options, urlRepository);
+        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             return null;
         }
+        InputStream in = new FileInputStream(report.getLocalFile());
         try {
             UpdateSite site = EclipseUpdateSiteParser.parse(in);
             site.setUrl(normalizeSiteUrl(site.getUrl(), siteUrl));
@@ -210,12 +235,14 @@ public class UpdateSiteLoader {
         }
         URL digest = new URL(digestUrl);
         Message.verbose("\tReading " + digest);
-        InputStream in;
-        try {
-            in = URLHandlerRegistry.getDefault().openStream(digest);
-        } catch (FileNotFoundException e) {
+
+        URLResource res = new URLResource(digest);
+        ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
+            "digest", "digest", "zip", options, urlRepository);
+        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             return null;
         }
+        InputStream in = new FileInputStream(report.getLocalFile());
         try {
             ZipInputStream zipped = findEntry(in, "digest.xml");
             if (zipped == null) {
@@ -236,7 +263,14 @@ public class UpdateSiteLoader {
         while (itFeatures.hasNext()) {
             EclipseFeature feature = (EclipseFeature) itFeatures.next();
             URL url = new URL(site.getUrl() + feature.getUrl());
-            InputStream in = URLHandlerRegistry.getDefault().openStream(url);
+
+            URLResource res = new URLResource(url);
+            ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
+                feature.getId(), "feature", "jar", options, urlRepository);
+            if (report.getDownloadStatus() == DownloadStatus.FAILED) {
+                return null;
+            }
+            InputStream in = new FileInputStream(report.getLocalFile());
             try {
                 ZipInputStream zipped = findEntry(in, "feature.xml");
                 if (zipped == null) {

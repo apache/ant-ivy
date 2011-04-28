@@ -26,6 +26,8 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.Repository;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
@@ -103,6 +105,29 @@ public interface RepositoryCacheManager {
             ArtifactResourceResolver resourceResolver, 
             ResourceDownloader resourceDownloader, 
             CacheDownloadOptions options);
+
+    /**
+     * Download some repository resource and put it in the cache.
+     * <p>
+     * If the cached version is considered enough up to date, no downloading is done.
+     * 
+     * @param resource
+     *            the resource of the file to put in cache
+     * @param name
+     *            the descriptive name of the resource (helps while manually looking into the cache
+     *            files)
+     * @param type
+     *            the type of the resource (helps while manually looking into the cache files)
+     * @param extension
+     *            the extension of the resource (helps while manually looking into the cache files)
+     * @param options
+     *            a set of options to adjust the download
+     * @param repository
+     *            the repository which resolve the content of the resource
+     * @return a report indicating how the download was performed
+     */
+    public ArtifactDownloadReport downloadRepositoryResource(Resource resource, String name,
+            String type, String extension, CacheResourceOptions options, Repository repository);
 
     /**
      * Caches an original module descriptor.

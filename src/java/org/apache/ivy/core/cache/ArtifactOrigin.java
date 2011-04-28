@@ -52,6 +52,10 @@ public class ArtifactOrigin {
 
     private Artifact artifact;
 
+    private Long lastChecked;
+
+    private boolean exists = true;
+
     /**
      * Create a new instance
      * 
@@ -98,8 +102,31 @@ public class ArtifactOrigin {
         return artifact;
     }
 
+    /**
+     * The last time the resource was checked to be up to date. Maybe <code>null</code> if this information is
+     * not actually used by in some case.
+     * 
+     * @return
+     */
+    public Long getLastChecked() {
+        return lastChecked;
+    }
+
+    public void setLastChecked(Long lastChecked) {
+        this.lastChecked = lastChecked;
+    }
+
+    public boolean isExists() {
+        return exists;
+    }
+
+    public void setExist(boolean exists) {
+        this.exists = exists;
+    }
+
     public String toString() {
-        return "ArtifactOrigin { isLocal=" + isLocal + ", location=" + location + "}";
+        return "ArtifactOrigin { isLocal=" + isLocal + ", location=" + location + ", lastChecked="
+                + lastChecked + ", exists=" + exists + "}";
     }
 
     public boolean equals(Object o) {
@@ -118,6 +145,16 @@ public class ArtifactOrigin {
         if (!location.equals(that.location)) {
             return false;
         }
+        if (lastChecked == null) {
+            if (that.lastChecked != null) {
+                return false;
+            }
+        } else if (!lastChecked.equals(that.lastChecked)) {
+            return false;
+        }
+        if (exists != that.exists) {
+            return false;
+        }
 
         return true;
     }
@@ -126,6 +163,8 @@ public class ArtifactOrigin {
         int result;
         result = (isLocal ? 1 : 0);
         result = MAGIC_HASH_VALUE * result + location.hashCode();
+        result = MAGIC_HASH_VALUE * result + ((lastChecked == null) ? 0 : lastChecked.hashCode());
+        result = MAGIC_HASH_VALUE * result + (exists ? 1 : 0);
         return result;
     }
 }
