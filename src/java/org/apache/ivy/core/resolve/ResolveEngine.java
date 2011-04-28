@@ -1045,13 +1045,16 @@ public class ResolveEngine {
         /*
          * We first try to remove all evicted nodes from the collection of selected nodes to update
          * this collection. If the collection changes, it means that it contained evicted nodes, and
-         * thus is not up to date. In this case we need to compute selected nodes again. Another
-         * case where we need to deeply compute selected nodes is when selectedNodes is empty (not
-         * computed yet) and we aren't in the context of the direct parent of the node.
+         * thus is not up to date.
          */
-        if (selectedNodes.removeAll(toevict) 
-                || (selectedNodes.isEmpty() 
+        boolean evictedInSelected = selectedNodes.removeAll(toevict);
+        /*
+         * Another case where we need to deeply compute selected nodes is when selectedNodes is
+         * empty (not computed yet) and we aren't in the context of the direct parent of the node.
+         */
+        if (evictedInSelected || (selectedNodes.isEmpty() 
                         && !node.getParent().getNode().equals(ancestor.getNode()))) {
+            // In this case we need to compute selected nodes again. 
             Collection deps = ancestor.getNode().getDependencies(
                 node.getRootModuleConf(), 
                 ancestor.getNode().getConfigurations(node.getRootModuleConf()));

@@ -245,13 +245,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     /**
      * Return the dependency configurations mapped to the given moduleConfiguration, actually
-     * resolved because of the given requestedConfiguration Usually requestedConfiguration and
-     * moduleConfiguration are the same, except when a conf extends another, then the
-     * moduleConfiguration is the configuration currently resolved (the extended one), and
-     * requestedConfiguration is the one actually requested initially (the extending one). Both
-     * moduleConfiguration and requestedConfiguration are configurations of the caller, the array
-     * returned is composed of the required configurations of the dependency described by this
-     * descriptor.
+     * resolved because of the given requestedConfiguration
+     * <p>
+     * Usually requestedConfiguration and moduleConfiguration are the same, except when a conf
+     * extends another, then the moduleConfiguration is the configuration currently resolved (the
+     * extended one), and requestedConfiguration is the one actually requested initially (the
+     * extending one). Both moduleConfiguration and requestedConfiguration are configurations of the
+     * caller, the array returned is composed of the required configurations of the dependency
+     * described by this descriptor.
      */
     public String[] getDependencyConfigurations(String moduleConfiguration,
             String requestedConfiguration) {

@@ -40,6 +40,15 @@ public final class ExtendableItemHelper {
         return ret;
     }
 
+    /**
+     * Extract from the XML attribute the extra Ivy ones
+     * 
+     * @param settings
+     * @param attributes
+     * @param ignoredAttNames
+     *            the XML attributes names which are not extra but Ivy core ones
+     * @return
+     */
     public static Map getExtraAttributes(
             ParserSettings settings, Attributes attributes, String[] ignoredAttNames) {
         Map ret = new HashMap();

@@ -154,6 +154,11 @@ public class VisitNode {
         return root;
     }
 
+    /**
+     * Get an ordered collection with the nodes from the root to this node
+     * 
+     * @return
+     */
     public Collection/*<VisitNode>*/ getPath() {
         if (path == null) {
             path = computePath();

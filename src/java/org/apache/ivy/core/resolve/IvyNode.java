@@ -229,8 +229,9 @@ public class IvyNode implements Comparable {
                         
                         md = module.getDescriptor();
                         confsToFetch.remove("*");
-                        updateConfsToFetch(Arrays.asList(resolveSpecialConfigurations(
-                            getRequiredConfigurations(parent, parentConf), this)));
+                        updateConfsToFetch(Arrays
+                                .asList(resolveSpecialConfigurations(getRequiredConfigurations(
+                                    parent, parentConf))));
                     } else {
                         Message.warn("\tmodule not found: " + getId());
                         resolver.reportFailure();
@@ -306,13 +307,26 @@ public class IvyNode implements Comparable {
         return deps;
     }
 
-    public Collection getDependencies(String rootModuleConf, String conf, String requestedConf) {
+    /**
+     * Load the dependencies of the current node
+     * <p>
+     * The resulting collection of nodes may have some configuration to load
+     * 
+     * @param rootModuleConf
+     *            the requested configuration of the root module
+     * @param conf
+     *            the configuration to load of this node
+     * @param requestedConf
+     *            the actual node conf requested, possibly extending the <code>conf</code> one.
+     * @return
+     */
+    public Collection/*<IvyNode>*/ getDependencies(String rootModuleConf, String conf, String requestedConf) {
         if (md == null) {
             throw new IllegalStateException(
                     "impossible to get dependencies when data has not been loaded");
         }
         DependencyDescriptor[] dds = md.getDependencies();
-        Map dependencies = new LinkedHashMap(); // it's important to respect order
+        Map/*<ModuleRevisionId, IvyNode> */ dependencies = new LinkedHashMap(); // it's important to respect order
         for (int i = 0; i < dds.length; i++) {
             DependencyDescriptor dd = data.mediate(dds[i]);
             String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
@@ -329,8 +343,10 @@ public class IvyNode implements Comparable {
                 continue;
             }
 
+            // check if not already loaded here
             IvyNode depNode = (IvyNode) dependencies.get(requestedDependencyRevisionId);
             if (depNode == null) {
+                // check if not already loaded during the resolve session
                 depNode = data.getNode(requestedDependencyRevisionId);
             }
 
@@ -344,8 +360,7 @@ public class IvyNode implements Comparable {
                 }
 
             }
-            String[] confsArray = resolveSpecialConfigurations(dependencyConfigurations,
-                depNode);
+            String[] confsArray = depNode.resolveSpecialConfigurations(dependencyConfigurations);
             Collection confs = Arrays.asList(confsArray);
             depNode.updateConfsToFetch(confs);
             depNode.addRootModuleConfigurations(depNode.usage, rootModuleConf, confsArray);
@@ -455,18 +470,17 @@ public class IvyNode implements Comparable {
     /**
      * resolve the '*' special configurations if necessary and possible
      */
-    private String[] resolveSpecialConfigurations(String[] dependencyConfigurations, IvyNode node) {
+    private String[] resolveSpecialConfigurations(String[] dependencyConfigurations) {
         if (dependencyConfigurations.length == 1 && dependencyConfigurations[0].startsWith("*")
-                && node != null && node.isLoaded()) {
+                && isLoaded()) {
             String conf = dependencyConfigurations[0];
             if ("*".equals(conf)) {
-                return node.getDescriptor().getPublicConfigurationsNames();
+                return getDescriptor().getPublicConfigurationsNames();
             }
             // there are exclusions in the configuration
             List exclusions = Arrays.asList(conf.substring(2).split("\\!"));
 
-            List ret = new ArrayList(Arrays.asList(node.getDescriptor()
-                    .getPublicConfigurationsNames()));
+            List ret = new ArrayList(Arrays.asList(getDescriptor().getPublicConfigurationsNames()));
             ret.removeAll(exclusions);
 
             return (String[]) ret.toArray(new String[ret.size()]);
@@ -627,7 +641,7 @@ public class IvyNode implements Comparable {
             conf = defaultConf;
         }
         if (conf.startsWith("*")) {
-            return resolveSpecialConfigurations(new String[] {conf}, this);
+            return resolveSpecialConfigurations(new String[] {conf});
         } else if (conf.indexOf(',') != -1) {
             String[] confs = conf.split(",");
             for (int i = 0; i < confs.length; i++) {
