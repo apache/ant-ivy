@@ -120,8 +120,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
 		String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
 				.replaceAll("\r\n?", "\n");
 		String expected = readEntirely("test-write-extends.xml")
-				.replaceAll("\r\n?", "\n")
-				.replaceAll("working@localhost", Ivy.getWorkingRevision());
+				.replaceAll("\r\n?", "\n");
 		assertEquals(expected, wrote);
 	}
 

@@ -119,12 +119,14 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Import Bushel into Ivy core (IVY-1241)
 - NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories
 
+- IMPROVEMENT: Added support for dynamic revisions in <extends> tag (IVY-1281) (thanks to Jean-Louis Boudart)
 - IMPROVEMENT: ivy:makepom child element dependency should support the type and classifier attributes (IVY-1262)
 - IMPROVEMENT: ivy:retrieve can now create a path or fileset containing the retrieved artifacts (IVY-1235)
 - IMPROVEMENT: Improve diagnostics in ssh resolver (IVY-1267) (thanks to Stepan Koltsov)
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: extends section of ivy.xml info does not replace variable in location tag (IVY-1287) (thanks to Jean-Louis Boudart)
 - FIX: Valid Path does not work for Filesystem Resolver (IVY-1268)
 - FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)
 - FIX: Dynamic version resolution result can be incorrect when ivy metadata contains extra attributes (IVY-1236)

@@ -20,7 +20,7 @@
 <ivy-module version="2.2">
 	<info organisation="myorg"
 		module="mymodule"
-		revision="working@localhost"
+		revision="myrev"
 		status="integration"
 		publication="20091206000000"
 	>

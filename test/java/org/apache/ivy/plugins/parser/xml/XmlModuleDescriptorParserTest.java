@@ -1030,7 +1030,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
-        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("myrev", md.getModuleRevisionId().getRevision());
         assertEquals("integration", md.getStatus());
 
         //verify that the parent description was merged.
@@ -1311,7 +1311,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
-        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
+        assertEquals("myrev", md.getModuleRevisionId().getRevision());
         assertEquals("integration", md.getStatus());
 
         //verify that the parent description was merged.
