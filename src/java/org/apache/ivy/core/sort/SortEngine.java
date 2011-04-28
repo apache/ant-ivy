@@ -43,9 +43,19 @@ public class SortEngine {
         this.settings = settings;
     }
 
-    
-
-    public List sortNodes(Collection nodes, SortOptions options) {
+    /**
+     * Same as {@link #sortModuleDescriptors(Collection, SortOptions)} but for <code>IvyNode</code>s.
+     * 
+     * @param nodes
+     *            a Collection of nodes to sort
+     * @param options
+     *            Options to use to sort the nodes.
+     * @return a List of sorted IvyNode
+     * @throws CircularDependencyException
+     *             if a circular dependency exists and circular dependency strategy decide to throw
+     *             an exception
+     */
+    public List/* <IvyNode> */sortNodes(Collection/* <IvyNode> */nodes, SortOptions options) {
         /*
          * here we want to use the sort algorithm which work on module descriptors : so we first put
          * dependencies on a map from descriptors to dependency, then we sort the keySet (i.e. a
