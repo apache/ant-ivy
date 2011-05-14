@@ -21,6 +21,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Stephane Bailliez
 	Karl Baum
 	Mikkel Bjerg
+	Per Arnold Blaasmo
 	Jeffrey Blattman
 	Jasper Blues
 	Jim Bonanno
@@ -114,6 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: The tag version-matchers is missing attribute in documentation (IVY-1292) (thanks to Per Arnold Blaasmo)
 - DOCUMENTATION: wrong default resolver documented on the 'How does it work' page (IVY-1265)
 - DOCUMENTATION: Correct outdated links to configuration pages (IVY-1266)
 

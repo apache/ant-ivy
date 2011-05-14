@@ -32,6 +32,18 @@ The child tag used for the version matcher must be equal to a name of a report o
 
 A version matcher is used to evaluate if a dependency version constraint matches a dependency version.
 
+<h1>Attributes</h1>
+<table class="ivy-attributes">
+<thead>
+    <tr><th class"ivy-att">Attribute</th><th class="ivy-att-desc">Descrition</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>usedefaults</td>
+        <td>when set to true, includes the built-in version matchers (Latest, Sub Revision, and Version Ranger Matcher). Exact Revision Matcher is always included</td>
+        <td>No, defaults to false</td>
+    </tr>
+</tbody>
+</table>
 <h1>Child elements</h1>
 <table class="ivy-children">
 <thead>
