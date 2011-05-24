@@ -72,7 +72,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * possible the original syntax
  */
 public final class XmlModuleDescriptorUpdater {
-    private static final int MAX_HEADER_LENGTH = 10000;
     //CheckStyle:StaticVariableName| OFF    
     //LINE_SEPARATOR is actually a constant, but we have to modify it for the tests
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
