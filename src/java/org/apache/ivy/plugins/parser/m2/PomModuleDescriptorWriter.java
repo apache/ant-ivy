@@ -36,6 +36,7 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
@@ -278,6 +279,10 @@ public final class PomModuleDescriptorWriter {
                     indent(out, indent * 3);
                     out.println("<optional>true</optional>");
                 }
+                
+                if(dds[i].canExclude()){
+                   printExclusions(dds[i].getAllExcludeRules(), out, indent);
+                }
                 indent(out, indent * 2);
                 out.println("</dependency>");
             }
@@ -288,6 +293,28 @@ public final class PomModuleDescriptorWriter {
             }
         }
     }
+    
+    private static void printExclusions(ExcludeRule[] exclusions, PrintWriter out, int indent ){
+        indent(out, indent * 3);
+        out.println("<exclusions>");        
+        
+        for(int i = 0; i < exclusions.length; i++ ){
+            indent(out, indent * 4);
+            out.println("<exclusion>");
+            ExcludeRule rule = exclusions[i];
+            indent(out, indent * 5);
+            out.println("<groupId>" + rule.getId().getModuleId().getOrganisation() + "</groupId>");
+            indent(out, indent * 5);
+            out.println("<artifactId>" + rule.getId().getModuleId().getName() + "</artifactId>");
+            indent(out, indent * 4);
+            out.println("</exclusion>"); 
+        }
+        
+        indent(out, indent * 3);
+        out.println("</exclusions>");      
+    }
+    
+    
     
     private static DependencyDescriptor[] getDependencies(ModuleDescriptor md, 
             PomWriterOptions options) {
