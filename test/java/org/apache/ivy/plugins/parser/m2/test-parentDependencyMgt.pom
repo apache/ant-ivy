@@ -37,7 +37,6 @@
 	<dependency>
         <groupId>commons-collection</groupId>
         <artifactId>commons-collection</artifactId>
-     	<version>1.0.5</version>
     </dependency>
   </dependencies>
 </project>
