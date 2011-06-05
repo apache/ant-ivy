@@ -292,8 +292,7 @@ public class PomModuleDescriptorBuilder {
             return;
         }
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ivyModuleDescriptor,
-                moduleRevId, true, false, true);
+        DefaultDependencyDescriptor dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor, moduleRevId);
         scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
         ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
@@ -631,5 +630,25 @@ public class PomModuleDescriptorBuilder {
     public void addJavadocArtifact() {
         ivyModuleDescriptor.addArtifact("javadoc", getJavadocArtifact());
     }
-    
+
+    /**
+     * <code>DependencyDescriptor</code> that provides access to the original <code>PomDependencyData</code>.
+     */
+    public static class PomDependencyDescriptor extends DefaultDependencyDescriptor {
+        private final PomDependencyData pomDependencyData;
+
+        private PomDependencyDescriptor(PomDependencyData pomDependencyData,
+                ModuleDescriptor moduleDescriptor, ModuleRevisionId revisionId) {
+            super(moduleDescriptor, revisionId, true, false, true);
+            this.pomDependencyData = pomDependencyData;
+        }
+
+        /**
+         * Get PomDependencyData.
+         * @return PomDependencyData
+         */
+        public PomDependencyData getPomDependencyData() {
+            return pomDependencyData;
+        }
+    }
 }

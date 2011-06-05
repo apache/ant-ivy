@@ -402,11 +402,16 @@ public class PomReader {
     
     public class PomDependencyData extends PomDependencyMgtElement {
         private final Element depElement;
+
+        public PomDependencyData(PomDependencyData copyFrom) {
+            this(copyFrom.depElement);
+        }
+
         PomDependencyData(Element depElement) {
             super(depElement);
             this.depElement = depElement;
         }
-        
+
         public String getScope() {
             String val = getFirstChildText(depElement , SCOPE);
             return replaceProps(val);
@@ -426,6 +431,7 @@ public class PomReader {
             Element e = getFirstChildElement(depElement, OPTIONAL); 
             return (e != null) && "true".equalsIgnoreCase(getTextContent(e));
         }
+
     }
     
     /**
@@ -443,8 +449,7 @@ public class PomReader {
         }
         return pomProperties;
     }
-    
-   
+
     private String replaceProps(String val) {
         if (val == null) {
             return null;

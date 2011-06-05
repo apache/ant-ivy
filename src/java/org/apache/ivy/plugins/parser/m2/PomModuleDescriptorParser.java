@@ -44,6 +44,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.PomDependencyDescriptor;
+import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
@@ -264,7 +266,14 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
                 if (parentDescr != null) {
                     for (int i = 0; i < parentDescr.getDependencies().length; i++) {
-                        mdBuilder.addDependency(parentDescr.getDependencies()[i]);
+                        DependencyDescriptor descriptor = parentDescr.getDependencies()[i];
+                        if (descriptor instanceof PomDependencyDescriptor) {
+                            PomDependencyData parentDep = ((PomDependencyDescriptor) descriptor).getPomDependencyData();
+                            PomDependencyData dep = domReader.new PomDependencyData(parentDep);
+                            mdBuilder.addDependency(res, dep);
+                        } else {
+                            mdBuilder.addDependency(descriptor);
+                        }
                     }
                 }
                 
