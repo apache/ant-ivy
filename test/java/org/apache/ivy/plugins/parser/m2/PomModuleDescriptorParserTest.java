@@ -721,13 +721,47 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
-        assertEquals(2, dds.length); 
+        assertEquals(2, dds.length);
         //2 are inherited from parent.  Only the first one is important for this test
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-yet-other", "5.79"), dds[1]
-                .getDependencyRevisionId());//present in the pom using a property defined in the parent
+                .getDependencyRevisionId());
     }
-    
+
+    public void testOverrideGrandparentProperties() throws ParseException, IOException {
+        settings.setDictatorResolver(new MockResolver() {
+            public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+                String resource;
+                if ("test".equals(dd.getDependencyId().getName())) {
+                    resource = "test-parent-properties.pom";
+                } else {
+                    resource = "test-version.pom";
+                }
+                try {
+                    ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance().parseDescriptor(
+                                            settings, getClass().getResource(resource), false);
+                    return new ResolvedModuleRevision(null,null,moduleDescriptor,null);
+                } catch (IOException e) {
+                    throw new AssertionError(e);
+                }
+            }
+        });
+
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-override-grandparent-properties.pom"), false);
+        assertNotNull(md);
+        assertEquals("1.0", md.getRevision());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(3, dds.length); 
+        
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-version-other", "5.79"), dds[0]
+                .getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-yet-other", "5.79"), dds[2]
+                .getDependencyRevisionId());
+    }
+
     public void testPomWithEntity() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-entity.pom"), true);
