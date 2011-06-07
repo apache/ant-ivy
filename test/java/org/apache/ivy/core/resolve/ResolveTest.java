@@ -4326,14 +4326,24 @@ public class ResolveTest extends TestCase {
         IvyNode ivyNode;
         ivyNode = (IvyNode) dependencies.get(0);
         assertNotNull(ivyNode);
-        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0");
+
+//      Bad assertions based on IVY-1301 bug, corrected below:
+//        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0");
+//        assertEquals(mrid, ivyNode.getId());
+//        // dependencies
+//        assertTrue(getIvyFileInCache(
+//            ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0")).exists());
+//        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "2.0",
+//            "test2", "jar", "jar").exists());
+
+        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "1.0");
         assertEquals(mrid, ivyNode.getId());
         // dependencies
         assertTrue(getIvyFileInCache(
-            ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0")).exists());
-        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "2.0",
+            ModuleRevisionId.newInstance("org.apache.dm", "test2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "1.0",
             "test2", "jar", "jar").exists());
-        
+
         ivyNode = (IvyNode) dependencies.get(1);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.dm", "test3", "1.0");
@@ -4423,14 +4433,24 @@ public class ResolveTest extends TestCase {
         IvyNode ivyNode;
         ivyNode = (IvyNode) dependencies.get(0);
         assertNotNull(ivyNode);
-        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0");
+
+//      Bad assertions based on IVY-1301 bug, corrected below:
+//        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0");
+//        assertEquals(mrid, ivyNode.getId());
+//        // dependencies
+//        assertTrue(getIvyFileInCache(
+//            ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0")).exists());
+//        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "2.0",
+//            "test2", "jar", "jar").exists());
+
+        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "1.0");
         assertEquals(mrid, ivyNode.getId());
         // dependencies
         assertTrue(getIvyFileInCache(
-            ModuleRevisionId.newInstance("org.apache.dm", "test2", "2.0")).exists());
-        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "2.0",
+            ModuleRevisionId.newInstance("org.apache.dm", "test2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "1.0",
             "test2", "jar", "jar").exists());
-        
+
         ivyNode = (IvyNode) dependencies.get(1);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.dm", "test3", "1.0");

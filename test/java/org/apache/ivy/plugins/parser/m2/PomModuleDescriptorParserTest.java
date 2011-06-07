@@ -675,6 +675,42 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jms", excludes[1].getId().getModuleId().getName());
     }
 
+    public void testOverrideParentVersionPropertyDependencyMgt() throws ParseException, IOException {        
+        settings.setDictatorResolver(new MockResolver() {
+            public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+                try {
+                    ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance().parseDescriptor(
+                        settings, getClass().getResource("test-versionPropertyDependencyMgt.pom"), false);
+                    return new ResolvedModuleRevision(null,null,moduleDescriptor,null);
+                } catch (IOException e) {
+                    throw new AssertionError(e);
+                }
+            }
+        });
+        
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-overrideParentVersionPropertyDependencyMgt.pom"), false);
+        assertNotNull(md);        
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-parentdep", "1.0"), md
+            .getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-collections", "commons-collections", "3.2.1"),
+            dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.1.1"),
+            dds[1].getDependencyRevisionId());
+        
+        ExcludeRule[] excludes = dds[0].getAllExcludeRules();
+        assertNotNull(excludes);
+        assertEquals(2, excludes.length);
+        assertEquals("javax.mail", excludes[0].getId().getModuleId().getOrganisation());
+        assertEquals("mail", excludes[0].getId().getModuleId().getName());
+        assertEquals("javax.jms", excludes[1].getId().getModuleId().getOrganisation());
+        assertEquals("jms", excludes[1].getId().getModuleId().getName());
+    }
+
     public void testParentProperties() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {

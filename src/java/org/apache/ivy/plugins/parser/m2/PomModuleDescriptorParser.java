@@ -46,6 +46,7 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.PomDependencyDescriptor;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
+import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyMgtElement;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
@@ -221,7 +222,11 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     // add dependency management info from parent
                     List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(parentDescr);
                     for (Iterator it = depMgt.iterator(); it.hasNext();) {
-                        mdBuilder.addDependencyMgt((PomDependencyMgt) it.next());
+                        PomDependencyMgt dep = (PomDependencyMgt) it.next();
+                        if (dep instanceof PomDependencyMgtElement) {
+                            dep = domReader.new PomDependencyMgtElement((PomDependencyMgtElement) dep);
+                        }
+                        mdBuilder.addDependencyMgt(dep);
                     }
                     
                     // add plugins from parent

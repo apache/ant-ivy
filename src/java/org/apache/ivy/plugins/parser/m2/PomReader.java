@@ -294,6 +294,10 @@ public class PomReader {
     public class PomDependencyMgtElement implements PomDependencyMgt {
         private final Element depElement;
         
+        public PomDependencyMgtElement(PomDependencyMgtElement copyFrom) {
+            this(copyFrom.depElement);
+        }
+
         PomDependencyMgtElement(Element depElement) {
             this.depElement = depElement; 
         }
