@@ -150,6 +150,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ConcurrentModificationException on ivy settings loading (IVY-1250)
 - FIX: Module inheritance sometimes fails to locate parent descriptor in deliver process (IVY-1248) (thanks to Jean-Louis Boudart)
 - FIX: <cachefileset> on an empty configuration produces a very slow-to-evaluate fileset (IVY-1272)
+- FIX: Ivy does not apply overridden properties to m2 parent dependency versions specified using properties (IVY-1299)
+- FIX: Ivy does not apply overridden properties to m2 parent dependency versions specified using dependencyManagement properties (IVY-1301)
 
    2.2.0
 =====================================
