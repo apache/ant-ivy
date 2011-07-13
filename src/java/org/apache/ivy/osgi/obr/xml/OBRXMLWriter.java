@@ -225,21 +225,29 @@ public class OBRXMLWriter {
         filter.append("(&");
         Version start = v.getStartVersion();
         if (start != null) {
-            filter.append("(version>");
             if (!v.isStartExclusive()) {
-                filter.append('=');
+                filter.append("(version>=");
+                filter.append(start.toString());
+                filter.append(')');
+            } else {
+                filter.append("(!");
+                filter.append("(version<=");
+                filter.append(start.toString());
+                filter.append("))");
             }
-            filter.append(start.toString());
-            filter.append(')');
         }
         Version end = v.getEndVersion();
         if (end != null) {
-            filter.append("(version<");
             if (!v.isEndExclusive()) {
-                filter.append('=');
+                filter.append("(version<=");
+                filter.append(end.toString());
+                filter.append(')');
+            } else {
+                filter.append("(!");
+                filter.append("(version>=");
+                filter.append(end.toString());
+                filter.append("))");
             }
-            filter.append(end.toString());
-            filter.append(')');
         }
     }
 
