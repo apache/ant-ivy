@@ -38,6 +38,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Flavio Coutinho da Costa
 	Stefan De Boey
 	Martin Eigenbrodt
+	Stephen Evanchik
 	Gregory Fernandez
 	Danno Ferrin
 	Benjamin Francisoud	
