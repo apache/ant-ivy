@@ -84,8 +84,10 @@ public class XmlReportParser {
                     // in which case, we put it at the last position
                     String pos = attributes.getValue("position");
                     position = pos == null ? getMaxPos() + 1 : Integer.valueOf(pos).intValue();
-                    if (attributes.getValue("error") != null
-                            || attributes.getValue("evicted") != null) {
+                    if (attributes.getValue("error") != null) {
+                        hasError = true;
+                        skip = true;
+                    } else if (attributes.getValue("evicted") != null) {
                         skip = true;
                     } else {
                         revisionsMap.put(new Integer(position), revisionArtifacts);
@@ -243,6 +245,8 @@ public class XmlReportParser {
 
         private File report;
 
+        private boolean hasError = false;
+        
         SaxXmlReportParser(File report) {
             artifacts = new ArrayList();
             artifactReports = new ArrayList();
@@ -335,5 +339,9 @@ public class XmlReportParser {
      */
     public ModuleRevisionId getResolvedModule() {
         return parser.getResolvedModule();
+    }
+
+    public boolean hasError() {
+        return parser.hasError;
     }
 }
