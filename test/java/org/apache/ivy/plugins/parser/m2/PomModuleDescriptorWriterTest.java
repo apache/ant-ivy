@@ -80,6 +80,32 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
     
+    public void testDependenciesWithType() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-dependencies-with-type.pom"), false);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-dependencies-with-type.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
+    public void testDependenciesWithClassifier() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-dependencies-with-classifier.pom"), false);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-dependencies-with-classifier.xml")
+            .replaceAll("\r\n", "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+    
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-optional.pom"), false);

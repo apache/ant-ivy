@@ -77,6 +77,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Stephen Nesbitt
 	Joshua Nichols
 	Bernard Niset
+	Andreas Mandel
 	David Maplesden
 	Glen Marchesani
 	Phil Messenger
@@ -126,6 +127,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Import Bushel into Ivy core (IVY-1241)
 - NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories
 
+- IMPROVEMENT: ivy:makepom ignores the artifact type in generated dependencies (IVY-1229) (thanks to Andreas Mandel)
 - IMPROVEMENT: ivy:makepom now honors exclusion of artifacts in generated pom files (IVY-1294) (thanks to Jens Rohloff)
 - IMPROVEMENT: Added support for dynamic revisions in <extends> tag (IVY-1281) (thanks to Jean-Louis Boudart)
 - IMPROVEMENT: ivy:makepom child element dependency should support the type and classifier attributes (IVY-1262)

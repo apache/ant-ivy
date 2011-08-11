@@ -35,6 +35,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -217,41 +218,16 @@ public final class PomModuleDescriptorWriter {
             // print the extra dependencies first
             for (Iterator it = extraDeps.iterator(); it.hasNext(); ) {
                 PomWriterOptions.ExtraDependency dep = (ExtraDependency) it.next();
-
-                indent(out, indent * 2);
-                out.println("<dependency>");
                 String groupId = dep.getGroup();
                 if (groupId == null) {
                     groupId = md.getModuleRevisionId().getOrganisation();
                 }
-                indent(out, indent * 3);
-                out.println("<groupId>" + groupId + "</groupId>");
-                indent(out, indent * 3);
-                out.println("<artifactId>" + dep.getArtifact() + "</artifactId>");
                 String version = dep.getVersion();
                 if (version == null) {
                     version = md.getModuleRevisionId().getRevision();
                 }
-                indent(out, indent * 3);
-                out.println("<version>" + version + "</version>");
-                if (dep.getType() != null) {
-                    indent(out, indent * 3);
-                    out.println("<type>" + dep.getType() + "</type>");
-                }
-                if (dep.getClassifier() != null) {
-                    indent(out, indent * 3);
-                    out.println("<classifier>" + dep.getClassifier() + "</classifier>");
-                }
-                if (dep.getScope() != null) {
-                    indent(out, indent * 3);
-                    out.println("<scope>" + dep.getScope() + "</scope>");
-                }
-                if (dep.isOptional()) {
-                    indent(out, indent * 3);
-                    out.println("<optional>true</optional>");
-                }
-                indent(out, indent * 2);
-                out.println("</dependency>");
+                printDependency(out, indent, groupId, dep.getArtifact(), version, dep.getType(), 
+                        dep.getClassifier(), dep.getScope(), dep.isOptional(), null);
             }
             
             // now print the dependencies listed in the ModuleDescriptor
@@ -262,29 +238,27 @@ public final class PomModuleDescriptorWriter {
             
             for (int i = 0; i < dds.length; i++) {
                 ModuleRevisionId mrid = dds[i].getDependencyRevisionId();
-                indent(out, indent * 2);
-                out.println("<dependency>");
-                indent(out, indent * 3);
-                out.println("<groupId>" + mrid.getOrganisation() + "</groupId>");
-                indent(out, indent * 3);
-                out.println("<artifactId>" + mrid.getName() + "</artifactId>");
-                indent(out, indent * 3);
-                out.println("<version>" + mrid.getRevision() + "</version>");
-                String scope = mapping.getScope(dds[i].getModuleConfigurations());
-                if (scope != null) {
-                    indent(out, indent * 3);
-                    out.println("<scope>" + scope + "</scope>");
-                }
-                if (mapping.isOptional(dds[i].getModuleConfigurations())) {
-                    indent(out, indent * 3);
-                    out.println("<optional>true</optional>");
-                }
-                
+                ExcludeRule[] excludes = null;
                 if(dds[i].canExclude()){
-                   printExclusions(dds[i].getAllExcludeRules(), out, indent);
+                    excludes = dds[i].getAllExcludeRules();
                 }
-                indent(out, indent * 2);
-                out.println("</dependency>");
+                DependencyArtifactDescriptor[] dads = dds[i].getAllDependencyArtifacts();
+                if(dads.length > 0) {
+                    for (int j = 0; j < dads.length; j++) {
+                        String type = dads[j].getType();
+                        String classifier = dads[j].getExtraAttribute("classifier");
+                        String scope = mapping.getScope(dds[i].getModuleConfigurations());
+                        boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
+                        printDependency(out, indent, mrid.getOrganisation(), mrid.getName(), 
+                                mrid.getRevision(), type, classifier, scope, optional, excludes);
+                    }
+                }
+                else {
+                    String scope = mapping.getScope(dds[i].getModuleConfigurations());
+                    boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
+                    printDependency(out, indent, mrid.getOrganisation(), mrid.getName(), 
+                            mrid.getRevision(), null, null, scope, optional, excludes);
+                }
             }
             
             if (printDependencies) {
@@ -294,7 +268,41 @@ public final class PomModuleDescriptorWriter {
         }
     }
     
-    private static void printExclusions(ExcludeRule[] exclusions, PrintWriter out, int indent ){
+    private static void printDependency(PrintWriter out, int indent, String groupId, 
+            String artifactId, String version, String type, String classifier, String scope, 
+            boolean isOptional, ExcludeRule[] excludes) {
+        indent(out, indent * 2);
+        out.println("<dependency>");
+        indent(out, indent * 3);
+        out.println("<groupId>" + groupId + "</groupId>");
+        indent(out, indent * 3);
+        out.println("<artifactId>" + artifactId + "</artifactId>");
+        indent(out, indent * 3);
+        out.println("<version>" + version + "</version>");
+        if (type != null && !"jar".equals(type)) {
+            indent(out, indent * 3);
+            out.println("<type>" + type + "</type>");
+        }
+        if (classifier != null) {
+            indent(out, indent * 3);
+            out.println("<classifier>" + classifier + "</classifier>");
+        }
+        if (scope != null) {
+            indent(out, indent * 3);
+            out.println("<scope>" + scope + "</scope>");
+        }
+        if (isOptional) {
+            indent(out, indent * 3);
+            out.println("<optional>true</optional>");
+        }
+        if (excludes != null) {
+           printExclusions(excludes, out, indent);
+        }
+        indent(out, indent * 2);
+        out.println("</dependency>");
+    }
+    
+    private static void printExclusions(ExcludeRule[] exclusions, PrintWriter out, int indent) {
         indent(out, indent * 3);
         out.println("<exclusions>");        
         
@@ -313,8 +321,6 @@ public final class PomModuleDescriptorWriter {
         indent(out, indent * 3);
         out.println("</exclusions>");      
     }
-    
-    
     
     private static DependencyDescriptor[] getDependencies(ModuleDescriptor md, 
             PomWriterOptions options) {
