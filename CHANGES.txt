@@ -52,6 +52,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Ben Hale
 	Peter Hayes
 	Scott Hebert
+	Payam Hekmat
 	Achim Huegen
 	Matt Inger
 	Anders Jacobsson
@@ -136,6 +137,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: Infinite loop in latest-compatible conflict manager (IVY-1233) (thanks to Payam Hekmat)
 - FIX: extends section of ivy.xml info does not replace variable in location tag (IVY-1287) (thanks to Jean-Louis Boudart)
 - FIX: Valid Path does not work for Filesystem Resolver (IVY-1268)
 - FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)

@@ -3365,6 +3365,21 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("myorg", "modB", "1.0", "modB-A", "jar", "jar").exists());
     }
 
+    public void testIVY1233() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-1233/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1233/ivy.xml").toURI().toURL(),
+            getResolveOptions(new String[] {"*"}));
+        ConfigurationResolveReport crr = rr.getConfigurationReport("default");
+        Set modRevIds = crr.getModuleRevisionIds();
+        assertEquals(3, modRevIds.size());
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "a", "1.0")));
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "b", "2.0")));
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "c", "3.0")));
+    }
+
     public void testIVY999() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-999/ivysettings.xml"));
