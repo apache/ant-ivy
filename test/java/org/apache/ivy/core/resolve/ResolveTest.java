@@ -3669,9 +3669,9 @@ public class ResolveTest extends TestCase {
         runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod32;1.0"));
         runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod33;1.0"));
         ConfigurationResolveReport compileReport = report.getConfigurationReport("compile");
-        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod31;1.0"));
-        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod32;1.0"));
-        runtimeReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod33;1.0"));
+        compileReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod31;1.0"));
+        compileReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod32;1.0"));
+        compileReport.getModuleRevisionIds().contains(ModuleRevisionId.parse("multiple-same-deps#mod33;1.0"));
     }
 
     public void testResolveTransitiveExcludesSimple() throws Exception {
