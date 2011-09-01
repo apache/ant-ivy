@@ -25,14 +25,17 @@
 <body>
 	<textarea id="xooki-source">
 <table class="resolver">
-<tr><td class="title">Tag</td><td class="value">obr</td></tr>
+<tr><td class="title">Tag</td><td class="value">updatesite</td></tr>
 <tr><td class="title">Handle latest</td><td class="value">yes</td></tr>
 <tr><td class="title">Handle publish</td><td class="value">no</td></tr>
 </table>
 
 <span class="since">since 2.3</span>
 
-<span class="tagdoc" id="ivysettings.resolvers.obr">This resolver is one of the resolver which supports <a href="../osgi.html">OSGi&#153;</a> dependencies. As part of the OSGi specification resides the OBR (OSGi Bundle Repository). The OBR defines the aggregation of the OSGi metadata of every bundle included in an repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
+<span class="tagdoc" id="ivysettings.resolvers.updatesite">This resolver is one of the resolver which supports <a href="../osgi.html">OSGi&#153;</a> dependencies.
+It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.
+
+This resolver supports old style Eclipse updatesite, based on simply a site.xml. It also supports Eclipse P2 repositories.
 
 <h1>Attributes</h1>
 This resolver shares the <a href="../settings/resolvers.html#common">common attributes</a> of composite resolvers.
@@ -41,15 +44,13 @@ This resolver shares the <a href="../settings/resolvers.html#common">common attr
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>repoXmlURL</td><td>the URL of the obr.xml to load.</td>
-        <td>Yes</td></tr>
-    <tr><td>repoXmlFile</td><td>the local path of the obr.xml to load.</td>
+    <tr><td>url</td><td>the URL of the Eclipse updatesite</td>
         <td>Yes</td></tr>
     <tr><td>requirementStrategy</td><td>defines how strict should be the OSGi resolution. Can be one of <tt>first</tt> or <tt>noambiguity</tt></td>
         <td>No, default to <tt>noambiguity</tt></td></tr>
-    <tr><td>metadataTtl</td><td>the time in milliseconds the obr.xml is considered up to date</td>
+    <tr><td>metadataTtl</td><td>the time in milliseconds the updatesite metadata are considered up to date</td>
         <td>No, default to 3600000 (1 hour)</td></tr>
-    <tr><td>forceMetadataUpdate</td><td>force the update of the obr.xml without checking its freshness</td>
+    <tr><td>forceMetadataUpdate</td><td>force the update of the updatesite metadata without checking their freshness</td>
         <td>No, default to false</td></tr>
 </tbody>
 </table>
@@ -62,14 +63,9 @@ The requirement strategy is defining how the resolver should behave in front of 
 
 <h1>Examples</h1>
 <code type="xml">
-<obr name="felix-repo" repoXmlURL="http://felix.apache.org/obr/releases.xml" />
+<updatesite name="ivyde-updatesite" url="http://www.apache.org/dist/ant/ivyde/updatesite" />
 </code>
-A simple repository configured to use the Felix OBR.
-<hr />
-<code type="xml">
-<obr name="my-osgi-repo" repoXmlFile="${ivy.settings.dir}/obr/obr.xml" requirementStrategy="first" />
-</code>
-A local repository which is trusted to always provide correct dependency for the <tt>Import-Package</tt> requirements.
+A simple repository configured to load the Apache IvyDE Eclipse update site.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

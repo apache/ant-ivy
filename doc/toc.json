@@ -372,6 +372,13 @@
                                   ]
                               },
                               {
+                                "id":"resolver/updatesite",
+                                "title":"Eclipse updatesite",
+                                "children": [
+
+                                  ]
+                              },
+                              {
                                 "id":"resolver/mirrored",
                                 "title":"Mirrored Resolver",
                                 "children": [

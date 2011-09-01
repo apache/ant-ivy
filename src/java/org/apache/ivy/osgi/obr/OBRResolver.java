@@ -42,12 +42,24 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
 
     private String repoXmlFile;
 
+    private Long metadataTtl;
+
+    private Boolean forceMetadataUpdate;
+
     public void setRepoXmlFile(String repositoryXmlFile) {
         this.repoXmlFile = repositoryXmlFile;
     }
 
     public void setRepoXmlURL(String repositoryXmlURL) {
         this.repoXmlURL = repositoryXmlURL;
+    }
+
+    public void setMetadataTtl(Long metadataTtl) {
+        this.metadataTtl = metadataTtl;
+    }
+
+    public void setForceMetadataUpdate(Boolean forceMetadataUpdate) {
+        this.forceMetadataUpdate = forceMetadataUpdate;
     }
 
     protected void init() {
@@ -95,6 +107,12 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
                 }
                 Resource obrResource = new URLResource(url);
                 CacheResourceOptions options = new CacheResourceOptions();
+                if (metadataTtl != null) {
+                    options.setTtl(metadataTtl.longValue());
+                }
+                if (forceMetadataUpdate != null) {
+                    options.setForce(forceMetadataUpdate.booleanValue());
+                }
                 report = getRepositoryCacheManager().downloadRepositoryResource(obrResource, "obr",
                     "obr", "xml", options, repo);
             } finally {
