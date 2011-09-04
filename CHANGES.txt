@@ -45,7 +45,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jacob Grydholt Jensen
 	John Gibson
 	Scott Goldstein
-	Pierre Hägnestrand
+	Pierre Hï¿½gnestrand
 	Scott Hebert
 	Tobias Himstedt
 	Aaron Hachez
@@ -126,7 +126,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: New Ant datatype ivy:resources, an Ant resource collection like ivy:cachepath or ivy:cachefileset (IVY-334)
 - NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
 - NEW: Import Bushel into Ivy core (IVY-1241)
-- NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories
+- NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories (IVY-468)
 
 - IMPROVEMENT: ivy:makepom ignores the artifact type in generated dependencies (IVY-1229) (thanks to Douglas Palmer)
 - IMPROVEMENT: ivy:makepom now honors exclusion of artifacts in generated pom files (IVY-1294) (thanks to Jens Rohloff)
@@ -524,7 +524,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Flexible cache management (IVY-399) (With contribution of Adrian Sandor)
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
-- IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
+- IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevï¿½e)
 - IMPROVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom
 
 - FIX: ivy:install task not using validate attribute (IVY-728)
@@ -537,7 +537,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: When in ssh plugin we does not set username in scheme, Ivy always try to connect with guest username, even if we change one in panel. (IVY-710) (thanks to Ruslan Shevchenko)
 - FIX: NPE in SshCache during publish with ssh resolver without passFile (IVY-709) (thanks to Ruslan Shevchenko)
 - FIX: Update install ivy build file example (IVY-705) (thanks to Benjamin Francisoud)
-- FIX: Ivy swallows ParseException when using a latest strategy requiring module descriptors (IVY-702) (thanks to Nicolas Lalevée)
+- FIX: Ivy swallows ParseException when using a latest strategy requiring module descriptors (IVY-702) (thanks to Nicolas Lalevï¿½e)
 - FIX: Problem with cached Ivy files which have extra attributes (IVY-693)
 - FIX: Detection of newer and better artifacts should not happen if 'checkModified' is set to 'false' (IVY-389) (with contribution from Johan Stuyts)
 - FIX: Ivy doesn't respect the order of the ivy patterns as defined in the settings (IVY-676)
@@ -562,7 +562,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: support atomic publish operation (IVY-492) (with contribution from Geoff Reedy)
 - NEW: latest compatible conflict manager (IVY-648)
 - NEW: Add a task/code to create M2 POM files from Ivy configurations (IVY-416)
-- NEW: [Build] Publish the ivy sources (IVY-646) (thanks to Nicolas Lalevée)
+- NEW: [Build] Publish the ivy sources (IVY-646) (thanks to Nicolas Lalevï¿½e)
 
 - IMPROVEMENT: Ease performance auditing (IVY-655)
 - IMPROVEMENT: Maven Dependency Management is not used to determine artifact version (IVY-616) (thanks to Jim Bonanno)
@@ -701,7 +701,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: IOException during publish causes NullPointerException (IVY-371)
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hï¿½gnestrand)
 
 
    version 1.4.1 - 2006-11-09
