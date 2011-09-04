@@ -359,7 +359,14 @@
                               },
                               {
                                 "id":"resolver/vfs",
-                                "title":"vfs",
+                                "title":"vfs resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"resolver/jar",
+                                "title":"Jar resolver",
                                 "children": [
 
                                   ]

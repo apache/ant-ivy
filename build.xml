@@ -431,6 +431,15 @@
         <ant dir="${basedir}/test/test-repo" target="generate-bundles" />
 	</target>
 
+    <target name="prepare-test-jar-repositories" unless="skip.test">
+        <jar destfile="${basedir}/test/jar-repos/jarrepo1.jar" >
+            <fileset dir="${basedir}/test/repositories/1" />
+        </jar>
+        <jar destfile="${basedir}/test/jar-repos/jarrepo1_subdir.jar">
+            <fileset dir="${basedir}/test/repositories" includes="1/**/*" />
+        </jar>
+    </target>
+
 	<target name="test-internal" depends="build-test, init-tests, prepare-osgi-tests" unless="skip.test">
         <mkdir dir="${test.xml.dir}" />
     	

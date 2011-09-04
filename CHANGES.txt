@@ -127,6 +127,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
 - NEW: Import Bushel into Ivy core (IVY-1241)
 - NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories (IVY-468)
+- NEW: Support for a jar resolver (IVY-1312)
 
 - IMPROVEMENT: ivy:makepom ignores the artifact type in generated dependencies (IVY-1229) (thanks to Douglas Palmer)
 - IMPROVEMENT: ivy:makepom now honors exclusion of artifacts in generated pom files (IVY-1294) (thanks to Jens Rohloff)
