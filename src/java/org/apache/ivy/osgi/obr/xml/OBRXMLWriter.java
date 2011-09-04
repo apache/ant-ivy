@@ -75,15 +75,14 @@ public class OBRXMLWriter {
             BundleInfo bundleInfo;
             try {
                 bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
-                bundleInfo.setUri(manifestAndLocation.getLocation());
+                bundleInfo.setUri(manifestAndLocation.getUri());
                 nbOk++;
             } catch (ParseException e) {
                 nbRejected++;
                 IvyContext
                         .getContext()
                         .getMessageLogger()
-                        .log(
-                            "Rejected " + manifestAndLocation.getLocation() + ": " + e.getMessage(),
+                        .log("Rejected " + manifestAndLocation.getUri() + ": " + e.getMessage(),
                             level);
                 continue;
             }
@@ -114,7 +113,7 @@ public class OBRXMLWriter {
         addAttr(atts, ResourceHandler.SYMBOLIC_NAME, bundleInfo.getSymbolicName());
         addAttr(atts, ResourceHandler.VERSION, bundleInfo.getRawVersion());
         if (bundleInfo.getUri() != null) {
-            addAttr(atts, ResourceHandler.URI, bundleInfo.getUri());
+            addAttr(atts, ResourceHandler.URI, bundleInfo.getUri().toString());
         }
         handler.startElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE, atts);
         Iterator itCapabilities = bundleInfo.getCapabilities().iterator();

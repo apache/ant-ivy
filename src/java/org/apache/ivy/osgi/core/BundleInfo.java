@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.core;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -61,7 +62,7 @@ public class BundleInfo {
 
     private Integer size;
 
-    private String uri;
+    private URI uri;
 
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
@@ -96,11 +97,11 @@ public class BundleInfo {
         return version;
     }
 
-    public void setUri(String uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 

@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.repo;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.util.Iterator;
 
@@ -31,8 +32,8 @@ public class BundleRepoDescriptor extends RepoDescriptor {
 
     private Long lastModified;
 
-    public BundleRepoDescriptor(ExecutionEnvironmentProfileProvider profileProvider) {
-        super(profileProvider);
+    public BundleRepoDescriptor(URI baseUri, ExecutionEnvironmentProfileProvider profileProvider) {
+        super(baseUri, profileProvider);
     }
 
     public void setName(String name) {
@@ -57,11 +58,10 @@ public class BundleRepoDescriptor extends RepoDescriptor {
             try {
                 BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation
                         .getManifest());
-                bundleInfo.setUri(manifestAndLocation.getLocation());
+                bundleInfo.setUri(manifestAndLocation.getUri());
                 addBundle(bundleInfo);
             } catch (ParseException e) {
-                Message.error("Rejected " + manifestAndLocation.getLocation() + ": "
-                        + e.getMessage());
+                Message.error("Rejected " + manifestAndLocation.getUri() + ": " + e.getMessage());
             }
         }
     }

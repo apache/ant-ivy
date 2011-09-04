@@ -48,7 +48,6 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ManifestParser;
-import org.apache.ivy.osgi.obr.OBRResolver;
 import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver.RequirementStrategy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
@@ -282,7 +281,8 @@ public class OBRResolverTest extends TestCase {
         JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo, null);
+        bundleInfo.setUri(new File("test/test-repo/bundlerepo/" + jarName).toURI());
+        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(null, bundleInfo, null);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertFalse("resolve failed " + resolveReport.getAllProblemMessages(),
@@ -312,7 +312,8 @@ public class OBRResolverTest extends TestCase {
         JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo, null);
+        bundleInfo.setUri(new File("test/test-repo/bundlerepo/" + jarName).toURI());
+        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(null, bundleInfo, null);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertTrue(resolveReport.hasError());

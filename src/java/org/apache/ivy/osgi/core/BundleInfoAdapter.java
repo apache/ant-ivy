@@ -18,11 +18,15 @@
 package org.apache.ivy.osgi.core;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,8 +45,6 @@ import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
-import org.apache.ivy.util.Message;
-import org.apache.ivy.util.StringUtils;
 
 public class BundleInfoAdapter {
 
@@ -75,7 +77,16 @@ public class BundleInfoAdapter {
     public static final Map/* <String, String> */OSGI_SERVICE = Collections.singletonMap(
         EXTRA_ATTRIBUTE_NAME, BundleInfo.SERVICE_TYPE);
 
-    public static DefaultModuleDescriptor toModuleDescriptor(BundleInfo bundle,
+    /**
+     * 
+     * @param baseUri
+     *            uri to help build the absolute url if the bundle info has a relative uri.
+     * @param bundle
+     * @param profileProvider
+     * @return
+     * @throws ProfileNotFoundException
+     */
+    public static DefaultModuleDescriptor toModuleDescriptor(URI baseUri, BundleInfo bundle,
             ExecutionEnvironmentProfileProvider profileProvider) throws ProfileNotFoundException {
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(null, null);
         md.addExtraAttributeNamespace("o", Ivy.getIvyHomeURL() + "osgi");
@@ -107,22 +118,20 @@ public class BundleInfoAdapter {
 
         requirementAsDependency(md, bundle, exportedPkgNames);
 
-        if (bundle.getUri() != null) {
+        URI uri = bundle.getUri();
+        if (uri != null) {
             DefaultArtifact artifact = null;
-            String uri = bundle.getUri();
-            if (uri.startsWith("ivy://")) {
-                artifact = decodeIvyLocation(uri);
+            if ("ivy".equals(uri.getScheme())) {
+                artifact = decodeIvyURI(uri);
             } else {
-                URL url = null;
-                try {
-                    url = new URL("file:" + uri);
-                } catch (MalformedURLException e) {
-                    Message.error("BUG IN BUSHEL, please report: " + e.getMessage() + "\n"
-                            + StringUtils.getStackTrace(e));
+                if (!uri.isAbsolute()) {
+                    uri = baseUri.resolve(uri);
                 }
-                if (url != null) {
+                try {
                     artifact = new DefaultArtifact(mrid, null, bundle.getSymbolicName(), "jar",
-                            "jar", url, null);
+                            "jar", new URL(uri.toString()), null);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException("Unable to make the uri into the url", e);
                 }
             }
             if (artifact != null) {
@@ -159,16 +168,31 @@ public class BundleInfoAdapter {
         return md;
     }
 
-    public static String encodeIvyLocation(Artifact artifact) {
+    public static List/*<String>*/ getConfigurations(BundleInfo bundle) {
+        List/*<String>*/ confs = new ArrayList();
+        confs.add(CONF_DEFAULT);
+        confs.add(CONF_OPTIONAL);
+        confs.add(CONF_TRANSITIVE_OPTIONAL);
+
+        Iterator itExport = bundle.getExports().iterator();
+        while (itExport.hasNext()) {
+            ExportPackage exportPackage = (ExportPackage) itExport.next();
+            confs.add(CONF_USE_PREFIX + exportPackage.getName());
+        }
+
+        return confs;
+    }
+
+    public static URI buildIvyURI(Artifact artifact) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
-        return encodeIvyLocation(mrid.getOrganisation(), mrid.getName(), mrid.getBranch(),
+        return asIvyURI(mrid.getOrganisation(), mrid.getName(), mrid.getBranch(),
             mrid.getRevision(), artifact.getType(), artifact.getName(), artifact.getExt());
     }
 
-    private static String encodeIvyLocation(String org, String name, String branch, String rev,
-            String type, String art, String ext) {
+    private static URI asIvyURI(String org, String name, String branch, String rev, String type,
+            String art, String ext) {
         StringBuffer builder = new StringBuffer();
-        builder.append("ivy://");
+        builder.append("ivy:///");
         builder.append(org);
         builder.append('/');
         builder.append(name);
@@ -193,10 +217,14 @@ public class BundleInfoAdapter {
             builder.append("&ext=");
             builder.append(ext);
         }
-        return builder.toString();
+        try {
+            return new URI(builder.toString());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("illformed ivy url", e);
+        }
     }
 
-    private static DefaultArtifact decodeIvyLocation(final String uri) {
+    private static DefaultArtifact decodeIvyURI(final URI uri) {
         String org = null;
         String name = null;
         String branch = null;
@@ -205,22 +233,19 @@ public class BundleInfoAdapter {
         String type = null;
         String ext = null;
 
-        String u = uri.substring(6);
-        int i = u.indexOf('/');
-        if (i < 0) {
-            throw new IllegalArgumentException("Expecting an organisation in the ivy uri: " + uri);
+        String path = uri.getPath();
+        if (!path.startsWith("/")) {
+            throw new IllegalArgumentException("An ivy url should be of the form ivy:///org/module but was : " + uri);
         }
-        org = u.substring(0, i);
-        u = u.substring(i + 1);
-
-        i = u.indexOf('?');
+        int i = path.indexOf('/', 1);
         if (i < 0) {
-            throw new IllegalArgumentException("Expecting an module name in the ivy uri: " + uri);
+            throw new IllegalArgumentException("Expecting an organisation in the ivy url: " + uri);
         }
-        name = u.substring(0, i);
-        u = u.substring(i + 1);
+        org = path.substring(1, i);
+        name = path.substring(i + 1);
 
-        String[] parameters = u.split("&");
+        String query = uri.getQuery();
+        String[] parameters = query.split("&");
         for (int j = 0; j < parameters.length; j++) {
             String parameter = parameters[j];
             if (parameter.length() == 0) {
@@ -228,7 +253,7 @@ public class BundleInfoAdapter {
             }
             String[] nameAndValue = parameter.split("=");
             if (nameAndValue.length != 2) {
-                throw new IllegalArgumentException("Malformed query string in the ivy uri: " + uri);
+                throw new IllegalArgumentException("Malformed query string in the ivy url: " + uri);
             } else if (nameAndValue[0].equals("branch")) {
                 branch = nameAndValue[1];
             } else if (nameAndValue[0].equals("rev")) {
@@ -241,7 +266,7 @@ public class BundleInfoAdapter {
                 ext = nameAndValue[1];
             } else {
                 throw new IllegalArgumentException("Unrecognized parameter '" + nameAndValue[0]
-                        + " in the query string of the ivy uri: " + uri);
+                        + " in the query string of the ivy url: " + uri);
             }
         }
 

@@ -18,6 +18,7 @@
 package org.apache.ivy.osgi.repo;
 
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -179,8 +180,8 @@ public class ResolverManifestIterable { //implements Iterable/* <ManifestAndLoca
                 if (manifest == null) {
                     Message.debug("No manifest on " + artifact);
                 } else {
-                    String location = BundleInfoAdapter.encodeIvyLocation(artifact);
-                    next = new ManifestAndLocation(manifest, location);
+                    URI uri = BundleInfoAdapter.buildIvyURI(artifact);
+                    next = new ManifestAndLocation(manifest, uri);
                 }
                 artifact = null;
             }

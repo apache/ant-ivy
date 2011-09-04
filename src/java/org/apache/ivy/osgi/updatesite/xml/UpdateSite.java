@@ -17,27 +17,28 @@
  */
 package org.apache.ivy.osgi.updatesite.xml;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateSite {
 
-    private String url;
+    private URI uri;
 
     private String mirrorsURL;
 
     private boolean pack200;
 
-    private String digestUrl;
+    private URI digestUri;
 
     private List/* <EclipseFeature> */features = new ArrayList();
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 
-    public String getUrl() {
-        return url;
+    public URI getUri() {
+        return uri;
     }
 
     public void setMirrorsURL(String mirrorsURL) {
@@ -48,12 +49,12 @@ public class UpdateSite {
         this.pack200 = pack200;
     }
 
-    public void setDigestURL(String digestURL) {
-        this.digestUrl = digestURL;
+    public void setDigestUri(URI digestUri) {
+        this.digestUri = digestUri;
     }
 
-    public String getDigestURL() {
-        return digestUrl;
+    public URI getDigestUri() {
+        return digestUri;
     }
 
     public void addFeature(EclipseFeature feature) {

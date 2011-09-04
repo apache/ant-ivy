@@ -286,7 +286,7 @@ public class P2MetadataParser implements XMLInputParser {
         protected void handleAttributes(Attributes atts) {
             String id = atts.getValue(ID);
             Version version = new Version(atts.getValue(VERSION));
-            boolean singleton = Boolean.getBoolean(atts.getValue(SINGLETON));
+            // Boolean singleton = Boolean.valueOf(atts.getValue(SINGLETON));
             bundleInfo = new BundleInfo(id, version);
         }
 

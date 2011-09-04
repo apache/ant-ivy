@@ -19,6 +19,8 @@ package org.apache.ivy.osgi.updatesite;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Iterator;
 
@@ -50,13 +52,15 @@ public class UpdateSiteLoaderTest extends TestCase {
         CacheCleaner.deleteDir(cache);
     }
 
-    public void testIvyDE() throws IOException, ParseException, SAXException {
-        RepoDescriptor site = loader.load("http://www.apache.org/dist/ant/ivyde/updatesite/");
+    public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
+        RepoDescriptor site = loader.load(new URI(
+                "http://www.apache.org/dist/ant/ivyde/updatesite/"));
         assertEquals(13, site.getModules().size());
     }
 
-    public void testM2Eclipse() throws IOException, ParseException, SAXException {
-        RepoDescriptor site = loader.load("http://m2eclipse.sonatype.org/sites/m2e/");
+    public void testM2Eclipse() throws IOException, ParseException, SAXException,
+            URISyntaxException {
+        RepoDescriptor site = loader.load(new URI("http://m2eclipse.sonatype.org/sites/m2e/"));
         assertTrue(site.getModules().size() > 70);
         Iterator itModules = site.getModules().iterator();
         while (itModules.hasNext()) {
@@ -65,12 +69,13 @@ public class UpdateSiteLoaderTest extends TestCase {
             assertTrue(name, name.indexOf("org.maven") != -1);
         }
 
-        site = loader.load("http://m2eclipse.sonatype.org/sites/m2e/");
+        site = loader.load(new URI("http://m2eclipse.sonatype.org/sites/m2e/"));
         assertTrue(site.getModules().size() > 70);
     }
 
-    public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException {
-        RepoDescriptor site = loader.load("http://download.eclipse.org/releases/helios/");
+    public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException,
+            URISyntaxException {
+        RepoDescriptor site = loader.load(new URI("http://download.eclipse.org/releases/helios/"));
         assertTrue(site.getModules().size() > 900);
     }
 

@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.repo;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,12 +40,23 @@ public class RepoDescriptor {
 
     private final ExecutionEnvironmentProfileProvider profileProvider;
 
-    public RepoDescriptor(ExecutionEnvironmentProfileProvider profileProvider) {
+    private final URI baseUri;
+
+    public RepoDescriptor(URI baseUri, ExecutionEnvironmentProfileProvider profileProvider) {
+        this.baseUri = baseUri;
         this.profileProvider = profileProvider;
     }
 
-    public Set/* <ModuleDescriptor> */ getModules() {
+    public URI getBaseUri() {
+        return baseUri;
+    }
+
+    public Set/* <ModuleDescriptor> */getModules() {
         return modules;
+    }
+
+    public Map/* <String, Map<String, Set<ModuleDescriptor>>> */getModuleByCapbilities() {
+        return moduleByCapbilities;
     }
 
     public Set/* <ModuleDescriptor> */findModule(String requirement, String value) {
@@ -83,7 +95,7 @@ public class RepoDescriptor {
     }
 
     public void addBundle(BundleInfo bundleInfo) {
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(bundleInfo,
+        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(baseUri, bundleInfo,
             profileProvider);
         add(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), md);
         Iterator itCapability = bundleInfo.getCapabilities().iterator();

@@ -20,6 +20,8 @@ package org.apache.ivy.osgi.updatesite.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -90,7 +92,11 @@ public class EclipseUpdateSiteParser {
                 if (!url.endsWith("/") && !url.endsWith(File.separator)) {
                     url += "/";
                 }
-                updatesite.setUrl(url);
+                try {
+                    updatesite.setUri(new URI(url));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException("illegal url", e);
+                }
             }
 
             String mirrorsURL = atts.getValue(MIRRORS_URL);
@@ -105,7 +111,11 @@ public class EclipseUpdateSiteParser {
 
             String digestURL = atts.getValue(DIGEST_URL);
             if (digestURL != null) {
-                updatesite.setDigestURL(digestURL);
+                try {
+                    updatesite.setDigestUri(new URI(digestURL));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException("illegal url", e);
+                }
             }
 
             String associateSitesURL = atts.getValue(ASSOCIATE_SITES_URL);

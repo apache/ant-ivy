@@ -19,6 +19,8 @@ package org.apache.ivy.osgi.repo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +42,16 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable {
         this.repo = repo;
     }
 
+    protected URI buildBundleURI(String location) throws IOException {
+        try {
+            return new URI(repo.getResource(location).getName());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(
+                    "Unsupported repository type, resources names cannot be transformed into uri",
+                    e);
+        }
+    }
+
     protected InputStream getInputStream(String f) throws IOException {
         return repo.getResource(f).openStream();
     }
@@ -53,7 +65,6 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable {
     }
 
     private List/* <String> */asList(String[] array) {
-        return array == null ? Collections.EMPTY_LIST : Arrays
-                ./* <String> */asList(array);
+        return array == null ? Collections.EMPTY_LIST : Arrays./* <String> */asList(array);
     }
 }

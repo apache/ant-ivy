@@ -19,6 +19,8 @@ package org.apache.ivy.osgi.obr.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,9 +39,9 @@ import org.xml.sax.SAXParseException;
 
 public class OBRXMLParser {
 
-    public static BundleRepoDescriptor parse(InputStream in) throws ParseException, IOException,
-            SAXException {
-        RepositoryHandler handler = new RepositoryHandler();
+    public static BundleRepoDescriptor parse(URI baseUri, InputStream in) throws ParseException,
+            IOException, SAXException {
+        RepositoryHandler handler = new RepositoryHandler(baseUri);
         try {
             XMLHelper.parse(in, null, handler, null);
         } catch (ParserConfigurationException e) {
@@ -58,8 +60,11 @@ public class OBRXMLParser {
 
         BundleRepoDescriptor repo;
 
-        public RepositoryHandler() {
+        private final URI baseUri;
+
+        public RepositoryHandler(URI baseUri) {
             super(REPOSITORY);
+            this.baseUri = baseUri;
             addChild(new ResourceHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     repo.addBundle(((ResourceHandler) child).bundleInfo);
@@ -68,7 +73,8 @@ public class OBRXMLParser {
         }
 
         protected void handleAttributes(Attributes atts) {
-            repo = new BundleRepoDescriptor(ExecutionEnvironmentProfileProvider.getInstance());
+            repo = new BundleRepoDescriptor(baseUri,
+                    ExecutionEnvironmentProfileProvider.getInstance());
 
             repo.setName(atts.getValue(NAME));
 
@@ -128,7 +134,7 @@ public class OBRXMLParser {
                         bundleInfo.setSize(Integer.valueOf(size));
                     } catch (NumberFormatException e) {
                         log(Message.MSG_WARN,
-                            "Invalid size for the bundle" + bundleInfo.getSymbolicName() + ": "
+                            "Invalid size for the bundle " + bundleInfo.getSymbolicName() + ": "
                                     + size + ". This size is then ignored.");
                     }
                 }
@@ -182,7 +188,17 @@ public class OBRXMLParser {
 
             bundleInfo = new BundleInfo(symbolicname, version);
             bundleInfo.setPresentationName(atts.getValue(PRESENTATION_NAME));
-            bundleInfo.setUri(atts.getValue(URI));
+            String uri = atts.getValue(URI);
+            if (uri != null) {
+                try {
+                    bundleInfo.setUri(new URI(uri));
+                } catch (URISyntaxException e) {
+                    log(Message.MSG_ERR, "Incorrect uri " + uri + ". The resource " + symbolicname
+                            + " is then ignored.");
+                    skip();
+                    return;
+                }
+            }
             bundleInfo.setId(atts.getValue(ID));
         }
 

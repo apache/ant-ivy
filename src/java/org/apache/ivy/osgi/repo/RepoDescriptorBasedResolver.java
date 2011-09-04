@@ -19,6 +19,7 @@ package org.apache.ivy.osgi.repo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,8 +35,6 @@ import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -45,10 +44,10 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
-import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.util.Version;
-import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.url.URLRepository;
+import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
@@ -57,11 +56,9 @@ import org.apache.ivy.util.Message;
 
 public abstract class RepoDescriptorBasedResolver extends BasicResolver {
 
-    private Repository repository = null;
-
     private RepoDescriptor repoDescriptor = null;
 
-    private ExecutionEnvironmentProfileProvider profileProvider;
+    private URLRepository repository = new URLRepository();
 
     public static class RequirementStrategy {
         // take the first matching
@@ -91,30 +88,21 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         setImportPackageStrategy(RequirementStrategy.valueOf(strategy));
     }
 
-    public void add(ExecutionEnvironmentProfileProvider pp) {
-        this.profileProvider = pp;
-    }
-
-    protected void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
     protected void setRepoDescriptor(RepoDescriptor repoDescriptor) {
         this.repoDescriptor = repoDescriptor;
     }
 
+    public URLRepository getRepository() {
+        return repository;
+    }
+
     protected void ensureInit() {
-        if (repoDescriptor == null || repository == null) {
+        if (repoDescriptor == null) {
             init();
         }
     }
 
     abstract protected void init();
-
-    public Repository getRepository() {
-        ensureInit();
-        return repository;
-    }
 
     private RepoDescriptor getRepoDescriptor() {
         ensureInit();
@@ -230,14 +218,11 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
     }
 
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
-        ModuleRevisionId mrid = artifact.getModuleRevisionId();
-        try {
-            return new ResolvedResource(getRepository().getResource(artifact.getUrl().getFile()),
-                    artifact.getModuleRevisionId().getRevision());
-        } catch (IOException e) {
-            throw new RuntimeException(getName() + ": unable to get resource for " + mrid
-                    + ": res=" + artifact.getName() + ": " + e.getMessage(), e);
-        }
+        URL url = artifact.getUrl();
+        Message.verbose("\tusing url for " + artifact + ": " + url);
+        logArtifactAttempt(artifact, url.toExternalForm());
+        Resource resource = new URLResource(url);
+        return new ResolvedResource(resource, artifact.getModuleRevisionId().getRevision());
     }
 
     protected Collection/* <String> */filterNames(Collection/* <String> */names) {
@@ -251,19 +236,42 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
                     BundleInfo.SERVICE_TYPE});
         }
 
-        String osgiAtt = (String) tokenValues.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
-
-        Set/* <String> */capabilityValues = getRepoDescriptor().getCapabilityValues(osgiAtt);
-        if (capabilityValues == null || capabilityValues.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
             return Collections.singletonList("");
         }
 
+        String org = (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
+        if (org != null && org.length() != 0) {
+            return Collections.EMPTY_LIST;
+        }
+
+        String osgiAtt = (String) tokenValues.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        String rev = (String) tokenValues.get(IvyPatternHelper.REVISION_KEY);
+
         if (IvyPatternHelper.MODULE_KEY.equals(token)) {
-            return capabilityValues;
+            Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapbilities = getRepoDescriptor()
+                    .getModuleByCapbilities();
+            if (osgiAtt != null) {
+                Map/* <String, Set<ModuleDescriptor>> */moduleByCapabilityValue = (Map) moduleByCapbilities
+                        .get(osgiAtt);
+                if (moduleByCapabilityValue == null) {
+                    return Collections.EMPTY_LIST;
+                }
+                Set/* <String> */capabilityValues = new HashSet();
+                filterCapabilityValues(capabilityValues, moduleByCapbilities, tokenValues, rev);
+                return capabilityValues;
+            } else {
+                Set/* <String> */capabilityValues = new HashSet();
+                Iterator/* <Map<String, Set<ModuleDescriptor>>> */it = ((Collection) moduleByCapbilities
+                        .values()).iterator();
+                while (it.hasNext()) {
+                    Map/* <String, Set<ModuleDescriptor>> */moduleByCapbilityValue = (Map) it
+                            .next();
+                    filterCapabilityValues(capabilityValues, moduleByCapbilityValue, tokenValues,
+                        rev);
+                }
+                return capabilityValues;
+            }
         }
 
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
@@ -315,17 +323,39 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
             if (found == null) {
                 return Collections.EMPTY_LIST;
             }
-            DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-                found.getBundleInfo(), profileProvider);
-            List/* <String> */confs = new ArrayList/* <String> */();
-            Configuration[] configurations = md.getConfigurations();
-            for (int i = 0; i < configurations.length; i++) {
-                Configuration conf = configurations[i];
-                confs.add(conf.getName());
-            }
+            List/* <String> */confs = BundleInfoAdapter.getConfigurations(found.getBundleInfo());
             return confs;
         }
         return Collections.EMPTY_LIST;
+    }
+
+    /**
+     * Populate capabilityValues with capability values for which at least one module match the
+     * expected revision
+     */
+    private void filterCapabilityValues(Set/* <String> */capabilityValues,
+            Map/* <String, Set<ModuleDescriptor>> */moduleByCapbilityValue,
+            Map/* <String, String */tokenValues, String rev) {
+        if (rev == null) {
+            // no revision, all match then
+            capabilityValues.addAll(moduleByCapbilityValue.keySet());
+        } else {
+            Iterator/* <Entry<String, Set<ModuleDescriptor>>> */it = moduleByCapbilityValue
+                    .entrySet().iterator();
+            while (it.hasNext()) {
+                Entry/* <String, Set<ModuleDescriptor>> */entry = (Entry) it.next();
+                Iterator/* <ModuleDescriptor> */itModules = ((Set) entry.getValue()).iterator();
+                boolean moduleMatchRev = false;
+                while (!moduleMatchRev && itModules.hasNext()) {
+                    ModuleDescriptor md = (ModuleDescriptor) itModules.next();
+                    moduleMatchRev = rev.equals(md.getRevision());
+                }
+                if (moduleMatchRev) {
+                    // at least one module matched, the capability value is ok to add
+                    capabilityValues.add(entry.getKey());
+                }
+            }
+        }
     }
 
     public Map[] listTokenValues(String[] tokens, Map criteria) {
@@ -442,13 +472,11 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
                 return Collections.EMPTY_SET;
             }
             Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
-            DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-                found.getBundleInfo(), profileProvider);
-            Configuration[] configurations = md.getConfigurations();
-            for (int i = 0; i < configurations.length; i++) {
-                Configuration c = configurations[i];
+            List/* <String> */configurations = BundleInfoAdapter.getConfigurations(found
+                    .getBundleInfo());
+            for (int i = 0; i < configurations.size(); i++) {
                 Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
-                newCriteria.put(IvyPatternHelper.CONF_KEY, c.getName());
+                newCriteria.put(IvyPatternHelper.CONF_KEY, configurations.get(i));
                 tokenValues.add(newCriteria);
             }
             return tokenValues;

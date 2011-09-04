@@ -128,7 +128,6 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         parent.delegate = null;
         skip = false;
         started = false;
-        charBuffer.setLength(0);
         Iterator itHandler = saxHandlerMapping.values().iterator();
         while (itHandler.hasNext()) {
             DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
@@ -191,6 +190,8 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
 
     public final void startElement(final String uri, final String localName, final String n,
             final Attributes atts) throws SAXException {
+        // reset the char buffer
+        charBuffer.setLength(0);
         if (delegate != null) {
             // we are already delegating, let's continue
             skipOnError(new SkipOnErrorCallback() {

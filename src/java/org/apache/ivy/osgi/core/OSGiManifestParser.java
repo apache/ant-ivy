@@ -20,6 +20,8 @@ package org.apache.ivy.osgi.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
@@ -61,7 +63,12 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
             Resource res, boolean validate) throws ParseException, IOException {
         Manifest m = new Manifest(res.openStream());
         BundleInfo bundleInfo = ManifestParser.parseManifest(m);
-        return BundleInfoAdapter.toModuleDescriptor(bundleInfo, profileProvider);
+        try {
+            bundleInfo.setUri(new URI(res.getName()));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Unsupported repository, resources names are not uris", e);
+        }
+        return BundleInfoAdapter.toModuleDescriptor(null, bundleInfo, profileProvider);
     }
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)

@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.repo;
 
+import java.net.URI;
 import java.util.jar.Manifest;
 
 public class ManifestAndLocation {
@@ -24,17 +25,17 @@ public class ManifestAndLocation {
     private final Manifest manifest;
 
     /**
-     * location of the jar relative to the repository URL
+     * location of the jar
      */
-    private final String location;
+    private final URI uri;
 
-    public ManifestAndLocation(Manifest manifest, String location) {
+    public ManifestAndLocation(Manifest manifest, URI uri) {
         this.manifest = manifest;
-        this.location = location;
+        this.uri = uri;
     }
 
-    public String getLocation() {
-        return location;
+    public URI getUri() {
+        return uri;
     }
 
     public Manifest getManifest() {

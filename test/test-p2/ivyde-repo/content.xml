@@ -1,0 +1,939 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<repository name='Test repo of IvyDE (metadata)' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1311544192366'/>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <units size='18'>
+    <unit id='org.apache.ivy.eclipse.ant' version='2.2.0.final_20100923230623'>
+      <update id='org.apache.ivy.eclipse.ant' range='[0.0.0,2.2.0.final_20100923230623)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Apache Ivy Ant Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.eclipse.ant' version='2.2.0.final_20100923230623'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivy.eclipse.ant' version='2.2.0.final_20100923230623'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ant.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.ant' range='1.7.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivy.eclipse.ant' version='2.2.0.final_20100923230623'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-Name: Apache Ivy Ant Plugin&#xA;Bundle-Version: 2.2.0.final_20100923230623&#xA;Require-Bundle: org.eclipse.core.runtime,org.eclipse.ant.core,org.apache.ant;bundle-version=&quot;1.7.0&quot;&#xA;Created-By: 1.6.0_20-b02-279-10M3065 (Apple Inc.)&#xA;Bundle-SymbolicName: org.apache.ivy.eclipse.ant;singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: Apache Software Foundation&#xA;Ant-Version: Apache Ant 1.8.1&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivy.feature.feature.jar' version='2.2.0.final_20100923230623'>
+      <properties size='8'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='df_LT.featureName' value='Apache Ivy'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='Ivy bundle'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' version='2.2.0.final_20100923230623'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.apache.ivy.feature' version='2.2.0.final_20100923230623'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.apache.ivy.feature' version='2.2.0.final_20100923230623'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivy.feature.feature.group' version='2.0.0.final_20090108225011' singleton='false'>
+      <update id='org.apache.ivy.feature.feature.group' range='[0.0.0,2.0.0.final_20090108225011)' severity='0'/>
+      <properties size='9'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.featureName' value='Apache Ivy'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='Ivy bundle'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.group' version='2.0.0.final_20090108225011'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' range='[2.0.0.final_20090108225011,2.0.0.final_20090108225011]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.eclipse.ant' range='[2.0.0.final_20090108225011,2.0.0.final_20090108225011]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' range='[2.0.0.final_20090108225011,2.0.0.final_20090108225011]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivyde.feature.feature.jar' version='2.0.0.final-200907011148-RELEASE'>
+      <properties size='8'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy/ivyde'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='df_LT.featureName' value='Apache IvyDE'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.jar' version='2.0.0.final-200907011148-RELEASE'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.apache.ivyde.feature' version='2.0.0.final-200907011148-RELEASE'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.apache.ivyde.feature' version='2.0.0.final-200907011148-RELEASE'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivy.eclipse.ant' version='2.0.0.final_20090108225011'>
+      <update id='org.apache.ivy.eclipse.ant' range='[0.0.0,2.0.0.final_20090108225011)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Apache Ivy Ant Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.eclipse.ant' version='2.0.0.final_20090108225011'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivy.eclipse.ant' version='2.0.0.final_20090108225011'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ant.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.ant' range='1.7.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivy.eclipse.ant' version='2.0.0.final_20090108225011'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-Name: Apache Ivy Ant Plugin&#xA;Bundle-Version: 2.0.0.final_20090108225011&#xA;Require-Bundle: org.eclipse.core.runtime,org.eclipse.ant.core,org.apache.ant;bundle-version=&quot;1.7.0&quot;&#xA;Created-By: 14.3-b01-101 (Apple Inc.)&#xA;Bundle-SymbolicName: org.apache.ivy.eclipse.ant;singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: Apache Software Foundation&#xA;Ant-Version: Apache Ant 1.7.1&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivyde.feature.feature.jar' version='2.1.0.201008101807-RELEASE'>
+      <properties size='8'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy/ivyde'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='df_LT.featureName' value='Apache IvyDE'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.jar' version='2.1.0.201008101807-RELEASE'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.apache.ivyde.feature' version='2.1.0.201008101807-RELEASE'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.apache.ivyde.feature' version='2.1.0.201008101807-RELEASE'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivyde.feature.feature.group' version='2.0.0.final-200907011148-RELEASE' singleton='false'>
+      <update id='org.apache.ivyde.feature.feature.group' range='[0.0.0,2.0.0.final-200907011148-RELEASE)' severity='0'/>
+      <properties size='9'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy/ivyde'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.featureName' value='Apache IvyDE'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.group' version='2.0.0.final-200907011148-RELEASE'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='18'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.search' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.osgi' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ant' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.jcraft.jsch' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.eclipse' range='[2.0.0.final-200907011148-RELEASE,2.0.0.final-200907011148-RELEASE]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.jar' range='[2.0.0.final-200907011148-RELEASE,2.0.0.final-200907011148-RELEASE]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivy.feature.feature.group' version='2.2.0.final_20100923230623' singleton='false'>
+      <update id='org.apache.ivy.feature.feature.group' range='[0.0.0,2.2.0.final_20100923230623)' severity='0'/>
+      <properties size='9'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.featureName' value='Apache Ivy'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='Ivy bundle'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.group' version='2.2.0.final_20100923230623'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' range='[2.2.0.final_20100923230623,2.2.0.final_20100923230623]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.eclipse.ant' range='[2.2.0.final_20100923230623,2.2.0.final_20100923230623]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' range='[2.2.0.final_20100923230623,2.2.0.final_20100923230623]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivy.feature.feature.jar' version='2.1.0.final_20090925235825'>
+      <properties size='8'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='df_LT.featureName' value='Apache Ivy'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='Ivy bundle'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' version='2.1.0.final_20090925235825'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.apache.ivy.feature' version='2.1.0.final_20090925235825'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.apache.ivy.feature' version='2.1.0.final_20090925235825'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivyde.eclipse' version='2.1.0.201008101807-RELEASE'>
+      <update id='org.apache.ivyde.eclipse' range='[0.0.0,2.1.0.201008101807-RELEASE)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='IvyDE Eclipse Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+      </properties>
+      <provides size='15'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.eclipse' version='2.1.0.201008101807-RELEASE'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivyde.eclipse' version='2.1.0.201008101807-RELEASE'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.cpcontainer' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.cpcontainer.fragmentinfo' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.console' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.editors' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.editors.pages' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.editors.xml' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.preferences' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.views' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.wizards' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='20'>
+        <required namespace='osgi.bundle' name='org.apache.xerces' range='0.0.0' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.search' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.ivy' range='[2.1.0,3.0.0)'/>
+        <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.wst.xml.core' range='0.0.0' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.launching' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.debug.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.variables' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivyde.eclipse' version='2.1.0.201008101807-RELEASE'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Export-Package: org.apache.ivyde.eclipse,org.apache.ivyde.eclipse.cpcontainer,org.apache.ivyde.eclipse.cpcontainer.fragmentinfo,org.apache.ivyde.eclipse.ui.actions,org.apache.ivyde.eclipse.ui.console,org.apache.ivyde.eclipse.ui.core,org.apache.ivyde.eclipse.ui.editors,org.apache.ivyde.eclipse.ui.editors.pages,org.apache.ivyde.eclipse.ui.editors.xml,org.apache.ivyde.eclipse.ui.preferences,org.apache.ivyde.eclipse.ui.views,org.apache.ivyde.eclipse.ui.wizards&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.apache.xerces;resolution:=optional,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.core.resources,org.eclipse.ui.ide,org.eclipse.ui.forms,org.eclipse.search,org.eclipse.jdt.core,org.eclipse.jdt.ui,org.eclipse.ui.console,org.apache.ivy;bundle-version=&quot;[2.1.0,3.0.0)&quot;,org.eclipse.help,org.eclipse.wst.xml.core;resolution:=optional,org.eclipse.debug.core,org.eclipse.jdt.launching,org.eclipse.debug.ui,org.eclipse.core.variables&#xA;Bundle-Activator: org.apache.ivyde.eclipse.IvyPlugin&#xA;Bundle-Name: IvyDE Eclipse Plug-in&#xA;Bundle-Version: 2.1.0.201008101807-RELEASE&#xA;Bundle-Vendor: Apache Software Foundation&#xA;Bundle-SymbolicName: org.apache.ivyde.eclipse; singleton:=true&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-ClassPath: ivyde-eclipse.jar&#xA;Manifest-Version: 1.0&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivy' version='2.2.0.final_20100923230623' singleton='false'>
+      <update id='org.apache.ivy' range='[0.0.0,2.2.0.final_20100923230623)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://ant.apache.org/ivy/'/>
+      </properties>
+      <provides size='55'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' version='2.2.0.final_20100923230623'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivy' version='2.2.0.final_20100923230623'/>
+        <provided namespace='java.package' name='org.apache.ivy' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.ant' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.cache' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.check' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.deliver' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.download' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.publish' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.resolve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.retrieve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.install' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.descriptor' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.id' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.status' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.publish' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.report' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.repository' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.resolve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.retrieve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.search' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.settings' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.sort' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.circular' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.conflict' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.latest' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.lock' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.matcher' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.namespace' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser.m2' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser.xml' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.report' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.file' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.sftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.ssh' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.url' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.vfs' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.vsftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver.packager' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.trigger' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.version' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.tools.analyser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.cli' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.extendable' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.filter' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.url' version='2.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='31'>
+        <required namespace='java.package' name='com.jcraft.jsch' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.crypto' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.swing.event' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform.sax' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform.stream' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.methods' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.params' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.protocol' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.net.ftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.impl' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.ftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.local' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.sftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.url' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.oro.text' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.oro.text.regex' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.filters' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.types' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.util' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.webdav' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.ext' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivy' version='2.2.0.final_20100923230623'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Apache Software Foundation&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Title: org.apache.ivy&#xA;Manifest-Version: 1.0&#xA;Implementation-Vendor-Id: org.apache&#xA;Bundle-SymbolicName: org.apache.ivy&#xA;Created-By: 1.6.0_04-b12 (Sun Microsystems Inc.)&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Implementation-Version: 2.2.0&#xA;Export-Package: org.apache.ivy;version=&quot;2.0.0&quot;,org.apache.ivy.ant;version=&quot;2.0.0&quot;,org.apache.ivy.core;version=&quot;2.0.0&quot;,org.apache.ivy.core.cache;version=&quot;2.0.0&quot;,org.apache.ivy.core.check;version=&quot;2.0.0&quot;,org.apache.ivy.core.deliver;version=&quot;2.0.0&quot;,org.apache.ivy.core.event;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.download;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.publish;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.resolve;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.retrieve;version=&quot;2.0.0&quot;,org.apache.ivy.core.install;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.descriptor;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.id;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.status;version=&quot;2.0.0&quot;,org.apache.ivy.core.publish;version=&quot;2.0.0&quot;,org.apache.ivy.core.report;version=&quot;2.0.0&quot;,org.apache.ivy.core.repository;version=&quot;2.0.0&quot;,org.apache.ivy.core.resolve;version=&quot;2.0.0&quot;,org.apache.ivy.core.retrieve;version=&quot;2.0.0&quot;,org.apache.ivy.core.search;version=&quot;2.0.0&quot;,org.apache.ivy.core.settings;version=&quot;2.0.0&quot;,org.apache.ivy.core.sort;version=&quot;2.0.0&quot;,org.apache.ivy.plugins;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.circular;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.conflict;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.latest;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.lock;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.matcher;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.namespace;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser.m2;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser.xml;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.report;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.file;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.sftp;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.ssh;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.url;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.vfs;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.vsftp;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver.packager;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver.util;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.trigger;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.version;version=&quot;2.0.0&quot;,org.apache.ivy.tools.analyser;version=&quot;2.0.0&quot;,org.apache.ivy.util;version=&quot;2.0.0&quot;,org.apache.ivy.util.cli;version=&quot;2.0.0&quot;,org.apache.ivy.util.extendable;version=&quot;2.0.0&quot;,org.apache.ivy.util.filter;version=&quot;2.0.0&quot;,org.apache.ivy.util.url;version=&quot;2.0.0&quot;&#xA;Ant-Version: Apache Ant 1.8.1&#xA;Build-Version: 2.2.0&#xA;Extension-name: org.apache.ivy&#xA;Main-Class: org.apache.ivy.Main&#xA;Import-Package: com.jcraft.jsch;resolution:=optional,javax.crypto,javax.swing;resolution:=optional,javax.swing.event;resolution:=optional,javax.xml.parsers,javax.xml.transform,javax.xml.transform.sax,javax.xml.transform.stream,org.apache.commons.httpclient;resolution:=optional,org.apache.commons.httpclient.methods;resolution:=optional,org.apache.commons.httpclient.params;resolution:=optional,org.apache.commons.httpclient.protocol;resolution:=optional,org.apache.commons.net.ftp;resolution:=optional,org.apache.commons.vfs;resolution:=optional,org.apache.commons.vfs.impl;resolution:=optional,org.apache.commons.vfs.provider;resolution:=optional,org.apache.commons.vfs.provider.ftp;resolution:=optional,org.apache.commons.vfs.provider.local;resolution:=optional,org.apache.commons.vfs.provider.sftp;resolution:=optional,org.apache.commons.vfs.provider.url;resolution:=optional,org.apache.oro.text;resolution:=optional,org.apache.oro.text.regex;resolution:=optional,org.apache.tools.ant;resolution:=optional,org.apache.tools.ant.filters;resolution:=optional,org.apache.tools.ant.taskdefs;resolution:=optional,org.apache.tools.ant.types;resolution:=optional,org.apache.tools.ant.util;resolution:=optional,org.apache.webdav;resolution:=optional,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers&#xA;Bundle-Name: Ivy&#xA;Bundle-ClassPath: .&#xA;Specification-Title: Apache Ivy with Ant tasks&#xA;Bundle-Version: 2.2.0.final_20100923230623&#xA;Bundle-DocURL: http://ant.apache.org/ivy/&#xA;Specification-Vendor: Apache Software Foundation&#xA;Specification-Version: 2.2.0&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivy' version='2.0.0.final_20090108225011' singleton='false'>
+      <update id='org.apache.ivy' range='[0.0.0,2.0.0.final_20090108225011)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://incubator.apache.org/ivy'/>
+      </properties>
+      <provides size='55'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' version='2.0.0.final_20090108225011'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivy' version='2.0.0.final_20090108225011'/>
+        <provided namespace='java.package' name='org.apache.ivy' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.ant' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.cache' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.check' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.deliver' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.download' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.publish' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.resolve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.retrieve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.install' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.descriptor' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.id' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.status' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.publish' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.report' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.repository' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.resolve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.retrieve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.search' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.settings' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.sort' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.circular' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.conflict' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.latest' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.lock' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.matcher' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.namespace' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser.m2' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser.xml' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.report' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.file' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.sftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.ssh' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.url' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.vfs' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.vsftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver.packager' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.trigger' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.version' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.tools.analyser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.cli' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.extendable' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.filter' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.url' version='2.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='31'>
+        <required namespace='java.package' name='com.jcraft.jsch' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.crypto' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.swing.event' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform.sax' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform.stream' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.methods' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.params' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.protocol' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.net.ftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.impl' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.ftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.local' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.sftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.url' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.oro.text' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.oro.text.regex' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.filters' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.types' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.util' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.webdav' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.ext' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivy' version='2.0.0.final_20090108225011'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Apache Software Foundation&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Title: org.apache.ivy&#xA;Manifest-Version: 1.0&#xA;Implementation-Vendor-Id: org.apache&#xA;Bundle-SymbolicName: org.apache.ivy&#xA;Created-By: 10.0-b19 (Sun Microsystems Inc.)&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Implementation-Version: 2.0.0&#xA;Export-Package: org.apache.ivy;version=&quot;2.0.0&quot;,org.apache.ivy.ant;version=&quot;2.0.0&quot;,org.apache.ivy.core;version=&quot;2.0.0&quot;,org.apache.ivy.core.cache;version=&quot;2.0.0&quot;,org.apache.ivy.core.check;version=&quot;2.0.0&quot;,org.apache.ivy.core.deliver;version=&quot;2.0.0&quot;,org.apache.ivy.core.event;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.download;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.publish;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.resolve;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.retrieve;version=&quot;2.0.0&quot;,org.apache.ivy.core.install;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.descriptor;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.id;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.status;version=&quot;2.0.0&quot;,org.apache.ivy.core.publish;version=&quot;2.0.0&quot;,org.apache.ivy.core.report;version=&quot;2.0.0&quot;,org.apache.ivy.core.repository;version=&quot;2.0.0&quot;,org.apache.ivy.core.resolve;version=&quot;2.0.0&quot;,org.apache.ivy.core.retrieve;version=&quot;2.0.0&quot;,org.apache.ivy.core.search;version=&quot;2.0.0&quot;,org.apache.ivy.core.settings;version=&quot;2.0.0&quot;,org.apache.ivy.core.sort;version=&quot;2.0.0&quot;,org.apache.ivy.plugins;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.circular;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.conflict;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.latest;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.lock;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.matcher;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.namespace;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser.m2;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser.xml;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.report;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.file;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.sftp;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.ssh;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.url;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.vfs;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.vsftp;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver.packager;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver.util;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.trigger;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.version;version=&quot;2.0.0&quot;,org.apache.ivy.tools.analyser;version=&quot;2.0.0&quot;,org.apache.ivy.util;version=&quot;2.0.0&quot;,org.apache.ivy.util.cli;version=&quot;2.0.0&quot;,org.apache.ivy.util.extendable;version=&quot;2.0.0&quot;,org.apache.ivy.util.filter;version=&quot;2.0.0&quot;,org.apache.ivy.util.url;version=&quot;2.0.0&quot;&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Build-Version: 2.0.0&#xA;Extension-name: org.apache.ivy&#xA;Main-Class: org.apache.ivy.Main&#xA;Import-Package: com.jcraft.jsch;resolution:=optional,javax.crypto,javax.swing;resolution:=optional,javax.swing.event;resolution:=optional,javax.xml.parsers,javax.xml.transform,javax.xml.transform.sax,javax.xml.transform.stream,org.apache.commons.httpclient;resolution:=optional,org.apache.commons.httpclient.methods;resolution:=optional,org.apache.commons.httpclient.params;resolution:=optional,org.apache.commons.httpclient.protocol;resolution:=optional,org.apache.commons.net.ftp;resolution:=optional,org.apache.commons.vfs;resolution:=optional,org.apache.commons.vfs.impl;resolution:=optional,org.apache.commons.vfs.provider;resolution:=optional,org.apache.commons.vfs.provider.ftp;resolution:=optional,org.apache.commons.vfs.provider.local;resolution:=optional,org.apache.commons.vfs.provider.sftp;resolution:=optional,org.apache.commons.vfs.provider.url;resolution:=optional,org.apache.oro.text;resolution:=optional,org.apache.oro.text.regex;resolution:=optional,org.apache.tools.ant;resolution:=optional,org.apache.tools.ant.filters;resolution:=optional,org.apache.tools.ant.taskdefs;resolution:=optional,org.apache.tools.ant.types;resolution:=optional,org.apache.tools.ant.util;resolution:=optional,org.apache.webdav;resolution:=optional,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers&#xA;Bundle-Name: Ivy&#xA;Bundle-ClassPath: .&#xA;Specification-Title: Apache Ivy with Ant tasks&#xA;Bundle-Version: 2.0.0.final_20090108225011&#xA;Bundle-DocURL: http://incubator.apache.org/ivy&#xA;Specification-Vendor: Apache Software Foundation&#xA;Specification-Version: 2.0.0&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivyde.feature.feature.group' version='2.1.0.201008101807-RELEASE' singleton='false'>
+      <update id='org.apache.ivyde.feature.feature.group' range='[0.0.0,2.1.0.201008101807-RELEASE)' severity='0'/>
+      <properties size='9'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy/ivyde'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.featureName' value='Apache IvyDE'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.group' version='2.1.0.201008101807-RELEASE'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='18'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.search' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jdt.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.osgi' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ant' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.jcraft.jsch' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.eclipse' range='[2.1.0.201008101807-RELEASE,2.1.0.201008101807-RELEASE]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.jar' range='[2.1.0.201008101807-RELEASE,2.1.0.201008101807-RELEASE]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivy' version='2.1.0.final_20090925235825' singleton='false'>
+      <update id='org.apache.ivy' range='[0.0.0,2.1.0.final_20090925235825)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='Ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://incubator.apache.org/ivy'/>
+      </properties>
+      <provides size='55'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' version='2.1.0.final_20090925235825'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivy' version='2.1.0.final_20090925235825'/>
+        <provided namespace='java.package' name='org.apache.ivy' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.ant' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.cache' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.check' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.deliver' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.download' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.publish' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.resolve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.event.retrieve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.install' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.descriptor' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.id' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.module.status' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.publish' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.report' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.repository' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.resolve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.retrieve' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.search' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.settings' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.core.sort' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.circular' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.conflict' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.latest' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.lock' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.matcher' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.namespace' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser.m2' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.parser.xml' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.report' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.file' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.sftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.ssh' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.url' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.vfs' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.repository.vsftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver.packager' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.resolver.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.trigger' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.plugins.version' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.tools.analyser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.cli' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.extendable' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.filter' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivy.util.url' version='2.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='31'>
+        <required namespace='java.package' name='com.jcraft.jsch' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.crypto' range='0.0.0'/>
+        <required namespace='java.package' name='javax.swing' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.swing.event' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='javax.xml.parsers' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform.sax' range='0.0.0'/>
+        <required namespace='java.package' name='javax.xml.transform.stream' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.methods' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.params' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.httpclient.protocol' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.net.ftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.impl' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.ftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.local' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.sftp' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.commons.vfs.provider.url' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.oro.text' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.oro.text.regex' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.filters' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.types' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.tools.ant.util' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.apache.webdav' range='0.0.0' optional='true'/>
+        <required namespace='java.package' name='org.xml.sax' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.ext' range='0.0.0'/>
+        <required namespace='java.package' name='org.xml.sax.helpers' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivy' version='2.1.0.final_20090925235825'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Apache Software Foundation&#xA;Bundle-ManifestVersion: 2&#xA;Implementation-Title: org.apache.ivy&#xA;Manifest-Version: 1.0&#xA;Implementation-Vendor-Id: org.apache&#xA;Bundle-SymbolicName: org.apache.ivy&#xA;Created-By: 10.0-b19 (Sun Microsystems Inc.)&#xA;Implementation-Vendor: Apache Software Foundation&#xA;Implementation-Version: 2.1.0&#xA;Export-Package: org.apache.ivy;version=&quot;2.0.0&quot;,org.apache.ivy.ant;version=&quot;2.0.0&quot;,org.apache.ivy.core;version=&quot;2.0.0&quot;,org.apache.ivy.core.cache;version=&quot;2.0.0&quot;,org.apache.ivy.core.check;version=&quot;2.0.0&quot;,org.apache.ivy.core.deliver;version=&quot;2.0.0&quot;,org.apache.ivy.core.event;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.download;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.publish;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.resolve;version=&quot;2.0.0&quot;,org.apache.ivy.core.event.retrieve;version=&quot;2.0.0&quot;,org.apache.ivy.core.install;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.descriptor;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.id;version=&quot;2.0.0&quot;,org.apache.ivy.core.module.status;version=&quot;2.0.0&quot;,org.apache.ivy.core.publish;version=&quot;2.0.0&quot;,org.apache.ivy.core.report;version=&quot;2.0.0&quot;,org.apache.ivy.core.repository;version=&quot;2.0.0&quot;,org.apache.ivy.core.resolve;version=&quot;2.0.0&quot;,org.apache.ivy.core.retrieve;version=&quot;2.0.0&quot;,org.apache.ivy.core.search;version=&quot;2.0.0&quot;,org.apache.ivy.core.settings;version=&quot;2.0.0&quot;,org.apache.ivy.core.sort;version=&quot;2.0.0&quot;,org.apache.ivy.plugins;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.circular;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.conflict;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.latest;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.lock;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.matcher;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.namespace;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser.m2;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.parser.xml;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.report;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.file;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.sftp;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.ssh;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.url;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.vfs;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.repository.vsftp;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver.packager;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.resolver.util;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.trigger;version=&quot;2.0.0&quot;,org.apache.ivy.plugins.version;version=&quot;2.0.0&quot;,org.apache.ivy.tools.analyser;version=&quot;2.0.0&quot;,org.apache.ivy.util;version=&quot;2.0.0&quot;,org.apache.ivy.util.cli;version=&quot;2.0.0&quot;,org.apache.ivy.util.extendable;version=&quot;2.0.0&quot;,org.apache.ivy.util.filter;version=&quot;2.0.0&quot;,org.apache.ivy.util.url;version=&quot;2.0.0&quot;&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Build-Version: 2.1.0&#xA;Extension-name: org.apache.ivy&#xA;Main-Class: org.apache.ivy.Main&#xA;Import-Package: com.jcraft.jsch;resolution:=optional,javax.crypto,javax.swing;resolution:=optional,javax.swing.event;resolution:=optional,javax.xml.parsers,javax.xml.transform,javax.xml.transform.sax,javax.xml.transform.stream,org.apache.commons.httpclient;resolution:=optional,org.apache.commons.httpclient.methods;resolution:=optional,org.apache.commons.httpclient.params;resolution:=optional,org.apache.commons.httpclient.protocol;resolution:=optional,org.apache.commons.net.ftp;resolution:=optional,org.apache.commons.vfs;resolution:=optional,org.apache.commons.vfs.impl;resolution:=optional,org.apache.commons.vfs.provider;resolution:=optional,org.apache.commons.vfs.provider.ftp;resolution:=optional,org.apache.commons.vfs.provider.local;resolution:=optional,org.apache.commons.vfs.provider.sftp;resolution:=optional,org.apache.commons.vfs.provider.url;resolution:=optional,org.apache.oro.text;resolution:=optional,org.apache.oro.text.regex;resolution:=optional,org.apache.tools.ant;resolution:=optional,org.apache.tools.ant.filters;resolution:=optional,org.apache.tools.ant.taskdefs;resolution:=optional,org.apache.tools.ant.types;resolution:=optional,org.apache.tools.ant.util;resolution:=optional,org.apache.webdav;resolution:=optional,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers&#xA;Bundle-Name: Ivy&#xA;Bundle-ClassPath: .&#xA;Specification-Title: Apache Ivy with Ant tasks&#xA;Bundle-Version: 2.1.0.final_20090925235825&#xA;Bundle-DocURL: http://incubator.apache.org/ivy&#xA;Specification-Vendor: Apache Software Foundation&#xA;Specification-Version: 2.1.0&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivy.feature.feature.jar' version='2.0.0.final_20090108225011'>
+      <properties size='8'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='df_LT.featureName' value='Apache Ivy'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='Ivy bundle'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' version='2.0.0.final_20090108225011'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.apache.ivy.feature' version='2.0.0.final_20090108225011'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.apache.ivy.feature' version='2.0.0.final_20090108225011'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+    <unit id='org.apache.ivy.eclipse.ant' version='2.1.0.final_20090925235825'>
+      <update id='org.apache.ivy.eclipse.ant' range='[0.0.0,2.1.0.final_20090925235825)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Apache Ivy Ant Plugin'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.eclipse.ant' version='2.1.0.final_20090925235825'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivy.eclipse.ant' version='2.1.0.final_20090925235825'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ant.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.ant' range='1.7.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivy.eclipse.ant' version='2.1.0.final_20090925235825'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-Name: Apache Ivy Ant Plugin&#xA;Bundle-Version: 2.1.0.final_20090925235825&#xA;Require-Bundle: org.eclipse.core.runtime,org.eclipse.ant.core,org.apache.ant;bundle-version=&quot;1.7.0&quot;&#xA;Created-By: 14.3-b01-101 (Apple Inc.)&#xA;Bundle-SymbolicName: org.apache.ivy.eclipse.ant;singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: Apache Software Foundation&#xA;Ant-Version: Apache Ant 1.7.1&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivyde.eclipse' version='2.0.0.final-200907011148-RELEASE'>
+      <update id='org.apache.ivyde.eclipse' range='[0.0.0,2.0.0.final-200907011148-RELEASE)' severity='0'/>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='IvyDE Eclipse Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Apache Software Foundation'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='15'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.eclipse' version='2.0.0.final-200907011148-RELEASE'/>
+        <provided namespace='osgi.bundle' name='org.apache.ivyde.eclipse' version='2.0.0.final-200907011148-RELEASE'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.cpcontainer' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.cpcontainer.fragmentinfo' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.console' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.editors' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.editors.pages' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.editors.xml' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.preferences' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.views' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ivyde.eclipse.ui.wizards' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='15'>
+        <required namespace='osgi.bundle' name='org.apache.xerces' range='0.0.0' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.search' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.ivy' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ivyde.eclipse' version='2.0.0.final-200907011148-RELEASE'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Export-Package: org.apache.ivyde.eclipse,org.apache.ivyde.eclipse.cpcontainer,org.apache.ivyde.eclipse.cpcontainer.fragmentinfo,org.apache.ivyde.eclipse.ui.actions,org.apache.ivyde.eclipse.ui.console,org.apache.ivyde.eclipse.ui.core,org.apache.ivyde.eclipse.ui.editors,org.apache.ivyde.eclipse.ui.editors.pages,org.apache.ivyde.eclipse.ui.editors.xml,org.apache.ivyde.eclipse.ui.preferences,org.apache.ivyde.eclipse.ui.views,org.apache.ivyde.eclipse.ui.wizards&#xA;Bundle-Localization: plugin&#xA;Require-Bundle: org.apache.xerces;resolution:=optional,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.eclipse.core.resources,org.eclipse.ui.ide,org.eclipse.ui.forms,org.eclipse.search,org.eclipse.jdt.core,org.eclipse.jdt.ui,org.eclipse.ui.console,org.apache.ivy,org.eclipse.help&#xA;Bundle-Activator: org.apache.ivyde.eclipse.IvyPlugin&#xA;Bundle-Name: IvyDE Eclipse Plug-in&#xA;Bundle-Version: 2.0.0.final-200907011148-RELEASE&#xA;Bundle-Vendor: Apache Software Foundation&#xA;Bundle-SymbolicName: org.apache.ivyde.eclipse; singleton:=true&#xA;Bundle-ClassPath: ivyde-eclipse.jar&#xA;Manifest-Version: 1.0&#xA;Eclipse-LazyStart: true&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ivy.feature.feature.group' version='2.1.0.final_20090925235825' singleton='false'>
+      <update id='org.apache.ivy.feature.feature.group' range='[0.0.0,2.1.0.final_20090925235825)' severity='0'/>
+      <properties size='9'>
+        <property name='org.eclipse.equinox.p2.name' value='%featureName'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://ant.apache.org/ivy'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.featureName' value='Apache Ivy'/>
+        <property name='df_LT.providerName' value='Apache Software Foundation'/>
+        <property name='df_LT.description' value='Ivy bundle'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.group' version='2.1.0.final_20090925235825'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy' range='[2.1.0.final_20090925235825,2.1.0.final_20090925235825]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.eclipse.ant' range='[2.1.0.final_20090925235825,2.1.0.final_20090925235825]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' range='[2.1.0.final_20090925235825,2.1.0.final_20090925235825]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+          %license
+        </license>
+      </licenses>
+    </unit>
+  </units>
+</repository>

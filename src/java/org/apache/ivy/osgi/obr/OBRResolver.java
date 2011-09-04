@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 
@@ -29,10 +31,8 @@ import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
-import org.apache.ivy.osgi.repo.RelativeURLRepository;
 import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver;
 import org.apache.ivy.plugins.repository.Resource;
-import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.xml.sax.SAXException;
 
@@ -69,8 +69,7 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
         }
         if (repoXmlFile != null) {
             File f = new File(repoXmlFile);
-            setRepository(new FileRepository(f.getParentFile()));
-            loadRepoFromFile(f, repoXmlFile);
+            loadRepoFromFile(f.getParentFile().toURI(), f, repoXmlFile);
         } else if (repoXmlURL != null) {
             final URL url;
             try {
@@ -79,25 +78,6 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
                 throw new RuntimeException("The OBR repository resolver " + getName()
                         + " couldn't be configured: repoXmlURL '" + repoXmlURL + "' is not an URL");
             }
-
-            // compute the base URL
-            URL baseUrl;
-            String basePath = "/";
-            int i = url.getPath().lastIndexOf("/");
-            if (i > 0) {
-                basePath = url.getPath().substring(0, i + 1);
-            }
-            try {
-                baseUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), basePath);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(
-                        "The OBR repository resolver "
-                                + getName()
-                                + " couldn't be configured: the base url couldn'd be extracted from the url "
-                                + url + " (" + e.getMessage() + ")");
-            }
-            RelativeURLRepository repo = new RelativeURLRepository(baseUrl);
-            setRepository(repo);
 
             ArtifactDownloadReport report;
             EventManager eventManager = getEventManager();
@@ -114,14 +94,20 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
                     options.setForce(forceMetadataUpdate.booleanValue());
                 }
                 report = getRepositoryCacheManager().downloadRepositoryResource(obrResource, "obr",
-                    "obr", "xml", options, repo);
+                    "obr", "xml", options, getRepository());
             } finally {
                 if (eventManager != null) {
                     getRepository().removeTransferListener(eventManager);
                 }
             }
 
-            loadRepoFromFile(report.getLocalFile(), repoXmlURL);
+            URI baseURI;
+            try {
+                baseURI = new URI(repoXmlURL);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("illegal uri");
+            }
+            loadRepoFromFile(baseURI, report.getLocalFile(), repoXmlURL);
 
         } else {
             throw new RuntimeException("The OBR repository resolver " + getName()
@@ -129,7 +115,7 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
         }
     }
 
-    private void loadRepoFromFile(File repoFile, String sourceLocation) {
+    private void loadRepoFromFile(URI baseUri, File repoFile, String sourceLocation) {
         FileInputStream in;
         try {
             in = new FileInputStream(repoFile);
@@ -138,7 +124,7 @@ public class OBRResolver extends RepoDescriptorBasedResolver {
                     + " couldn't be configured: the file " + sourceLocation + " was not found");
         }
         try {
-            setRepoDescriptor(OBRXMLParser.parse(in));
+            setRepoDescriptor(OBRXMLParser.parse(baseUri, in));
         } catch (ParseException e) {
             throw new RuntimeException("The OBR repository resolver " + getName()
                     + " couldn't be configured: the file " + sourceLocation

@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.osgi.p2;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +32,17 @@ public class P2Descriptor extends RepoDescriptor {
 
     private long timestamp;
 
-    private Map/* <String, Map<Version, String>> */artifactUrls = new HashMap();
+    private Map/* <String, Map<Version, String>> */artifactUrlPatterns = new HashMap();
 
-    public P2Descriptor(ExecutionEnvironmentProfileProvider profileProvider) {
-        super(profileProvider);
+    private String repoUrl;
+
+    public P2Descriptor(URI repoUri, ExecutionEnvironmentProfileProvider profileProvider) {
+        super(repoUri, profileProvider);
+        try {
+            repoUrl = repoUri.toURL().toExternalForm();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Illegal repo uri", e);
+        }
     }
 
     public void setTimestamp(long timestamp) {
@@ -42,12 +52,20 @@ public class P2Descriptor extends RepoDescriptor {
     public void addBundle(BundleInfo bundleInfo) {
         // before transforming it and adding it into the repo, let's add the artifacts
 
-        Map/* <Version, String> */urlsByVersion = (Map) artifactUrls.get(bundleInfo
+        Map/* <Version, String> */urlPatternsByVersion = (Map) artifactUrlPatterns.get(bundleInfo
                 .getSymbolicName());
-        if (urlsByVersion != null) {
-            String url = (String) urlsByVersion.get(bundleInfo.getVersion());
-            if (url != null) {
-                bundleInfo.setUri(url);
+        if (urlPatternsByVersion != null) {
+            String urlPattern = (String) urlPatternsByVersion.get(bundleInfo.getVersion());
+            if (urlPattern != null) {
+                String url = urlPattern.replaceAll("\\$\\{repoUrl\\}", repoUrl);
+                url = url.replaceAll("\\$\\{id\\}", bundleInfo.getSymbolicName());
+                url = url.replaceAll("\\$\\{version\\}", bundleInfo.getVersion().toString());
+                try {
+                    bundleInfo.setUri(new URI(url));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException("Unable to build the artifact uri of " + bundleInfo,
+                            e);
+                }
             }
         }
 
@@ -55,10 +73,10 @@ public class P2Descriptor extends RepoDescriptor {
     }
 
     public void addArtifactUrl(String id, Version version, String url) {
-        Map/* <Version, String> */byVersion = (Map) artifactUrls.get(id);
+        Map/* <Version, String> */byVersion = (Map) artifactUrlPatterns.get(id);
         if (byVersion == null) {
             byVersion = new HashMap();
-            artifactUrls.put(id, byVersion);
+            artifactUrlPatterns.put(id, byVersion);
         }
         byVersion.put(version, url);
     }

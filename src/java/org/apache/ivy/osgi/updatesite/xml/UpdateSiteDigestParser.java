@@ -47,14 +47,15 @@ public class UpdateSiteDigestParser {
 
         private static final String DIGEST = "digest";
 
-        UpdateSiteDescriptor repoDescriptor = new UpdateSiteDescriptor(
-                ExecutionEnvironmentProfileProvider.getInstance());
+        UpdateSiteDescriptor repoDescriptor;
 
         public DigestHandler(final UpdateSite site) {
             super(DIGEST);
+            repoDescriptor = new UpdateSiteDescriptor(site.getUri(),
+                    ExecutionEnvironmentProfileProvider.getInstance());
             addChild(new FeatureHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    repoDescriptor.addFeature(site.getUrl(), ((FeatureHandler) child).feature);
+                    repoDescriptor.addFeature(((FeatureHandler) child).feature);
                 }
             });
         }

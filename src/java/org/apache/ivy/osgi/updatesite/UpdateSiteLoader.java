@@ -20,7 +20,8 @@ package org.apache.ivy.osgi.updatesite;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Iterator;
@@ -66,16 +67,23 @@ public class UpdateSiteLoader {
         }
     }
 
-    public RepoDescriptor load(String url) throws IOException, ParseException, SAXException {
-        Message.verbose("Loading the update site " + url);
+    public RepoDescriptor load(URI repoUri) throws IOException, ParseException, SAXException {
+        if (!repoUri.toString().endsWith("/")) {
+            try {
+                repoUri = new URI(repoUri.toString() + "/");
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Cannot make an uri for the repo");
+            }
+        }
+        Message.verbose("Loading the update site " + repoUri);
         // first look for a p2 repository
-        RepoDescriptor repo = loadP2(url);
+        RepoDescriptor repo = loadP2(repoUri);
         if (repo != null) {
             return repo;
         }
         Message.verbose("\tNo P2 artifacts, falling back on the old fashioned updatesite");
         // then try the old update site
-        UpdateSite site = loadSite(url);
+        UpdateSite site = loadSite(repoUri);
         if (site == null) {
             return null;
         }
@@ -86,56 +94,53 @@ public class UpdateSiteLoader {
         return loadFromSite(site);
     }
 
-    private P2Descriptor loadP2(String url) throws IOException, ParseException, SAXException {
-        P2Descriptor p2Descriptor = new P2Descriptor(
+    private P2Descriptor loadP2(URI repoUri) throws IOException, ParseException, SAXException {
+        P2Descriptor p2Descriptor = new P2Descriptor(repoUri,
                 ExecutionEnvironmentProfileProvider.getInstance());
-        if (!populateP2Descriptor(url, p2Descriptor)) {
+        if (!populateP2Descriptor(repoUri, p2Descriptor)) {
             return null;
         }
         return p2Descriptor;
     }
 
-    private boolean populateP2Descriptor(String url, P2Descriptor p2Descriptor) throws IOException,
-            ParseException, SAXException {
+    private boolean populateP2Descriptor(URI repoUri, P2Descriptor p2Descriptor)
+            throws IOException, ParseException, SAXException {
         boolean exist = false;
 
-        exist |= readComposite(url, "compositeContent", p2Descriptor);
+        exist |= readComposite(repoUri, "compositeContent", p2Descriptor);
 
-        exist |= readComposite(url, "compositeArtifacts", p2Descriptor);
+        exist |= readComposite(repoUri, "compositeArtifacts", p2Descriptor);
 
-        exist |= readJarOrXml(url, "artifacts", new P2ArtifactParser(p2Descriptor));
+        exist |= readJarOrXml(repoUri, "artifacts", new P2ArtifactParser(p2Descriptor));
 
-        exist |= readJarOrXml(url, "content", new P2MetadataParser(p2Descriptor));
+        exist |= readJarOrXml(repoUri, "content", new P2MetadataParser(p2Descriptor));
 
         return exist;
     }
 
-    private boolean readComposite(String url, String name, P2Descriptor p2Descriptor)
+    private boolean readComposite(URI repoUri, String name, P2Descriptor p2Descriptor)
             throws IOException, ParseException, SAXException {
         P2CompositeParser p2CompositeParser = new P2CompositeParser();
-        boolean exist = readJarOrXml(url, name, p2CompositeParser);
+        boolean exist = readJarOrXml(repoUri, name, p2CompositeParser);
         if (exist) {
             Iterator itChildLocation = p2CompositeParser.getChildLocations().iterator();
             while (itChildLocation.hasNext()) {
                 String childLocation = (String) itChildLocation.next();
-                String childUrl = url + childLocation + "/";
-                try {
-                    URL u = new URL(childLocation);
-                    childUrl = u.toExternalForm();
-                } catch (MalformedURLException e) {
-                    // not an url, keep the relative location one
+                if (!childLocation.endsWith("/")) {
+                    childLocation += "/";
                 }
-                populateP2Descriptor(childUrl, p2Descriptor);
+                URI childUri = repoUri.resolve(childLocation);
+                populateP2Descriptor(childUri, p2Descriptor);
             }
         }
         return exist;
     }
 
-    private boolean readJarOrXml(String url, String baseName, XMLInputParser reader)
+    private boolean readJarOrXml(URI repoUri, String baseName, XMLInputParser reader)
             throws IOException, ParseException, SAXException {
         InputStream readIn = null; // the input stream from which the xml should be read
 
-        URL contentUrl = new URL(url + baseName + ".jar");
+        URL contentUrl = repoUri.resolve(baseName + ".jar").toURL();
         URLResource res = new URLResource(contentUrl);
 
         ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
@@ -143,11 +148,11 @@ public class UpdateSiteLoader {
 
         if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             // no jar file, try the xml one
-            contentUrl = new URL(url + baseName + ".xml");
+            contentUrl = repoUri.resolve(baseName + ".xml").toURL();
             res = new URLResource(contentUrl);
 
-            report = repositoryCacheManager.downloadRepositoryResource(res,
-                baseName, baseName, "xml", options, urlRepository);
+            report = repositoryCacheManager.downloadRepositoryResource(res, baseName, baseName,
+                "xml", options, urlRepository);
 
             if (report.getDownloadStatus() == DownloadStatus.FAILED) {
                 // no xml either
@@ -181,9 +186,9 @@ public class UpdateSiteLoader {
         return true;
     }
 
-    private UpdateSite loadSite(String url) throws IOException, ParseException, SAXException {
-        String siteUrl = normalizeSiteUrl(url, null);
-        URL u = new URL(siteUrl + "site.xml");
+    private UpdateSite loadSite(URI repoUri) throws IOException, ParseException, SAXException {
+        URI siteUri = normalizeSiteUri(repoUri, null);
+        URL u = siteUri.resolve("site.xml").toURL();
 
         URLResource res = new URLResource(u);
         ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
@@ -194,46 +199,44 @@ public class UpdateSiteLoader {
         InputStream in = new FileInputStream(report.getLocalFile());
         try {
             UpdateSite site = EclipseUpdateSiteParser.parse(in);
-            site.setUrl(normalizeSiteUrl(site.getUrl(), siteUrl));
+            site.setUri(normalizeSiteUri(site.getUri(), siteUri));
             return site;
         } finally {
             in.close();
         }
     }
 
-    private String normalizeSiteUrl(String url, String defaultValue) {
-        if (url == null) {
+    private URI normalizeSiteUri(URI uri, URI defaultValue) {
+        if (uri == null) {
             return defaultValue;
         }
-        if (url.endsWith("site.xml")) {
-            return url.substring(0, url.length() - 8);
+        String uriString = uri.toString();
+        if (uriString.endsWith("site.xml")) {
+            try {
+                return new URI(uriString.substring(0, uriString.length() - 8));
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Illegal uri", e);
+            }
         }
-        if (!url.endsWith("/")) {
-            return url + "/";
+        if (!uriString.endsWith("/")) {
+            try {
+                return new URI(uriString + "/");
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Illegal uri", e);
+            }
         }
-        return url;
+        return uri;
     }
 
     private UpdateSiteDescriptor loadFromDigest(UpdateSite site) throws IOException,
             ParseException, SAXException {
-        String baseUrl = site.getDigestURL();
-        String siteUrl = site.getUrl();
-        if (baseUrl == null) {
-            baseUrl = siteUrl;
-        } else if (baseUrl.startsWith(".")) {
-            if (baseUrl.length() > 1 && baseUrl.charAt(1) == '/') {
-                baseUrl = siteUrl + baseUrl.substring(2);
-            } else {
-                baseUrl = siteUrl + baseUrl.substring(1);
-            }
+        URI digestBaseUri = site.getDigestUri();
+        if (digestBaseUri == null) {
+            digestBaseUri = site.getUri();
+        } else if (!digestBaseUri.isAbsolute()) {
+            digestBaseUri = site.getUri().resolve(digestBaseUri);
         }
-        String digestUrl;
-        if (baseUrl.endsWith("/")) {
-            digestUrl = baseUrl + "digest.zip";
-        } else {
-            digestUrl = baseUrl + "/digest.zip";
-        }
-        URL digest = new URL(digestUrl);
+        URL digest = digestBaseUri.resolve("digest.zip").toURL();
         Message.verbose("\tReading " + digest);
 
         URLResource res = new URLResource(digest);
@@ -256,13 +259,13 @@ public class UpdateSiteLoader {
 
     private UpdateSiteDescriptor loadFromSite(UpdateSite site) throws IOException, ParseException,
             SAXException {
-        UpdateSiteDescriptor repoDescriptor = new UpdateSiteDescriptor(
+        UpdateSiteDescriptor repoDescriptor = new UpdateSiteDescriptor(site.getUri(),
                 ExecutionEnvironmentProfileProvider.getInstance());
 
         Iterator itFeatures = site.getFeatures().iterator();
         while (itFeatures.hasNext()) {
             EclipseFeature feature = (EclipseFeature) itFeatures.next();
-            URL url = new URL(site.getUrl() + feature.getUrl());
+            URL url = site.getUri().resolve(feature.getUrl()).toURL();
 
             URLResource res = new URLResource(url);
             ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
@@ -278,7 +281,7 @@ public class UpdateSiteLoader {
                 }
                 EclipseFeature f = FeatureParser.parse(zipped);
                 f.setURL(feature.getUrl());
-                repoDescriptor.addFeature(site.getUrl(), f);
+                repoDescriptor.addFeature(f);
             } finally {
                 in.close();
             }

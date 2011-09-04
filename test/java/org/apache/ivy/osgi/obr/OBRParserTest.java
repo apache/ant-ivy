@@ -29,9 +29,11 @@ import org.apache.ivy.util.Message;
 
 public class OBRParserTest extends TestCase {
 
+    private File testObr = new File("test/test-obr");
+
     public void testParse() throws Exception {
-        BundleRepoDescriptor repo = OBRXMLParser
-                .parse(new FileInputStream(new File("test/test-obr/obr.xml")));
+        BundleRepoDescriptor repo = OBRXMLParser.parse(testObr.toURI(), new FileInputStream(
+                new File(testObr, "obr.xml")));
         assertNotNull(repo);
         System.out.println(repo.getModules().size() + " bundles successfully parsed, "
                 + Message.getProblems().size() + " errors");

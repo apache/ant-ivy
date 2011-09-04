@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.updatesite;
 
+import java.net.URI;
 import java.util.Iterator;
 
 import org.apache.ivy.osgi.core.BundleInfo;
@@ -28,13 +29,14 @@ import org.apache.ivy.osgi.util.VersionRange;
 
 public class PluginAdapter {
 
-    public static BundleInfo featureAsBundle(String baseUrl, EclipseFeature feature) {
+    public static BundleInfo featureAsBundle(URI baseUri, EclipseFeature feature) {
         BundleInfo b = new BundleInfo(feature.getId(), feature.getVersion());
 
         if (feature.getUrl() == null) {
-            b.setUri(baseUrl + "features/" + feature.getId() + '_' + feature.getVersion() + ".jar");
+            b.setUri(baseUri.resolve("features/" + feature.getId() + '_' + feature.getVersion()
+                    + ".jar"));
         } else {
-            b.setUri(baseUrl + feature.getUrl());
+            b.setUri(baseUri.resolve(feature.getUrl()));
         }
 
         b.setDescription(feature.getDescription());
@@ -70,10 +72,10 @@ public class PluginAdapter {
         return b;
     }
 
-    public static BundleInfo pluginAsBundle(String baseUrl, EclipsePlugin plugin) {
+    public static BundleInfo pluginAsBundle(URI baseUri, EclipsePlugin plugin) {
         BundleInfo b = new BundleInfo(plugin.getId(), plugin.getVersion());
 
-        b.setUri(baseUrl + "plugins/" + plugin.getId() + '_' + plugin.getVersion() + ".jar");
+        b.setUri(baseUri.resolve("plugins/" + plugin.getId() + '_' + plugin.getVersion() + ".jar"));
 
         return b;
     }

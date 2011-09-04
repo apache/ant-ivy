@@ -20,6 +20,7 @@ package org.apache.ivy.osgi.repo;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +31,8 @@ import java.util.jar.Manifest;
 
 import org.apache.ivy.util.Message;
 
-public abstract class AbstractFSManifestIterable { //implements Iterable/* <ManifestAndLocation> */{
+public abstract class AbstractFSManifestIterable { // implements Iterable/* <ManifestAndLocation>
+                                                   // */{
 
     public Iterator/* <ManifestAndLocation> */iterator() {
         return new FSManifestIterator();
@@ -42,9 +44,7 @@ public abstract class AbstractFSManifestIterable { //implements Iterable/* <Mani
 
     abstract protected InputStream getInputStream(String f) throws IOException;
 
-    protected String createBundleLocation(String location) {
-        return location;
-    }
+    abstract protected URI buildBundleURI(String location) throws IOException;
 
     class FSManifestIterator implements Iterator/* <ManifestAndLocation> */{
 
@@ -101,7 +101,7 @@ public abstract class AbstractFSManifestIterable { //implements Iterable/* <Mani
                         Manifest manifest = in.getManifest();
                         if (manifest != null) {
                             next = new ManifestAndLocation(manifest,
-                                    createBundleLocation(bundleCandidate));
+                                    buildBundleURI(bundleCandidate));
                         } else {
                             Message.debug("No manifest in jar: " + bundleCandidate);
                         }

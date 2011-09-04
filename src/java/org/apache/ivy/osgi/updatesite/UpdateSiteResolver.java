@@ -18,6 +18,8 @@
 package org.apache.ivy.osgi.updatesite;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 
 import org.apache.ivy.core.cache.CacheResourceOptions;
@@ -57,9 +59,8 @@ public class UpdateSiteResolver extends RepoDescriptorBasedResolver {
         }
         UpdateSiteLoader loader = new UpdateSiteLoader(getRepositoryCacheManager(),
                 getEventManager(), options);
-        String u = url.endsWith("/") ? url : (url + "/");
         try {
-            loader.load(u);
+            setRepoDescriptor(loader.load(new URI(url)));
         } catch (IOException e) {
             throw new RuntimeException("IO issue while trying to read the update site ("
                     + e.getMessage() + ")");
@@ -67,6 +68,8 @@ public class UpdateSiteResolver extends RepoDescriptorBasedResolver {
             throw new RuntimeException("Failed to parse the updatesite (" + e.getMessage() + ")");
         } catch (SAXException e) {
             throw new RuntimeException("Illformed updatesite (" + e.getMessage() + ")");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Illformed url (" + e.getMessage() + ")");
         }
     }
 }

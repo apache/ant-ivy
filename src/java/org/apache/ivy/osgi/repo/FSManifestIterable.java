@@ -23,6 +23,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -93,8 +96,14 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
         this.bundleFilter = bundleFilter;
     }
 
-    protected String createBundleLocation(String location) {
-        return basePath + location;
+    protected URI buildBundleURI(String location) {
+        try {
+            return new URI(new File(basePath + location).toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unexpected file to url conversion error", e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Unexpected url to uri conversion error", e);
+        }
     }
 
     protected InputStream getInputStream(String f) throws FileNotFoundException {
