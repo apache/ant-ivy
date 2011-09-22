@@ -432,6 +432,7 @@
 	</target>
 
     <target name="prepare-test-jar-repositories" unless="skip.test">
+    	<mkdir dir="${basedir}/test/jar-repos" />
         <jar destfile="${basedir}/test/jar-repos/jarrepo1.jar" >
             <fileset dir="${basedir}/test/repositories/1" />
         </jar>
