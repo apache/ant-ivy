@@ -115,7 +115,7 @@ public class PomModuleDescriptorBuilder {
     private static final String PROPERTIES = "m:properties";
     private static final String EXTRA_INFO_DELIMITER = "__";
     private static final Collection/*<String>*/ JAR_PACKAGINGS = Arrays.asList(
-                new String[] {"ejb", "bundle", "maven-plugin"});
+                new String[] {"ejb", "bundle", "maven-plugin", "eclipse-plugin"});
 
     
     static interface ConfMapper {
