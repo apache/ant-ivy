@@ -26,6 +26,7 @@ import java.util.jar.JarFile;
 import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.jar.JarRepository;
 import org.apache.ivy.plugins.repository.url.URLRepository;
@@ -89,6 +90,10 @@ public class JarResolver extends RepositoryResolver {
                 if (eventManager != null) {
                     getRepository().removeTransferListener(eventManager);
                 }
+            }
+            if (report.getDownloadStatus() == DownloadStatus.FAILED) {
+                throw new RuntimeException("The jar file " + url.toExternalForm()
+                        + " could not be downloaded (" + report.getDownloadDetails() + ")");
             }
             setJarFile(report.getLocalFile());
         }
