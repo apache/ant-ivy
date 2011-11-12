@@ -62,30 +62,43 @@ public class JarResolverTest extends TestCase {
     public void testSimpleFile() throws Exception {
         JarResolver resolver = new JarResolver();
         resolver.setName("jarresolver1");
-        resolver.setSettings(settings);
         resolver.setFile(new File("test/jar-repos/jarrepo1.jar").getAbsolutePath());
         resolver.addIvyPattern("[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.setSettings(settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
                 false), data);
         assertNotNull(rmr);
-
     }
 
     public void testSubdirInFile() throws Exception {
         JarResolver resolver = new JarResolver();
         resolver.setName("jarresolver1_subdir");
-        resolver.setSettings(settings);
         resolver.setFile(new File("test/jar-repos/jarrepo1_subdir.jar").getAbsolutePath());
         resolver.addIvyPattern("1/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.setSettings(settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
                 false), data);
         assertNotNull(rmr);
-
     }
+
+    public void testUrl() throws Exception {
+        JarResolver resolver = new JarResolver();
+        resolver.setName("jarresolver1");
+        resolver.setUrl(new File("test/jar-repos/jarrepo1.jar").toURI().toURL().toExternalForm());
+        resolver.addIvyPattern("[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern("[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.setSettings(settings);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), data);
+        assertNotNull(rmr);
+    }
+
 }

@@ -28,9 +28,12 @@ import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.jar.JarRepository;
+import org.apache.ivy.plugins.repository.url.URLRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
 
 public class JarResolver extends RepositoryResolver {
+
+    private URL url;
 
     public JarResolver() {
         setRepository(new JarRepository());
@@ -45,30 +48,12 @@ public class JarResolver extends RepositoryResolver {
     }
 
     public void setUrl(String jarUrl) {
-        URL url;
         try {
             url = new URL(jarUrl);
         } catch (MalformedURLException e) {
             throw new RuntimeException("the jar repository " + getName()
                     + " has an malformed url : " + jarUrl + " (" + e.getMessage() + ")");
         }
-
-        ArtifactDownloadReport report;
-        EventManager eventManager = getEventManager();
-        try {
-            if (eventManager != null) {
-                getRepository().addTransferListener(eventManager);
-            }
-            Resource jarResource = new URLResource(url);
-            CacheResourceOptions options = new CacheResourceOptions();
-            report = getRepositoryCacheManager().downloadRepositoryResource(jarResource,
-                "jarrepository", "jar", "jar", options, getRepository());
-        } finally {
-            if (eventManager != null) {
-                getRepository().removeTransferListener(eventManager);
-            }
-        }
-        setJarFile(report.getLocalFile());
     }
 
     public JarRepository getJarRepository() {
@@ -86,4 +71,26 @@ public class JarResolver extends RepositoryResolver {
         getJarRepository().setJarFile(jar);
     }
 
+    public void setSettings(ResolverSettings settings) {
+        super.setSettings(settings);
+        // let's resolve the url
+        if (url != null) {
+            ArtifactDownloadReport report;
+            EventManager eventManager = getEventManager();
+            try {
+                if (eventManager != null) {
+                    getRepository().addTransferListener(eventManager);
+                }
+                Resource jarResource = new URLResource(url);
+                CacheResourceOptions options = new CacheResourceOptions();
+                report = getRepositoryCacheManager().downloadRepositoryResource(jarResource,
+                    "jarrepository", "jar", "jar", options, new URLRepository());
+            } finally {
+                if (eventManager != null) {
+                    getRepository().removeTransferListener(eventManager);
+                }
+            }
+            setJarFile(report.getLocalFile());
+        }
+    }
 }
