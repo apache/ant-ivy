@@ -55,7 +55,8 @@ public class JarResource implements Resource {
     }
 
     public boolean isLocal() {
-        return true;
+        // not local as it is not a directly accessible file
+        return false;
     }
 
     public Resource clone(String cloneName) {
@@ -66,4 +67,7 @@ public class JarResource implements Resource {
         return jarFile.getInputStream(entry);
     }
 
+    public String toString() {
+        return jarFile.getName() + "!" + getName();
+    }
 }
