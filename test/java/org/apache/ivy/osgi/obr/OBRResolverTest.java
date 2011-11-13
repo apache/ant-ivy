@@ -252,7 +252,7 @@ public class OBRResolverTest extends TestCase {
 
     public void testResolveImportAmbiguity() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.ambiguity_3.2.1.jar";
-        bundleResolver.setImportPackageStrategy(RequirementStrategy.first);
+        bundleResolver.setRequirementStrategy(RequirementStrategy.first);
         genericTestResolve(jarName, "default",
             new ModuleRevisionId[] {MRID_TEST_BUNDLE_EXPORTING_AMBIGUITY}, new ModuleRevisionId[] {
                     MRID_TEST_BUNDLE, MRID_TEST_BUNDLE_IMPORTING_VERSION});
@@ -260,13 +260,13 @@ public class OBRResolverTest extends TestCase {
 
     public void testResolveImportNoAmbiguity() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.ambiguity_3.2.1.jar";
-        bundleResolver.setImportPackageStrategy(RequirementStrategy.noambiguity);
+        bundleResolver.setRequirementStrategy(RequirementStrategy.noambiguity);
         genericTestFailingResolve(jarName, "default");
     }
 
     public void testResolveRequireAmbiguity() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.require.ambiguity_1.1.1.jar";
-        bundleResolver.setImportPackageStrategy(RequirementStrategy.noambiguity);
+        bundleResolver.setRequirementStrategy(RequirementStrategy.noambiguity);
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {MRID_TEST_BUNDLE,
                 MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }

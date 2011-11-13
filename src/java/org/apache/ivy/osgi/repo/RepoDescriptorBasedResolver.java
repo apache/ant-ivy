@@ -80,12 +80,12 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
 
     private RequirementStrategy requirementStrategy = RequirementStrategy.noambiguity;
 
-    public void setImportPackageStrategy(RequirementStrategy importPackageStrategy) {
+    public void setRequirementStrategy(RequirementStrategy importPackageStrategy) {
         this.requirementStrategy = importPackageStrategy;
     }
 
-    public void setImportPackageStrategy(String strategy) {
-        setImportPackageStrategy(RequirementStrategy.valueOf(strategy));
+    public void setRequirementStrategy(String strategy) {
+        setRequirementStrategy(RequirementStrategy.valueOf(strategy));
     }
 
     protected void setRepoDescriptor(RepoDescriptor repoDescriptor) {
