@@ -187,7 +187,10 @@ public class P2MetadataParser implements XMLInputParser {
             super(UNITS);
             addChild(new UnitHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    bundles.add(((UnitHandler) child).bundleInfo);
+                    BundleInfo bundleInfo = ((UnitHandler) child).bundleInfo;
+                    if (!bundleInfo.getCapabilities().isEmpty()) {
+                        bundles.add(((UnitHandler) child).bundleInfo);
+                    }
                 }
             });
         }
@@ -207,7 +210,7 @@ public class P2MetadataParser implements XMLInputParser {
 
         private static final String VERSION = "version";
 
-        private static final String SINGLETON = "singleton";
+        // private static final String SINGLETON = "singleton";
 
         BundleInfo bundleInfo;
 
@@ -350,6 +353,9 @@ public class P2MetadataParser implements XMLInputParser {
                     String name = ((ProvidedHandler) child).name;
                     Version version = ((ProvidedHandler) child).version;
                     String type = namespace2Type(((ProvidedHandler) child).namespace);
+                    if (type == null) {
+                        return;
+                    }
                     BundleCapability capability;
                     if (type == BundleInfo.PACKAGE_TYPE) {
                         capability = new ExportPackage(name, version);
@@ -423,7 +429,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     static class RequiresHandler extends AbstractRequirementHandler {
 
-        private static final String REQUIRES = "provides";
+        private static final String REQUIRES = "requires";
 
         public RequiresHandler() {
             super(REQUIRES);
@@ -679,7 +685,7 @@ public class P2MetadataParser implements XMLInputParser {
 
         private static final String CHANGES = "changes";
 
-        private static final String SIZE = "size";
+        // private static final String SIZE = "size";
 
         public ChangesHandler() {
             super(CHANGES);
@@ -690,7 +696,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
 
         protected void handleAttributes(Attributes atts) {
-            int size = Integer.parseInt(atts.getValue(SIZE));
+            // int size = Integer.parseInt(atts.getValue(SIZE));
         }
     }
 
@@ -727,7 +733,7 @@ public class P2MetadataParser implements XMLInputParser {
 
         private static final String PATCH_SCOPE = "patchScope";
 
-        private static final String SIZE = "size";
+        // private static final String SIZE = "size";
 
         public PatchScopeHandler() {
             super(PATCH_SCOPE);
@@ -738,7 +744,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
 
         protected void handleAttributes(Attributes atts) {
-            int size = Integer.parseInt(atts.getValue(SIZE));
+            // int size = Integer.parseInt(atts.getValue(SIZE));
         }
     }
 

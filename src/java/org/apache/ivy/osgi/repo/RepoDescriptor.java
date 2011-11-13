@@ -90,7 +90,8 @@ public class RepoDescriptor {
             map.put(value, bundleReferences);
         }
         if (!bundleReferences.add(md)) {
-            Message.warn("The repo did already contains " + md);
+            Message.debug("Duplicate module in the repo " + baseUri + " for " + type + " "
+                    + value + ": " + md.getModuleRevisionId());
         }
     }
 

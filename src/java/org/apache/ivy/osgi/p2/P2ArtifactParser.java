@@ -38,12 +38,15 @@ public class P2ArtifactParser implements XMLInputParser {
 
     private final P2Descriptor p2Descriptor;
 
-    public P2ArtifactParser(P2Descriptor p2Descriptor) {
+    private final String repoUrl;
+
+    public P2ArtifactParser(P2Descriptor p2Descriptor, String repoUrl) {
         this.p2Descriptor = p2Descriptor;
+        this.repoUrl = repoUrl;
     }
 
     public void parse(InputStream in) throws ParseException, IOException, SAXException {
-        RepositoryHandler handler = new RepositoryHandler(p2Descriptor);
+        RepositoryHandler handler = new RepositoryHandler(p2Descriptor, repoUrl);
         try {
             XMLHelper.parse(in, null, handler, null);
         } catch (ParserConfigurationException e) {
@@ -63,7 +66,7 @@ public class P2ArtifactParser implements XMLInputParser {
 
         private Map/* <String, String> */patternsByClassifier = new HashMap();
 
-        public RepositoryHandler(final P2Descriptor p2Descriptor) {
+        public RepositoryHandler(final P2Descriptor p2Descriptor, String repoUrl) {
             super(REPOSITORY);
             // addChild(new PropertiesHandler(), new ChildElementHandler() {
             // public void childHanlded(DelegetingHandler child) {
@@ -85,7 +88,7 @@ public class P2ArtifactParser implements XMLInputParser {
                     }
                 }
             });
-            addChild(new ArtifactsHandler(p2Descriptor, patternsByClassifier),
+            addChild(new ArtifactsHandler(p2Descriptor, patternsByClassifier, repoUrl),
                 new ChildElementHandler() {
                     public void childHanlded(DelegetingHandler child) {
                         // nothing to do
@@ -153,12 +156,13 @@ public class P2ArtifactParser implements XMLInputParser {
         // private static final String SIZE = "size";
 
         public ArtifactsHandler(final P2Descriptor p2Descriptor,
-                final Map/* <String, String> */patternsByClassifier) {
+                final Map/* <String, String> */patternsByClassifier, final String repoUrl) {
             super(ARTIFACTS);
             addChild(new ArtifactHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     P2Artifact a = ((ArtifactHandler) child).p2Artifact;
                     String url = (String) patternsByClassifier.get(a.getClassifier());
+                    url = url.replaceAll("\\$\\{repoUrl\\}", repoUrl);
                     p2Descriptor.addArtifactUrl(a.getId(), a.getVersion(), url);
                 }
             });

@@ -79,4 +79,13 @@ public class UpdateSiteLoaderTest extends TestCase {
         assertTrue(site.getModules().size() > 900);
     }
 
+    public void testComposite() throws Exception {
+        RepoDescriptor site = loader.load(new File("test/test-p2/composite/").toURI());
+        assertEquals(18, site.getModules().size());
+
+        // check that the url of the artifact is correctly resolved
+        String path = new File("test/test-p2/ivyde-repo/").toURI().toURL().toExternalForm();
+        ModuleDescriptor md = (ModuleDescriptor) site.getModules().iterator().next();
+        assertTrue(md.getAllArtifacts()[0].getUrl().toExternalForm().startsWith(path));
+    }
 }

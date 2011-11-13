@@ -20,7 +20,9 @@ package org.apache.ivy.osgi.p2;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.osgi.core.BundleInfo;
@@ -51,14 +53,14 @@ public class P2Descriptor extends RepoDescriptor {
 
     public void addBundle(BundleInfo bundleInfo) {
         // before transforming it and adding it into the repo, let's add the artifacts
+        // and if no artifact, then no bundle
 
         Map/* <Version, String> */urlPatternsByVersion = (Map) artifactUrlPatterns.get(bundleInfo
                 .getSymbolicName());
         if (urlPatternsByVersion != null) {
             String urlPattern = (String) urlPatternsByVersion.get(bundleInfo.getVersion());
             if (urlPattern != null) {
-                String url = urlPattern.replaceAll("\\$\\{repoUrl\\}", repoUrl);
-                url = url.replaceAll("\\$\\{id\\}", bundleInfo.getSymbolicName());
+                String url = urlPattern.replaceAll("\\$\\{id\\}", bundleInfo.getSymbolicName());
                 url = url.replaceAll("\\$\\{version\\}", bundleInfo.getVersion().toString());
                 try {
                     bundleInfo.setUri(new URI(url));
@@ -66,10 +68,9 @@ public class P2Descriptor extends RepoDescriptor {
                     throw new RuntimeException("Unable to build the artifact uri of " + bundleInfo,
                             e);
                 }
+                super.addBundle(bundleInfo);
             }
         }
-
-        super.addBundle(bundleInfo);
     }
 
     public void addArtifactUrl(String id, Version version, String url) {
@@ -80,4 +81,5 @@ public class P2Descriptor extends RepoDescriptor {
         }
         byVersion.put(version, url);
     }
+
 }

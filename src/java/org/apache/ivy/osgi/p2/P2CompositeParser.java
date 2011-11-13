@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,9 +34,9 @@ import org.xml.sax.SAXException;
 
 public class P2CompositeParser implements XMLInputParser {
 
-    private List/* <String> */childLocations;
+    private Set/* <String> */childLocations = new LinkedHashSet();
 
-    public List getChildLocations() {
+    public Set getChildLocations() {
         return childLocations;
     }
 
@@ -45,7 +47,7 @@ public class P2CompositeParser implements XMLInputParser {
         } catch (ParserConfigurationException e) {
             throw new SAXException(e);
         }
-        childLocations = handler.childLocations;
+        childLocations.addAll(handler.childLocations);
     }
 
     static class RepositoryHandler extends DelegetingHandler {

@@ -105,15 +105,22 @@ public class UpdateSiteLoader {
 
     private boolean populateP2Descriptor(URI repoUri, P2Descriptor p2Descriptor)
             throws IOException, ParseException, SAXException {
+        Message.verbose("Loading P2 repository " + repoUri);
+
         boolean exist = false;
 
-        exist |= readComposite(repoUri, "compositeContent", p2Descriptor);
+        boolean artifactExists = readComposite(repoUri, "compositeArtifacts", p2Descriptor);
+        if (!artifactExists) {
+            artifactExists = readJarOrXml(repoUri, "artifacts", new P2ArtifactParser(p2Descriptor,
+                    repoUri.toURL().toExternalForm()));
+        }
+        exist |= artifactExists;
 
-        exist |= readComposite(repoUri, "compositeArtifacts", p2Descriptor);
-
-        exist |= readJarOrXml(repoUri, "artifacts", new P2ArtifactParser(p2Descriptor));
-
-        exist |= readJarOrXml(repoUri, "content", new P2MetadataParser(p2Descriptor));
+        boolean contentExists = readComposite(repoUri, "compositeContent", p2Descriptor);
+        if (!contentExists) {
+            contentExists = readJarOrXml(repoUri, "content", new P2MetadataParser(p2Descriptor));
+        }
+        exist |= artifactExists;
 
         return exist;
     }
