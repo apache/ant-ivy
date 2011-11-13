@@ -267,7 +267,7 @@ public class BundleInfo {
         Iterator itCapabilities = capabilities.iterator();
         while (itCapabilities.hasNext()) {
             BundleCapability capability = (BundleCapability) itCapabilities.next();
-            if (capability.getType().equals(PACKAGE_TYPE)) {
+            if (PACKAGE_TYPE.equals(capability.getType())) {
                 set.add((ExportPackage) capability);
             }
         }
@@ -279,7 +279,7 @@ public class BundleInfo {
         Iterator itCapabilities = capabilities.iterator();
         while (itCapabilities.hasNext()) {
             BundleCapability capability = (BundleCapability) itCapabilities.next();
-            if (capability.getType().equals(SERVICE_TYPE)) {
+            if (SERVICE_TYPE.equals(capability.getType())) {
                 set.add(capability);
             }
         }

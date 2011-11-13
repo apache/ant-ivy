@@ -283,7 +283,7 @@ public class BundleInfoAdapter {
             String type = requirement.getType();
             String name = requirement.getName();
 
-            if (type.equals(BundleInfo.PACKAGE_TYPE) && exportedPkgNames.contains(name)) {
+            if (BundleInfo.PACKAGE_TYPE.equals(type) && exportedPkgNames.contains(name)) {
                 // don't declare package exported by the current bundle
                 continue;
             }
@@ -293,7 +293,7 @@ public class BundleInfoAdapter {
             DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ddmrid, false);
 
             String conf = CONF_NAME_DEFAULT;
-            if (type.equals(BundleInfo.PACKAGE_TYPE)) {
+            if (BundleInfo.PACKAGE_TYPE.equals(type)) {
                 // declare the configuration for the package
                 conf = CONF_USE_PREFIX + name;
                 md.addConfiguration(new Configuration(CONF_USE_PREFIX + name, Visibility.PUBLIC,
