@@ -81,6 +81,15 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         return findResourceUsingPatterns(mrid, artifactPatterns, artifact,
             getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }
+    
+    public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
+            ModuleRevisionId mrid, Date date) {
+        if (isM2compatible()) {
+            // convert 'M2'-organisation back to 'Ivy'-organisation
+            mrid = convertM2ResourceSearchIdToNormal(mrid);
+        }
+        return super.findResource(rress, rmdparser, mrid, date);
+    }    
 
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision,
             List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
@@ -327,6 +336,15 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     public void setM2compatible(boolean compatible) {
         m2compatible = compatible;
+    }
+    
+    protected ModuleRevisionId convertM2ResourceSearchIdToNormal(ModuleRevisionId mrid) {
+        if (mrid.getOrganisation() == null || mrid.getOrganisation().indexOf('/') == -1) {
+            return mrid;
+        }
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('/', '.'),
+            mrid.getName(), mrid.getBranch(), mrid.getRevision(),
+            mrid.getQualifiedExtraAttributes());
     }
 
     protected ModuleRevisionId convertM2IdForResourceSearch(ModuleRevisionId mrid) {
