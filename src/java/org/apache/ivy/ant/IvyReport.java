@@ -273,6 +273,7 @@ public class IvyReport extends IvyTask {
         ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
         File style = new File(cacheMgr.getResolutionCacheRoot(), "ivy-report.xsl");
         if (!style.exists()) {
+            Message.debug("copying ivy-report.xsl to " + style.getAbsolutePath());
             FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.xsl"), style, null);
         }
         return style;
