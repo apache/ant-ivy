@@ -118,7 +118,7 @@ public class DeliverEngine {
             ivyFileURL = ivyFile.toURI().toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
                 options.isValidate());
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, 
+            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), 
                 options.getPubBranch() == null ? mrid.getBranch() : options.getPubBranch(), 
                 revision));
             md.setResolvedPublicationDate(options.getPubdate());

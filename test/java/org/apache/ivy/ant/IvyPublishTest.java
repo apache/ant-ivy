@@ -308,6 +308,134 @@ public class IvyPublishTest extends TestCase {
         }
     }
 
+    public void testMergeExtraAttributes() throws IOException, ParseException {
+        //publish the parent descriptor first, so that it can be found while
+        //we are reading the child descriptor.
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        IvyPublish pubParent = new IvyPublish();
+        pubParent.setProject(project);
+        pubParent.setResolver("1");
+        pubParent.setPubrevision("1.0");
+        File art = new File("build/test/publish/resolve-simple-1.0.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        pubParent.execute();
+
+        //update=true implies merge=true
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-extra-attributes.xml");
+        res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        publish.setResolver("1");
+        publish.setUpdate(true);
+        publish.setOrganisation("apache");
+        publish.setModule("resolve-minimal");
+        publish.setRevision("1.0");
+        publish.setPubrevision("1.2");
+        publish.setStatus("release");
+        publish.addArtifactspattern("build/test/publish/ivy-extends-extra-attributes.xml");
+        publish.setForcedeliver(true);
+        publish.execute();
+
+        // should have published the files with "1" resolver
+        File published = new File("test/repositories/1/apache/resolve-minimal/ivys/ivy-1.2.xml");
+        assertTrue(published.exists());
+
+        // do a text compare, since we want to test comments as well as structure.
+        // we could do a better job of this with xmlunit
+
+        int lineNo = 1;
+
+        BufferedReader merged = new BufferedReader(new FileReader(published));
+        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
+            .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
+        for (String mergeLine = merged.readLine(),
+                    expectedLine = expected.readLine();
+            mergeLine != null && expectedLine != null;
+            mergeLine = merged.readLine(),
+            expectedLine = expected.readLine()) {
+
+            //strip timestamps for the comparison
+            if (mergeLine.indexOf("<info") >= 0) {
+                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
+            }
+            //discard whitespace-only lines
+            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+            }
+
+            ++lineNo;
+        }
+    }
+
+    public void testMergeExtraAttributesFromParent() throws IOException, ParseException {
+        //publish the parent descriptor first, so that it can be found while
+        //we are reading the child descriptor.
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf-extra-attributes.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        IvyPublish pubParent = new IvyPublish();
+        pubParent.setProject(project);
+        pubParent.setResolver("1");
+        pubParent.setPubrevision("1.0");
+        File art = new File("build/test/publish/resolve-simple-1.0.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        pubParent.execute();
+
+        //update=true implies merge=true
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-extra-attributes-parent.xml");
+        res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        publish.setResolver("1");
+        publish.setUpdate(true);
+        publish.setOrganisation("apache");
+        publish.setModule("resolve-minimal");
+        publish.setRevision("1.0");
+        publish.setPubrevision("1.2");
+        publish.setStatus("release");
+        publish.addArtifactspattern("build/test/publish/ivy-extends-extra-attributes.xml");
+        publish.setForcedeliver(true);
+        publish.execute();
+
+        // should have published the files with "1" resolver
+        File published = new File("test/repositories/1/apache/resolve-minimal/ivys/ivy-1.2.xml");
+        assertTrue(published.exists());
+
+        // do a text compare, since we want to test comments as well as structure.
+        // we could do a better job of this with xmlunit
+
+        int lineNo = 1;
+
+        BufferedReader merged = new BufferedReader(new FileReader(published));
+        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
+            .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
+        for (String mergeLine = merged.readLine(),
+                    expectedLine = expected.readLine();
+            mergeLine != null && expectedLine != null;
+            mergeLine = merged.readLine(),
+            expectedLine = expected.readLine()) {
+
+            //strip timestamps for the comparison
+            if (mergeLine.indexOf("<info") >= 0) {
+                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
+            }
+            //discard whitespace-only lines
+            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+            }
+
+            ++lineNo;
+        }
+    }
+
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
