@@ -61,16 +61,13 @@ public class UpdateSiteLoaderTest extends TestCase {
     public void testM2Eclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
         RepoDescriptor site = loader.load(new URI("http://m2eclipse.sonatype.org/sites/m2e/"));
-        assertTrue(site.getModules().size() > 70);
+        assertTrue(site.getModules().size() > 50);
         Iterator itModules = site.getModules().iterator();
         while (itModules.hasNext()) {
             ModuleDescriptor md = (ModuleDescriptor) itModules.next();
             String name = md.getModuleRevisionId().getName();
             assertTrue(name, name.indexOf("org.maven") != -1);
         }
-
-        site = loader.load(new URI("http://m2eclipse.sonatype.org/sites/m2e/"));
-        assertTrue(site.getModules().size() > 70);
     }
 
     public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException,
@@ -81,7 +78,7 @@ public class UpdateSiteLoaderTest extends TestCase {
 
     public void testComposite() throws Exception {
         RepoDescriptor site = loader.load(new File("test/test-p2/composite/").toURI());
-        assertEquals(18, site.getModules().size());
+        assertEquals(8, site.getModules().size());
 
         // check that the url of the artifact is correctly resolved
         String path = new File("test/test-p2/ivyde-repo/").toURI().toURL().toExternalForm();
