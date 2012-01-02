@@ -20,9 +20,7 @@ package org.apache.ivy.osgi.p2;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.osgi.core.BundleInfo;
