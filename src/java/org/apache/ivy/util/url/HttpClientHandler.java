@@ -45,7 +45,6 @@ import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
 import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -181,6 +180,12 @@ public class HttpClientHandler extends AbstractURLHandler {
         if (status == HttpStatus.SC_OK) {
             return true;
         }
+        
+        // IVY-1328: some servers return a 204 on a HEAD request
+        if ("HEAD".equals(method.getName()) && (status == 204)) {
+            return true;
+        }
+        
         Message.debug("HTTP response status: " + status + " url=" + url);
         if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
             Message.warn("Your proxy requires authentication.");

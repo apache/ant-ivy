@@ -98,6 +98,12 @@ public class BasicURLHandler extends AbstractURLHandler {
         if (status == HttpStatus.SC_OK) {
             return true;
         }
+        
+        // IVY-1328: some servers return a 204 on a HEAD request
+        if ("HEAD".equals(con.getRequestMethod()) && (status == 204)) {
+            return true;
+        }
+        
         Message.debug("HTTP response status: " + status + " url=" + url);
         if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
             Message.warn("Your proxy requires authentication.");
