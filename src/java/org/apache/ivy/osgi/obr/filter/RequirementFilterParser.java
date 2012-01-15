@@ -93,27 +93,33 @@ public class RequirementFilterParser {
             if (c != '(') {
                 throw new ParseException("Expecting '(' as the start of the filter", pos);
             }
+            RequirementFilter filter;
             switch (readNext()) {
                 case '&':
-                    return parseAnd();
+                    filter = parseAnd();
+                    break;
                 case '|':
-                    return parseOr();
+                    filter = parseOr();
+                    break;
                 case '!':
-                    return parseNot();
+                    filter = parseNot();
+                    break;
                 default:
                     unread();
-                    return parseCompare();
+                    filter = parseCompare();
+                    break;
             }
+            readNext();
+            if (c != ')') {
+                throw new ParseException("Expecting ')' as the end of the filter", pos);
+            }
+            return filter;
         }
 
         private RequirementFilter parseCompare() throws ParseException {
             String leftValue = parseCompareValue();
             Operator operator = parseCompareOperator();
             String rightValue = parseCompareValue();
-            readNext();
-            if (c != ')') {
-                throw new ParseException("Expecting ')' as the end of the filter", pos);
-            }
             return new CompareFilter(leftValue, operator, rightValue);
         }
 
@@ -177,6 +183,7 @@ public class RequirementFilterParser {
                     unread();
                     filter.add(parseFilter());
                 } else {
+                    unread();
                     break;
                 }
             } while (pos < length);

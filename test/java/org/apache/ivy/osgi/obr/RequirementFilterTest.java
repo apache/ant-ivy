@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.apache.ivy.osgi.obr.filter.AndFilter;
 import org.apache.ivy.osgi.obr.filter.CompareFilter;
 import org.apache.ivy.osgi.obr.filter.CompareFilter.Operator;
+import org.apache.ivy.osgi.obr.filter.NotFilter;
 import org.apache.ivy.osgi.obr.filter.RequirementFilterParser;
 import org.apache.ivy.osgi.obr.xml.RequirementFilter;
 
@@ -38,16 +39,28 @@ public class RequirementFilterTest extends TestCase {
         checkParse(cgt2, "(c>2)");
         RequirementFilter twoeqd = new CompareFilter("2", Operator.EQUALS, "d");
         checkParse(twoeqd, "(2=d)");
-        RequirementFilter foodorbarge0dot0 = new CompareFilter("foo.bar",
+        RequirementFilter foodotbarge0dot0 = new CompareFilter("foo.bar",
                 Operator.GREATER_OR_EQUAL, "0.0");
-        checkParse(foodorbarge0dot0, "(foo.bar>=0.0)");
-        RequirementFilter and = new AndFilter(new RequirementFilter[] {foodorbarge0dot0});
+        checkParse(foodotbarge0dot0, "(foo.bar>=0.0)");
+        RequirementFilter and = new AndFilter(new RequirementFilter[] {foodotbarge0dot0});
         checkParse(and, "(&(foo.bar>=0.0))");
         RequirementFilter and2 = new AndFilter(new RequirementFilter[] {cgt2, twoeqd,
-                foodorbarge0dot0});
+                foodotbarge0dot0});
         checkParse(and2, "(&(c>2)(2=d)(foo.bar>=0.0))");
         RequirementFilter spaceAfterAnd = new AndFilter(new RequirementFilter[] {twoeqd});
         checkParse(spaceAfterAnd, "(& (2=d))");
+
+        RequirementFilter version350 = new CompareFilter("version", Operator.GREATER_OR_EQUAL,
+                "3.5.0");
+        RequirementFilter version400 = new CompareFilter("version", Operator.GREATER_OR_EQUAL,
+                "4.0.0");
+        RequirementFilter notVersion400 = new NotFilter(version400);
+        RequirementFilter bundle = new CompareFilter("bundle", Operator.EQUALS,
+                "org.eclipse.core.runtime");
+        RequirementFilter andEverythingWithSpace = new AndFilter(new RequirementFilter[] {
+                version350, notVersion400, bundle});
+        checkParse(andEverythingWithSpace,
+            "(&     (version>=3.5.0)     (!(version>=4.0.0))     (bundle=org.eclipse.core.runtime)    )");
     }
 
     private void assertParseFail(String toParse) {

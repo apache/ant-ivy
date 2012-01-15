@@ -54,7 +54,7 @@ public abstract class UniOperatorFilter extends RequirementFilter {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof MultiOperatorFilter)) {
+        if (!(obj instanceof UniOperatorFilter)) {
             return false;
         }
         UniOperatorFilter other = (UniOperatorFilter) obj;
