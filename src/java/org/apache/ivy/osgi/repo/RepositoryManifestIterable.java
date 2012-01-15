@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.repo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivy.plugins.repository.Repository;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.util.ResolverHelper;
 
 public class RepositoryManifestIterable extends AbstractFSManifestIterable/* <String> */{
@@ -44,12 +46,12 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable/* <St
     }
 
     protected URI buildBundleURI(Object/* String */location) throws IOException {
+        Resource resource = repo.getResource((String) location);
+        // We have a resource to transform into an URI, let's use some heuristics
         try {
-            return new URI(repo.getResource((String) location).getName());
+            return new URI(resource.getName());
         } catch (URISyntaxException e) {
-            throw new RuntimeException(
-                    "Unsupported repository type, resources names cannot be transformed into uri",
-                    e);
+            return new File(resource.getName()).toURI();
         }
     }
 
