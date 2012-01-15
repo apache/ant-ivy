@@ -309,9 +309,9 @@ public class VisitNode {
         return loaded;
     }
 
-    public Collection getDependencies(String conf) {
-        Collection deps = node.getDependencies(rootModuleConf, conf, requestedConf);
-        Collection ret = new ArrayList(deps.size());
+    public Collection/*<VisitNode>*/ getDependencies(String conf) {
+        Collection/*<IvyNode>*/ deps = node.getDependencies(rootModuleConf, conf, requestedConf);
+        Collection/*<VisitNode>*/ ret = new ArrayList(deps.size());
         for (Iterator iter = deps.iterator(); iter.hasNext();) {
             IvyNode depNode = (IvyNode) iter.next();
             ret.add(traverseChild(conf, depNode));

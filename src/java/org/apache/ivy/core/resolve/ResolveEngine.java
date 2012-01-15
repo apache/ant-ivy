@@ -771,7 +771,7 @@ public class ResolveEngine {
 
         // now we can actually resolve this configuration dependencies
         if (!isDependenciesFetched(node.getNode(), conf) && node.isTransitive()) {
-            Collection dependencies = node.getDependencies(conf);
+            Collection/*<VisitNode>*/ dependencies = node.getDependencies(conf);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 VisitNode dep = (VisitNode) iter.next();
                 dep.useRealNode(); // the node may have been resolved to another real one while

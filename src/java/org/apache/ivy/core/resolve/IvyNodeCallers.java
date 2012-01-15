@@ -138,7 +138,7 @@ public class IvyNodeCallers {
     // easily get a caller by its mrid
     private Map callersByRootConf = new HashMap();
 
-    // this map contains all the module ids calling this one (including transitively) as keys
+    // this map contains all the module ids calling this one (including transitively) as keys.
     // the mapped nodes (values) correspond to a direct caller from which the transitive caller
     // comes
 
