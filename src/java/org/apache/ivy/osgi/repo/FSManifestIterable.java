@@ -26,13 +26,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FSManifestIterable extends AbstractFSManifestIterable {
+public class FSManifestIterable extends AbstractFSManifestIterable/* <File> */{
 
     /**
      * List of directory name that usually contains jars but are not bundles
@@ -63,21 +62,14 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
 
     private FilenameFilter bundleFilter = DEFAULT_BUNLDE_FILTER;
 
-    private String root;
-
-    private final String basePath;
-
     /**
      * Default constructor
      * 
      * @param root
      *            the root directory of the file system to lookup
-     * @param basePath
-     *            path the found locations should be append to
      */
-    public FSManifestIterable(File root, String basePath) {
-        this.basePath = basePath;
-        this.root = root.getAbsolutePath();
+    public FSManifestIterable(File root) {
+        super(root);
     }
 
     public FilenameFilter getDirFilter() {
@@ -96,9 +88,9 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
         this.bundleFilter = bundleFilter;
     }
 
-    protected URI buildBundleURI(String location) {
+    protected URI buildBundleURI(Object/* File */location) {
         try {
-            return new URI(new File(basePath + location).toURL().toExternalForm());
+            return new URI(((File) location).toURL().toExternalForm());
         } catch (MalformedURLException e) {
             throw new RuntimeException("Unexpected file to url conversion error", e);
         } catch (URISyntaxException e) {
@@ -106,12 +98,12 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
         }
     }
 
-    protected InputStream getInputStream(String f) throws FileNotFoundException {
-        return new FileInputStream(new File(root, f));
+    protected InputStream getInputStream(Object/* File */f) throws FileNotFoundException {
+        return new FileInputStream((File) f);
     }
 
-    protected List/* <String> */listBundleFiles(String dir) {
-        return fileArray2pathList(new File(root, dir).listFiles(new FileFilter() {
+    protected List/* <File> */listBundleFiles(Object/* File */dir) {
+        return Arrays.asList(((File) dir).listFiles(new FileFilter() {
             public boolean accept(File f) {
                 if (!f.isFile()) {
                     return false;
@@ -121,16 +113,8 @@ public class FSManifestIterable extends AbstractFSManifestIterable {
         }));
     }
 
-    private List/* <String> */fileArray2pathList(File[] files) {
-        ArrayList/* <String> */list = new ArrayList/* <String> */(files.length);
-        for (int i = 0; i < files.length; i++) {
-            list.add(files[i].getAbsolutePath().substring(root.length() + 1));
-        }
-        return list;
-    }
-
-    protected List/* <String> */listDirs(String dir) {
-        return fileArray2pathList(new File(root, dir).listFiles(new FileFilter() {
+    protected List/* <File> */listDirs(Object/* File */dir) {
+        return Arrays.asList(((File) dir).listFiles(new FileFilter() {
             public boolean accept(File f) {
                 if (!f.isDirectory()) {
                     return false;

@@ -27,8 +27,6 @@ import java.util.Iterator;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ant.AntMessageLogger;
-import org.apache.ivy.ant.IvyTask;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
@@ -40,7 +38,6 @@ import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -57,8 +54,6 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
     private boolean indent = true;
 
     private File baseDir;
-
-    private String basePath = "";
 
     private boolean quiet;
 
@@ -86,10 +81,6 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
         this.baseDir = dir;
     }
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
-
     public void setQuiet(boolean quiet) {
         this.quiet = quiet;
     }
@@ -113,9 +104,6 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             if (cacheName != null) {
                 throw new BuildException("specify only one of 'resolver' or 'cache'");
             }
-            if (basePath != null) {
-                log("'basePath' is only usefull with 'baseDir'", Project.MSG_WARN);
-            }
             Ivy ivy = getIvyInstance();
             IvySettings settings = ivy.getSettings();
             DependencyResolver resolver = settings.getResolver(resolverName);
@@ -134,7 +122,7 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             if (!baseDir.isDirectory()) {
                 throw new BuildException(baseDir + " is not a directory");
             }
-            it = new FSManifestIterable(baseDir, basePath).iterator();
+            it = new FSManifestIterable(baseDir).iterator();
         } else if (cacheName != null) {
             Ivy ivy = getIvyInstance();
             RepositoryCacheManager cacheManager = ivy.getSettings().getRepositoryCacheManager(
@@ -144,7 +132,7 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
                         + cacheManager.getClass().getName() + "' is not supported.");
             }
             File basedir = ((DefaultRepositoryCacheManager) cacheManager).getBasedir();
-            it = new FSManifestIterable(basedir, basedir.getAbsolutePath() + File.separator).iterator();
+            it = new FSManifestIterable(basedir).iterator();
         } else {
             throw new BuildException(
                     "No resolver, cache or basedir specified: "

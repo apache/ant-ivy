@@ -31,20 +31,26 @@ import java.util.jar.Manifest;
 
 import org.apache.ivy.util.Message;
 
-public abstract class AbstractFSManifestIterable { // implements Iterable/* <ManifestAndLocation>
-                                                   // */{
+// T is the type of the resource "path"
+public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <ManifestAndLocation> */{
 
-    public Iterator/* <ManifestAndLocation> */iterator() {
-        return new FSManifestIterator();
+    private final Object/* T */root;
+
+    public AbstractFSManifestIterable(Object /* T */root) {
+        this.root = root;
     }
 
-    abstract protected List/* <String> */listBundleFiles(String dir) throws IOException;
+    public Iterator/* <ManifestAndLocation> */iterator() {
+        return new FSManifestIterator(root);
+    }
 
-    abstract protected List/* <String> */listDirs(String dir) throws IOException;
+    abstract protected List/* <T> */listBundleFiles(Object/* T */dir) throws IOException;
 
-    abstract protected InputStream getInputStream(String f) throws IOException;
+    abstract protected List/* <T> */listDirs(Object/* T */dir) throws IOException;
 
-    abstract protected URI buildBundleURI(String location) throws IOException;
+    abstract protected InputStream getInputStream(Object/* T */f) throws IOException;
+
+    abstract protected URI buildBundleURI(Object/* T */location) throws IOException;
 
     class FSManifestIterator implements Iterator/* <ManifestAndLocation> */{
 
@@ -56,17 +62,17 @@ public abstract class AbstractFSManifestIterable { // implements Iterable/* <Man
          * the stack is an iterator on the children on the root. The last iterator in the stack
          * points to {@link #currentDir}.
          */
-        private Stack/* <Iterator<String>> */dirs = new Stack/* <Iterator<String>> */();
+        private Stack/* <Iterator<T>> */dirs = new Stack/* <Iterator<T>> */();
 
         /**
          * The bundles files being lookup.
          */
-        private Iterator/* <String> */bundleCandidates = null;
+        private Iterator/* <T> */bundleCandidates = null;
 
-        private String currentDir = null;
+        private Object/* T */currentDir = null;
 
-        FSManifestIterator() {
-            dirs.add(Collections.singleton("").iterator());
+        FSManifestIterator(Object /* T */root) {
+            dirs.add(Collections.singleton(root).iterator());
         }
 
         /**
@@ -79,7 +85,7 @@ public abstract class AbstractFSManifestIterable { // implements Iterable/* <Man
                 if (currentDir == null) {
                     // so get the next one
                     if (((Iterator) dirs.peek()).hasNext()) {
-                        currentDir = (String) ((Iterator) dirs.peek()).next();
+                        currentDir = ((Iterator) dirs.peek()).next();
                         try {
                             bundleCandidates = listBundleFiles(currentDir).iterator();
                         } catch (IOException e) {
@@ -94,7 +100,7 @@ public abstract class AbstractFSManifestIterable { // implements Iterable/* <Man
                         dirs.pop();
                     }
                 } else if (bundleCandidates.hasNext()) {
-                    String bundleCandidate = (String) bundleCandidates.next();
+                    Object/* T */bundleCandidate = bundleCandidates.next();
                     JarInputStream in = null;
                     try {
                         in = new JarInputStream(getInputStream(bundleCandidate));

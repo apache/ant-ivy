@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.resolver.util.ResolverHelper;
 
-public class RepositoryManifestIterable extends AbstractFSManifestIterable {
+public class RepositoryManifestIterable extends AbstractFSManifestIterable/* <String> */{
 
     private final Repository repo;
 
@@ -39,12 +39,13 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable {
      *            the root directory of the file system to lookup
      */
     public RepositoryManifestIterable(Repository repo) {
+        super("");
         this.repo = repo;
     }
 
-    protected URI buildBundleURI(String location) throws IOException {
+    protected URI buildBundleURI(Object/* String */location) throws IOException {
         try {
-            return new URI(repo.getResource(location).getName());
+            return new URI(repo.getResource((String) location).getName());
         } catch (URISyntaxException e) {
             throw new RuntimeException(
                     "Unsupported repository type, resources names cannot be transformed into uri",
@@ -52,16 +53,16 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable {
         }
     }
 
-    protected InputStream getInputStream(String f) throws IOException {
-        return repo.getResource(f).openStream();
+    protected InputStream getInputStream(Object/* String */f) throws IOException {
+        return repo.getResource((String) f).openStream();
     }
 
-    protected List/* <String> */listBundleFiles(String dir) throws IOException {
-        return asList(ResolverHelper.listAll(repo, dir));
+    protected List/* <String> */listBundleFiles(Object/* String */dir) throws IOException {
+        return asList(ResolverHelper.listAll(repo, (String) dir));
     }
 
-    protected List/* <String> */listDirs(String dir) throws IOException {
-        return asList(ResolverHelper.listAll(repo, dir));
+    protected List/* <String> */listDirs(Object/* String */dir) throws IOException {
+        return asList(ResolverHelper.listAll(repo, (String) dir));
     }
 
     private List/* <String> */asList(String[] array) {

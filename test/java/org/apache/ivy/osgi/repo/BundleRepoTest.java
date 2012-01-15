@@ -47,7 +47,7 @@ public class BundleRepoTest extends TestCase {
     private File ivyrepo = new File("test/test-repo/ivyrepo");
 
     public void testFS() throws Exception {
-        FSManifestIterable it = new FSManifestIterable(bundlerepo, "");
+        FSManifestIterable it = new FSManifestIterable(bundlerepo);
         BundleRepoDescriptor repo = new BundleRepoDescriptor(bundlerepo.toURI(),
                 ExecutionEnvironmentProfileProvider.getInstance());
         repo.populate(it.iterator());
@@ -91,7 +91,7 @@ public class BundleRepoTest extends TestCase {
     }
 
     public void testXMLSerialisation() throws SAXException, ParseException, IOException {
-        FSManifestIterable it = new FSManifestIterable(bundlerepo, "");
+        FSManifestIterable it = new FSManifestIterable(bundlerepo);
         BundleRepoDescriptor repo = new BundleRepoDescriptor(bundlerepo.toURI(),
                 ExecutionEnvironmentProfileProvider.getInstance());
         repo.populate(it.iterator());
