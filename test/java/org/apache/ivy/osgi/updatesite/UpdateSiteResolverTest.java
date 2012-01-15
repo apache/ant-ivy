@@ -88,7 +88,7 @@ public class UpdateSiteResolverTest extends TestCase {
 
     public void testListModules() throws Exception {
         ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver, ""));
-        assertEquals(7, modules.length);
+        assertEquals(65, modules.length);
     }
 
     private void genericTestResolveDownload(DependencyResolver resolver, ModuleRevisionId mrid)
