@@ -414,7 +414,7 @@ public abstract class BasicResolver extends AbstractResolver {
         }
     }
 
-    private void checkModuleDescriptorRevision(ModuleDescriptor systemMd,
+    protected void checkModuleDescriptorRevision(ModuleDescriptor systemMd,
             ModuleRevisionId systemMrid) {
         if (!getSettings().getVersionMatcher().accept(systemMrid, systemMd)) {
             throw new UnresolvedDependencyException("\t" + getName()

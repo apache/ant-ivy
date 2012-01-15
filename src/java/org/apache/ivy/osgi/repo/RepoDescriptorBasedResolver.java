@@ -225,6 +225,15 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         return new ResolvedResource(resource, artifact.getModuleRevisionId().getRevision());
     }
 
+    protected void checkModuleDescriptorRevision(ModuleDescriptor systemMd,
+            ModuleRevisionId systemMrid) {
+        String osgiAtt = systemMrid.getExtraAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        // only check revision if we're searching for a bundle (package and bundle have different version
+        if (osgiAtt == null || osgiAtt.equals(BundleInfo.BUNDLE_TYPE)) {
+            super.checkModuleDescriptorRevision(systemMd, systemMrid);
+        }
+    }
+
     protected Collection/* <String> */filterNames(Collection/* <String> */names) {
         getSettings().filterIgnore(names);
         return names;
