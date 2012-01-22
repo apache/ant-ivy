@@ -129,7 +129,7 @@ public abstract class AbstractURLHandler implements URLHandler {
             throws IOException {
         InputStream result = null;
         
-        if ("gzip".equals(encoding)) {
+        if ("gzip".equals(encoding) || "x-gzip".equals(encoding)) {
             result = new GZIPInputStream(in);
         } else if ("deflate".equals(encoding)) {
             // There seems to be 2 variants of the "deflate"-encoding.
