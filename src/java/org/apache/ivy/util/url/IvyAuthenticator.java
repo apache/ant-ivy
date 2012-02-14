@@ -94,7 +94,8 @@ public final class IvyAuthenticator extends Authenticator {
                     + Credentials.buildKey(getRequestingPrompt(), getRequestingHost()) + "' c='" + c
                     + "'");
             if (c != null) {
-                result = new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray());
+                final String password = c.getPasswd() == null ? "" : c.getPasswd();
+                result = new PasswordAuthentication(c.getUserName(), password.toCharArray());
             }
         }
         

@@ -139,6 +139,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: NullPointerException when providing empty password to <credentials> (IVY-1335)
 - FIX: [originalname] not expanded for source and javadoc types during publish in ivy:install (IVY-1324)
 - FIX: cannot resolve from repositories that return HTTP 204 in response to an HTTP HEAD request (IVY-1328)
 - FIX: extra attributes lost from info when ivy file is merged with parent (IVY-1206)
