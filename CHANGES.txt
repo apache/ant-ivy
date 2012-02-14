@@ -65,6 +65,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Gregory Kisling
 	Stepan Koltsov
 	Heschi Kreinick
+    Sebastian Krueger
 	Tat Leung
 	Costin Leau
 	Antoine Levy-Lambert
