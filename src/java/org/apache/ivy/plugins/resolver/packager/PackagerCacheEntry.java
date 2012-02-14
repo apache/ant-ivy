@@ -217,9 +217,9 @@ public class PackagerCacheEntry {
     }
 
     private String getResourceURL() {
-        String baseURL = IvyPatternHelper.substitute(this.resourceURL, this.mr.getOrganisation(),
-          this.mr.getName(), this.mr.getRevision(), null, null, null, null,
-          this.mr.getAttributes(), null);
+        String baseURL = IvyPatternHelper.substitute(resourceURL, mr.getOrganisation(),
+                mr.getName(), mr.getRevision(), null, null, null, null,
+                mr.getQualifiedExtraAttributes(), null);
         int slash = baseURL.lastIndexOf('/');
         if (slash != -1) {
             baseURL = baseURL.substring(0, slash + 1);

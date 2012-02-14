@@ -112,6 +112,24 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
     }
 
+    public void testInstallWithClassifiers() {
+        // IVY-1324
+        project.setProperty("ivy.settings.file", "test/repositories/m2/ivysettings.xml");
+        install.setOrganisation("org.apache");
+        install.setModule("test-sources");
+        install.setRevision("1.0");
+        install.setType("*");
+        install.setFrom("m2");
+        install.setTo("IVY-1324");
+
+        install.execute();
+        
+        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0-javadoc.jar").exists());        
+        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0-sources.jar").exists());        
+        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0.jar").exists());        
+        assertTrue(new File("build/test/install/org.apache/test-sources/ivy-1.0.xml").exists());        
+    }
+
     public void testInstallWithUnusedType() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
         install.setOrganisation("org8");

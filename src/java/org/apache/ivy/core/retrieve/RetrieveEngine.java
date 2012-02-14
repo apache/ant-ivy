@@ -323,7 +323,7 @@ public class RetrieveEngine {
                     String org = mRevId.getOrganisation() == null ? null : mRevId.getOrganisation().replace('.', '/');
                     destFileName = IvyPatternHelper.substitute(destPattern, org, mRevId.getName(), mRevId.getBranch(),
                             mRevId.getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf,
-                            artifact.getArtifactOrigin(), mrid.getExtraAttributes(), artifact.getArtifact().getExtraAttributes());
+                            artifact.getArtifactOrigin(), mrid.getQualifiedExtraAttributes(), artifact.getArtifact().getQualifiedExtraAttributes());
                 } else {
                     throw new IllegalArgumentException("Unsupported dirMode: " + options.getDirMode());
                 }

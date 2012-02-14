@@ -19,6 +19,7 @@ package org.apache.ivy.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -69,7 +70,7 @@ public final class IvyPatternHelper {
     public static String substitute(String pattern, ModuleRevisionId moduleRevision) {
         return substitute(pattern, moduleRevision.getOrganisation(), moduleRevision.getName(),
             moduleRevision.getBranch(), moduleRevision.getRevision(), "ivy", "ivy", "xml", null,
-            null, moduleRevision.getAttributes(), null);
+            null, moduleRevision.getQualifiedExtraAttributes(), null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId moduleRevision,
@@ -98,7 +99,7 @@ public final class IvyPatternHelper {
             String conf, ArtifactOrigin origin) {
         return substitute(pattern, mrid.getOrganisation(), mrid.getName(), mrid.getBranch(), mrid
                 .getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf,
-            origin, mrid.getExtraAttributes(), artifact.getExtraAttributes());
+            origin, mrid.getQualifiedExtraAttributes(), artifact.getQualifiedExtraAttributes());
     }
 
     public static String substitute(String pattern, String org, String module, String revision,
@@ -126,10 +127,24 @@ public final class IvyPatternHelper {
             ArtifactOrigin origin, Map extraModuleAttributes, Map extraArtifactAttributes) {
         Map tokens = new HashMap();
         if (extraModuleAttributes != null) {
-            tokens.putAll(extraModuleAttributes);
+            for (Iterator entries = extraModuleAttributes.entrySet().iterator(); entries.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                String token = (String) entry.getKey();
+                if (token.indexOf(':') > 0) {
+                    token = token.substring(token.indexOf(':') + 1);
+                }
+                tokens.put(token, entry.getValue());
+            }
         }
         if (extraArtifactAttributes != null) {
-            tokens.putAll(extraArtifactAttributes);
+            for (Iterator entries = extraArtifactAttributes.entrySet().iterator(); entries.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                String token = (String) entry.getKey();
+                if (token.indexOf(':') > 0) {
+                    token = token.substring(token.indexOf(':') + 1);
+                }
+                tokens.put(token, entry.getValue());
+            }
         }
         tokens.put(ORGANISATION_KEY, org == null ? "" : org);
         tokens.put(ORGANISATION_KEY2, org == null ? "" : org);
