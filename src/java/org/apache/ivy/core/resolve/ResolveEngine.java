@@ -65,7 +65,6 @@ import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.repository.url.URLResource;
-import org.apache.ivy.plugins.resolver.CacheResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
