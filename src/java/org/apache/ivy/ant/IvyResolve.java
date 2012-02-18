@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
