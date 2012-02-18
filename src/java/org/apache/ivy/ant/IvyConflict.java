@@ -23,7 +23,6 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
-import org.xml.sax.Attributes;
 
 public class IvyConflict {
 
