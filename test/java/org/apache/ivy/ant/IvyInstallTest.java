@@ -38,8 +38,6 @@ public class IvyInstallTest extends TestCase {
         
         project = AntTestHelper.newProject();
         
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-
         install = new IvyInstall();
         install.setProject(project);
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
@@ -112,9 +110,9 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
     }
 
-    public void testInstallWithClassifiers() {
+    public void testInstallWithClassifiers() throws Exception {
         // IVY-1324
-        project.setProperty("ivy.settings.file", "test/repositories/m2/ivysettings.xml");
+        project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml").toURL().toExternalForm());
         install.setOrganisation("org.apache");
         install.setModule("test-sources");
         install.setRevision("1.0");
@@ -225,6 +223,7 @@ public class IvyInstallTest extends TestCase {
     }
 
     public void testDependencyNotFoundFailure() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("xxx");
         install.setModule("yyy");
         install.setRevision("zzz");
@@ -240,6 +239,7 @@ public class IvyInstallTest extends TestCase {
     }
 
     public void testDependencyNotFoundSuccess() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("xxx");
         install.setModule("yyy");
         install.setRevision("zzz");

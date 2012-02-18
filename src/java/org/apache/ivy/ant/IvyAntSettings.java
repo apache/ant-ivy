@@ -338,14 +338,23 @@ public class IvyAntSettings extends DataType {
             }
         }
         if (!file.exists()) {
+            file = null;
             if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible")).booleanValue()) {
                 task.log("no settings file found, using Ivy 1.4 default...", Project.MSG_VERBOSE);
-                file = null;
                 url = IvySettings.getDefault14SettingsURL();
             } else {
-                task.log("no settings file found, using default...", Project.MSG_VERBOSE);
-                file = null;
-                url = IvySettings.getDefaultSettingsURL();
+                String settingsFileUrl = variableContainer.getVariable("ivy.settings.url");
+                if (settingsFileUrl != null) {
+                    try {
+                        url = new URL(settingsFileUrl);
+                    } catch (MalformedURLException e) {
+                        throw new BuildException("Impossible to configure ivy:settings with given url: " 
+                            + settingsFileUrl + ": " + e.getMessage(), e);
+                    }
+                } else {
+                    task.log("no settings file found, using default...", Project.MSG_VERBOSE);
+                    url = IvySettings.getDefaultSettingsURL();
+                }
             }
         }
     }
