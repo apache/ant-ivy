@@ -135,4 +135,12 @@ public class FileRepository extends AbstractRepository {
         Checks.checkAbsolute(baseDir, "basedir");
         this.baseDir = baseDir;
     }
+
+    public String standardize(String source) {
+        return FileUtil.normalize(source).getPath();
+    }
+
+    public String getFileSeparator() {
+        return File.separator;
+    }
 }
