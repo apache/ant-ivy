@@ -137,7 +137,11 @@ public class FileRepository extends AbstractRepository {
     }
 
     public String standardize(String source) {
-        return FileUtil.normalize(source).getPath();
+        if (baseDir != null) {
+            return FileUtil.resolveFile(baseDir, source).getPath();
+        } else {
+            return FileUtil.normalize(source).getPath();
+        }
     }
 
     public String getFileSeparator() {
