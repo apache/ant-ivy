@@ -19,12 +19,21 @@ package org.apache.ivy.plugins.version;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.Status;
 import org.apache.ivy.core.module.status.StatusManager;
 
 public class LatestVersionMatcherTest extends TestCase {
     private LatestVersionMatcher vm = new LatestVersionMatcher();
+    
+    protected void setUp() {
+        IvyContext.pushNewContext();
+    }
+    
+    protected void tearDown() {
+        IvyContext.popContext();
+    }
 
     public void testNeedModuleDescriptorStandardStatus() throws Exception {
         assertNeed("latest.release", true);
