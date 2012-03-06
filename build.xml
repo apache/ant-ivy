@@ -37,7 +37,7 @@
     
     <target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home" />
 
-    <target name="init-ivy" depends="compile-bootstrap">
+    <target name="init-ivy" depends="compile-bootstrap, init-ivy-home">
         <taskdef resource="org/apache/ivy/ant/antlib.xml"
                 uri="antlib:org.apache.ivy.ant">
             <classpath>
