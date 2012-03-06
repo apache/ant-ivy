@@ -64,6 +64,8 @@ public class IvyResolve extends IvyTask {
 
     private boolean haltOnFailure = true;
 
+    private boolean showProgress = true;
+
     private boolean useCacheOnly = false;
 
     private String type = null;
@@ -155,7 +157,7 @@ public class IvyResolve extends IvyTask {
     }
 
     public void setShowprogress(boolean show) {
-        Message.setShowProgress(show);
+        this.showProgress = show;
     }
 
     public boolean isUseCacheOnly() {
@@ -223,6 +225,11 @@ public class IvyResolve extends IvyTask {
         IvyConflict c = new IvyConflict();
         conflicts.add(c);
         return c;
+    }
+
+    protected void prepareTask() {
+        super.prepareTask();
+        Message.setShowProgress(showProgress);
     }
 
     public void doExecute() throws BuildException {

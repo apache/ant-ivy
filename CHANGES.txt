@@ -26,6 +26,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jasper Blues
 	Jim Bonanno
 	Jean-Louis Boudart
+	Joseph Boyd
 	Dave Brosius
 	Matthieu Brouillard
 	Carlton Brown
@@ -139,6 +140,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: The showprogress=false attribute of ivy:resolve doesn't do what it should (IVY-1052) (thanks to Joseph Boyd)
 - FIX: extends ignores defaultconfmapping/defaultconf/confmappingoverride attributes from parent's configurations and dependencies tags (IVY-1213)
 - FIX: NullPointerException when providing empty password to <credentials> (IVY-1335)
 - FIX: [originalname] not expanded for source and javadoc types during publish in ivy:install (IVY-1324)
