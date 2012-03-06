@@ -468,7 +468,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * @param parent a given parent module descriptor
          */
         protected void mergeWithOtherModuleDescriptor(List/* <String> */extendTypes,
-                ModuleDescriptor parent) {
+                ModuleDescriptor parent) throws ParseException {
 
             if (extendTypes.contains("all")) {
                 mergeAll(parent);
@@ -478,7 +478,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 }
                 
                 if (extendTypes.contains("configurations")) {
-                    mergeConfigurations(parent.getModuleRevisionId(), parent.getConfigurations());
+                    mergeConfigurations(parent);
                 }
 
                 if (extendTypes.contains("dependencies")) {
@@ -500,9 +500,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * @param parent a given parent module desciptor
          */
         protected void mergeAll(ModuleDescriptor parent) {
-            ModuleRevisionId sourceMrid = parent.getModuleRevisionId();
             mergeInfo(parent);
-            mergeConfigurations(sourceMrid, parent.getConfigurations());
+            mergeConfigurations(parent);
             mergeDependencies(parent.getDependencies());
             mergeDescription(parent.getDescription());
             mergeLicenses(parent.getLicenses());
@@ -561,13 +560,20 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * @param sourceMrid the source module revision id
          * @param configurations array of configurations to be inherited 
          */
-        protected void mergeConfigurations(ModuleRevisionId sourceMrid, Configuration[] configurations) {
-            DefaultModuleDescriptor md = getMd();
+        protected void mergeConfigurations(ModuleDescriptor parent) {
+            ModuleRevisionId sourceMrid = parent.getModuleRevisionId();
+            Configuration[] configurations = parent.getConfigurations();
             for (int i = 0; i < configurations.length; i++) {
                 Configuration configuration = configurations[i];
                 Message.debug("Merging configuration with: " + configuration.getName());
                 //copy configuration from parent descriptor
-                md.addConfiguration(new Configuration(configuration, sourceMrid));
+                getMd().addConfiguration(new Configuration(configuration, sourceMrid));
+            }
+
+            if (parent instanceof DefaultModuleDescriptor) {
+                setDefaultConfMapping(((DefaultModuleDescriptor) parent).getDefaultConfMapping());
+                setDefaultConf(((DefaultModuleDescriptor) parent).getDefaultConf());
+                getMd().setMappingOverride(((DefaultModuleDescriptor) parent).isMappingOverride());
             }
         }
 

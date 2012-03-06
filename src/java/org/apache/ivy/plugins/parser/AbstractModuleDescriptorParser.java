@@ -106,6 +106,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         protected void setDefaultConfMapping(String defaultConf) {
             defaultConfMapping = defaultConf;
+            getMd().setDefaultConfMapping(defaultConf);
         }
 
         protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd) {
@@ -336,6 +337,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         protected void setDefaultConf(String defaultConf) {
             this.defaultConf = defaultConf;
+            getMd().setDefaultConf(defaultConf);
         }
 
         public ModuleDescriptor getModuleDescriptor() throws ParseException {

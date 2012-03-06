@@ -230,6 +230,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private Namespace namespace;
 
+    private String defaultConf;
+
+    private String defaultConfMapping;
+
     private boolean mappingOverride;
 
     private ModuleDescriptorParser parser;
@@ -715,6 +719,22 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             checkConf(confs, ext[i].trim());
             confs.pop();
         }
+    }
+
+    public String getDefaultConf() {
+        return defaultConf;
+    }
+
+    public void setDefaultConf(String defaultConf) {
+        this.defaultConf = defaultConf;
+    }
+
+    public String getDefaultConfMapping() {
+        return defaultConfMapping;
+    }
+
+    public void setDefaultConfMapping(String defaultConfMapping) {
+        this.defaultConfMapping = defaultConfMapping;
     }
 
     public void setMappingOverride(boolean override) {
