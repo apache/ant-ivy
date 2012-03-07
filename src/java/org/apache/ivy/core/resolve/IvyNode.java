@@ -634,7 +634,7 @@ public class IvyNode implements Comparable {
         }
         String defaultConf = getDefaultConf(conf);
         conf = getMainConf(conf);
-        if (md.getConfiguration(conf) == null) {
+        if ((md.getConfiguration(conf) == null) || Configuration.Visibility.PRIVATE.equals(md.getConfiguration(conf).getVisibility())) {
             if ("".equals(defaultConf)) {
                 return new String[0];
             }
