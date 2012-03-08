@@ -122,6 +122,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: link to FAQ is incorrect in distribution files (IVY-793) (thanks to Joseph Boyd)
 - DOCUMENTATION: The tag version-matchers is missing attribute in documentation (IVY-1292) (thanks to Per Arnold Blaasmo)
 - DOCUMENTATION: wrong default resolver documented on the 'How does it work' page (IVY-1265)
 - DOCUMENTATION: Correct outdated links to configuration pages (IVY-1266)
