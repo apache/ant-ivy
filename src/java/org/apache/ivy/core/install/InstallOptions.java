@@ -25,6 +25,7 @@ public class InstallOptions {
     private boolean transitive = true;
     private boolean validate = true;
     private boolean overwrite = false;
+    private String[] confs = {"*"};
     private Filter artifactFilter = FilterHelper.NO_FILTER;
     private String matcherName = PatternMatcher.EXACT;
     
@@ -61,6 +62,13 @@ public class InstallOptions {
     }
     public InstallOptions setMatcherName(String matcherName) {
         this.matcherName = matcherName;
+        return this;
+    }
+    public String[] getConfs() {
+        return confs;
+    }
+    public InstallOptions setConfs(String[] conf) {
+        this.confs = conf;
         return this;
     }
 }

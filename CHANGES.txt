@@ -105,6 +105,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Ben Schmidt
 	Ruslan Shevchenko
 	John Shields
+	Nihal Sinha
 	Simon Steiner
 	Johan Stuyts
 	John Tinetti
@@ -133,6 +134,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories (IVY-468)
 - NEW: Support for a jar resolver (IVY-1312)
 
+- IMPROVEMENT: ivy:install task does not allow specification of conf (IVY-1313) (thanks to Nihal Sinha)
 - IMPROVEMENT: ivy:makepom ignores the artifact type in generated dependencies (IVY-1229) (thanks to Douglas Palmer)
 - IMPROVEMENT: ivy:makepom now honors exclusion of artifacts in generated pom files (IVY-1294) (thanks to Jens Rohloff)
 - IMPROVEMENT: Added support for dynamic revisions in <extends> tag (IVY-1281) (thanks to Jean-Louis Boudart)

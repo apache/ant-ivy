@@ -52,6 +52,8 @@ For more details about this task and its usage see the <a href="../tutorial/buil
         <td>Yes</td></tr>
     <tr><td>type</td><td>the type(s) of artefact(s) to install.  You can give multiple values separated by commas</td>
         <td>No, defaults to '*' meaning all types</td></tr>
+    <tr><td>conf</td><td>the configurations to install. Only the dependencies of the specified configurations will be installed. <span class="since">since 2.3</span></td>
+        <td>No, defaults to '*' meaning all configurations</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
         <td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
     <tr><td>overwrite</td><td>true to override modules already present in the destination resolver, false otherwise</td>

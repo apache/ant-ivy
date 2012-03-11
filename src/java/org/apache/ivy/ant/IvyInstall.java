@@ -40,6 +40,8 @@ public class IvyInstall extends IvyTask {
     private String revision;
 
     private String branch;
+    
+    private String conf = "*";
 
     private boolean overwrite = false;
 
@@ -48,7 +50,7 @@ public class IvyInstall extends IvyTask {
     private String to;
 
     private boolean transitive;
-
+    
     private String type;
 
     private String matcher = PatternMatcher.EXACT;
@@ -103,6 +105,7 @@ public class IvyInstall extends IvyTask {
                     .setTransitive(transitive)
                     .setValidate(doValidate(settings))
                     .setOverwrite(overwrite)
+                    .setConfs(conf.split(","))
                     .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
                     .setMatcherName(matcher));
         } catch (Exception e) {
@@ -206,4 +209,13 @@ public class IvyInstall extends IvyTask {
     public void setMatcher(String matcher) {
         this.matcher = matcher;
     }
+    
+    public String getConf() {
+        return conf;
+    }
+    
+    public void setConf(String conf) {
+        this.conf = conf;
+    }
+
 }

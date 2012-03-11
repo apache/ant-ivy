@@ -91,23 +91,31 @@ public class InstallEngine {
                     ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE,
                 new NoConflictManager());
 
-            if (MatcherHelper.isExact(matcher, mrid)) {
-                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false,
-                        false, options.isTransitive());
-                dd.addDependencyConfiguration("default", "*");
-                md.addDependency(dd);
-            } else {
-                ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid, matcher);
+            for (int c = 0; c < options.getConfs().length; c++) {
+                final String[] depConfs = options.getConfs();
 
-                for (int i = 0; i < mrids.length; i++) {
-                    Message.info("\tfound " + mrids[i] + " to install: adding to the list");
-                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrids[i],
-                            false, false, options.isTransitive());
-                    dd.addDependencyConfiguration("default", "*");
-                    md.addDependency(dd);
+                for (int j = 0; j < depConfs.length; j++) {
+                    final String depConf = depConfs[j].trim();
+                
+                    if (MatcherHelper.isExact(matcher, mrid)) {
+                        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false,
+                                false, options.isTransitive());
+                        dd.addDependencyConfiguration("default", depConf);
+                        md.addDependency(dd);
+                    } else {
+                        ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid, matcher);
+        
+                        for (int i = 0; i < mrids.length; i++) {
+                            Message.info("\tfound " + mrids[i] + " to install: adding to the list");
+                            DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrids[i],
+                                    false, false, options.isTransitive());
+                            dd.addDependencyConfiguration("default", depConf);
+                            md.addDependency(dd);
+                        }
+                    }
                 }
             }
-
+            
             // resolve using appropriate resolver
             ResolveReport report = new ResolveReport(md, resolveId);
 

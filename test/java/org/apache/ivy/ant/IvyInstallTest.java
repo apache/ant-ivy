@@ -110,6 +110,45 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
     }
 
+    /**
+     * Normal case; no confs set (should use the default->* configuration).
+     */
+    public void testInstallWithConfsDefaultSettings() {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1313/ivysettings.xml");
+        install.setOrganisation("org1");
+        install.setModule("mod1");
+        install.setRevision("1.0");
+        install.setFrom("default");
+        install.setTo("install");
+        install.setTransitive(true);
+
+        install.execute();
+        
+        assertTrue(new File("build/test/install/org1/mod1/jars/mod1-1.0.jar").exists());
+        assertTrue(new File("build/test/install/org1/mod2/jars/mod2-1.0.jar").exists());
+        assertTrue(new File("build/test/install/org1/mod3/jars/mod3-1.0.jar").exists());
+    }
+    
+    /**
+     * Test retrieving artifacts under only the master and runtime configuration.
+     */
+    public void testInstallWithConfsRuntimeOnly() {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1313/ivysettings.xml");
+        install.setOrganisation("org1");
+        install.setModule("mod1");
+        install.setRevision("1.0");
+        install.setFrom("default");
+        install.setTo("install");
+        install.setConf("master,runtime");
+        install.setTransitive(true);
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/org1/mod1/jars/mod1-1.0.jar").exists());
+        assertTrue(new File("build/test/install/org1/mod2/jars/mod2-1.0.jar").exists());
+        assertFalse(new File("build/test/install/org1/mod3/jars/mod3-1.0.jar").exists());
+    }
+    
     public void testInstallWithClassifiers() throws Exception {
         // IVY-1324
         project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml").toURL().toExternalForm());
