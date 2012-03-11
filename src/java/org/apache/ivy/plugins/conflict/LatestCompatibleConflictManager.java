@@ -165,7 +165,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                  IvyNode oldestNode = latestNode == node ? other : node;
                  blackListIncompatibleCallerAndRestartResolveIfPossible(
                      getSettings(), parent, oldestNode, latestNode); 
-                 // if we arrive here, we haven' managed to blacklist all paths to the latest
+                 // if we arrive here, we haven't managed to blacklist all paths to the latest
                  // node, we try with the oldest
                  blackListIncompatibleCallerAndRestartResolveIfPossible(
                      getSettings(), parent, latestNode, oldestNode); 
