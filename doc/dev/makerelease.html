@@ -128,6 +128,13 @@ xooki -r790212 https://svn.apache.org/repos/asf/ant/ivy/site/xooki/
 
 And commit that modification.
 
+<h3>Publish the release candidate</h3>
+
+<ul>Two choices here:
+  <li>commit them into the dev dist area: https://dist.apache.org/repos/dist/dev/ant/</li>
+  <li>or simply put it in your <tt>public_html</tt> folder on people.apache.org so it will be avalaible at http://people.apache.org/~$LOGIN/$RELEASENAME</li>
+</ul>
+
 <h3>13. Call for a vote to approve the release</h3>
 Cast a vote to approve the release on the dev@ant.apache.org mailing list.
 
@@ -148,11 +155,17 @@ Regards,
 
 ${me}, Ivy ${version} release manager
 </code>
-<h3>14. Upload to public repository</h3>
-If the release is approved, it's now time to make it public by uploading it to the public Apache distrib repository (i.e. /www/www.apache.org/dist/ant/ivy/[version] on people.a.o).
+<h3>14. Publish the release</h3>
 
-Copy also the staging maven 2 repository to apache maven 2 rsync repo:
-/www/people.apache.org/repo/m2-ibiblio-rsync-repository
+If the release is approved, it's now time to make it public. The apache dist is manage by svnpubsub, so releases should be committed into https://dist.apache.org/repos/dist/dev/ant/
+
+If the release candidate has been staged into the dev area, then just do:
+<code>
+$ svn copy https://dist.apache.org/repos/dist/dev/ant/$RELEASE_NAME https://dist.apache.org/repos/dist/release/ant/
+$ svn rm https://dist.apache.org/repos/dist/dev/ant/$RELEASE_NAME
+</code>
+
+If the candidate has been published on people.apache.org, just directly commit the artifacts into the subversion repository https://dist.apache.org/repos/dist/release/ant/ 
 
 <h3>15. Update the web site</h3>
 Add a link to the released version documentation in the web site. 
