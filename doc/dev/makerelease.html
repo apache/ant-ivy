@@ -131,7 +131,7 @@ And commit that modification.
 <h3>Publish the release candidate</h3>
 
 <ul>Two choices here:
-  <li>commit them into the dev dist area: https://dist.apache.org/repos/dist/dev/ant/</li>
+  <li>commit them into the dev dist area: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION</li>
   <li>or simply put it in your <tt>public_html</tt> folder on people.apache.org so it will be avalaible at http://people.apache.org/~$LOGIN/$RELEASENAME</li>
 </ul>
 
@@ -157,15 +157,17 @@ ${me}, Ivy ${version} release manager
 </code>
 <h3>14. Publish the release</h3>
 
-If the release is approved, it's now time to make it public. The apache dist is manage by svnpubsub, so releases should be committed into https://dist.apache.org/repos/dist/dev/ant/
+If the release is approved, it's now time to make it public. The apache dist is manage by svnpubsub, so releases should be committed into https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
 
 If the release candidate has been staged into the dev area, then just do:
 <code>
-$ svn copy https://dist.apache.org/repos/dist/dev/ant/$RELEASE_NAME https://dist.apache.org/repos/dist/release/ant/
-$ svn rm https://dist.apache.org/repos/dist/dev/ant/$RELEASE_NAME
+$ svn copy https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.apache.org/repos/dist/release/ant/ivy/$VERSION
+$ svn rm https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
 </code>
 
 If the candidate has been published on people.apache.org, just directly commit the artifacts into the subversion repository https://dist.apache.org/repos/dist/release/ant/ 
+
+In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the <a href="http://archive.apache.org/dist/ant/ivy/">archive</a>. To do so, just use the <tt>svn rm</tt> command against the artifacts or folders to remove.
 
 <h3>15. Update the web site</h3>
 Add a link to the released version documentation in the web site. 
