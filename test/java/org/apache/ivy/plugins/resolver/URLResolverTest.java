@@ -48,33 +48,33 @@ import org.apache.tools.ant.taskdefs.Delete;
  */
 public class URLResolverTest extends AbstractDependencyResolverTest {
     // remote.test
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private ResolveEngine _engine;
+    private ResolveEngine engine;
 
-    private ResolveData _data;
+    private ResolveData data;
 
-    private File _cache;
+    private File cache;
 
     protected void setUp() throws Exception {
-        _settings = new IvySettings();
-        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions());
-        _cache.mkdirs();
-        _settings.setDefaultCache(_cache);
+        settings = new IvySettings();
+        engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+        cache = new File("build/cache");
+        data = new ResolveData(engine, new ResolveOptions());
+        cache.mkdirs();
+        settings.setDefaultCache(cache);
     }
 
     protected void tearDown() throws Exception {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testFile() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         String rootpath = new File("test/repositories/1").getAbsolutePath();
         resolver.addIvyPattern("file:" + rootpath
                 + "/[organisation]/[module]/ivys/ivy-[revision].xml");
@@ -85,7 +85,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -120,7 +120,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
     public void testLatestFile() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
         resolver.addIvyPattern(rootpath + "[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern(rootpath + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
@@ -130,7 +130,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
         ResolvedModuleRevision rmr = resolver
                 .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), _data);
+                    "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -140,7 +140,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
     public void testLatestFileWithOpaqueURL() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 //        String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
         String rootpath = new File("test/repositories/1").getAbsolutePath();
         resolver.addIvyPattern("file:" + rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
@@ -151,7 +151,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
         ResolvedModuleRevision rmr = resolver
                 .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), _data);
+                    "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -166,14 +166,14 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         }
 
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         resolver.addArtifactPattern(ibiblioRoot + "/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-fileupload", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
@@ -210,7 +210,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         }
 
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         resolver.addArtifactPattern(ibiblioRoot + "/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
@@ -221,7 +221,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
                 "nanning-profiler", "jar", "jar"), ExactPatternMatcher.INSTANCE, null));
         dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(),
                 "nanning-trace", "jar", "jar"), ExactPatternMatcher.INSTANCE, null));
-        ResolvedModuleRevision rmr = resolver.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
@@ -273,14 +273,14 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         }
 
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         resolver.addArtifactPattern(ibiblioRoot + "/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("objectweb", "asm", "1.4+");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
         assertEquals("1.4.3", rmr.getId().getRevision());
     }
@@ -292,7 +292,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         }
 
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         resolver.setAlwaysCheckExactRevision(true);
         resolver.addIvyPattern(ibiblioRoot + "/[module]/poms/[module]-[revision].pom");
         resolver.addArtifactPattern(ibiblioRoot + "/[module]/[type]s/[artifact]-[revision].[type]");
@@ -301,7 +301,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("asm", "asm", "[1.4,1.5]");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
         assertEquals("1.4.4", rmr.getId().getRevision());
     }
@@ -313,19 +313,19 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         }
 
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         resolver.addIvyPattern(ibiblioRoot + "/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern(ibiblioRoot
                 + "/maven/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
 
         assertNull(resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("unknown", "unknown", "1.0"), false), _data));
+                .newInstance("unknown", "unknown", "1.0"), false), data));
     }
 
     public void testDownloadWithUseOriginIsTrue() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         String rootpath = new File("test/repositories/1").getAbsolutePath();
         resolver.addIvyPattern("file:" + rootpath
                 + "/[organisation]/[module]/ivys/ivy-[revision].xml");
@@ -337,7 +337,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
