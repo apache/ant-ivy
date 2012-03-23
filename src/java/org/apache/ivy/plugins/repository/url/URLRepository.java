@@ -109,7 +109,12 @@ public class URLRepository extends AbstractRepository {
         } else if (parent.startsWith("file")) {
             String path;
             try {
-                path = new URI(parent).getPath();
+                URI uri = new URI(parent);
+                if (uri.isOpaque()) {
+                    path = uri.getSchemeSpecificPart();
+                } else {
+                    path = uri.getPath();
+                }
             } catch (URISyntaxException e) {
                 IOException ioe = new IOException("Couldn't list content of '" + parent + "'");
                 ioe.initCause(e);

@@ -145,6 +145,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: Ivy didn't properly handle some file: URLs (IVY-1340)
 - FIX: fallback mechanism didn't work properly for private configurations
 - FIX: /localivy target does not work when building Ivy jar (IVY-1338) (thanks to Ben Schmidt)
 - FIX: The showprogress=false attribute of ivy:resolve doesn't do what it should (IVY-1052) (thanks to Joseph Boyd)

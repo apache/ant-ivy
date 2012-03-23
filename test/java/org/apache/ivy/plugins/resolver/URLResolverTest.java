@@ -138,6 +138,27 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    public void testLatestFileWithOpaqueURL() throws Exception {
+        URLResolver resolver = new URLResolver();
+        resolver.setSettings(_settings);
+//        String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
+        String rootpath = new File("test/repositories/1").getAbsolutePath();
+        resolver.addIvyPattern("file:" + rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern("file:" + rootpath + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.setName("test");
+        assertEquals("test", resolver.getName());
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
+        ResolvedModuleRevision rmr = resolver
+                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
+                    "mod1.1", "latest.integration"), false), _data);
+        assertNotNull(rmr);
+
+        assertEquals(mrid, rmr.getId());
+        Date pubdate = new GregorianCalendar(2005, 1, 15, 11, 0, 0).getTime();
+        assertEquals(pubdate, rmr.getPublicationDate());
+    }
+
     public void testIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
