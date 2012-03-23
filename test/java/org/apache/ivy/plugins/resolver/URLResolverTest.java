@@ -357,18 +357,5 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-
-        // test to ask to download again, should use cache
-        // report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
-        // assertNotNull(report);
-        //        
-        // assertEquals(1, report.getArtifactsReports().length);
-        //        
-        // ar = report.getArtifactReport(artifact);
-        // assertNotNull(ar);
-        //        
-        // assertEquals(artifact, ar.getArtifact());
-        // assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
-        //    	
     }
 }
