@@ -17,9 +17,9 @@
    under the License.    
 -->
 <ivysettings>
-	<settings defaultCache="${ivy.cache.dir}/advanced"	
-              defaultResolver="my-repository"
+	<settings defaultResolver="my-repository"
               defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+	<caches defaultCacheDir="${ivy.cache.dir}/advanced" />
 
 	<!-- 
 	   You can override this property to use one of the mirrors listed on

@@ -33,7 +33,8 @@ Here is an example of the settings file:
 <code type="xml">
 <ivysettings>
         <properties file="${ivy.settings.dir}/ivysettings-file.properties" />
-        <settings defaultCache="${cache.dir}" defaultResolver="ibiblio" checkUpToDate="false" />
+        <settings defaultResolver="ibiblio" />
+        <caches  defaultCacheDir="${cache.dir}" checkUpToDate="false" />
         <resolvers>
                 <ibiblio name="ibiblio" />
                 <filesystem name="internal">

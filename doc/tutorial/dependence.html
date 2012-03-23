@@ -83,7 +83,8 @@ Let's have a look at the <tt>ivysettings.xml</tt> file:
 <code>
 <ivysettings>
 	<properties file="${ivy.settings.dir}/ivysettings.properties"/>
-	<settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries"/>
+	<settings defaultResolver="libraries" />
+	<caches defaultCacheDir="${ivy.settings.dir}/ivy-cache" />
 	<resolvers>
 		<filesystem name="projects">
 			<artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />

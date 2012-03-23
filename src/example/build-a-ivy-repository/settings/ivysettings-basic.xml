@@ -17,9 +17,9 @@
    under the License.    
 -->
 <ivysettings>
-	<settings	defaultCache="${ivy.cache.dir}/no-namespace"	
-			defaultResolver="libraries"
+	<settings       defaultResolver="libraries"
 			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+	<caches defaultCacheDir="${ivy.cache.dir}/no-namespace" />
 	<resolvers>
 		<ibiblio name="libraries" m2compatible="true" />
   		<filesystem name="my-repository">
