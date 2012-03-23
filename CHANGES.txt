@@ -119,6 +119,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
+	Sven Zethelius
 	Aleksey Zhukov
 	
    trunk
@@ -154,7 +155,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: extra attributes lost from info when ivy file is merged with parent (IVY-1206)
 - FIX: ivy:report ant task intermittently "cannot compile stylesheet" (IVY-1325)
 - FIX: Maven 'eclipse-plugin', 'jbi-component' and 'jbi-shared-library' packaging is now mapped to 'jar' extension (IVY-899)
-- FIX: Infinite loop in latest-compatible conflict manager (IVY-1233) (thanks to Payam Hekmat)
+- FIX: Infinite loop in latest-compatible conflict manager (IVY-1233) (thanks to Payam Hekmat and Sven Zethelius)
 - FIX: extends section of ivy.xml info does not replace variable in location tag (IVY-1287) (thanks to Jean-Louis Boudart)
 - FIX: Valid Path does not work for Filesystem Resolver (IVY-1268)
 - FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)

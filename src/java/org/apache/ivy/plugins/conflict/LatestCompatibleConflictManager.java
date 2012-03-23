@@ -188,7 +188,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         Stack callerStack = new Stack();
         callerStack.push(evicted);
         final Collection toBlacklist = blackListIncompatibleCaller(
-            settings.getVersionMatcher(), parent, selected, evicted, callerStack, false); 
+            settings.getVersionMatcher(), parent, selected, evicted, callerStack); 
         if (toBlacklist != null) {
             final StringBuffer blacklisted = new StringBuffer();
             for (Iterator iterator = toBlacklist.iterator(); iterator.hasNext();) {
@@ -217,7 +217,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
 
     private boolean handleIncompatibleCaller(Stack callerStack, IvyNode node, IvyNode callerNode,
             IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode,
-            Collection blacklisted, VersionMatcher versionMatcher, boolean dynamicCaller) {
+            Collection blacklisted, VersionMatcher versionMatcher) {
         if (callerStack.subList(0, callerStack.size() - 1).contains(node)) {
             // circular dependency found and handled: the current top of the stack (node)
             // was already contained in the rest of the stack, the circle is closed, nothing
@@ -226,7 +226,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         } else {
             callerStack.push(callerNode);
             Collection sub = blackListIncompatibleCaller(versionMatcher, conflictParent,
-                selectedNode, evictedNode, callerStack, dynamicCaller);
+                selectedNode, evictedNode, callerStack);
             callerStack.pop();
             if (sub == null) {
                 // propagate the fact that a path with unblacklistable caller has been found
@@ -257,8 +257,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
     private Collection/*<IvyNodeBlacklist>*/ blackListIncompatibleCaller(
             VersionMatcher versionMatcher,
             IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode, 
-            Stack/*<IvyNode>*/ callerStack,
-            boolean dynamicCaller) {
+            Stack/*<IvyNode>*/ callerStack) {
         Collection/*<IvyNodeBlacklist>*/ blacklisted = new ArrayList/*<IvyNodeBlacklist>*/();
         IvyNode node = (IvyNode) callerStack.peek();
         String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
@@ -273,15 +272,15 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                         node, rootModuleConf));
                 if (node.isEvicted(rootModuleConf)
                         && !handleIncompatibleCaller(callerStack, node, callerNode, conflictParent,
-                            selectedNode, evictedNode, blacklisted, versionMatcher, true)) {
+                            selectedNode, evictedNode, blacklisted, versionMatcher)) {
                     return null;
                 }
             } else if(!handleIncompatibleCaller(callerStack, node, callerNode, conflictParent,
-                    selectedNode, evictedNode, blacklisted, versionMatcher, false)) {
+                    selectedNode, evictedNode, blacklisted, versionMatcher)) {
                 return null;
             }
         }
-        if (!dynamicCaller && blacklisted.isEmpty() 
+        if (blacklisted.isEmpty() 
                 && !callerStack.subList(0, callerStack.size() - 1).contains(node)) {
             return null;
         }

@@ -176,6 +176,25 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
             // this is expected
         }
     }
+    
+    public void testDynamicRootConflict() throws Exception {
+        try {
+            fixture
+                .addMD("#A;conflict-> {#B;[1.2,2.0[ #C;pCC.main.+ #D;[1.5,1.7[ }")
+                .addMD("#B;1.0.0->#D;[1.6.1,2.0[")
+                .addMD("#B;1.1.0->#D;[1.6.1,2.0[")
+                .addMD("#B;pCC.main.0.0->#D;[1.6.1,2.0[")
+                .addMD("#C;1.0.0-> {#B;[1.0,2.0[ #D;[1.6.0,1.7[ }")
+                .addMD("#C;1.1.0-> {#B;[1.1,2.0[ #D;[1.6.0,1.7[ }")
+                .addMD("#C;pCC.main.1.9-> {#B;pCC.main.+ #D;[1.6.0,1.7[ }")
+                .addMD("#D;1.6.1").init();
+            fixture.resolve("#A;conflict");
+    
+            fail("Resolve should have failed with a conflict");
+        } catch (StrictConflictException e) { 
+            // this is expected }
+        }
+    }
 
     private void resolveAndAssert(String mrid, String expectedModuleSet) 
         throws ParseException, IOException {
