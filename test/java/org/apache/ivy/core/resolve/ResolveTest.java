@@ -3380,6 +3380,24 @@ public class ResolveTest extends TestCase {
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "c", "3.0")));
     }
 
+    public void testIVY1333() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-1333/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1333/ivy.xml").toURI().toURL(),
+            getResolveOptions(new String[] {"*"}));
+        ConfigurationResolveReport crr = rr.getConfigurationReport("default");
+        Set modRevIds = crr.getModuleRevisionIds();
+        assertEquals(3, modRevIds.size());
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "dep1", "1.0")));
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "dep2", "1.0")));
+        
+        Map extra = new HashMap();
+        extra.put("o:a", "58701");
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "badArtifact", "1.0.0.m4", extra)));
+    }
+
     public void testIVY999() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-999/ivysettings.xml"));

@@ -94,7 +94,69 @@ public class ResolveData {
     }
 
     public VisitData getVisitData(ModuleRevisionId mrid) {
-        return (VisitData) visitData.get(mrid);
+        VisitData result = (VisitData) visitData.get(mrid);
+
+        if (result == null) {
+            // search again, now ignore the missing extra attributes
+            for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Entry) it.next();
+                ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
+                
+                if (isSubMap(mrid.getAttributes(), current.getAttributes())) {
+                    result = (VisitData) entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+    
+    /**
+     * Checks whether one map is a sub-map of the other.
+     */
+    private static boolean isSubMap(Map map1, Map map2) {
+        int map1Size = map1.size();
+        int map2Size = map2.size();
+        
+        if (map1Size == map2Size) {
+            return map1.equals(map2);
+        }
+        
+        Map smallest = map1Size < map2Size ? map1 : map2;
+        Map largest = map1Size < map2Size ? map2 : map1;
+        
+        for (Iterator it = smallest.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Entry) it.next();
+            
+            if (!largest.containsKey(entry.getKey())) {
+                return false;
+            }
+            
+            Object map1Value = smallest.get(entry.getKey());
+            Object map2Value = largest.get(entry.getKey());
+            if (!isEqual(map1Value, map2Value)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private static boolean isEqual(Object obj1, Object obj2) {
+        if (obj1 == obj2) {
+            return true;
+        }
+        
+        if (obj1 == null) {
+            return obj2 == null;
+        }
+        
+        if (obj2 == null) {
+            return obj1 == null;
+        }
+        
+        return obj1.equals(obj2);
     }
     
     /**
@@ -210,22 +272,22 @@ public class ResolveData {
     public boolean isBlacklisted(String rootModuleConf, ModuleRevisionId mrid) {
         IvyNode node = getNode(mrid);
         
-        if (node == null) {
-            // search again, now ignore the extra attributes
-            // TODO: maybe we should search the node that has at least the 
-            // same attributes as mrid
-            for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Entry) it.next();
-                ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
-                if (current.getModuleId().equals(mrid.getModuleId())
-                        && current.getRevision().equals(mrid.getRevision())) {
-                    VisitData data = (VisitData) entry.getValue();
-                    node = data.getNode();
-                    break;
-                }
-            }
-        }
-        
+//        if (node == null) {
+//            // search again, now ignore the extra attributes
+//            // TODO: maybe we should search the node that has at least the 
+//            // same attributes as mrid
+//            for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
+//                Map.Entry entry = (Entry) it.next();
+//                ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
+//                if (current.getModuleId().equals(mrid.getModuleId())
+//                        && current.getRevision().equals(mrid.getRevision())) {
+//                    VisitData data = (VisitData) entry.getValue();
+//                    node = data.getNode();
+//                    break;
+//                }
+//            }
+//        }
+//        
         return node != null && node.isBlacklisted(rootModuleConf);
     }
 
