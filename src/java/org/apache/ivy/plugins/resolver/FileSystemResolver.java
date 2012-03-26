@@ -33,7 +33,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvyPattern;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.util.Checks;
-import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 /**
