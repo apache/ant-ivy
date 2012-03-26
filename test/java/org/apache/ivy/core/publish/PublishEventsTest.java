@@ -19,7 +19,6 @@ package org.apache.ivy.core.publish;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
