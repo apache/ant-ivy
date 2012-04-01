@@ -19,7 +19,7 @@
 -->
 <antlib xmlns:current="ant:current">
     <typedef name="settings" classname="org.apache.ivy.ant.IvyAntSettings"/>
-    <typedef name="resources" classname="org.apache.ivy.ant.IvyResources"/>
+    <typedef name="resources" classname="org.apache.ivy.ant.IvyResources" onerror="report"/>
 	<taskdef name="configure" classname="org.apache.ivy.ant.IvyConfigure"/>
 	<taskdef name="resolve" classname="org.apache.ivy.ant.IvyResolve"/>
 	<taskdef name="retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>
