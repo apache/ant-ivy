@@ -450,10 +450,11 @@
                 <exclude name=".classpath" />
                 <exclude name=".ivy2/**/*" />
                 <exclude name="build/**/*" />
+                <exclude name="bin/**/*" />
                 <exclude name="**/*.sha1" />
                 <exclude name="**/*.md5" />
                 <exclude name="**/*.txt" />
-                <exclude name="META-INF/MANIFEST.MF" />
+                <exclude name="**/MANIFEST*.MF" />
                 <exclude name="**/*.json" />
                 <exclude name="doc/config.js" />
                 <exclude name="doc/js/jquery.pack.js" />
