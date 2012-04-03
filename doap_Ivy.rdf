@@ -27,8 +27,8 @@
     <name>Apache Ivy</name>
     <homepage rdf:resource="http://ant.apache.org/ivy/" />
     <asfext:pmc rdf:resource="http://ant.apache.org" />
-    <shortdesc>Ivy is a very powerful dependency manager oriented toward Java dependency management, even though it could be used to manage dependencies of any kind.</shortdesc>
-    <description>Ivy is a very powerful dependency manager oriented toward Java dependency management, even though it could be used to manage dependencies of any kind.</description>
+    <shortdesc>Apache Ivy is a very powerful dependency manager oriented toward Java dependency management, even though it could be used to manage dependencies of any kind.</shortdesc>
+    <description>Apache Ivy is a very powerful dependency manager oriented toward Java dependency management, even though it could be used to manage dependencies of any kind.</description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/IVY" />
     <mailing-list rdf:resource="http://ant.apache.org/ivy/mailing-lists.html" />
     <download-page rdf:resource="http://ant.apache.org/ivy/download.cgi" />
