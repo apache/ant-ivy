@@ -161,8 +161,7 @@ If the release is approved, it's now time to make it public. The apache dist is 
 
 If the release candidate has been staged into the dev area, then just do:
 <code>
-$ svn copy https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.apache.org/repos/dist/release/ant/ivy/$VERSION
-$ svn rm https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
+$ svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.apache.org/repos/dist/release/ant/ivy/$VERSION
 </code>
 
 If the candidate has been published on people.apache.org, just directly commit the artifacts into the subversion repository https://dist.apache.org/repos/dist/release/ant/ 
