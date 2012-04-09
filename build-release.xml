@@ -213,6 +213,7 @@
         <xooki:print src="${doc.tmp.dir}/index.html" 
                      dest="${doc.build.dir}/book.html"
                      xookidir="${doc.src.dir}/xooki" />
+	</target>
 
 	<target name="all-doc" depends="javadoc, generate-doc" />
 	
