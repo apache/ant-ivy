@@ -57,7 +57,7 @@
          ================================= -->
     <target name="compile" depends="resolve" description="--> description">
         <mkdir dir="${classes.dir}" />
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="lib.path.id" />
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
     </target>
     
     <!-- ================================= 

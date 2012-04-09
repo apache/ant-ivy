@@ -55,7 +55,7 @@
          ================================= -->
     <target name="run.dev" depends="resolve" description="--> compile and run the project">
         <mkdir dir="${build.dir}" />
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.run.dev.id" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.run.dev.id" includeAntRuntime="false"/>
     	<copy todir="${build.dir}">
     		<fileset dir="${src.dir}" includes="**/*.properties"></fileset>
     	</copy>
@@ -69,7 +69,7 @@
          ================================= -->
     <target name="run.prod" depends="resolve" description="--> compile and run the project">
         <mkdir dir="${build.dir}" />
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.run.prod.id"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.run.prod.id" includeAntRuntime="false"/>
     	<copy todir="${build.dir}">
     		<fileset dir="${src.dir}" includes="**/*.properties"></fileset>
     	</copy>    	
