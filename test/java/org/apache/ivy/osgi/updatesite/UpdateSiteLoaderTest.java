@@ -55,7 +55,12 @@ public class UpdateSiteLoaderTest extends TestCase {
     public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
         RepoDescriptor site = loader.load(new URI(
                 "http://www.apache.org/dist/ant/ivyde/updatesite/"));
-        assertEquals(13, site.getModules().size());
+        assertFalse(site.getModules().isEmpty());
+        for (Iterator it = site.getModules().iterator(); it.hasNext(); ) {
+            ModuleDescriptor md = (ModuleDescriptor) it.next();
+            String name = md.getModuleRevisionId().getName();
+            assertTrue(name, name.startsWith("org.apache.ivy"));
+        }
     }
 
     public void testM2Eclipse() throws IOException, ParseException, SAXException,
