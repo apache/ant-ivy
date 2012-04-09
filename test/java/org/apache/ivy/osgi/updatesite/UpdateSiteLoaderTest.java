@@ -59,7 +59,6 @@ public class UpdateSiteLoaderTest extends TestCase {
         for (Iterator it = site.getModules().iterator(); it.hasNext(); ) {
             ModuleDescriptor md = (ModuleDescriptor) it.next();
             String name = md.getModuleRevisionId().getName();
-            System.out.println(name);
             assertTrue(name, name.startsWith("org.apache.ivy"));
         }
     }
