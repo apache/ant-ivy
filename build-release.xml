@@ -188,7 +188,7 @@
 
         <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
         <taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml" />
-        <xooki:generate destDir="${doc.build.dir}" checkUpToDate="true">
+        <xooki:generate destDir="${doc.build.dir}" checkUpToDate="true" xookidir="${doc.src.dir}/xooki">
             <fileset dir="${doc.tmp.dir}">
                 <include name="**/*.html"/>
                 <exclude name="template.html"/>
@@ -211,8 +211,8 @@
         <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
         <taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml" />
         <xooki:print src="${doc.tmp.dir}/index.html" 
-                     dest="${doc.build.dir}/book.html" />
-	</target>
+                     dest="${doc.build.dir}/book.html"
+                     xookidir="${doc.src.dir}/xooki" />
 
 	<target name="all-doc" depends="javadoc, generate-doc" />
 	
