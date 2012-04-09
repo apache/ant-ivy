@@ -266,48 +266,54 @@ public class IvyNodeCallers {
     }
 
     boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
-        if (callersStack.contains(node.getId())) {
-            return false;
-        }
         callersStack.push(node.getId());
         try {
             Caller[] callers = getCallers(rootModuleConf);
             if (callers.length == 0) {
                 return false;
             }
+            boolean allUnconclusive = true;
             for (int i = 0; i < callers.length; i++) {
                 if (!callers[i].canExclude()) {
                     return false;
                 }
                 ModuleDescriptor md = callers[i].getModuleDescriptor();
-                if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(),
-                    callers[i].getDependencyDescriptor(), artifact, callersStack)) {
-                    return false;
-                }
+                Boolean doesExclude = doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(),
+                    callers[i].getDependencyDescriptor(), artifact, callersStack);
+                if (doesExclude != null) {
+                    if (!doesExclude.booleanValue()) {
+                        return false;
+                    }
+                    allUnconclusive = false;
+                } 
             }
-            return true;
+            return allUnconclusive ? false : true;
         } finally {
             callersStack.pop();
         }
     }
 
-    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs,
+    private Boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs,
             DependencyDescriptor dd, Artifact artifact, Stack callersStack) {
         // artifact is excluded if it match any of the exclude pattern for this dependency...
         if (dd != null) {
             if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
-                return true;
+                return Boolean.TRUE;
             }
         }
         if (md.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
-            return true;
+            return Boolean.TRUE;
         }
         // ... or if it is excluded by all its callers
         IvyNode c = node.getData().getNode(md.getModuleRevisionId());
         if (c != null) {
-            return c.doesCallersExclude(rootModuleConf, artifact, callersStack);
+            if (callersStack.contains(c.getId())) {
+                // a circular dependency, we cannot be conclusive here
+                return null;
+            }
+            return Boolean.valueOf(c.doesCallersExclude(rootModuleConf, artifact, callersStack));
         } else {
-            return false;
+            return Boolean.FALSE;
         }
     }
 

@@ -46,7 +46,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jacob Grydholt Jensen
 	John Gibson
 	Scott Goldstein
-	Pierre Hägnestrand
+	Pierre Hï¿½gnestrand
 	Scott Hebert
 	Tobias Himstedt
 	Aaron Hachez
@@ -146,6 +146,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
 - IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
 
+- FIX: Exclude doesn't work when there is some circular dependencies (IVY-1309)
 - FIX: Impossible to get artifacts when data has not been loaded for multiple dynamic revisions (IVY-1333)
 - FIX: Ivy didn't properly handle some file: URLs (IVY-1340)
 - FIX: fallback mechanism didn't work properly for private configurations
@@ -722,7 +723,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: IOException during publish causes NullPointerException (IVY-371)
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hï¿½gnestrand)
 
 
    version 1.4.1 - 2006-11-09
