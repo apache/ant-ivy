@@ -55,6 +55,7 @@
 	            </classpath>
 	        	<sysproperty key="ivy.cache.dir" value="${tutorial.cache}" />
 	        	<sysproperty key="ivy.local.default.root" value="${tutorial.local-repo}" />
+                <sysproperty key="ivy.cache.ttl.default" value="1s" />
 	        	<sysproperty key="skip.download" value="true" />
 	            <arg line="-f @{antfile}" />
 	        	<arg line="@{target}" />

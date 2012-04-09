@@ -124,6 +124,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    2.3.0-rc1
 =====================================
+- DOCUMENTATION: Bad example in Project dependencies Tutorial (IVY-1263)
 - DOCUMENTATION: remove deprecated defaultCache setting from examples (IVY-1273) (thanks to Joseph Boyd)
 - DOCUMENTATION: link to FAQ is incorrect in distribution files (IVY-793) (thanks to Joseph Boyd)
 - DOCUMENTATION: The tag version-matchers is missing attribute in documentation (IVY-1292) (thanks to Per Arnold Blaasmo)
