@@ -46,7 +46,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jacob Grydholt Jensen
 	John Gibson
 	Scott Goldstein
-	Pierre Hï¿½gnestrand
+	Pierre Hägnestrand
 	Scott Hebert
 	Tobias Himstedt
 	Aaron Hachez
@@ -723,7 +723,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: IOException during publish causes NullPointerException (IVY-371)
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hï¿½gnestrand)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
 
 
    version 1.4.1 - 2006-11-09
