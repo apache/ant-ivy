@@ -53,7 +53,7 @@
          ================================= -->
     <target name="build" depends="resolve" description="--> compile the project">
         <mkdir dir="${build.dir}" />
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
     </target>
 	
 	<!-- ================================= 

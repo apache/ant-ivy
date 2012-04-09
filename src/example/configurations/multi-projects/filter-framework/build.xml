@@ -54,7 +54,7 @@
     <target name="build" depends="clean, resolve" description="--> compile and jar project">
         <mkdir dir="${build.dir}" />
 		<mkdir dir="${distrib.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="compile.path.id"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="compile.path.id" includeAntRuntime="false"/>
     	<jar destfile="${distrib.dir}/filter-api.jar" >
     		<fileset dir="${build.dir}">
     			<include name="filter/*.class"/>
