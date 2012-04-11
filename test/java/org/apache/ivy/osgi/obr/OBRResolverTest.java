@@ -55,27 +55,27 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 
 public class OBRResolverTest extends TestCase {
 
-    private static final ModuleRevisionId MRID_TEST_BUNDLE = ModuleRevisionId.newInstance("",
-        "org.apache.ivy.osgi.testbundle", "1.2.3", BundleInfoAdapter.OSGI_BUNDLE);
+    private static final ModuleRevisionId MRID_TEST_BUNDLE = ModuleRevisionId.newInstance(
+        BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle", "1.2.3");
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE_IMPORTING = ModuleRevisionId
-            .newInstance("", "org.apache.ivy.osgi.testbundle.importing", "3.2.1",
-                BundleInfoAdapter.OSGI_BUNDLE);
+            .newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle.importing",
+                "3.2.1");
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE_IMPORTING_VERSION = ModuleRevisionId
-            .newInstance("", "org.apache.ivy.osgi.testbundle.importing.version", "3.2.1",
-                BundleInfoAdapter.OSGI_BUNDLE);
+            .newInstance(BundleInfo.BUNDLE_TYPE,
+                "org.apache.ivy.osgi.testbundle.importing.version", "3.2.1");
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE_IMPORTING_OPTIONAL = ModuleRevisionId
-            .newInstance("", "org.apache.ivy.osgi.testbundle.importing.optional", "3.2.1",
-                BundleInfoAdapter.OSGI_BUNDLE);
+            .newInstance(BundleInfo.BUNDLE_TYPE,
+                "org.apache.ivy.osgi.testbundle.importing.optional", "3.2.1");
 
-    private static final ModuleRevisionId MRID_TEST_BUNDLE_USE = ModuleRevisionId.newInstance("",
-        "org.apache.ivy.osgi.testbundle.use", "2.2.2", BundleInfoAdapter.OSGI_BUNDLE);
+    private static final ModuleRevisionId MRID_TEST_BUNDLE_USE = ModuleRevisionId.newInstance(
+        BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle.use", "2.2.2");
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE_EXPORTING_AMBIGUITY = ModuleRevisionId
-            .newInstance("", "org.apache.ivy.osgi.testbundle.exporting.ambiguity", "3.3.3",
-                BundleInfoAdapter.OSGI_BUNDLE);
+            .newInstance(BundleInfo.BUNDLE_TYPE,
+                "org.apache.ivy.osgi.testbundle.exporting.ambiguity", "3.3.3");
 
     private IvySettings settings;
 
@@ -146,20 +146,20 @@ public class OBRResolverTest extends TestCase {
     }
 
     public void testSimpleResolve() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "org.apache.ivy.osgi.testbundle",
-            "1.2.3", BundleInfoAdapter.OSGI_BUNDLE);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle",
+            "1.2.3");
         genericTestResolveDownload(bundleResolver, mrid);
     }
 
     public void testSimpleUrlResolve() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "org.apache.ivy.osgi.testbundle",
-            "1.2.3", BundleInfoAdapter.OSGI_BUNDLE);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle",
+            "1.2.3");
         genericTestResolveDownload(bundleUrlResolver, mrid);
     }
 
     public void testResolveDual() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "org.apache.ivy.osgi.testbundle",
-            "1.2.3", BundleInfoAdapter.OSGI_BUNDLE);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle",
+            "1.2.3");
         genericTestResolveDownload(dualResolver, mrid);
     }
 

@@ -179,7 +179,7 @@ public class OBRXMLParser {
             Version version;
             try {
                 version = new Version(v);
-            } catch (NumberFormatException e) {
+            } catch (ParseException e) {
                 log(Message.MSG_ERR, "Incorrect resource version: " + v + ". The resource "
                         + symbolicname + " is then ignored.");
                 skip();

@@ -306,7 +306,7 @@ public class VersionRange {
         return startVersion.equals(endVersion);
     }
 
-    public boolean contains(String versionStr) {
+    public boolean contains(String versionStr) throws ParseException {
         return contains(new Version(versionStr));
     }
 

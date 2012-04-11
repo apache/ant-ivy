@@ -32,8 +32,8 @@
         <!-- example of a dependency that we can't declare in the MANIFEST.MF because we want it to be embedded -->
         <!--dependency osgi="bundle" org="" module="org.apache.commons.httpcore" rev="4.1.0" conf="embedded->default" /-->
         <!-- Ivy-Osgi doesn't understand bundle fragment -->
-        <dependency o:type="bundle" org="" name="org.eclipse.swt.win32.win32.x86" rev="3.+" conf="win32->default" />
-        <dependency o:type="bundle" org="" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="3.+" conf="macos->default" />
-        <dependency o:type="bundle" org="" name="org.eclipse.swt.gtk.linux.x86" rev="3.+" conf="linux->default" />
+        <dependency org="bundle" name="org.eclipse.swt.win32.win32.x86" rev="3.+" conf="win32->default" />
+        <dependency org="bundle" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="3.+" conf="macos->default" />
+        <dependency org="bundle" name="org.eclipse.swt.gtk.linux.x86" rev="3.+" conf="linux->default" />
      </dependencies>
 </ivy-module>

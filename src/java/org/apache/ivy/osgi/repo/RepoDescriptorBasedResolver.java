@@ -20,6 +20,7 @@ package org.apache.ivy.osgi.repo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,11 +36,15 @@ import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
+import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.osgi.core.BundleInfo;
@@ -55,6 +60,8 @@ import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
 import org.apache.ivy.util.Message;
 
 public abstract class RepoDescriptorBasedResolver extends BasicResolver {
+
+    private static final String CAPABILITY_EXTRA_ATTR = "osgi_bundle";
 
     private RepoDescriptor repoDescriptor = null;
 
@@ -109,39 +116,30 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         return repoDescriptor;
     }
 
-    public boolean isCheckconsistency() {
-        // since a module can fit a requirement with a different id, no not check anything
+    public boolean isAllownomd() {
+        // this a repo based resolver, we always have md
         return false;
     }
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
 
-        String osgiAtt = mrid.getExtraAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        String osgiType = mrid.getOrganisation();
+        if (osgiType == null) {
+            throw new RuntimeException("Unsupported OSGi module Id: " + mrid.getModuleId());
+        }
         String id = mrid.getName();
-        Set/* <ModuleDescriptor> */mds = getRepoDescriptor().findModule(osgiAtt, id);
+        Set/* <ModuleDescriptor> */mds = getRepoDescriptor().findModule(osgiType, id);
         if (mds == null || mds.isEmpty()) {
             Message.verbose("\t " + id + " not found.");
             return null;
         }
 
-        ResolvedResource[] ret = new ResolvedResource[mds.size()];
-        int i = 0;
-        Iterator itMd = mds.iterator();
-        while (itMd.hasNext()) {
-            ModuleDescriptor md = (ModuleDescriptor) itMd.next();
-            MetadataArtifactDownloadReport report = new MetadataArtifactDownloadReport(null);
-            report.setDownloadStatus(DownloadStatus.NO);
-            report.setSearched(true);
-            ResolvedModuleRevision rmr = new ResolvedModuleRevision(this, this, md, report);
-            MDResolvedResource mdrr = new MDResolvedResource(null, md.getRevision(), rmr);
-            if (!BundleInfo.BUNDLE_TYPE.equals(osgiAtt)) {
-                if (data.getVisitData(md.getModuleRevisionId()) != null) {
-                    // already resolved import, no need to go further
-                    return mdrr;
-                }
-            }
-            ret[i++] = mdrr;
+        ResolvedResource[] ret;
+        if (BundleInfo.BUNDLE_TYPE.equals(osgiType)) {
+            ret = findBundle(dd, data, mds);
+        } else {
+            ret = findCapability(dd, data, mds);
         }
 
         ResolvedResource found = findResource(ret, getDefaultRMDParser(dd.getDependencyId()), mrid,
@@ -152,20 +150,97 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         return found;
     }
 
+    public ResolvedResource[] findBundle(DependencyDescriptor dd, ResolveData data, Set/*
+                                                                                        * <
+                                                                                        * ModuleDescriptor
+                                                                                        * >
+                                                                                        */mds) {
+        ResolvedResource[] ret = new ResolvedResource[mds.size()];
+        int i = 0;
+        Iterator itMd = mds.iterator();
+        while (itMd.hasNext()) {
+            ModuleDescriptor md = (ModuleDescriptor) itMd.next();
+            MetadataArtifactDownloadReport report = new MetadataArtifactDownloadReport(null);
+            report.setDownloadStatus(DownloadStatus.NO);
+            report.setSearched(true);
+            ResolvedModuleRevision rmr = new ResolvedModuleRevision(this, this, md, report);
+            MDResolvedResource mdrr = new MDResolvedResource(null, md.getRevision(), rmr);
+            ret[i++] = mdrr;
+        }
+        return ret;
+    }
+
+    public ResolvedResource[] findCapability(DependencyDescriptor dd, ResolveData data, Set/*
+                                                                                            * <
+                                                                                            * ModuleDescriptor
+                                                                                            * >
+                                                                                            */mds) {
+        ResolvedResource[] ret = new ResolvedResource[mds.size()];
+        int i = 0;
+        Iterator itMd = mds.iterator();
+        while (itMd.hasNext()) {
+            ModuleDescriptor md = (ModuleDescriptor) itMd.next();
+            IvyNode node = data.getNode(md.getModuleRevisionId());
+            if (node != null) {
+                // already resolved import, no need to go further
+                return new ResolvedResource[] {buildResolvedCapabilityMd(dd, node.getDescriptor())};
+            }
+            ret[i++] = buildResolvedCapabilityMd(dd, md);
+        }
+        return ret;
+    }
+
+    private MDResolvedResource buildResolvedCapabilityMd(DependencyDescriptor dd,
+            ModuleDescriptor md) {
+        String org = dd.getDependencyRevisionId().getOrganisation();
+        String name = dd.getDependencyRevisionId().getName();
+        String rev = (String) md.getExtraInfo().get(
+            BundleInfoAdapter.EXTRA_INFO_EXPORT_PREFIX + name);
+        ModuleRevisionId capabilityRev = ModuleRevisionId.newInstance(org, name, rev,
+            Collections.singletonMap(CAPABILITY_EXTRA_ATTR, md.getModuleRevisionId().toString()));
+
+        DefaultModuleDescriptor capabilityMd = new DefaultModuleDescriptor(capabilityRev,
+                "release", new Date());
+
+        String useConf = BundleInfoAdapter.CONF_USE_PREFIX + dd.getDependencyRevisionId().getName();
+
+        capabilityMd.addConfiguration(BundleInfoAdapter.CONF_DEFAULT);
+        capabilityMd.addConfiguration(BundleInfoAdapter.CONF_OPTIONAL);
+        capabilityMd.addConfiguration(BundleInfoAdapter.CONF_TRANSITIVE_OPTIONAL);
+        capabilityMd.addConfiguration(new Configuration(useConf));
+
+        DefaultDependencyDescriptor capabilityDD = new DefaultDependencyDescriptor(
+                md.getModuleRevisionId(), false);
+        capabilityDD.addDependencyConfiguration(BundleInfoAdapter.CONF_NAME_DEFAULT,
+            BundleInfoAdapter.CONF_NAME_DEFAULT);
+        capabilityDD.addDependencyConfiguration(BundleInfoAdapter.CONF_NAME_OPTIONAL,
+            BundleInfoAdapter.CONF_NAME_OPTIONAL);
+        capabilityDD.addDependencyConfiguration(BundleInfoAdapter.CONF_NAME_TRANSITIVE_OPTIONAL,
+            BundleInfoAdapter.CONF_NAME_TRANSITIVE_OPTIONAL);
+        capabilityDD.addDependencyConfiguration(useConf, useConf);
+        capabilityMd.addDependency(capabilityDD);
+
+        MetadataArtifactDownloadReport report = new MetadataArtifactDownloadReport(null);
+        report.setDownloadStatus(DownloadStatus.NO);
+        report.setSearched(true);
+        ResolvedModuleRevision rmr = new ResolvedModuleRevision(this, this, capabilityMd, report);
+        return new MDResolvedResource(null, capabilityMd.getRevision(), rmr);
+    }
+
     public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, Date date) {
         ResolvedResource found = super.findResource(rress, rmdparser, mrid, date);
 
-        String osgiAtt = mrid.getExtraAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
+        String osgiType = mrid.getOrganisation();
         // for non bundle requirement : log the selected bundle
-        if (!BundleInfo.BUNDLE_TYPE.equals(osgiAtt)) {
+        if (!BundleInfo.BUNDLE_TYPE.equals(osgiType)) {
             // several candidates with different symbolic name : make an warning about the ambiguity
             if (rress.length != 1) {
                 // several candidates with different symbolic name ?
                 Map/* <String, List<MDResolvedResource>> */matching = new HashMap();
                 for (int i = 0; i < rress.length; i++) {
                     String name = ((MDResolvedResource) rress[i]).getResolvedModuleRevision()
-                            .getId().getName();
+                            .getDescriptor().getExtraAttribute(CAPABILITY_EXTRA_ATTR);
                     List/* <MDResolvedResource> */list = (List) matching.get(name);
                     if (list == null) {
                         list = new ArrayList/* <MDResolvedResource> */();
@@ -175,7 +250,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
                 }
                 if (matching.keySet().size() != 1) {
                     if (requirementStrategy == RequirementStrategy.first) {
-                        Message.warn("Ambiguity for the '" + osgiAtt + "' requirement "
+                        Message.warn("Ambiguity for the '" + osgiType + "' requirement "
                                 + mrid.getName() + ";version=" + mrid.getRevision());
                         Iterator itMatching = matching.entrySet().iterator();
                         while (itMatching.hasNext()) {
@@ -190,7 +265,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
                             }
                         }
                     } else if (requirementStrategy == RequirementStrategy.noambiguity) {
-                        Message.error("Ambiguity for the '" + osgiAtt + "' requirement "
+                        Message.error("Ambiguity for the '" + osgiType + "' requirement "
                                 + mrid.getName() + ";version=" + mrid.getRevision());
                         Iterator itMatching = matching.entrySet().iterator();
                         while (itMatching.hasNext()) {
@@ -208,7 +283,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
                     }
                 }
             }
-            Message.info("'" + osgiAtt + "' requirement " + mrid.getName() + ";version="
+            Message.info("'" + osgiType + "' requirement " + mrid.getName() + ";version="
                     + mrid.getRevision() + " satisfied by "
                     + ((MDResolvedResource) found).getResolvedModuleRevision().getId().getName()
                     + ";" + found.getRevision());
@@ -227,9 +302,10 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
 
     protected void checkModuleDescriptorRevision(ModuleDescriptor systemMd,
             ModuleRevisionId systemMrid) {
-        String osgiAtt = systemMrid.getExtraAttribute(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
-        // only check revision if we're searching for a bundle (package and bundle have different version
-        if (osgiAtt == null || osgiAtt.equals(BundleInfo.BUNDLE_TYPE)) {
+        String osgiType = systemMrid.getOrganisation();
+        // only check revision if we're searching for a bundle (package and bundle have different
+        // version
+        if (osgiType == null || osgiType.equals(BundleInfo.BUNDLE_TYPE)) {
             super.checkModuleDescriptorRevision(systemMd, systemMrid);
         }
     }
@@ -240,35 +316,28 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
     }
 
     protected Collection findNames(Map tokenValues, String token) {
-        if (BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME.equals(token)) {
-            return Arrays.asList(new String[] {BundleInfo.BUNDLE_TYPE, BundleInfo.PACKAGE_TYPE,
-                    BundleInfo.SERVICE_TYPE});
-        }
-
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
-            return Collections.singletonList("");
+            return getRepoDescriptor().getModuleByCapbilities().keySet();
         }
 
-        String org = (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
-        if (org != null && org.length() != 0) {
-            return Collections.EMPTY_LIST;
+        String osgiType = (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
+        if (osgiType == null || osgiType.length() == 0) {
+            return Collections.emptyList();
         }
 
-        String osgiAtt = (String) tokenValues.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
         String rev = (String) tokenValues.get(IvyPatternHelper.REVISION_KEY);
 
         if (IvyPatternHelper.MODULE_KEY.equals(token)) {
             Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapbilities = getRepoDescriptor()
                     .getModuleByCapbilities();
-            if (osgiAtt != null) {
+            if (osgiType != null) {
                 Map/* <String, Set<ModuleDescriptor>> */moduleByCapabilityValue = (Map) moduleByCapbilities
-                        .get(osgiAtt);
+                        .get(osgiType);
                 if (moduleByCapabilityValue == null) {
                     return Collections.EMPTY_LIST;
                 }
                 Set/* <String> */capabilityValues = new HashSet();
-                filterCapabilityValues(capabilityValues, moduleByCapbilities, tokenValues, rev);
-                return capabilityValues;
+                return moduleByCapabilityValue.keySet();
             } else {
                 Set/* <String> */capabilityValues = new HashSet();
                 Iterator/* <Map<String, Set<ModuleDescriptor>>> */it = ((Collection) moduleByCapbilities
@@ -286,7 +355,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
             List/* <String> */versions = new ArrayList/* <String> */();
-            Set/* <ModuleDescriptor> */mds = getRepoDescriptor().findModule(osgiAtt, name);
+            Set/* <ModuleDescriptor> */mds = getRepoDescriptor().findModule(osgiType, name);
             if (mds != null) {
                 Iterator itMd = mds.iterator();
                 while (itMd.hasNext()) {
@@ -302,11 +371,11 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
             if (name == null) {
                 return Collections.EMPTY_LIST;
             }
-            if (osgiAtt.equals(BundleInfo.PACKAGE_TYPE)) {
+            if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 return Collections.singletonList(BundleInfoAdapter.CONF_USE_PREFIX + name);
             }
             Set/* <BundleCapabilityAndLocation> */bundleCapabilities = getRepoDescriptor()
-                    .findModule(osgiAtt, name);
+                    .findModule(osgiType, name);
             if (bundleCapabilities == null) {
                 return Collections.EMPTY_LIST;
             }
@@ -317,7 +386,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
             Version v;
             try {
                 v = new Version(version);
-            } catch (NumberFormatException e) {
+            } catch (ParseException e) {
                 return Collections.EMPTY_LIST;
             }
             BundleCapabilityAndLocation found = null;
@@ -385,34 +454,31 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
 
         Map/* <String, String> */values = new HashMap/* <String, String> */();
 
-        tokenSet.remove(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
-        String osgiAtt = (String) criteria.get(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME);
-        if (osgiAtt == null) {
+        tokenSet.remove(IvyPatternHelper.ORGANISATION_KEY);
+        String osgiType = (String) criteria.get(IvyPatternHelper.ORGANISATION_KEY);
+        if (osgiType == null || osgiType.length() == 0) {
+            return Collections.emptySet();
+        }
+        values.put(IvyPatternHelper.ORGANISATION_KEY, osgiType);
+
+        if (osgiType == null) {
             Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
             Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
-            newCriteria.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, BundleInfo.BUNDLE_TYPE);
+            newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.BUNDLE_TYPE);
             tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             newCriteria = new HashMap/* <String, String> */(criteria);
-            newCriteria.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, BundleInfo.PACKAGE_TYPE);
+            newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.PACKAGE_TYPE);
             tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             newCriteria = new HashMap/* <String, String> */(criteria);
-            newCriteria.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, BundleInfo.SERVICE_TYPE);
+            newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.SERVICE_TYPE);
             tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             return tokenValues;
         }
-        values.put(BundleInfoAdapter.EXTRA_ATTRIBUTE_NAME, osgiAtt);
 
-        Set/* <String> */capabilities = getRepoDescriptor().getCapabilityValues(osgiAtt);
+        Set/* <String> */capabilities = getRepoDescriptor().getCapabilityValues(osgiType);
         if (capabilities == null || capabilities.isEmpty()) {
             return Collections.EMPTY_SET;
         }
-
-        tokenSet.remove(IvyPatternHelper.ORGANISATION_KEY);
-        String org = (String) criteria.get(IvyPatternHelper.ORGANISATION_KEY);
-        if (org != null && org.length() != 0) {
-            return Collections.EMPTY_SET;
-        }
-        values.put(IvyPatternHelper.ORGANISATION_KEY, "");
 
         tokenSet.remove(IvyPatternHelper.MODULE_KEY);
         String module = (String) criteria.get(IvyPatternHelper.MODULE_KEY);
@@ -433,7 +499,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         String rev = (String) criteria.get(IvyPatternHelper.REVISION_KEY);
         if (rev == null) {
             Set/* <BundleCapabilityAndLocation> */bundleCapabilities = getRepoDescriptor()
-                    .findModule(osgiAtt, module);
+                    .findModule(osgiType, module);
             if (bundleCapabilities == null) {
                 return Collections.EMPTY_SET;
             }
@@ -453,19 +519,19 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         tokenSet.remove(IvyPatternHelper.CONF_KEY);
         String conf = (String) criteria.get(IvyPatternHelper.CONF_KEY);
         if (conf == null) {
-            if (osgiAtt.equals(BundleInfo.PACKAGE_TYPE)) {
+            if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 values.put(IvyPatternHelper.CONF_KEY, BundleInfoAdapter.CONF_USE_PREFIX + module);
                 return Collections./* <Map<String, String>> */singleton(values);
             }
             Set/* <BundleCapabilityAndLocation> */bundleCapabilities = getRepoDescriptor()
-                    .findModule(osgiAtt, module);
+                    .findModule(osgiType, module);
             if (bundleCapabilities == null) {
                 return Collections.EMPTY_SET;
             }
             Version v;
             try {
                 v = new Version(rev);
-            } catch (NumberFormatException e) {
+            } catch (ParseException e) {
                 return Collections.EMPTY_SET;
             }
             BundleCapabilityAndLocation found = null;

@@ -286,11 +286,16 @@ public class P2MetadataParser implements XMLInputParser {
 
         }
 
-        protected void handleAttributes(Attributes atts) {
+        protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
-            Version version = new Version(atts.getValue(VERSION));
+            String version = atts.getValue(VERSION);
             // Boolean singleton = Boolean.valueOf(atts.getValue(SINGLETON));
-            bundleInfo = new BundleInfo(id, version);
+            try {
+                bundleInfo = new BundleInfo(id, new Version(version));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on bundle '" + id + "': " + version
+                        + " (" + e.getMessage() + ")");
+            }
         }
 
     }
@@ -394,10 +399,15 @@ public class P2MetadataParser implements XMLInputParser {
             super(PROVIDED);
         }
 
-        protected void handleAttributes(Attributes atts) {
+        protected void handleAttributes(Attributes atts) throws SAXException {
             namespace = atts.getValue(NAMESPACE);
             name = atts.getValue(NAME);
-            version = new Version(atts.getValue(VERSION));
+            try {
+                version = new Version(atts.getValue(VERSION));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on provided capability: " + version
+                        + " (" + e.getMessage() + ")");
+            }
         }
 
     }
@@ -536,11 +546,16 @@ public class P2MetadataParser implements XMLInputParser {
             super(ARTIFACT);
         }
 
-        protected void handleAttributes(Attributes atts) {
+        protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
-            Version version = new Version(atts.getValue(VERSION));
+            String version = atts.getValue(VERSION);
             String classifier = atts.getValue(CLASSIFIER);
-            artifact = new P2Artifact(id, version, classifier);
+            try {
+                artifact = new P2Artifact(id, new Version(version), classifier);
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on artifact '" + id + "': " + version
+                        + " (" + e.getMessage() + ")");
+            }
         }
 
     }

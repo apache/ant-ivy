@@ -195,9 +195,15 @@ public class P2ArtifactParser implements XMLInputParser {
             });
         }
 
-        protected void handleAttributes(Attributes atts) {
+        protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
-            Version version = new Version(atts.getValue(VERSION));
+            Version version;
+            try {
+                version = new Version(atts.getValue(VERSION));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version attribute on artifact '" + id + "': "
+                        + atts.getValue(VERSION) + " (" + e.getMessage() + ")");
+            }
             String classifier = atts.getValue(CLASSIFIER);
 
             p2Artifact = new P2Artifact(id, version, classifier);

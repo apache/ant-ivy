@@ -59,7 +59,7 @@ import org.apache.ivy.core.resolve.ResolveEngineSettings;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveEngineSettings;
 import org.apache.ivy.core.sort.SortEngineSettings;
-import org.apache.ivy.osgi.core.OsgiRevisionStrategy;
+import org.apache.ivy.osgi.core.OsgiLatestStrategy;
 import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
@@ -248,12 +248,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         LatestLexicographicStrategy latestLexicographicStrategy = new LatestLexicographicStrategy();
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         LatestTimeStrategy latestTimeStrategy = new LatestTimeStrategy();
-        OsgiRevisionStrategy osgiRevisionStrategy = new OsgiRevisionStrategy();
+        OsgiLatestStrategy osgiLatestStrategy = new OsgiLatestStrategy();
 
         addLatestStrategy("latest-revision", latestRevisionStrategy);
         addLatestStrategy("latest-lexico", latestLexicographicStrategy);
         addLatestStrategy("latest-time", latestTimeStrategy);
-        addLatestStrategy("latest-osgi", osgiRevisionStrategy);
+        addLatestStrategy("latest-osgi", osgiLatestStrategy);
 
         addLockStrategy("no-lock", new NoLockStrategy());
         addLockStrategy("artifact-lock", new ArtifactLockStrategy(debugLocking()));
