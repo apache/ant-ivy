@@ -23,10 +23,10 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 
 import org.apache.ivy.core.cache.CacheResourceOptions;
-import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver;
+import org.apache.ivy.osgi.repo.AbstractOSGiResolver;
 import org.xml.sax.SAXException;
 
-public class UpdateSiteResolver extends RepoDescriptorBasedResolver {
+public class UpdateSiteResolver extends AbstractOSGiResolver {
 
     private String url;
 

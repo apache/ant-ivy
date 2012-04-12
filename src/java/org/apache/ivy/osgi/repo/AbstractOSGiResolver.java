@@ -59,7 +59,7 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
 import org.apache.ivy.util.Message;
 
-public abstract class RepoDescriptorBasedResolver extends BasicResolver {
+public abstract class AbstractOSGiResolver extends BasicResolver {
 
     private static final String CAPABILITY_EXTRA_ATTR = "osgi_bundle";
 
@@ -322,7 +322,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
 
         String osgiType = (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null || osgiType.length() == 0) {
-            return Collections.emptyList();
+            return Collections.EMPTY_LIST;
         }
 
         String rev = (String) tokenValues.get(IvyPatternHelper.REVISION_KEY);
@@ -457,7 +457,7 @@ public abstract class RepoDescriptorBasedResolver extends BasicResolver {
         tokenSet.remove(IvyPatternHelper.ORGANISATION_KEY);
         String osgiType = (String) criteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null || osgiType.length() == 0) {
-            return Collections.emptySet();
+            return Collections.EMPTY_SET;
         }
         values.put(IvyPatternHelper.ORGANISATION_KEY, osgiType);
 

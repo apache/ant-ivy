@@ -31,12 +31,12 @@ import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
-import org.apache.ivy.osgi.repo.RepoDescriptorBasedResolver;
+import org.apache.ivy.osgi.repo.AbstractOSGiResolver;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.xml.sax.SAXException;
 
-public class OBRResolver extends RepoDescriptorBasedResolver {
+public class OBRResolver extends AbstractOSGiResolver {
 
     private String repoXmlURL;
 
