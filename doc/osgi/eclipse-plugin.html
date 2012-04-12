@@ -39,6 +39,7 @@ In few steps, we will setup a build to compile and package an Eclipse plugin.
 <ol>
 <li>download this <a href="../samples/eclipse-plugin/ivy.xml">ivy.xml<a>, this <a href="../samples/eclipse-plugin/ivysettings.xml">ivysettings.xml</a>, this <a href="../samples/eclipse-plugin/ivysettings.properties">ivysettings.properties</a>, this <a href="../samples/eclipse-plugin/build.xml">build.xml</a>, and put them into your plugin folder;</li>
 <li>in the ivysettings.properties, specify the location of the plugins folder of your Eclipse target;</li>
+<li>in the ivy.xml, change the symbolic name declared in the extends element;</li>
 <li><i>(optional)</i> by default the build.xml is expecting the sources to be in the <tt>src</tt> folder. You may want to edit it if it is not the case</li>
 <li><i>(optional)</i> if Ivy is not in Ant's classpath, get the jar of <a href="../download.html">Apache Ivy</a> and edit the build.xml accordingly (see the comments at the begining of the file)</li>
 </ol>

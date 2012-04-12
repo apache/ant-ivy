@@ -18,8 +18,8 @@
    under the License.    
 -->
 <ivy-module version="2.2" xmlns:o="http://ant.apache.org/ivy/osgi">
-    <info organisation="" module="myplugin">
-        <extends organisation="" module="myplugin" revision="1.0.0.qualifier" location="META-INF/MANIFEST.MF" />
+    <info organisation="bundle" module="myplugin">
+        <extends organisation="bundle" module="com.acme.myplugin" revision="1.0.0.qualifier" location="META-INF/MANIFEST.MF" />
     </info>
     <configurations>
         <conf name="compile"  extends="default,embedded" description="Dependencies for the compilation" />

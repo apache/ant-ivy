@@ -43,6 +43,7 @@ import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 
 public class BundleInfoAdapter {
 
@@ -72,12 +73,13 @@ public class BundleInfoAdapter {
      *            uri to help build the absolute url if the bundle info has a relative uri.
      * @param bundle
      * @param profileProvider
+     * @param parser 
      * @return
      * @throws ProfileNotFoundException
      */
-    public static DefaultModuleDescriptor toModuleDescriptor(URI baseUri, BundleInfo bundle,
+    public static DefaultModuleDescriptor toModuleDescriptor(ModuleDescriptorParser parser, URI baseUri, BundleInfo bundle,
             ExecutionEnvironmentProfileProvider profileProvider) throws ProfileNotFoundException {
-        DefaultModuleDescriptor md = new DefaultModuleDescriptor(null, null);
+        DefaultModuleDescriptor md = new DefaultModuleDescriptor(parser, null);
         md.addExtraAttributeNamespace("o", Ivy.getIvyHomeURL() + "osgi");
         ModuleRevisionId mrid = asMrid(BundleInfo.BUNDLE_TYPE, bundle.getSymbolicName(), bundle.getVersion());
         md.setResolvedPublicationDate(new Date());
