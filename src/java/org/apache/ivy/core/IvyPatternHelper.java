@@ -61,6 +61,8 @@ public final class IvyPatternHelper {
 
     public static final String ORGANISATION_KEY2 = "organization";
 
+    public static final String ORGANISATION_PATH_KEY = "orgPath";
+
     public static final String ORIGINAL_ARTIFACTNAME_KEY = "originalname";
 
     private static final Pattern PARAM_PATTERN = Pattern.compile("\\@\\{(.*?)\\}");
@@ -148,6 +150,7 @@ public final class IvyPatternHelper {
         }
         tokens.put(ORGANISATION_KEY, org == null ? "" : org);
         tokens.put(ORGANISATION_KEY2, org == null ? "" : org);
+        tokens.put(ORGANISATION_PATH_KEY, org == null ? "" : org.replace('.', '/'));
         tokens.put(MODULE_KEY, module == null ? "" : module);
         tokens.put(BRANCH_KEY, branch == null ? "" : branch);
         tokens.put(REVISION_KEY, revision == null ? "" : revision);
@@ -221,6 +224,10 @@ public final class IvyPatternHelper {
         Map tokensCopy = new HashMap(tokens);
         if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_KEY2)) {
             tokensCopy.put(ORGANISATION_KEY2, tokensCopy.get(ORGANISATION_KEY));
+        }
+        if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_PATH_KEY)) {
+            String org = (String) tokensCopy.get(ORGANISATION_KEY);
+            tokensCopy.put(ORGANISATION_PATH_KEY, org == null ? "" : org.replace('.', '/'));
         }
         
         StringBuffer buffer = new StringBuffer();
