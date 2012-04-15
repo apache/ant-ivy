@@ -28,9 +28,14 @@
 
 Since Apache Ivy&#153; 2.3, some support for OSGi&#153; dependency management has been introduced.
 
-<div class="notice">
+<table class="notice">
+  <tr>
+    <td style="vertical-align: top"><img src="images/warning.png" style="float:left;" /></td>
+    <td>
     Note that this feature is considered as <b>experimental</b>. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
-</div>
+    </td>
+  </tr>
+</table>
 
 So with a standard ivy.xml, you can express some dependency on some OSGi bundle and every of their trasitive dependencies will be resolved. You can also declare in your ivy.xml some OSGi dependency, like a <tt>Require-Bundle</tt>, an <tt>Import-Package</tt> or an <tt>Import-Service</tt>, miming an OSGi MANIFEST.MF.
 

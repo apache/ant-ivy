@@ -27,67 +27,48 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 
-public class OsgiRevisionStrategyTest extends TestCase {
+public class OsgiLatestStrategyTest extends TestCase {
 
     public void testComparator() {
-        ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
-                "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
-                "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0", "2.0.0", "2.0.0.b006",
-                "2.0.0.b012", "2.0.0.xyz"});
+        ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.final", "1.0",
+                "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
+                "2.0.0.xyz"});
 
         List shuffled = new ArrayList(Arrays.asList(revs));
         Collections.shuffle(shuffled);
-        Collections.sort(shuffled, new OsgiRevisionStrategy().new ArtifactInfoComparator());
+        Collections.sort(shuffled, new OsgiLatestStrategy().new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
     }
 
     public void testSort() {
-        ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
-                "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
-                "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
+        ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.final", "1.0",
+                "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
+                "2.0.0.xyz"});
 
         List shuffled = new ArrayList(Arrays.asList(revs));
         ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
                 .toArray(new ArtifactInfo[revs.length]);
 
-        OsgiRevisionStrategy latestRevisionStrategy = new OsgiRevisionStrategy();
+        OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
         List sorted = latestRevisionStrategy.sort(shuffledRevs);
         assertEquals(Arrays.asList(revs), sorted);
     }
 
     public void testFindLatest() {
-        ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
-                "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
-                "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
+        ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.rc1",
+                "0.2.0.final", "1.0.0.dev1", "1.0.0.dev2", "1.0.0.alpha1", "1.0.0.alpha2",
+                "1.0.0.beta1", "1.0.0.beta2", "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0",
+                "1.0.1", "2.0"});
 
         List shuffled = new ArrayList(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
                 .toArray(new ArtifactInfo[revs.length]);
 
-        OsgiRevisionStrategy latestRevisionStrategy = new OsgiRevisionStrategy();
+        OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
         ArtifactInfo latest = latestRevisionStrategy.findLatest(shuffledRevs, new Date());
         assertNotNull(latest);
         assertEquals("2.0", latest.getRevision());
-    }
-
-    public void testSpecialMeaningComparator() {
-        ArtifactInfo[] revs = toMockAI(new String[] {"0.1", "0.2-pre", "0.2-dev", "0.2-rc1",
-                "0.2-final", "0.2-QA", "1.0-dev1"});
-
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        Collections.shuffle(shuffled);
-        OsgiRevisionStrategy latestRevisionStrategy = new OsgiRevisionStrategy();
-        OsgiRevisionStrategy.SpecialMeaning specialMeaning = new OsgiRevisionStrategy.SpecialMeaning();
-        specialMeaning.setName("pre");
-        specialMeaning.setValue(new Integer(-2));
-        latestRevisionStrategy.addConfiguredSpecialMeaning(specialMeaning);
-        specialMeaning = new OsgiRevisionStrategy.SpecialMeaning();
-        specialMeaning.setName("QA");
-        specialMeaning.setValue(new Integer(4));
-        latestRevisionStrategy.addConfiguredSpecialMeaning(specialMeaning);
-        Collections.sort(shuffled, latestRevisionStrategy.new ArtifactInfoComparator());
-        assertEquals(Arrays.asList(revs), shuffled);
     }
 
     private static class MockArtifactInfo implements ArtifactInfo {

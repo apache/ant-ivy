@@ -116,7 +116,14 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            feature = new EclipseFeature(atts.getValue(ID), new Version(atts.getValue(VERSION)));
+            String id = atts.getValue(ID);
+            String version = atts.getValue(VERSION);
+            try {
+                feature = new EclipseFeature(id, new Version(version));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on feature '" + id + "': " + version
+                        + " (" + e.getMessage() + ")");
+            }
 
             feature.setOS(atts.getValue(OS));
             feature.setWS(atts.getValue(WS));
@@ -157,8 +164,16 @@ public class FeatureParser {
         protected void handleAttributes(Attributes atts) throws SAXException {
             plugin = new EclipsePlugin();
 
-            plugin.setId(atts.getValue(ID));
-            plugin.setVersion(new Version(atts.getValue(VERSION)));
+            String id = atts.getValue(ID);
+            String version = atts.getValue(VERSION);
+
+            plugin.setId(id);
+            try {
+                plugin.setVersion(new Version(version));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on feature's plugin '" + id + "': "
+                        + version + " (" + e.getMessage() + ")");
+            }
             plugin.setUnpack(Boolean.valueOf(atts.getValue(UNPACK)).booleanValue());
             plugin.setFragment(atts.getValue(FRAGMENT));
             plugin.setFilter(atts.getValue(FILTER));
@@ -253,9 +268,16 @@ public class FeatureParser {
         protected void handleAttributes(Attributes atts) throws SAXException {
             require = new Require();
 
+            String version = atts.getValue(VERSION);
+
             require.setFeature(atts.getValue(FEATURE));
             require.setPlugin(atts.getValue(PLUGIN));
-            require.setVersion(new Version(atts.getValue(VERSION)));
+            try {
+                require.setVersion(new Version(version));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on feature's import: " + version + " ("
+                        + e.getMessage() + ")");
+            }
             require.setMatch(atts.getValue(MATCH));
             require.setFilter(atts.getValue(FILTER));
         }

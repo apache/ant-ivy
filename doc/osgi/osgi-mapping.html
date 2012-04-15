@@ -36,9 +36,8 @@ In OSGi a bundle is identified by its symbolic name. In Ivy there is a notion of
 
 The choosen mapping is:
 <ul>
-<li>No organisation : org=""</li>
+<li>The organisation is "bundle" (transitive dependencies like pakages or services have their own organisations, "package" and "service")</li>
 <li>The module name is the symbolic name</li>
-<li>an extra attribute is defining it as an OSGi bundle</li>
 </ul>
 
 <table border="1" cellspacing="1" cellpadding="4">
@@ -50,7 +49,7 @@ The choosen mapping is:
 <td> <tt>Bundle-SymbolicName: com.acme.product.plugin</tt> </td>
 <td>
 <code type="xml">
-<info organisation="" module="com.acme.product.plugin" osgi="bundle" />
+<info organisation="bundle" module="com.acme.product.plugin" />
 </code>
 </td>
 </tr>
@@ -75,7 +74,7 @@ Then about version range, Ivy will understand correctly fully defined range as <
 <td><tt>Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1"</tt> </td>
 <td>
 <code type="xml">
-<dependency osgi="bundle" org="" name="com.acme.product.plugin" rev="[3.2.1,)" />
+<dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" />
 </code>
 </td>
 </tr>
@@ -159,7 +158,7 @@ If there is the OSGi <tt>resolution</tt> parameter specified to <tt>optional</tt
 <td> <tt>Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1";resolution:="optional"</tt> </td>
 <td>
 <code type="xml">
-<dependency osgi="bundle" org="" name="com.acme.product.plugin" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional" />
+<dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional" />
 </code>
 </td>
 </tr>
@@ -183,7 +182,7 @@ As it is an import package the configuration of the dependency will be the <tt>u
 </td>
 <td>
 <code type="xml">
-<dependency osgi="pkg" org="" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="default->default;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
+<dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="default->default;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
 </code>
 </td>
 </tr>
@@ -191,7 +190,7 @@ As it is an import package the configuration of the dependency will be the <tt>u
 <td> <tt>Import-Package: com.acme.product.plugin.utils;version="3.2.1";resolution:="optional"</tt> </td>
 <td>
  <code type="xml">
-<dependency osgi="pkg" org="" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
+<dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
 </code>
 </td>
 </tr>
@@ -211,9 +210,9 @@ The OSGi <tt>Bundle-RequiredExecutionEnvironment</tt> manifest attribute is spec
 <td>
 <code type="xml">
 <dependencies>
-    <exclude org="" module="javax.accessibility" osgi="pkg" />
-    <exclude org="" module="javax.activation" osgi="pkg" />
-    <exclude org="" module="javax.activity" osgi="pkg" />
+    <exclude org="package" module="javax.accessibility" />
+    <exclude org="package" module="javax.activation" />
+    <exclude org="package" module="javax.activity" />
     ...
 </dependencies>
 </code>

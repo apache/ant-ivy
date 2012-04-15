@@ -26,9 +26,18 @@
 <body>
 	<textarea id="xooki-source">
 
-<div class="notice">
-This documentation is describing the <b>experimental</b> OSGi capability of Ivy. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
-</div>
+<table class="notice">
+  <tr>
+    <td style="vertical-align: top"><img src="../images/warning.png" style="float:left;" /></td>
+    <td>
+    Note that this feature is considered as <b>experimental</b>. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
+    </td>
+  </tr>
+</table>
+
+<hr />
+<center><b>TODO - WORK IN PROGRESS</b></center>
+<hr />
 
 This page describes how to build an OSGi&#153; bundle with Apache Ivy&#153;. In this use case, we just basically want to compute a classpath to compile, optionaly one for testing too, and then publish our bundle in a OSGi aware repository.
 
@@ -45,7 +54,6 @@ In few steps, we will setup a build to compile and publish an OSGi bundle.
 <li><i>(optional)</i> by default the build.xml is expecting the sources to be in the <tt>src</tt> folder. You may want to edit it if it is not the case</li>
 <li><i>(optional)</i> if Ivy is not in Ant's classpath, get the jar of <a href="../download.html">Apache Ivy</a> and edit the build.xml accordingly (see the comments at the begining of the file)</li>
 </ol>
-
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

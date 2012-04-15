@@ -30,6 +30,7 @@ import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
+import org.apache.ivy.osgi.core.OSGiManifestParser;
 import org.apache.ivy.util.Message;
 
 public class RepoDescriptor {
@@ -96,8 +97,8 @@ public class RepoDescriptor {
     }
 
     public void addBundle(BundleInfo bundleInfo) {
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(baseUri, bundleInfo,
-            profileProvider);
+        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
+            OSGiManifestParser.getInstance(), baseUri, bundleInfo, profileProvider);
         add(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), md);
         Iterator itCapability = bundleInfo.getCapabilities().iterator();
         while (itCapability.hasNext()) {

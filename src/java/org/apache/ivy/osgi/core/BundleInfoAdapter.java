@@ -22,12 +22,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
@@ -45,6 +43,7 @@ import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 
 public class BundleInfoAdapter {
 
@@ -66,16 +65,7 @@ public class BundleInfoAdapter {
 
     public static final String CONF_USE_PREFIX = "use_";
 
-    public static final String EXTRA_ATTRIBUTE_NAME = "o:type";
-
-    public static final Map/* <String, String> */OSGI_BUNDLE = Collections.singletonMap(
-        EXTRA_ATTRIBUTE_NAME, BundleInfo.BUNDLE_TYPE);
-
-    public static final Map/* <String, String> */OSGI_PACKAGE = Collections.singletonMap(
-        EXTRA_ATTRIBUTE_NAME, BundleInfo.PACKAGE_TYPE);
-
-    public static final Map/* <String, String> */OSGI_SERVICE = Collections.singletonMap(
-        EXTRA_ATTRIBUTE_NAME, BundleInfo.SERVICE_TYPE);
+    public static final String EXTRA_INFO_EXPORT_PREFIX = "_osgi_export_";
 
     /**
      * 
@@ -83,14 +73,15 @@ public class BundleInfoAdapter {
      *            uri to help build the absolute url if the bundle info has a relative uri.
      * @param bundle
      * @param profileProvider
+     * @param parser 
      * @return
      * @throws ProfileNotFoundException
      */
-    public static DefaultModuleDescriptor toModuleDescriptor(URI baseUri, BundleInfo bundle,
+    public static DefaultModuleDescriptor toModuleDescriptor(ModuleDescriptorParser parser, URI baseUri, BundleInfo bundle,
             ExecutionEnvironmentProfileProvider profileProvider) throws ProfileNotFoundException {
-        DefaultModuleDescriptor md = new DefaultModuleDescriptor(null, null);
+        DefaultModuleDescriptor md = new DefaultModuleDescriptor(parser, null);
         md.addExtraAttributeNamespace("o", Ivy.getIvyHomeURL() + "osgi");
-        ModuleRevisionId mrid = asMrid(bundle.getSymbolicName(), bundle.getVersion(), OSGI_BUNDLE);
+        ModuleRevisionId mrid = asMrid(BundleInfo.BUNDLE_TYPE, bundle.getSymbolicName(), bundle.getVersion());
         md.setResolvedPublicationDate(new Date());
         md.setModuleRevisionId(mrid);
 
@@ -102,6 +93,8 @@ public class BundleInfoAdapter {
         Iterator itExport = bundle.getExports().iterator();
         while (itExport.hasNext()) {
             ExportPackage exportPackage = (ExportPackage) itExport.next();
+            md.getExtraInfo().put(EXTRA_INFO_EXPORT_PREFIX + exportPackage.getName(),
+                exportPackage.getVersion().toString());
             exportedPkgNames.add(exportPackage.getName());
             String[] confDependencies = new String[exportPackage.getUses().size() + 1];
             int i = 0;
@@ -151,11 +144,11 @@ public class BundleInfoAdapter {
                 Iterator itPkg = profile.getPkgNames().iterator();
                 while (itPkg.hasNext()) {
                     String pkg = (String) itPkg.next();
-                    ArtifactId id = new ArtifactId(ModuleId.newInstance("", pkg),
+                    ArtifactId id = new ArtifactId(ModuleId.newInstance(BundleInfo.BUNDLE_TYPE, pkg),
                             PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
                             PatternMatcher.ANY_EXPRESSION);
                     DefaultExcludeRule rule = new DefaultExcludeRule(id,
-                            ExactOrRegexpPatternMatcher.INSTANCE, OSGI_PACKAGE);
+                            ExactOrRegexpPatternMatcher.INSTANCE, null);
                     String[] confs = md.getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
                         rule.addConfiguration(confs[i]);
@@ -288,8 +281,7 @@ public class BundleInfoAdapter {
                 continue;
             }
 
-            Map/* <String, String> */osgiAtt = Collections.singletonMap(EXTRA_ATTRIBUTE_NAME, type);
-            ModuleRevisionId ddmrid = asMrid(name, requirement.getVersion(), osgiAtt);
+            ModuleRevisionId ddmrid = asMrid(type, name, requirement.getVersion());
             DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ddmrid, false);
 
             String conf = CONF_NAME_DEFAULT;
@@ -314,23 +306,18 @@ public class BundleInfoAdapter {
 
     }
 
-    private static ModuleRevisionId asMrid(String symbolicNAme, Version v,
-            Map/* <String, String> */extraAttr) {
-        return ModuleRevisionId.newInstance("", symbolicNAme, v == null ? null : v.toString(),
-            extraAttr);
+    public static ModuleRevisionId asMrid(String type, String name, Version v) {
+        return ModuleRevisionId.newInstance(type, name, v == null ? null : v.toString());
     }
 
-    private static ModuleRevisionId asMrid(String symbolicNAme, VersionRange v, Map/*
-                                                                                    * <String,
-                                                                                    * String>
-                                                                                    */extraAttr) {
+    public static ModuleRevisionId asMrid(String type, String name, VersionRange v) {
         String revision;
         if (v == null) {
             revision = "[0,)";
         } else {
             revision = v.toIvyRevision();
         }
-        return ModuleRevisionId.newInstance("", symbolicNAme, revision, extraAttr);
+        return ModuleRevisionId.newInstance(type, name, revision);
     }
 
     public static class ProfileNotFoundException extends RuntimeException {

@@ -93,7 +93,7 @@ public class RequirementAdapter {
     }
 
     private void parseCompareFilter(CompareFilter compareFilter, boolean not)
-            throws UnsupportedFilterException {
+            throws UnsupportedFilterException, ParseException {
         String att = compareFilter.getLeftValue();
         if (BundleInfo.PACKAGE_TYPE.equals(att) || BundleInfo.BUNDLE_TYPE.equals(att)
                 || "symbolicname".equals(att) || BundleInfo.SERVICE_TYPE.equals(att)) {
@@ -116,6 +116,12 @@ public class RequirementAdapter {
             name = compareFilter.getRightValue();
         } else if ("version".equals(att)) {
             String v = compareFilter.getRightValue();
+            Version version;
+            try {
+                version = new Version(v);
+            } catch (ParseException e) {
+                throw new ParseException("Ill formed version: " + v, 0);
+            }
             Operator operator = compareFilter.getOperator();
             if (not) {
                 if (operator == Operator.EQUALS) {
@@ -136,37 +142,37 @@ public class RequirementAdapter {
                     throw new UnsupportedFilterException(
                             "Multiple version matching is not supported");
                 }
-                startVersion = new Version(v);
+                startVersion = version;
                 startExclusive = false;
-                endVersion = new Version(v);
+                endVersion = version;
                 endExclusive = false;
             } else if (operator == Operator.GREATER_OR_EQUAL) {
                 if (startVersion != null) {
                     throw new UnsupportedFilterException(
                             "Multiple version matching is not supported");
                 }
-                startVersion = new Version(v);
+                startVersion = version;
                 startExclusive = false;
             } else if (operator == Operator.GREATER_THAN) {
                 if (startVersion != null) {
                     throw new UnsupportedFilterException(
                             "Multiple version matching is not supported");
                 }
-                startVersion = new Version(v);
+                startVersion = version;
                 startExclusive = true;
             } else if (operator == Operator.LOWER_OR_EQUAL) {
                 if (endVersion != null) {
                     throw new UnsupportedFilterException(
                             "Multiple version matching is not supported");
                 }
-                endVersion = new Version(v);
+                endVersion = version;
                 endExclusive = false;
             } else if (operator == Operator.LOWER_THAN) {
                 if (endVersion != null) {
                     throw new UnsupportedFilterException(
                             "Multiple version matching is not supported");
                 }
-                endVersion = new Version(v);
+                endVersion = version;
                 endExclusive = true;
             }
         } else {

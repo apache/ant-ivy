@@ -26,13 +26,26 @@
 <body>
 	<textarea id="xooki-source">
 
-<div class="notice">
-This documentation is describing the <b>experimental</b> OSGi capability of Ivy. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
-</div>
+<table class="notice">
+  <tr>
+    <td style="vertical-align: top"><img src="../images/warning.png" style="float:left;" /></td>
+    <td>
+    Note that this feature is considered as <b>experimental</b>. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the <a href="http://ant.apache.org/ivy/mailing-lists.html">ivy-user</a> mailing list, or discuss about implementation issues or improvement you may have found on <a href="http://ant.apache.org/ivy/mailing-lists.html">ant-dev</a>.
+    </td>
+  </tr>
+</table>
 
-Building an OSGi&#153; bundle with standard tools like <tt>javac</tt> and a classpath computed by Apache Ivy&#153; can be erroneous as these tools doesn't take into account the package visibility enforced by the OSGi metadata. Then switching to OSGi dedicated tools like the Eclipse&#153; JTD can be prefered. This kind of tools still need a "target platform", a set of jars against to compile and then later run. A target platform can be easily managed with Ivy and its OSGi capabilities.
+<hr />
+<center><b>TODO - WORK IN PROGRESS</b></center>
+<hr />
 
-TODO
+Building an OSGi&#153; bundle with standard tools like <tt>javac</tt> and a classpath computed by Apache Ivy&#153; can be erroneous as these tools doesn't take into account the package visibility enforced by the OSGi metadata. Then switching to OSGi dedicated tools like the Eclipse&#153; JDT can be prefered. This kind of tools still need a "target platform", a set of jars against to compile and then later run. A target platform can be easily managed with Ivy and its OSGi capabilities.
+
+<ul>Some links of interest:
+  <li><a href="../resolver/obr.html">OSGi Bundle Repository Resolver</a></li>
+  <li><a href="../resolver/updatesite.html">Eclipse updatesite Resolver</a></li>
+  <li><a href="../use/retrieve.html">Ant ivy:retrieve task</a></li>
+</ul>
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

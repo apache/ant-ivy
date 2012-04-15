@@ -17,11 +17,13 @@
  */
 package org.apache.ivy.osgi.util;
 
+import java.text.ParseException;
+
 import junit.framework.TestCase;
 
 public class VersionTest extends TestCase {
 
-    public void testParsing() {
+    public void testParsing() throws Exception {
         Version v;
 
         v = new Version("1");
@@ -41,7 +43,7 @@ public class VersionTest extends TestCase {
         assertEquals("abc", v.qualifier());
     }
 
-    public void testCompareTo() {
+    public void testCompareTo() throws Exception {
         assertTrue(new Version("1.2.3").compareTo(new Version("1.2.3")) == 0);
 
         assertTrue(new Version("1.2.3").compareTo(new Version("1.2.2")) > 0);

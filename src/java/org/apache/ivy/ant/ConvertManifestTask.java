@@ -30,6 +30,7 @@ import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.core.ManifestParser;
+import org.apache.ivy.osgi.core.OSGiManifestParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.tools.ant.BuildException;
 
@@ -83,7 +84,8 @@ public class ConvertManifestTask extends IvyTask {
         } catch (ParseException e) {
             throw new BuildException("Incorrect manifest file '" + manifest + "'", e);
         }
-        ModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(null, bundleInfo, profileProvider);
+        ModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
+            OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
 
         try {
             XmlModuleDescriptorWriter.write(md, ivyFile);

@@ -37,7 +37,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.osgi.core.BundleInfoAdapter;
+import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class UpdateSiteResolverTest extends TestCase {
@@ -82,13 +82,18 @@ public class UpdateSiteResolverTest extends TestCase {
 
     public void testListOrganization() throws Exception {
         OrganisationEntry[] orgs = resolver.listOrganisations();
-        assertEquals(1, orgs.length);
-        assertEquals("", orgs[0].getOrganisation());
+        assertEquals(2, orgs.length);
+        assertTrue((orgs[0].getOrganisation().equals(BundleInfo.BUNDLE_TYPE) && orgs[1]
+                .getOrganisation().equals(BundleInfo.PACKAGE_TYPE))
+                || (orgs[0].getOrganisation().equals(BundleInfo.PACKAGE_TYPE) && orgs[1]
+                        .getOrganisation().equals(BundleInfo.BUNDLE_TYPE)));
     }
 
     public void testListModules() throws Exception {
-        ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver, ""));
-        assertEquals(65, modules.length);
+        ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver, BundleInfo.BUNDLE_TYPE));
+        assertEquals(3, modules.length);
+        modules = resolver.listModules(new OrganisationEntry(resolver, BundleInfo.PACKAGE_TYPE));
+        assertEquals(64, modules.length);
     }
 
     private void genericTestResolveDownload(DependencyResolver resolver, ModuleRevisionId mrid)
@@ -124,8 +129,8 @@ public class UpdateSiteResolverTest extends TestCase {
     }
 
     public void testResolve() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "org.apache.ivy",
-            "2.0.0.final_20090108225011", BundleInfoAdapter.OSGI_BUNDLE);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
+            "org.apache.ivy", "2.0.0.final_20090108225011");
         genericTestResolveDownload(resolver, mrid);
     }
 }

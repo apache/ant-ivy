@@ -177,7 +177,14 @@ public class EclipseUpdateSiteParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            feature = new EclipseFeature(atts.getValue(ID), new Version(atts.getValue(VERSION)));
+            String id = atts.getValue(ID);
+            String version = atts.getValue(VERSION);
+            try {
+                feature = new EclipseFeature(id, new Version(version));
+            } catch (ParseException e) {
+                throw new SAXException("Incorrect version on the feature '" + id + "': " + version
+                        + " (" + e.getMessage() + ")");
+            }
 
             String url = atts.getValue(URL);
             if (url != null) {
