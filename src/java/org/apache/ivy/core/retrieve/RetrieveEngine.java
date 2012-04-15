@@ -313,21 +313,9 @@ public class RetrieveEngine {
                     continue; // skip this artifact, the filter didn't accept it!
                 }
 
-                String destFileName;
-                if (RetrieveOptions.DIRMODE_FLAT.equals(options.getDirMode())) {
-                    destFileName = IvyPatternHelper.substitute(destPattern,
+                String destFileName = IvyPatternHelper.substitute(destPattern,
                             artifact.getArtifact().getModuleRevisionId(), artifact.getArtifact(),
                             conf, artifact.getArtifactOrigin());
-                } else if (RetrieveOptions.DIRMODE_TREE.equals(options.getDirMode())) {
-                    ModuleRevisionId mRevId = artifact.getArtifact().getModuleRevisionId();
-                    String org = mRevId.getOrganisation() == null ? null : mRevId.getOrganisation().replace('.', '/');
-                    destFileName = IvyPatternHelper.substitute(destPattern, org, mRevId.getName(), mRevId.getBranch(),
-                            mRevId.getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf,
-                            artifact.getArtifactOrigin(), mrid.getQualifiedExtraAttributes(), artifact.getArtifact().getQualifiedExtraAttributes());
-                } else {
-                    throw new IllegalArgumentException("Unsupported dirMode: " + options.getDirMode());
-                }
-                
                 Set dest = (Set) artifactsToCopy.get(artifact);
                 if (dest == null) {
                     dest = new HashSet();

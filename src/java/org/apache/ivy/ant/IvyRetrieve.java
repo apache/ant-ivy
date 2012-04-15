@@ -43,10 +43,6 @@ public class IvyRetrieve extends IvyPostResolveTask {
             RetrieveOptions.OVERWRITEMODE_NEWER, RetrieveOptions.OVERWRITEMODE_DIFFERENT
     });
 
-    private static final Collection DIRMODE_VALUES = Arrays.asList(new String[] {
-            RetrieveOptions.DIRMODE_FLAT, RetrieveOptions.DIRMODE_TREE
-    });
-
     private String pattern;
 
     private String ivypattern = null;
@@ -56,8 +52,6 @@ public class IvyRetrieve extends IvyPostResolveTask {
     private boolean symlink = false;
     
     private String overwriteMode = RetrieveOptions.OVERWRITEMODE_NEWER;
-
-    private String dirMode = RetrieveOptions.DIRMODE_FLAT;
 
     private String pathId = null;
 
@@ -110,7 +104,6 @@ public class IvyRetrieve extends IvyPostResolveTask {
                             .setArtifactFilter(artifactFilter)
                             .setSync(sync)
                             .setOverwriteMode(getOverwriteMode())
-                            .setDirMode(getDirMode())
                             .setUseOrigin(isUseOrigin())
                             .setMakeSymlinks(symlink)
                             .setResolveId(getResolveId())
@@ -187,18 +180,6 @@ public class IvyRetrieve extends IvyPostResolveTask {
         return overwriteMode;
     }
 
-    public void setDirMode(String dirMode) {
-        if (!DIRMODE_VALUES.contains(dirMode)) {
-            throw new IllegalArgumentException("invalid dirMode value '" + dirMode + "'. "
-                + "Valid values are " + DIRMODE_VALUES);
-        }
-        this.dirMode = dirMode;
-    }
-
-    public String getDirMode() {
-        return dirMode;
-    }
-    
     /**
      * Add a mapper to convert the file names.
      *
