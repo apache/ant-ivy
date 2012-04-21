@@ -204,7 +204,7 @@ And now let's generate the site and deploy it:
 <ol>
     <li>generate the part of the site for the new version:</li>
 <code>
-ant generate-history-ivy -Dhistory.version=2.0.0-beta1
+ant generate-history -Dhistory.version=2.0.0-beta1
 </code>
 <u>WARNING:</u> that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
     <li>generate the website with the new toc:</li>
