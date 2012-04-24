@@ -294,6 +294,10 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         URL url = artifact.getUrl();
+        if (url == null) {
+            // not an artifact resolved by this resolver
+            return null;
+        }
         Message.verbose("\tusing url for " + artifact + ": " + url);
         logArtifactAttempt(artifact, url.toExternalForm());
         Resource resource = new URLResource(url);

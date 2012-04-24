@@ -67,6 +67,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Stepan Koltsov
 	Heschi Kreinick
     Sebastian Krueger
+	Thomas Kurpick
 	Tat Leung
 	Costin Leau
 	Antoine Levy-Lambert
@@ -122,6 +123,10 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sven Zethelius
 	Aleksey Zhukov
 	
+   trunk
+=====================================
+- FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)
+
    2.3.0-rc1
 =====================================
 - DOCUMENTATION: Bad example in Project dependencies Tutorial (IVY-1263)
