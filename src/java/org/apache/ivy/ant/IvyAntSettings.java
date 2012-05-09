@@ -136,6 +136,13 @@ public class IvyAntSettings extends DataType {
             return (IvyAntSettings) defaultInstanceObj;
         }
     }
+
+    /*
+     * Keep this for backwards compatibility!
+     */
+    public static IvyAntSettings getDefaultInstance(Task task) {
+        return getDefaultInstance((ProjectComponent) task);
+    }
     
     public File getFile() {
         return file;
