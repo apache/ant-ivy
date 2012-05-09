@@ -36,6 +36,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.DataType;
 
