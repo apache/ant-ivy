@@ -247,6 +247,13 @@ public class IvyAntSettings extends DataType {
         return ivyEngine;
     }
 
+    /*
+     * Keep this for backwards compatibility!
+     */
+    public Ivy getConfiguredIvyInstance(Task task) {
+        return getConfiguredIvyInstance((ProjectComponent) task);
+    }
+
     void createIvyEngine(final ProjectComponent task) {
         Project project = task.getProject();
         Property prop = new Property() {
