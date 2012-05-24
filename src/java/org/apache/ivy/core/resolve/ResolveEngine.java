@@ -52,6 +52,7 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
@@ -258,11 +259,31 @@ public class ResolveEngine {
                         forcedRevisions.put(dependencies[i].getModuleId(), dependencies[i].getResolvedId());
                     }
                 }
-
+                
                 IvyNode root = dependencies[0].getRoot();
+
+                //                <ModuleId,IvyNode>();
+                Map topLevelDeps = new HashMap(); //
                 for (int i = 0; i < dependencies.length; i++) {
                     if (!dependencies[i].hasProblem()) {
                         DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
+                        if (dd != null) {
+                            ModuleId orgMod = dependencies[i].getModuleId();
+                            topLevelDeps.put(orgMod, dependencies[i]);
+                        }
+                    }
+                }
+
+                for (int i = 0; i < dependencies.length; i++) {
+                    if (!dependencies[i].hasProblem() && !dependencies[i].isCompletelyEvicted()) {
+                        DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
+                        if (dd == null) {
+                            ModuleId mid = dependencies[i].getModuleId();
+                            IvyNode tlDep = (IvyNode)topLevelDeps.get(mid);
+                            if (tlDep != null) {
+                                dd = tlDep.getDependencyDescriptor(root);
+                            }
+                        }
                         if (dd != null) {
                             ModuleRevisionId depResolvedId = dependencies[i].getResolvedId();
                             ModuleDescriptor depDescriptor = dependencies[i].getDescriptor();
@@ -294,7 +315,8 @@ public class ResolveEngine {
                             
                             // The evicted modules have no description, so we can't put the status
                             String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
-                            props.put(depRevisionId.encodeToString(), rev + " " + status + " " + forcedRev);
+                            Message.debug("storing dependency " + depResolvedId + " in props");
+                            props.put(depRevisionId.encodeToString(), rev + " " + status + " " + forcedRev + " " + depResolvedId.getBranch());
                         }
                     }
                 }

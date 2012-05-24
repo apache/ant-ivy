@@ -5285,6 +5285,56 @@ public class ResolveTest extends TestCase {
         ivy.deliver(pubrev, deliveryPattern, dopts);
     }
 
+    public void testIVY1300() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1300/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(
+            new File("test/repositories/IVY-1300/assembly-ivy.xml").toURL(), opts);
+        assertFalse(report.hasError());
+        
+        ModuleRevisionId modAExpectedRevId = ModuleRevisionId.newInstance("myorg", "modA", "trunk", "5");
+        ModuleRevisionId modBExpectedRevId = ModuleRevisionId.newInstance("myorg", "modB", "releasebranch", "1");
+
+        // check that the resolve report has the expected results, namely that trunk/5 is considered later than branch/1 
+        // purely because 5>1. Of course it is more likely that we would want to consider this a 'bad comparison', but 
+        // this Unit Test is not about that. It is about inconsistency of results between the resolve report and the 
+        // delivered descriptor. In fact the delivered descriptor is out of step, because retrieve and the report both 
+        // agree that trunk/5 is selected. Deliver begs to differ.
+
+        Set reportMrids = report.getConfigurationReport("default").getModuleRevisionIds();
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] { modAExpectedRevId, modBExpectedRevId })),
+            reportMrids);
+        
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] { "*" });
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+        
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "releasebranch", "1"), dds[1].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "trunk", "5"), dds[0].getDependencyRevisionId());
+    }
+
     public void testUseCacheOnly() throws Exception {
         ResolveOptions option = getResolveOptions(new String[] {"*"}).setValidate(false);
         URL url = new File("test/repositories/1/usecacheonly/mod1/ivys/ivy-1.0.xml").toURI()

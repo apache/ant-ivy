@@ -23,7 +23,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -46,6 +48,7 @@ public class IvyDeliverTest extends TestCase {
 
     protected void setUp() throws Exception {
         cleanTestDir();
+        cleanRetrieveDir();
         cleanRep();
         createCache();
         project = new Project();
@@ -66,6 +69,7 @@ public class IvyDeliverTest extends TestCase {
     protected void tearDown() throws Exception {
         cleanCache();
         cleanTestDir();
+        cleanRetrieveDir();
         cleanRep();
     }
 
@@ -83,6 +87,13 @@ public class IvyDeliverTest extends TestCase {
         del.execute();
     }
 
+    private void cleanRetrieveDir() {
+        Delete del = new Delete();
+        del.setProject(new Project());
+        del.setDir(new File("build/test/retrieve"));
+        del.execute();
+    }
+    
     private void cleanRep() {
         Delete del = new Delete();
         del.setProject(new Project());
@@ -394,8 +405,28 @@ public class IvyDeliverTest extends TestCase {
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), 
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"), 
             dds[0].getDependencyRevisionId());
+
+        IvyRetrieve ret = new IvyRetrieve();
+        ret.setProject(project);
+        ret.setPattern("build/test/retrieve/[artifact]-[revision].[ext]");
+        ret.execute();
+
+        File list = new File("build/test/retrieve");
+        String[] files = list.list();
+        HashSet actualFileSet = new HashSet(Arrays.asList(files));
+        HashSet expectedFileSet = new HashSet();
+        for (int i = 0; i < dds.length; i++) {
+            DependencyDescriptor dd = dds[i];
+            String name = dd.getDependencyId().getName();
+            String rev = dd.getDependencyRevisionId().getRevision();
+            String ext = "jar";
+            String artifact = name + "-" + rev + "." + ext;
+            expectedFileSet.add(artifact);
+        }
+        assertEquals("Delivered Ivy descriptor inconsistent with retrieved artifacts",
+            expectedFileSet, actualFileSet);
     }
 
     public void testWithDynEvicted2() throws Exception {
@@ -421,10 +452,31 @@ public class IvyDeliverTest extends TestCase {
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), 
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"), 
             dds[1].getDependencyRevisionId());
-    }
 
+        IvyRetrieve ret = new IvyRetrieve();
+        ret.setProject(project);
+        ret.setPattern("build/test/retrieve/[artifact]-[revision].[ext]");
+        ret.execute();
+
+        File list = new File("build/test/retrieve");
+        String[] files = list.list();
+        HashSet actualFileSet = new HashSet(Arrays.asList(files));
+        HashSet expectedFileSet = new HashSet();
+        for (int i = 0; i < dds.length; i++) {
+            DependencyDescriptor dd = dds[i];
+            String name = dd.getDependencyId().getName();
+            String rev = dd.getDependencyRevisionId().getRevision();
+            String ext = "jar";
+            String artifact = name + "-" + rev + "." + ext;
+            expectedFileSet.add(artifact);
+        }
+        assertEquals("Delivered Ivy descriptor inconsistent with retrieved artifacts",
+            expectedFileSet, actualFileSet);
+        list.delete();
+    }
+    
     public void testReplaceImportedConfigurations() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-import-confs.xml");
         IvyResolve res = new IvyResolve();
