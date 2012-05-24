@@ -181,7 +181,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         while (itMd.hasNext()) {
             ModuleDescriptor md = (ModuleDescriptor) itMd.next();
             IvyNode node = data.getNode(md.getModuleRevisionId());
-            if (node != null) {
+            if (node != null && node.getDescriptor() != null) {
                 // already resolved import, no need to go further
                 return new ResolvedResource[] {buildResolvedCapabilityMd(dd, node.getDescriptor())};
             }

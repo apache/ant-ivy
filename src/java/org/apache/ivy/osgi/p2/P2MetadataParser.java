@@ -37,6 +37,7 @@ import org.apache.ivy.osgi.p2.PropertiesParser.PropertiesHandler;
 import org.apache.ivy.osgi.util.DelegetingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -359,6 +360,8 @@ public class P2MetadataParser implements XMLInputParser {
                     Version version = ((ProvidedHandler) child).version;
                     String type = namespace2Type(((ProvidedHandler) child).namespace);
                     if (type == null) {
+                        Message.debug("Unsupported provided capability "
+                                + ((ProvidedHandler) child).namespace + " " + name + " " + version);
                         return;
                     }
                     BundleCapability capability;
@@ -425,7 +428,12 @@ public class P2MetadataParser implements XMLInputParser {
                     String name = ((RequiredHandler) child).name;
                     VersionRange range = ((RequiredHandler) child).range;
                     String type = namespace2Type(((RequiredHandler) child).namespace);
-                    requirements.add(new BundleRequirement(type, name, range, null));
+                    if (type == null) {
+                        Message.debug("Unsupported required capability "
+                                + ((RequiredHandler) child).namespace + " " + name + " " + range);
+                    } else {
+                        requirements.add(new BundleRequirement(type, name, range, null));
+                    }
                 }
             });
         }

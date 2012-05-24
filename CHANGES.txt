@@ -128,6 +128,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)
 - FIX: Delivered ivy descriptor inconsistent with resolve report / retrieve and other post-resolve actions (IVY-1300) (thanks to Ed Burcher)
+- FIX: The Updatesite resolver is downloading Eclipse features instead of Eclipse bundle/plugin
 
    2.3.0-rc1
 =====================================
