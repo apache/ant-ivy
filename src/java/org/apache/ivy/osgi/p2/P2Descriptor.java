@@ -71,7 +71,11 @@ public class P2Descriptor extends RepoDescriptor {
         }
     }
 
-    public void addArtifactUrl(String id, Version version, String url) {
+    public void addArtifactUrl(String classifier, String id, Version version, String url) {
+        if (!classifier.equals("osgi.bundle")) {
+            // we only support OSGi bundle, no Eclipse feature or anything else
+            return;
+        }
         Map/* <Version, String> */byVersion = (Map) artifactUrlPatterns.get(id);
         if (byVersion == null) {
             byVersion = new HashMap();

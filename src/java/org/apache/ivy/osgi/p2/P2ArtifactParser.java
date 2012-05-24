@@ -163,7 +163,7 @@ public class P2ArtifactParser implements XMLInputParser {
                     P2Artifact a = ((ArtifactHandler) child).p2Artifact;
                     String url = (String) patternsByClassifier.get(a.getClassifier());
                     url = url.replaceAll("\\$\\{repoUrl\\}", repoUrl);
-                    p2Descriptor.addArtifactUrl(a.getId(), a.getVersion(), url);
+                    p2Descriptor.addArtifactUrl(a.getClassifier(), a.getId(), a.getVersion(), url);
                 }
             });
         }
