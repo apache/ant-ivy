@@ -131,6 +131,7 @@ public class DeliverEngine {
 
         // 2) parse resolvedRevisions From properties file
         Map resolvedRevisions = new HashMap(); // Map (ModuleId -> String revision)
+        Map resolvedBranches = new HashMap(); // Map (ModuleId -> String branch)
         Map dependenciesStatus = new HashMap(); // Map (ModuleId -> String status)
         File ivyProperties = getCache().getResolvedIvyPropertiesInCache(mrid);
         if (!ivyProperties.exists()) {
@@ -148,6 +149,11 @@ public class DeliverEngine {
             ModuleRevisionId decodedMrid = ModuleRevisionId.decode(depMridStr);
             if (options.isResolveDynamicRevisions()) {
                 resolvedRevisions.put(decodedMrid, parts[0]);
+                if (parts.length >= 4) {
+                    if (parts[3] != null && !"null".equals(parts[3])) {
+                        resolvedBranches.put(decodedMrid, parts[3]);
+                    }
+                }
             }
             dependenciesStatus.put(decodedMrid, parts[1]);
             
@@ -171,14 +177,24 @@ public class DeliverEngine {
             if (rev == null) {
                 rev = dependencies[i].getDependencyRevisionId().getRevision();
             }
+            String bra = (String) resolvedBranches.get(dependencies[i].getDependencyRevisionId());
+            if (bra == null || "null".equals(bra)) {
+                bra = dependencies[i].getDependencyRevisionId().getBranch();
+            }
             String depStatus = (String) dependenciesStatus.get(dependencies[i]
                     .getDependencyRevisionId());
+            ModuleRevisionId mrid2 = null;
+            if (bra == null) {
+                mrid2 = ModuleRevisionId.newInstance(dependencies[i].getDependencyRevisionId(), rev);
+            }
+            else {
+                mrid2 = ModuleRevisionId.newInstance(dependencies[i].getDependencyRevisionId(), bra, rev);
+            }
             resolvedDependencies.put(dependencies[i].getDependencyRevisionId(), options
                     .getPdrResolver().resolve(
                         md,
                         options.getStatus(),
-                        ModuleRevisionId
-                                .newInstance(dependencies[i].getDependencyRevisionId(), rev),
+                        mrid2,
                         depStatus));
         }
 
@@ -194,19 +210,22 @@ public class DeliverEngine {
         confsToRemove.removeAll(Arrays.asList(confs));
 
         try {
-            XmlModuleDescriptorUpdater.update(ivyFileURL, publishedIvy,
-                    new UpdateOptions()
-                        .setSettings(settings)
-                        .setResolvedRevisions(resolvedDependencies)
-                        .setStatus(options.getStatus())
-                        .setRevision(revision)
-                        .setBranch(options.getPubBranch())
-                        .setPubdate(options.getPubdate())
-                        .setGenerateRevConstraint(options.isGenerateRevConstraint())
-                        .setMerge(options.isMerge())
-                        .setMergedDescriptor(md)
-                        .setConfsToExclude((String[]) confsToRemove
-                            .toArray(new String[confsToRemove.size()])));
+            UpdateOptions opts = new UpdateOptions()
+            .setSettings(settings)
+            .setResolvedRevisions(resolvedDependencies)
+            .setStatus(options.getStatus())
+            .setRevision(revision)
+            .setBranch(options.getPubBranch())
+            .setPubdate(options.getPubdate())
+            .setGenerateRevConstraint(options.isGenerateRevConstraint())
+            .setMerge(options.isMerge())
+            .setMergedDescriptor(md)
+            .setConfsToExclude((String[]) confsToRemove
+                .toArray(new String[confsToRemove.size()]));
+            if (!resolvedBranches.isEmpty()) {
+                opts = opts.setResolvedBranches(resolvedBranches);
+            }
+            XmlModuleDescriptorUpdater.update(ivyFileURL, publishedIvy, opts);
         } catch (SAXException ex) {
             throw new RuntimeException("bad ivy file in cache for " + mrid
                     + ": please clean '" + ivyFile + "' and resolve again", ex);
