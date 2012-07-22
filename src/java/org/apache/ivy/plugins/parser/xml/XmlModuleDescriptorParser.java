@@ -232,6 +232,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             settings = ivySettings;
             configureModuleInheritanceRepository();
         }
+
         /**
          * Configure module inheritance repository (repository containning all path references 
          * to parent modules). Basicaly it checks if module inheritance repository exist 
@@ -428,13 +429,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
             //check on filesystem based on location attribute (for dev ONLY)
             try {
-                checkParentModuleOnFilesystem(location);
+                checkParentModuleOnFilesystem(location, parentMrid);
             } catch (IOException e) {
                 Message.warn("Unable to parse included ivy file " + location + ": " 
                     + e.getMessage());
             }
             
-            // resolve parent from module inheritance repository
+            // Resolve parent module descriptor from module inheritance repository
             parent = resolveParentFromModuleInheritanceRepository(parentMrid);
             
             // if not found, tries to resolve using repositories
@@ -616,22 +617,30 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * Check if parent module is reachable using location attribute (for dev purpose).
          * If parent module is reachable it will be registered in module inheritance repository 
          * @param location a given location 
+         * @param parentMrid 
          * @throws IOException
          * @throws ParseException 
          */
-        protected void checkParentModuleOnFilesystem(String location) throws IOException, ParseException {
-            URL url =getSettings().getRelativeUrlResolver().getURL(descriptorURL, location);
-            //is parent module reachable using location attribute ?
-            if (url.openConnection().getContentLength() >0 ) {
-                IvySettings ivysettings = IvyContext.getContext().getSettings();
-                URLResolver urlResolver= (URLResolver) ivysettings.getResolver(MODULE_INHERITANCE_REPOSITORY);
-                if (urlResolver == null) {
-                    throw new ParseException("Unable to find module inheritance repository", 0);
-                } 
-                
-                if (!urlResolver.getIvyPatterns().contains(url.toExternalForm())) {
-                    Message.debug("Registering parent module into module inheritance repository, parent module location is "+url.toExternalForm());
-                    urlResolver.addIvyPattern(url.toExternalForm());
+        protected void checkParentModuleOnFilesystem(String location, ModuleRevisionId parentMrid) throws IOException, ParseException {
+            IvyContext ivyContext = IvyContext.getContext();
+            File file = new File(location);
+            URL url = null;
+            if (file.isAbsolute()) {
+                url = getSettings().getRelativeUrlResolver().getURL(descriptorURL,
+                    file.getAbsolutePath(), location);
+            } else {
+                url = getSettings().getRelativeUrlResolver().getURL(descriptorURL, location);
+            }
+            // Is parent module reachable using location attribute?
+            if (url.openConnection().getContentLength() > 0) {
+                String urlString = url.toExternalForm();
+                if (ivyContext.getSettings().getResolver(getModuleInheritanceRepositoryParentResolverName(parentMrid)) == null) {
+                    Message.debug("Registering parent module into module inheritance repository map. Parent module location: " + urlString);
+                    URLResolver parentModuleResolver = new URLResolver();
+                    parentModuleResolver.setName(getModuleInheritanceRepositoryParentResolverName(parentMrid));
+                    parentModuleResolver.addIvyPattern(url.toExternalForm());
+                    // Do we even need to be adding this resolver to the Ivy settings considering that it's being placed in the map and not being used elsewhere?
+                    ivyContext.getSettings().addResolver(parentModuleResolver);
                 }
             }
         }
@@ -665,13 +674,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         /**
-         * Resolve parent module from module inhertance repository
+         * Resolve parent module from module inheritance repository
          * @param parentMrid a given {@link ModuleRevisionId} to find
          * @return a {@link ModuleDescriptor} if found. Return null if no {@link ModuleDescriptor} was found
          * @throws ParseException
          */
         protected ModuleDescriptor resolveParentFromModuleInheritanceRepository(ModuleRevisionId parentMrid) throws ParseException {
-            Message.debug("Trying to load included ivy file from module inheritance repository " );
+            Message.debug("Trying to resolve included ivy file from module inheritance repository " );
             DependencyDescriptor dd = new DefaultDependencyDescriptor(parentMrid, true);
             ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
             ResolveOptions options = new ResolveOptions();
@@ -679,7 +688,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             options.setDownload(false);
             ResolveData data = new ResolveData(engine, options);
 
-            DependencyResolver resolver = IvyContext.getContext().getSettings().getResolver(MODULE_INHERITANCE_REPOSITORY);
+            DependencyResolver resolver = IvyContext.getContext().getSettings().getResolver(getModuleInheritanceRepositoryParentResolverName(parentMrid));
+            // The parent resolver will be null if its dev-only filesystem path hasn't been specified via the location attribute of the extends element. 
+            if (resolver == null) {
+                return null;
+            }
             dd = NameSpaceHelper.toSystem(dd, getSettings().getContextNamespace());
             ResolvedModuleRevision otherModule = resolver.getDependency(dd, data);
             if (otherModule != null) {
@@ -687,6 +700,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else {
                 return null;
             }
+        }
+        
+        private static String getModuleInheritanceRepositoryParentResolverName(ModuleRevisionId parentMrid) {
+            return MODULE_INHERITANCE_REPOSITORY + "-" + parentMrid.toString();
         }
 
         protected void publicationsStarted(Attributes attributes) {
