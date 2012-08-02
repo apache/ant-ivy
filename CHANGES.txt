@@ -48,7 +48,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Gibson
 	Mitch Gitman
 	Scott Goldstein
-	Pierre Hägnestrand
+	Pierre Hï¿½gnestrand
 	Scott Hebert
 	Tobias Himstedt
 	Aaron Hachez
@@ -133,6 +133,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy:buildlist task confused by extends feature using two parents (IVY-1363) (thanks to Mitch Gitman and Jean-Louis Boudart)
 - FIX: ivy.xml extends feature complains about Windows filesystem path (IVY-1359) (thanks to Mitch Gitman and Jean-Louis Boudart)
 - FIX: buildlist task chokes on absolute path to parent Ivy module (IVY-1364) (thanks to Mitch Gitman and Jean-Louis Boudart)
+
+- IMPROVEMENT: add support for source bundles from p2 repositories
 
    2.3.0-rc1
 =====================================
@@ -736,7 +738,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: IOException during publish causes NullPointerException (IVY-371)
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hï¿½gnestrand)
 
 
    version 1.4.1 - 2006-11-09

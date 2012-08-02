@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.jar.Manifest;
 
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
+import org.apache.tools.ant.util.ReaderInputStream;
 
 /**
  * Provides an OSGi manifest parser.
@@ -59,6 +61,8 @@ public class ManifestParser {
 
     private static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment";
 
+    private static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle";
+
     private static final String ATTR_RESOLUTION = "resolution";
 
     private static final String ATTR_VERSION = "version";
@@ -79,6 +83,13 @@ public class ManifestParser {
         final FileInputStream fis = new FileInputStream(manifestFile);
         final BundleInfo parseManifest = parseManifest(fis);
         fis.close();
+        return parseManifest;
+    }
+
+    public static BundleInfo parseManifest(String manifest) throws IOException, ParseException {
+        final ReaderInputStream ris = new ReaderInputStream(new StringReader(manifest));
+        final BundleInfo parseManifest = parseManifest(ris);
+        ris.close();
         return parseManifest;
     }
 
@@ -167,6 +178,22 @@ public class ManifestParser {
 
         parseCapability(bundleInfo, mainAttributes, EXPORT_SERVICE, BundleInfo.SERVICE_TYPE);
 
+        // handle Eclipse specific source attachement
+        String eclipseSourceBundle = mainAttributes.getValue(ECLIPSE_SOURCE_BUNDLE);
+        if (eclipseSourceBundle != null) {
+            bundleInfo.setSource(true);
+            ManifestHeaderValue eclipseSourceBundleValue = new ManifestHeaderValue(
+                    eclipseSourceBundle);
+            ManifestHeaderElement element = (ManifestHeaderElement) eclipseSourceBundleValue
+                    .getElements().iterator().next();
+            String symbolicNameTarget = (String) element.getValues().iterator().next();
+            bundleInfo.setSymbolicNameTarget(symbolicNameTarget);
+            String v = (String) element.getAttributes().get(ATTR_VERSION);
+            if (v != null) {
+                bundleInfo.setVersionTarget(new Version(v));
+            }
+        }
+
         return bundleInfo;
     }
 
@@ -233,4 +260,38 @@ public class ManifestParser {
         return new Version(v);
     }
 
+    /**
+     * Ensure that the lines are not longer than 72 characters, so it can be parsed by the
+     * {@link Manifest} class
+     * 
+     * @param manifest
+     * @return
+     */
+    public static String formatLines(String manifest) {
+        StringBuffer buffer = new StringBuffer(manifest.length());
+        String[] lines = manifest.split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].length() <= 72) {
+                buffer.append(lines[i]);
+                buffer.append('\n');
+            } else {
+                buffer.append(lines[i].substring(0, 72));
+                buffer.append("\n ");
+                int n = 72;
+                while (n <= lines[i].length() - 1) {
+                    int end = n + 71;
+                    if (end > lines[i].length()) {
+                        end = lines[i].length();
+                    }
+                    buffer.append(lines[i].substring(n, end));
+                    buffer.append('\n');
+                    if (end != lines[i].length()) {
+                        buffer.append(' ');
+                    }
+                    n = end;
+                }
+            }
+        }
+        return buffer.toString();
+    }
 }

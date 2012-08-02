@@ -33,6 +33,7 @@ import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
 import org.apache.ivy.osgi.core.ExportPackage;
+import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.osgi.p2.PropertiesParser.PropertiesHandler;
 import org.apache.ivy.osgi.util.DelegetingHandler;
 import org.apache.ivy.osgi.util.Version;
@@ -41,6 +42,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class P2MetadataParser implements XMLInputParser {
 
@@ -57,6 +59,7 @@ public class P2MetadataParser implements XMLInputParser {
         } catch (ParserConfigurationException e) {
             throw new SAXException(e);
         }
+        p2Descriptor.finish();
     }
 
     static class RepositoryHandler extends DelegetingHandler {
@@ -234,6 +237,13 @@ public class P2MetadataParser implements XMLInputParser {
             });
             addChild(new ProvidesHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
+                    String eclipseType = ((ProvidesHandler) child).eclipseType;
+                    if ("source".equals(eclipseType)) {
+                        // this is some source of some bundle
+                        bundleInfo.setSource(true);
+                        // we need to parse the manifest in the toupointData to figure out the
+                        // targeted bundle
+                    }
                     Iterator it = ((ProvidesHandler) child).capabilities.iterator();
                     while (it.hasNext()) {
                         bundleInfo.addCapability((BundleCapability) it.next());
@@ -268,10 +278,52 @@ public class P2MetadataParser implements XMLInputParser {
             // public void childHanlded(DelegetingHandler child) {
             // }
             // });
-            // addChild(new TouchpointDataHandler(), new ChildElementHandler() {
-            // public void childHanlded(DelegetingHandler child) {
-            // }
-            // });
+            addChild(new TouchpointDataHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) throws SAXParseException {
+                    if (!bundleInfo.isSource()) {
+                        // we only care about parsing the manifest if it is a source
+                        return;
+                    }
+                    String manifest = ((TouchpointDataHandler) child).manifest;
+                    if (manifest != null) {
+                        try {
+                            // Eclipse may have serialized a little bit weirdly
+                            manifest = ManifestParser.formatLines(manifest.trim());
+                            BundleInfo embeddedInfo = ManifestParser.parseManifest(manifest);
+                            if (!embeddedInfo.isSource()) {
+                                throw new SAXParseException(
+                                        "Expecting an embedded manifest declaring being a source",
+                                        child.getLocator());
+                            }
+                            String symbolicNameTarget = embeddedInfo.getSymbolicNameTarget();
+                            if (symbolicNameTarget == null) {
+                                throw new SAXParseException(
+                                        "Expecting a symbolic name in the source header of the embedded manifest",
+                                        child.getLocator());
+                            }
+                            Version versionTarget = embeddedInfo.getVersionTarget();
+                            if (versionTarget == null) {
+                                throw new SAXParseException(
+                                        "Expecting a version in the source header of the embedded manifest",
+                                        child.getLocator());
+                            }
+                            bundleInfo.setSymbolicNameTarget(symbolicNameTarget);
+                            bundleInfo.setVersionTarget(versionTarget);
+                        } catch (IOException e) {
+                            // now way, we are in ram
+                            SAXParseException spe = new SAXParseException(e.getMessage(), child
+                                    .getLocator());
+                            spe.initCause(e);
+                            throw spe;
+                        } catch (ParseException e) {
+                            SAXParseException spe = new SAXParseException(e.getMessage(), child
+                                    .getLocator());
+                            spe.initCause(e);
+                            throw spe;
+                        }
+                    }
+                }
+            });
             // addChild(new LicensesHandler(), new ChildElementHandler() {
             // public void childHanlded(DelegetingHandler child) {
             // }
@@ -280,10 +332,10 @@ public class P2MetadataParser implements XMLInputParser {
             // public void childHanlded(DelegetingHandler child) {
             // }
             // });
-            addChild(new ChangesHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                }
-            });
+            // addChild(new ChangesHandler(), new ChildElementHandler() {
+            // public void childHanlded(DelegetingHandler child) {
+            // }
+            // });
 
         }
 
@@ -352,25 +404,33 @@ public class P2MetadataParser implements XMLInputParser {
 
         List capabilities;
 
+        String eclipseType;
+
         public ProvidesHandler() {
             super(PROVIDES);
             addChild(new ProvidedHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     String name = ((ProvidedHandler) child).name;
                     Version version = ((ProvidedHandler) child).version;
-                    String type = namespace2Type(((ProvidedHandler) child).namespace);
-                    if (type == null) {
-                        Message.debug("Unsupported provided capability "
-                                + ((ProvidedHandler) child).namespace + " " + name + " " + version);
-                        return;
-                    }
-                    BundleCapability capability;
-                    if (type == BundleInfo.PACKAGE_TYPE) {
-                        capability = new ExportPackage(name, version);
+                    String namespace = ((ProvidedHandler) child).namespace;
+                    if (namespace.equals("org.eclipse.equinox.p2.eclipse.type")) {
+                        eclipseType = ((ProvidedHandler) child).name;
                     } else {
-                        capability = new BundleCapability(type, name, version);
+                        String type = namespace2Type(namespace);
+                        if (type == null) {
+                            Message.debug("Unsupported provided capability "
+                                    + ((ProvidedHandler) child).namespace + " " + name + " "
+                                    + version);
+                            return;
+                        }
+                        BundleCapability capability;
+                        if (type == BundleInfo.PACKAGE_TYPE) {
+                            capability = new ExportPackage(name, version);
+                        } else {
+                            capability = new BundleCapability(type, name, version);
+                        }
+                        capabilities.add(capability);
                     }
-                    capabilities.add(capability);
                 }
             });
         }
@@ -587,64 +647,74 @@ public class P2MetadataParser implements XMLInputParser {
     // }
     //
     // }
-    //
-    // static class TouchpointDataHandler extends DelegetingHandler {
-    //
-    // private static final String TOUCHPOINTDATA = "touchpointData";
-    //
-    // private static final String SIZE = "size";
-    //
-    // public TouchpointDataHandler() {
-    // super(TOUCHPOINTDATA);
-    // addChild(new InstructionsHandler(), new ChildElementHandler() {
-    // public void childHanlded(DelegetingHandler child) {
-    // }
-    // });
-    // }
-    //
-    // protected void handleAttributes(Attributes atts) {
-    // String size = atts.getValue(SIZE);
-    // }
-    //
-    // }
-    //
-    // static class InstructionsHandler extends DelegetingHandler {
-    //
-    // private static final String INSTRUCTIONS = "instructions";
-    //
-    // private static final String SIZE = "size";
-    //
-    // public InstructionsHandler() {
-    // super(INSTRUCTIONS);
-    // addChild(new InstructionHandler(), new ChildElementHandler() {
-    // public void childHanlded(DelegetingHandler child) {
-    // }
-    // });
-    // }
-    //
-    // protected void handleAttributes(Attributes atts) {
-    // String size = atts.getValue(SIZE);
-    // }
-    //
-    // }
-    //
-    // static class InstructionHandler extends DelegetingHandler {
-    //
-    // private static final String INSTRUCTION = "instruction";
-    //
-    // private static final String KEY = "key";
-    //
-    // public InstructionHandler() {
-    // super(INSTRUCTION);
-    // setBufferingChar(true);
-    // }
-    //
-    // protected void handleAttributes(Attributes atts) {
-    // String size = atts.getValue(KEY);
-    // }
-    //
-    // }
-    //
+
+    static class TouchpointDataHandler extends DelegetingHandler {
+
+        private static final String TOUCHPOINTDATA = "touchpointData";
+
+        // private static final String SIZE = "size";
+
+        String manifest;
+
+        public TouchpointDataHandler() {
+            super(TOUCHPOINTDATA);
+            addChild(new InstructionsHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    manifest = ((InstructionsHandler) child).manifest;
+                }
+            });
+        }
+
+        protected void handleAttributes(Attributes atts) {
+            // String size = atts.getValue(SIZE);
+        }
+
+    }
+
+    static class InstructionsHandler extends DelegetingHandler {
+
+        private static final String INSTRUCTIONS = "instructions";
+
+        // private static final String SIZE = "size";
+
+        String manifest;
+
+        public InstructionsHandler() {
+            super(INSTRUCTIONS);
+            addChild(new InstructionHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    if (((InstructionHandler) child).key.equals("manifest")) {
+                        manifest = ((InstructionHandler) child).getBufferedChars();
+                    }
+                }
+            });
+        }
+
+        protected void handleAttributes(Attributes atts) {
+            // String size = atts.getValue(SIZE);
+        }
+
+    }
+
+    static class InstructionHandler extends DelegetingHandler {
+
+        private static final String INSTRUCTION = "instruction";
+
+        private static final String KEY = "key";
+
+        String key;
+
+        public InstructionHandler() {
+            super(INSTRUCTION);
+            setBufferingChar(true);
+        }
+
+        protected void handleAttributes(Attributes atts) {
+            key = atts.getValue(KEY);
+        }
+
+    }
+
     // static class LicensesHandler extends DelegetingHandler {
     //
     // private static final String LICENSES = "licenses";

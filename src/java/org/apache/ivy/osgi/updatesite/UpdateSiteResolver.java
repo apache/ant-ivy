@@ -65,11 +65,11 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
             throw new RuntimeException("IO issue while trying to read the update site ("
                     + e.getMessage() + ")");
         } catch (ParseException e) {
-            throw new RuntimeException("Failed to parse the updatesite (" + e.getMessage() + ")");
+            throw new RuntimeException("Failed to parse the updatesite (" + e.getMessage() + ")", e);
         } catch (SAXException e) {
-            throw new RuntimeException("Illformed updatesite (" + e.getMessage() + ")");
+            throw new RuntimeException("Illformed updatesite (" + e.getMessage() + ")", e);
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Illformed url (" + e.getMessage() + ")");
+            throw new RuntimeException("Illformed url (" + e.getMessage() + ")", e);
         }
     }
 }

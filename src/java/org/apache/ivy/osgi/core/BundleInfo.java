@@ -64,6 +64,14 @@ public class BundleInfo {
 
     private URI uri;
 
+    private boolean isSource = false;
+
+    /** the symbolic name of the bundle it is source of */
+    private String symbolicNameTarget;
+
+    /** the version of the bundle it is source of */
+    private Version versionTarget;
+
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
         this.version = version;
@@ -82,6 +90,12 @@ public class BundleInfo {
         builder.append(", version=");
         builder.append(version);
         builder.append("]");
+        if (isSource) {
+            builder.append(" source of ");
+            builder.append(symbolicNameTarget);
+            builder.append("@");
+            builder.append(versionTarget);
+        }
         return builder.toString();
     }
 
@@ -177,6 +191,30 @@ public class BundleInfo {
         this.executionEnvironments = executionEnvironment;
     }
 
+    public void setSource(boolean isSource) {
+        this.isSource = isSource;
+    }
+
+    public boolean isSource() {
+        return isSource;
+    }
+
+    public void setSymbolicNameTarget(String symbolicNameTarget) {
+        this.symbolicNameTarget = symbolicNameTarget;
+    }
+
+    public String getSymbolicNameTarget() {
+        return symbolicNameTarget;
+    }
+
+    public void setVersionTarget(Version versionTarget) {
+        this.versionTarget = versionTarget;
+    }
+
+    public Version getVersionTarget() {
+        return versionTarget;
+    }
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -186,6 +224,10 @@ public class BundleInfo {
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result
                 + ((executionEnvironments == null) ? 0 : executionEnvironments.hashCode());
+        result = prime * result + (isSource ? 1231 : 1237);
+        result = prime * result
+                + ((symbolicNameTarget == null) ? 0 : symbolicNameTarget.hashCode());
+        result = prime * result + ((versionTarget == null) ? 0 : versionTarget.hashCode());
         return result;
     }
 
@@ -233,6 +275,23 @@ public class BundleInfo {
                 return false;
             }
         } else if (!executionEnvironments.equals(other.executionEnvironments)) {
+            return false;
+        }
+        if (isSource != other.isSource) {
+            return false;
+        }
+        if (symbolicNameTarget == null) {
+            if (other.symbolicNameTarget != null) {
+                return false;
+            }
+        } else if (!symbolicNameTarget.equals(other.symbolicNameTarget)) {
+            return false;
+        }
+        if (versionTarget == null) {
+            if (other.versionTarget != null) {
+                return false;
+            }
+        } else if (!versionTarget.equals(other.versionTarget)) {
             return false;
         }
         return true;

@@ -113,23 +113,8 @@ public class BundleInfoAdapter {
 
         URI uri = bundle.getUri();
         if (uri != null) {
-            DefaultArtifact artifact = null;
-            if ("ivy".equals(uri.getScheme())) {
-                artifact = decodeIvyURI(uri);
-            } else {
-                if (!uri.isAbsolute()) {
-                    uri = baseUri.resolve(uri);
-                }
-                try {
-                    artifact = new DefaultArtifact(mrid, null, bundle.getSymbolicName(), "jar",
-                            "jar", new URL(uri.toString()), null);
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException("Unable to make the uri into the url", e);
-                }
-            }
-            if (artifact != null) {
-                md.addArtifact(CONF_NAME_DEFAULT, artifact);
-            }
+            DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar");
+            md.addArtifact(CONF_NAME_DEFAULT, artifact);
         }
 
         if (profileProvider != null) {
@@ -159,6 +144,24 @@ public class BundleInfoAdapter {
         }
 
         return md;
+    }
+
+    public static DefaultArtifact buildArtifact(ModuleRevisionId mrid, URI baseUri, URI uri, String type) {
+        DefaultArtifact artifact;
+        if ("ivy".equals(uri.getScheme())) {
+            artifact = decodeIvyURI(uri);
+        } else {
+            if (!uri.isAbsolute()) {
+                uri = baseUri.resolve(uri);
+            }
+            try {
+                artifact = new DefaultArtifact(mrid, null, mrid.getName(), type, "jar", new URL(
+                        uri.toString()), null);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Unable to make the uri into the url", e);
+            }
+        }
+        return artifact;
     }
 
     public static List/*<String>*/ getConfigurations(BundleInfo bundle) {

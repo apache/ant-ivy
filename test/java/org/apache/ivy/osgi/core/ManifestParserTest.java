@@ -65,4 +65,23 @@ public class ManifestParserTest extends TestCase {
         assertEquals(1, bundleInfo.getImports().size());
         assertTrue(bundleInfo.getImports().toString().indexOf("com.acme.charlie") != -1);
     }
+
+    public void testFormatLines() throws Exception {
+        assertEquals("foo bar\n", ManifestParser.formatLines("foo bar"));
+        assertEquals(
+            "123456789012345678901234567890123456789012345678901234567890123456789012\n",
+            ManifestParser
+                    .formatLines("123456789012345678901234567890123456789012345678901234567890123456789012"));
+        assertEquals(
+            "123456789012345678901234567890123456789012345678901234567890123456789012\n 3\n",
+            ManifestParser
+                    .formatLines("1234567890123456789012345678901234567890123456789012345678901234567890123"));
+        assertEquals("foo bar\n"
+                + "123456789012345678901234567890123456789012345678901234567890123456789012\n"
+                + " 12345678901234567890123456789012345678901234567890123456789012345678901\n"
+                + " 21234\n" + "foo bar\n", ManifestParser.formatLines("foo bar\n"
+                + "123456789012345678901234567890123456789012345678901234567890123456789012"
+                + "123456789012345678901234567890123456789012345678901234567890123456789012"
+                + "1234\n" + "foo bar\n"));
+    }
 }
