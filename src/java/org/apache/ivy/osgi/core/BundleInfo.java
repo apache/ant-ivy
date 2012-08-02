@@ -72,6 +72,8 @@ public class BundleInfo {
     /** the version of the bundle it is source of */
     private Version versionTarget;
 
+    private URI sourceURI;
+
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
         this.version = version;
@@ -191,6 +193,14 @@ public class BundleInfo {
         this.executionEnvironments = executionEnvironment;
     }
 
+    public void setSourceURI(URI sourceURI) {
+        this.sourceURI = sourceURI;
+    }
+
+    public URI getSourceURI() {
+        return sourceURI;
+    }
+
     public void setSource(boolean isSource) {
         this.isSource = isSource;
     }
@@ -228,6 +238,7 @@ public class BundleInfo {
         result = prime * result
                 + ((symbolicNameTarget == null) ? 0 : symbolicNameTarget.hashCode());
         result = prime * result + ((versionTarget == null) ? 0 : versionTarget.hashCode());
+        result = prime * result + ((sourceURI == null) ? 0 : sourceURI.hashCode());
         return result;
     }
 
@@ -292,6 +303,13 @@ public class BundleInfo {
                 return false;
             }
         } else if (!versionTarget.equals(other.versionTarget)) {
+            return false;
+        }
+        if (sourceURI == null) {
+            if (other.sourceURI != null) {
+                return false;
+            }
+        } else if (!sourceURI.equals(other.sourceURI)) {
             return false;
         }
         return true;

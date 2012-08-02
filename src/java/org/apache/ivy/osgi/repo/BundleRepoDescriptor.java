@@ -30,7 +30,7 @@ public class BundleRepoDescriptor extends RepoDescriptor {
 
     private String name;
 
-    private Long lastModified;
+    private String lastModified;
 
     public BundleRepoDescriptor(URI baseUri, ExecutionEnvironmentProfileProvider profileProvider) {
         super(baseUri, profileProvider);
@@ -44,11 +44,11 @@ public class BundleRepoDescriptor extends RepoDescriptor {
         return name;
     }
 
-    public void setLastModified(Long lastModified) {
+    public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
 
-    public Long getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 

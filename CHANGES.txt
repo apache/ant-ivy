@@ -135,6 +135,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: buildlist task chokes on absolute path to parent Ivy module (IVY-1364) (thanks to Mitch Gitman and Jean-Louis Boudart)
 
 - IMPROVEMENT: add support for source bundles from p2 repositories
+- IMPROVEMENT: add support for source URI from OBR repositories
 
    2.3.0-rc1
 =====================================

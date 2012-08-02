@@ -27,8 +27,6 @@ public class Requirement {
 
     private boolean multiple = false;
 
-    private boolean extend = false;
-
     public Requirement(String name, RequirementFilter filter) {
         this.name = name;
         this.filter = filter;
@@ -48,14 +46,6 @@ public class Requirement {
 
     public boolean isOptional() {
         return optional;
-    }
-
-    public void setExtend(boolean extend) {
-        this.extend = extend;
-    }
-
-    public boolean isExtend() {
-        return extend;
     }
 
     public void setMultiple(boolean multiple) {

@@ -116,6 +116,11 @@ public class BundleInfoAdapter {
             DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar");
             md.addArtifact(CONF_NAME_DEFAULT, artifact);
         }
+        URI sourceURI = bundle.getSourceURI();
+        if (sourceURI != null) {
+            DefaultArtifact artifact = buildArtifact(mrid, baseUri, sourceURI, "source");
+            md.addArtifact(CONF_NAME_DEFAULT, artifact);
+        }
 
         if (profileProvider != null) {
             Iterator itEnv = bundle.getExecutionEnvironments().iterator();

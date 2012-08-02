@@ -78,13 +78,7 @@ public class OBRXMLParser {
 
             repo.setName(atts.getValue(NAME));
 
-            try {
-                Long lastModified = getOptionalLongAttribute(atts, LASTMODIFIED, null);
-                repo.setLastModified(lastModified);
-            } catch (SAXParseException e) {
-                log(Message.MSG_WARN, e.getMessage() + ". It will be ignored.");
-            }
-
+            repo.setLastModified(atts.getValue(LASTMODIFIED));
         }
     }
 
@@ -112,6 +106,25 @@ public class OBRXMLParser {
             setSkipOnError(true); // if anything bad happen in any children, just ignore the
                                   // resource
 
+            addChild(new ResourceSourceHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) {
+                    String uri = child.getBufferedChars().trim();
+                    if (!uri.endsWith(".jar")) {
+                        // the maven plugin is putting some useless source url sometimes...
+                        log(Message.MSG_WARN,
+                            "A source uri is suspect, it is not ending with .jar, it is probably"
+                                    + " a pointer to a download page. Ignoring it.");
+                        return;
+                    }
+                    try {
+                        bundleInfo.setSourceURI(new URI(uri));
+                    } catch (URISyntaxException e) {
+                        log(Message.MSG_WARN, "Incorrect uri " + uri + ". The source of "
+                                + bundleInfo.getSymbolicName() + " is then ignored.");
+                        return;
+                    }
+                }
+            });
             addChild(new ResourceDescriptionHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     bundleInfo.setDescription(child.getBufferedChars().trim());
@@ -165,6 +178,11 @@ public class OBRXMLParser {
                     }
                 }
             });
+            addChild(new ExtendHandler(), new ChildElementHandler() {
+                public void childHanlded(DelegetingHandler child) throws SAXParseException {
+                    // TODO handle fragment host
+                }
+            });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -204,6 +222,17 @@ public class OBRXMLParser {
 
         protected String getCurrentElementIdentifier() {
             return bundleInfo.getSymbolicName() + "/" + bundleInfo.getVersion();
+        }
+
+    }
+
+    static class ResourceSourceHandler extends DelegetingHandler {
+
+        static final String SOURCE = "source";
+
+        public ResourceSourceHandler() {
+            super(SOURCE);
+            setBufferingChar(true);
         }
 
     }
@@ -305,9 +334,7 @@ public class OBRXMLParser {
         }
     }
 
-    static class RequireHandler extends DelegetingHandler {
-
-        static final String REQUIRE = "require";
+    static class AbstractRequirementHandler extends DelegetingHandler {
 
         static final String NAME = "name";
 
@@ -315,16 +342,14 @@ public class OBRXMLParser {
 
         static final String MULTIPLE = "multiple";
 
-        static final String EXTEND = "extend";
-
         static final String FILTER = "filter";
 
-        private Requirement requirement;
+        Requirement requirement;
 
-        private RequirementFilter filter;
+        RequirementFilter filter;
 
-        public RequireHandler() {
-            super(REQUIRE);
+        public AbstractRequirementHandler(String name) {
+            super(name);
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -343,7 +368,6 @@ public class OBRXMLParser {
 
             Boolean optional = getOptionalBooleanAttribute(atts, OPTIONAL, null);
             Boolean multiple = getOptionalBooleanAttribute(atts, MULTIPLE, null);
-            Boolean extend = getOptionalBooleanAttribute(atts, EXTEND, null);
 
             requirement = new Requirement(name, filter);
             if (optional != null) {
@@ -352,11 +376,27 @@ public class OBRXMLParser {
             if (multiple != null) {
                 requirement.setMultiple(multiple.booleanValue());
             }
-            if (extend != null) {
-                requirement.setExtend(extend.booleanValue());
-            }
         }
 
     }
 
+    static class RequireHandler extends AbstractRequirementHandler {
+
+        static final String REQUIRE = "require";
+
+        public RequireHandler() {
+            super(REQUIRE);
+        }
+
+    }
+
+    static class ExtendHandler extends AbstractRequirementHandler {
+
+        static final String EXTEND = "extend";
+
+        public ExtendHandler() {
+            super(EXTEND);
+        }
+
+    }
 }
