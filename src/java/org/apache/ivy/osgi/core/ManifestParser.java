@@ -17,11 +17,11 @@
  */
 package org.apache.ivy.osgi.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +31,6 @@ import java.util.jar.Manifest;
 
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
-import org.apache.tools.ant.util.ReaderInputStream;
 
 /**
  * Provides an OSGi manifest parser.
@@ -87,9 +86,9 @@ public class ManifestParser {
     }
 
     public static BundleInfo parseManifest(String manifest) throws IOException, ParseException {
-        final ReaderInputStream ris = new ReaderInputStream(new StringReader(manifest));
-        final BundleInfo parseManifest = parseManifest(ris);
-        ris.close();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(manifest.getBytes("UTF-8"));
+        final BundleInfo parseManifest = parseManifest(bais);
+        bais.close();
         return parseManifest;
     }
 
