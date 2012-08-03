@@ -200,7 +200,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             Collections.singletonMap(CAPABILITY_EXTRA_ATTR, md.getModuleRevisionId().toString()));
 
         DefaultModuleDescriptor capabilityMd = new DefaultModuleDescriptor(capabilityRev,
-                "release", new Date());
+                getSettings().getStatusManager().getDefaultStatus(), new Date());
 
         String useConf = BundleInfoAdapter.CONF_USE_PREFIX + dd.getDependencyRevisionId().getName();
 
