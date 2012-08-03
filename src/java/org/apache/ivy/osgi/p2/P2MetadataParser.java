@@ -59,7 +59,6 @@ public class P2MetadataParser implements XMLInputParser {
         } catch (ParserConfigurationException e) {
             throw new SAXException(e);
         }
-        p2Descriptor.finish();
     }
 
     static class RepositoryHandler extends DelegetingHandler {

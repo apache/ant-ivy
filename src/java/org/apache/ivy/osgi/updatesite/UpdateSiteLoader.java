@@ -100,6 +100,7 @@ public class UpdateSiteLoader {
         if (!populateP2Descriptor(repoUri, p2Descriptor)) {
             return null;
         }
+        p2Descriptor.finish();
         return p2Descriptor;
     }
 
