@@ -50,15 +50,25 @@ public class P2Descriptor extends RepoDescriptor {
 
     public void addBundle(BundleInfo bundleInfo) {
         if (bundleInfo.isSource()) {
+            if (bundleInfo.getSymbolicNameTarget() == null || bundleInfo.getVersionTarget() == null) {
+                Message.verbose("The source bundle " + bundleInfo.getSymbolicName()
+                        + " did declare its target. Ignoring it");
+                return;
+            }
             Map/*<String, URI>*/ byVersion = (Map) sourceURIs.get(bundleInfo.getSymbolicNameTarget());
             if (byVersion == null) {
                 byVersion = new HashMap();
                 sourceURIs.put(bundleInfo.getSymbolicNameTarget(), byVersion);
             }
             URI sourceUri = getArtifactURI(bundleInfo);
+            if (sourceUri == null) {
+                Message.verbose("The source bundle " + bundleInfo.getSymbolicName()
+                    + " has no actual artifact. Ignoring it");
+                return;
+            }
             URI old = (URI) byVersion.put(bundleInfo.getVersionTarget().toString(), sourceUri);
             if (old != null) {
-                Message.debug("Duplicate source for the bundle "
+                Message.verbose("Duplicate source for the bundle "
                         + bundleInfo.getSymbolicNameTarget() + "@" + bundleInfo.getVersionTarget()
                         + " : " + sourceUri + " is replacing " + old);
             }

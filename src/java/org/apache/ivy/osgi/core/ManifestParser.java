@@ -102,11 +102,12 @@ public class ManifestParser {
     public static BundleInfo parseManifest(Manifest manifest) throws ParseException {
         Attributes mainAttributes = manifest.getMainAttributes();
 
-        String manifestVersion = mainAttributes.getValue(BUNDLE_MANIFEST_VERSION);
-        if (manifestVersion == null) {
-            // non OSGi manifest
-            throw new ParseException("No " + BUNDLE_MANIFEST_VERSION + " in the manifest", 0);
-        }
+        // Eclipse source bundle doesn't have it. Disable it until proven actually useful
+        // String manifestVersion = mainAttributes.getValue(BUNDLE_MANIFEST_VERSION);
+        // if (manifestVersion == null) {
+        // // non OSGi manifest
+        // throw new ParseException("No " + BUNDLE_MANIFEST_VERSION + " in the manifest", 0);
+        // }
 
         String symbolicName = new ManifestHeaderValue(mainAttributes.getValue(BUNDLE_SYMBOLIC_NAME))
                 .getSingleValue();

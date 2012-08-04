@@ -191,8 +191,8 @@ public class P2MetadataParser implements XMLInputParser {
             addChild(new UnitHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     BundleInfo bundleInfo = ((UnitHandler) child).bundleInfo;
-                    if (!bundleInfo.getCapabilities().isEmpty()) {
-                        bundles.add(((UnitHandler) child).bundleInfo);
+                    if (bundleInfo != null && !bundleInfo.getCapabilities().isEmpty()) {
+                        bundles.add(bundleInfo);
                     }
                 }
             });
@@ -231,6 +231,7 @@ public class P2MetadataParser implements XMLInputParser {
                     if (category != null && Boolean.valueOf(category).booleanValue()) {
                         // this is a category definition, this is useless, skip this unit
                         child.getParent().skip();
+                        bundleInfo = null;
                     }
                 }
             });
@@ -242,6 +243,14 @@ public class P2MetadataParser implements XMLInputParser {
                         bundleInfo.setSource(true);
                         // we need to parse the manifest in the toupointData to figure out the
                         // targeted bundle
+                        // in case we won't have the proper data in the manifest, prepare the source
+                        // data from the convention
+                        String symbolicName = bundleInfo.getSymbolicName();
+                        if (symbolicName.endsWith(".source")) {
+                            bundleInfo.setSymbolicNameTarget(symbolicName.substring(0, symbolicName
+                                    .length() - 7));
+                            bundleInfo.setVersionTarget(bundleInfo.getVersion());
+                        }
                     }
                     Iterator it = ((ProvidesHandler) child).capabilities.iterator();
                     while (it.hasNext()) {
@@ -285,41 +294,44 @@ public class P2MetadataParser implements XMLInputParser {
                     }
                     String manifest = ((TouchpointDataHandler) child).manifest;
                     if (manifest != null) {
+                        // Eclipse may have serialized a little bit weirdly
+                        manifest = ManifestParser.formatLines(manifest.trim());
+                        BundleInfo embeddedInfo;
                         try {
-                            // Eclipse may have serialized a little bit weirdly
-                            manifest = ManifestParser.formatLines(manifest.trim());
-                            BundleInfo embeddedInfo = ManifestParser.parseManifest(manifest);
-                            if (!embeddedInfo.isSource()) {
-                                throw new SAXParseException(
-                                        "Expecting an embedded manifest declaring being a source",
-                                        child.getLocator());
-                            }
-                            String symbolicNameTarget = embeddedInfo.getSymbolicNameTarget();
-                            if (symbolicNameTarget == null) {
-                                throw new SAXParseException(
-                                        "Expecting a symbolic name in the source header of the embedded manifest",
-                                        child.getLocator());
-                            }
-                            Version versionTarget = embeddedInfo.getVersionTarget();
-                            if (versionTarget == null) {
-                                throw new SAXParseException(
-                                        "Expecting a version in the source header of the embedded manifest",
-                                        child.getLocator());
-                            }
-                            bundleInfo.setSymbolicNameTarget(symbolicNameTarget);
-                            bundleInfo.setVersionTarget(versionTarget);
+                            embeddedInfo = ManifestParser.parseManifest(manifest);
                         } catch (IOException e) {
-                            // now way, we are in ram
-                            SAXParseException spe = new SAXParseException(e.getMessage(), child
-                                    .getLocator());
-                            spe.initCause(e);
-                            throw spe;
+                            Message.verbose("The Manifest of the source bundle "
+                                    + bundleInfo.getSymbolicName() + " could not be parsed: "
+                                    + e.getMessage());
+                            return;
                         } catch (ParseException e) {
-                            SAXParseException spe = new SAXParseException(e.getMessage(), child
-                                    .getLocator());
-                            spe.initCause(e);
-                            throw spe;
+                            Message.verbose("The Manifest of the source bundle "
+                                    + bundleInfo.getSymbolicName() + " is ill formed: "
+                                    + e.getMessage());
+                            return;
                         }
+                        if (!embeddedInfo.isSource()) {
+                            Message.verbose("The Manifest of the source bundle "
+                                    + bundleInfo.getSymbolicName()
+                                    + " is not declaring being a source.");
+                            return;
+                        }
+                        String symbolicNameTarget = embeddedInfo.getSymbolicNameTarget();
+                        if (symbolicNameTarget == null) {
+                            Message.verbose("The Manifest of the source bundle "
+                                    + bundleInfo.getSymbolicName()
+                                    + " is not declaring a target symbolic name.");
+                            return;
+                        }
+                        Version versionTarget = embeddedInfo.getVersionTarget();
+                        if (versionTarget == null) {
+                            Message.verbose("The Manifest of the source bundle "
+                                    + bundleInfo.getSymbolicName()
+                                    + " is not declaring a target version.");
+                            return;
+                        }
+                        bundleInfo.setSymbolicNameTarget(symbolicNameTarget);
+                        bundleInfo.setVersionTarget(versionTarget);
                     }
                 }
             });
