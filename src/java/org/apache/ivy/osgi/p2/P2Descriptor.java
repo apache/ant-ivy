@@ -67,7 +67,7 @@ public class P2Descriptor extends RepoDescriptor {
                 return;
             }
             URI old = (URI) byVersion.put(bundleInfo.getVersionTarget().toString(), sourceUri);
-            if (old != null) {
+            if (old != null && !old.equals(sourceUri)) {
                 Message.verbose("Duplicate source for the bundle "
                         + bundleInfo.getSymbolicNameTarget() + "@" + bundleInfo.getVersionTarget()
                         + " : " + sourceUri + " is replacing " + old);
