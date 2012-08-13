@@ -41,6 +41,8 @@ The optional override attribute enables you to avoid overriding the previous val
         <td>Yes</td></tr>
     <tr><td>override</td><td>true if the previous value (if any) of the variable should overriden, false otherwise</td>
         <td>No, defaults to true</td></tr>
+    <tr><td>ifset</td><td>the variable will be set only if the provided 'ifset' variable is already set (Since 2.4)</td><td>No</td></tr>
+    <tr><td>unlessset</td><td>the variable will not be set unless the provided 'unlessset' variable is set (Since 2.4)</td><td>No</td></tr>
 </tbody>
 </table>
 <h1>Examples</h1>
@@ -53,6 +55,13 @@ Sets the variable myvar to the value myvalue.
 <property name="myvar" value="myvalue" override="false"/>
 </code>
 Sets the variable myvar to the value myvalue only if myvar has not been set yet.
+<hr/>
+<code type="xml">
+ <properties environment="env"/>
+ <property name="ivy.repos.server" value="${env.IVY_SERVER}" override="false" ifset="env.IVY_SERVER" />
+ <property name="ivy.repos.server" value="http://ivy:8081" override="false"/>
+</code>
+If the environment variable is set, it takes precedence over of default value.
 
 
 	</textarea>

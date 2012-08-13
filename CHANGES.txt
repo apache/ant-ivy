@@ -134,6 +134,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy.xml extends feature complains about Windows filesystem path (IVY-1359) (thanks to Mitch Gitman and Jean-Louis Boudart)
 - FIX: buildlist task chokes on absolute path to parent Ivy module (IVY-1364) (thanks to Mitch Gitman and Jean-Louis Boudart)
 
+- NEW: Support Conditional Setting of a Property (IVY-1367)
+
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories
 

@@ -497,6 +497,8 @@ public class XmlSettingsParser extends DefaultHandler {
         String name = (String) attributes.get("name");
         String value = (String) attributes.get("value");
         String override = (String) attributes.get("override");
+        String isSetVar = (String) attributes.get("ifset");
+        String unlessSetVar = (String) attributes.get("unlessset");
         if (name == null) {
             throw new IllegalArgumentException("missing attribute name on property tag");
         }
@@ -504,7 +506,7 @@ public class XmlSettingsParser extends DefaultHandler {
             throw new IllegalArgumentException("missing attribute value on property tag");
         }
         ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override)
-                .booleanValue());
+                .booleanValue(), isSetVar, unlessSetVar);
     }
 
     private void typedefStarted(Map attributes) {

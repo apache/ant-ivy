@@ -576,6 +576,20 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public void setVariable(String varName, String value, boolean overwrite) {
+        setVariable(varName, value, overwrite, null, null);
+    }
+
+    public void setVariable(String varName, String value, boolean overwrite, String ifSetVar, String unlessSetVar) {
+        if (ifSetVar != null && variableContainer.getVariable(ifSetVar) == null) {
+            Message.verbose("Not setting '" + varName + "' to '" + value + "' since '" + ifSetVar
+                + "' is not set.");
+            return;
+        }
+        if (unlessSetVar != null && variableContainer.getVariable(unlessSetVar) != null) {
+            Message.verbose("Not setting '" + varName + "' to '" + value + "' since '" + unlessSetVar
+                + "' is set.");
+            return;
+        }
         variableContainer.setVariable(varName, value, overwrite);
     }
 
