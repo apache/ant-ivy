@@ -1,0 +1,11 @@
+.classpath
+.ivy2
+bin
+build
+doc/style/.svn
+doc/xooki/.svn
+lib
+test/jar-repos
+test/test-repo/bundlerepo/*.jar
+test/test-repo/ivyrepo/org.apache.ivy.osgi
+
