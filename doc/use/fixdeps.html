@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<span class="since">since 2.4</span>
+From some resolved dependencies against an ivy.xml, generate another ivy.xml which will have all transitive dependencies declared at the resolved revision.
+
+This task is usefull to always resolve the same set of dependencies. From an ivy.xml where dependencies are declared with ranges and the immediate required modules, <tt>fixdeps</tt> will produce an ivy.xml with all dependencies, with fixed versions, and no more transitive resolve to do.
+
+Nota Bene: this task is not suited to be used in a multi project environement where some dependencies still need to be maintained loose: the one between the projects.
+
+This is a [[ant:postresolvetask post resolve task]], with all the behaviour and attributes common to all post resolve tasks.
+
+<h1>Attributes</h1>
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>tofile</td><td>The location of the ivy file to generate</td>
+        <td>Yes</td></tr>
+</tbody>
+</table>
+
+<h1>Examples</h1>
+<code type="xml">
+<ivy:fixdeps tofile="ivy-fixed.xml" />
+</code>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

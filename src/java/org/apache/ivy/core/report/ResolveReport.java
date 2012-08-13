@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -28,11 +29,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ExcludeRule;
+import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.util.filter.Filter;
 
@@ -252,7 +263,7 @@ public class ResolveReport {
      * 
      * @return The list of all dependencies.
      */
-    public List getDependencies() {
+    public List/* <IvyNode> */getDependencies() {
         return dependencies;
     }
 
@@ -262,7 +273,7 @@ public class ResolveReport {
      * 
      * @return The list of all artifacts.
      */
-    public List getArtifacts() {
+    public List/* <Artifact> */getArtifacts() {
         return artifacts;
     }
 
@@ -321,4 +332,36 @@ public class ResolveReport {
         return resolveId;
     }
 
+    public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings) {
+        DefaultModuleDescriptor fixedmd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
+                md.getStatus(), new Date());
+
+        // copy configurations
+        String[] resolvedConf = getConfigurations();
+        for (int i = 0; i < resolvedConf.length; i++) {
+            Configuration conf = md.getConfiguration(resolvedConf[i]);
+            fixedmd.addConfiguration(conf);
+        }
+
+        // get dependencies
+        for (int i = 0; i < dependencies.size(); i++) {
+            IvyNode node = (IvyNode) dependencies.get(i);
+            if (node.getAllArtifacts().length == 0) {
+                // no artifact: it was probably useful transitively, hence it is useless here
+                continue;
+            }
+            DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
+                    node.getResolvedId(), true, false, false);
+            String[] rootConfs = node.getRootModuleConfigurations();
+            for (int j = 0; j < rootConfs.length; j++) {
+                String[] targetConfs = node.getConfigurations(rootConfs[j]);
+                for (int k = 0; k < targetConfs.length; k++) {
+                    dep.addDependencyConfiguration(rootConfs[j], targetConfs[k]);
+                }
+            }
+            fixedmd.addDependency(dep);
+        }
+
+        return fixedmd;
+    }
 }
