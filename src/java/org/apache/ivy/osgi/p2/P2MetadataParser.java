@@ -503,7 +503,8 @@ public class P2MetadataParser implements XMLInputParser {
                         Message.debug("Unsupported required capability "
                                 + ((RequiredHandler) child).namespace + " " + name + " " + range);
                     } else {
-                        requirements.add(new BundleRequirement(type, name, range, null));
+                        String resolution = ((RequiredHandler) child).optional ? "optional" : null;
+                        requirements.add(new BundleRequirement(type, name, range, resolution));
                     }
                 }
             });
@@ -536,6 +537,10 @@ public class P2MetadataParser implements XMLInputParser {
 
         private static final String RANGE = "range";
 
+        private static final String OPTIONAL = "optional";
+
+        private static final String GREEDY = "greedy";
+
         String namespace;
 
         String name;
@@ -543,6 +548,10 @@ public class P2MetadataParser implements XMLInputParser {
         VersionRange range;
 
         String filter;
+
+        boolean greedy;
+
+        boolean optional;
 
         public RequiredHandler() {
             super(REQUIRED);
@@ -553,7 +562,7 @@ public class P2MetadataParser implements XMLInputParser {
             });
         }
 
-        protected void handleAttributes(Attributes atts) {
+        protected void handleAttributes(Attributes atts) throws SAXParseException {
             namespace = atts.getValue(NAMESPACE);
             name = atts.getValue(NAME);
             try {
@@ -561,6 +570,8 @@ public class P2MetadataParser implements XMLInputParser {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
+            greedy = getOptionalBooleanAttribute(atts, GREEDY, Boolean.TRUE).booleanValue();
+            optional = getOptionalBooleanAttribute(atts, OPTIONAL, Boolean.FALSE).booleanValue();
         }
 
     }
