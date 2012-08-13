@@ -230,31 +230,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings) {
             super(parser);
             settings = ivySettings;
-            configureModuleInheritanceRepository();
-        }
-
-        /**
-         * Configure module inheritance repository (repository containning all path references 
-         * to parent modules). Basicaly it checks if module inheritance repository exist 
-         * in current ivy context, otherwise it will create one as a {@link URLResolver}
-         */
-        protected void configureModuleInheritanceRepository() {
-            IvySettings ivysettings = IvyContext.getContext().getSettings();
-            DependencyResolver parentModuleResolver=null;
-            //Does module-inheritance-repository exists ?
-            for (Iterator iterator = ivysettings.getResolvers().iterator(); iterator.hasNext();) {
-                DependencyResolver resolver = (DependencyResolver) iterator.next();
-                if (resolver.getName().equals(MODULE_INHERITANCE_REPOSITORY)) {
-                    parentModuleResolver=resolver;
-                    break;
-                }
-            }
-            //if does not exist create one 
-            if (parentModuleResolver == null) {
-                parentModuleResolver= new URLResolver();
-                parentModuleResolver.setName(MODULE_INHERITANCE_REPOSITORY);
-                ivysettings.addResolver(parentModuleResolver);
-            }
         }
 
         public void setInput(InputStream descriptorInput) {
@@ -634,7 +609,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             // Is parent module reachable using location attribute?
             if (url.openConnection().getContentLength() > 0) {
                 String urlString = url.toExternalForm();
-                if (ivyContext.getSettings().getResolver(getModuleInheritanceRepositoryParentResolverName(parentMrid)) == null) {
+                if (!ivyContext.getSettings().hasResolver(getModuleInheritanceRepositoryParentResolverName(parentMrid))) {
                     Message.debug("Registering parent module into module inheritance repository map. Parent module location: " + urlString);
                     URLResolver parentModuleResolver = new URLResolver();
                     parentModuleResolver.setName(getModuleInheritanceRepositoryParentResolverName(parentMrid));

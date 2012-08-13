@@ -875,6 +875,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return getResolver(resolverName);
     }
 
+    public boolean hasResolver(String resolverName) {
+        return resolversMap.containsKey(resolverName);
+    }
+
     public DependencyResolver getResolver(String resolverName) {
         if (dictatorResolver != null) {
             return dictatorResolver;
