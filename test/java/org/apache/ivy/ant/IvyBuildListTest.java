@@ -24,579 +24,435 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
+// CheckStyle:MagicNumber| OFF
+// The test very often use MagicNumber. Using a constant is less expressive.
+
 public class IvyBuildListTest extends TestCase {
 
-    /* 
-     * Those tests use the ivy files A , B , C , D , E in test/buildlist
-     * The dependencies are :
-     * A -> C
-     * B has no dependency
-     * C -> B
-     * D -> A , B
-     * E has no dependency
-     * F -> G
-     * G -> F
-     */
+    private File cache;
 
-    //CheckStyle:MagicNumber| OFF   
-    //The test very often use MagicNumber.  Using a constant is less expressive.
+    private Project project;
 
-    
-    public void testSimple() {
-        Project p = new Project();
+    private IvyBuildList buildlist;
 
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
+    protected void setUp() throws Exception {
+        createCache();
 
-        FileSet fs = new FileSet();
-        fs.setDir(new File("test/buildlist"));
-        fs.setIncludes("**/build.xml");
-        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
-        buildlist.addFileset(fs);
-        buildlist.setOnMissingDescriptor("skip");
+        project = new Project();
+        project.init();
+
+        buildlist = new IvyBuildList();
+        buildlist.setProject(project);
+
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+    }
+
+    protected void tearDown() throws Exception {
+        cleanCache();
+    }
+
+    private void cleanCache() {
+        FileUtil.forceDelete(cache);
+    }
+
+    private void createCache() {
+        cache = new File("build/cache");
+        cache.mkdirs();
+    }
+
+    private String[] getFiles(IvyBuildList buildlist) {
         buildlist.setReference("ordered.build.files");
-
         buildlist.execute();
 
-        Object o = p.getReference("ordered.build.files");
+        Object o = buildlist.getProject().getReference("ordered.build.files");
         assertNotNull(o);
         assertTrue(o instanceof Path);
 
         Path path = (Path) o;
         String[] files = path.list();
         assertNotNull(files);
-        
+        return files;
+    }
+
+    private void assertListOfFiles(String prefix, String[] expected, String[] actual) {
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(new File(prefix + expected[i] + "/build.xml").getAbsolutePath(), new File(
+                    actual[i]).getAbsolutePath());
+        }
+    }
+
+    /*
+     * Those tests use the ivy files A , B , C , D , E in test/buildlist The dependencies are : A ->
+     * C B has no dependency C -> B D -> A , B E has no dependency F -> G G -> F
+     */
+
+    public void testSimple() {
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
+
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
+
+        String[] files = getFiles(buildlist);
+
         assertEquals(5, files.length);
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[4])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D", "E"}, files);
     }
 
     public void testReverse() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setReverse(true);
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
+
         buildlist.addFileset(fs);
+        buildlist.setReverse(true);
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("reverse.ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("reverse.ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(5, files.length);
 
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[4])
-                .getAbsolutePath());
-        
+        assertListOfFiles("test/buildlist/", new String[] {"E", "D", "A", "C", "B"}, files);
     }
 
     public void testWithRoot() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setRoot("C");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
+
         buildlist.addFileset(fs);
+        buildlist.setRoot("C");
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
         assertEquals(2, files.length); // A and D should be filtered out
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"B", "C"}, files);
     }
 
     public void testWithRootCircular() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setRoot("F");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+
         buildlist.addFileset(fs);
+        buildlist.setRoot("F");
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
         assertEquals(2, files.length); // F and G should be in the list
     }
 
     public void testWithTwoRoots() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setRoot("C,E");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
+
         buildlist.addFileset(fs);
+        buildlist.setRoot("C,E");
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(3, files.length); // A and D should be filtered out
-        
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"B", "C", "E"}, files);
     }
 
     public void testWithRootExclude() {
-        Project p = new Project();
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
 
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
+        buildlist.addFileset(fs);
         buildlist.setRoot("C");
         buildlist.setExcludeRoot(true);
-
-        FileSet fs = new FileSet();
-        fs.setDir(new File("test/buildlist"));
-        fs.setIncludes("**/build.xml");
-        fs.setExcludes("E2/**");
-        buildlist.addFileset(fs);
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
         assertEquals(1, files.length); // A, D and C should be filtered out
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"B"}, files);
     }
 
-    
     public void testWithRootAndOnlyDirectDep() {
-        Project p = new Project();
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
 
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
+        buildlist.addFileset(fs);
         buildlist.setRoot("A");
         buildlist.setOnlydirectdep(true);
-
-        FileSet fs = new FileSet();
-        fs.setDir(new File("test/buildlist"));
-        fs.setIncludes("**/build.xml");
-        fs.setExcludes("E2/**");
-        buildlist.addFileset(fs);
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
         assertEquals(2, files.length); // We should have only A and C
 
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"C", "A"}, files);
     }
 
-    
     public void testWithLeaf() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setLeaf("C");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
+
         buildlist.addFileset(fs);
+        buildlist.setLeaf("C");
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(3, files.length); // B should be filtered out
-        
 
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"C", "A", "D"}, files);
     }
 
     public void testWithLeafCircular() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setLeaf("F");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+
         buildlist.addFileset(fs);
+        buildlist.setLeaf("F");
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
-        assertEquals(2, files.length); 
+        assertEquals(2, files.length);
     }
 
     public void testWithTwoLeafs() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setLeaf("C,E");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
+
         buildlist.addFileset(fs);
+        buildlist.setLeaf("C,E");
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(4, files.length); // B should be filtered out
 
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
-        
+        assertListOfFiles("test/buildlist/", new String[] {"C", "A", "D", "E"}, files);
     }
 
     public void testWithLeafExclude() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setLeaf("C");
-        buildlist.setExcludeLeaf(true);
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
+
         buildlist.addFileset(fs);
+        buildlist.setLeaf("C");
+        buildlist.setExcludeLeaf(true);
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
         assertEquals(2, files.length); // B and C should be filtered out
 
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"A", "D"}, files);
     }
 
-    
     public void testWithLeafAndOnlyDirectDep() {
-        Project p = new Project();
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
 
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setLeaf("C");
         buildlist.setOnlydirectdep(true);
 
-        FileSet fs = new FileSet();
-        fs.setDir(new File("test/buildlist"));
-        fs.setIncludes("**/build.xml");
-        fs.setExcludes("E2/**");
-        buildlist.addFileset(fs);
-        buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
+        String[] files = getFiles(buildlist);
 
-        buildlist.execute();
-
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
         assertEquals(2, files.length); // We must have only A and C
 
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"C", "A"}, files);
     }
 
-    
     public void testRestartFrom() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-        buildlist.setRestartFrom("C");
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
+
         buildlist.addFileset(fs);
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
+        buildlist.setRestartFrom("C");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(4, files.length);
 
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"C", "A", "D", "E"}, files);
     }
-    
+
     public void testOnMissingDescriptor() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
+
         buildlist.addFileset(fs);
         buildlist.setOnMissingDescriptor(new String("tail")); // IVY-805: new String instance
-        buildlist.setReference("ordered.build.files");
-        buildlist.execute();
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
+        String[] files = getFiles(buildlist);
 
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(6, files.length);
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[4])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/H/build.xml").getAbsolutePath(), new File(files[5])
-                .getAbsolutePath());
-        
+        assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D", "E", "H"}, files);
+    }
+
+    public void testOnMissingDescriptor2() {
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
+
+        buildlist.addFileset(fs);
         buildlist.setOnMissingDescriptor(new String("skip")); // IVY-805: new String instance
-        buildlist.execute();
 
-        o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
+        String[] files = getFiles(buildlist);
 
-        path = (Path) o;
-        files = path.list();
-        assertNotNull(files);
-        
         assertEquals(5, files.length);
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[4])
-                .getAbsolutePath());
+        assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D", "E"}, files);
     }
 
     public void testWithModuleWithSameNameAndDifferentOrg() {
-        Project p = new Project();
-
-        IvyBuildList buildlist = new IvyBuildList();
-        buildlist.setProject(p);
-
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         fs.setExcludes("F/build.xml,G/build.xml");
+
         buildlist.addFileset(fs);
         buildlist.setOnMissingDescriptor("skip");
-        buildlist.setReference("ordered.build.files");
 
-        buildlist.execute();
+        String[] files = getFiles(buildlist);
 
-        Object o = p.getReference("ordered.build.files");
-        assertNotNull(o);
-        assertTrue(o instanceof Path);
-
-        Path path = (Path) o;
-        String[] files = path.list();
-        assertNotNull(files);
-        
         assertEquals(6, files.length);
 
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
-                .getAbsolutePath());
-        
+        assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D"}, files);
+
         // the order of E and E2 is undefined
         List other = new ArrayList();
         other.add(new File(files[4]).getAbsoluteFile().toURI());
         other.add(new File(files[5]).getAbsoluteFile().toURI());
         Collections.sort(other);
-        
+
         assertEquals(new File("test/buildlist/E/build.xml").getAbsoluteFile().toURI(), other.get(0));
-        assertEquals(new File("test/buildlist/E2/build.xml").getAbsoluteFile().toURI(), other.get(1));
+        assertEquals(new File("test/buildlist/E2/build.xml").getAbsoluteFile().toURI(),
+            other.get(1));
     }
-    
+
+    public void testNoParents() {
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlists/testNoParents"));
+        fs.setIncludes("**/build.xml");
+
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
+        buildlist.setHaltonerror(false);
+
+        String[] files = getFiles(buildlist);
+
+        assertEquals(5, files.length);
+
+        assertListOfFiles("test/buildlists/testNoParents/", new String[] {"bootstrap-parent",
+                "ireland", "germany", "master-parent", "croatia"}, files);
+    }
+
+    public void testOneParent() {
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlists/testOneParent"));
+        fs.setIncludes("**/build.xml");
+
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
+        buildlist.setHaltonerror(false);
+
+        String[] files = getFiles(buildlist);
+
+        assertEquals(5, files.length);
+
+        assertListOfFiles("test/buildlists/testOneParent/", new String[] {"bootstrap-parent",
+                "master-parent", "croatia", "ireland", "germany"}, files);
+    }
+
+    public void testTwoParents() {
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlists/testTwoParents"));
+        fs.setIncludes("**/build.xml");
+
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
+        buildlist.setHaltonerror(false);
+
+        String[] files = getFiles(buildlist);
+
+        assertEquals(5, files.length);
+
+        assertListOfFiles("test/buildlists/testTwoParents/", new String[] {"bootstrap-parent",
+                "master-parent", "croatia", "ireland", "germany"}, files);
+    }
+
+    public void testRelativePathToParent() {
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlists/testRelativePathToParent"));
+        fs.setIncludes("**/build.xml");
+
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
+        buildlist.setHaltonerror(false);
+
+        String[] files = getFiles(buildlist);
+
+        assertEquals(5, files.length);
+
+        assertListOfFiles("test/buildlists/testRelativePathToParent/", new String[] {
+                "bootstrap-parent", "master-parent", "croatia", "ireland", "germany"}, files);
+    }
+
+    public void testAbsolutePathToParent() {
+        project.setProperty("master-parent.dir", new File("test/buildlists/testAbsolutePathToParent/master-parent").getAbsolutePath());
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlists/testAbsolutePathToParent"));
+        fs.setIncludes("**/build.xml");
+
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor("skip");
+        buildlist.setHaltonerror(false);
+
+        String[] files = getFiles(buildlist);
+
+        assertEquals(5, files.length);
+
+        assertListOfFiles("test/buildlists/testAbsolutePathToParent/", new String[] {
+                "bootstrap-parent", "master-parent", "croatia", "ireland", "germany"}, files);
+    }
+
 }
-//CheckStyle:MagicNumber| ON
+// CheckStyle:MagicNumber| ON
