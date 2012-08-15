@@ -31,9 +31,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
@@ -52,22 +56,75 @@ public final class FileUtil {
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
-    public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite)
-            throws IOException {
+    private static final Pattern ALLOWED_PATH_PATTERN = Pattern.compile("[\\w-./\\\\:~ ]+");
+
+    public static void symlinkInMass(Map/* <File, File> */destToSrcMap, boolean overwrite) throws IOException {
+
+        // This pattern could be more forgiving if somebody wanted it to be...
+        // ...but this should satisfy 99+% of all needs, without letting unsafe operations be done.
+        // If you paths is not supported, you then skip this mass option.
+        // NOTE: A space inside the path is allowed (I can't control other programmers who like them
+        // in their working directory names)...
+        // but trailing spaces on file names will be checked otherwise and refused.
         try {
-            if (dest.exists()) {
-                if (!dest.isFile()) {
-                    throw new IOException("impossible to copy: destination is not a file: " + dest);
+            StringBuffer sb = new StringBuffer();
+
+            Iterator keyItr = destToSrcMap.entrySet().iterator();
+            while (keyItr.hasNext()) {
+                Entry/*<File, File>*/ entry = (Entry) keyItr.next();
+                File destFile = (File) entry.getKey();
+                File srcFile = (File) entry.getValue();
+                if (!ALLOWED_PATH_PATTERN.matcher(srcFile.getAbsolutePath()).matches()) {
+                    throw new IOException("Unsafe file to 'mass' symlink: '"
+                            + srcFile.getAbsolutePath() + "'");
                 }
-                if (!overwrite) {
-                    Message.verbose(dest + " already exists, nothing done");
-                    return;
+                if (!ALLOWED_PATH_PATTERN.matcher(destFile.getAbsolutePath()).matches()) {
+                    throw new IOException("Unsafe file to 'mass' symlink to: '"
+                            + destFile.getAbsolutePath() + "'");
                 }
-            }
-            if (dest.getParentFile() != null) {
-                dest.getParentFile().mkdirs();
+
+                // Add to our buffer of commands
+                sb.append("ln -s -f \"" + srcFile.getAbsolutePath() + "\"  \"" + destFile.getAbsolutePath() + "\";");
+                if (keyItr.hasNext()) {
+                    sb.append("\n");
+                }
             }
 
+            String commands = sb.toString();
+            // Run the buffer of commands we have built.
+            Runtime runtime = Runtime.getRuntime();
+            Message.verbose("executing \"sh\" of:\n\t" + commands.replace("\n", "\n\t"));
+            Process process = runtime.exec("sh");
+            OutputStream os = process.getOutputStream();
+            os.write(commands.getBytes("UTF-8"));
+            os.flush();
+            os.close();
+
+            if (process.waitFor() != 0) {
+                InputStream errorStream = process.getErrorStream();
+                InputStreamReader isr = new InputStreamReader(errorStream);
+                BufferedReader br = new BufferedReader(isr);
+
+                StringBuffer error = new StringBuffer();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    error.append(line);
+                    error.append('\n');
+                }
+
+                throw new IOException("error running ln commands with 'sh':\n" + error);
+            }
+        } catch (InterruptedException x) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite)
+            throws IOException {
+        if (!prepareCopy(src, dest, overwrite)) {
+            return;
+        }
+        try {
             Runtime runtime = Runtime.getRuntime();
             Message.verbose("executing 'ln -s -f " + src.getAbsolutePath() + " " + dest.getPath()
                     + "'");
@@ -114,8 +171,7 @@ public final class FileUtil {
         return copy(src, dest, l, false);
     }
 
-    public static boolean copy(File src, File dest, CopyProgressListener l, boolean overwrite)
-            throws IOException {
+    public static boolean prepareCopy(File src, File dest, boolean overwrite) throws IOException {
         if (dest.exists()) {
             if (!dest.isFile()) {
                 throw new IOException("impossible to copy: destination is not a file: " + dest);
@@ -128,6 +184,17 @@ public final class FileUtil {
                 Message.verbose(dest + " already exists, nothing done");
                 return false;
             }
+        }
+        if (dest.getParentFile() != null) {
+            dest.getParentFile().mkdirs();
+        }
+        return true;
+    }
+
+    public static boolean copy(File src, File dest, CopyProgressListener l, boolean overwrite)
+            throws IOException {
+        if (!prepareCopy(src, dest, overwrite)) {
+            return false;
         }
         copy(new FileInputStream(src), dest, l);
         long srcLen = src.length();

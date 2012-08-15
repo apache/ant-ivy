@@ -111,6 +111,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Ruslan Shevchenko
 	John Shields
 	Nihal Sinha
+	Gene Smith
 	Simon Steiner
 	Johan Stuyts
 	John Tinetti
@@ -141,6 +142,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288) (Thanks to Jean-Louis Boudart)
+- NEW: symlinkmass feature based on symlink feature of ivy:retrieve (IVY-1252) (Thanks to Gene Smith)
 
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories

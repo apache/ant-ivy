@@ -287,7 +287,8 @@ public final class Main {
                         .setUseOrigin(line.hasOption("useOrigin"))
                         .setDestIvyPattern(ivyPattern)
                         .setArtifactFilter(FilterHelper.getArtifactTypeFilter(line.getOptionValues("types")))
-                        .setMakeSymlinks(line.hasOption("symlink")));
+                        .setMakeSymlinks(line.hasOption("symlink"))
+                        .setMakeSymlinksInMass(line.hasOption("symlinkmass")));
             }
             if (line.hasOption("cachepath")) {
                 outputCachePath(ivy, cache, md, confs, line.getOptionValue("cachepath",

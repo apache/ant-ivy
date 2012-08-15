@@ -50,6 +50,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
     private boolean sync = false;
 
     private boolean symlink = false;
+
+    private boolean symlinkmass = false;
     
     private String overwriteMode = RetrieveOptions.OVERWRITEMODE_NEWER;
 
@@ -106,6 +108,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
                             .setOverwriteMode(getOverwriteMode())
                             .setUseOrigin(isUseOrigin())
                             .setMakeSymlinks(symlink)
+                            .setMakeSymlinksInMass(symlinkmass)
                             .setResolveId(getResolveId())
                             .setMapper(mapper == null ? null : new MapperAdapter(mapper)));
 
@@ -166,6 +169,13 @@ public class IvyRetrieve extends IvyPostResolveTask {
      */
     public void setSymlink(boolean symlink) {
         this.symlink = symlink;
+    }
+
+    /**
+     * Option to create symlinks in one mass action, instead of separately.
+     */
+    public void setSymlinkmass(boolean symlinkmass) {
+        this.symlinkmass = symlinkmass;
     }
 
     public void setOverwriteMode(String overwriteMode) {

@@ -110,6 +110,7 @@ public class RetrieveEngine {
         }
 
         try {
+            Map/*<File, File>*/ destToSrcMap = null;
             Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
             File fileRetrieveRoot = settings.resolveFile(
                 IvyPatternHelper.getTokenRoot(destFilePattern));
@@ -121,6 +122,12 @@ public class RetrieveEngine {
             // then end of retrieve (useful
             // for sync)
             Collection targetIvysStructure = new HashSet(); // same for ivy files
+
+            if (options.isMakeSymlinksInMass()) {
+                // The HashMap is of "destToSrc" because src could go two places, but dest can only
+                // come from one
+                destToSrcMap = new HashMap();
+            }
 
             // do retrieve
             long totalCopiedSize = 0;
@@ -139,17 +146,29 @@ public class RetrieveEngine {
                     if (!settings.isCheckUpToDate() || !upToDate(archive, destFile, options)) {
                         Message.verbose("\t\tto " + destFile);
                         if (this.eventManager != null) {
-                            this.eventManager.fireIvyEvent(
-                                new StartRetrieveArtifactEvent(artifact, destFile));
+                            // There is no unitary event for the mass sym linking.
+                            // skip the event declaration.
+                            if (!options.isMakeSymlinksInMass()) {
+                                this.eventManager.fireIvyEvent(new StartRetrieveArtifactEvent(
+                                        artifact, destFile));
+                            }
                         }
-                        if (options.isMakeSymlinks()) {
+                        if (options.isMakeSymlinksInMass()) {
+                            if (FileUtil.prepareCopy(archive, destFile, true)) {
+                                destToSrcMap.put(destFile, archive);
+                            }
+                        } else if (options.isMakeSymlinks()) {
                             FileUtil.symlink(archive, destFile, null, true);
                         } else {
                             FileUtil.copy(archive, destFile, null, true);
                         }
                         if (this.eventManager != null) {
-                            this.eventManager.fireIvyEvent(
-                                new EndRetrieveArtifactEvent(artifact, destFile));
+                            // There is no unitary event for the mass sym linking.
+                            // skip the event declaration.
+                            if (!options.isMakeSymlinksInMass()) {
+                                this.eventManager.fireIvyEvent(new EndRetrieveArtifactEvent(
+                                        artifact, destFile));
+                            }
                         }
                         totalCopiedSize += destFile.length();
                         report.addCopiedFile(destFile, artifact);
@@ -166,6 +185,11 @@ public class RetrieveEngine {
                             destFile));
                     }
                 }
+            }
+
+            if (options.isMakeSymlinksInMass()) {
+                Message.verbose("\tMass symlinking " + destToSrcMap.size() + " files");
+                FileUtil.symlinkInMass(destToSrcMap, true);
             }
 
             if (options.isSync()) {

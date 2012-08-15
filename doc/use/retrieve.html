@@ -62,7 +62,17 @@ Possible values are:
 <li><b>always</b></li> always overwrite the destination file
 <li><b>never</b></li> never overwrite the destination file
 </ul></td><td>No. Defaults to 'newer'.</td></tr>
-    <tr><td>symlink</td><td>true to create symbolic links, false to copy the artifacts. The destination of the symbolic links depends on the value of the useOrigin attribute <span class="since">(since 2.0)</span></td><td>No. Defaults to false</td></tr>
+    <tr><td>symlink</td><td>true to create symbolic links, false to copy the artifacts.
+    The destination of the symbolic links depends on the value of the useOrigin attribute.
+    (requires "ln" to be a valid command, and to support the options -s and -f (works on UNIX/Linux, on other systems you may need to script "ln")
+    <span class="since">(since 2.0)</span></td><td>No. Defaults to false</td></tr>
+    <tr><td>symlinkmass</td><td>true to create symbolic links in mass, false to copy the artifacts.
+    "symlinkmass" overrides "symlink" if both are set to "true".
+    "symlinkmass" will create the same symbolic links "symlink" does, but with a single process call to "sh" with batched "ln" commands passed in as standard input (works on UNIX/Linux, on other systems you may need to script it)
+    Far large lists of resolved jars, this can be dramatically faster.
+    The destination of the symbolic links depends on the value of the useOrigin attribute.
+    The events "StartRetrieveArtifactEvent" and EndRetrieveEvent are NOT fired by this activity, because it is not clear when they should be called.
+    <span class="since">(since 2.4)</span></td><td>No. Defaults to false</td></tr>
     <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
     <tr><td>log</td><td>the log setting to use during the resolve and retrieve process. <span class="since">(since 2.0)</span><br/>
 Available options are the same as for [[ant:resolve]] when used to trigger resolve automatically (see [[ant:postresolvetask]]), or the following for the retrieve process only:

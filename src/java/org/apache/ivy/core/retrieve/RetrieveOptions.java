@@ -75,6 +75,12 @@ public class RetrieveOptions extends LogOptions {
     private boolean makeSymlinks = false;
 
     /**
+     * True if symbolic links should be created all at once, instead of one at a time. Works only on
+     * OS supporting with both "sh" (a shell) and "ln" (the link command).
+     */
+    private boolean makeSymlinksInMass = false;
+
+    /**
      * The id used to store the resolve information.
      */
     private String resolveId;
@@ -147,8 +153,17 @@ public class RetrieveOptions extends LogOptions {
         return makeSymlinks;
     }
 
+    public boolean isMakeSymlinksInMass() {
+        return makeSymlinksInMass;
+    }
+
     public RetrieveOptions setMakeSymlinks(boolean makeSymlinks) {
         this.makeSymlinks = makeSymlinks;
+        return this;
+    }
+
+    public RetrieveOptions setMakeSymlinksInMass(boolean makeSymlinksInMass) {
+        this.makeSymlinksInMass = makeSymlinksInMass;
         return this;
     }
 

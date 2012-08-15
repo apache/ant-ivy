@@ -195,17 +195,37 @@ public class RetrieveTest extends TestCase {
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
 
+        getRetrieveOptions().setMakeSymlinks(true);
+
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy
-                .retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions().setMakeSymlinks(
-                    true));
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy
-                .retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions().setMakeSymlinks(
-                    true));
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar", "default"));
+    }
+
+    public void testRetrieveWithSymlinksMass() throws Exception {
+        // mod1.1 depends on mod1.2
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+
+        getRetrieveOptions().setMakeSymlinksInMass(true);
+
+        String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
+            "jar", "default"));
+
+        pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
