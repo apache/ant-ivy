@@ -30,7 +30,7 @@ public final class IgnoreCircularDependencyStrategy extends AbstractLogCircularD
     }
 
     private IgnoreCircularDependencyStrategy() {
-        super("warn");
+        super("ignore");
     }
 
     protected void logCircularDependency(ModuleRevisionId[] mrids) {

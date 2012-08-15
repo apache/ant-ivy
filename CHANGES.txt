@@ -133,6 +133,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy:buildlist task confused by extends feature using two parents (IVY-1363) (thanks to Mitch Gitman and Jean-Louis Boudart)
 - FIX: ivy.xml extends feature complains about Windows filesystem path (IVY-1359) (thanks to Mitch Gitman and Jean-Louis Boudart)
 - FIX: buildlist task chokes on absolute path to parent Ivy module (IVY-1364) (thanks to Mitch Gitman and Jean-Louis Boudart)
+- FIX: The ignore circular dependency strategy is clobbering the warn strategy (IVY-1353) (Thanks to Carl Quinn)
 
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 
