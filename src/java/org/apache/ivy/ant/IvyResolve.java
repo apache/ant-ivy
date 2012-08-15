@@ -357,17 +357,21 @@ public class IvyResolve extends IvyTask {
                     String parentModule = parent.getResolvedParentRevisionId().getName();
                     String parentRevision = parent.getResolvedParentRevisionId().getRevision();
                     String parentBranch = parent.getResolvedParentRevisionId().getBranch();
-                    getProject().setProperty("ivy.parent["+i+"].organisation", parentOrg);
-                    settings.setVariable("ivy.parent["+i+"].organisation", parentOrg);
-                    getProject().setProperty("ivy.parent["+i+"].module", parentModule);
-                    settings.setVariable("ivy.parent["+i+"].module", parentModule);
-                    getProject().setProperty("ivy.parent["+i+"].revision", parentRevision);
-                    settings.setVariable("ivy.parent["+i+"].revision", parentRevision);
-                    getProject().setProperty("ivy.parent["+i+"].branch", parentBranch);
-                    settings.setVariable("ivy.parent["+i+"].branch", parentBranch);
+                    getProject().setProperty("ivy.parent[" + i + "].organisation", parentOrg);
+                    settings.setVariable("ivy.parent[" + i + "].organisation", parentOrg);
+                    getProject().setProperty("ivy.parent[" + i + "].module", parentModule);
+                    settings.setVariable("ivy.parent[" + i + "].module", parentModule);
+                    getProject().setProperty("ivy.parent[" + i + "].revision", parentRevision);
+                    settings.setVariable("ivy.parent[" + i + "].revision", parentRevision);
+                    if (parentBranch != null) {
+                        getProject().setProperty("ivy.parent[" + i + "].branch", parentBranch);
+                        settings.setVariable("ivy.parent[" + i + "].branch", parentBranch);
+                    }
                 }
-                getProject().setProperty("ivy.parents.count", String.valueOf(md.getInheritedDescriptors().length));
-                settings.setVariable("ivy.parents.count", String.valueOf(md.getInheritedDescriptors().length));
+                getProject().setProperty("ivy.parents.count",
+                    String.valueOf(md.getInheritedDescriptors().length));
+                settings.setVariable("ivy.parents.count",
+                    String.valueOf(md.getInheritedDescriptors().length));
 
                 Boolean hasChanged = null;
                 if (getCheckIfChanged()) {
