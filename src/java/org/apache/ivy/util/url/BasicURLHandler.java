@@ -71,14 +71,17 @@ public class BasicURLHandler extends AbstractURLHandler {
                     httpCon.setRequestMethod("HEAD");
                 }
                 if (checkStatusCode(url, httpCon)) {
-                    return new URLInfo(true, httpCon.getContentLength(), con.getLastModified());
+                    String bodyCharset = getCharSetFromContentType(con.getContentType());
+                    return new URLInfo(true, httpCon.getContentLength(), con.getLastModified(), bodyCharset);
                 }
             } else {
                 int contentLength = con.getContentLength();
                 if (contentLength <= 0) {
                     return UNAVAILABLE;
                 } else {
-                    return new URLInfo(true, contentLength, con.getLastModified());
+                    // TODO: not HTTP... maybe we *don't* want to default to ISO-8559-1 here?
+                    String bodyCharset = getCharSetFromContentType(con.getContentType());
+                    return new URLInfo(true, contentLength, con.getLastModified(), bodyCharset);
                 }
             }
         } catch (UnknownHostException e) {
@@ -91,6 +94,34 @@ public class BasicURLHandler extends AbstractURLHandler {
             disconnect(con);
         }
         return UNAVAILABLE;
+    }
+
+    /**
+     * Extract the charset from the Content-Type header string, or default to ISO-8859-1 as per
+     * rfc2616-sec3.html#sec3.7.1 .
+     * 
+     * @param contentType
+     *            the Content-Type header string
+     * @return the charset as specified in the content type, or ISO-8859-1 if unspecified.
+     */
+    public static String getCharSetFromContentType(String contentType) {
+
+        String charSet = null;
+
+        String[] elements = contentType.split(";");
+        for (int i = 0; i < elements.length; i++) {
+            String element = elements[i].trim();
+            if (element.toLowerCase().startsWith("charset=")) {
+                charSet = element.substring("charset=".length());
+            }
+        }
+
+        if (charSet == null || charSet.length() == 0) {
+            // default to ISO-8859-1 as per rfc2616-sec3.html#sec3.7.1
+            charSet = "ISO-8859-1";
+        }
+
+        return charSet;
     }
 
     private boolean checkStatusCode(URL url, HttpURLConnection con) throws IOException {

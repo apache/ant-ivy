@@ -19,6 +19,7 @@ package org.apache.ivy.util.url;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -106,8 +107,10 @@ public class ApacheURLLister {
             url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath() + "/");
         }
 
-        BufferedReader r = new BufferedReader(new InputStreamReader(URLHandlerRegistry.getDefault()
-                .openStream(url)));
+        URLHandler urlHandler = URLHandlerRegistry.getDefault();
+        String charset = urlHandler.getURLInfo(url).getBodyCharset();
+        InputStream contentStream = urlHandler.openStream(url);
+        BufferedReader r = new BufferedReader(new InputStreamReader(contentStream, charset));
 
         String htmlText = FileUtil.readEntirely(r);
 

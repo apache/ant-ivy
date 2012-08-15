@@ -48,10 +48,17 @@ public interface URLHandler {
 
         private boolean available;
 
+        private String bodyCharset;
+
         protected URLInfo(boolean available, long contentLength, long lastModified) {
+            this(available, contentLength, lastModified, null);
+        }
+
+        protected URLInfo(boolean available, long contentLength, long lastModified, String bodyCharset) {
             this.available = available;
             this.contentLength = contentLength;
             this.lastModified = lastModified;
+            this.bodyCharset = bodyCharset;
         }
 
         public boolean isReachable() {
@@ -64,6 +71,10 @@ public interface URLHandler {
 
         public long getLastModified() {
             return lastModified;
+        }
+
+        public String getBodyCharset() {
+            return bodyCharset;
         }
     }
 

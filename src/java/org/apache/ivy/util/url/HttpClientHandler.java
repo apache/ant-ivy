@@ -153,7 +153,9 @@ public class HttpClientHandler extends AbstractURLHandler {
                 method = doGet(url, timeout);
             }
             if (checkStatusCode(url, method)) {
-                return new URLInfo(true, getResponseContentLength(method), getLastModified(method));
+                String contentType = method.getResponseHeader("content-type").getValue();
+                String bodyCharset = BasicURLHandler.getCharSetFromContentType(contentType);
+                return new URLInfo(true, getResponseContentLength(method), getLastModified(method), bodyCharset);
             }
         } catch (HttpException e) {
             Message.error("HttpClientHandler: " + e.getMessage() + ":" + e.getReasonCode() + "="
