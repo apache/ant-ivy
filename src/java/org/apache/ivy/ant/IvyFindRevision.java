@@ -93,7 +93,7 @@ public class IvyFindRevision extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (branch == null) {
-            settings.getDefaultBranch(new ModuleId(organisation, module));
+            branch = settings.getDefaultBranch(new ModuleId(organisation, module));
         }
         ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(organisation,
             module, branch, revision));
