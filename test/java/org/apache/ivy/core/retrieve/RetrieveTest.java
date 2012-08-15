@@ -37,6 +37,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
@@ -51,6 +52,7 @@ public class RetrieveTest extends TestCase {
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
         createCache();
+        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
     }
 
     private void createCache() {
@@ -195,15 +197,15 @@ public class RetrieveTest extends TestCase {
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
 
-        getRetrieveOptions().setMakeSymlinks(true);
+        RetrieveOptions options = getRetrieveOptions().setMakeSymlinks(true);
 
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
@@ -217,15 +219,15 @@ public class RetrieveTest extends TestCase {
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
 
-        getRetrieveOptions().setMakeSymlinksInMass(true);
+        RetrieveOptions options = getRetrieveOptions().setMakeSymlinksInMass(true);
 
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
