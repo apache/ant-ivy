@@ -240,7 +240,7 @@ public class RetrieveTest extends TestCase {
         assertTrue("The file " + filename + " doesn't exist", file.exists());
 
         String os = System.getProperty("os.name");
-        if (os.equals("Linux") || os.equals("Solaris") || os.equals("FreeBSD")) {
+        if (os.equals("Linux") || os.equals("Solaris") || os.equals("FreeBSD") || os.equals("Mac OS X")) {
             // these OS should support symnlink, so check that the file is actually a symlink.
             // this is done be checking that the canonical path is different from the absolute
             // path.
