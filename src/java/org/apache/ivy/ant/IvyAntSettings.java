@@ -36,6 +36,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.DataType;
 
@@ -135,6 +136,13 @@ public class IvyAntSettings extends DataType {
         } else {
             return (IvyAntSettings) defaultInstanceObj;
         }
+    }
+
+    /*
+     * Keep this for backwards compatibility!
+     */
+    public static IvyAntSettings getDefaultInstance(Task task) {
+        return getDefaultInstance((ProjectComponent) task);
     }
     
     public File getFile() {
@@ -237,6 +245,13 @@ public class IvyAntSettings extends DataType {
             createIvyEngine(task);
         }
         return ivyEngine;
+    }
+
+    /*
+     * Keep this for backwards compatibility!
+     */
+    public Ivy getConfiguredIvyInstance(Task task) {
+        return getConfiguredIvyInstance((ProjectComponent) task);
     }
 
     void createIvyEngine(final ProjectComponent task) {
