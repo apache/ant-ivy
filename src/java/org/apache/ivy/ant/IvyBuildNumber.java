@@ -147,7 +147,7 @@ public class IvyBuildNumber extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (branch == null) {
-            settings.getDefaultBranch(new ModuleId(organisation, module));
+            branch = settings.getDefaultBranch(new ModuleId(organisation, module));
         }
         if (revision == null || revision.length() == 0) {
             revision = "latest.integration";
