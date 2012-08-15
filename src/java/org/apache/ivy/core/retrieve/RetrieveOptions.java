@@ -100,6 +100,7 @@ public class RetrieveOptions extends LogOptions {
         this.overwriteMode = options.overwriteMode;
         this.useOrigin = options.useOrigin;
         this.makeSymlinks = options.makeSymlinks;
+        this.makeSymlinksInMass = options.makeSymlinksInMass;
         this.resolveId = options.resolveId;
         this.mapper = options.mapper;
     }
