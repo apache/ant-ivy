@@ -93,7 +93,7 @@ public final class FileUtil {
             String commands = sb.toString();
             // Run the buffer of commands we have built.
             Runtime runtime = Runtime.getRuntime();
-            Message.verbose("executing \"sh\" of:\n\t" + commands.replace("\n", "\n\t"));
+            Message.verbose("executing \"sh\" of:\n\t" + commands.replaceAll("\n", "\n\t"));
             Process process = runtime.exec("sh");
             OutputStream os = process.getOutputStream();
             os.write(commands.getBytes("UTF-8"));
