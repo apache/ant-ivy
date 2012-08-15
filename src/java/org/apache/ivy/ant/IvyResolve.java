@@ -31,6 +31,7 @@ import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ExtendsDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
@@ -350,6 +351,24 @@ public class IvyResolve extends IvyTask {
                 settings.setVariable("ivy.module", mdName);
                 getProject().setProperty("ivy.revision", mdRev);
                 settings.setVariable("ivy.revision", mdRev);
+                for (int i = 0; i < md.getInheritedDescriptors().length; i++) {
+                    ExtendsDescriptor parent = md.getInheritedDescriptors()[i];
+                    String parentOrg = parent.getResolvedParentRevisionId().getOrganisation();
+                    String parentModule = parent.getResolvedParentRevisionId().getName();
+                    String parentRevision = parent.getResolvedParentRevisionId().getRevision();
+                    String parentBranch = parent.getResolvedParentRevisionId().getBranch();
+                    getProject().setProperty("ivy.parent["+i+"].organisation", parentOrg);
+                    settings.setVariable("ivy.parent["+i+"].organisation", parentOrg);
+                    getProject().setProperty("ivy.parent["+i+"].module", parentModule);
+                    settings.setVariable("ivy.parent["+i+"].module", parentModule);
+                    getProject().setProperty("ivy.parent["+i+"].revision", parentRevision);
+                    settings.setVariable("ivy.parent["+i+"].revision", parentRevision);
+                    getProject().setProperty("ivy.parent["+i+"].branch", parentBranch);
+                    settings.setVariable("ivy.parent["+i+"].branch", parentBranch);
+                }
+                getProject().setProperty("ivy.parents.count", String.valueOf(md.getInheritedDescriptors().length));
+                settings.setVariable("ivy.parents.count", String.valueOf(md.getInheritedDescriptors().length));
+
                 Boolean hasChanged = null;
                 if (getCheckIfChanged()) {
                     hasChanged = Boolean.valueOf(report.hasChanged());

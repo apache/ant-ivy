@@ -138,6 +138,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Buildnumber and IvyFindRevision Ant tasks should honour defaultBranch setting (IVY-1344) (Thanks to Ales Nosek)
 
 - NEW: Support Conditional Setting of a Property (IVY-1367)
+- NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288) (Thanks to Jean-Louis Boudart)
 
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories

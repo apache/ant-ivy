@@ -54,6 +54,22 @@ In addition, if the <i>resolveId</i> attribute has been set, the following prope
 <li>ivy.deps.changed.${resolveId}</li>
 </ul>
 
+<b>Since 2.4</b>
+If current module extends other modules 
+<ul>
+<li>ivy.parents.count</li>
+number of parents module
+<li>ivy.parent[index].organisation</li>
+set to the organisation name found in the parent ivyfile which was used for resolve
+<li>ivy.parent[index].module</li>
+set to the module name found in the parent ivyfile which was used for resolve
+<li>ivy.parent[index].revision</li>
+set to the revision name found in the parent ivyfile which was used for resolve
+<li>ivy.parent[index].branch</li>
+set to the branch name found in the parent ivyfile which was used for resolve
+</ul>
+Where <i>index</i> represent the index of extends module.
+
 When ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:
 <pre>
 ---------------------------------------------------------------------

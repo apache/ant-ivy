@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
-import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -585,6 +584,16 @@ public class IvyResolveTest extends TestCase {
         } catch (BuildException e) {
             // ok
         }
+    }
+    
+    public void testSimpleExtends() throws Exception {
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
+        resolve.execute();
+        assertEquals("1", resolve.getProject().getProperty("ivy.parents.count"));
+        assertEquals("apache", resolve.getProject().getProperty("ivy.parent[0].organisation"));
+        assertEquals("resolve-simple", resolve.getProject().getProperty("ivy.parent[0].module"));
+        assertEquals("1.0", resolve.getProject().getProperty("ivy.parent[0].revision"));
+        assertEquals(null, resolve.getProject().getProperty("ivy.parent[0].branch"));
     }
 
 }
