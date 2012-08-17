@@ -663,11 +663,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             options.setDownload(false);
             ResolveData data = new ResolveData(engine, options);
 
-            DependencyResolver resolver = IvyContext.getContext().getSettings().getResolver(getModuleInheritanceRepositoryParentResolverName(parentMrid));
-            // The parent resolver will be null if its dev-only filesystem path hasn't been specified via the location attribute of the extends element. 
-            if (resolver == null) {
+            IvySettings settings = IvyContext.getContext().getSettings();
+            String resolverName = getModuleInheritanceRepositoryParentResolverName(parentMrid);
+            if (!settings.hasResolver(resolverName)) {
+                // The parent resolver will not exist if its dev-only filesystem path hasn't been specified via the location attribute of the extends element. 
                 return null;
             }
+            
+            DependencyResolver resolver = settings.getResolver(resolverName);
             dd = NameSpaceHelper.toSystem(dd, getSettings().getContextNamespace());
             ResolvedModuleRevision otherModule = resolver.getDependency(dd, data);
             if (otherModule != null) {
