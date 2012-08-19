@@ -246,7 +246,7 @@ public class ConfigurationResolveReport {
      * 
      * @return a list of ModuleId
      */
-    public List getModuleIds() {
+    public List/* <ModuleId> */getModuleIds() {
         if (modulesIds == null) {
             List sortedDependencies = resolveEngine.getSortEngine().sortNodes(
                 getDependencies(), SortOptions.SILENT);
@@ -266,7 +266,7 @@ public class ConfigurationResolveReport {
         return Collections.unmodifiableList(modulesIds);
     }
 
-    public Collection getNodes(ModuleId mid) {
+    public Collection/* <IvyNode> */getNodes(ModuleId mid) {
         if (modulesIds == null) {
             getModuleIds();
         }
