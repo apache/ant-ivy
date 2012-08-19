@@ -163,17 +163,24 @@ public class P2MetadataParser implements XMLInputParser {
             options = Integer.parseInt(atts.getValue(OPTIONS));
             name = atts.getValue(NAME);
 
-            try {
-                String uriAtt = atts.getValue(URI);
-                String url = atts.getValue(URL);
-                if (uri != null) {
+            String uriAtt = atts.getValue(URI);
+            String urlAtt = atts.getValue(URL);
+
+            if (uriAtt != null) {
+                try {
                     uri = new URI(uriAtt);
-                } else if (url != null) {
-                    uri = new URI(url);
+                } catch (URISyntaxException e) {
+                    throw new SAXParseException("Invalid uri attribute " + uriAtt + "("
+                            + e.getMessage() + ")", getLocator());
                 }
-            } catch (URISyntaxException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            }
+            if (uri != null && urlAtt != null) {
+                try {
+                    uri = new URI(urlAtt);
+                } catch (URISyntaxException e) {
+                    throw new SAXParseException("Invalid url attribute " + urlAtt + "("
+                            + e.getMessage() + ")", getLocator());
+                }
             }
         }
     }
@@ -300,14 +307,14 @@ public class P2MetadataParser implements XMLInputParser {
                         try {
                             embeddedInfo = ManifestParser.parseManifest(manifest);
                         } catch (IOException e) {
-                            Message.verbose("The Manifest of the source bundle "
-                                    + bundleInfo.getSymbolicName() + " could not be parsed: "
-                                    + e.getMessage());
+                            Message.verbose(
+                                "The Manifest of the source bundle " + bundleInfo.getSymbolicName()
+                                        + " could not be parsed", e);
                             return;
                         } catch (ParseException e) {
-                            Message.verbose("The Manifest of the source bundle "
-                                    + bundleInfo.getSymbolicName() + " is ill formed: "
-                                    + e.getMessage());
+                            Message.verbose(
+                                "The Manifest of the source bundle " + bundleInfo.getSymbolicName()
+                                        + " is ill formed", e);
                             return;
                         }
                         if (!embeddedInfo.isSource()) {

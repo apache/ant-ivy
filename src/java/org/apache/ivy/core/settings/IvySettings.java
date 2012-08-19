@@ -234,15 +234,14 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                 } catch (FileNotFoundException e) {
                     Message.warn("typedefs file not found: " + files[i].trim());
                 } catch (IOException e) {
-                    Message.warn("problem with typedef file: " + files[i].trim() + ": "
-                            + e.getMessage());
+                    Message.warn("problem with typedef file: " + files[i].trim(), e);
                 }
             }
         } else {
             try {
                 typeDefs(getSettingsURL("typedef.properties").openStream(), true);
             } catch (IOException e) {
-                Message.warn("impossible to load default type defs");
+                Message.warn("impossible to load default type defs", e);
             }
         }
         LatestLexicographicStrategy latestLexicographicStrategy = new LatestLexicographicStrategy();
@@ -279,8 +278,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             addMatcher((PatternMatcher) instanceField.get(null));
         } catch (Exception e) {
             // ignore: the matcher isn't on the classpath
-            Message.info("impossible to define glob matcher: " 
-                + "org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found.");
+            Message.info("impossible to define glob matcher: "
+                    + "org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found", e);
         }
 
         addReportOutputter(new LogReportOutputter());
@@ -323,8 +322,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                     props.load(URLHandlerRegistry.getDefault().openStream(url));
                     configured = true;
                 } catch (Exception ex) {
-                    Message.verbose("unable to use remote repository configuration: "
-                            + ex.getMessage());
+                    Message.verbose("unable to use remote repository configuration", ex);
                     props = new Properties();
                 }
             }
@@ -334,8 +332,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                     repositoryPropsStream = getSettingsURL("repository.properties").openStream();
                     props.load(repositoryPropsStream);
                 } catch (IOException e) {
-                    Message.error("unable to use internal repository configuration: "
-                            + e.getMessage());
+                    Message.error("unable to use internal repository configuration", e);
                     if (repositoryPropsStream != null) {
                         try {
                             repositoryPropsStream.close();

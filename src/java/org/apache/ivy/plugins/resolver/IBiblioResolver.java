@@ -195,14 +195,11 @@ public class IBiblioResolver extends URLResolver {
                     Message.verbose("\tmaven-metadata not available: " + metadata);
                 }
             } catch (IOException e) {
-                Message.verbose(
-                    "impossible to access maven metadata file, ignored: " + e.getMessage());
+                Message.verbose("impossible to access maven metadata file, ignored", e);
             } catch (SAXException e) {
-                Message.verbose(
-                    "impossible to parse maven metadata file, ignored: " + e.getMessage());
+                Message.verbose("impossible to parse maven metadata file, ignored", e);
             } catch (ParserConfigurationException e) {
-                Message.verbose(
-                    "impossible to parse maven metadata file, ignored: " + e.getMessage());
+                Message.verbose("impossible to parse maven metadata file, ignored", e);
             } finally {
                 if (metadataStream != null) {
                     try {
@@ -409,7 +406,7 @@ public class IBiblioResolver extends URLResolver {
                     } catch (IOException e) {
                         Message.warn(
                             "impossible to get resource from name listed by maven-metadata.xml:"
-                            + rres + ": " + e.getMessage());
+                                    + rres, e);
                     }
                 }
                 return (ResolvedResource[]) rres.toArray(new ResolvedResource[rres.size()]);
@@ -452,14 +449,11 @@ public class IBiblioResolver extends URLResolver {
                 Message.verbose("\tmaven-metadata not available: " + metadata);
             }
         } catch (IOException e) {
-            Message.verbose(
-                "impossible to access maven metadata file, ignored: " + e.getMessage());
+            Message.verbose("impossible to access maven metadata file, ignored", e);
         } catch (SAXException e) {
-            Message.verbose(
-                "impossible to parse maven metadata file, ignored: " + e.getMessage());
+            Message.verbose("impossible to parse maven metadata file, ignored", e);
         } catch (ParserConfigurationException e) {
-            Message.verbose(
-                "impossible to parse maven metadata file, ignored: " + e.getMessage());
+            Message.verbose("impossible to parse maven metadata file, ignored", e);
         } finally {
             if (metadataStream != null) {
                 try {

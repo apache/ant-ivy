@@ -89,13 +89,10 @@ public final class ResolverHelper {
                     return null;
                 }
             } catch (IOException e) {
-                Message.verbose(
-                    "problem while listing resources in " + root + " with " + rep + ":");
-                Message.verbose("  " + e.getClass().getName() + " " + e.getMessage());
+                Message.verbose("problem while listing resources in " + root + " with " + rep, e);
                 return null;
             } catch (Exception e) {
-                Message.warn("problem while listing resources in " + root + " with " + rep + ":");
-                Message.warn("  " + e.getClass().getName() + " " + e.getMessage());
+                Message.warn("problem while listing resources in " + root + " with " + rep, e);
                 return null;
             }
         }
@@ -123,12 +120,10 @@ public final class ResolverHelper {
                 return null;
             }
         } catch (IOException e) {
-            Message.verbose("problem while listing resources in " + parent + " with " + rep + ":");
-            Message.verbose("  " + e.getClass().getName() + " " + e.getMessage());
+            Message.verbose("problem while listing resources in " + parent + " with " + rep, e);
             return null;
         } catch (Exception e) {
-            Message.warn("problem while listing resources in " + parent + " with " + rep + ":");
-            Message.warn("  " + e.getClass().getName() + " " + e.getMessage());
+            Message.warn("problem while listing resources in " + parent + " with " + rep, e);
             return null;
         }
     }
@@ -159,7 +154,7 @@ public final class ResolverHelper {
                     }
                 } catch (IOException e) {
                     Message.warn("impossible to get resource from name listed by repository: "
-                            + rres + ": " + e.getMessage());
+                            + rres, e);
                 }
             }
             if (revs.length != ret.size()) {
@@ -180,7 +175,7 @@ public final class ResolverHelper {
                 }
             } catch (IOException e) {
                 Message.debug("\timpossible to get resource from name listed by repository: "
-                        + partiallyResolvedPattern + ": " + e.getMessage());
+                        + partiallyResolvedPattern, e);
             }
             Message.debug("\tno revision found");
         }
@@ -304,8 +299,7 @@ public final class ResolverHelper {
                     Message.debug("\t\t" + ret.size() + " matched " + pattern);
                     return (String[]) ret.toArray(new String[ret.size()]);
                 } catch (Exception e) {
-                    Message.warn("problem while listing files in " + root + ": " + e.getClass()
-                            + " " + e.getMessage());
+                    Message.warn("problem while listing files in " + root, e);
                     return null;
                 }
             }
@@ -337,8 +331,7 @@ public final class ResolverHelper {
             }
             return null;
         } catch (Exception e) {
-            Message.warn("problem while listing directories in " + root + ": " + e.getClass() + " "
-                    + e.getMessage());
+            Message.warn("problem while listing directories in " + root, e);
             return null;
         }
     }

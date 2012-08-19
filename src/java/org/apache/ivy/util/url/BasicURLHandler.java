@@ -89,7 +89,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             Message.info("You probably access the destination server through "
                 + "a proxy server that is not well configured.");
         } catch (IOException e) {
-            Message.error("Server access Error: " + e.getMessage() + " url=" + url);
+            Message.error("Server access error at url " + url, e);
         } finally {
             disconnect(con);
         }

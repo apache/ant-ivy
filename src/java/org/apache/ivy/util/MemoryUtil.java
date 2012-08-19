@@ -47,8 +47,7 @@ public final class MemoryUtil {
             float approxSize = (endingMemoryUse - startingMemoryUse) / (float) objects.length;
             size = Math.round(approxSize);
         } catch (Exception e) {
-            System.out.println("WARNING:couldn't instantiate" + clazz);
-            e.printStackTrace();
+            Message.warn("Couldn't instantiate " + clazz, e);
         }
         return size;
     }
@@ -80,7 +79,7 @@ public final class MemoryUtil {
             System.runFinalization();
             Thread.sleep(SLEEP_TIME);
         } catch (Exception e) {
-            e.printStackTrace();
+            Message.debug(e);
         }
     }
     

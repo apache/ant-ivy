@@ -156,11 +156,8 @@ public final class FileUtil {
                 dest.delete(); // just make sure we do delete the invalid symlink!
                 throw new IOException("error symlinking: " + dest + " isn't a symlink"); 
             }
-        } catch (IOException x) {
-            Message.verbose("symlink failed; falling back to copy");
-            StringWriter buffer = new StringWriter();
-            x.printStackTrace(new PrintWriter(buffer));
-            Message.debug(buffer.toString());
+        } catch (IOException e) {
+            Message.verbose("symlink failed; falling back to copy", e);
             copy(src, dest, l, overwrite);
         } catch (InterruptedException x) {
             Thread.currentThread().interrupt();

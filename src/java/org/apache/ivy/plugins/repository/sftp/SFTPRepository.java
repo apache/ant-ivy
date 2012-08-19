@@ -104,7 +104,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
                 }
             }
         } catch (Exception e) {
-            Message.debug("reolving resource error: " + e.getMessage());
+            Message.debug("Error while resolving resource " + path, e);
             // silent fail, return unexisting resource
         }
 

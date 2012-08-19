@@ -128,15 +128,15 @@ public class OBRResolver extends AbstractOSGiResolver {
         } catch (ParseException e) {
             throw new RuntimeException("The OBR repository resolver " + getName()
                     + " couldn't be configured: the file " + sourceLocation
-                    + " is incorrectly formed (" + e.getMessage() + ")");
+                    + " is incorrectly formed (" + e.getMessage() + ")", e);
         } catch (IOException e) {
             throw new RuntimeException("The OBR repository resolver " + getName()
                     + " couldn't be configured: the file " + sourceLocation
-                    + " could not be read (" + e.getMessage() + ")");
+                    + " could not be read (" + e.getMessage() + ")", e);
         } catch (SAXException e) {
             throw new RuntimeException("The OBR repository resolver " + getName()
                     + " couldn't be configured: the file " + sourceLocation
-                    + " has incorrect XML (" + e.getMessage() + ")");
+                    + " has incorrect XML (" + e.getMessage() + ")", e);
         }
         try {
             in.close();

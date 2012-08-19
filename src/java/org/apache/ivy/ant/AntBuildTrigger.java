@@ -107,7 +107,6 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                     ant.execute();
                 } catch (BuildException e) {
                     Message.verbose("Exception occurred while executing target " + target);
-                    e.printStackTrace(); // TODO: remove when finished debugging
                     throw e;
                 }
                 markBuilt(f);

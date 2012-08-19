@@ -89,7 +89,7 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
                         try {
                             bundleCandidates = listBundleFiles(currentDir).iterator();
                         } catch (IOException e) {
-                            Message.warn("Unlistable dir: " + currentDir + " (" + e + ")");
+                            Message.warn("Unlistable dir: " + currentDir, e);
                             currentDir = null;
                         }
                     } else if (dirs.size() <= 1) {
@@ -112,9 +112,9 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
                             Message.debug("No manifest in jar: " + bundleCandidate);
                         }
                     } catch (FileNotFoundException e) {
-                        Message.debug("Jar file just removed: " + bundleCandidate + " (" + e + ")");
+                        Message.debug("Jar file just removed: " + bundleCandidate, e);
                     } catch (IOException e) {
-                        Message.warn("Unreadable jar: " + bundleCandidate + " (" + e + ")");
+                        Message.warn("Unreadable jar: " + bundleCandidate, e);
                     } finally {
                         if (in != null) {
                             try {

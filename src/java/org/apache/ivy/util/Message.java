@@ -165,4 +165,54 @@ public final class Message {
 
     private Message() {
     }
+
+    public static void debug(String message, Throwable t) {
+        if (t == null) {
+            debug(message);
+        } else {
+            debug(message + " (" + t.getClass().getName() + ": " + t.getMessage() + ")");
+            debug(t);
+        }
+    }
+
+    public static void verbose(String message, Throwable t) {
+        if (t == null) {
+            verbose(message);
+        } else {
+            verbose(message + " (" + t.getClass().getName() + ": " + t.getMessage() + ")");
+            debug(t);
+        }
+    }
+
+    public static void info(String message, Throwable t) {
+        if (t == null) {
+            info(message);
+        } else {
+            info(message + " (" + t.getClass().getName() + ": " + t.getMessage() + ")");
+            debug(t);
+        }
+    }
+
+    public static void warn(String message, Throwable t) {
+        if (t == null) {
+            warn(message);
+        } else {
+            warn(message + " (" + t.getClass().getName() + ": " + t.getMessage() + ")");
+            debug(t);
+        }
+    }
+
+    public static void error(String message, Throwable t) {
+        if (t == null) {
+            error(message);
+        } else {
+            error(message + " (" + t.getClass().getName() + ": " + t.getMessage() + ")");
+            debug(t);
+        }
+    }
+
+    public static void debug(Throwable t) {
+        debug(StringUtils.getStackTrace(t));
+    }
+
 }

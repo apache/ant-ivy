@@ -38,8 +38,7 @@ public class RepositoryAnalyser {
                 Message.info("generating " + ivyFile);
                 XmlModuleDescriptorWriter.write(mds[i], ivyFile);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Message.debug(e);
             }
         }
     }

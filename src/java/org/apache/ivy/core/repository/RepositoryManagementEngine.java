@@ -145,6 +145,7 @@ public class RepositoryManagementEngine {
             try {
                 loadModuleRevision(mrids[i]);
             } catch (Exception e) {
+                Message.debug(e);
                 errors.put(mrids[i], e.getMessage());
             }
         }

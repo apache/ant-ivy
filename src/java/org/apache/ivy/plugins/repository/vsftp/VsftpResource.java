@@ -36,6 +36,7 @@ public class VsftpResource extends LazyResource {
         try {
             init(repository.getInitResource(getName()));
         } catch (IOException e) {
+            Message.debug(e);
             Message.verbose(e.toString());
         }
     }

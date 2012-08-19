@@ -684,8 +684,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     }
                 } catch (Exception e) {
                     // will try with resolver
-                    Message.debug("\tproblem while parsing cached ivy file for: " + mrid + ": "
-                        + e.getMessage());
+                    Message.debug("\tproblem while parsing cached ivy file for: " + mrid, e);
                 }
             } else {
                 Message.debug("\tno ivy file in cache for " + mrid + ": tried " + ivyFile);
@@ -896,6 +895,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
                     }
                 } catch (Exception ex) {
+                    Message.debug(ex);
                     adr.setDownloadStatus(DownloadStatus.FAILED);
                     adr.setDownloadDetails(ex.getMessage());
                     adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
@@ -982,6 +982,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         adr.setLocalFile(archiveFile);
                     }
                 } catch (Exception ex) {
+                    Message.debug(ex);
                     origin.setExist(false);
                     saveArtifactOrigin(artifact, origin);
                     adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -1081,11 +1082,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            Message.warn("impossible to put metadata file in cache: " 
-                + (orginalMetadataRef == null 
-                        ? String.valueOf(md.getResolvedModuleRevisionId()) 
-                        : String.valueOf(orginalMetadataRef))
-                + ". " + e.getClass().getName() + ": " + e.getMessage());
+            String metadataRef;
+            if (orginalMetadataRef == null) {
+                metadataRef = String.valueOf(md.getResolvedModuleRevisionId());
+            } else {
+                metadataRef = String.valueOf(orginalMetadataRef);
+            }
+            Message.warn("impossible to put metadata file in cache: " + metadataRef, e);
         } finally {
             unlockMetadataArtifact(mrid);
         }
@@ -1256,8 +1259,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 
                 return new ResolvedModuleRevision(resolver, resolver, md, madr);
             } catch (IOException ex) {
-                Message.warn("io problem while parsing ivy file: " + mdRef.getResource() + ": "
-                    + ex.getMessage());
+                Message.warn("io problem while parsing ivy file: " + mdRef.getResource(), ex);
                 return null;
             }
         } finally {

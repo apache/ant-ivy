@@ -65,7 +65,7 @@ public class ConvertManifestTask extends IvyTask {
             try {
                 profileProvider = new ExecutionEnvironmentProfileProvider();
             } catch (IOException e) {
-                throw new BuildException("Enable to load the default environment profiles");
+                throw new BuildException("Enable to load the default environment profiles", e);
             }
         }
 

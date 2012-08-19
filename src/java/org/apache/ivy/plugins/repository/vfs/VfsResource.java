@@ -68,6 +68,7 @@ public class VfsResource implements Resource {
                 lastModified = content.getLastModifiedTime();
                 contentLength = content.getSize();
             } catch (FileSystemException e) {
+                Message.debug(e);
                 Message.verbose(e.getLocalizedMessage());
                 exists = false;
                 lastModified = 0;
@@ -98,6 +99,7 @@ public class VfsResource implements Resource {
                 }
             }
         } catch (IOException e) {
+            Message.debug(e);
             Message.verbose(e.getLocalizedMessage());
         }
         return list;
@@ -186,7 +188,7 @@ public class VfsResource implements Resource {
             // include all exceptions when I found it would throw a NPE exception when the query was
             // run on non-wellformed VFS URI.
         } catch (Exception e) {
-            Message.verbose(e.getLocalizedMessage());
+            Message.verbose("Fail to check the existance of the resource " + getName(), e);
             return false;
         }
     }

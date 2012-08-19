@@ -411,8 +411,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     parent = resolveParentFromModuleInheritanceRepository(parentResolver, parentMrid);
                 }
             } catch (IOException e) {
-                Message.warn("Unable to parse included ivy file " + location + ": " 
-                    + e.getMessage());
+                Message.warn("Unable to parse included ivy file " + location, e);
             }
             
             // if not found, tries to resolve using repositories
@@ -420,7 +419,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 try {
                     parent = parseOtherIvyFile(parentMrid);
                 } catch (ParseException e) {
-                    Message.warn("Unable to parse included ivy file for " + parentMrid.toString());
+                    Message.warn("Unable to parse included ivy file for " + parentMrid.toString(), e);
                 }
             }
             

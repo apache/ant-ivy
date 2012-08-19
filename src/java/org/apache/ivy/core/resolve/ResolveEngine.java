@@ -346,6 +346,7 @@ public class ResolveEngine {
             eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
             return report;
         } catch (RuntimeException ex) {
+            Message.debug(ex);
             Message.error(ex.getMessage());
             Message.sumupProblems();
             throw ex;

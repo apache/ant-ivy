@@ -58,7 +58,7 @@ public class IvyDependencyArtifact {
         try {
             u = url == null ? null : new URL(url);
         } catch (MalformedURLException e) {
-            throw new BuildException("Malformed url in the artifact: " + e.getMessage());
+            throw new BuildException("Malformed url in the artifact: " + e.getMessage(), e);
         }
         DefaultDependencyArtifactDescriptor dad = new DefaultDependencyArtifactDescriptor(dd, name,
                 typePattern, extPattern, u, null);

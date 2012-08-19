@@ -17,8 +17,8 @@
  */
 package org.apache.ivy.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
@@ -73,17 +73,14 @@ public final class StringUtils {
      *            the exception to get the stack trace from.
      * @return the exception stack trace
      */
-    public static String getStackTrace(Exception e) {
+    public static String getStackTrace(Throwable e) {
         if (e == null) {
             return "";
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintWriter printWriter = new PrintWriter(baos);
+        StringWriter sw = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(sw, true);
         e.printStackTrace(printWriter);
-        printWriter.flush();
-        String stackTrace = new String(baos.toByteArray());
-        printWriter.close();
-        return stackTrace;
+        return sw.getBuffer().toString();
     }
 
     /**

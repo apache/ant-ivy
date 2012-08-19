@@ -549,7 +549,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         return new MDResolvedResource(resource, rev, rmr);
                     }
                 } catch (ParseException e) {
-                    Message.warn("Failed to parse the file '" + resource + "': " + e.getMessage());
+                    Message.warn("Failed to parse the file '" + resource + "'", e);
                     return null;
                 }
             }
@@ -868,6 +868,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         String revision = origin.getArtifact().getModuleRevisionId().getRevision();
                         return new ResolvedResource(resource, revision);
                     } catch (IOException e) {
+                        Message.debug(e);
                         return null;
                     }
                 }

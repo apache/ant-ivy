@@ -239,7 +239,7 @@ public class IvyRepResolver extends URLResolver {
         } catch (MalformedURLException e) {
             //???
         } catch (Exception e) {
-            Message.warn("unable to parse content.xml file on ivyrep: " + e.getMessage());
+            Message.warn("unable to parse content.xml file on ivyrep", e);
         }
         return super.listOrganisations();
     }

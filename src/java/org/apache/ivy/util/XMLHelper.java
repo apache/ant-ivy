@@ -64,9 +64,8 @@ public abstract class XMLHelper {
                 parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
                 parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
             } catch (SAXNotRecognizedException ex) {
-                System.err.println(
-                    "WARNING: problem while setting JAXP validating property on SAXParser... "
-                    + "XML validation will not be done: " + ex.getMessage());
+                Message.warn("problem while setting JAXP validating property on SAXParser... "
+                        + "XML validation will not be done", ex);
                 canUseSchemaValidation = false;
                 parserFactory.setValidating(false);
                 parser = parserFactory.newSAXParser();
@@ -123,9 +122,8 @@ public abstract class XMLHelper {
                 try {
                     parser.setProperty("http://xml.org/sax/properties/lexical-handler", lHandler);
                 } catch (SAXException ex) {
-                    System.err.println(
-                        "WARNING: problem while setting the lexical handler property on SAXParser: "
-                                    + ex.getMessage());
+                    Message.warn("problem while setting the lexical handler property on SAXParser",
+                        ex);
                     // continue without the lexical handler
                 }
             }
@@ -197,7 +195,6 @@ public abstract class XMLHelper {
         try {
             pomDomDoc = docBuilder.parse(stream, res.getName());
         } catch (SAXException e) {
-            e.printStackTrace();
             throw e;
         } finally {
             stream.close();

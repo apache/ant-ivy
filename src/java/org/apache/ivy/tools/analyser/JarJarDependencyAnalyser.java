@@ -80,8 +80,7 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
                 md.addDependency(dd);
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Message.debug(e);
         }
         return (ModuleDescriptor[]) mds.values().toArray(new ModuleDescriptor[mds.values().size()]);
     }

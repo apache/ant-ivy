@@ -106,8 +106,7 @@ public class ChainResolver extends AbstractResolver {
                     mr = forcedRevision(mr);
                 }
             } catch (Exception ex) {
-                Message.verbose("problem occurred while resolving " + dd + " with " + resolver
-                        + ": " + StringUtils.getStackTrace(ex));
+                Message.verbose("problem occurred while resolving " + dd + " with " + resolver, ex);
                 errors.add(ex);
             } finally {
                 if (oldLatest != null) {

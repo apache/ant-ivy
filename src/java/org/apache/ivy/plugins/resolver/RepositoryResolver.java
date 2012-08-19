@@ -309,6 +309,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             Resource resource = repository.getResource(path);
             return resource.exists();
         } catch (IOException e) {
+            Message.debug(e);
             return false;
         }
     }

@@ -659,9 +659,7 @@ public class VsftpRepository extends AbstractRepository {
                     return new BasicResource(file, true, contentLength, FORMAT.parse(date)
                             .getTime(), false);
                 } catch (Exception ex) {
-                    Message
-                            .warn("impossible to parse server response: " + responseLine + ": "
-                                    + ex);
+                    Message.warn("impossible to parse server response: " + responseLine, ex);
                     return new BasicResource(file, false, 0, 0, false);
                 }
             }

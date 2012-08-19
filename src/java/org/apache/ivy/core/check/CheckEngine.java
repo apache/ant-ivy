@@ -124,13 +124,13 @@ public class CheckEngine {
             }
             return result;
         } catch (ParseException e) {
-            Message.info("parse problem on " + ivyFile + ": " + e);
+            Message.info("parse problem on " + ivyFile, e);
             return false;
         } catch (IOException e) {
-            Message.info("io problem on " + ivyFile + ": " + e);
+            Message.info("io problem on " + ivyFile, e);
             return false;
         } catch (Exception e) {
-            Message.info("problem on " + ivyFile + ": " + e);
+            Message.info("problem on " + ivyFile, e);
             return false;
         }
     }

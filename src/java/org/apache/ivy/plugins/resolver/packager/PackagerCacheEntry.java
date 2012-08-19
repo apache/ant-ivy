@@ -160,7 +160,6 @@ public class PackagerCacheEntry {
             project.executeTarget("build");
             this.built = true;
         } catch (BuildException e) {
-            e.printStackTrace(System.out);
             Message.verbose("packager resolver build failed: " + e);
             throw e;
         }

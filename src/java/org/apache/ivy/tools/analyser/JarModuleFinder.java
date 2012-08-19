@@ -26,6 +26,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.resolver.util.FileURLLister;
 import org.apache.ivy.plugins.resolver.util.ResolverHelper;
 import org.apache.ivy.plugins.resolver.util.URLLister;
+import org.apache.ivy.util.Message;
 
 public class JarModuleFinder {
     private String pattern;
@@ -62,6 +63,7 @@ public class JarModuleFinder {
             }
 
         } catch (Exception e) {
+            Message.debug(e);
             // TODO: handle exception
         }
         return (JarModule[]) ret.toArray(new JarModule[ret.size()]);

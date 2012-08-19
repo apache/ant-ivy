@@ -48,7 +48,7 @@ public class ChainedRepository extends AbstractRepository {
                     return r;
                 }
             } catch (Exception e) {
-                logFailed(repository);
+                logFailed(repository, e);
             }
         }
         // resource that basically doesn't exists
@@ -65,7 +65,7 @@ public class ChainedRepository extends AbstractRepository {
                 repository.get(source, destination);
                 ok = true;
             } catch (Exception e) {
-                logFailed(repository);
+                logFailed(repository, e);
             }
             if (ok) {
                 logSuccess(repository);
@@ -87,7 +87,7 @@ public class ChainedRepository extends AbstractRepository {
                     return list;
                 }
             } catch (Exception e) {
-                logFailed(repository);
+                logFailed(repository, e);
             }
         }
         throw newIOEFail("list contents in " + parent);
@@ -97,9 +97,10 @@ public class ChainedRepository extends AbstractRepository {
         Message.debug("Mirrored repository " + getName() + ": trying " + repository.getName());
     }
 
-    private void logFailed(Repository repository) {
-        Message.warn("Mirrored repository " + getName() + ": " + repository
-                + " is not available. Trying the next one in the mirror list...");
+    private void logFailed(Repository repository, Exception e) {
+        Message.warn("Mirrored repository " + getName() + ": " + repository.getName()
+                + " is not available", e);
+        Message.warn("Trying the next one in the mirror list...");
     }
 
     private void logSuccess(Repository repository) {

@@ -145,7 +145,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         } catch (SAXException e) {
             if (skipOnError) {
                 skip();
-                log(Message.MSG_ERR, e.getMessage());
+                log(Message.MSG_ERR, e.getMessage(), e);
             } else {
                 throw e;
             }
@@ -510,6 +510,11 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
     // //////////////////////
     // Functions related to error handling
     // //////////////////////
+
+    protected void log(int logLevel, String message, Throwable t) {
+        Message.debug(t);
+        log(logLevel, message);
+    }
 
     protected void log(int logLevel, String message) {
         Message.log(logLevel, getLocation(getLocator()) + message);

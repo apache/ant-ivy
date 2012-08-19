@@ -101,8 +101,7 @@ public class ConfigurationResolveReport {
                 hasChanged = Boolean.valueOf(!previousDepSet.equals(getModuleRevisionIds()));
             } catch (Exception e) {
                 Message.warn("Error while parsing configuration resolve report "
-                        + previousReportFile.getAbsolutePath());
-                e.printStackTrace();
+                        + previousReportFile.getAbsolutePath(), e);
                 hasChanged = Boolean.TRUE;
             }
         } else {
