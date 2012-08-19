@@ -129,6 +129,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    2.3.x
 =====================================
+- FIX: Maven 'hk2-jar' packaging is now supported (IVY-1357)
 - FIX: Maven 'orbit' and 'pear' packaging is now supported (IVY-899)
 - FIX: Memory leak and infinite loop in ModuleId.java (IVY-1362)
 - FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)
