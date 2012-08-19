@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.core.module.id;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -33,7 +34,7 @@ import org.apache.ivy.core.IvyPatternHelper;
 public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";
     
-    private static final Map/*<ModuleId, ModuleId>*/ CACHE = new WeakHashMap();
+    private static final Map/*<ModuleId, WeakReference<ModuleId>>*/ CACHE = new WeakHashMap();
 
     /**
      * Returns a ModuleId for the given organization and module name.
@@ -59,12 +60,20 @@ public class ModuleId implements Comparable {
      *            the module id to return
      * @return a unit instance of the given module id.
      */
-    public static synchronized ModuleId intern(ModuleId moduleId) {
-        ModuleId r = (ModuleId) CACHE.get(moduleId);
-        if (r == null) {
-            r = moduleId;
-            CACHE.put(r, r);
+    public static ModuleId intern(ModuleId moduleId) {
+        ModuleId r = null;
+        
+        synchronized (CACHE) {
+            WeakReference ref = (WeakReference) CACHE.get(moduleId);
+            if (ref != null) {
+                r = (ModuleId) ref.get();
+            }
+            if (r == null) {
+                r = moduleId;
+                CACHE.put(r, new WeakReference(r));
+            }
         }
+
         return r;
     }
 
