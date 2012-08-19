@@ -116,7 +116,7 @@ public class PomModuleDescriptorBuilder {
     private static final String EXTRA_INFO_DELIMITER = "__";
     private static final Collection/*<String>*/ JAR_PACKAGINGS = Arrays.asList(
                 new String[] {"ejb", "bundle", "maven-plugin", "eclipse-plugin",
-                        "jbi-component", "jbi-shared-library", "orbit"});
+                        "jbi-component", "jbi-shared-library", "orbit", "hk2-jar"});
 
     
     static interface ConfMapper {
