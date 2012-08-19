@@ -116,7 +116,7 @@ public class PomModuleDescriptorBuilder {
     private static final String EXTRA_INFO_DELIMITER = "__";
     private static final Collection/*<String>*/ JAR_PACKAGINGS = Arrays.asList(
                 new String[] {"ejb", "bundle", "maven-plugin", "eclipse-plugin",
-                        "jbi-component", "jbi-shared-library"});
+                        "jbi-component", "jbi-shared-library", "orbit"});
 
     
     static interface ConfMapper {
@@ -266,6 +266,8 @@ public class PomModuleDescriptorBuilder {
             return;
         } else if (JAR_PACKAGINGS.contains(packaging)) {
             ext = "jar";
+        } else if ("pear".equals(packaging)) {
+            ext = "phar";
         } else {
             ext = packaging;
         }
