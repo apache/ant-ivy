@@ -46,7 +46,9 @@ import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
@@ -54,6 +56,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     
     protected void setUp() throws Exception {
         super.setUp();
+        
+        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_WARN));
         
         this.settings = new IvySettings();
         //prevent test from polluting local cache
@@ -1023,6 +1027,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testExtendsAll() throws Exception {
+        Message.setDefaultLogger(new DefaultMessageLogger(99));
+        
         //default extends type is 'all' when no extendsType attribute is specified.
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extends-all.xml"), true);
