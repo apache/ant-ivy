@@ -129,6 +129,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    2.3.x
 =====================================
+- FIX: Memory leak and infinite loop in ModuleId.java (IVY-1362)
 - FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)
 - FIX: Delivered ivy descriptor inconsistent with resolve report / retrieve and other post-resolve actions (IVY-1300) (thanks to Ed Burcher)
 - FIX: The Updatesite resolver is downloading Eclipse features instead of Eclipse bundle/plugin
