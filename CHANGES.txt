@@ -130,6 +130,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Memory leak and infinite loop in ModuleId.java (IVY-1362)
 - FIX: Unnecessary warning when parent ivy.xml is not found (IVY-1346)
 - FIX: StackOverflowError when using <extends> and ../ivy.xml is not the parent ivy.xml (IVY-1437)
 - FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)

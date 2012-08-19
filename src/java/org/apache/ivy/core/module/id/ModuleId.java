@@ -59,7 +59,7 @@ public class ModuleId implements Comparable {
      *            the module id to return
      * @return a unit instance of the given module id.
      */
-    public static ModuleId intern(ModuleId moduleId) {
+    public static synchronized ModuleId intern(ModuleId moduleId) {
         ModuleId r = (ModuleId) CACHE.get(moduleId);
         if (r == null) {
             r = moduleId;
