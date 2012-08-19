@@ -44,6 +44,7 @@ import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ExtendsDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -3396,6 +3397,24 @@ public class ResolveTest extends TestCase {
         Map extra = new HashMap();
         extra.put("o:a", "58701");
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "badArtifact", "1.0.0.m4", extra)));
+    }
+
+    public void testIVY1347() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-1347/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1347/childone/childtwo/ivy.xml").toURI().toURL(),
+            getResolveOptions(new String[] {"*"}));
+        ModuleDescriptor md = rr.getModuleDescriptor();
+        assertNotNull(md);
+        
+        ExtendsDescriptor[] parents = md.getInheritedDescriptors();
+        assertNotNull(parents);
+        assertEquals(1, parents.length);
+        
+        ModuleRevisionId parent = parents[0].getParentRevisionId();
+        assertEquals(ModuleRevisionId.newInstance("foo", "parent", "1.0"), parent);
     }
 
     public void testIVY999() throws Exception {
