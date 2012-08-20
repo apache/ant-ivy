@@ -31,7 +31,6 @@ import java.util.TreeMap;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -39,6 +38,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -108,7 +108,7 @@ public class XmlReportParser {
                         try {
                             String pubDateAttr = attributes.getValue("pubdate");
                             if (pubDateAttr != null) {
-                                pubdate = Ivy.DATE_FORMAT.parse(pubDateAttr);
+                                pubdate = DateUtil.parse(pubDateAttr);
                             }
                             skip = false;
                         } catch (ParseException e) {

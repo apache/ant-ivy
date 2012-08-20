@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -42,6 +41,7 @@ import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.XMLHelper;
 
@@ -85,7 +85,7 @@ public class XmlReportWriter {
         }
         out.println("\t\tconf=\"" + XMLHelper.escape(report.getConfiguration()) + "\"");
         out.println("\t\tconfs=\"" + XMLHelper.escape(StringUtils.join(confs, ", ")) + "\"");
-        out.println("\t\tdate=\"" + Ivy.DATE_FORMAT.format(report.getDate()) + "\"/>");
+        out.println("\t\tdate=\"" + DateUtil.format(report.getDate()) + "\"/>");
 
         out.println("\t<dependencies>");
 
@@ -120,7 +120,7 @@ public class XmlReportWriter {
             details.append(" status=\"");
             details.append(XMLHelper.escape(dep.getDescriptor().getStatus()));
             details.append("\" pubdate=\"");
-            details.append(Ivy.DATE_FORMAT.format(new Date(dep.getPublication())));
+            details.append(DateUtil.format(new Date(dep.getPublication())));
             details.append("\" resolver=\"");
             details.append(XMLHelper.escape(
                 dep.getModuleRevision().getResolver().getName()));

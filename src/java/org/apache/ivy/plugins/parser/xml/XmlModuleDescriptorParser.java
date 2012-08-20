@@ -71,6 +71,7 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
@@ -1004,7 +1005,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String pubDate = settings.substitute(attributes.getValue("publication"));
             if (pubDate != null && pubDate.length() > 0) {
                 try {
-                    getMd().setPublicationDate(Ivy.DATE_FORMAT.parse(pubDate));
+                    getMd().setPublicationDate(DateUtil.parse(pubDate));
                 } catch (ParseException e) {
                     addError("invalid publication date format: " + pubDate);
                     getMd().setPublicationDate(getDefaultPubDate());
