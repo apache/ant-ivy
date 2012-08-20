@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -43,6 +42,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.MapMatcher;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.XMLHelper;
@@ -450,7 +450,7 @@ public final class XmlModuleDescriptorWriter {
         }
         out.println("\t\tstatus=\"" + XMLHelper.escape(md.getStatus()) + "\"");
         out.println("\t\tpublication=\""
-                + Ivy.DATE_FORMAT.format(md.getResolvedPublicationDate()) + "\"");
+                + DateUtil.format(md.getResolvedPublicationDate()) + "\"");
         if (md.isDefault()) {
             out.println("\t\tdefault=\"true\"");
         }

@@ -28,6 +28,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.CallTarget;
@@ -375,7 +376,7 @@ public class IvyDeliver extends IvyTask {
         Date pubdate = getPubDate(this.pubdate, new Date());
         if (pubRevision == null) {
             if (revision.startsWith("working@")) {
-                pubRevision = Ivy.DATE_FORMAT.format(pubdate);
+                pubRevision = DateUtil.format(pubdate);
             } else {
                 pubRevision = revision;
             }

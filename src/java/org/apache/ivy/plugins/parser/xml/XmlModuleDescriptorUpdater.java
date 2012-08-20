@@ -41,7 +41,6 @@ import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -57,6 +56,7 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Checks;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
@@ -755,7 +755,7 @@ public final class XmlModuleDescriptorUpdater {
             }
             write(" status=\"" + XMLHelper.escape(status) + "\"");
             if (pubdate != null) {
-                write(" publication=\"" + Ivy.DATE_FORMAT.format(pubdate) + "\"");
+                write(" publication=\"" + DateUtil.format(pubdate) + "\"");
             } else if (attributes.getValue("publication") != null) {
                 write(" publication=\""
                         + substitute(settings, attributes.getValue("publication")) + "\"");

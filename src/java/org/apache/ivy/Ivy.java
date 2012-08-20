@@ -65,6 +65,7 @@ import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLoggerEngine;
@@ -130,7 +131,10 @@ public class Ivy {
     
     private static final int KILO = 1024;
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
+    /**
+     * @deprecated Use the {@link DateUtil} utility class instead.
+     */
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DateUtil.DATE_FORMAT_PATTERN);
     
     /**
      * the current version of Ivy, as displayed on the console when 

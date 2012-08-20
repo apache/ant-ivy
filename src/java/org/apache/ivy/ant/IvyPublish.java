@@ -33,6 +33,7 @@ import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.util.DateUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DynamicAttribute;
 
@@ -271,7 +272,7 @@ public class IvyPublish extends IvyTask {
         Date pubdate = getPubDate(this.pubdate, new Date());
         if (pubRevision == null) {
             if (revision.startsWith("working@")) {
-                pubRevision = Ivy.DATE_FORMAT.format(pubdate);
+                pubRevision = DateUtil.format(pubdate);
             } else {
                 pubRevision = revision;
             }
@@ -295,7 +296,7 @@ public class IvyPublish extends IvyTask {
                 deliver.setDeliveryList(deliveryList);
                 deliver.setModule(getModule());
                 deliver.setOrganisation(getOrganisation());
-                deliver.setPubdate(Ivy.DATE_FORMAT.format(pubdate));
+                deliver.setPubdate(DateUtil.format(pubdate));
                 deliver.setPubrevision(getPubrevision());
                 deliver.setPubbranch(getPubbranch());
                 deliver.setRevision(getRevision());
