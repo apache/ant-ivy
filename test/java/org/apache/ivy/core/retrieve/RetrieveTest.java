@@ -25,6 +25,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.event.IvyEvent;
@@ -211,6 +212,10 @@ public class RetrieveTest extends TestCase {
     }
 
     public void testRetrieveWithSymlinksMass() throws Exception {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return;
+        }
+        
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
