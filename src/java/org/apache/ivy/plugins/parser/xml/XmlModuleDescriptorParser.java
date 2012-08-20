@@ -613,6 +613,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
 
             if (!file.exists()) {
+                Message.verbose("Parent module doesn't exist on the filesystem: " + file.getAbsolutePath());
                 return null;
             }
             
