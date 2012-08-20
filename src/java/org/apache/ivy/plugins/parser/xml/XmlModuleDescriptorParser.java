@@ -59,7 +59,6 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
@@ -602,16 +601,17 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 return null;
             }
             
-            File file = FileUtil.normalize(location);
+            File file = new File(location);
             if (!file.isAbsolute()) {
                 URL url = new URL(descriptorURL, location);
                 try {
-                    file = FileUtil.normalize(new File(new URI(url.toExternalForm())).getAbsolutePath());
+                    file = new File(new URI(url.toExternalForm()));
                 } catch (URISyntaxException e) {
-                    file = FileUtil.normalize(new File(url.getPath()).getAbsolutePath());
+                    file = new File(url.getPath());
                 }
             }
-
+            
+            file = FileUtil.normalize(file.getAbsolutePath());
             if (!file.exists()) {
                 Message.verbose("Parent module doesn't exist on the filesystem: " + file.getAbsolutePath());
                 return null;
