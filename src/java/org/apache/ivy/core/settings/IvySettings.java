@@ -478,6 +478,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             setDeprecatedVariable("ivy.conf.file", "ivy.settings.file");
             setVariable("ivy.settings.url", settingsFile.toURI().toURL().toExternalForm());
             setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
+            setVariable("ivy.settings.dir.url", new File(settingsFile.getAbsolutePath())
+                    .getParentFile().toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException(
                     "given file cannot be transformed to url: " + settingsFile);

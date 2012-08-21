@@ -20,7 +20,7 @@
 	<settings defaultCache="${ivy.basedir}/build/cache" defaultResolver="m2"/>
 	<resolvers>
 		<ibiblio name="m2" m2compatible="true" useMavenMetadata="true" 
-		         root="${ivy.settings.url}" />
+		         root="${ivy.settings.dir.url}" />
         <filesystem name="IVY-1324">
             <ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
             <artifact pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[originalname].[ext]"/>
