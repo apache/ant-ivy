@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<repository name='Test repo of artifacts with zipped touchpointData' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1311544192366'/>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <units size='3'>
+    <unit id='org.apache.ant' version='1.8.3.v20120321-1730' singleton='false'>
+      <update id='org.apache.ant' range='[0.0.0,1.8.3.v20120321-1730)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+      </properties>
+      <provides size='73'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ant' version='1.8.3.v20120321-1730'/>
+        <provided namespace='osgi.bundle' name='org.apache.ant' version='1.8.3.v20120321-1730'/>
+        <provided namespace='java.package' name='org.apache.tools.ant' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.dispatch' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.filters' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.filters.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.helper' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.input' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.launch' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.listener' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.loader' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.property' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.compilers' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.condition' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.cvslib' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.email' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.ccm' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.clearcase' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.depend' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.depend.constantpool' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.ejb' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.extension' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.extension.resolvers' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.i18n' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.image' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.j2ee' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.javacc' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.javah' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.jdepend' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.jlink' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.jsp' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.jsp.compilers' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.junit' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.native2ascii' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.net' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.perforce' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.pvcs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.script' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.sos' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.sound' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.splash' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.ssh' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.testing' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.unix' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.vss' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.optional.windows' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.taskdefs.rmic' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.mappers' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.optional' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.optional.depend' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.optional.image' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.resolver' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.resources' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.resources.comparators' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.resources.selectors' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.selectors' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.selectors.modifiedselector' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.types.spi' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util.depend' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util.depend.bcel' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util.facade' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util.java15' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util.optional' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.ant.util.regexp' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.bzip2' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.mail' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.tar' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.tools.zip' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ant' version='1.8.3.v20120321-1730'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.apache.ant&#xA;Bundle-Version: 1.8.3.v20120321-1730
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ant.source' version='1.8.3.v20120321-1730' singleton='false'>
+      <update id='org.apache.ant.source' range='[0.0.0,1.8.3.v20120321-1730)' severity='0'/>
+      <properties size='5'>
+        <property name='df_LT.pluginName' value='Apache Ant'/>
+        <property name='df_LT.providerName' value='Eclipse Orbit'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ant.source' version='1.8.3.v20120321-1730'/>
+        <provided namespace='osgi.bundle' name='org.apache.ant.source' version='1.8.3.v20120321-1730'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='source' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ant.source' version='1.8.3.v20120321-1730'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.apache.ant.source&#xA;Bundle-Version: 1.8.3.v20120321-1730
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.eclipse.e4.core.services' version='1.0.0.v20120521-2346'>
+      <update id='org.eclipse.e4.core.services' range='[0.0.0,1.0.0.v20120521-2346)' severity='0'/>
+      <properties size='5'>
+        <property name='df_LT.providerName' value='Eclipse.org'/>
+        <property name='df_LT.pluginName' value='Eclipse Application Services'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='13'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.e4.core.services' version='1.0.0.v20120521-2346'/>
+        <provided namespace='osgi.bundle' name='org.eclipse.e4.core.services' version='1.0.0.v20120521-2346'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.internal.services' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.adapter' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.contributions' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.events' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.log' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.statusreporter' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.translation' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eclipse.e4.core.services.work' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.eclipse.e4.core.services' version='1.0.0.v20120521-2346'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.eclipse.e4.core.services;singleton:=true&#xA;Bundle-Version: 1.0.0.v20120521-2346
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+  </units>
+</repository>
