@@ -132,8 +132,9 @@ public class P2Descriptor extends RepoDescriptor {
             if (source == null) {
                 continue;
             }
+            String compression = md.getAllArtifacts()[0].getExtraAttribute("compression");
             DefaultArtifact sourceArtifact = BundleInfoAdapter.buildArtifact(
-                md.getModuleRevisionId(), getBaseUri(), source, "source", null);
+                md.getModuleRevisionId(), getBaseUri(), source, "source", compression);
             md.addArtifact(BundleInfoAdapter.CONF_NAME_DEFAULT, sourceArtifact);
         }
         sourceURIs = null;

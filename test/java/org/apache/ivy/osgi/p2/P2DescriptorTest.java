@@ -18,7 +18,6 @@
 package org.apache.ivy.osgi.p2;
 
 import java.io.File;
-import java.text.ParseException;
 
 import junit.framework.TestCase;
 
@@ -37,7 +36,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.updatesite.UpdateSiteResolver;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class P2DescriptorTest extends TestCase {
 
@@ -45,7 +43,9 @@ public class P2DescriptorTest extends TestCase {
 
     private IvySettings settings;
 
-    private UpdateSiteResolver resolver;
+    private UpdateSiteResolver p2SourceResolver;
+
+    private UpdateSiteResolver p2ZippedResolver;
 
     private Ivy ivy;
 
@@ -54,13 +54,17 @@ public class P2DescriptorTest extends TestCase {
     protected void setUp() throws Exception {
         settings = new IvySettings();
 
-        resolver = new UpdateSiteResolver();
-        resolver.setName("p2-sources");
-        resolver.setUrl(new File("test/test-p2/sources").toURL().toExternalForm());
-        resolver.setSettings(settings);
-        settings.addResolver(resolver);
+        p2SourceResolver = new UpdateSiteResolver();
+        p2SourceResolver.setName("p2-sources");
+        p2SourceResolver.setUrl(new File("test/test-p2/sources").toURL().toExternalForm());
+        p2SourceResolver.setSettings(settings);
+        settings.addResolver(p2SourceResolver);
 
-        settings.setDefaultResolver("p2-sources");
+        p2ZippedResolver = new UpdateSiteResolver();
+        p2ZippedResolver.setName("p2-zipped");
+        p2ZippedResolver.setUrl(new File("test/test-p2/zipped").toURL().toExternalForm());
+        p2ZippedResolver.setSettings(settings);
+        settings.addResolver(p2ZippedResolver);
 
         cache = new File("build/cache");
         cache.mkdirs();
@@ -79,18 +83,20 @@ public class P2DescriptorTest extends TestCase {
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
     }
 
-    public void testResolve() throws Exception {
+    public void testResolveSource() throws Exception {
+        settings.setDefaultResolver("p2-sources");
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy", "2.2.0.final_20100923230623");
 
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), data);
+        ResolvedModuleRevision rmr = p2SourceResolver.getDependency(
+            new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
         assertEquals(2, rmr.getDescriptor().getAllArtifacts().length);
 
-        DownloadReport report = resolver.download(rmr.getDescriptor().getAllArtifacts(),
+        DownloadReport report = p2SourceResolver.download(rmr.getDescriptor().getAllArtifacts(),
             new DownloadOptions());
         assertNotNull(report);
 
@@ -105,7 +111,7 @@ public class P2DescriptorTest extends TestCase {
             assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
             // test to ask to download again, should use cache
-            DownloadReport report2 = resolver.download(new Artifact[] {artifact},
+            DownloadReport report2 = p2SourceResolver.download(new Artifact[] {artifact},
                 new DownloadOptions());
             assertNotNull(report2);
 
@@ -116,6 +122,68 @@ public class P2DescriptorTest extends TestCase {
 
             assertEquals(artifact, ar.getArtifact());
             assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
+        }
+    }
+
+    public void testResolveNotZipped() throws Exception {
+        settings.setDefaultResolver("p2-zipped");
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
+            "org.eclipse.e4.core.services", "1.0.0.v20120521-2346");
+
+        ResolvedModuleRevision rmr = p2ZippedResolver.getDependency(
+            new DefaultDependencyDescriptor(mrid, false), data);
+        assertNotNull(rmr);
+        assertEquals(mrid, rmr.getId());
+
+        assertEquals(1, rmr.getDescriptor().getAllArtifacts().length);
+
+        DownloadOptions options = new DownloadOptions();
+        options.setExpandCompressed(true);
+        DownloadReport report = p2ZippedResolver.download(rmr.getDescriptor().getAllArtifacts(),
+            options);
+        assertNotNull(report);
+
+        assertEquals(1, report.getArtifactsReports().length);
+
+        Artifact artifact = rmr.getDescriptor().getAllArtifacts()[0];
+        ArtifactDownloadReport ar = report.getArtifactReport(artifact);
+        assertNotNull(ar);
+
+        assertEquals(artifact, ar.getArtifact());
+        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+        assertNull(ar.getUncompressedLocalDir());
+    }
+
+    public void testResolveZipped() throws Exception {
+        settings.setDefaultResolver("p2-zipped");
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
+            "org.apache.ant", "1.8.3.v20120321-1730");
+
+        ResolvedModuleRevision rmr = p2ZippedResolver.getDependency(
+            new DefaultDependencyDescriptor(mrid, false), data);
+        assertNotNull(rmr);
+        assertEquals(mrid, rmr.getId());
+
+        assertEquals(2, rmr.getDescriptor().getAllArtifacts().length);
+
+        DownloadOptions options = new DownloadOptions();
+        options.setExpandCompressed(true);
+        DownloadReport report = p2ZippedResolver.download(rmr.getDescriptor().getAllArtifacts(),
+            options);
+        assertNotNull(report);
+
+        assertEquals(2, report.getArtifactsReports().length);
+
+        for (int i = 0; i < 2; i++) {
+            Artifact artifact = rmr.getDescriptor().getAllArtifacts()[i];
+            ArtifactDownloadReport ar = report.getArtifactReport(artifact);
+            assertNotNull(ar);
+    
+            assertEquals(artifact, ar.getArtifact());
+            assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+            assertNotNull(ar.getUncompressedLocalDir());
         }
     }
 }

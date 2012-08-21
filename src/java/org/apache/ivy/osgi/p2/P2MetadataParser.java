@@ -295,8 +295,9 @@ public class P2MetadataParser implements XMLInputParser {
             // });
             addChild(new TouchpointDataHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) throws SAXParseException {
-                    if (((TouchpointDataHandler) child).zipped) {
-                        bundleInfo.setHasInnerClasspath(true);                        
+                    Boolean zipped = ((TouchpointDataHandler) child).zipped;
+                    if (zipped != null) {
+                        bundleInfo.setHasInnerClasspath(zipped.booleanValue());                        
                     }
                     if (!bundleInfo.isSource()) {
                         // we only care about parsing the manifest if it is a source
@@ -688,7 +689,7 @@ public class P2MetadataParser implements XMLInputParser {
 
         String manifest;
 
-        boolean zipped;
+        Boolean zipped;
 
         public TouchpointDataHandler() {
             super(TOUCHPOINTDATA);
@@ -714,18 +715,20 @@ public class P2MetadataParser implements XMLInputParser {
 
         String manifest;
 
-        boolean zipped;
+        Boolean zipped;
 
         public InstructionsHandler() {
             super(INSTRUCTIONS);
             addChild(new InstructionHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
+                    manifest = null;
+                    zipped = null;
+                    String buffer = ((InstructionHandler) child).getBufferedChars().trim();
                     String key = ((InstructionHandler) child).key;
                     if ("manifest".equals(key)) {
-                        manifest = ((InstructionHandler) child).getBufferedChars();
-                    } else if ("zipped".equals(key)) {
-                        zipped = Boolean.valueOf(
-                            ((InstructionHandler) child).getBufferedChars().trim()).booleanValue();
+                        manifest = buffer;
+                    } else if ("zipped".equals(key) && buffer.length() != 0) {
+                        zipped = Boolean.valueOf(buffer);
                     }
                 }
             });
