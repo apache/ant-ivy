@@ -5436,7 +5436,7 @@ public class ResolveTest extends TestCase {
 
     public void testCompressed() throws Exception {
         ResolveOptions options = getResolveOptions(new String[] {"*"});
-        options.setExpandCompressed(true);
+        options.setUncompress(true);
 
         URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI().toURL();
 

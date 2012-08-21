@@ -23,7 +23,7 @@ public class CacheDownloadOptions {
 
     private boolean force = false;
 
-    private boolean expandCompressed = false;
+    private boolean uncompress = false;
 
     public DownloadListener getListener() {
         return listener;
@@ -43,12 +43,12 @@ public class CacheDownloadOptions {
         return this;
     }
 
-    public boolean isExpandCompressed() {
-        return expandCompressed;
+    public boolean isUncompress() {
+        return uncompress;
     }
 
-    public CacheDownloadOptions setExpandCompressed(boolean expandCompressed) {
-        this.expandCompressed = expandCompressed;
+    public CacheDownloadOptions setUncompress(boolean uncompress) {
+        this.uncompress = uncompress;
         return this;
     }
 }

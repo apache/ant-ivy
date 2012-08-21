@@ -135,7 +135,7 @@ public class RetrieveEngine {
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
                 File archive = artifact.getLocalFile();
-                if (options.isUncompressed() && artifact.getUncompressedLocalDir() != null) {
+                if (options.isUncompress() && artifact.getUncompressedLocalDir() != null) {
                     archive = artifact.getUncompressedLocalDir();
                 }
                 if (archive == null) {
@@ -343,7 +343,7 @@ public class RetrieveEngine {
 
                 Artifact artifact = adr.getArtifact();
                 String ext = artifact.getExt();
-                if (options.isUncompressed() && adr.getUncompressedLocalDir() != null) {
+                if (options.isUncompress() && adr.getUncompressedLocalDir() != null) {
                     ext = "";
                 }
 

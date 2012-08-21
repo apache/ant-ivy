@@ -139,7 +139,7 @@ public class P2DescriptorTest extends TestCase {
         assertEquals(1, rmr.getDescriptor().getAllArtifacts().length);
 
         DownloadOptions options = new DownloadOptions();
-        options.setExpandCompressed(true);
+        options.setUncompress(true);
         DownloadReport report = p2ZippedResolver.download(rmr.getDescriptor().getAllArtifacts(),
             options);
         assertNotNull(report);
@@ -169,7 +169,7 @@ public class P2DescriptorTest extends TestCase {
         assertEquals(2, rmr.getDescriptor().getAllArtifacts().length);
 
         DownloadOptions options = new DownloadOptions();
-        options.setExpandCompressed(true);
+        options.setUncompress(true);
         DownloadReport report = p2ZippedResolver.download(rmr.getDescriptor().getAllArtifacts(),
             options);
         assertNotNull(report);

@@ -89,7 +89,7 @@ public class IvyResolve extends IvyTask {
     
     private String log = ResolveOptions.LOG_DEFAULT;
 
-    private boolean uncompressed = false;
+    private boolean uncompress = false;
 
     private boolean checkIfChanged = true; //for backward compatibility
 
@@ -195,12 +195,12 @@ public class IvyResolve extends IvyTask {
         this.log = log;
     }
 
-    public boolean isUncompressed() {
-        return uncompressed;
+    public boolean isUncompress() {
+        return uncompress;
     }
 
-    public void setUncompressed(boolean uncompressed) {
-        this.uncompressed = uncompressed;
+    public void setUncompress(boolean uncompress) {
+        this.uncompress = uncompress;
     }
 
     /**
@@ -456,7 +456,7 @@ public class IvyResolve extends IvyTask {
                 .setResolveMode(resolveMode)
                 .setResolveId(resolveId)
                 .setCheckIfChanged(checkIfChanged)
-                .setExpandCompressed(uncompressed);
+                .setUncompress(uncompress);
     }
 
     public String getModule() {

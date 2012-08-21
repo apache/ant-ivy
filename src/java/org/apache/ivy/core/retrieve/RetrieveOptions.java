@@ -86,7 +86,7 @@ public class RetrieveOptions extends LogOptions {
     private String resolveId;
     
     private FileNameMapper mapper;
-    private boolean uncompressed;
+    private boolean uncompress;
 
     public RetrieveOptions() {
     }
@@ -104,7 +104,7 @@ public class RetrieveOptions extends LogOptions {
         this.makeSymlinksInMass = options.makeSymlinksInMass;
         this.resolveId = options.resolveId;
         this.mapper = options.mapper;
-        this.uncompressed = options.uncompressed;
+        this.uncompress = options.uncompress;
     }
 
     public String getDestArtifactPattern() {
@@ -206,12 +206,12 @@ public class RetrieveOptions extends LogOptions {
         return this;
     }
 
-    public boolean isUncompressed() {
-        return uncompressed;
+    public boolean isUncompress() {
+        return uncompress;
     }
 
-    public RetrieveOptions setUncompressed(boolean uncompressed) {
-        this.uncompressed = uncompressed;
+    public RetrieveOptions setUncompress(boolean uncompress) {
+        this.uncompress = uncompress;
         return this;
     }
 }

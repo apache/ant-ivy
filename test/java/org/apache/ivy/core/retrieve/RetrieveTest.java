@@ -308,7 +308,7 @@ public class RetrieveTest extends TestCase {
 
     public void testUncompress() throws Exception {
         ResolveOptions roptions = getResolveOptions(new String[] {"*"});
-        roptions.setExpandCompressed(true);
+        roptions.setUncompress(true);
 
         URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI()
                 .toURL();
@@ -322,7 +322,7 @@ public class RetrieveTest extends TestCase {
         String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
         RetrieveOptions options = getRetrieveOptions();
-        options.setUncompressed(true);
+        options.setUncompress(true);
         ivy.retrieve(md.getModuleRevisionId(), pattern, options);
 
         File dest = new File("build/test/retrieve/compression/module2/default/jars/module2-1.0");
@@ -336,7 +336,7 @@ public class RetrieveTest extends TestCase {
 
     public void testUncompressSync() throws Exception {
         ResolveOptions roptions = getResolveOptions(new String[] {"*"});
-        roptions.setExpandCompressed(true);
+        roptions.setUncompress(true);
 
         URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI()
                 .toURL();
@@ -350,7 +350,7 @@ public class RetrieveTest extends TestCase {
         String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
         RetrieveOptions options = getRetrieveOptions();
-        options.setUncompressed(true);
+        options.setUncompress(true);
         options.setSync(true);
         ivy.retrieve(md.getModuleRevisionId(), pattern, options);
 

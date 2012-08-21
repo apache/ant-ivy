@@ -22,17 +22,17 @@ import org.apache.ivy.core.LogOptions;
 
 public class DownloadOptions extends LogOptions {
 
-    private boolean expandCompressed;
+    private boolean uncompress;
 
     public DownloadOptions() {
     }
 
-    public DownloadOptions setExpandCompressed(boolean expandCompressed) {
-        this.expandCompressed = expandCompressed;
+    public DownloadOptions setUncompress(boolean uncompress) {
+        this.uncompress = uncompress;
         return this;
     }
 
-    public boolean isExpandCompressed() {
-        return expandCompressed;
+    public boolean isUncompress() {
+        return uncompress;
     }
 }

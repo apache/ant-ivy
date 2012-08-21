@@ -333,7 +333,7 @@ public class ResolveEngine {
 
                 DownloadOptions downloadOptions = new DownloadOptions();
                 downloadOptions.setLog(options.getLog());
-                downloadOptions.setExpandCompressed(options.isExpandCompressed());
+                downloadOptions.setUncompress(options.isUncompress());
                 downloadArtifacts(report, options.getArtifactFilter(), downloadOptions);
             }
 

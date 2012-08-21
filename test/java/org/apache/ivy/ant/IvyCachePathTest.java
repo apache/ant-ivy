@@ -243,7 +243,7 @@ public class IvyCachePathTest extends TestCase {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/compression/module1/ivys/ivy-1.0.xml");
         path.setPathid("testUncompress");
-        path.setUncompressed(true);
+        path.setUncompress(true);
         path.execute();
         Object ref = project.getReference("testUncompress");
         assertNotNull(ref);
@@ -257,7 +257,7 @@ public class IvyCachePathTest extends TestCase {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/compression/module5/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");
-        path.setUncompressed(true);
+        path.setUncompress(true);
         path.setOsgi(true);
         path.execute();
         Object ref = project.getReference("testOSGi");
@@ -277,7 +277,7 @@ public class IvyCachePathTest extends TestCase {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/compression/module6/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");
-        path.setUncompressed(true);
+        path.setUncompress(true);
         path.setOsgi(true);
         path.execute();
         Object ref = project.getReference("testOSGi");

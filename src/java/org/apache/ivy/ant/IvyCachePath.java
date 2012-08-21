@@ -75,7 +75,7 @@ public class IvyCachePath extends IvyCacheTask {
             for (Iterator iter = getArtifactReports().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
                 File f = a.getLocalFile();
-                if (isUncompressed() && a.getUncompressedLocalDir() != null) {
+                if (isUncompress() && a.getUncompressedLocalDir() != null) {
                     f = a.getUncompressedLocalDir();
                 }
                 addToPath(path, f);

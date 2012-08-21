@@ -907,8 +907,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
                 }
             }
-            if (options.isExpandCompressed() && adr.getDownloadStatus() != DownloadStatus.FAILED) {
-                expandCompressedArtifact(artifact, adr, options);
+            if (options.isUncompress() && adr.getDownloadStatus() != DownloadStatus.FAILED) {
+                uncompressArtifact(artifact, adr, options);
             }
             if (listener != null) {
                 listener.endArtifactDownload(this, artifact, adr, archiveFile);
@@ -919,7 +919,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
     }
 
-    private void expandCompressedArtifact(Artifact artifact, ArtifactDownloadReport adr,
+    private void uncompressArtifact(Artifact artifact, ArtifactDownloadReport adr,
             CacheDownloadOptions options) {
         String compression = artifact.getExtraAttribute("compression");
         if (compression == null) {
