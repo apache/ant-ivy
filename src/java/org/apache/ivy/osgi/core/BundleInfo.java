@@ -76,6 +76,8 @@ public class BundleInfo {
 
     private boolean hasInnerClasspath;
 
+    private List/* <String> */classpath;
+
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
         this.version = version;
@@ -235,6 +237,14 @@ public class BundleInfo {
         return hasInnerClasspath;
     }
 
+    public void setClasspath(List/* <String> */classpath) {
+        this.classpath = classpath;
+    }
+
+    public List/* <String> */getClasspath() {
+        return classpath;
+    }
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -323,6 +333,13 @@ public class BundleInfo {
             return false;
         }
         if (hasInnerClasspath != other.hasInnerClasspath) {
+            return false;
+        }
+        if (classpath == null) {
+            if (other.classpath != null) {
+                return false;
+            }
+        } else if (!classpath.equals(other.classpath)) {
             return false;
         }
         return true;

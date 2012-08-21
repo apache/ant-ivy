@@ -17,7 +17,12 @@
  */
 package org.apache.ivy.osgi.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -44,6 +49,7 @@ public class ManifestParserTest extends TestCase {
         assertEquals(expectedRequires, bundleInfo.getRequires());
         assertEquals(0, bundleInfo.getExports().size());
         assertEquals(2, bundleInfo.getImports().size());
+        assertNull(bundleInfo.getClasspath());
 
         final String importsList = bundleInfo.getImports().toString();
         assertTrue(importsList.indexOf("com.acme.bravo") != -1);
@@ -64,6 +70,34 @@ public class ManifestParserTest extends TestCase {
         assertTrue(bundleInfo.getExports().toString().indexOf("com.acme.bravo") != -1);
         assertEquals(1, bundleInfo.getImports().size());
         assertTrue(bundleInfo.getImports().toString().indexOf("com.acme.charlie") != -1);
+    }
+
+    public void testClasspath() throws Exception {
+        InputStream in = this.getClass().getResourceAsStream(
+            "/org/apache/ivy/osgi/core/MANIFEST_classpath.MF");
+        BundleInfo bundleInfo;
+        try {
+            bundleInfo = ManifestParser.parseManifest(in);
+        } finally {
+            in.close();
+        }
+        List/* <String> */cp = bundleInfo.getClasspath();
+        assertNotNull(cp);
+        assertEquals(4, cp.size());
+        assertEquals(
+            Arrays.asList(new String[] {"lib/ant-antlr.jar", "lib/ant-apache-bcel.jar",
+                    "lib/ant-apache-bsf.jar", "lib/ant-apache-log4j.jar"}), cp);
+
+        in = this.getClass().getResourceAsStream("/org/apache/ivy/osgi/core/MANIFEST_classpath2.MF");
+        try {
+            bundleInfo = ManifestParser.parseManifest(in);
+        } finally {
+            in.close();
+        }
+        cp = bundleInfo.getClasspath();
+        assertNotNull(cp);
+        assertEquals(1, cp.size());
+        assertEquals(Arrays.asList(new String[] {"."}), cp);
     }
 
     public void testFormatLines() throws Exception {

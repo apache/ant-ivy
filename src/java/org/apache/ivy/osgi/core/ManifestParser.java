@@ -60,6 +60,8 @@ public class ManifestParser {
 
     private static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment";
 
+    private static final String BUNDLE_CLASSPATH = "Bundle-ClassPath";
+
     private static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle";
 
     private static final String ATTR_RESOLUTION = "resolution";
@@ -192,6 +194,12 @@ public class ManifestParser {
             if (v != null) {
                 bundleInfo.setVersionTarget(new Version(v));
             }
+        }
+
+        String bundleClasspath = mainAttributes.getValue(BUNDLE_CLASSPATH);
+        if (bundleClasspath != null) {
+            ManifestHeaderValue bundleClasspathValue = new ManifestHeaderValue(bundleClasspath);
+            bundleInfo.setClasspath(bundleClasspathValue.getValues());
         }
 
         return bundleInfo;
