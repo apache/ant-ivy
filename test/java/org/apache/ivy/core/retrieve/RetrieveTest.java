@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -329,6 +330,7 @@ public class RetrieveTest extends TestCase {
         assertTrue(dest.exists());
         assertTrue(dest.isDirectory());
         File[] jarContents = dest.listFiles();
+        Arrays.sort(jarContents);
         assertEquals(new File(dest, "META-INF"), jarContents[0]);
         assertEquals(new File(dest, "test.txt"), jarContents[1]);
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
@@ -358,6 +360,7 @@ public class RetrieveTest extends TestCase {
         assertTrue(dest.exists());
         assertTrue(dest.isDirectory());
         File[] jarContents = dest.listFiles();
+        Arrays.sort(jarContents);
         assertEquals(new File(dest, "META-INF"), jarContents[0]);
         assertEquals(new File(dest, "test.txt"), jarContents[1]);
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);

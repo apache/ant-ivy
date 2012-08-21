@@ -506,7 +506,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
         int slashIndex = settingsURLStr.lastIndexOf('/');
         if (slashIndex != -1) {
-            setVariable("ivy.settings.dir", settingsURLStr.substring(0, slashIndex));
+            String dirUrl = settingsURLStr.substring(0, slashIndex);
+            setVariable("ivy.settings.dir", dirUrl);
+            setVariable("ivy.settings.dir.url", dirUrl);
             setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
         } else {
             Message.warn("settings url does not contain any slash (/): " 

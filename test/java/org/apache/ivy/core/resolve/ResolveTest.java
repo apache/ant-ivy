@@ -4951,7 +4951,7 @@ public class ResolveTest extends TestCase {
     public void testExternalArtifacts() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.getSettings().setVariable("test.base.url",
-            new File("test/repositories/external-artifacts").toString());
+            new File("test/repositories/external-artifacts").toURI().toURL().toExternalForm());
         ivy.configure(new File("test/repositories/external-artifacts/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File("test/repositories/external-artifacts/ivy.xml")
@@ -5434,7 +5434,7 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
     }
 
-    public void testCompressed() throws Exception {
+    public void testUncompress() throws Exception {
         ResolveOptions options = getResolveOptions(new String[] {"*"});
         options.setUncompress(true);
 
@@ -5452,6 +5452,7 @@ public class ResolveTest extends TestCase {
             adr.getUncompressedLocalDir());
 
         File[] jarContents = adr.getUncompressedLocalDir().listFiles();
+        Arrays.sort(jarContents);
         assertEquals(new File(adr.getUncompressedLocalDir(), "META-INF"), jarContents[0]);
         assertEquals(new File(adr.getUncompressedLocalDir(), "test.txt"), jarContents[1]);
         assertEquals(new File(adr.getUncompressedLocalDir(), "META-INF/MANIFEST.MF"),

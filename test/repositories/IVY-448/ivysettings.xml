@@ -20,8 +20,8 @@
     <settings defaultResolver="myresolver" defaultConflictManager="all"/>
     <resolvers>
 			<url name="myresolver">
-				<ivy pattern="${ivy.settings.dir}/[module]/ivy-[revision].xml" />
-				<artifact pattern="${ivy.settings.dir}/[module]/[artifact]-[revision].[ext]" />
+				<ivy pattern="${ivy.settings.dir.url}/[module]/ivy-[revision].xml" />
+				<artifact pattern="${ivy.settings.dir.url}/[module]/[artifact]-[revision].[ext]" />
 			</url>
     </resolvers>
     <modules>
