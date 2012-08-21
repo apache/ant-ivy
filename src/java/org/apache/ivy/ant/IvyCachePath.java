@@ -19,8 +19,11 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.osgi.core.BundleInfo;
+import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;
@@ -29,9 +32,12 @@ import org.apache.tools.ant.types.Path;
  * Creates an ant path consisting in all artifacts found during a resolve.
  */
 public class IvyCachePath extends IvyCacheTask {
+
     private String pathid;
 
     private String id;
+
+    private boolean osgi = false;
 
     public String getPathid() {
         return pathid;
@@ -39,6 +45,10 @@ public class IvyCachePath extends IvyCacheTask {
 
     public void setPathid(String id) {
         pathid = id;
+    }
+
+    public void setOsgi(boolean osgi) {
+        this.osgi = osgi;
     }
 
     /**
@@ -68,12 +78,38 @@ public class IvyCachePath extends IvyCacheTask {
                 if (isUncompressed() && a.getUncompressedLocalDir() != null) {
                     f = a.getUncompressedLocalDir();
                 }
-                path.createPathElement().setLocation(f);
+                addToPath(path, f);
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy path: " + ex, ex);
         }
 
+    }
+
+    protected void addToPath(Path path, File f) throws Exception {
+        if (!osgi || !f.isDirectory()) {
+            path.createPathElement().setLocation(f);
+            return;
+        }
+        File manifest = new File(f, "META-INF/MANIFEST.MF");
+        if (!manifest.exists()) {
+            path.createPathElement().setLocation(f);
+            return;
+        }
+        BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
+        List/* <String> */cp = bundleInfo.getClasspath();
+        if (cp == null) {
+            path.createPathElement().setLocation(f);
+            return;
+        }
+        for (int i = 0; i < cp.size(); i++) {
+            String p = (String) cp.get(i);
+            if (p.equals(".")) {
+                path.createPathElement().setLocation(f);
+            } else {
+                path.createPathElement().setLocation(new File(f, p));
+            }
+        }
     }
 
 }
