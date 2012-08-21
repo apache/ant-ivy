@@ -319,14 +319,13 @@ public class RetrieveTest extends TestCase {
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
 
-        String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[artifact]-[revision](.[ext])";
+        String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
         RetrieveOptions options = getRetrieveOptions();
         options.setUncompressed(true);
         ivy.retrieve(md.getModuleRevisionId(), pattern, options);
 
-        // NB
-        File dest = new File("build/test/retrieve/compression/module2/default/module2-1.0");
+        File dest = new File("build/test/retrieve/compression/module2/default/jars/module2-1.0");
         assertTrue(dest.exists());
         assertTrue(dest.isDirectory());
         File[] jarContents = dest.listFiles();

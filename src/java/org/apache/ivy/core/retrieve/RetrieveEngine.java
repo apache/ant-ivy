@@ -338,8 +338,9 @@ public class RetrieveEngine {
                 ArtifactDownloadReport adr = (ArtifactDownloadReport) iter.next();
 
                 Artifact artifact = adr.getArtifact();
+                String ext = artifact.getExt();
                 if (options.isUncompressed() && adr.getUncompressedLocalDir() != null) {
-                    artifact = adr.buildUncompressedArtifact();
+                    ext = "";
                 }
 
                 String destPattern = "ivy".equals(adr.getType()) ? destIvyPattern
@@ -350,8 +351,12 @@ public class RetrieveEngine {
                     continue; // skip this artifact, the filter didn't accept it!
                 }
 
+                ModuleRevisionId aMrid = artifact.getModuleRevisionId();
                 String destFileName = IvyPatternHelper.substitute(destPattern,
-                    artifact.getModuleRevisionId(), artifact, conf, adr.getArtifactOrigin());
+                    aMrid.getOrganisation(), aMrid.getName(), aMrid.getBranch(),
+                    aMrid.getRevision(), artifact.getName(), artifact.getType(), ext, conf,
+                    adr.getArtifactOrigin(), aMrid.getQualifiedExtraAttributes(),
+                    artifact.getQualifiedExtraAttributes());
                 Set dest = (Set) artifactsToCopy.get(adr);
                 if (dest == null) {
                     dest = new HashSet();

@@ -5448,7 +5448,7 @@ public class ResolveTest extends TestCase {
         File cacheDir = ivy.getSettings().getDefaultRepositoryCacheBasedir();
         assertEquals(new File(cacheDir, "compression/module2/jars/module2-1.0.jar"),
             adr.getLocalFile());
-        assertEquals(new File(cacheDir, "compression/module2/_uncompresseds/module2-1.0"),
+        assertEquals(new File(cacheDir, "compression/module2/jar_uncompresseds/module2-1.0"),
             adr.getUncompressedLocalDir());
 
         File[] jarContents = adr.getUncompressedLocalDir().listFiles();

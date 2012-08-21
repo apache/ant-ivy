@@ -160,7 +160,7 @@ public class ArtifactDownloadReport {
 
     public Artifact buildUncompressedArtifact() {
         return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(),
-                artifact.getName(), "_uncompressed", "");
+                artifact.getName(), artifact.getType() + "_uncompressed", "");
     }
 
     public void setUncompressedLocalDir(File uncompressedLocalDir) {
