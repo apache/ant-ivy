@@ -928,9 +928,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
 
         // the artifact for the folder of the uncompressed data
-        DefaultArtifact uncompressed = new DefaultArtifact(artifact.getModuleRevisionId(),
-                artifact.getPublicationDate(), artifact.getName(), "_uncompressed", "");
-        adr.setUncompressedArtifact(uncompressed);
+        Artifact uncompressed = adr.buildUncompressedArtifact();
 
         File archiveFile = getArchiveFileInCache(uncompressed, null, false);
         if (archiveFile.exists() && !options.isForce()) {

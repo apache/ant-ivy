@@ -111,6 +111,7 @@ public class RetrieveEngine {
 
         try {
             Map/*<File, File>*/ destToSrcMap = null;
+            // Map<ArtifactDownloadReport, Set<String>>
             Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
             File fileRetrieveRoot = settings.resolveFile(
                 IvyPatternHelper.getTokenRoot(destFilePattern));
@@ -134,6 +135,9 @@ public class RetrieveEngine {
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
                 File archive = artifact.getLocalFile();
+                if (options.isUncompressed() && artifact.getUncompressedLocalDir() != null) {
+                    archive = artifact.getUncompressedLocalDir();
+                }
                 if (archive == null) {
                     Message.verbose("\tno local file available for " + artifact + ": skipping");
                     continue;
@@ -170,7 +174,7 @@ public class RetrieveEngine {
                                         artifact, destFile));
                             }
                         }
-                        totalCopiedSize += destFile.length();
+                        totalCopiedSize += FileUtil.getFileLength(destFile);
                         report.addCopiedFile(destFile, artifact);
                     } else {
                         Message.verbose("\t\tto " + destFile + " [NOT REQUIRED]");
@@ -288,6 +292,9 @@ public class RetrieveEngine {
         }
     }
 
+    /**
+     * @return Map<ArtifactDownloadReport, Set<String>>
+     */
     public Map determineArtifactsToCopy(ModuleRevisionId mrid, String destFilePattern,
             RetrieveOptions options) throws ParseException, IOException {
         ModuleId moduleId = mrid.getModuleId();
@@ -328,22 +335,27 @@ public class RetrieveEngine {
                 }
             }
             for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
-                String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern
+                ArtifactDownloadReport adr = (ArtifactDownloadReport) iter.next();
+
+                Artifact artifact = adr.getArtifact();
+                if (options.isUncompressed() && adr.getUncompressedLocalDir() != null) {
+                    artifact = adr.buildUncompressedArtifact();
+                }
+
+                String destPattern = "ivy".equals(adr.getType()) ? destIvyPattern
                         : destFilePattern;
                 
-                if (!"ivy".equals(artifact.getType())
-                        && !options.getArtifactFilter().accept(artifact.getArtifact())) {
+                if (!"ivy".equals(adr.getType())
+                        && !options.getArtifactFilter().accept(adr.getArtifact())) {
                     continue; // skip this artifact, the filter didn't accept it!
                 }
 
                 String destFileName = IvyPatternHelper.substitute(destPattern,
-                            artifact.getArtifact().getModuleRevisionId(), artifact.getArtifact(),
-                            conf, artifact.getArtifactOrigin());
-                Set dest = (Set) artifactsToCopy.get(artifact);
+                    artifact.getModuleRevisionId(), artifact, conf, adr.getArtifactOrigin());
+                Set dest = (Set) artifactsToCopy.get(adr);
                 if (dest == null) {
                     dest = new HashSet();
-                    artifactsToCopy.put(artifact, dest);
+                    artifactsToCopy.put(adr, dest);
                 }
                 String copyDest = settings.resolveFile(destFileName).getAbsolutePath();
 
@@ -370,8 +382,8 @@ public class RetrieveEngine {
                         conflictsConf = new HashSet();
                         conflictsConfMap.put(destinations[j], conflictsConf);
                     }
-                    if (conflicts.add(artifact.getArtifact().getId())) {
-                        conflictsReports.add(artifact);
+                    if (conflicts.add(artifact.getId())) {
+                        conflictsReports.add(adr);
                         conflictsConf.add(conf);
                     }
                 }

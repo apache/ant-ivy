@@ -25,10 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -169,6 +168,17 @@ public final class FileUtil {
     }
 
     public static boolean prepareCopy(File src, File dest, boolean overwrite) throws IOException {
+        if (src.isDirectory()) {
+            if (dest.exists()) {
+                if (!dest.isDirectory()) {
+                    throw new IOException("impossible to copy: destination is not a directory: " + dest);
+                }
+            } else {
+                dest.mkdirs();
+            }
+            return true;
+        }
+        // else it is a file copy
         if (dest.exists()) {
             if (!dest.isFile()) {
                 throw new IOException("impossible to copy: destination is not a file: " + dest);
@@ -193,6 +203,10 @@ public final class FileUtil {
         if (!prepareCopy(src, dest, overwrite)) {
             return false;
         }
+        if (src.isDirectory()) {
+            return deepCopy(src, dest, l, overwrite);
+        }
+        // else it is a file copy
         copy(new FileInputStream(src), dest, l);
         long srcLen = src.length();
         long destLen = dest.length();
@@ -203,6 +217,50 @@ public final class FileUtil {
                     + ") - please retry");
         }
         dest.setLastModified(src.lastModified());
+        return true;
+    }
+
+    public static boolean deepCopy(File src, File dest, CopyProgressListener l, boolean overwrite)
+            throws IOException {
+        // the list of files which already exist in the destination folder
+        List/* <File> */existingChild = Collections.EMPTY_LIST;
+        if (dest.exists()) {
+            if (!dest.isDirectory()) {
+                // not expected type, remove
+                dest.delete();
+                // and create a folder
+                dest.mkdirs();
+                dest.setLastModified(src.lastModified());
+            } else {
+                // existing folder, gather existing children
+                File[] children = dest.listFiles();
+                if (children != null) {
+                    existingChild = Arrays.asList(children);
+                }
+            }
+        } else {
+            dest.mkdirs();
+            dest.setLastModified(src.lastModified());
+        }
+        // copy files one by one
+        File[] toCopy = src.listFiles();
+        if (toCopy != null) {
+            for (int i = 0; i < toCopy.length; i++) {
+                // compute the destination file
+                File childDest = new File(dest, toCopy[i].getName());
+                // if file existing, 'mark' it as taken care of
+                existingChild.remove(childDest);
+                if (toCopy[i].isDirectory()) {
+                    deepCopy(toCopy[i], childDest, l, overwrite);
+                } else {
+                    copy(toCopy[i], childDest, l, overwrite);
+                }
+            }
+        }
+        // some file exist in the destination but not in the source: delete them
+        for (int i = 0; i < existingChild.size(); i++) {
+            forceDelete((File) existingChild.get(i));
+        }
         return true;
     }
 
@@ -548,7 +606,27 @@ public final class FileUtil {
         }
         return new String[] {root, path};
     }
- 
+
+    /**
+     * Get the length of the file, or the sum of the children lengths if it is a directory
+     * 
+     * @param file
+     * @return
+     */
+    public static long getFileLength(File file) {
+        long l = 0;
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    l += getFileLength(files[i]);
+                }
+            }
+        } else {
+            l = file.length();
+        }
+        return l;
+    }
 
 
 }

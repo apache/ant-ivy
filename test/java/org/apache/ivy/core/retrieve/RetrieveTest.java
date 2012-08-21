@@ -19,6 +19,7 @@ package org.apache.ivy.core.retrieve;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -303,6 +304,35 @@ public class RetrieveTest extends TestCase {
         artifactsToCopy = ivy.getRetrieveEngine().determineArtifactsToCopy(mrid,
             "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]", options);
         assertEquals(3, artifactsToCopy.size());
+    }
+
+    public void testUncompress() throws Exception {
+        ResolveOptions roptions = getResolveOptions(new String[] {"*"});
+        roptions.setExpandCompressed(true);
+
+        URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI()
+                .toURL();
+
+        // normal resolve, the file goes in the cache
+        ResolveReport report = ivy.resolve(url, roptions);
+        assertFalse(report.hasError());
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+
+        String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[artifact]-[revision](.[ext])";
+
+        RetrieveOptions options = getRetrieveOptions();
+        options.setUncompressed(true);
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+
+        // NB
+        File dest = new File("build/test/retrieve/compression/module2/default/module2-1.0");
+        assertTrue(dest.exists());
+        assertTrue(dest.isDirectory());
+        File[] jarContents = dest.listFiles();
+        assertEquals(new File(dest, "META-INF"), jarContents[0]);
+        assertEquals(new File(dest, "test.txt"), jarContents[1]);
+        assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
     }
 
     private RetrieveOptions getRetrieveOptions() {

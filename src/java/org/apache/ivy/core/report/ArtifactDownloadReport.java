@@ -21,6 +21,7 @@ import java.io.File;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 
 /**
  * Report on the download of an artifact from a repository to a local (cached) file.
@@ -56,8 +57,6 @@ public class ArtifactDownloadReport {
     private long downloadTimeMillis;
 
     private File uncompressedLocalDir;
-
-    private Artifact uncompressedArtifact;
 
     public ArtifactDownloadReport(Artifact artifact) {
         this.artifact = artifact;
@@ -159,12 +158,9 @@ public class ArtifactDownloadReport {
         return DownloadStatus.SUCCESSFUL == downloadStatus;
     }
 
-    public void setUncompressedArtifact(Artifact uncompressedArtifact) {
-        this.uncompressedArtifact = uncompressedArtifact;
-    }
-
-    public Artifact getUncompressedArtifact() {
-        return uncompressedArtifact;
+    public Artifact buildUncompressedArtifact() {
+        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(),
+                artifact.getName(), "_uncompressed", "");
     }
 
     public void setUncompressedLocalDir(File uncompressedLocalDir) {

@@ -168,6 +168,10 @@ public class XmlReportParser {
                     if (attributes.getValue("location") != null) {
                         aReport.setLocalFile(new File(attributes.getValue("location")));
                     }
+                    if (attributes.getValue("uncompressedDir") != null) {
+                        aReport.setUncompressedLocalDir(new File(attributes
+                                .getValue("uncompressedDir")));
+                    }
                     revisionArtifacts.add(aReport);
                 } else if ("origin-location".equals(qName)) {
                     if (skip) {
