@@ -445,7 +445,10 @@ public abstract class AbstractResolver
     }
 
     protected CacheDownloadOptions getCacheDownloadOptions(DownloadOptions options) {
-        return new CacheDownloadOptions().setListener(getDownloadListener(options));
+        CacheDownloadOptions cacheDownloadOptions = new CacheDownloadOptions();
+        cacheDownloadOptions.setExpandCompressed(options.isExpandCompressed());
+        cacheDownloadOptions.setListener(getDownloadListener(options));
+        return cacheDownloadOptions;
     }
 
     protected DownloadOptions getDownloadOptions(ResolveOptions options) {

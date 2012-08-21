@@ -147,6 +147,7 @@
 						            <xs:attribute name="ext" type="xs:string"/>
 						            <xs:attribute name="conf" type="xs:string"/>
 						            <xs:attribute name="url" type="xs:string"/>
+                                    <xs:attribute name="compression" type="xs:string"/>
 						            <xs:anyAttribute namespace="##other" processContents="lax" />
 				            	</xs:complexType>
 				      		</xs:element>

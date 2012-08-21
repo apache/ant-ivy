@@ -331,8 +331,10 @@ public class ResolveEngine {
             if (options.isDownload()) {
                 Message.verbose(":: downloading artifacts ::");
 
-                downloadArtifacts(report, options.getArtifactFilter(), 
-                    (DownloadOptions) new DownloadOptions().setLog(options.getLog()));
+                DownloadOptions downloadOptions = new DownloadOptions();
+                downloadOptions.setLog(options.getLog());
+                downloadOptions.setExpandCompressed(options.isExpandCompressed());
+                downloadArtifacts(report, options.getArtifactFilter(), downloadOptions);
             }
 
             if (options.isOutputReport()) {

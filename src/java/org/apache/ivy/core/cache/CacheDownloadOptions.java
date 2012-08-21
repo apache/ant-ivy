@@ -17,23 +17,38 @@
  */
 package org.apache.ivy.core.cache;
 
-
 public class CacheDownloadOptions {
+
     private DownloadListener listener = null;
+
     private boolean force = false;
+
+    private boolean expandCompressed = false;
 
     public DownloadListener getListener() {
         return listener;
     }
+
     public CacheDownloadOptions setListener(DownloadListener listener) {
         this.listener = listener;
         return this;
     }
+
     public boolean isForce() {
         return force;
     }
+
     public CacheDownloadOptions setForce(boolean force) {
         this.force = force;
+        return this;
+    }
+
+    public boolean isExpandCompressed() {
+        return expandCompressed;
+    }
+
+    public CacheDownloadOptions setExpandCompressed(boolean expandCompressed) {
+        this.expandCompressed = expandCompressed;
         return this;
     }
 }

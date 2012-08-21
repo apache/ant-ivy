@@ -18,14 +18,20 @@
 package org.apache.ivy.core.cache;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -901,12 +907,90 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
                 }
             }
+            if (options.isExpandCompressed() && adr.getDownloadStatus() != DownloadStatus.FAILED) {
+                expandCompressedArtifact(artifact, adr, options);
+            }
             if (listener != null) {
                 listener.endArtifactDownload(this, artifact, adr, archiveFile);
             }
             return adr;
         } finally {
             unlockMetadataArtifact(mrid);
+        }
+    }
+
+    private void expandCompressedArtifact(Artifact artifact, ArtifactDownloadReport adr,
+            CacheDownloadOptions options) {
+        String compression = artifact.getExtraAttribute("compression");
+        if (compression == null) {
+            // not declared as compressed, nothing to do
+            return;
+        }
+
+        // the artifact for the folder of the uncompressed data
+        DefaultArtifact uncompressed = new DefaultArtifact(artifact.getModuleRevisionId(),
+                artifact.getPublicationDate(), artifact.getName(), "_uncompressed", "");
+        adr.setUncompressedArtifact(uncompressed);
+
+        File archiveFile = getArchiveFileInCache(uncompressed, null, false);
+        if (archiveFile.exists() && !options.isForce()) {
+            adr.setUncompressedLocalDir(archiveFile);
+        } else {
+            if (compression.equals("zip") || compression.equals("jar") || compression.equals("war")) {
+                Message.info("\tUncompressing " + artifact.getId());
+                try {
+                    ZipFile zipFile = new ZipFile(adr.getLocalFile());
+                    Enumeration entries = zipFile.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = (ZipEntry) entries.nextElement();
+                        File f = new File(archiveFile, entry.getName());
+                        Message.verbose("\t\texpanding " + entry.getName() + " to " + f);
+
+                        // create intermediary directories - sometimes zip don't add them
+                        File dirF = f.getParentFile();
+                        if (dirF != null) {
+                            dirF.mkdirs();
+                        }
+
+                        if (entry.isDirectory()) {
+                            f.mkdirs();
+                        } else {
+                            InputStream in = zipFile.getInputStream(entry);
+                            OutputStream out = new FileOutputStream(f);
+                            try {
+                                byte[] buffer = new byte[1024];
+                                int length = 0;
+                                while ((length = in.read(buffer)) >= 0) {
+                                    out.write(buffer, 0, length);
+                                }
+                            } finally {
+                                try {
+                                    in.close();
+                                } catch (IOException e) {
+                                    // ignore
+                                }
+                                try {
+                                    out.close();
+                                } catch (IOException e) {
+                                    // ignore
+                                }
+                            }
+                        }
+
+                        f.setLastModified(entry.getTime());
+                    }
+                    adr.setUncompressedLocalDir(archiveFile);
+                } catch (Exception e) {
+                    Message.debug(e);
+                    adr.setDownloadStatus(DownloadStatus.FAILED);
+                    adr.setDownloadDetails("The compressed artifact " + artifact.getId()
+                            + " could not be uncompressed (" + e.getMessage() + ")");
+                }
+            } else {
+                adr.setDownloadStatus(DownloadStatus.FAILED);
+                adr.setDownloadDetails("Compression algorithm " + compression
+                        + " is not supported, " + artifact.getId() + " won't be uncompressed");
+            }
         }
     }
 

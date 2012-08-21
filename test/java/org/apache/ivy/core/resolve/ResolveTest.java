@@ -5433,4 +5433,28 @@ public class ResolveTest extends TestCase {
         report = ivy.resolve(url, option);
         assertFalse(report.hasError());
     }
+
+    public void testCompressed() throws Exception {
+        ResolveOptions options = getResolveOptions(new String[] {"*"});
+        options.setExpandCompressed(true);
+
+        URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI().toURL();
+
+        // normal resolve, the file goes in the cache
+        ResolveReport report = ivy.resolve(url, options);
+        assertFalse(report.hasError());
+
+        ArtifactDownloadReport adr = report.getAllArtifactsReports()[0];
+        File cacheDir = ivy.getSettings().getDefaultRepositoryCacheBasedir();
+        assertEquals(new File(cacheDir, "compression/module2/jars/module2-1.0.jar"),
+            adr.getLocalFile());
+        assertEquals(new File(cacheDir, "compression/module2/_uncompresseds/module2-1.0"),
+            adr.getUncompressedLocalDir());
+
+        File[] jarContents = adr.getUncompressedLocalDir().listFiles();
+        assertEquals(new File(adr.getUncompressedLocalDir(), "META-INF"), jarContents[0]);
+        assertEquals(new File(adr.getUncompressedLocalDir(), "test.txt"), jarContents[1]);
+        assertEquals(new File(adr.getUncompressedLocalDir(), "META-INF/MANIFEST.MF"),
+            jarContents[0].listFiles()[0]);
+    }
 }
