@@ -110,6 +110,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
                             .setMakeSymlinks(symlink)
                             .setMakeSymlinksInMass(symlinkmass)
                             .setResolveId(getResolveId())
+                            .setUncompressed(isUncompressed())
                             .setMapper(mapper == null ? null : new MapperAdapter(mapper)));
 
             int targetsCopied = report.getNbrArtifactsCopied();

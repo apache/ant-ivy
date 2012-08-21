@@ -239,6 +239,19 @@ public class IvyCachePathTest extends TestCase {
         path.execute();
     }
 
+    public void testUncompress() throws Exception {
+        project.setProperty("ivy.dep.file", "test/repositories/1/compression/module1/ivys/ivy-1.0.xml");
+        path.setPathid("testUncompress");
+        path.setUncompressed(true);
+        path.execute();
+        Object ref = project.getReference("testUncompress");
+        assertNotNull(ref);
+        assertTrue(ref instanceof Path);
+        Path p = (Path) ref;
+        assertEquals(1, p.size());
+        assertTrue(new File(p.list()[0]).isDirectory());
+    }
+
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
         return TestHelper.getArchiveFileInCache(path.getIvyInstance(), organisation,

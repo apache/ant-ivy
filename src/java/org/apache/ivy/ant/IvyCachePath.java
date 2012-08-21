@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.File;
 import java.util.Iterator;
 
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -63,7 +64,11 @@ public class IvyCachePath extends IvyCacheTask {
             getProject().addReference(pathid, path);
             for (Iterator iter = getArtifactReports().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
-                path.createPathElement().setLocation(a.getLocalFile());
+                File f = a.getLocalFile();
+                if (isUncompressed() && a.getUncompressedLocalDir() != null) {
+                    f = a.getUncompressedLocalDir();
+                }
+                path.createPathElement().setLocation(f);
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy path: " + ex, ex);

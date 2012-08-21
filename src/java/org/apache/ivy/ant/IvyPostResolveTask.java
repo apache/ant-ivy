@@ -76,6 +76,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     
     private boolean changing = false;
 
+    private boolean uncompressed;
+
     private IvyResolve resolve = new IvyResolve();
 
     public boolean isUseOrigin() {
@@ -92,6 +94,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     public void setLog(String log) {
         this.log = log;
+    }
+
+    public boolean isUncompressed() {
+        return uncompressed;
+    }
+
+    public void setUncompressed(boolean uncompressed) {
+        this.uncompressed = uncompressed;
     }
 
     public IvyDependency createDependency() {
@@ -315,6 +325,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         resolve.setLog(getLog());
         resolve.setSettingsRef(getSettingsRef());
         resolve.setResolveMode(getResolveMode());
+        resolve.setUncompressed(uncompressed);
         return resolve;
     }
 
