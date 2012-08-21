@@ -74,6 +74,8 @@ public class BundleInfo {
 
     private URI sourceURI;
 
+    private boolean hasInnerClasspath;
+
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
         this.version = version;
@@ -225,6 +227,14 @@ public class BundleInfo {
         return versionTarget;
     }
 
+    public void setHasInnerClasspath(boolean hasInnerClasspath) {
+        this.hasInnerClasspath = hasInnerClasspath;
+    }
+
+    public boolean hasInnerClasspath() {
+        return hasInnerClasspath;
+    }
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -310,6 +320,9 @@ public class BundleInfo {
                 return false;
             }
         } else if (!sourceURI.equals(other.sourceURI)) {
+            return false;
+        }
+        if (hasInnerClasspath != other.hasInnerClasspath) {
             return false;
         }
         return true;

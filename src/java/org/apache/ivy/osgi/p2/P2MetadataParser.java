@@ -295,6 +295,9 @@ public class P2MetadataParser implements XMLInputParser {
             // });
             addChild(new TouchpointDataHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) throws SAXParseException {
+                    if (((TouchpointDataHandler) child).zipped) {
+                        bundleInfo.setHasInnerClasspath(true);                        
+                    }
                     if (!bundleInfo.isSource()) {
                         // we only care about parsing the manifest if it is a source
                         return;
@@ -685,11 +688,14 @@ public class P2MetadataParser implements XMLInputParser {
 
         String manifest;
 
+        boolean zipped;
+
         public TouchpointDataHandler() {
             super(TOUCHPOINTDATA);
             addChild(new InstructionsHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     manifest = ((InstructionsHandler) child).manifest;
+                    zipped = ((InstructionsHandler) child).zipped;
                 }
             });
         }
@@ -708,12 +714,18 @@ public class P2MetadataParser implements XMLInputParser {
 
         String manifest;
 
+        boolean zipped;
+
         public InstructionsHandler() {
             super(INSTRUCTIONS);
             addChild(new InstructionHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    if (((InstructionHandler) child).key.equals("manifest")) {
+                    String key = ((InstructionHandler) child).key;
+                    if ("manifest".equals(key)) {
                         manifest = ((InstructionHandler) child).getBufferedChars();
+                    } else if ("zipped".equals(key)) {
+                        zipped = Boolean.valueOf(
+                            ((InstructionHandler) child).getBufferedChars().trim()).booleanValue();
                     }
                 }
             });

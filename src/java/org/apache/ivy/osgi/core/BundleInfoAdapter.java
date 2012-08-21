@@ -23,9 +23,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.Ivy;
@@ -111,14 +113,16 @@ public class BundleInfoAdapter {
 
         requirementAsDependency(md, bundle, exportedPkgNames);
 
+        String compression = bundle.hasInnerClasspath() ? "zip" : null;
         URI uri = bundle.getUri();
         if (uri != null) {
-            DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar");
+            DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar", compression);
             md.addArtifact(CONF_NAME_DEFAULT, artifact);
         }
         URI sourceURI = bundle.getSourceURI();
         if (sourceURI != null) {
-            DefaultArtifact artifact = buildArtifact(mrid, baseUri, sourceURI, "source");
+            DefaultArtifact artifact = buildArtifact(mrid, baseUri, sourceURI, "source",
+                compression);
             md.addArtifact(CONF_NAME_DEFAULT, artifact);
         }
 
@@ -151,7 +155,7 @@ public class BundleInfoAdapter {
         return md;
     }
 
-    public static DefaultArtifact buildArtifact(ModuleRevisionId mrid, URI baseUri, URI uri, String type) {
+    public static DefaultArtifact buildArtifact(ModuleRevisionId mrid, URI baseUri, URI uri, String type, String compression) {
         DefaultArtifact artifact;
         if ("ivy".equals(uri.getScheme())) {
             artifact = decodeIvyURI(uri);
@@ -159,9 +163,13 @@ public class BundleInfoAdapter {
             if (!uri.isAbsolute()) {
                 uri = baseUri.resolve(uri);
             }
+            Map extraAtt = new HashMap();
+            if (compression != null) {
+                extraAtt.put("compression", compression);
+            }
             try {
                 artifact = new DefaultArtifact(mrid, null, mrid.getName(), type, "jar", new URL(
-                        uri.toString()), null);
+                        uri.toString()), extraAtt);
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Unable to make the uri into the url", e);
             }
