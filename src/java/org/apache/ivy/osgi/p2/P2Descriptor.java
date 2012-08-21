@@ -133,7 +133,7 @@ public class P2Descriptor extends RepoDescriptor {
                 continue;
             }
             DefaultArtifact sourceArtifact = BundleInfoAdapter.buildArtifact(
-                md.getModuleRevisionId(), getBaseUri(), source, "source");
+                md.getModuleRevisionId(), getBaseUri(), source, "source", null);
             md.addArtifact(BundleInfoAdapter.CONF_NAME_DEFAULT, sourceArtifact);
         }
         sourceURIs = null;
