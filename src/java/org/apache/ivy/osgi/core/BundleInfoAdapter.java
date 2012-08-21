@@ -113,17 +113,19 @@ public class BundleInfoAdapter {
 
         requirementAsDependency(md, bundle, exportedPkgNames);
 
-        String compression = bundle.hasInnerClasspath() ? "zip" : null;
-        URI uri = bundle.getUri();
-        if (uri != null) {
-            DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar", compression);
-            md.addArtifact(CONF_NAME_DEFAULT, artifact);
-        }
-        URI sourceURI = bundle.getSourceURI();
-        if (sourceURI != null) {
-            DefaultArtifact artifact = buildArtifact(mrid, baseUri, sourceURI, "source",
-                compression);
-            md.addArtifact(CONF_NAME_DEFAULT, artifact);
+        if (baseUri != null) {
+            String compression = bundle.hasInnerClasspath() ? "zip" : null;
+            URI uri = bundle.getUri();
+            if (uri != null) {
+                DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar", compression);
+                md.addArtifact(CONF_NAME_DEFAULT, artifact);
+            }
+            URI sourceURI = bundle.getSourceURI();
+            if (sourceURI != null) {
+                DefaultArtifact artifact = buildArtifact(mrid, baseUri, sourceURI, "source",
+                    compression);
+                md.addArtifact(CONF_NAME_DEFAULT, artifact);
+            }
         }
 
         if (profileProvider != null) {
