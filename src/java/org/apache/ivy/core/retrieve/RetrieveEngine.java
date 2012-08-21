@@ -185,8 +185,12 @@ public class RetrieveEngine {
                         targetIvysStructure
                                 .addAll(FileUtil.getPathFiles(ivyRetrieveRoot, destFile));
                     } else {
-                        targetArtifactsStructure.addAll(FileUtil.getPathFiles(fileRetrieveRoot,
-                            destFile));
+                        Iterator destFiles = FileUtil.listAll(destFile, Collections.EMPTY_LIST)
+                                .iterator();
+                        while (destFiles.hasNext()) {
+                            targetArtifactsStructure.addAll(FileUtil.getPathFiles(fileRetrieveRoot,
+                                (File) destFiles.next()));
+                        }
                     }
                 }
             }

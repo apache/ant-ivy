@@ -334,6 +334,35 @@ public class RetrieveTest extends TestCase {
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
     }
 
+    public void testUncompressSync() throws Exception {
+        ResolveOptions roptions = getResolveOptions(new String[] {"*"});
+        roptions.setExpandCompressed(true);
+
+        URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI()
+                .toURL();
+
+        // normal resolve, the file goes in the cache
+        ResolveReport report = ivy.resolve(url, roptions);
+        assertFalse(report.hasError());
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+
+        String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
+
+        RetrieveOptions options = getRetrieveOptions();
+        options.setUncompressed(true);
+        options.setSync(true);
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+
+        File dest = new File("build/test/retrieve/compression/module2/default/jars/module2-1.0");
+        assertTrue(dest.exists());
+        assertTrue(dest.isDirectory());
+        File[] jarContents = dest.listFiles();
+        assertEquals(new File(dest, "META-INF"), jarContents[0]);
+        assertEquals(new File(dest, "test.txt"), jarContents[1]);
+        assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
+    }
+
     private RetrieveOptions getRetrieveOptions() {
         return new RetrieveOptions();
     }
