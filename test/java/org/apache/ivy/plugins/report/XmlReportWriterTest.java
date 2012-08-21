@@ -71,7 +71,7 @@ public class XmlReportWriterTest extends TestCase {
                 + new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath()
                 + "\"";
         String expectedIsLocal = "is-local=\"true\"";
-        String expectedOrg = "organisation=\"sp�cial\"";
+        String expectedOrg = "organisation=\"sp\u00E9cial\"";
 
         assertTrue("XML doesn't contain artifact location attribute",
             xml.indexOf(expectedLocation) != -1);
