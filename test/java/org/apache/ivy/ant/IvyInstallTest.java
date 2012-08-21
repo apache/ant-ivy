@@ -151,7 +151,8 @@ public class IvyInstallTest extends TestCase {
     
     public void testInstallWithClassifiers() throws Exception {
         // IVY-1324
-        project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml").toURL().toExternalForm());
+        project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml")
+                .toURI().toURL().toExternalForm());
         install.setOrganisation("org.apache");
         install.setModule("test-sources");
         install.setRevision("1.0");

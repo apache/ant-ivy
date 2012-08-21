@@ -119,9 +119,7 @@ public class TestFixture {
 
     public ResolveReport resolve(String mrid) 
             throws MalformedURLException, ParseException, IOException {
-        return ivy.resolve(
-            getIvyFile(mrid).toURL(),
-            TestHelper.newResolveOptions(getSettings()));
+        return ivy.resolve(getIvyFile(mrid), TestHelper.newResolveOptions(getSettings()));
     }
     
 }

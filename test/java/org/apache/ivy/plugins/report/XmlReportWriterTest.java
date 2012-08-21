@@ -57,7 +57,7 @@ public class XmlReportWriterTest extends TestCase {
 
     public void testWriteOrigin() throws Exception {
         ResolveReport report = _ivy.resolve(new File(
-                "test/repositories/1/special-encoding-root-ivy.xml").toURL(),
+                "test/repositories/1/special-encoding-root-ivy.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 
@@ -71,7 +71,7 @@ public class XmlReportWriterTest extends TestCase {
                 + new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath()
                 + "\"";
         String expectedIsLocal = "is-local=\"true\"";
-        String expectedOrg = "organisation=\"spécial\"";
+        String expectedOrg = "organisation=\"spï¿½cial\"";
 
         assertTrue("XML doesn't contain artifact location attribute",
             xml.indexOf(expectedLocation) != -1);
@@ -88,7 +88,7 @@ public class XmlReportWriterTest extends TestCase {
     public void testEscapeXml() throws Exception {
         _ivy.configure(new File("test/repositories/IVY-635/ivysettings.xml"));
         ResolveReport report = _ivy.resolve(new File(
-                "test/java/org/apache/ivy/plugins/report/ivy-635.xml").toURL(),
+                "test/java/org/apache/ivy/plugins/report/ivy-635.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
         
@@ -106,7 +106,7 @@ public class XmlReportWriterTest extends TestCase {
 
     public void testWriteModuleInfo() throws Exception {
         ResolveReport report = _ivy.resolve(new File(
-                "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),
+                "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),
             getResolveOptions(new String[] {"default"}).setValidate(false));
         assertNotNull(report);
 

@@ -138,7 +138,7 @@ public class TestPerformance {
         generateModules(70, 2, 5, 2, 15);
 
         long start = System.currentTimeMillis();
-        ResolveReport report = ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}).setRevision("1.0"));
         long end = System.currentTimeMillis();
         System.out.println("resolve " + report.getConfigurationReport("default").getNodesNumber()

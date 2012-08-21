@@ -294,7 +294,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         // the converted Ivy file should be parsable with validate=true
         ModuleDescriptor md2 = XmlModuleDescriptorParser.getInstance()
-            .parseDescriptor(new IvySettings(), dest.toURL(), true);
+            .parseDescriptor(new IvySettings(), dest.toURI().toURL(), true);
 
         // and the parsed module descriptor should be similar to the original
         assertNotNull(md2);

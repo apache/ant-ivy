@@ -90,7 +90,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable/* <File> */{
 
     protected URI buildBundleURI(Object/* File */location) {
         try {
-            return new URI(((File) location).toURL().toExternalForm());
+            return new URI(((File) location).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             throw new RuntimeException("Unexpected file to url conversion error", e);
         } catch (URISyntaxException e) {

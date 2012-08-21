@@ -57,7 +57,7 @@ public class UpdateSiteResolverTest extends TestCase {
 
         resolver = new UpdateSiteResolver();
         resolver.setName("ivyde-repo");
-        resolver.setUrl(new File("test/test-p2/ivyde-repo").toURL().toExternalForm());
+        resolver.setUrl(new File("test/test-p2/ivyde-repo").toURI().toURL().toExternalForm());
         resolver.setSettings(settings);
         settings.addResolver(resolver);
 

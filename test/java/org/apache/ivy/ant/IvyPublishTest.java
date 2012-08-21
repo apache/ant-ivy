@@ -459,7 +459,8 @@ public class IvyPublishTest extends TestCase {
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
-            new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
+            new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURI().toURL(),
+            false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
     }
 
@@ -568,7 +569,8 @@ public class IvyPublishTest extends TestCase {
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
-            new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
+            new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURI().toURL(),
+            false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
 
         // should only contain the default configuration
@@ -650,7 +652,7 @@ public class IvyPublishTest extends TestCase {
 
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), dest.toURL(), false);
+            new IvySettings(), dest.toURI().toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
 
         // should have kept custom attributes
@@ -691,7 +693,8 @@ public class IvyPublishTest extends TestCase {
         // the published ivy version should be ok (ok in ivy-publish file)
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
-            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURI().toURL(),
+            false);
         assertEquals("1.3", md.getModuleRevisionId().getRevision());
 
         // should not have done delivery (replace dynamic revisions with static ones)
@@ -726,7 +729,8 @@ public class IvyPublishTest extends TestCase {
         // the published ivy version should be ok (ok in ivy-publish file)
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
-            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURI().toURL(),
+            false);
         assertEquals("BRANCH1", md.getModuleRevisionId().getBranch());
         assertEquals("1.3", md.getModuleRevisionId().getRevision());
 
@@ -761,7 +765,8 @@ public class IvyPublishTest extends TestCase {
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
-            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURI().toURL(),
+            false);
         assertEquals("1.3", md.getModuleRevisionId().getRevision());
     }
 

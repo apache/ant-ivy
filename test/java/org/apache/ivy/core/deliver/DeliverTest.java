@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 
 import junit.framework.TestCase;
 
@@ -63,8 +64,7 @@ public class DeliverTest extends TestCase {
     public void testIVY1111() throws Exception {
         Project project = ivyDeliver.getProject();
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1111/ivysettings.xml");
-        String ivyFileName = DeliverTest.class.getResource("ivy-1111.xml").getFile();
-        File ivyFile = new File(ivyFileName);
+        File ivyFile = new File(new URI(DeliverTest.class.getResource("ivy-1111.xml").toString()));
 
         resolve(ivyFile);
 

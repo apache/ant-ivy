@@ -137,8 +137,9 @@ public class IvyConfigureTest extends TestCase {
     }
 
     public void testURL() throws Exception {
-        String confUrl = new File("test/repositories/ivysettings-url.xml").toURL().toExternalForm();
-        String confDirUrl = new File("test/repositories").toURL().toExternalForm();
+        String confUrl = new File("test/repositories/ivysettings-url.xml").toURI().toURL()
+                .toExternalForm();
+        String confDirUrl = new File("test/repositories").toURI().toURL().toExternalForm();
         if (confDirUrl.endsWith("/")) {
             confDirUrl = confDirUrl.substring(0, confDirUrl.length() - 1);
         }

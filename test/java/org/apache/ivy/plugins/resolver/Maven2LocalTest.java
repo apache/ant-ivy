@@ -91,7 +91,7 @@ public class Maven2LocalTest extends TestCase {
         resolver.setSettings(settings);
         resolver.setName("maven2");
         resolver.setM2compatible(true);
-        resolver.setRoot(new File("test/repositories/m2").toURL().toExternalForm());
+        resolver.setRoot(new File("test/repositories/m2").toURI().toURL().toExternalForm());
         return resolver;
     }
 }

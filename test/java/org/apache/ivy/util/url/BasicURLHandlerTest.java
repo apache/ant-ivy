@@ -47,8 +47,8 @@ public class BasicURLHandlerTest extends TestCase {
         assertTrue(handler.isReachable(new URL("http://www.google.fr/")));
         assertFalse(handler.isReachable(new URL("http://www.google.fr/unknownpage.html")));
 
-        assertTrue(handler.isReachable(new File("build.xml").toURL()));
-        assertFalse(handler.isReachable(new File("unknownfile.xml").toURL()));
+        assertTrue(handler.isReachable(new File("build.xml").toURI().toURL()));
+        assertFalse(handler.isReachable(new File("unknownfile.xml").toURI().toURL()));
 
         // to test ftp we should know of an anonymous ftp site... !
         // assertTrue(handler.isReachable(new URL("ftp://ftp.mozilla.org/pub/dir.sizes")));

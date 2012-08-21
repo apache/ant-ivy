@@ -173,7 +173,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -199,7 +199,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -232,7 +232,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -269,7 +269,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -293,7 +293,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "BRANCH1", "1.2"), 
                         md.getModuleRevisionId());
     }
@@ -313,7 +313,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -345,7 +345,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -373,7 +373,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), false);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), false);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -400,7 +400,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists()); 
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-        new IvySettings(), deliveredIvyFile.toURL(), false);
+        new IvySettings(), deliveredIvyFile.toURI().toURL(), false);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), 
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -447,7 +447,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists()); 
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-        new IvySettings(), deliveredIvyFile.toURL(), false);
+        new IvySettings(), deliveredIvyFile.toURI().toURL(), false);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), 
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -536,7 +536,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
@@ -560,7 +560,7 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), deliveredIvyFile.toURL(), true);
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), true);
         assertEquals(ModuleRevisionId.newInstance("apache", "different-revs", "1.2"), md
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();

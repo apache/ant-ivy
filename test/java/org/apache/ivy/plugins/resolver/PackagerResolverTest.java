@@ -97,16 +97,16 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             File repoRoot = new File("test/repositories/packager/repo");
             resolver.addIvyPattern(
-                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").toURI().toURL().toExternalForm());
             resolver.setPackagerPattern(
-                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").toURI().toURL().toExternalForm());
             resolver.setBuildRoot(builddir);
             resolver.setResourceCache(cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
             resolver.setProperty("packager.website.url", 
-                new File("test/repositories/packager/website").getAbsoluteFile().toURL().toExternalForm());
+                new File("test/repositories/packager/website").toURI().toURL().toExternalForm());
     
             resolver.setName("packager");
             assertEquals("packager", resolver.getName());
@@ -179,16 +179,16 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             File repoRoot = new File("test/repositories/IVY-1179/repo");
             resolver.addIvyPattern(
-                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").toURI().toURL().toExternalForm());
             resolver.setPackagerPattern(
-                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").toURI().toURL().toExternalForm());
             resolver.setBuildRoot(builddir);
             resolver.setResourceCache(cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
             resolver.setProperty("packager.website.url", 
-                new File("test/repositories/IVY-1179/website").getAbsoluteFile().toURL().toExternalForm());
+                new File("test/repositories/IVY-1179/website").toURI().toURL().toExternalForm());
     
             resolver.setName("packager");
     
@@ -225,16 +225,16 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             File repoRoot = new File("test/repositories/IVY-1179/repo");
             resolver.addIvyPattern(
-                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").toURI().toURL().toExternalForm());
             resolver.setPackagerPattern(
-                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+                    new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").toURI().toURL().toExternalForm());
             resolver.setBuildRoot(builddir);
             resolver.setResourceCache(cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
             resolver.setProperty("packager.website.url", 
-                new File("test/repositories/IVY-1179/website").getAbsoluteFile().toURL().toExternalForm());
+                new File("test/repositories/IVY-1179/website").toURI().toURL().toExternalForm());
     
             resolver.setName("packager");
     

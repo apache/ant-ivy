@@ -115,7 +115,7 @@ public class ResolveTest extends TestCase {
         ((DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager())
                 .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
-                .toURL(), getResolveOptions(new String[] {"default"}));
+                , getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 
         ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
@@ -147,7 +147,7 @@ public class ResolveTest extends TestCase {
         ((DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager())
                 .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.4/ivy-1.1.xml")
-                .toURL(), getResolveOptions(new String[] {"default"}).setValidate(false));
+                , getResolveOptions(new String[] {"default"}).setValidate(false));
         assertNotNull(report);
 
         Map extra = new HashMap();
@@ -179,7 +179,7 @@ public class ResolveTest extends TestCase {
 
     public void testArtifactOrigin() throws Exception {
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 
@@ -209,7 +209,7 @@ public class ResolveTest extends TestCase {
 
         // now resolve the same artifact again and verify the origin of the (not-downloaded)
         // artifact
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 
@@ -231,7 +231,7 @@ public class ResolveTest extends TestCase {
             .setUseOrigin(true);
         
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"), getResolveOptions(
             new String[] {"default"}));
         assertNotNull(report);
 
@@ -259,7 +259,7 @@ public class ResolveTest extends TestCase {
     public void testResolveSimple() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -278,7 +278,7 @@ public class ResolveTest extends TestCase {
     public void testResolveBadStatus() throws Exception {
         // mod1.4 depends on modfailure, modfailure has a bad status
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.1.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.1.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertTrue(report.hasError());
@@ -288,8 +288,8 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         Throwable th = null;
         try {
-            ivy.configure(new File("test/repositories/xml-entities/ivysettings.xml").toURL());
-            ResolveReport report = ivy.resolve(new File("test/repositories/xml-entities/ivy.xml").toURL(),
+            ivy.configure(new File("test/repositories/xml-entities/ivysettings.xml"));
+            ResolveReport report = ivy.resolve(new File("test/repositories/xml-entities/ivy.xml"),
                 getResolveOptions(new String[] {"*"}));
             assertNotNull(report);
             assertFalse(report.hasError());
@@ -303,8 +303,8 @@ public class ResolveTest extends TestCase {
         // module1 depends on latest version of module2, for which there is no revision in the
         // pattern
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/norev/ivysettings.xml").toURL());
-        ResolveReport report = ivy.resolve(new File("test/repositories/norev/ivy.xml").toURL(),
+        ivy.configure(new File("test/repositories/norev/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/norev/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -312,8 +312,8 @@ public class ResolveTest extends TestCase {
 
     public void testResolveLatestWithNoRevisionInPattern() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/norev/ivysettings.xml").toURL());
-        ResolveReport report = ivy.resolve(new File("test/repositories/norev/ivy-latest.xml").toURL(),
+        ivy.configure(new File("test/repositories/norev/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/norev/ivy-latest.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -322,7 +322,7 @@ public class ResolveTest extends TestCase {
     public void testResolveNoRevisionInDep() throws Exception {
         // mod1.4 depends on mod1.6, in which the ivy file has no revision
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertTrue(report.hasError());
@@ -333,13 +333,13 @@ public class ResolveTest extends TestCase {
         // module1 depends on latest version of module2, which contains no revision in its ivy file,
         // nor in the pattern
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/IVY-258/ivysettings.xml").toURL());
-        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml").toURL(),
+        ivy.configure(new File("test/repositories/IVY-258/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
         ((BasicResolver) ivy.getSettings().getResolver("myresolver")).setCheckconsistency(false);
-        report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
     }
@@ -355,8 +355,8 @@ public class ResolveTest extends TestCase {
         // settings use 'all' as default conflict manager, and latest-revision for modules from
         // myorg
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/IVY-448/ivysettings.xml").toURL());
-        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-448/ivy.xml").toURL(),
+        ivy.configure(new File("test/repositories/IVY-448/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-448/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -374,7 +374,7 @@ public class ResolveTest extends TestCase {
         //            <conflict org="org1" module="mod1.2" rev="1.1,2.0" />
         
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/1/IVY-465/M1/ivys/ivy-1.0.xml").toURL(),
+            new File("test/repositories/1/IVY-465/M1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -392,7 +392,7 @@ public class ResolveTest extends TestCase {
         ((FileSystemResolver) ivy.getSettings().getResolver("1"))
             .setDescriptor(FileSystemResolver.DESCRIPTOR_REQUIRED);
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertTrue(report.hasError());
@@ -437,7 +437,7 @@ public class ResolveTest extends TestCase {
         // mod1.1 depends on mod1.2
 
         // we first do a simple resolve so that module is in cache
-        ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
 
         // we now use a badly configured ivy, so that it can't find module in repository
@@ -447,7 +447,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().validate();
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"), getResolveOptions(ivy
                 .getSettings(), new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -476,7 +476,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -484,7 +484,7 @@ public class ResolveTest extends TestCase {
         FileUtil.forceDelete(new File("build/testCache2"));
 
         // now do a new resolve: it should use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -515,7 +515,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -528,7 +528,7 @@ public class ResolveTest extends TestCase {
         FileUtil.forceDelete(new File("build/testCache2"));
 
         // now do a new resolve: it should use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -556,7 +556,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -569,7 +569,7 @@ public class ResolveTest extends TestCase {
         FileUtil.forceDelete(new File("build/testCache2"));
 
         // now do a new resolve: it should use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -598,7 +598,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -611,7 +611,7 @@ public class ResolveTest extends TestCase {
         Thread.sleep(700);
         
         // we resolve again, it should work fine
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -624,7 +624,7 @@ public class ResolveTest extends TestCase {
         FileUtil.forceDelete(new File("build/testCache2"));
 
         // now do a new resolve: it should use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -648,7 +648,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -663,7 +663,7 @@ public class ResolveTest extends TestCase {
             new File("build/testCache2/mod1.2-1.6.jar"), null);
 
         // now do a new resolve: it should not use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -689,7 +689,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -699,7 +699,7 @@ public class ResolveTest extends TestCase {
             new File("build/testCache2/mod1.2-1.6.jar"), null);
 
         // now do a new resolve: it should use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -712,7 +712,7 @@ public class ResolveTest extends TestCase {
         Thread.sleep(700);
 
         // now do a new resolve: it should resolve the dynamic revision again
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -736,7 +736,7 @@ public class ResolveTest extends TestCase {
 
         // we first do a simple resolve so that module is in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -746,7 +746,7 @@ public class ResolveTest extends TestCase {
             new File("build/testCache2/mod1.2-1.6.jar"), null);
 
         // now do a new resolve: it should use cached data
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
         
@@ -756,7 +756,7 @@ public class ResolveTest extends TestCase {
             report.getConfigurationReport("default").getModuleRevisionIds());
 
         // resolve again with refresh: it should find the new version
-        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"*"}).setRefresh(true));
         assertFalse(report.hasError());
         
@@ -800,7 +800,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().setDefaultCache(cache);
 
         // ResolveReport report = ivy.resolve(new
-        // File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+        // File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
         // getResolveOptions(new String[] {"*"}));
         // // should have an error, the conf is bad and the dependency should not be found
         // assertTrue(report.hasError());
@@ -813,7 +813,7 @@ public class ResolveTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), art, null);
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"), getResolveOptions(ivy
                 .getSettings(), new String[] {"*"}));
         assertFalse(report.hasError());
     }
@@ -829,7 +829,7 @@ public class ResolveTest extends TestCase {
 
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"), getResolveOptions(ivy
                 .getSettings(), new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -864,7 +864,7 @@ public class ResolveTest extends TestCase {
 
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"), getResolveOptions(ivy
                 .getSettings(), new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -895,7 +895,7 @@ public class ResolveTest extends TestCase {
 
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+            new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -927,7 +927,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings-local.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -955,7 +955,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings-local.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.8.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.8.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -989,7 +989,7 @@ public class ResolveTest extends TestCase {
         // a local build for mod1.2 is available
         // we do a first resolve without local build so that cache contains mod1.2;2.0 module
         ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getIvyFileInCache(
@@ -999,7 +999,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings-local.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -1020,7 +1020,7 @@ public class ResolveTest extends TestCase {
     public void testResolveExtends() throws Exception {
         // mod6.1 depends on mod1.2 2.0 in conf default, and conf extension extends default
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"extension"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1039,7 +1039,7 @@ public class ResolveTest extends TestCase {
     public void testResolveExtended() throws Exception {
         // mod6.1 depends on mod1.2 2.0 in conf default, and conf extension extends default
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1058,7 +1058,7 @@ public class ResolveTest extends TestCase {
     public void testResolveExtendedAndExtends() throws Exception {
         // mod6.1 depends on mod1.2 2.0 in conf default, and conf extension extends default
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"default", "extension"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1087,7 +1087,7 @@ public class ResolveTest extends TestCase {
         // mod6.1 depends on mod1.2 2.0 in conf (default->default)
         // conf extension extends default
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.2/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org6/mod6.2/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"default", "extension"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -1124,7 +1124,7 @@ public class ResolveTest extends TestCase {
         // mod6.1 2.0 has two confs default and standalone
         // mod6.1 2.0 depends on mod1.2 2.2 in conf (default->default)
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.1.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1157,7 +1157,7 @@ public class ResolveTest extends TestCase {
         // mod6.1
         // depends on mod1.2 2.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.2/ivys/ivy-0.6.xml").toURL(),
+                "test/repositories/1/org6/mod6.2/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"compile", "run"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -1186,7 +1186,7 @@ public class ResolveTest extends TestCase {
         // mod1.1
         // depends on mod1.2 2.0
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.2/ivys/ivy-0.5.xml").toURL(),
+                "test/repositories/1/org6/mod6.2/ivys/ivy-0.5.xml"),
             getResolveOptions(new String[] {"compile", "run"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -1222,7 +1222,7 @@ public class ResolveTest extends TestCase {
         // same as before, except that mod6.2 depends on mod1.2 2.1 extension->default
         // so mod1.2 2.0 should be evicted in conf extension
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml").toURL(),
+                "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml"),
             getResolveOptions(new String[] {"default", "extension"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -1267,7 +1267,7 @@ public class ResolveTest extends TestCase {
         // mod1.4, which depends on mod1.3 and selects one of its artifacts
         // mod1.3 and selects two of its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.6/ivys/ivy-1.0.3.xml").toURL(),
+                "test/repositories/1/org1/mod1.6/ivys/ivy-1.0.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -1286,7 +1286,7 @@ public class ResolveTest extends TestCase {
         // #mod1.3;3.1 has only A and C artifacts, not B. 
         // Both A and C should be downloaded, and a message should tell that B was not available.
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.12.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.12.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -1301,7 +1301,7 @@ public class ResolveTest extends TestCase {
         // test case for IVY-283
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-283/ivysettings.xml"));
-        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -1320,7 +1320,7 @@ public class ResolveTest extends TestCase {
         // second test case for IVY-283
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-283/ivysettings.xml"));
-        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy-d.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy-d.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -1354,7 +1354,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithStartPublicConf() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.2/ivys/ivy-0.8.xml").toURL(),
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.8.xml"),
             getResolveOptions(new String[] {"*(public)"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1378,7 +1378,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithPrivateConf() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.2/ivys/ivy-0.8.xml").toURL(),
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.8.xml"),
             getResolveOptions(new String[] {"*(private)"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1402,7 +1402,7 @@ public class ResolveTest extends TestCase {
     public void testResolveDefaultWithArtifactsConf1() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml").toURL(),
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml"),
             getResolveOptions(new String[] {"myconf1"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1425,7 +1425,7 @@ public class ResolveTest extends TestCase {
     public void testResolveDefaultWithArtifactsConf2() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml").toURL(),
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml"),
             getResolveOptions(new String[] {"myconf2"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1450,7 +1450,7 @@ public class ResolveTest extends TestCase {
     public void testResolveDefaultWithArtifactsAndConfMapping() throws Exception {
         // mod2.2 depends on mod1.3 and specify its artifacts and a conf mapping
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.1.xml").toURL(),
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.1.xml"),
             getResolveOptions(new String[] {"myconf1"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -1473,7 +1473,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithIncludeArtifactsConf1() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts in myconf1
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml"),
             getResolveOptions(new String[] {"myconf1"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1493,7 +1493,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithIncludeArtifactsConf2() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts in myconf1
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml"),
             getResolveOptions(new String[] {"myconf2"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1513,7 +1513,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithIncludeArtifactsWithoutConf() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.5.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.5.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1535,7 +1535,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.3 and mod2.1
         // mod2.3 depends on mod2.1 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.5.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.5.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -1548,7 +1548,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithExcludesArtifacts() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1568,7 +1568,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithExcludesArtifacts2() throws Exception {
         // mod2.3 depends on mod2.1 and badly excludes artifacts with incorrect matcher
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.2.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.2.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1588,7 +1588,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithExcludesArtifacts3() throws Exception {
         // mod2.3 depends on mod2.1 and excludes artifacts with exact matcher
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1608,7 +1608,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithExcludesArtifacts4() throws Exception {
         // mod2.3 depends on mod2.1 and excludes artifacts with regexp matcher
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.4.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.4.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1628,7 +1628,7 @@ public class ResolveTest extends TestCase {
     public void testResolveWithExcludesArtifacts5() throws Exception {
         // mod2.3 depends on mod2.1 and excludes artifacts with glob matcher
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.5.xml").toURL(),
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.6.5.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1648,7 +1648,7 @@ public class ResolveTest extends TestCase {
     public void testResolveTransitiveDependencies() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1671,7 +1671,7 @@ public class ResolveTest extends TestCase {
     public void testResolveTransitiveDependenciesWithOverride() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.6.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1697,7 +1697,7 @@ public class ResolveTest extends TestCase {
     public void testResolveTransitiveDependenciesWithOverrideAndDynamicResolveMode() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.6.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"*"}).setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1720,7 +1720,7 @@ public class ResolveTest extends TestCase {
     public void testResolveTransitiveDisabled() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(), getResolveOptions(
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml"), getResolveOptions(
             new String[] {"*"}).setTransitive(false));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1762,7 +1762,7 @@ public class ResolveTest extends TestCase {
         // compile conf is not transitive
 
         // first we resolve compile conf only
-        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml"),
             getResolveOptions(new String[] {"compile"}));
 
         // dependencies
@@ -1775,7 +1775,7 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         // then we resolve runtime conf
-        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml"),
             getResolveOptions(new String[] {"runtime"}));
 
         // dependencies
@@ -1785,7 +1785,7 @@ public class ResolveTest extends TestCase {
 
         // same as before, but resolve both confs in one call
         ResolveReport r = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml"),
             getResolveOptions(new String[] {"runtime", "compile"}));
         assertFalse(r.hasError());
         assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
@@ -1798,7 +1798,7 @@ public class ResolveTest extends TestCase {
         // compile extends runtime
 
         // first we resolve compile conf only
-        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml"),
             getResolveOptions(new String[] {"compile"}));
 
         // dependencies
@@ -1811,7 +1811,7 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         // then we resolve runtime conf
-        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml"),
             getResolveOptions(new String[] {"runtime"}));
 
         // dependencies
@@ -1821,7 +1821,7 @@ public class ResolveTest extends TestCase {
 
         // same as before, but resolve both confs in one call
         ResolveReport r = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml"),
             getResolveOptions(new String[] {"runtime", "compile"}));
         assertFalse(r.hasError());
         assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
@@ -1834,7 +1834,7 @@ public class ResolveTest extends TestCase {
         // runtime extends compile
 
         // first we resolve compile conf only
-        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml"),
             getResolveOptions(new String[] {"compile"}));
 
         // dependencies
@@ -1847,7 +1847,7 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         // then we resolve runtime conf
-        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml"),
             getResolveOptions(new String[] {"runtime"}));
 
         // dependencies
@@ -1857,7 +1857,7 @@ public class ResolveTest extends TestCase {
 
         // same as before, but resolve both confs in one call
         ResolveReport r = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml"),
             getResolveOptions(new String[] {"runtime", "compile"}));
         assertFalse(r.hasError());
         assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
@@ -1872,7 +1872,7 @@ public class ResolveTest extends TestCase {
         // compile conf is not transitive and extends runtime
 
         ResolveReport r = ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.6.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertFalse(r.hasError());
 
         // here we should get all three recursive dependencies
@@ -1904,7 +1904,7 @@ public class ResolveTest extends TestCase {
         // compile conf is not transitive and extends runtime
 
         ResolveReport r = ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.7.xml")
-                .toURL(), getResolveOptions(new String[] {"A", "B", "compile"}));
+                , getResolveOptions(new String[] {"A", "B", "compile"}));
         assertFalse(r.hasError());
 
         // here we should get all three recursive dependencies
@@ -1932,7 +1932,7 @@ public class ResolveTest extends TestCase {
         // - mod1.1 which depends on mod1.2
         // - mod3.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -1961,7 +1961,7 @@ public class ResolveTest extends TestCase {
         // - mod1.1 v 1.0 which depends on mod1.2 v 2.0
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.1.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2014,7 +2014,7 @@ public class ResolveTest extends TestCase {
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
         // - mod6.1 v 0.3 which depends on mod1.2 v 2.0
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.14.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         // dependencies
         ConfigurationResolveReport crr = report.getConfigurationReport("default");
@@ -2062,7 +2062,7 @@ public class ResolveTest extends TestCase {
         // y depends on commons-lang 2.0
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-264/ivysettings.xml"));
-        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-264/ivy.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-264/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -2088,7 +2088,7 @@ public class ResolveTest extends TestCase {
         // mod20.1;1.0 -> mod1.2;1.0
         // mod20.1;1.1 -> mod1.2;1.0
         ResolveReport report = ivy.resolve(new File("test/repositories/1/org20/mod20.4/ivys/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         // dependencies
         ConfigurationResolveReport crr = report.getConfigurationReport("default");
@@ -2106,7 +2106,7 @@ public class ResolveTest extends TestCase {
      */
     public void testResolveConflictFromPoms() throws Exception {
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod17.1/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
     }
@@ -2118,7 +2118,7 @@ public class ResolveTest extends TestCase {
         // mod7.1 v1.0 depends on mod 1.2 v2.0 (which should be evicted by transitivity)
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod7.3/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2148,7 +2148,7 @@ public class ResolveTest extends TestCase {
         // - mod3.1 v 1.0 which depends on mod1.2 v 2.0
         // - mod1.2 v 2.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.13.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
 
         // dependencies
@@ -2189,7 +2189,7 @@ public class ResolveTest extends TestCase {
         // mod2.1 conf A depends on mod1.1 which depends on mod1.2 2.0
         // mod2.1 conf B depends on mod1.2 2.1
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.1/ivys/ivy-0.4.xml").toURL(),
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.4.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -2222,7 +2222,7 @@ public class ResolveTest extends TestCase {
         //
         // mod5.1 r4.2 conf B depends on mod1.2 r2.0
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2263,7 +2263,7 @@ public class ResolveTest extends TestCase {
         //
         // mod5.1 r4.2 conf B depends on mod1.2 r2.0
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.1.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2302,7 +2302,7 @@ public class ResolveTest extends TestCase {
         //
         // mod5.1 r4.3 has only conf A, not B
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.4.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
         // dependencies
@@ -2324,7 +2324,7 @@ public class ResolveTest extends TestCase {
         // mod6.1 r1.5 depends on
         // mod5.1 [1.0,4.3] conf unknown which doesn't exist in mod5.1;4.3
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.5.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertTrue("missing conf should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'unknown'") != -1);
     }
@@ -2339,7 +2339,7 @@ public class ResolveTest extends TestCase {
         //
         // mod5.1 r4.2 conf B depends on mod1.2 r2.0
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.2.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2392,7 +2392,7 @@ public class ResolveTest extends TestCase {
         //
         // mod5.1 r4.2 conf B depends on mod1.2 r2.0
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.3.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2436,7 +2436,7 @@ public class ResolveTest extends TestCase {
     public void testMultipleEviction() throws Exception {
         
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/1/IVY-644/M1/ivys/ivy-1.0.xml").toURL(),
+            new File("test/repositories/1/IVY-644/M1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"test" , "runtime" })); //NB the order impact the bug
         assertFalse(report.hasError());
     }
@@ -2447,7 +2447,7 @@ public class ResolveTest extends TestCase {
         // - mod1.2 v 2.0 and forces it
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.2.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2477,7 +2477,7 @@ public class ResolveTest extends TestCase {
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
         // - mod1.2 v 2.0 and forces it
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.9.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2500,7 +2500,7 @@ public class ResolveTest extends TestCase {
         // - mod3.1 v 1.0.1 which depends on mod1.2 v 2.0 and forces it
         // - mod3.2 v 1.2 which depends on mod1.2 v 2.1 and on mod3.1 v1.0.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.10.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
 
         // dependencies
@@ -2520,7 +2520,7 @@ public class ResolveTest extends TestCase {
         // - mod1.2 v 2.1
         // - mod1.2 v 1.0 and forces it
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.11.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
 
         // dependencies
@@ -2542,7 +2542,7 @@ public class ResolveTest extends TestCase {
         // - mod3.1 v1.1 which depends on
         // - mod1.2 v 2.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.12.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
 
         // dependencies
@@ -2560,7 +2560,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings-artifact-lock.xml"));
         ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.5.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         List lockFiles = new ArrayList();
         findLockFiles(cache, lockFiles);
@@ -2583,7 +2583,7 @@ public class ResolveTest extends TestCase {
         // - mod1.2 v 1+ and forces it
         // - mod3.1 v 1.2 which depends on mod1.2 v 2+
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.5.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2611,7 +2611,7 @@ public class ResolveTest extends TestCase {
         // - mod1.2 v 1+ and forces it in conf compile
         // - mod3.1 v 1.2 in conf test which depends on mod1.2 v 2+
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.6.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2641,7 +2641,7 @@ public class ResolveTest extends TestCase {
         // which defines confs compile, runtime extends compile
         // which depends on mod1.2 v 2+ in conf compile->default
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.7.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2704,7 +2704,7 @@ public class ResolveTest extends TestCase {
         // - mod1.1 v 1.0 which depends on mod1.2 v 2.0
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2731,7 +2731,7 @@ public class ResolveTest extends TestCase {
         // mod4.1 v 4.3 depends on
         // - mod1.2 v 2.1
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
-        ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.1.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.1.xml"),
             getResolveOptions(new String[] {"*"}));
 
         // conflicting dependencies
@@ -2754,7 +2754,7 @@ public class ResolveTest extends TestCase {
         // - mod1.2 v 2.0 but selects mod1.2 v 2.1
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.3.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         IvyNode[] evicted = report.getConfigurationReport("default").getEvictedNodes();
         assertEquals(1, evicted.length);
@@ -2768,7 +2768,7 @@ public class ResolveTest extends TestCase {
         // mod5.1 conf B extends conf A
         // mod5.1 conf A publishes art51A
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod5.2/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2789,7 +2789,7 @@ public class ResolveTest extends TestCase {
         // mod5.1 conf B publishes art51B
         // mod5.1 conf A publishes art51A
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod5.2/ivy-2.0.xml")
-                .toURL(), getResolveOptions(new String[] {"B", "A"}));
+                , getResolveOptions(new String[] {"B", "A"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2826,7 +2826,7 @@ public class ResolveTest extends TestCase {
 
     public void testThisConfiguration() throws Exception {
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod14.4/ivy-1.1.xml")
-                .toURL(), getResolveOptions(new String[] {"compile"}));
+                , getResolveOptions(new String[] {"compile"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2849,7 +2849,7 @@ public class ResolveTest extends TestCase {
 
         CacheCleaner.deleteDir(cache);
         createCache();
-        report = ivy.resolve(new File("test/repositories/2/mod14.4/ivy-1.1.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/2/mod14.4/ivy-1.1.xml"),
             getResolveOptions(new String[] {"standalone"}));
         crr = report.getConfigurationReport("standalone");
         assertNotNull(crr);
@@ -2876,7 +2876,7 @@ public class ResolveTest extends TestCase {
     public void testLatest() throws Exception {
         // mod1.4 depends on latest mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -2917,7 +2917,7 @@ public class ResolveTest extends TestCase {
         // latest mod1.4, which depends on mod1.2 2.2
         // latest mod1.2 (which is 2.2)
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.5/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.5/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
@@ -2953,7 +2953,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/ivysettings-IVY602.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-            "test/repositories/1/org9/mod9.2/ivys/ivy-1.3.xml").toURL(),
+            "test/repositories/1/org9/mod9.2/ivys/ivy-1.3.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -2964,7 +2964,7 @@ public class ResolveTest extends TestCase {
     public void testResolveModeDynamic1() throws Exception {
         // mod1.1;1.0.1 -> mod1.2;2.0|latest.integration
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml"),
             getResolveOptions(new String[] {"default"})
             .setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
         assertNotNull(report);
@@ -2986,7 +2986,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().addModuleConfiguration(
             attributes, ExactPatternMatcher.INSTANCE, null, null, null, ResolveOptions.RESOLVEMODE_DYNAMIC);
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 
@@ -3005,7 +3005,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/5/ivy.xml").toURL(), 
+                "test/repositories/branches/bar/bar1/trunk/5/ivy.xml"), 
                 getResolveOptions(new String[] {"*"})
                 .setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
         assertFalse(report.hasError());
@@ -3019,7 +3019,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/6/ivy.xml").toURL(), 
+                "test/repositories/branches/bar/bar1/trunk/6/ivy.xml"), 
                 getResolveOptions(new String[] {"*"})
                 .setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
         assertFalse(report.hasError());
@@ -3035,7 +3035,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().addModuleConfiguration(
             attributes, ExactPatternMatcher.INSTANCE, null, null, null, ResolveOptions.RESOLVEMODE_DYNAMIC);
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml"),
             getResolveOptions(new String[] {"default"})
             .setResolveMode(ResolveOptions.RESOLVEMODE_DEFAULT));
         assertNotNull(report);
@@ -3052,7 +3052,7 @@ public class ResolveTest extends TestCase {
     public void testVersionRange1() throws Exception {
         // mod 1.4 depends on mod1.2 [1.0,2.0[
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
@@ -3071,7 +3071,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.3.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.3.xml"),
             getResolveOptions(new String[] {"default"}));
         assertTrue(report.hasError());
     }
@@ -3079,7 +3079,7 @@ public class ResolveTest extends TestCase {
     public void testLatestMilestone() throws Exception {
         // mod9.2 depends on latest.milestone of mod6.4
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org9/mod9.2/ivys/ivy-1.1.xml").toURL(),
+                "test/repositories/1/org9/mod9.2/ivys/ivy-1.1.xml"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
@@ -3097,7 +3097,7 @@ public class ResolveTest extends TestCase {
         // mod9.2 depends on latest.milestone of mod6.2, but there is no milestone
         // test case for IVY-318
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org9/mod9.2/ivys/ivy-1.2.xml").toURL(),
+                "test/repositories/1/org9/mod9.2/ivys/ivy-1.2.xml"),
             getResolveOptions(new String[] {"default"}));
         // we should have an error since there is no milestone version, it should be considered as a
         // non resolved dependency
@@ -3149,7 +3149,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/IVY-729/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/IVY-729/ivy.xml").toURL(), 
+                "test/repositories/IVY-729/ivy.xml"), 
                 getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
     }
@@ -3158,22 +3158,22 @@ public class ResolveTest extends TestCase {
         // mod6.3 depends on mod6.2, which itself depends on mod6.3
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"default"}));
+                , getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
         ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
         ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
         ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
-            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
                 getResolveOptions(new String[] {"default"}));
             fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex) {
@@ -3186,13 +3186,13 @@ public class ResolveTest extends TestCase {
     public void testCircular2() throws Exception {
         // mod 9.1 (no revision) depends on mod9.2, which depends on mod9.1 2.+
 
-        ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
         ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
-            ivy.resolve(new File("test/repositories/circular/ivy.xml").toURL(),
+            ivy.resolve(new File("test/repositories/circular/ivy.xml"),
                 getResolveOptions(new String[] {"*"}));
             fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex) {
@@ -3209,21 +3209,21 @@ public class ResolveTest extends TestCase {
         // in both configuration default and test
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml")
-                .toURL(), getResolveOptions(new String[] {"default", "test"}));
+                , getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         // we should have mod 6.2 artifact in both configurations
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
         ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
             getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
         ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
             getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
@@ -3231,7 +3231,7 @@ public class ResolveTest extends TestCase {
 
         ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
-            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
                 getResolveOptions(new String[] {"default", "test"}));
             fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex) {
@@ -3246,7 +3246,7 @@ public class ResolveTest extends TestCase {
         // mod11.2 depends on mod11.1
         ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod11.1/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"test"}));
+                , getResolveOptions(new String[] {"test"}));
 
         assertNotNull(report);
         assertFalse(report.hasError());
@@ -3351,7 +3351,7 @@ public class ResolveTest extends TestCase {
     public void testIVY1236() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-1236/ivysettings.xml"));
-        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1236/ivy.xml").toURI().toURL(),
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1236/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         
         assertNotNull(report);
@@ -3371,7 +3371,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/IVY-1233/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
 
-        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1233/ivy.xml").toURI().toURL(),
+        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1233/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         ConfigurationResolveReport crr = rr.getConfigurationReport("default");
         Set modRevIds = crr.getModuleRevisionIds();
@@ -3386,7 +3386,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/IVY-1333/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
 
-        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1333/ivy.xml").toURI().toURL(),
+        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1333/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         ConfigurationResolveReport crr = rr.getConfigurationReport("default");
         Set modRevIds = crr.getModuleRevisionIds();
@@ -3404,7 +3404,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/IVY-1347/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
 
-        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1347/childone/childtwo/ivy.xml").toURI().toURL(),
+        ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1347/childone/childtwo/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         ModuleDescriptor md = rr.getModuleDescriptor();
         assertNotNull(md);
@@ -3435,27 +3435,27 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/badfile/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/badfile/ivys/ivy-badorg.xml").toURL(),
+            new File("test/repositories/badfile/ivys/ivy-badorg.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad org should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badorg'") != -1);
         
-        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badmodule.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badmodule.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad module should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badmodule'") != -1);
 
-        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badbranch.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badbranch.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad branch should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badbranch'") != -1);
         
-        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad revision should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badrevision'") != -1);
         
-        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badxml.xml").toURL(),
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badxml.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad xml should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("badatt") != -1);
@@ -3465,7 +3465,7 @@ public class ResolveTest extends TestCase {
         // mod2.4 depends on mod1.1 with transitive set to false
         // mod1.1 depends on mod1.2, which should not be resolved because of the transitive setting
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.4/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.4/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -3491,7 +3491,7 @@ public class ResolveTest extends TestCase {
         // mod2.4 depends on mod1.1 with transitive set to false
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.7/ivys/ivy-0.6.xml").toURL(),
+                "test/repositories/1/org2/mod2.7/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
@@ -3515,7 +3515,7 @@ public class ResolveTest extends TestCase {
         // dependency
         // file in cache
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.4/ivys/ivy-0.3.xml").toURL(),
+                "test/repositories/1/org2/mod2.4/ivys/ivy-0.3.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertNotNull(report);
@@ -3533,7 +3533,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testVisibility1() throws Exception {
-        ivy.resolve(new File("test/repositories/2/mod8.2/ivy-1.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod8.2/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertFalse(getArchiveFileInCache("org8", "mod8.1", "1.0", "a-private", "txt", "txt")
@@ -3541,7 +3541,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testVisibility2() throws Exception {
-        ivy.resolve(new File("test/repositories/2/mod8.3/ivy-1.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod8.3/ivy-1.0.xml"),
             getResolveOptions(new String[] {"private"}));
 
         assertFalse(getArchiveFileInCache("org8", "mod8.1", "1.0", "a-private", "txt", "txt")
@@ -3550,7 +3550,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testVisibility3() throws Exception {
-        ivy.resolve(new File("test/repositories/2/mod8.4/ivy-1.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod8.4/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertFalse(getArchiveFileInCache("org8", "mod8.1", "1.0", "a-private", "txt", "txt")
@@ -3559,7 +3559,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testVisibility4() throws Exception {
-        ivy.resolve(new File("test/repositories/2/mod8.4/ivy-1.1.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod8.4/ivy-1.1.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org8", "mod8.1", "1.1", "a-private", "txt", "txt")
@@ -3576,7 +3576,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/1/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("default");
 
@@ -3592,7 +3592,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/2/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("default");
 
@@ -3608,7 +3608,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/3/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"buildtime"}));
+                , getResolveOptions(new String[] {"buildtime"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("buildtime");
 
@@ -3624,7 +3624,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/4/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"default"}));
+                , getResolveOptions(new String[] {"default"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("default");
 
@@ -3640,7 +3640,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/5/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("default");
 
@@ -3656,7 +3656,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/6/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"default", "buildtime"}));
+                , getResolveOptions(new String[] {"default", "buildtime"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("default");
 
@@ -3672,7 +3672,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-84/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/7/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"buildtime", "default"}));
+                , getResolveOptions(new String[] {"buildtime", "default"}));
 
         ConfigurationResolveReport conf = report.getConfigurationReport("default");
 
@@ -3688,7 +3688,7 @@ public class ResolveTest extends TestCase {
         // mod9.2 depends on mod9.1 and mod1.2
         // mod9.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org9/mod9.2/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org9/mod9.2/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -3709,7 +3709,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testResolveMultipleSameDependency() throws Exception {
-        ResolveReport report = ivy.resolve(new File("test/repositories/1/multiple-same-deps/mod1/ivys/ivy-1.0.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/multiple-same-deps/mod1/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("multiple-same-deps", "mod31", "1.0", "mod31", "jar", "jar").exists());
@@ -3730,7 +3730,7 @@ public class ResolveTest extends TestCase {
         // mod2.5 depends on mod2.3 and excludes one artifact from mod2.1
         // mod2.3 depends on mod2.1
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.5/ivys/ivy-0.6.xml").toURL(),
+                "test/repositories/1/org2/mod2.5/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -3754,7 +3754,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.3 and mod2.5
         // mod2.3 depends on mod2.1 and excludes art21B
         // mod2.5 depends on mod2.1 and excludes art21A
-        ivy.resolve(new File("test/repositories/1/org2/mod2.6/ivys/ivy-0.6.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.6/ivys/ivy-0.6.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
@@ -3765,7 +3765,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.3 and mod2.5
         // mod2.3 depends on mod2.1 and excludes art21B
         // mod2.5 depends on mod2.1 and excludes art21B
-        ivy.resolve(new File("test/repositories/1/org2/mod2.6/ivys/ivy-0.7.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.6/ivys/ivy-0.7.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
@@ -3776,7 +3776,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.3 and mod2.5 and on mod2.1 for which it excludes art21A
         // mod2.3 depends on mod2.1 and excludes art21B
         // mod2.5 depends on mod2.1 and excludes art21B
-        ivy.resolve(new File("test/repositories/1/org2/mod2.6/ivys/ivy-0.8.xml").toURL(),
+        ivy.resolve(new File("test/repositories/1/org2/mod2.6/ivys/ivy-0.8.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
@@ -3787,7 +3787,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.3 for which it excludes art21A
         // mod2.3 depends on mod2.1 and excludes art21B
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.9.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.9.xml"),
             getResolveOptions(new String[] {"*"}));
         ModuleDescriptor md = report.getModuleDescriptor();
         assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.9"), md
@@ -3801,7 +3801,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.1 and excludes mod1.1
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.10.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.10.xml"),
             getResolveOptions(new String[] {"*"}));
         ModuleDescriptor md = report.getModuleDescriptor();
         assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.10"), md
@@ -3819,7 +3819,7 @@ public class ResolveTest extends TestCase {
         // mod2.6 depends on mod2.1 and excludes mod1.1 module wide
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.11.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.11.xml"),
             getResolveOptions(new String[] {"*"}));
         ModuleDescriptor md = report.getModuleDescriptor();
         assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.11"), md
@@ -3838,7 +3838,7 @@ public class ResolveTest extends TestCase {
         // mod2.5 depends on mod2.3
         // mod2.6 globally exclude mod2.3 in conf exclude
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml"),
             getResolveOptions(new String[] {"include"}));
         ModuleDescriptor md = report.getModuleDescriptor();
         assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.13"), md
@@ -3851,7 +3851,7 @@ public class ResolveTest extends TestCase {
     public void testResolveExcludesConf2() throws Exception {
         // same as testResolveExcludesConf
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml").toURL(),
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.13.xml"),
             getResolveOptions(new String[] {"exclude"}));
         ModuleDescriptor md = report.getModuleDescriptor();
         assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.13"), md
@@ -3863,7 +3863,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveExceptConfiguration() throws Exception {
         // mod10.2 depends on mod5.1 conf *, !A
-        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-2.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-2.0.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.1", "art51A", "jar", "jar").exists());
@@ -3875,7 +3875,7 @@ public class ResolveTest extends TestCase {
         // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
         // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
         // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
-        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml"),
             getResolveOptions(new String[] {"A"}));
 
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
@@ -3889,7 +3889,7 @@ public class ResolveTest extends TestCase {
         // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
         // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
         // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
-        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml"),
             getResolveOptions(new String[] {"B"}));
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
@@ -3909,7 +3909,7 @@ public class ResolveTest extends TestCase {
         // mod5.1;4.4 -> mod1.2;2.0 (B,xplatform->default)
         // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
         // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
-        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml"),
             getResolveOptions(new String[] {"B+windows"}));
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
@@ -3930,7 +3930,7 @@ public class ResolveTest extends TestCase {
         // mod5.1;4.4 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
         // mod5.1;4.4 -> mod2.1;0.5 (B,windows->A+B)
         // mod5.1;4.4 -> mod2.8;0.6 (windows,linux->@+thread+debug;A,B->*)
-        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.0.xml"),
             getResolveOptions(new String[] {"B+linux"}));
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.4", "art51A", "jar", "jar").exists());
@@ -3955,7 +3955,7 @@ public class ResolveTest extends TestCase {
         // mod5.1;4.5 -> mod2.2;0.9 (B,windows->myconf1;B,linux->myconf2)
         // mod5.1;4.5 -> mod2.1;0.5 (B,windows->A+B)
         // mod5.1;4.5 -> mod2.8;0.6 (windows,linux->@+thread+debug;A,B->*)
-        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.1.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod5.2/ivy-3.1.xml"),
             getResolveOptions(new String[] {"B+linux"}));
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.5", "art51A", "jar", "jar").exists());
@@ -3976,7 +3976,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveFallbackConfiguration() throws Exception {
         // mod10.2 depends on mod5.1 conf runtime(default)
-        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.0.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.0.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
@@ -3984,7 +3984,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveFallbackConfiguration2() throws Exception {
         // mod10.2 depends on mod5.1 conf runtime(*)
-        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.1.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.1.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
@@ -3993,7 +3993,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveFallbackConfiguration3() throws Exception {
         // mod10.2 depends on mod5.1 conf runtime(*),compile(*)
-        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.2.xml").toURL(),
+        ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.2.xml"),
             getResolveOptions(new String[] {"*"}));
 
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
@@ -4003,7 +4003,7 @@ public class ResolveTest extends TestCase {
     public void testResolveFallbackConfiguration4() throws Exception {
         // mod10.2 depends on mod5.1 conf runtime()
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.3.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
@@ -4013,9 +4013,9 @@ public class ResolveTest extends TestCase {
     public void testResolveMaven2() throws Exception {
         // test3 depends on test2 which depends on test
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/m2/org/apache/test3/1.0/test3-1.0.pom").toURL(),
+                "test/repositories/m2/org/apache/test3/1.0/test3-1.0.pom"),
             getResolveOptions(new String[] {"test"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -4039,9 +4039,9 @@ public class ResolveTest extends TestCase {
 
     public void testResolveMaven2WithConflict() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/m2/org/apache/test3/1.1/test3-1.1.pom").toURL(),
+                "test/repositories/m2/org/apache/test3/1.1/test3-1.1.pom"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
@@ -4063,7 +4063,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveMaven2WithConflict2() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-874.xml"),
             getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
@@ -4080,11 +4080,11 @@ public class ResolveTest extends TestCase {
         //Same as testResolveMaven2 but with a relocated module pointing to the module
         //used in testResolveMaven2.
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
-                    "test/repositories/m2/org/relocated/test3/1.0/test3-1.0.pom").toURL(),
+                    "test/repositories/m2/org/relocated/test3/1.0/test3-1.0.pom"),
                 getResolveOptions(new String[] {"*"}));
             assertNotNull(report);
     
@@ -4108,11 +4108,11 @@ public class ResolveTest extends TestCase {
         //Same as testResolveMaven2 but with a relocated module pointing to the module
         //used in testResolveMaven2.
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
-                    "test/repositories/m2/org/relocated/test3full/1.1/test3full-1.1.pom").toURL(),
+                    "test/repositories/m2/org/relocated/test3full/1.1/test3full-1.1.pom"),
                 getResolveOptions(new String[] {"*"}));
             assertNotNull(report);
     
@@ -4134,11 +4134,11 @@ public class ResolveTest extends TestCase {
 
     public void testResolveVesionRelocationChainedWithGroupRelocation() throws Exception {
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
-                    "test/repositories/m2/org/relocated/test3/1.1/test3-1.1.pom").toURL(),
+                    "test/repositories/m2/org/relocated/test3/1.1/test3-1.1.pom"),
                 getResolveOptions(new String[] {"*"}));
             assertNotNull(report);
     
@@ -4160,12 +4160,12 @@ public class ResolveTest extends TestCase {
 
     public void testResolveTransitivelyToRelocatedPom() throws Exception {
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
                     "test/repositories/m2/org/relocated/testRelocationUser/1.0/" +
-                    "testRelocationUser-1.0.pom").toURL(),
+                    "testRelocationUser-1.0.pom"),
                 getResolveOptions(new String[] {"compile"}));
             assertNotNull(report);
             assertFalse(report.hasError());
@@ -4186,12 +4186,12 @@ public class ResolveTest extends TestCase {
 
     public void testResolveTransitivelyToPomRelocatedToNewVersion() throws Exception {
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
                     "test/repositories/m2/org/relocated/testRelocationUser/1.1/" +
-                    "testRelocationUser-1.1.pom").toURL(),
+                    "testRelocationUser-1.1.pom"),
                 getResolveOptions(new String[] {"compile"}));
             assertNotNull(report);
             assertFalse(report.hasError());
@@ -4214,10 +4214,10 @@ public class ResolveTest extends TestCase {
         // test case for IVY-418
         // test-classifier depends on test-classified with classifier asl
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test-classifier/1.0/test-classifier-1.0.pom")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -4241,10 +4241,10 @@ public class ResolveTest extends TestCase {
         // test case for IVY-1041
         // test-classifier depends on test-classified with classifier asl
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test-classifier/2.0/test-classifier-2.0.pom")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -4266,7 +4266,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveMaven2GetSources() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(
             ResolveTest.class.getResource("ivy-m2-with-sources.xml"), 
             getResolveOptions(new String[] {"*"}));
@@ -4287,7 +4287,7 @@ public class ResolveTest extends TestCase {
     public void testResolveMaven2GetSourcesWithSrcClassifier() throws Exception {
         // IVY-1138
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(
             ResolveTest.class.getResource("ivy-m2-with-src.xml"), 
             getResolveOptions(new String[] {"*"}));
@@ -4307,7 +4307,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveMaven2GetSourcesAndJavadocAuto() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(
             ResolveTest.class.getResource("ivy-m2-with-sources-and-javadoc-auto.xml"), 
             getResolveOptions(new String[] {"*"}));
@@ -4331,9 +4331,9 @@ public class ResolveTest extends TestCase {
 
     public void testResolveMaven2WithVersionProperty() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/m2/org/apache/test-version/1.0/test-version-1.0.pom").toURL(),
+                "test/repositories/m2/org/apache/test-version/1.0/test-version-1.0.pom"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -4361,7 +4361,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().setDefaultResolver("parentChain");
         
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/parentPom/org/apache/dm/test/1.0/test-1.0.pom").toURL(),
+                "test/repositories/parentPom/org/apache/dm/test/1.0/test-1.0.pom"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -4468,7 +4468,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().setDefaultResolver("parentDual");
         
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/parentPom/org/apache/dm/test/1.0/test-1.0.pom").toURL(),
+                "test/repositories/parentPom/org/apache/dm/test/1.0/test-1.0.pom"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -4528,7 +4528,7 @@ public class ResolveTest extends TestCase {
         ivy.getSettings().setDefaultResolver("parentChain");
         
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/parentPom/org/apache/dm/test/2.0/test-2.0.pom").toURL(),
+                "test/repositories/parentPom/org/apache/dm/test/2.0/test-2.0.pom"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
 
@@ -4561,10 +4561,10 @@ public class ResolveTest extends TestCase {
         // here we test maven SNAPSHOT versions handling, 
         // with m2 snapshotRepository/uniqueVersion set to true
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test4/1.0/test4-1.0.pom")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
 
@@ -4580,10 +4580,10 @@ public class ResolveTest extends TestCase {
         // here we test maven SNAPSHOT versions handling, 
         // without m2 snapshotRepository/uniqueVersion set to true
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test4/1.1/test4-1.1.pom")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
 
@@ -4614,7 +4614,7 @@ public class ResolveTest extends TestCase {
             ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0"));
         assertTrue(ivyFile.exists());
         ModuleDescriptor parsedMD = XmlModuleDescriptorParser.getInstance()
-            .parseDescriptor(ivy.getSettings(), ivyFile.toURL(), true);
+            .parseDescriptor(ivy.getSettings(), ivyFile.toURI().toURL(), true);
         assertEquals("systemorg", parsedMD.getModuleRevisionId().getOrganisation());
         assertEquals("systemmod", parsedMD.getModuleRevisionId().getName());
 
@@ -4696,7 +4696,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/multirevisions/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/multirevisions/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"compile", "test"}));
+                , getResolveOptions(new String[] {"compile", "test"}));
 
         assertNotNull(report);
         assertNotNull(report.getUnresolvedDependencies());
@@ -4708,7 +4708,7 @@ public class ResolveTest extends TestCase {
         // mod12.2 depends on mod12.1 1.0 which depends on mod1.2
         // mod12.1 doesn't have revision in its ivy file
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod12.2/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         assertTrue(report.hasError());
 
@@ -4729,7 +4729,7 @@ public class ResolveTest extends TestCase {
         ((BasicResolver) ivy.getSettings().getResolver("2-ivy")).setCheckconsistency(false);
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod12.2/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         assertFalse(report.hasError());
 
@@ -4753,7 +4753,7 @@ public class ResolveTest extends TestCase {
         // thus conf j2ee should be empty for each modules
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod13.3/ivy-1.0.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}));
+                , getResolveOptions(new String[] {"*"}));
 
         assertFalse(report.hasError());
 
@@ -4863,7 +4863,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/1/ivy.xml").toURL(), getResolveOptions(
+                "test/repositories/branches/bar/bar1/trunk/1/ivy.xml"), getResolveOptions(
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
@@ -4875,7 +4875,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/2/ivy.xml").toURL(), getResolveOptions(
+                "test/repositories/branches/bar/bar1/trunk/2/ivy.xml"), getResolveOptions(
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
@@ -4887,7 +4887,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings-defaultbranch1.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/1/ivy.xml").toURL(), getResolveOptions(
+                "test/repositories/branches/bar/bar1/trunk/1/ivy.xml"), getResolveOptions(
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
@@ -4899,7 +4899,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/3/ivy.xml").toURL(), getResolveOptions(
+                "test/repositories/branches/bar/bar1/trunk/3/ivy.xml"), getResolveOptions(
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
@@ -4912,7 +4912,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/branches/ivysettings-fooonbranch1.xml"));
 
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/3/ivy.xml").toURL(), getResolveOptions(
+                "test/repositories/branches/bar/bar1/trunk/3/ivy.xml"), getResolveOptions(
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
@@ -4932,7 +4932,7 @@ public class ResolveTest extends TestCase {
 
         ivy.setVariable("ivy.branch", "branch1");
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/4/ivy.xml").toURL(), 
+                "test/repositories/branches/bar/bar1/trunk/4/ivy.xml"), 
                 getResolveOptions(new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
@@ -4941,7 +4941,7 @@ public class ResolveTest extends TestCase {
 
         ivy.setVariable("ivy.branch", "trunk");
         report = ivy.resolve(new File(
-                "test/repositories/branches/bar/bar1/trunk/4/ivy.xml").toURL(), 
+                "test/repositories/branches/bar/bar1/trunk/4/ivy.xml"), 
                 getResolveOptions(new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getNodesNumber());
@@ -4951,11 +4951,11 @@ public class ResolveTest extends TestCase {
     public void testExternalArtifacts() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.getSettings().setVariable("test.base.url",
-            new File("test/repositories/external-artifacts").toURL().toString());
+            new File("test/repositories/external-artifacts").toString());
         ivy.configure(new File("test/repositories/external-artifacts/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File("test/repositories/external-artifacts/ivy.xml")
-                .toURL(), getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+                , getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
         assertTrue(getArchiveFileInCache(ivy, "apache", "A", "1.0", "a", "jar", "jar").exists());
@@ -4986,7 +4986,7 @@ public class ResolveTest extends TestCase {
     
     public void testPrivateConfigurationTransferWhenConflict() throws Exception {        
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/1/orgConflictAndPrivateConf/root/ivys/ivy-1.0.xml").toURL(),
+            new File("test/repositories/1/orgConflictAndPrivateConf/root/ivys/ivy-1.0.xml"),
             getResolveOptions(new String[] {"assembly"}));
         assertFalse(report.hasError());        
     }
@@ -5134,7 +5134,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File(deliverDir, "ivy-1.0.0.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("CAE-Visualization-Components",
@@ -5157,7 +5157,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File(deliverDir, "ivy-1.0.0.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("CAE-Visualization-Components",
@@ -5222,7 +5222,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "0"), dds[0].getDependencyRevisionId());
@@ -5235,7 +5235,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "1"), dds[0].getDependencyRevisionId());
@@ -5248,7 +5248,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "0"), dds[0].getDependencyRevisionId());
@@ -5261,7 +5261,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "1"), dds[0].getDependencyRevisionId());
@@ -5279,7 +5279,7 @@ public class ResolveTest extends TestCase {
         opts.setTransitive(true);
 
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/IVY-1159/"+modCIvyFile).toURL(),
+            new File("test/repositories/IVY-1159/"+modCIvyFile),
             opts
         );
         assertFalse(report.hasError());
@@ -5314,7 +5314,7 @@ public class ResolveTest extends TestCase {
         opts.setTransitive(true);
 
         ResolveReport report = ivy.resolve(
-            new File("test/repositories/IVY-1300/assembly-ivy.xml").toURL(), opts);
+            new File("test/repositories/IVY-1300/assembly-ivy.xml"), opts);
         assertFalse(report.hasError());
         
         ModuleRevisionId modAExpectedRevId = ModuleRevisionId.newInstance("myorg", "modA", "trunk", "5");
@@ -5347,7 +5347,7 @@ public class ResolveTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
         assertTrue(deliveredIvyFile.exists());
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            ivy.getSettings(), deliveredIvyFile.toURL(), false);
+            ivy.getSettings(), deliveredIvyFile.toURI().toURL(), false);
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "releasebranch", "1"), dds[1].getDependencyRevisionId());

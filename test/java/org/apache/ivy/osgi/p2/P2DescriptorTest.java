@@ -56,13 +56,13 @@ public class P2DescriptorTest extends TestCase {
 
         p2SourceResolver = new UpdateSiteResolver();
         p2SourceResolver.setName("p2-sources");
-        p2SourceResolver.setUrl(new File("test/test-p2/sources").toURL().toExternalForm());
+        p2SourceResolver.setUrl(new File("test/test-p2/sources").toURI().toURL().toExternalForm());
         p2SourceResolver.setSettings(settings);
         settings.addResolver(p2SourceResolver);
 
         p2ZippedResolver = new UpdateSiteResolver();
         p2ZippedResolver.setName("p2-zipped");
-        p2ZippedResolver.setUrl(new File("test/test-p2/zipped").toURL().toExternalForm());
+        p2ZippedResolver.setUrl(new File("test/test-p2/zipped").toURI().toURL().toExternalForm());
         p2ZippedResolver.setSettings(settings);
         settings.addResolver(p2ZippedResolver);
 

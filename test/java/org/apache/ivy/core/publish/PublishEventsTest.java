@@ -94,7 +94,8 @@ public class PublishEventsTest extends TestCase {
         dataFile = File.createTempFile("ivydata", ".jar");
         dataFile.deleteOnExit();
         
-        publishModule = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), ivyFile.toURL(), false);
+        publishModule = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(),
+            ivyFile.toURI().toURL(), false);
         //always use the same source data file, no pattern substitution is required.
         publishSources = Collections.singleton(dataFile.getAbsolutePath());
         //always use the same ivy file, no pattern substitution is required.
