@@ -20,6 +20,8 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1036,7 +1038,14 @@ public abstract class BasicResolver extends AbstractResolver {
                 logArtifactAttempt(artifact, url.toExternalForm());
                 Resource resource;
                 if ("file".equals(url.getProtocol())) {
-                    resource = new FileResource(new FileRepository(), new File(url.getPath()));
+                    File f;
+                    try {
+                        f = new File(new URI(url.toExternalForm()));
+                    } catch (URISyntaxException e) {
+                        // unexpected, try to get the best of it
+                        f = new File(url.getPath());
+                    }
+                    resource = new FileResource(new FileRepository(), f);
                 } else {
                     resource = new URLResource(url);
                 }

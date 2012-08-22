@@ -19,6 +19,8 @@ package org.apache.ivy.plugins.resolver.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +42,13 @@ public class FileURLLister implements URLLister {
     }
 
     public List listAll(URL url) throws IOException {
-        String path = url.getPath();
+        String path;
+        try {
+            path = new File(new URI(url.toExternalForm())).getPath();
+        } catch (URISyntaxException e) {
+            // unexpected try to get the best of it
+            path = url.getPath();
+        }
         File file = basedir == null ? new File(path) : new File(basedir, path);
         if (file.exists() && file.isDirectory()) {
             String[] files = file.list();
