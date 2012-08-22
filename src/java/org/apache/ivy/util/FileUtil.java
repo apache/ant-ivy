@@ -55,7 +55,7 @@ public final class FileUtil {
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
-    private static final Pattern ALLOWED_PATH_PATTERN = Pattern.compile("[\\w-./\\\\:~ ]+");
+    private static final Pattern ALLOWED_PATH_PATTERN = Pattern.compile("[\\w-./\\\\:~ %\\(\\)]+");
 
     public static void symlinkInMass(Map/* <File, File> */destToSrcMap, boolean overwrite) throws IOException {
 
