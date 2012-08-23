@@ -55,7 +55,7 @@ public interface DependencyResolver {
     /**
      * Resolve a module by id, getting its module descriptor and resolving the revision if it's a
      * latest one (i.e. a revision uniquely identifying the revision of a module in the current
-     * environment - If this revision is not able to identify uniquelely the revision of the module
+     * environment - If this revision is not able to identify uniquely the revision of the module
      * outside of the current environment, then the resolved revision must begin by ##)
      * 
      * @throws ParseException

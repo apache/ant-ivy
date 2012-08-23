@@ -271,6 +271,20 @@ public final class XmlModuleDescriptorUpdater {
             }
 
             flushMergedElementsBefore(qName);
+            
+            // according to ivy.xsd, all <dependency> elements must occur before
+            // the <exclude>, <override> or <conflict> elements
+            if (options.isMerge() 
+                    && ("exclude".equals(localName)
+                            || "override".equals(localName)
+                            || "conflict".equals(localName))
+                    && "ivy-module/dependencies".equals(getContext())) {
+                ModuleDescriptor merged = options.getMergedDescriptor();
+                writeInheritedDependencies(merged);
+                out.println();
+                out.print(getIndent());
+            }
+
             context.push(qName);
 
             String path = getContext();
@@ -360,7 +374,7 @@ public final class XmlModuleDescriptorUpdater {
                         writeInheritedDescription(merged);
                     }
                 }
-
+                
                 // copy
                 write("<" + qName);
                 for (int i = 0; i < attributes.getLength(); i++) {

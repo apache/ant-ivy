@@ -46,6 +46,12 @@ import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXParseException;
 
 public class XmlModuleUpdaterTest extends TestCase {
+    
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        
+        XmlModuleDescriptorUpdater.LINE_SEPARATOR = System.getProperty("line.separator");
+    }
 
     public void testUpdate() throws Exception {
         /*
@@ -319,6 +325,35 @@ public class XmlModuleUpdaterTest extends TestCase {
                     + " shouldn't have a dependency artifact for configuration myconf2", 0, deps[i]
                     .getDependencyArtifacts("myconf2").length);
         }
+    }
+    
+    // IVY-1356
+    public void testMergedUpdateWithExtendsAndExcludes() throws Exception {
+        URL url = XmlModuleUpdaterTest.class.getResource("test-extends-dependencies-exclude.xml");
+
+        XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+        ModuleDescriptor md = parser.parseDescriptor(new IvySettings(), url, true);
+        
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlModuleDescriptorUpdater.update(url, buffer, 
+            getUpdateOptions("release", "mynewrev")
+                .setMerge(true)
+                .setMergedDescriptor(md));
+        
+        ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
+            new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
+                    false), true);
+
+        DependencyDescriptor[] deps = updatedMd.getDependencies();
+        assertNotNull("Dependencies shouldn't be null", deps);
+        assertEquals("Number of dependencies is incorrect", 2, deps.length);
+        
+        // test indentation
+        String updatedXml = buffer.toString();
+        System.out.println(updatedXml);
+        assertTrue(updatedXml.indexOf(XmlModuleDescriptorUpdater.LINE_SEPARATOR 
+            + "\t\t<dependency org=\"myorg\" name=\"mymodule1\" rev=\"1.0\" conf=\"default->default\"/>" 
+            + XmlModuleDescriptorUpdater.LINE_SEPARATOR) != -1);
     }
 
     private UpdateOptions getUpdateOptions(String status, String revision) {
