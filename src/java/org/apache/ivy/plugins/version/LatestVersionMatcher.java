@@ -57,14 +57,6 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
      */
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
             Comparator staticComparator) {
-        if (isDynamic(askedMrid) && !isDynamic(foundMrid)) {
-            return needModuleDescriptor(askedMrid, null) ? 0 : 1;
-        }
-        
-        String askedStatus = askedMrid.getRevision().substring("latest.".length());
-        String foundStatus = foundMrid.getRevision().substring("latest.".length());
-        
-        List statuses = StatusManager.getCurrent().getStatuses();
-        return statuses.indexOf(askedStatus) - statuses.indexOf(foundStatus);
+        return needModuleDescriptor(askedMrid, foundMrid) ? 0 : 1;
     }
 }
