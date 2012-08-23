@@ -71,6 +71,7 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
             VersionMatcher vmatcher = IvyContext.getContext().getSettings().getVersionMatcher();
             ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("", "", rev1);
             ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("", "", rev2);
+            
             if (vmatcher.isDynamic(mrid1)) {
                 int c = vmatcher.compare(mrid1, mrid2, mridComparator);
                 return c >= 0 ? 1 : -1;
