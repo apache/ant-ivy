@@ -387,17 +387,27 @@
 	</target>
 	
 	<target name="sign" depends="init-ivy">
-		<ivy:settings id="sign.settingsId" file="ivysettings-release.xml" />
-		<ivy:cachepath organisation="org.apache.commons" settingsRef="sign.settingsId" transitive="false" log="download-only"
-				module="commons-openpgp" revision="1.0-SNAPSHOT" inline="true" pathid="openpgp.classpath"/>
-		<ivy:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" log="download-only"
-				module="bcprov-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcprov.classpath"/>
-		<ivy:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" transitive="false" log="download-only"
-				module="bcpg-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcpg.classpath"/>
-		
-		<property file="${user.home}/ivybuild.properties" />
-		<input message="please enter your PGP password: " addproperty="pgp.password"/>
-		<input message="please enter your PGP keyId: " addproperty="pgp.keyId"/>
+        <property file="${user.home}/ivybuild.properties" />
+        <input message="please enter your PGP password: " addproperty="pgp.password"/>
+        <input message="please enter your PGP keyId: " addproperty="pgp.keyId"/>
+
+        <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]" />
+
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                uri="antlib:org.apache.ivy.ant_2">
+            <classpath>
+                <fileset dir="${artifacts.build.dir}/jars" includes="${final.name}" />
+                <fileset dir="${build.dir}/lib" excludes="ant-*.jar" />
+            </classpath>
+        </taskdef>
+
+        <ivy2:settings id="sign.settingsId" file="ivysettings-release.xml" />
+        <ivy2:cachepath organisation="org.apache.commons" settingsRef="sign.settingsId" transitive="false" log="download-only"
+                module="commons-openpgp" revision="1.0-SNAPSHOT" inline="true" pathid="openpgp.classpath"/>
+        <ivy2:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" log="download-only"
+                module="bcprov-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcprov.classpath"/>
+        <ivy2:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" transitive="false" log="download-only"
+                module="bcpg-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcpg.classpath"/>
 		
 		<!--
 			For some reason, if we use the openpgp:signer task here directly, the bouncycastle security
