@@ -936,8 +936,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         } else {
             if (compression.equals("zip") || compression.equals("jar") || compression.equals("war")) {
                 Message.info("\tUncompressing " + artifact.getId());
+                ZipFile zipFile = null;
                 try {
-                    ZipFile zipFile = new ZipFile(adr.getLocalFile());
+                    zipFile = new ZipFile(adr.getLocalFile());
                     Enumeration entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -983,6 +984,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     adr.setDownloadStatus(DownloadStatus.FAILED);
                     adr.setDownloadDetails("The compressed artifact " + artifact.getId()
                             + " could not be uncompressed (" + e.getMessage() + ")");
+                } finally {
+                    if (zipFile != null) {
+                        try {
+                            zipFile.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
                 }
             } else {
                 adr.setDownloadStatus(DownloadStatus.FAILED);
