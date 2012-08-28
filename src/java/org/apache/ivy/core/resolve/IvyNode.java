@@ -336,7 +336,7 @@ public class IvyNode implements Comparable {
                 continue;
             }
             ModuleRevisionId requestedDependencyRevisionId = dd.getDependencyRevisionId();
-            if (isDependencyModuleExcluded(rootModuleConf, requestedDependencyRevisionId, conf)) {
+            if (isDependencyModuleExcluded(dd, rootModuleConf, requestedDependencyRevisionId, conf)) {
                 // the whole module is excluded, it is considered as not being part of dependencies
                 // at all
                 Message.verbose("excluding " + dd + " in " + conf);
@@ -380,10 +380,40 @@ public class IvyNode implements Comparable {
         return (DependencyDescriptor) dds.get(parent);
     }
 
-    private boolean isDependencyModuleExcluded(String rootModuleConf,
+    private boolean isDependencyModuleExcluded(DependencyDescriptor dd, String rootModuleConf,
             ModuleRevisionId dependencyRevisionId, String conf) {
-        return callers.doesCallersExclude(rootModuleConf, DefaultArtifact.newIvyArtifact(
-            dependencyRevisionId, null));
+        Artifact a = DefaultArtifact.newIvyArtifact(dependencyRevisionId, null);
+        if (isRoot()) {
+            // no callers, but maybe some exclude
+            Boolean exclude = doesExclude(md, rootModuleConf, new String[] {rootModuleConf}, dd, a,
+                new Stack());
+            return exclude == null ? false : exclude.booleanValue();
+        }
+        return callers.doesCallersExclude(rootModuleConf, a);
+    }
+
+    Boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs,
+            DependencyDescriptor dd, Artifact artifact, Stack callersStack) {
+        // artifact is excluded if it match any of the exclude pattern for this dependency...
+        if (dd != null) {
+            if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
+                return Boolean.TRUE;
+            }
+        }
+        if (md.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
+            return Boolean.TRUE;
+        }
+        // ... or if it is excluded by all its callers
+        IvyNode c = getData().getNode(md.getModuleRevisionId());
+        if (c != null) {
+            if (callersStack.contains(c.getId())) {
+                // a circular dependency, we cannot be conclusive here
+                return null;
+            }
+            return Boolean.valueOf(c.doesCallersExclude(rootModuleConf, artifact, callersStack));
+        } else {
+            return Boolean.FALSE;
+        }
     }
 
     public boolean hasConfigurationsToLoad() {

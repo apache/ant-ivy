@@ -3861,6 +3861,18 @@ public class ResolveTest extends TestCase {
             ModuleRevisionId.newInstance("org2", "mod2.3", "0.4")).exists());
     }
 
+    public void testResolveExcludesConf3() throws Exception {
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.14.xml"),
+            getResolveOptions(new String[] {"exclude"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org2", "mod2.6", "0.14"), md
+                .getModuleRevisionId());
+
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.5", "0.9")).exists());
+    }
+
     public void testResolveExceptConfiguration() throws Exception {
         // mod10.2 depends on mod5.1 conf *, !A
         ivy.resolve(new File("test/repositories/2/mod10.2/ivy-2.0.xml"),

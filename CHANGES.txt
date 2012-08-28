@@ -146,6 +146,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: The ignore circular dependency strategy is clobbering the warn strategy (IVY-1353) (Thanks to Carl Quinn)
 - FIX: Buildnumber and IvyFindRevision Ant tasks should honour defaultBranch setting (IVY-1344) (Thanks to Ales Nosek)
 - FIX: ApacheURLLister.retrieveListing() fails if the encoding of the URL list is different from the default encoding (IVY-1060) (Thanks to Robin Fernandes)
+- FIX: global exclude rules is not applying to root ivy files
 
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288) (Thanks to Jean-Louis Boudart)
