@@ -339,8 +339,7 @@ public class ResolveReport {
         // copy configurations
         String[] resolvedConf = getConfigurations();
         for (int i = 0; i < resolvedConf.length; i++) {
-            Configuration conf = md.getConfiguration(resolvedConf[i]);
-            fixedmd.addConfiguration(conf);
+            fixedmd.addConfiguration(new Configuration(resolvedConf[i]));
         }
 
         // get dependencies
