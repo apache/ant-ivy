@@ -110,7 +110,7 @@ public class ResolveTest extends TestCase {
         FileUtil.forceDelete(deliverDir);
         FileUtil.forceDelete(workDir);
     }
-
+    
     public void testResolveWithRetainingArtifactName() throws Exception {
         ((DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager())
                 .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
@@ -3430,6 +3430,21 @@ public class ResolveTest extends TestCase {
         assertFalse(modRevIds.contains(ModuleRevisionId.newInstance("junit", "junit", "3.8")));
     }
 
+    public void testIVY1366() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-1366/ivysettings.xml"));
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1366/ivy.xml"), 
+                new ResolveOptions().setConfs(new String[] {"runtime"}));
+        assertFalse(report.hasError());
+        
+        List artifacts = report.getArtifacts();
+        assertEquals(3, artifacts.size());
+        assertEquals("test#a;1!a.jar", artifacts.get(0).toString());
+        assertEquals("test#c;1!c.jar", artifacts.get(1).toString());
+        assertEquals("test#b;1!b.jar", artifacts.get(2).toString());
+    }
+    
     public void testBadFiles() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/badfile/ivysettings.xml"));
