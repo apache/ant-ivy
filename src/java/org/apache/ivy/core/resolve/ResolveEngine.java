@@ -1084,7 +1084,8 @@ public class ResolveEngine {
             // In this case we need to compute selected nodes again. 
             Collection deps = ancestor.getNode().getDependencies(
                 node.getRootModuleConf(), 
-                ancestor.getNode().getConfigurations(node.getRootModuleConf()));
+                ancestor.getNode().getConfigurations(node.getRootModuleConf()), 
+                ancestor.getRequestedConf());
             for (Iterator iter = deps.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode) iter.next();
                 if (dep.getModuleId().equals(node.getModuleId())) {
@@ -1099,9 +1100,11 @@ public class ResolveEngine {
              * (otherwise previous block would have been reached). We can compute conflicts based on
              * the parent direct dependencies in current root module conf.
              */
-            Collection parentDepIvyNodes = node.getParent().getNode()
-                        .getDependencies(node.getRootModuleConf(), 
-                            new String[] {node.getParentConf()});
+            VisitNode parent = node.getParent();
+            Collection parentDepIvyNodes = parent.getNode().getDependencies(
+                node.getRootModuleConf(), 
+                parent.getNode().getConfigurations(node.getRootModuleConf()), 
+                parent.getRequestedConf());
             for (Iterator it = parentDepIvyNodes.iterator(); it.hasNext();) {
                 IvyNode parentDep = (IvyNode) it.next();
                 if (parentDep.getModuleId().equals(node.getModuleId())) {

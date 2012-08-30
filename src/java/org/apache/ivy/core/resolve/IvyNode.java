@@ -288,7 +288,7 @@ public class IvyNode implements Comparable {
         }
     }
 
-    public Collection getDependencies(String rootModuleConf, String[] confs) {
+    public Collection getDependencies(String rootModuleConf, String[] confs, String requestedConf) {
         if (md == null) {
             throw new IllegalStateException(
                     "impossible to get dependencies when data has not been loaded");
@@ -302,7 +302,7 @@ public class IvyNode implements Comparable {
         }
         Collection deps = new HashSet();
         for (int i = 0; i < confs.length; i++) {
-            deps.addAll(getDependencies(rootModuleConf, confs[i], confs[i]));
+            deps.addAll(getDependencies(rootModuleConf, confs[i], requestedConf));
         }
         return deps;
     }

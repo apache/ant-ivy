@@ -45,6 +45,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Gregory Fernandez
 	Danno Ferrin
 	Benjamin Francisoud	
+	Wolfgang Frank
 	Jacob Grydholt Jensen
 	John Gibson
 	Mitch Gitman
@@ -130,6 +131,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Resolve does not deliver all dependent artifacts (IVY-1366) (thanks to Wolfgang Frank)
 - FIX: Ivy descriptors are merged incorrectly when there is an <exclude> element (IVY-1356)
 - FIX: SimpleDateFormat is not thread safe (IVY-1373)
 - FIX: Maven 'hk2-jar' packaging is now supported (IVY-1357)
