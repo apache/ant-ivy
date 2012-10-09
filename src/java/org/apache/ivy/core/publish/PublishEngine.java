@@ -90,31 +90,21 @@ public class PublishEngine {
         }
         ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(
             mrid, options.getPubBranch(), options.getPubrevision());
-        File ivyFile;
+        
+        // let's find the resolved module descriptor
+        ModuleDescriptor md = null;
         if (options.getSrcIvyPattern() != null) {
-            ivyFile = settings.resolveFile(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
-                DefaultArtifact.newIvyArtifact(pubmrid, new Date())));
+            File ivyFile = settings.resolveFile(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
+                    DefaultArtifact.newIvyArtifact(pubmrid, new Date())));
             if (!ivyFile.exists()) {
                 throw new IllegalArgumentException("ivy file to publish not found for " + mrid
                         + ": call deliver before (" + ivyFile + ")");
             }
-        } else {
-            ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
-            ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
-            if (!ivyFile.exists()) {
-                throw new IllegalStateException("ivy file not found in cache for " + mrid
-                        + ": please resolve dependencies before publishing (" + ivyFile + ")");
-            }
-        }
 
-        // let's find the resolved module descriptor
-        ModuleDescriptor md = null;
-        URL ivyFileURL = null;
-        try {
-            ivyFileURL = ivyFile.toURI().toURL();
-            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
-                false);
-            if (options.getSrcIvyPattern() != null) {
+            URL ivyFileURL = ivyFile.toURI().toURL();
+            try {
+                md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL, false);
+                
                 if (options.isUpdate()) {
                     File tmp = File.createTempFile("ivy", ".xml");
                     tmp.deleteOnExit();
@@ -154,13 +144,17 @@ public class PublishEngine {
                             + md.getModuleRevisionId().getRevision()
                             + "). Use forcedeliver or update.");
                 }
-            } else {
-                md.setResolvedModuleRevisionId(pubmrid);
+            } catch (ParseException e) {
+                throw new IllegalStateException("bad ivy file for " + mrid + ": " + ivyFile + ": " + e);
             }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("malformed url obtained for file " + ivyFile);
-        } catch (ParseException e) {
-            throw new IllegalStateException("bad ivy file for " + mrid + ": " + ivyFile + ": " + e);
+        } else {
+            ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
+            try {
+                md = cacheManager.getResolveModuleDescriptor(mrid);
+            } catch (ParseException e) {
+                throw new IllegalStateException("bad ivy file in cache for " + mrid + ": " + e);
+            }
+            md.setResolvedModuleRevisionId(pubmrid);
         }
 
         DependencyResolver resolver = settings.getResolver(resolverName);

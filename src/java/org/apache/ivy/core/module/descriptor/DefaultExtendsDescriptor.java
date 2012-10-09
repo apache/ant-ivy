@@ -24,17 +24,22 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class DefaultExtendsDescriptor implements ExtendsDescriptor {
 
-    private ModuleRevisionId parentRevisionId;
-    private ModuleRevisionId resolvedParentRevisionId;
+    private ModuleDescriptor parent;
     private String location;
     private List extendsTypes;
+    private boolean local;
 
-    public DefaultExtendsDescriptor(ModuleRevisionId parentRevisionId,
-                                    ModuleRevisionId resolvedParentRevisionId,
-                                    String location, String[] types) {
-        this.parentRevisionId = parentRevisionId;
-        this.resolvedParentRevisionId = resolvedParentRevisionId;
+    public DefaultExtendsDescriptor(ModuleDescriptor parent,
+            String location, String[] types) {
+        this(parent, location, types, false);
+    }
+    
+    public DefaultExtendsDescriptor(ModuleDescriptor parent,
+                                    String location, String[] types, 
+                                    boolean local) {
+        this.parent = parent;
         this.location = location;
+        this.local = local;
         this.extendsTypes = new ArrayList(types.length);
         for (int i = 0; i < types.length; ++i) {
             extendsTypes.add(types[i]);
@@ -42,11 +47,15 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
     }
 
     public ModuleRevisionId getParentRevisionId() {
-        return parentRevisionId;
+        return parent.getModuleRevisionId();
     }
 
     public ModuleRevisionId getResolvedParentRevisionId() {
-        return resolvedParentRevisionId;
+        return parent.getResolvedModuleRevisionId();
+    }
+    
+    public ModuleDescriptor getParentMd() {
+        return parent;
     }
 
     public String getLocation() {
@@ -75,5 +84,9 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
 
     public boolean areDependenciesInherited() {
         return isAllInherited() || extendsTypes.contains("dependencies");
+    }
+    
+    public boolean isLocal() {
+        return local;
     }
 }

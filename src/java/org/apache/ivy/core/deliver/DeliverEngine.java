@@ -40,6 +40,7 @@ import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.report.XmlReportParser;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
@@ -107,27 +108,11 @@ public class DeliverEngine {
         destIvyPattern = settings.substitute(destIvyPattern);
 
         // 1) find the resolved module descriptor in cache
-        File ivyFile = getCache().getResolvedIvyFileInCache(mrid);
-        if (!ivyFile.exists()) {
-            throw new IllegalStateException("ivy file not found in cache for " + mrid
-                    + ": please resolve dependencies before delivering (" + ivyFile + ")");
-        }
-        ModuleDescriptor md = null;
-        URL ivyFileURL = null;
-        try {
-            ivyFileURL = ivyFile.toURI().toURL();
-            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
-                options.isValidate());
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), 
-                options.getPubBranch() == null ? mrid.getBranch() : options.getPubBranch(), 
-                revision));
-            md.setResolvedPublicationDate(options.getPubdate());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("malformed url obtained for file " + ivyFile, e);
-        } catch (ParseException e) {
-            throw new RuntimeException("bad ivy file in cache for " + mrid
-                    + ": please clean '" + ivyFile + "' and resolve again", e);
-        }
+        ModuleDescriptor md = getCache().getResolveModuleDescriptor(mrid);
+        md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), 
+            options.getPubBranch() == null ? mrid.getBranch() : options.getPubBranch(), 
+            revision));
+        md.setResolvedPublicationDate(options.getPubdate());
 
         // 2) parse resolvedRevisions From properties file
         Map resolvedRevisions = new HashMap(); // Map (ModuleId -> String revision)
@@ -136,7 +121,7 @@ public class DeliverEngine {
         File ivyProperties = getCache().getResolvedIvyPropertiesInCache(mrid);
         if (!ivyProperties.exists()) {
             throw new IllegalStateException("ivy properties not found in cache for " + mrid
-                    + ": please resolve dependencies before delivering (" + ivyFile + ")");
+                    + "; please resolve dependencies before delivering!");
         }
         Properties props = new Properties();
         FileInputStream in = new FileInputStream(ivyProperties);
@@ -225,10 +210,10 @@ public class DeliverEngine {
             if (!resolvedBranches.isEmpty()) {
                 opts = opts.setResolvedBranches(resolvedBranches);
             }
-            XmlModuleDescriptorUpdater.update(ivyFileURL, publishedIvy, opts);
+            Resource res = md.getResource();
+            XmlModuleDescriptorUpdater.update(res.openStream(), res, publishedIvy, opts);
         } catch (SAXException ex) {
-            throw new RuntimeException("bad ivy file in cache for " + mrid
-                    + ": please clean '" + ivyFile + "' and resolve again", ex);
+            throw new RuntimeException("bad ivy file in cache for " + mrid, ex);
         }
 
         Message.verbose("\tdeliver done (" + (System.currentTimeMillis() - start) + "ms)");

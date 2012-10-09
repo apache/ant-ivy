@@ -31,6 +31,8 @@ public interface ExtendsDescriptor {
      * {@link org.apache.ivy.core.module.descriptor.ModuleDescriptor#getResolvedModuleRevisionId()} }
      */
     public ModuleRevisionId getResolvedParentRevisionId();
+    
+    public ModuleDescriptor getParentMd();
 
     /**
      * If there is an explicit path to check for the parent descriptor, return it.
@@ -60,4 +62,6 @@ public interface ExtendsDescriptor {
 
     /** @return true if parent dependencies are inherited */
     public boolean areDependenciesInherited();
+    
+    public boolean isLocal();
 }

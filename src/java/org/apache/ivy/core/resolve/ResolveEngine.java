@@ -240,13 +240,10 @@ public class ResolveEngine {
 
             // produce resolved ivy file and ivy properties in cache
             ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
-            File ivyFileInCache = cacheManager.getResolvedIvyFileInCache(md
-                    .getResolvedModuleRevisionId());
-            md.toIvyFile(ivyFileInCache);
+            cacheManager.saveResolvedModuleDescriptor(md);
 
             // we store the resolved dependencies revisions and statuses per asked dependency
-            // revision id,
-            // for direct dependencies only.
+            // revision id, for direct dependencies only.
             // this is used by the deliver task to resolve dynamic revisions to static ones
             File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(
                         md.getResolvedModuleRevisionId());
@@ -324,7 +321,7 @@ public class ResolveEngine {
             FileOutputStream out = new FileOutputStream(ivyPropertiesInCache);
             props.store(out, md.getResolvedModuleRevisionId() + " resolved revisions");
             out.close();
-            Message.verbose("\tresolved ivy file produced in " + ivyFileInCache);
+            Message.verbose("\tresolved ivy file produced in cache");
 
             report.setResolveTime(System.currentTimeMillis() - start);
 
