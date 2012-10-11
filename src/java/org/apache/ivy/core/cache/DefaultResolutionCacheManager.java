@@ -18,13 +18,35 @@
 package org.apache.ivy.core.cache;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.module.descriptor.ExtendsDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.IvySettingsAware;
+import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.FileUtil;
 
-public class DefaultResolutionCacheManager implements ResolutionCacheManager {
+public class DefaultResolutionCacheManager implements ResolutionCacheManager, IvySettingsAware {
+    
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = 
         "resolved-[organisation]-[module]-[revision].xml";
 
@@ -39,13 +61,19 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager {
     
     private File basedir;
 
-    private String name = "resolution-cache"; 
+    private String name = "resolution-cache";
+
+    private IvySettings settings; 
 
     public DefaultResolutionCacheManager() {
     }
     
     public DefaultResolutionCacheManager(File basedir) {
         setBasedir(basedir);
+    }
+    
+    public void setSettings(IvySettings settings) {
+        this.settings = settings;
     }
 
     public File getResolutionCacheRoot() {
@@ -110,6 +138,62 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager {
             }
         });
     }
+    
+    public ModuleDescriptor getResolveModuleDescriptor(ModuleRevisionId mrid)
+            throws ParseException, IOException {
+        File ivyFile = getResolvedIvyFileInCache(mrid);
+        if (!ivyFile.exists()) {
+            throw new IllegalStateException("Ivy file not found in cache for " + mrid + "!");
+        }
+
+        Properties paths = new Properties();
+
+        File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrid, mrid.getRevision() + "-parents"));
+        if (parentsFile.exists()) {
+            FileInputStream in = new FileInputStream(parentsFile);
+            paths.load(in);
+            in.close();
+        }
+        
+        ParserSettings pSettings = new CacheParserSettings(settings, paths);
+        
+        URL ivyFileURL = ivyFile.toURI().toURL();
+        return XmlModuleDescriptorParser.getInstance().parseDescriptor(pSettings, ivyFileURL, false);
+    }
+    
+    public void saveResolvedModuleDescriptor(ModuleDescriptor md) throws ParseException, IOException {
+        ModuleRevisionId mrevId = md.getResolvedModuleRevisionId();
+        File ivyFileInCache = getResolvedIvyFileInCache(mrevId);
+        md.toIvyFile(ivyFileInCache);
+        
+        Properties paths = new Properties();
+        saveLocalParents(mrevId, md, ivyFileInCache, paths);
+        
+        if (!paths.isEmpty()) {
+            File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrevId, mrevId.getRevision() + "-parents"));
+            FileOutputStream out = new FileOutputStream(parentsFile);
+            paths.store(out, null);
+            out.close();
+        }
+    }
+    
+    private void saveLocalParents(ModuleRevisionId baseMrevId, ModuleDescriptor md, File mdFile, Properties paths) throws ParseException, IOException {
+        ExtendsDescriptor[] parents = md.getInheritedDescriptors();
+        for (int i = 0; i < parents.length; i++) {
+            if (!parents[i].isLocal()) {
+                // we store only local parents in the cache!
+                continue;
+            }
+
+            ModuleDescriptor parent = parents[i].getParentMd();
+            ModuleRevisionId pRevId = ModuleRevisionId.newInstance(baseMrevId, baseMrevId.getRevision() + "-parent." + paths.size());
+            File parentFile = getResolvedIvyFileInCache(pRevId);
+            parent.toIvyFile(parentFile);
+            
+            paths.setProperty(mdFile.getName() + "|" + parents[i].getLocation(), parentFile.getAbsolutePath());
+            saveLocalParents(baseMrevId, parent, parentFile, paths);
+        }
+    }
 
     public String toString() {
         return name;
@@ -118,5 +202,88 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager {
     public void clean() {
         FileUtil.forceDelete(getBasedir());
     }
+    
+    private static class CacheParserSettings implements ParserSettings {
+        
+        private ParserSettings delegate;
+        private Map parentPaths;
+        
+        public CacheParserSettings(ParserSettings delegate, Map parentPaths) {
+            this.delegate = delegate;
+            this.parentPaths = parentPaths;
+        }
 
+        public String substitute(String value) {
+            return delegate.substitute(value);
+        }
+
+        public Map substitute(Map strings) {
+            return delegate.substitute(strings);
+        }
+
+        public ResolutionCacheManager getResolutionCacheManager() {
+            return delegate.getResolutionCacheManager();
+        }
+
+        public ConflictManager getConflictManager(String name) {
+            return delegate.getConflictManager(name);
+        }
+
+        public PatternMatcher getMatcher(String matcherName) {
+            return delegate.getMatcher(matcherName);
+        }
+
+        public Namespace getNamespace(String namespace) {
+            return delegate.getNamespace(namespace);
+        }
+
+        public StatusManager getStatusManager() {
+            return delegate.getStatusManager();
+        }
+
+        public RelativeUrlResolver getRelativeUrlResolver() {
+            return new MapURLResolver(parentPaths, delegate.getRelativeUrlResolver());
+        }
+
+        public DependencyResolver getResolver(ModuleRevisionId mRevId) {
+            return delegate.getResolver(mRevId);
+        }
+
+        public File resolveFile(String filename) {
+            return delegate.resolveFile(filename);
+        }
+
+        public String getDefaultBranch(ModuleId moduleId) {
+            return delegate.getDefaultBranch(moduleId);
+        }
+
+        public Namespace getContextNamespace() {
+            return delegate.getContextNamespace();
+        }
+    }
+    
+    private static class MapURLResolver extends RelativeUrlResolver {
+        
+        private Map paths;
+        private RelativeUrlResolver delegate;
+        
+        private MapURLResolver(Map paths, RelativeUrlResolver delegate) {
+            this.paths = paths;
+            this.delegate = delegate;
+        }
+
+        public URL getURL(URL context, String url) throws MalformedURLException {
+            String path = context.getPath();
+            if (path.indexOf('/') >= 0) {
+                String file = path.substring(path.lastIndexOf('/') + 1);
+                
+                if (paths.containsKey(file + "|" + url)) {
+                    File result = new File(paths.get(file + "|" + url).toString());
+                    return result.toURI().toURL();
+                }
+            }
+            
+            return delegate.getURL(context, url);
+        }
+    }
 }

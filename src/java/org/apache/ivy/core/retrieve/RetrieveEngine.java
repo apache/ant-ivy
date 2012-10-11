@@ -19,7 +19,6 @@ package org.apache.ivy.core.retrieve;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +47,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
-import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.report.XmlReportParser;
-import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
@@ -220,14 +216,8 @@ public class RetrieveEngine {
         String[] confs = options.getConfs();
         if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
             try {
-                File ivyFile = getCache().getResolvedIvyFileInCache(mrid);
-                Message.verbose("no explicit confs given for retrieve, using ivy file: " + ivyFile);
-                URL ivySource = ivyFile.toURI().toURL();
-                URLResource res = new URLResource(ivySource);
-                ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance()
-                        .getParser(res);
-                Message.debug("using " + parser + " to parse " + ivyFile);
-                ModuleDescriptor md = parser.parseDescriptor(settings, ivySource, false);
+                ModuleDescriptor md = getCache().getResolveModuleDescriptor(mrid);
+                Message.verbose("no explicit confs given for retrieve, using ivy file: " + md.getResource().getName());
                 confs = md.getConfigurationsNames();
                 options.setConfs(confs);
             } catch (IOException e) {

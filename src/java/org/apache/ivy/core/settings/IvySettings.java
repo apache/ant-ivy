@@ -1252,6 +1252,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if (resolutionCacheManager == null) {
             resolutionCacheManager 
                 = new DefaultResolutionCacheManager(getDefaultResolutionCacheBasedir());
+            init(resolutionCacheManager);
         }
         return resolutionCacheManager;
     }
