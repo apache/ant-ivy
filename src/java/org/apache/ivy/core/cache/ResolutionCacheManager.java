@@ -36,7 +36,7 @@ public interface ResolutionCacheManager {
 
     File[] getConfigurationResolveReportsInCache(final String resolveId);
     
-    ModuleDescriptor getResolveModuleDescriptor(ModuleRevisionId mrid) throws ParseException, IOException;
+    ModuleDescriptor getResolvedModuleDescriptor(ModuleRevisionId mrid) throws ParseException, IOException;
     
     void saveResolvedModuleDescriptor(ModuleDescriptor md) throws ParseException, IOException;
     

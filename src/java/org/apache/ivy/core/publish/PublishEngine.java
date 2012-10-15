@@ -150,7 +150,7 @@ public class PublishEngine {
         } else {
             ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
             try {
-                md = cacheManager.getResolveModuleDescriptor(mrid);
+                md = cacheManager.getResolvedModuleDescriptor(mrid);
             } catch (ParseException e) {
                 throw new IllegalStateException("bad ivy file in cache for " + mrid + ": " + e);
             }
