@@ -248,7 +248,7 @@ public class RetrieveEngine {
         String[] confs = options.getConfs();
         if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
             try {
-                ModuleDescriptor md = getCache().getResolveModuleDescriptor(mrid);
+                ModuleDescriptor md = getCache().getResolvedModuleDescriptor(mrid);
                 Message.verbose("no explicit confs given for retrieve, using ivy file: " + md.getResource().getName());
                 confs = md.getConfigurationsNames();
                 options.setConfs(confs);

@@ -139,7 +139,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         });
     }
     
-    public ModuleDescriptor getResolveModuleDescriptor(ModuleRevisionId mrid)
+    public ModuleDescriptor getResolvedModuleDescriptor(ModuleRevisionId mrid)
             throws ParseException, IOException {
         File ivyFile = getResolvedIvyFileInCache(mrid);
         if (!ivyFile.exists()) {

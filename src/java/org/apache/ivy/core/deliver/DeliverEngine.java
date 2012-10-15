@@ -108,7 +108,7 @@ public class DeliverEngine {
         destIvyPattern = settings.substitute(destIvyPattern);
 
         // 1) find the resolved module descriptor in cache
-        ModuleDescriptor md = getCache().getResolveModuleDescriptor(mrid);
+        ModuleDescriptor md = getCache().getResolvedModuleDescriptor(mrid);
         md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), 
             options.getPubBranch() == null ? mrid.getBranch() : options.getPubBranch(), 
             revision));
