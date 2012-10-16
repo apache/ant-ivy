@@ -396,8 +396,13 @@ public class IBiblioResolver extends URLResolver {
                 List rres = new ArrayList();
                 for (Iterator iter = revs.iterator(); iter.hasNext();) {
                     String rev = (String) iter.next();
+                    ModuleRevisionId historicalMrid = ModuleRevisionId.newInstance(mrid, rev);
+                    String snapshotVersion = findSnapshotVersion(historicalMrid);
+                    if (snapshotVersion != null) {
+                        pattern = pattern.replaceFirst("\\-\\[revision\\]", "-" + snapshotVersion);
+                    }
                     String resolvedPattern = IvyPatternHelper.substitute(
-                        pattern, ModuleRevisionId.newInstance(mrid, rev), artifact);
+                        pattern, historicalMrid, artifact);
                     try {
                         Resource res = repository.getResource(resolvedPattern);
                         if ((res != null) && res.exists()) {
