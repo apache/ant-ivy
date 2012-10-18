@@ -4632,7 +4632,7 @@ public class ResolveTest extends TestCase {
                 "test/repositories/m2/org/apache/test4/1.1/test4-1.1.pom")
                 .toURL(), getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
-        //assertFalse(report.hasError());
+        assertFalse(report.hasError());
 
         // dependencies
         assertTrue(getIvyFileInCache(
