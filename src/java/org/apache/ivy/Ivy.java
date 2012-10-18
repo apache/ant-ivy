@@ -510,11 +510,6 @@ public class Ivy {
         }
     }
 
-    public ResolveReport resolve(File ivySource, ResolveOptions options) 
-            throws ParseException, IOException {
-        return resolve(ivySource.toURI().toURL(), options);
-    }
-
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
             throws ParseException, IOException {
         pushContext();
