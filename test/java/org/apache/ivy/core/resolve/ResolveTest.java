@@ -4602,6 +4602,26 @@ public class ResolveTest extends TestCase {
             "test-SNAPSHOT1", "jar", "jar").exists());
     }
 
+    public void testResolveMaven2Snapshot1AsLatestIntegration() throws Exception {
+        // test case for IVY-1036
+        // here we test maven SNAPSHOT versions handling, 
+        // with m2 snapshotRepository/uniqueVersion set to true
+        // but retrieving by latest.integration
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(
+            ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT1", "latest.integration"),
+            getResolveOptions(new String[] {"*(public)"}), true);
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT1", "2.0.2-SNAPSHOT")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-SNAPSHOT1", "2.0.2-SNAPSHOT",
+            "test-SNAPSHOT1", "jar", "jar").exists());
+    }
+
     public void testResolveMaven2Snapshot2() throws Exception {
         // test case for IVY-501
         // here we test maven SNAPSHOT versions handling, 
@@ -4621,6 +4641,26 @@ public class ResolveTest extends TestCase {
             "test-SNAPSHOT2", "jar", "jar").exists());
     }
 
+    public void testResolveMaven2Snapshot2AsLatestIntegration() throws Exception {
+        // test case for IVY-1036
+        // here we test maven SNAPSHOT versions handling, 
+        // with m2 snapshotRepository/uniqueVersion set to true
+        // but retrieving by latest.integration
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(
+            ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT2", "latest.integration"),
+            getResolveOptions(new String[] { "*(public)" }), true);
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT2", "2.0.2-SNAPSHOT"))
+                .exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-SNAPSHOT2", "2.0.2-SNAPSHOT",
+            "test-SNAPSHOT2", "jar", "jar").exists());
+    }
 
     public void testNamespaceMapping() throws Exception {
         // the dependency is in another namespace
