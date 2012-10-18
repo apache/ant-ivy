@@ -4608,12 +4608,12 @@ public class ResolveTest extends TestCase {
         // with m2 snapshotRepository/uniqueVersion set to true
         // but retrieving by latest.integration
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(
             ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT1", "latest.integration"),
             getResolveOptions(new String[] {"*(public)"}), true);
         assertNotNull(report);
-        //assertFalse(report.hasError());
+        assertFalse(report.hasError());
 
         // dependencies
         assertTrue(getIvyFileInCache(
@@ -4647,7 +4647,7 @@ public class ResolveTest extends TestCase {
         // with m2 snapshotRepository/uniqueVersion set to true
         // but retrieving by latest.integration
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(
             ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT2", "latest.integration"),
             getResolveOptions(new String[] { "*(public)" }), true);
