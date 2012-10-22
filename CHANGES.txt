@@ -131,6 +131,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: Documentation and Implementation mismatch of makepom (IVY-1383) (thanks to Thomas Kurpick)
 - DOCUMENTATION: added link to extra beginners guide (IVY-1381)
 
 - FIX: latest.integration isn't resolved against a Maven snapshot repository (when uniqueVersion = true) (IVY-1036)
