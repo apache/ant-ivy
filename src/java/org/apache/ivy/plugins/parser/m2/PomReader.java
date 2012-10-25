@@ -48,8 +48,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-
-
 /**
  * Provides the method to read some data out of the DOM tree of a pom 
  * file.
@@ -91,8 +89,10 @@ public class PomReader {
     
     public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
         InputStream stream = new AddDTDFilterInputStream(URLHandlerRegistry.getDefault().openStream(descriptorURL));
+        InputSource source = new InputSource(stream);
+        source.setSystemId(XMLHelper.toSystemId(descriptorURL));
         try {
-            Document pomDomDoc = XMLHelper.parseToDom(stream, res, new EntityResolver() {
+            Document pomDomDoc = XMLHelper.parseToDom(source, new EntityResolver() {
                 public InputSource resolveEntity(String publicId, String systemId) 
                                 throws SAXException, IOException {
                     if ((systemId != null) && systemId.endsWith("m2-entities.ent")) {
@@ -109,12 +109,10 @@ public class PomReader {
             }
             parentElement = getFirstChildElement(projectElement , PARENT);
         } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    // ignore
-                }
+            try {
+                stream.close();
+            } catch (IOException e) {
+                // ignore
             }
         }
     }

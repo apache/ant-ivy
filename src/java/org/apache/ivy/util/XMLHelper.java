@@ -19,6 +19,8 @@ package org.apache.ivy.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -77,6 +79,17 @@ public abstract class XMLHelper {
         return parser;
     }
 
+    /**
+     * Convert an URL to a valid systemId according to RFC 2396.
+     */
+    public static String toSystemId(URL url) {
+        try {
+            return new URI(url.toExternalForm()).toASCIIString();
+        } catch (URISyntaxException e) {
+            return url.toExternalForm();
+        }
+    }
+
     // IMPORTANT: validation errors are only notified to the given handler, and
     // do not cause exception
     // implement warning error and fatalError methods in handler to be informed
@@ -92,7 +105,7 @@ public abstract class XMLHelper {
         InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
         try {
             InputSource inSrc = new InputSource(xmlStream);
-            inSrc.setSystemId(xmlURL.toExternalForm());
+            inSrc.setSystemId(toSystemId(xmlURL));
             parse(inSrc, schema, handler, lHandler);
         } finally {
             try {
@@ -189,20 +202,10 @@ public abstract class XMLHelper {
     }
 
     
-    public static Document parseToDom(
-            InputStream stream, Resource res, EntityResolver entityResolver) 
-                throws IOException, SAXException {
+    public static Document parseToDom(InputSource source, EntityResolver entityResolver)
+            throws IOException, SAXException {
         DocumentBuilder docBuilder = getDocBuilder(entityResolver);
-        Document pomDomDoc;
-        try {
-            pomDomDoc = docBuilder.parse(stream, res.getName());
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            stream.close();
-        } 
-        return pomDomDoc;
+        return docBuilder.parse(source);
     }
 
     public static DocumentBuilder getDocBuilder(EntityResolver entityResolver) {
