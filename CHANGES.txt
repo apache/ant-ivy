@@ -134,6 +134,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - DOCUMENTATION: Documentation and Implementation mismatch of makepom (IVY-1383) (thanks to Thomas Kurpick)
 - DOCUMENTATION: added link to extra beginners guide (IVY-1381)
 
+- FIX: Ivy default cache path with non-ASCII character lets it crash (IVY-1378)
 - FIX: latest.integration isn't resolved against a Maven snapshot repository (when uniqueVersion = true) (IVY-1036)
 - FIX: Resolve does not deliver all dependent artifacts (IVY-1366) (thanks to Wolfgang Frank)
 - FIX: Ivy descriptors are merged incorrectly when there is an <exclude> element (IVY-1356)
