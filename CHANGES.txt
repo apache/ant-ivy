@@ -128,7 +128,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sven Zethelius
 	Aleksey Zhukov
 	
-   2.3.x
+   2.3.0-rc2
 =====================================
 - DOCUMENTATION: Documentation and Implementation mismatch of makepom (IVY-1383) (thanks to Thomas Kurpick)
 - DOCUMENTATION: added link to extra beginners guide (IVY-1381)
