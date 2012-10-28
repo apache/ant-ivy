@@ -28,18 +28,15 @@
 <h2>Announcement</h2>
 
 <pre>
-April 20, 2012 - The Ivy project is pleased to announce its 2.3.0-RC1 release.
+November 4, 2012 - The Ivy project is pleased to announce its 2.3.0-RC2 release.
 
 Ivy is a tool for managing (recording, tracking, resolving and
 reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
-Key features of this 2.3.0-RC1 release are
-* improved Ant support with some new Ant tasks and enhancements to existing tasks
-* some new resolvers
+Key features of this 2.3.0-RC2 release are
+* improved Maven support
 * numerous bug fixes as documented in Jira and in the release notes
-
-In addition, experimental OSGI support has been added to the Ivy core.
 
 As a release candidate version, we strongly encourage the use of this version for 
 testing and validation. From now on, features are frozen until final 2.3.0 version, 
@@ -50,7 +47,7 @@ release candidate.
 Issues should be reported to:
 https://issues.apache.org/jira/browse/IVY
 
-Download the 2.3.0-RC1 release at:
+Download the 2.3.0-RC2 release at:
 http://ant.apache.org/ivy/download.cgi
 
 More information can be found on the Ivy website:
@@ -89,7 +86,7 @@ It is characterized by the following:
 
 <h3>2. Status of this release</h3> 
 
-This is the first release candidate of Ivy targetting 2.3.0. 
+This is the second release candidate of Ivy targetting 2.3.0. 
 
 As a release candidate version, we strongly encourage the use of this version for 
 testing and validation. From now on, features are frozen until final 2.3.0 version, 
@@ -125,17 +122,14 @@ long, but Ivy couldn't be what it is without you!
     Gilles Scokart
 
  Contributors
-    Arnold Blaasmo
     Jean-Louis Boudart
-    Joseph Boyd
-    Payam Hekmat
-    Stepan Koltsov
-    Douglas Palmer
-    Torkild U. Resheim
-    Jens Rohloff
-    Ben Schmidt
-    Nihal Sinha
-    Sven Zethelius
+    Ed Burcher
+    Robin Fernandes
+    Wolfgang Frank
+    Mitch Gitman
+    Thomas Kurpick
+    Ales Nosek
+    Carl Quinn
 
 For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
 
@@ -146,62 +140,30 @@ For a full release history of Ivy see the file CHANGES.txt
 For details about the following changes, check our JIRA install at 
 http://issues.apache.org/jira/browse/ivy
 
-List of changes since Ivy 2.2.0:
-- DOCUMENTATION: remove deprecated defaultCache setting from examples (IVY-1273) (thanks to Joseph Boyd)
-- DOCUMENTATION: link to FAQ is incorrect in distribution files (IVY-793) (thanks to Joseph Boyd)
-- DOCUMENTATION: The tag version-matchers is missing attribute in documentation (IVY-1292) (thanks to Per Arnold Blaasmo)
-- DOCUMENTATION: wrong default resolver documented on the 'How does it work' page (IVY-1265)
-- DOCUMENTATION: Correct outdated links to configuration pages (IVY-1266)
+List of changes since Ivy 2.3.0-rc1:
+- DOCUMENTATION: Documentation and Implementation mismatch of makepom (IVY-1383) (thanks to Thomas Kurpick)
+- DOCUMENTATION: added link to extra beginners guide (IVY-1381)
 
-- NEW: New Ant datatype ivy:resources, an Ant resource collection like ivy:cachepath or ivy:cachefileset (IVY-334)
-- NEW: ivy:resolve and post resole task can now have inlined dependencies declaration.
-- NEW: Import Bushel into Ivy core (IVY-1241)
-- NEW: An new resolver 'mirroredurl' which can handle a list of mirrored URL repositories (IVY-468)
-- NEW: Support for a jar resolver (IVY-1312)
-
-- IMPROVEMENT: ivy:install task does not allow specification of conf (IVY-1313) (thanks to Nihal Sinha)
-- IMPROVEMENT: ivy:makepom ignores the artifact type in generated dependencies (IVY-1229) (thanks to Douglas Palmer)
-- IMPROVEMENT: ivy:makepom now honors exclusion of artifacts in generated pom files (IVY-1294) (thanks to Jens Rohloff)
-- IMPROVEMENT: Added support for dynamic revisions in <extends> tag (IVY-1281) (thanks to Jean-Louis Boudart)
-- IMPROVEMENT: ivy:makepom child element dependency should support the type and classifier attributes (IVY-1262)
-- IMPROVEMENT: ivy:retrieve can now create a path or fileset containing the retrieved artifacts (IVY-1235)
-- IMPROVEMENT: Improve diagnostics in ssh resolver (IVY-1267) (thanks to Stepan Koltsov)
-- IMPROVEMENT: ivy:retrieve can now convert 'dotted'-organisation names into a directory tree.
-- IMPROVEMENT: ivy:retrieve now accepts a nested mapper type.
-
-- FIX: Exclude doesn't work when there is some circular dependencies (IVY-1309)
-- FIX: Impossible to get artifacts when data has not been loaded for multiple dynamic revisions (IVY-1333)
-- FIX: Ivy didn't properly handle some file: URLs (IVY-1340)
-- FIX: fallback mechanism didn't work properly for private configurations
-- FIX: /localivy target does not work when building Ivy jar (IVY-1338) (thanks to Ben Schmidt)
-- FIX: The showprogress=false attribute of ivy:resolve doesn't do what it should (IVY-1052) (thanks to Joseph Boyd)
-- FIX: extends ignores defaultconfmapping/defaultconf/confmappingoverride attributes from parent's configurations and dependencies tags (IVY-1213)
-- FIX: NullPointerException when providing empty password to <credentials> (IVY-1335)
-- FIX: [originalname] not expanded for source and javadoc types during publish in ivy:install (IVY-1324)
-- FIX: cannot resolve from repositories that return HTTP 204 in response to an HTTP HEAD request (IVY-1328)
-- FIX: extra attributes lost from info when ivy file is merged with parent (IVY-1206)
-- FIX: ivy:report ant task intermittently "cannot compile stylesheet" (IVY-1325)
-- FIX: Maven 'eclipse-plugin', 'jbi-component' and 'jbi-shared-library' packaging is now mapped to 'jar' extension (IVY-899)
-- FIX: Infinite loop in latest-compatible conflict manager (IVY-1233) (thanks to Payam Hekmat and Sven Zethelius)
-- FIX: extends section of ivy.xml info does not replace variable in location tag (IVY-1287) (thanks to Jean-Louis Boudart)
-- FIX: Valid Path does not work for Filesystem Resolver (IVY-1268)
-- FIX: quiet="true" does not surpress download 'dots' on packager resolver (IVY-1269)
-- FIX: Dynamic version resolution result can be incorrect when ivy metadata contains extra attributes (IVY-1236)
-- FIX: NullPointerException in FileUtil#forceDelete.
-- FIX: XmlModuleDescriptorUpdater is a mess that produces broken xmls in many cases (IVY-1010)
-- FIX: ivy.xml that contains UTF-8 encoded umlauts cannot be bigger than 10000 bytes (IVY-1253)
-- FIX: Can not use a v[revision] in an artifact pattern of a filesystem resolver (IVY-1238)
-- FIX: Cached ivy.xml is invalid if the description contains the ampersand entity (&amp;) (IVY-1237)
-- FIX: Couldn't authenticate against sites having the same address as the proxy server (IVY-1234)
-- FIX: OutOfMemoryError when uploading large files using commons-httpclient (IVY-1197) (thanks to Torkild U. Resheim)
-- FIX: Only the last dependency descriptor is taken into account on the same module (IVY-1240)
-- FIX: UseCacheOnly doesn't respect the cache configuration in the ivysettings (IVY-1227)
-- FIX: UseCacheOnly is influenced by the TTL on cached metadata (IVY-1243)
-- FIX: ConcurrentModificationException on ivy settings loading (IVY-1250)
-- FIX: Module inheritance sometimes fails to locate parent descriptor in deliver process (IVY-1248) (thanks to Jean-Louis Boudart)
-- FIX: <cachefileset> on an empty configuration produces a very slow-to-evaluate fileset (IVY-1272)
-- FIX: Ivy does not apply overridden properties to m2 parent dependency versions specified using properties (IVY-1299)
-- FIX: Ivy does not apply overridden properties to m2 parent dependency versions specified using dependencyManagement properties (IVY-1301)
+- FIX: Ivy default cache path with non-ASCII character lets it crash (IVY-1378)
+- FIX: latest.integration isn't resolved against a Maven snapshot repository (when uniqueVersion = true) (IVY-1036)
+- FIX: Resolve does not deliver all dependent artifacts (IVY-1366) (thanks to Wolfgang Frank)
+- FIX: Ivy descriptors are merged incorrectly when there is an <exclude> element (IVY-1356)
+- FIX: SimpleDateFormat is not thread safe (IVY-1373)
+- FIX: Maven 'hk2-jar' packaging is now supported (IVY-1357)
+- FIX: Maven 'orbit' and 'pear' packaging is now supported (IVY-899)
+- FIX: Memory leak and infinite loop in ModuleId.java (IVY-1362)
+- FIX: Unnecessary warning when parent ivy.xml is not found (IVY-1346)
+- FIX: StackOverflowError when using <extends> and ../ivy.xml is not the parent ivy.xml (IVY-1437)
+- FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)
+- FIX: Delivered ivy descriptor inconsistent with resolve report / retrieve and other post-resolve actions (IVY-1300) (thanks to Ed Burcher)
+- FIX: The Updatesite resolver is downloading Eclipse features instead of Eclipse bundle/plugin
+- FIX: ivy:buildlist task confused by extends feature using two parents (IVY-1363) (thanks to Mitch Gitman and Jean-Louis Boudart)
+- FIX: ivy.xml extends feature complains about Windows filesystem path (IVY-1359) (thanks to Mitch Gitman and Jean-Louis Boudart)
+- FIX: buildlist task chokes on absolute path to parent Ivy module (IVY-1364) (thanks to Mitch Gitman and Jean-Louis Boudart)
+- FIX: The ignore circular dependency strategy is clobbering the warn strategy (IVY-1353) (Thanks to Carl Quinn)
+- FIX: Buildnumber and IvyFindRevision Ant tasks should honour defaultBranch setting (IVY-1344) (Thanks to Ales Nosek)
+- FIX: ApacheURLLister.retrieveListing() fails if the encoding of the URL list is different from the default encoding (IVY-1060) (Thanks to Robin Fernandes)
+- FIX: global exclude rules is not applying to root ivy files
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
