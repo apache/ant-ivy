@@ -730,6 +730,13 @@
                             ]
                         },
                         {
+                          "id":"use/dependencytree",
+                          "title":"dependencytree",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/findrevision",
                           "title":"findrevision",
                           "children": [
