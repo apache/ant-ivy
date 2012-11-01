@@ -137,7 +137,7 @@ public class IvyDependencyTreeTest extends TestCase {
     private class AntTestListener implements BuildListener {
         private int logLevel;
 
-        private StringBuilder buildLog = new StringBuilder();
+        private StringBuffer buildLog = new StringBuffer();
 
         /**
          * Constructs a test listener which will ignore log events above the given level.

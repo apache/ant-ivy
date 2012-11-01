@@ -59,7 +59,7 @@ public class IvyDependencyTree extends IvyPostResolveTask {
             if (evicted && !showEvicted) {
                 continue;
             }
-            StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
             if (indent > 0) {
                 for (int i = 0; i < indent; i++) {
                     if (i == indent - 1 && !iterator.hasNext() && !hasDependencies(dependency)) {
