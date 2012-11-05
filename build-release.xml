@@ -496,6 +496,13 @@
             </classpath>
         </taskdef>
     	
+        <property file="${user.home}/ivybuild.properties" />
+        <input message="please enter your PGP password: " addproperty="pgp.password"/>
+        <input message="please enter your PGP keyId: " addproperty="pgp.keyId"/>
+
+        <input message="please enter your repository.apache.org username: " addproperty="upload.user"/>
+        <input message="please enter your repository.apache.org password: " addproperty="upload.password"/>
+
         <ivy2:settings id="upload.settingsId" file="ivysettings-release.xml" />
         <ivy2:resolve file="${basedir}/build/artifact/ivy.xml" transitive="false" />
         <ivy2:publish organisation="org.apache.ivy"
