@@ -7,6 +7,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
  Committers
 	Matt Benson
+    Jean-Louis Boudart
 	Maarten Coene
 	Xavier Hanin
 	Nicolas Lalevee
@@ -25,7 +26,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jeffrey Blattman
 	Jasper Blues
 	Jim Bonanno
-	Jean-Louis Boudart
 	Joseph Boyd
 	Dave Brosius
 	Matthieu Brouillard
@@ -155,6 +155,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ApacheURLLister.retrieveListing() fails if the encoding of the URL list is different from the default encoding (IVY-1060) (Thanks to Robin Fernandes)
 - FIX: global exclude rules is not applying to root ivy files
 
+- NEW: IvyDependencyTree task : display a dependency tree on the console
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288) (Thanks to Jean-Louis Boudart)
 - NEW: symlinkmass feature based on symlink feature of ivy:retrieve (IVY-1252) (Thanks to Gene Smith)
