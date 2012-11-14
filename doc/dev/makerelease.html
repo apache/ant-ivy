@@ -209,7 +209,7 @@ ant generate-history -Dhistory.version=2.0.0-beta1
 <u>WARNING:</u> that target is modifiying the toc.json in the imported branch so that the generated html have a proper version declared in the toc. You should not commit that change. Once the site has been generated, you may want to revert the changes so you won't commit it by mistake. (TODO: process to improve so we shouldn't worry).
     <li>generate the website with the new toc:</li>
 <code>
-ant /all generate-site-ivy
+ant /all generate-site
 </code>
     <li>you should verify that the site generated in target is OK. And once your happy with it, commit the changes in target (some svn add might be needed !)</li>
     <li>deploy the website: go on people.apache.org and <tt>svn up /www/ant.apache.org/ivy/</tt></li>
