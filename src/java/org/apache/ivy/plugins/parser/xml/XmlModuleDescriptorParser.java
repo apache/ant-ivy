@@ -441,7 +441,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
             DefaultExtendsDescriptor ed = new DefaultExtendsDescriptor(
                     parent,
-                    attributes.getValue("location"),
+                    location,
                     (String[]) extendTypes.toArray(new String[extendTypes.size()]),
                     local);
             getMd().addInheritedDescriptor(ed);

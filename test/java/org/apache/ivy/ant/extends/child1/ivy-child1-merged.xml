@@ -17,32 +17,27 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<projectDescription>
-	<name>ivy-2.3.x</name>
-	<comment></comment>
-	<projects>
-	</projects>
-	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.pde.ManifestBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-	</buildSpec>
-	<natures>
-		<nature>org.eclipse.pde.PluginNature</nature>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
-		<nature>org.apache.ivyde.eclipse.ivynature</nature>
-	</natures>
-</projectDescription>
+<ivy-module version="2.0"> 
+
+	<info organisation="apache" module="child1" revision="1.2" status="release">
+		<!-- <extends organisation="apache" module="extends-parent" revision="1.0"/> -->
+        
+		<!-- description inherited from parent -->
+		<description>Demonstrates configuration-specific dependencies</description>
+	</info>
+
+	<configurations>
+		<!-- configurations inherited from apache#extends-parent;1.0 -->
+		<conf name="default" visibility="public"/>
+		<conf name="compile" visibility="public"/>
+	</configurations>
+
+	<publications/>
+  
+	<dependencies>
+		<!-- dependencies inherited from apache#extends-parent;1.0 -->
+		<dependency org="org1" name="mod1.2" rev="2.0" conf="default->default"/>
+		<dependency org="org1" name="mod1.1" rev="2.0" transitive="false" conf="compile->default"/>
+	</dependencies>
+
+</ivy-module>
