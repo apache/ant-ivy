@@ -247,6 +247,55 @@ public class IvyPublishTest extends TestCase {
             ++lineNo;
         }
     }
+    
+    public void testMergeParentWithoutLocationAttribute() throws IOException, ParseException {
+        //See : IVY-XXX
+        
+        
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(project);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/extends/child1/ivy-child1.xml"));
+        resolve.execute();
+       
+        //update=true implies merge=true
+        //project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        publish.setResolver("1");
+        publish.setUpdate(true);
+        publish.setPubrevision("1.2");
+        publish.setStatus("release");
+        publish.addArtifactspattern("${build}/[artifact].[ext]");
+        publish.execute();
+
+        // should have published the files with "1" resolver
+        File published = new File("test/repositories/1/apache/child1/ivys/ivy-1.2.xml");
+        assertTrue(published.exists());
+
+        // do a text compare, since we want to test comments as well as structure.
+        // we could do a better job of this with xmlunit
+
+        int lineNo = 1;
+
+        BufferedReader merged = new BufferedReader(new FileReader(published));
+        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
+            .getResourceAsStream("extends/child1/ivy-child1-merged.xml")));
+        for (String mergeLine = merged.readLine(),
+                    expectedLine = expected.readLine(); 
+            mergeLine != null && expectedLine != null; 
+            mergeLine = merged.readLine(),
+            expectedLine = expected.readLine()) {
+
+            //strip timestamps for the comparison
+            if (mergeLine.indexOf("<info") >= 0) {
+                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
+            }
+            //discard whitespace-only lines
+            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+            }
+
+            ++lineNo;
+        }
+    }
 
     
     public void testMinimalMerge() throws IOException, ParseException {
