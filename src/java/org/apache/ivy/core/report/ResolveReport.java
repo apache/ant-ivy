@@ -345,20 +345,23 @@ public class ResolveReport {
         // get dependencies
         for (int i = 0; i < dependencies.size(); i++) {
             IvyNode node = (IvyNode) dependencies.get(i);
-            if (node.getAllArtifacts().length == 0) {
-                // no artifact: it was probably useful transitively, hence it is useless here
-                continue;
-            }
-            DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
-                    node.getResolvedId(), true, false, false);
             String[] rootConfs = node.getRootModuleConfigurations();
             for (int j = 0; j < rootConfs.length; j++) {
+                if (node.isEvicted(rootConfs[j])) {
+                    continue;
+                }
+                if (node.getAllArtifacts().length == 0) {
+                    // no artifact: it was probably useful transitively, hence it is useless here
+                    break;
+                }
+                DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
+                        node.getResolvedId(), true, false, false);
                 String[] targetConfs = node.getConfigurations(rootConfs[j]);
                 for (int k = 0; k < targetConfs.length; k++) {
                     dep.addDependencyConfiguration(rootConfs[j], targetConfs[k]);
                 }
+                fixedmd.addDependency(dep);
             }
-            fixedmd.addDependency(dep);
         }
 
         return fixedmd;
