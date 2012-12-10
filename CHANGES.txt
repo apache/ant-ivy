@@ -131,6 +131,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    2.3.x
 =====================================
 - FIX: Maven2: resolve failure when parent has <dependencyManagement> with dependency in 'import' scope (IVY-1376)
+- FIX: IvyPublish fails when using extend tags with no explicit location attribute (IVY-1391)
 
    2.3.0-rc2
 =====================================
