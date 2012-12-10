@@ -419,6 +419,11 @@ public class XmlSettingsParser extends DefaultHandler {
                 if ("file".equals(settingsURL.getProtocol())) {
                     try {
                         File settingsFile = new File(new URI(settingsURL.toExternalForm()));
+                        String optional = (String) attributes.get("optional");
+                        if ("true".equals(optional) && !settingsFile.exists()) {
+                            return;
+                        }
+
                         ivy.setSettingsVariables(
                             Checks.checkAbsolute(settingsFile, 
                             "settings include path"));
