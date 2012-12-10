@@ -23,6 +23,9 @@
   <artifactId>parent2</artifactId>
   <name>Test parsing parent POM</name>
   <version>1.0</version>
+  <properties>
+    <test3.version>1.0</test3.version>
+  </properties>
   <dependencyManagement>
     <dependencies>
 	  <dependency>
@@ -33,7 +36,13 @@
 	  <dependency>
         <groupId>org.apache.dm</groupId>
         <artifactId>test3</artifactId>
+        <version>${test3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.dm</groupId>
+        <artifactId>parent3</artifactId>
         <version>1.0</version>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

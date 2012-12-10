@@ -19,36 +19,20 @@
 -->
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>parent2</artifactId>
-    <groupId>org.apache.dm</groupId>
-    <version>1.0</version>
-   </parent>
   <groupId>org.apache.dm</groupId>
-  <artifactId>parent</artifactId>
+  <artifactId>parent3</artifactId>
   <name>Test parsing parent POM</name>
-  <version>2.0</version>
+  <version>1.0</version>
   <properties>
-    <test4.version>1.0</test4.version>
+    <test5.version>2.0</test5.version>
   </properties>
   <dependencyManagement>
     <dependencies>
-      <dependency>
+	  <dependency>
         <groupId>org.apache.dm</groupId>
-        <artifactId>test2</artifactId>
-        <version>${pom.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.dm</groupId>
-        <artifactId>test4</artifactId>
-        <version>${test4.version}</version>
+        <artifactId>test5</artifactId>
+        <version>${test5.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.dm</groupId>
-      <artifactId>test3</artifactId>
-    </dependency>
-  </dependencies>
 </project>

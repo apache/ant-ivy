@@ -252,7 +252,13 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             // add dependency management info from imported module
                             List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(importDescr);
                             for (Iterator it2 = depMgt.iterator(); it2.hasNext();) {
-                                mdBuilder.addDependencyMgt((PomDependencyMgt) it2.next());
+                                PomDependencyMgt importedDepMgt = (PomDependencyMgt) it2.next();
+                                mdBuilder.addDependencyMgt(new DefaultPomDependencyMgt(
+                                        importedDepMgt.getGroupId(),
+                                        importedDepMgt.getArtifactId(),
+                                        importedDepMgt.getVersion(),
+                                        importedDepMgt.getScope(), 
+                                        importedDepMgt.getExcludedModules()));
                             }
                         } else {
                             throw new IOException("Impossible to import module for " + res.getName() + "."

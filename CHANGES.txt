@@ -128,6 +128,10 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sven Zethelius
 	Aleksey Zhukov
 	
+   2.3.x
+=====================================
+- FIX: Maven2: resolve failure when parent has <dependencyManagement> with dependency in 'import' scope (IVY-1376)
+
    2.3.0-rc2
 =====================================
 - DOCUMENTATION: Documentation and Implementation mismatch of makepom (IVY-1383) (thanks to Thomas Kurpick)

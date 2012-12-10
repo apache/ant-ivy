@@ -4583,6 +4583,33 @@ public class ResolveTest extends TestCase {
             "test4", "jar", "jar").exists());
     }
     
+    public void testResolveMaven2ParentPomDependencyManagementWithImport() throws Exception {
+        // IVY-1376
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
+        ivy.getSettings().setDefaultResolver("parentChain");
+        
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/parentPom/org/apache/dm/test/3.0/test-3.0.pom").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+
+        //test the report to make sure the right dependencies are listed
+        List dependencies = report.getDependencies();
+        assertFalse(report.hasError());
+        assertEquals(2, dependencies.size());
+        
+        IvyNode ivyNode;
+        ivyNode = (IvyNode) dependencies.get(0);
+        assertNotNull(ivyNode);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.dm", "test5", "2.0");
+        assertEquals(mrid, ivyNode.getId());
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache.dm", "test5", "2.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test5", "2.0",
+            "test5", "jar", "jar").exists());
+    }
+    
     public void testResolveMaven2Snapshot1() throws Exception {
         // test case for IVY-501
         // here we test maven SNAPSHOT versions handling, 
