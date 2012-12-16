@@ -150,6 +150,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
                     if (file.createNewFile()) {
+                        DeleteOnExitHook.add(file);
                         return true;
                     } else {
                         if (debugLocking) {
@@ -167,6 +168,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
         public void unlock(File file) {
             file.delete();
+            DeleteOnExitHook.remove(file);
         }
     }
     /**

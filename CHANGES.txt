@@ -33,6 +33,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mirko Bulovic
 	Ed Burcher
 	Jamie Burns
+	Wei Chen
 	Chris Chilvers
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
@@ -132,6 +133,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: *.lck files created by "artifact-lock" lock strategy are not cleaned up if ivy quits abruptly (IVY-1388) (thanks to Wei Chen)
+
 - NEW: IvyDependencyTree task : display a dependency tree on the console
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
