@@ -133,8 +133,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
-- FIX: *.lck files created by "artifact-lock" lock strategy are not cleaned up if ivy quits abruptly (IVY-1388) (thanks to Wei Chen)
-
 - NEW: IvyDependencyTree task : display a dependency tree on the console
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
@@ -147,6 +145,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Maven2: resolve failure when parent has <dependencyManagement> with dependency in 'import' scope (IVY-1376)
 - FIX: IvyPublish fails when using extend tags with no explicit location attribute (IVY-1391)
 - FIX: Properly handle evicted nodes in ResolveReport
+- FIX: *.lck files created by "artifact-lock" lock strategy are not cleaned up if ivy quits abruptly (IVY-1388) (thanks to Wei Chen)
 
    2.3.0-rc2
 =====================================
