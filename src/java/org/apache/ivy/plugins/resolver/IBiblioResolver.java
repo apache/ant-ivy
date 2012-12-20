@@ -400,14 +400,16 @@ public class IBiblioResolver extends URLResolver {
                 for (Iterator iter = revs.iterator(); iter.hasNext();) {
                     String rev = (String) iter.next();
                     ModuleRevisionId historicalMrid = ModuleRevisionId.newInstance(mrid, rev);
+
+                    String patternForRev = pattern;
                     if (rev.endsWith("SNAPSHOT")) {
                         String snapshotVersion = findSnapshotVersion(historicalMrid);
                         if (snapshotVersion != null) {
-                            pattern = pattern.replaceFirst("\\-\\[revision\\]", "-" + snapshotVersion);
+                            patternForRev = pattern.replaceFirst("\\-\\[revision\\]", "-" + snapshotVersion);
                         }
                     }
                     String resolvedPattern = IvyPatternHelper.substitute(
-                        pattern, historicalMrid, artifact);
+                        patternForRev, historicalMrid, artifact);
                     try {
                         Resource res = repository.getResource(resolvedPattern);
                         if ((res != null) && res.exists()) {
