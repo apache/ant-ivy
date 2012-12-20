@@ -7,6 +7,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
  Committers
 	Matt Benson
+    Jean-Louis Boudart
 	Maarten Coene
 	Xavier Hanin
 	Nicolas Lalevee
@@ -25,7 +26,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jeffrey Blattman
 	Jasper Blues
 	Jim Bonanno
-	Jean-Louis Boudart
 	Joseph Boyd
 	Dave Brosius
 	Matthieu Brouillard
