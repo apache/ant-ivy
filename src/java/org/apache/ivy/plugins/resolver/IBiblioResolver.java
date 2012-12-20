@@ -409,7 +409,10 @@ public class IBiblioResolver extends URLResolver {
                         patternForRev, historicalMrid, artifact);
                     try {
                         Resource res = repository.getResource(resolvedPattern);
-                        if ((res != null) && res.exists()) {
+                        if (res != null) {
+                            // we do not test if the resource actually exist here, it would cause
+                            // a lot of checks which are not always necessary depending on the usage
+                            // which is done of the returned ResolvedResource array
                             rres.add(new ResolvedResource(res, rev));
                         }
                     } catch (IOException e) {
