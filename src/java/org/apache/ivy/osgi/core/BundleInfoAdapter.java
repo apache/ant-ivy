@@ -114,6 +114,8 @@ public class BundleInfoAdapter {
         requirementAsDependency(md, bundle, exportedPkgNames);
 
         if (baseUri != null) {
+            // TODO handle:
+            // Eclipse-BundleShape ::= ( 'jar' | 'dir' )
             String compression = bundle.hasInnerClasspath() ? "zip" : null;
             URI uri = bundle.getUri();
             if (uri != null) {
