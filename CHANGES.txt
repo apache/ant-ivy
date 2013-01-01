@@ -33,6 +33,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mirko Bulovic
 	Ed Burcher
 	Jamie Burns
+	Wei Chen
 	Chris Chilvers
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
