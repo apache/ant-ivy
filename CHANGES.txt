@@ -128,7 +128,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sven Zethelius
 	Aleksey Zhukov
 	
-   2.3.x
+   2.3.0
 =====================================
 - FIX: Ivy generates wrong revision in URL for Maven snapshots (IVY-1396)
 - FIX: Maven2: resolve failure when parent has <dependencyManagement> with dependency in 'import' scope (IVY-1376)
