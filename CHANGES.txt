@@ -142,10 +142,13 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories
 
+- FIX: Properly handle evicted nodes in ResolveReport
+
+   2.3.0
+=====================================
 - FIX: Ivy generates wrong revision in URL for Maven snapshots (IVY-1396)
 - FIX: Maven2: resolve failure when parent has <dependencyManagement> with dependency in 'import' scope (IVY-1376)
 - FIX: IvyPublish fails when using extend tags with no explicit location attribute (IVY-1391)
-- FIX: Properly handle evicted nodes in ResolveReport
 - FIX: *.lck files created by "artifact-lock" lock strategy are not cleaned up if ivy quits abruptly (IVY-1388) (thanks to Wei Chen)
 
    2.3.0-rc2
