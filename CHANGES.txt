@@ -105,6 +105,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Geoff Reedy
 	Torkild U. Resheim
 	Christian Riege
+	Frederic Riviere
 	Jens Rohloff
 	Andreas Sahlbach
 	Brian Sanders
@@ -142,6 +143,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories
 
+- FIX: NullPointerException when using httpclient and server doesn't return content-type header (IVY-1400) (thanks to Frederic Riviere)
 - FIX: Properly handle evicted nodes in ResolveReport
 
    2.3.0
