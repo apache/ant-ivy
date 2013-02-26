@@ -1031,7 +1031,7 @@ public final class XmlModuleDescriptorUpdater {
             if (!hasDescription) {
                 hasDescription = true;
                 String description = merged.getDescription();
-                if (description != null) {
+                if ((description != null) && (description.length() > 0)) {
                     PrintWriter writer = getWriter();
                     if (justOpen != null) {
                         writer.println(">");
