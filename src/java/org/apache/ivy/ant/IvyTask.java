@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -27,6 +25,7 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildException;
@@ -184,19 +183,16 @@ public abstract class IvyTask extends Task {
         return StringUtils.join(conf, ", ");
     }
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
-
     protected static Date getPubDate(String date, Date def) {
         if (date != null) {
             if ("now".equals(date.toLowerCase(Locale.US))) {
                 return new Date();
             }
             try {
-                return DATE_FORMAT.parse(date);
+                return DateUtil.parse(date);
             } catch (Exception ex) {
-                throw new BuildException(
-                        "publication date provided in bad format. should be yyyyMMddHHmmss and not "
-                                + date);
+                throw new BuildException("Publication date provided in bad format. Should be '" 
+                                + DateUtil.DATE_FORMAT_PATTERN + "' and not '" + date + "'!");
             }
         } else {
             return def;
