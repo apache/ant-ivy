@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.IvyEvent;
@@ -328,6 +329,12 @@ public final class SshCache {
                 session.setUserInfo(new CfUserInfo(host, username, userPassword, pemFile,
                         pemPassword, passFile));
                 session.setDaemonThread(true);
+                
+                Properties config = new Properties();
+                config.setProperty("PreferredAuthentications",
+                        "publickey,keyboard-interactive,password");
+                session.setConfig(config);
+                
                 session.connect();
                 Message.verbose(":: SSH :: connected to " + host + "!");
                 setSession(username, host, port, session);
