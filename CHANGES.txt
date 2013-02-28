@@ -134,6 +134,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- DOCUMENTATION: Broken link in <dependency> documentation (IVY-1405)
+
 - NEW: IvyDependencyTree task : display a dependency tree on the console
 - NEW: Support Conditional Setting of a Property (IVY-1367)
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
