@@ -131,6 +131,7 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         PutMethod put = new PutMethod(normalizeToString(dest));
         put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
+        put.getParams().setBooleanParameter("http.protocol.expect-continue", true);
         try {
             put.setRequestEntity(new FileRequestEntity(src));
             int statusCode = client.executeMethod(put);
