@@ -46,19 +46,27 @@ public abstract class XMLHelper {
 
     static final String JAXP_SCHEMA_SOURCE 
         = "http://java.sun.com/xml/jaxp/properties/schemaSource";
-    
+
+    static final String XERCES_LOAD_EXTERNAL_DTD
+        = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+
     static final String XML_NAMESPACE_PREFIXES
         = "http://xml.org/sax/features/namespace-prefixes";
 
     static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
     private static boolean canUseSchemaValidation = true;
-    
-    private static SAXParser newSAXParser(URL schema, InputStream schemaStream)
-            throws ParserConfigurationException, SAXException {
+
+    private static Boolean canDisableExternalDtds = null;
+
+    private static SAXParser newSAXParser(URL schema, InputStream schemaStream, 
+        boolean loadExternalDtds) throws ParserConfigurationException, SAXException {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
         parserFactory.setValidating(canUseSchemaValidation && (schema != null));
+        if (!loadExternalDtds && canDisableExternalDtds(parserFactory)) {
+            parserFactory.setFeature(XERCES_LOAD_EXTERNAL_DTD, false);
+        }
         SAXParser parser = parserFactory.newSAXParser();
         
         if (canUseSchemaValidation && (schema != null)) {
@@ -77,6 +85,19 @@ public abstract class XMLHelper {
         parser.getXMLReader().setFeature(XML_NAMESPACE_PREFIXES, true);
         return parser;
     }
+
+    private static boolean canDisableExternalDtds(SAXParserFactory parserFactory) {
+       if (canDisableExternalDtds == null) {
+           try {
+               parserFactory.getFeature(XERCES_LOAD_EXTERNAL_DTD);
+               canDisableExternalDtds = Boolean.TRUE;
+           } catch (Exception ex) {
+               canDisableExternalDtds = Boolean.FALSE;
+           }
+       }
+       return canDisableExternalDtds.booleanValue();
+    }
+
 
     /**
      * Convert an URL to a valid systemId according to RFC 2396.
@@ -120,16 +141,22 @@ public abstract class XMLHelper {
             throws SAXException, IOException, ParserConfigurationException {
         parse(new InputSource(xmlStream), schema, handler, lHandler);
     }
-
+    
     public static void parse(
             InputSource xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
+        parse(xmlStream, schema, handler, lHandler, true);
+    }
+
+    public static void parse(
+            InputSource xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler,
+            boolean loadExternalDtds) throws SAXException, IOException, ParserConfigurationException {
         InputStream schemaStream = null;
         try {
             if (schema != null) {
                 schemaStream = URLHandlerRegistry.getDefault().openStream(schema);
             }
-            SAXParser parser = XMLHelper.newSAXParser(schema, schemaStream);
+            SAXParser parser = XMLHelper.newSAXParser(schema, schemaStream, loadExternalDtds);
 
             if (lHandler != null) {
                 try {

@@ -57,6 +57,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Tobias Himstedt
 	Aaron Hachez
 	Ben Hale
+	Stephen Haberman
 	Peter Hayes
 	Scott Hebert
 	Payam Hekmat
