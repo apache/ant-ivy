@@ -58,8 +58,23 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     public void testSimple() throws Exception {
         // depends on org="org1" name="mod1.1" rev="1.0"
-        // has transitive dependecy on org="org1" name="mod1.2" rev="2.0"
+        // has transitive dependency on org="org1" name="mod1.2" rev="2.0"
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple3.xml"));
+        dependencyUpdateChecker.execute();
+
+        assertEquals("resolve-simple", getIvy().getVariable("ivy.module"));
+        assertEquals("1.0", getIvy().getVariable("ivy.revision"));
+
+        assertLogContaining("Dependencies updates available :");
+        assertLogContaining("org1#mod1.1\t1.0 -> 2.0");
+        assertLogNotContaining("org1#mod1.2 (transitive)\t2.0 -> 2.1");
+    }
+
+    public void testSimpleAndShowTransitiveDependencies() throws Exception {
+        // depends on org="org1" name="mod1.1" rev="1.0"
+        // has transitive dependency on org="org1" name="mod1.2" rev="2.0"
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple3.xml"));
+        dependencyUpdateChecker.setShowTransitive(true);
         dependencyUpdateChecker.execute();
 
         assertEquals("resolve-simple", getIvy().getVariable("ivy.module"));

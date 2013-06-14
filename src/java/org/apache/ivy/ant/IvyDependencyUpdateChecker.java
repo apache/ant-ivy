@@ -41,6 +41,8 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     private boolean checkIfChanged = false;
 
+    private boolean showTransitive = false;
+
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
@@ -75,8 +77,10 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 resolveOptions);
 
             displayDependencyUpdates(getResolvedReport(), latestReport);
-            displayNewDependencyOnLatest(getResolvedReport(), latestReport);
-            displayMissingDependencyOnLatest(getResolvedReport(), latestReport);
+            if (showTransitive) {
+                displayNewDependencyOnLatest(getResolvedReport(), latestReport);
+                displayMissingDependencyOnLatest(getResolvedReport(), latestReport);
+            }
 
         } catch (ParseException e) {
             throw new BuildException("impossible to resolve dependencies:\n\t" + e, e);
@@ -102,18 +106,20 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                         // .isTranstive() methods doesn't have the same meaning)
                         boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
                                 .getRoot()) == null;
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("\t")//
-                                .append(originalDependency.getResolvedId().getOrganisation()) //
-                                .append('#')//
-                                .append(originalDependency.getResolvedId().getName())//
-                                .append(isTransitiveDependency ? " (transitive)" : "") //
-                                .append("\t")//
-                                .append(originalDependency.getResolvedId().getRevision())//
-                                .append(" -> ")//
-                                .append(latest.getResolvedId().getRevision());
-                        log(sb.toString());
-                        dependencyUpdateDetected = true;
+                        if ((!isTransitiveDependency) || (isTransitiveDependency && showTransitive)) {
+                            StringBuffer sb = new StringBuffer();
+                            sb.append("\t")//
+                                    .append(originalDependency.getResolvedId().getOrganisation()) //
+                                    .append('#')//
+                                    .append(originalDependency.getResolvedId().getName())//
+                                    .append(isTransitiveDependency ? " (transitive)" : "") //
+                                    .append("\t")//
+                                    .append(originalDependency.getResolvedId().getRevision())//
+                                    .append(" -> ")//
+                                    .append(latest.getResolvedId().getRevision());
+                            log(sb.toString());
+                            dependencyUpdateDetected = true;
+                        }
                     }
 
                 }
@@ -195,6 +201,14 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    public boolean isShowTransitive() {
+        return showTransitive;
+    }
+
+    public void setShowTransitive(boolean showTransitive) {
+        this.showTransitive = showTransitive;
     }
 
 }
