@@ -19,29 +19,22 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.apache.tools.ant.BuildEvent;
+import org.apache.ivy.ant.testutil.AntTaskTestCase;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-public class IvyDependencyTreeTest extends TestCase {
+public class IvyDependencyTreeTest extends AntTaskTestCase {
     private File cache;
 
     private IvyDependencyTree dependencyTree;
-
-    private AntTestListener antTestListener;
 
     private Project project;
 
     protected void setUp() throws Exception {
         createCache();
-        project = AntTestHelper.newProject();
+        project = configureProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-        antTestListener = new AntTestListener(Project.MSG_INFO);
-        project.addBuildListener(antTestListener);
 
         dependencyTree = new IvyDependencyTree();
         dependencyTree.setProject(project);
@@ -117,107 +110,6 @@ public class IvyDependencyTreeTest extends TestCase {
         assertLogContaining("+- org6#mod6.1;2.0");
         assertLogContaining("   \\- org1#mod1.2;2.2");
         assertLogContaining("\\- org1#mod1.2;2.2");
-    }
-
-    public void assertLogContaining(String substring) {
-        String realLog = antTestListener.getLog();
-        assertTrue("expecting log to contain \"" + substring + "\" log was \"" + realLog + "\"",
-            realLog.contains(substring));
-    }
-
-    public void assertLogNotContaining(String substring) {
-        String realLog = antTestListener.getLog();
-        assertFalse("expecting log to contain \"" + substring + "\" log was \"" + realLog + "\"",
-            realLog.contains(substring));
-    }
-
-    /**
-     * Our own personal build listener.
-     */
-    private class AntTestListener implements BuildListener {
-        private int logLevel;
-
-        private StringBuffer buildLog = new StringBuffer();
-
-        /**
-         * Constructs a test listener which will ignore log events above the given level.
-         */
-        public AntTestListener(int logLevel) {
-            this.logLevel = logLevel;
-        }
-
-        /**
-         * Fired before any targets are started.
-         */
-        public void buildStarted(BuildEvent event) {
-        }
-
-        /**
-         * Fired after the last target has finished. This event will still be thrown if an error
-         * occurred during the build.
-         * 
-         * @see BuildEvent#getException()
-         */
-        public void buildFinished(BuildEvent event) {
-        }
-
-        /**
-         * Fired when a target is started.
-         * 
-         * @see BuildEvent#getTarget()
-         */
-        public void targetStarted(BuildEvent event) {
-            // System.out.println("targetStarted " + event.getTarget().getName());
-        }
-
-        /**
-         * Fired when a target has finished. This event will still be thrown if an error occurred
-         * during the build.
-         * 
-         * @see BuildEvent#getException()
-         */
-        public void targetFinished(BuildEvent event) {
-            // System.out.println("targetFinished " + event.getTarget().getName());
-        }
-
-        /**
-         * Fired when a task is started.
-         * 
-         * @see BuildEvent#getTask()
-         */
-        public void taskStarted(BuildEvent event) {
-            // System.out.println("taskStarted " + event.getTask().getTaskName());
-        }
-
-        /**
-         * Fired when a task has finished. This event will still be throw if an error occurred
-         * during the build.
-         * 
-         * @see BuildEvent#getException()
-         */
-        public void taskFinished(BuildEvent event) {
-            // System.out.println("taskFinished " + event.getTask().getTaskName());
-        }
-
-        /**
-         * Fired whenever a message is logged.
-         * 
-         * @see BuildEvent#getMessage()
-         * @see BuildEvent#getPriority()
-         */
-        public void messageLogged(BuildEvent event) {
-            if (event.getPriority() > logLevel) {
-                // ignore event
-                return;
-            }
-
-            buildLog.append(event.getMessage());
-        }
-
-        public String getLog() {
-            return buildLog.toString();
-        }
-
     }
 
 }
