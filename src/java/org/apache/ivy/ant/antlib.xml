@@ -48,4 +48,5 @@
     <taskdef name="convertmanifest" classname="org.apache.ivy.ant.ConvertManifestTask" />
     <taskdef name="fixdeps" classname="org.apache.ivy.ant.FixDepsTask" />
     <taskdef name="dependencytree" classname="org.apache.ivy.ant.IvyDependencyTree"/>
+    <taskdef name="checkdepsupdate" classname="org.apache.ivy.ant.IvyDependencyUpdateChecker"/>
 </antlib>

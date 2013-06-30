@@ -695,6 +695,13 @@
                             ]
                         },
                         {
+                          "id":"use/checkdepsupdate",
+                          "title":"checkdepsupdate",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/cleancache",
                           "title":"cleancache",
                           "children": [
