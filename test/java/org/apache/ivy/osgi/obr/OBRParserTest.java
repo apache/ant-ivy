@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.obr;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URL;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -27,6 +26,8 @@ import junit.framework.TestCase;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
+import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
+import org.apache.ivy.util.CollectionUtils;
 import org.apache.ivy.util.Message;
 
 public class OBRParserTest extends TestCase {
@@ -37,7 +38,7 @@ public class OBRParserTest extends TestCase {
         BundleRepoDescriptor repo = OBRXMLParser.parse(testObr.toURI(), new FileInputStream(
                 new File(testObr, "obr.xml")));
         assertNotNull(repo);
-        System.out.println(repo.getModules().size() + " bundles successfully parsed, "
+        System.out.println(CollectionUtils.toList(repo.getModules()).size() + " bundles successfully parsed, "
                 + Message.getProblems().size() + " errors");
         Iterator itPb = Message.getProblems().iterator();
         while (itPb.hasNext()) {
@@ -52,10 +53,10 @@ public class OBRParserTest extends TestCase {
         BundleRepoDescriptor repo = OBRXMLParser.parse(testObr.toURI(), new FileInputStream(
                 new File(testObr, "sources.xml")));
         assertNotNull(repo);
-        assertEquals(2, repo.getModules().size());
-        Iterator itModule = repo.getModules().iterator();
+        assertEquals(2, CollectionUtils.toList(repo.getModules()).size());
+        Iterator itModule = repo.getModules();
         while (itModule.hasNext()) {
-            ModuleDescriptor md = (ModuleDescriptor) itModule.next();
+            ModuleDescriptor md = ((ModuleDescriptorWrapper) itModule.next()).getModuleDescriptor();
             if (md.getModuleRevisionId().getName().equals("org.apache.felix.eventadmin")) {
                 assertEquals(1, md.getAllArtifacts().length);
             } else {

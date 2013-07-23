@@ -29,8 +29,10 @@ import junit.framework.TestCase;
 import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.CollectionUtils;
 import org.xml.sax.SAXException;
 
 public class UpdateSiteLoaderTest extends TestCase {
@@ -55,9 +57,9 @@ public class UpdateSiteLoaderTest extends TestCase {
     public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
         RepoDescriptor site = loader.load(new URI(
                 "http://www.apache.org/dist/ant/ivyde/updatesite/"));
-        assertFalse(site.getModules().isEmpty());
-        for (Iterator it = site.getModules().iterator(); it.hasNext(); ) {
-            ModuleDescriptor md = (ModuleDescriptor) it.next();
+        assertFalse(site.getModules().hasNext());
+        for (Iterator it = site.getModules(); it.hasNext();) {
+            ModuleDescriptor md = ((ModuleDescriptorWrapper) it.next()).getModuleDescriptor();
             String name = md.getModuleRevisionId().getName();
             assertTrue(name, name.startsWith("org.apache.ivy"));
         }
@@ -66,10 +68,11 @@ public class UpdateSiteLoaderTest extends TestCase {
     public void testM2Eclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
         RepoDescriptor site = loader.load(new URI("http://m2eclipse.sonatype.org/sites/m2e/"));
-        assertTrue(site.getModules().size() > 50);
-        Iterator itModules = site.getModules().iterator();
+        assertTrue(CollectionUtils.toList(site.getModules()).size() > 50);
+        Iterator itModules = site.getModules();
         while (itModules.hasNext()) {
-            ModuleDescriptor md = (ModuleDescriptor) itModules.next();
+            ModuleDescriptor md = ((ModuleDescriptorWrapper) itModules.next())
+                    .getModuleDescriptor();
             String name = md.getModuleRevisionId().getName();
             assertTrue(name, name.indexOf("org.maven") != -1);
         }
@@ -78,16 +81,17 @@ public class UpdateSiteLoaderTest extends TestCase {
     public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
         RepoDescriptor site = loader.load(new URI("http://download.eclipse.org/releases/helios/"));
-        assertTrue(site.getModules().size() > 900);
+        assertTrue(CollectionUtils.toList(site.getModules()).size() > 900);
     }
 
     public void testComposite() throws Exception {
         RepoDescriptor site = loader.load(new File("test/test-p2/composite/").toURI());
-        assertEquals(8, site.getModules().size());
+        assertEquals(8, CollectionUtils.toList(site.getModules()).size());
 
         // check that the url of the artifact is correctly resolved
         String path = new File("test/test-p2/ivyde-repo/").toURI().toURL().toExternalForm();
-        ModuleDescriptor md = (ModuleDescriptor) site.getModules().iterator().next();
+        ModuleDescriptor md = ((ModuleDescriptorWrapper) site.getModules().next())
+                .getModuleDescriptor();
         assertTrue(md.getAllArtifacts()[0].getUrl().toExternalForm().startsWith(path));
     }
 }

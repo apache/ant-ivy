@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,14 @@ public class P2MetadataParser implements XMLInputParser {
 
     private final P2Descriptor p2Descriptor;
 
+    private int logLevel = Message.MSG_INFO;
+
     public P2MetadataParser(P2Descriptor p2Descriptor) {
         this.p2Descriptor = p2Descriptor;
+    }
+
+    public void setLogLevel(int logLevel) {
+        this.logLevel = logLevel;
     }
 
     public void parse(InputStream in) throws ParseException, IOException, SAXException {
@@ -61,7 +68,9 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class RepositoryHandler extends DelegetingHandler {
+    class RepositoryHandler extends DelegetingHandler {
+
+        private static final String P2_TIMESTAMP = "p2.timestamp";
 
         private static final String REPOSITORY = "repository";
 
@@ -77,15 +86,16 @@ public class P2MetadataParser implements XMLInputParser {
 
         public RepositoryHandler(final P2Descriptor p2Descriptor) {
             super(REPOSITORY);
-            addChild(new PropertiesHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    Map properties = ((PropertiesHandler) child).properties;
-                    String timestamp = (String) properties.get("p2.timestamp");
-                    if (timestamp != null) {
-                        p2Descriptor.setTimestamp(Long.parseLong(timestamp));
+            addChild(new PropertiesHandler(Arrays.asList(new String[] {P2_TIMESTAMP})),
+                new ChildElementHandler() {
+                    public void childHanlded(DelegetingHandler child) {
+                        Map properties = ((PropertiesHandler) child).properties;
+                        String timestamp = (String) properties.get(P2_TIMESTAMP);
+                        if (timestamp != null) {
+                            p2Descriptor.setTimestamp(Long.parseLong(timestamp));
+                        }
                     }
-                }
-            });
+                });
             addChild(new UnitsHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     Iterator it = ((UnitsHandler) child).bundles.iterator();
@@ -109,7 +119,7 @@ public class P2MetadataParser implements XMLInputParser {
         // }
     }
 
-    static class ReferencesHandler extends DelegetingHandler {
+    class ReferencesHandler extends DelegetingHandler {
 
         private static final String REFERENCES = "references";
 
@@ -132,7 +142,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class RepositoryReferenceHandler extends DelegetingHandler {
+    class RepositoryReferenceHandler extends DelegetingHandler {
 
         private static final String REPOSITORY = "repository";
 
@@ -185,7 +195,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class UnitsHandler extends DelegetingHandler {
+    class UnitsHandler extends DelegetingHandler {
 
         private static final String UNITS = "units";
 
@@ -212,7 +222,9 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class UnitHandler extends DelegetingHandler {
+    class UnitHandler extends DelegetingHandler {
+
+        private static final String CATEGORY_PROPERTY = "org.eclipse.equinox.p2.type.category";
 
         private static final String UNIT = "unit";
 
@@ -230,18 +242,18 @@ public class P2MetadataParser implements XMLInputParser {
             // public void childHanlded(DelegetingHandler child) {
             // }
             // });
-            addChild(new PropertiesHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    Map properties = ((PropertiesHandler) child).properties;
-                    String category = (String) properties
-                            .get("org.eclipse.equinox.p2.type.category");
-                    if (category != null && Boolean.valueOf(category).booleanValue()) {
-                        // this is a category definition, this is useless, skip this unit
-                        child.getParent().skip();
-                        bundleInfo = null;
+            addChild(new PropertiesHandler(Arrays.asList(new String[] {CATEGORY_PROPERTY})),
+                new ChildElementHandler() {
+                    public void childHanlded(DelegetingHandler child) {
+                        Map properties = ((PropertiesHandler) child).properties;
+                        String category = (String) properties.get(CATEGORY_PROPERTY);
+                        if (category != null && Boolean.valueOf(category).booleanValue()) {
+                            // this is a category definition, this is useless, skip this unit
+                            child.getParent().skip();
+                            bundleInfo = null;
+                        }
                     }
-                }
-            });
+                });
             addChild(new ProvidesHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
                     String eclipseType = ((ProvidesHandler) child).eclipseType;
@@ -254,8 +266,8 @@ public class P2MetadataParser implements XMLInputParser {
                         // data from the convention
                         String symbolicName = bundleInfo.getSymbolicName();
                         if (symbolicName.endsWith(".source")) {
-                            bundleInfo.setSymbolicNameTarget(symbolicName.substring(0, symbolicName
-                                    .length() - 7));
+                            bundleInfo.setSymbolicNameTarget(symbolicName.substring(0,
+                                symbolicName.length() - 7));
                             bundleInfo.setVersionTarget(bundleInfo.getVersion());
                         }
                     }
@@ -297,7 +309,7 @@ public class P2MetadataParser implements XMLInputParser {
                 public void childHanlded(DelegetingHandler child) throws SAXParseException {
                     Boolean zipped = ((TouchpointDataHandler) child).zipped;
                     if (zipped != null) {
-                        bundleInfo.setHasInnerClasspath(zipped.booleanValue());                        
+                        bundleInfo.setHasInnerClasspath(zipped.booleanValue());
                     }
                     if (!bundleInfo.isSource()) {
                         // we only care about parsing the manifest if it is a source
@@ -311,34 +323,45 @@ public class P2MetadataParser implements XMLInputParser {
                         try {
                             embeddedInfo = ManifestParser.parseManifest(manifest);
                         } catch (IOException e) {
-                            Message.verbose(
-                                "The Manifest of the source bundle " + bundleInfo.getSymbolicName()
-                                        + " could not be parsed", e);
+                            if (logLevel >= Message.MSG_VERBOSE) {
+                                Message.verbose(
+                                    "The Manifest of the source bundle "
+                                            + bundleInfo.getSymbolicName() + " could not be parsed",
+                                    e);
+                            }
                             return;
                         } catch (ParseException e) {
-                            Message.verbose(
-                                "The Manifest of the source bundle " + bundleInfo.getSymbolicName()
-                                        + " is ill formed", e);
+                            if (logLevel >= Message.MSG_VERBOSE) {
+                                Message.verbose(
+                                    "The Manifest of the source bundle "
+                                            + bundleInfo.getSymbolicName() + " is ill formed", e);
+                            }
                             return;
                         }
                         if (!embeddedInfo.isSource()) {
-                            Message.verbose("The Manifest of the source bundle "
-                                    + bundleInfo.getSymbolicName()
-                                    + " is not declaring being a source.");
+                            if (logLevel >= Message.MSG_VERBOSE) {
+                                Message.verbose("The Manifest of the source bundle "
+                                        + bundleInfo.getSymbolicName()
+                                        + " is not declaring being a source.");
+                            }
                             return;
                         }
                         String symbolicNameTarget = embeddedInfo.getSymbolicNameTarget();
                         if (symbolicNameTarget == null) {
-                            Message.verbose("The Manifest of the source bundle "
-                                    + bundleInfo.getSymbolicName()
-                                    + " is not declaring a target symbolic name.");
+                            if (logLevel >= Message.MSG_VERBOSE) {
+                                Message.verbose("The Manifest of the source bundle "
+                                        + bundleInfo.getSymbolicName()
+                                        + " is not declaring a target symbolic name.");
+                            }
                             return;
                         }
                         Version versionTarget = embeddedInfo.getVersionTarget();
                         if (versionTarget == null) {
-                            Message.verbose("The Manifest of the source bundle "
-                                    + bundleInfo.getSymbolicName()
-                                    + " is not declaring a target version.");
+                            if (logLevel >= Message.MSG_VERBOSE) {
+                                Message.verbose("The Manifest of the source bundle "
+                                        + bundleInfo.getSymbolicName()
+                                        + " is not declaring a target version.");
+                            }
                             return;
                         }
                         bundleInfo.setSymbolicNameTarget(symbolicNameTarget);
@@ -418,7 +441,7 @@ public class P2MetadataParser implements XMLInputParser {
         return null;
     }
 
-    static class ProvidesHandler extends DelegetingHandler {
+    class ProvidesHandler extends DelegetingHandler {
 
         private static final String PROVIDES = "provides";
 
@@ -440,9 +463,11 @@ public class P2MetadataParser implements XMLInputParser {
                     } else {
                         String type = namespace2Type(namespace);
                         if (type == null) {
-                            Message.debug("Unsupported provided capability "
-                                    + ((ProvidedHandler) child).namespace + " " + name + " "
-                                    + version);
+                            if (logLevel >= Message.MSG_DEBUG) {
+                                Message.debug("Unsupported provided capability "
+                                        + ((ProvidedHandler) child).namespace + " " + name + " "
+                                        + version);
+                            }
                             return;
                         }
                         BundleCapability capability;
@@ -497,7 +522,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static abstract class AbstractRequirementHandler extends DelegetingHandler {
+    abstract class AbstractRequirementHandler extends DelegetingHandler {
 
         private static final String SIZE = "size";
 
@@ -511,8 +536,11 @@ public class P2MetadataParser implements XMLInputParser {
                     VersionRange range = ((RequiredHandler) child).range;
                     String type = namespace2Type(((RequiredHandler) child).namespace);
                     if (type == null) {
-                        Message.debug("Unsupported required capability "
-                                + ((RequiredHandler) child).namespace + " " + name + " " + range);
+                        if (logLevel >= Message.MSG_DEBUG) {
+                            Message.debug("Unsupported required capability "
+                                    + ((RequiredHandler) child).namespace + " " + name + " "
+                                    + range);
+                        }
                     } else {
                         String resolution = ((RequiredHandler) child).optional ? "optional" : null;
                         requirements.add(new BundleRequirement(type, name, range, resolution));
@@ -528,7 +556,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class RequiresHandler extends AbstractRequirementHandler {
+    class RequiresHandler extends AbstractRequirementHandler {
 
         private static final String REQUIRES = "requires";
 
@@ -538,7 +566,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class RequiredHandler extends DelegetingHandler {
+    class RequiredHandler extends DelegetingHandler {
 
         private static final String REQUIRED = "required";
 
@@ -587,7 +615,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class HostRequirementsHandler extends AbstractRequirementHandler {
+    class HostRequirementsHandler extends AbstractRequirementHandler {
 
         private static final String HOST_REQUIREMENTS = "hostRequirements";
 
@@ -597,7 +625,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class MetaRequirementsHandler extends AbstractRequirementHandler {
+    class MetaRequirementsHandler extends AbstractRequirementHandler {
 
         private static final String META_REQUIREMENTS = "metaRequirements";
 
@@ -607,7 +635,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class ArtifactsHandler extends DelegetingHandler {
+    class ArtifactsHandler extends DelegetingHandler {
 
         private static final String ARTIFACTS = "artifacts";
 
@@ -631,7 +659,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class ArtifactHandler extends DelegetingHandler/* <ArtifactsHandler> */{
+    class ArtifactHandler extends DelegetingHandler/* <ArtifactsHandler> */{
 
         private static final String ARTIFACT = "artifact";
 
@@ -681,7 +709,7 @@ public class P2MetadataParser implements XMLInputParser {
     //
     // }
 
-    static class TouchpointDataHandler extends DelegetingHandler {
+    class TouchpointDataHandler extends DelegetingHandler {
 
         private static final String TOUCHPOINTDATA = "touchpointData";
 
@@ -707,7 +735,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class InstructionsHandler extends DelegetingHandler {
+    class InstructionsHandler extends DelegetingHandler {
 
         private static final String INSTRUCTIONS = "instructions";
 
@@ -740,7 +768,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class InstructionHandler extends DelegetingHandler {
+    class InstructionHandler extends DelegetingHandler {
 
         private static final String INSTRUCTION = "instruction";
 
@@ -818,7 +846,7 @@ public class P2MetadataParser implements XMLInputParser {
     //
     // }
 
-    static class ChangesHandler extends DelegetingHandler {
+    class ChangesHandler extends DelegetingHandler {
 
         private static final String CHANGES = "changes";
 
@@ -837,7 +865,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class ChangeHandler extends DelegetingHandler {
+    class ChangeHandler extends DelegetingHandler {
 
         private static final String CHANGE = "change";
 
@@ -846,7 +874,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class FromHandler extends AbstractRequirementHandler {
+    class FromHandler extends AbstractRequirementHandler {
 
         private static final String FROM = "from";
 
@@ -856,7 +884,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class ToHandler extends AbstractRequirementHandler {
+    class ToHandler extends AbstractRequirementHandler {
 
         private static final String TO = "to";
 
@@ -866,7 +894,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    static class PatchScopeHandler extends DelegetingHandler {
+    class PatchScopeHandler extends DelegetingHandler {
 
         private static final String PATCH_SCOPE = "patchScope";
 
@@ -885,7 +913,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class ScopeHandler extends DelegetingHandler {
+    class ScopeHandler extends DelegetingHandler {
 
         private static final String SCOPE = "scope";
 
@@ -898,7 +926,7 @@ public class P2MetadataParser implements XMLInputParser {
         }
     }
 
-    static class LifeCycleHandler extends AbstractRequirementHandler {
+    class LifeCycleHandler extends AbstractRequirementHandler {
 
         private static final String LIFE_CYCLE = "lifeCycle";
 

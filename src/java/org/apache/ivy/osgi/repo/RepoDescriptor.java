@@ -18,50 +18,59 @@
 package org.apache.ivy.osgi.repo;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
-import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-import org.apache.ivy.osgi.core.OSGiManifestParser;
 import org.apache.ivy.util.Message;
 
 public class RepoDescriptor {
 
-    private final Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapbilities = new HashMap();
+    private final Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapabilities = new HashMap();
 
-    private final Set/* <ModuleDescriptor> */modules = new HashSet();
+    private final List/* <ModuleDescriptor> */modules = new ArrayList();
 
     private final ExecutionEnvironmentProfileProvider profileProvider;
 
     private final URI baseUri;
+
+    private int logLevel = Message.MSG_INFO;
 
     public RepoDescriptor(URI baseUri, ExecutionEnvironmentProfileProvider profileProvider) {
         this.baseUri = baseUri;
         this.profileProvider = profileProvider;
     }
 
+    public void setLogLevel(int logLevel) {
+        this.logLevel = logLevel;
+    }
+
+    public int getLogLevel() {
+        return logLevel;
+    }
+
     public URI getBaseUri() {
         return baseUri;
     }
 
-    public Set/* <ModuleDescriptor> */getModules() {
-        return modules;
+    public Iterator/* <ModuleDescriptorWrapper> */getModules() {
+        return modules.iterator();
     }
 
-    public Map/* <String, Map<String, Set<ModuleDescriptor>>> */getModuleByCapbilities() {
-        return moduleByCapbilities;
+    public Set/* <String> */getCapabilities() {
+        return moduleByCapabilities.keySet();
     }
 
-    public Set/* <ModuleDescriptor> */findModule(String requirement, String value) {
-        Map/* <String, Set<ModuleDescriptor>> */modules = (Map) moduleByCapbilities
+    public Set/* <ModuleDescriptorWrapper> */findModule(String requirement, String value) {
+        Map/* <String, Set<ModuleDescriptorWrapper>> */modules = (Map) moduleByCapabilities
                 .get(requirement);
         if (modules == null) {
             return null;
@@ -70,35 +79,38 @@ public class RepoDescriptor {
     }
 
     public Set/* <String> */getCapabilityValues(String capabilityName) {
-        Map/* <String, Set<ModuleDescriptor>> */modules = (Map) moduleByCapbilities
+        Map/* <String, Set<ModuleDescriptorWrapper>> */modules = (Map) moduleByCapabilities
                 .get(capabilityName);
         if (modules == null) {
-            return null;
+            return Collections.EMPTY_SET;
         }
-        return (Set) modules.keySet();
+        return modules.keySet();
     }
 
-    public void add(String type, String value, ModuleDescriptor md) {
+    public void add(String type, String value, ModuleDescriptorWrapper md) {
         modules.add(md);
-        Map/* <String, Set<ModuleDescriptor>> */map = (Map) moduleByCapbilities.get(type);
+        Map/* <String, Set<ModuleDescriptorWrapper>> */map = (Map) moduleByCapabilities.get(type);
         if (map == null) {
-            map = new HashMap/* <String, Set<ModuleDescriptor>> */();
-            moduleByCapbilities.put(type, map);
+            map = new HashMap/* <String, Set<ModuleDescriptorWrapper>> */();
+            moduleByCapabilities.put(type, map);
         }
-        Set/* <ModuleDescriptor> */bundleReferences = (Set) map.get(value);
+        Set/* <ModuleDescriptorWrapper> */bundleReferences = (Set) map.get(value);
         if (bundleReferences == null) {
-            bundleReferences = new HashSet/* <ModuleDescriptor> */();
+            bundleReferences = new HashSet/* <ModuleDescriptorWrapper> */();
             map.put(value, bundleReferences);
         }
         if (!bundleReferences.add(md)) {
-            Message.debug("Duplicate module in the repo " + baseUri + " for " + type + " "
-                    + value + ": " + md.getModuleRevisionId());
+            if (logLevel <= Message.MSG_DEBUG) {
+                Message.debug("Duplicate module in the repo " + baseUri + " for " + type + " "
+                        + value + ": " + md.getBundleInfo().getSymbolicName() + "#"
+                        + md.getBundleInfo().getVersion());
+            }
         }
     }
 
     public void addBundle(BundleInfo bundleInfo) {
-        DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-            OSGiManifestParser.getInstance(), baseUri, bundleInfo, profileProvider);
+        ModuleDescriptorWrapper md = new ModuleDescriptorWrapper(bundleInfo, baseUri,
+                profileProvider);
         add(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), md);
         Iterator itCapability = bundleInfo.getCapabilities().iterator();
         while (itCapability.hasNext()) {

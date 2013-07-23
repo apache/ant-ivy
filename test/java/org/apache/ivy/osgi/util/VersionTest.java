@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.osgi.util;
 
-import java.text.ParseException;
-
 import junit.framework.TestCase;
 
 public class VersionTest extends TestCase {
@@ -27,15 +25,15 @@ public class VersionTest extends TestCase {
         Version v;
 
         v = new Version("1");
-        assertEquals("1.0.0", v.numbersAsString());
+        assertEquals("1.0.0", v.toString());
         assertEquals("", v.qualifier());
 
         v = new Version("1.2");
-        assertEquals("1.2.0", v.numbersAsString());
+        assertEquals("1.2.0", v.toString());
         assertEquals("", v.qualifier());
 
         v = new Version("1.2.3");
-        assertEquals("1.2.3", v.numbersAsString());
+        assertEquals("1.2.3", v.toString());
         assertEquals("", v.qualifier());
 
         v = new Version("1.2.3.abc");

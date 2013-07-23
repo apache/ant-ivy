@@ -17,9 +17,7 @@
  */
 package org.apache.ivy.osgi.core;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +35,6 @@ public class ManifestParserTest extends TestCase {
         bundleInfo = ManifestParser.parseJarManifest(getClass().getResourceAsStream(
             "com.acme.alpha-1.0.0.20080101.jar"));
         assertEquals("com.acme.alpha", bundleInfo.getSymbolicName());
-        assertEquals("1.0.0", bundleInfo.getVersion().numbersAsString());
         assertEquals("20080101", bundleInfo.getVersion().qualifier());
         assertEquals("1.0.0.20080101", bundleInfo.getVersion().toString());
         assertEquals(2, bundleInfo.getRequires().size());
@@ -59,7 +56,6 @@ public class ManifestParserTest extends TestCase {
             "com.acme.bravo-2.0.0.20080202.jar"));
         assertNotNull(bundleInfo);
         assertEquals("com.acme.bravo", bundleInfo.getSymbolicName());
-        assertEquals("2.0.0", bundleInfo.getVersion().numbersAsString());
         assertEquals("20080202", bundleInfo.getVersion().qualifier());
         assertEquals("2.0.0.20080202", bundleInfo.getVersion().toString());
         assertEquals(1, bundleInfo.getRequires().size());

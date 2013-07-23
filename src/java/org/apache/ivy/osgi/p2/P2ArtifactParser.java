@@ -162,7 +162,11 @@ public class P2ArtifactParser implements XMLInputParser {
                 public void childHanlded(DelegetingHandler child) {
                     P2Artifact a = ((ArtifactHandler) child).p2Artifact;
                     String url = (String) patternsByClassifier.get(a.getClassifier());
-                    url = url.replaceAll("\\$\\{repoUrl\\}", repoUrl);
+                    if (url.startsWith("${repoUrl}")) { // try to avoid costly regexp
+                        url = repoUrl + url.substring(10);
+                    } else {
+                        url = url.replaceAll("\\$\\{repoUrl\\}", repoUrl);
+                    }
                     p2Descriptor.addArtifactUrl(a.getClassifier(), a.getId(), a.getVersion(), url);
                 }
             });
@@ -189,10 +193,10 @@ public class P2ArtifactParser implements XMLInputParser {
 
         public ArtifactHandler() {
             super(ARTIFACT);
-            addChild(new PropertiesHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                }
-            });
+            // addChild(new PropertiesHandler(), new ChildElementHandler() {
+            // public void childHanlded(DelegetingHandler child) {
+            // }
+            // });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {

@@ -18,6 +18,7 @@
 package org.apache.ivy.osgi.p2;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.osgi.util.DelegetingHandler;
@@ -33,11 +34,15 @@ public class PropertiesParser {
 
         Map properties;
 
-        public PropertiesHandler() {
+
+        public PropertiesHandler(final List/*<String>*/ props) {
             super(PROPERTIES);
             addChild(new PropertyHandler(), new ChildElementHandler() {
                 public void childHanlded(DelegetingHandler child) {
-                    properties.put(((PropertyHandler) child).name, ((PropertyHandler) child).value);
+                    String name = ((PropertyHandler) child).name;
+                    if (props == null || props.contains(name)) {
+                        properties.put(name, ((PropertyHandler) child).value);
+                    }
                 }
             });
         }

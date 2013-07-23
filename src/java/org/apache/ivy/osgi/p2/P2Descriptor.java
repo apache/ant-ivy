@@ -22,12 +22,11 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
-import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.osgi.core.BundleInfo;
-import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
+import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
@@ -51,26 +50,34 @@ public class P2Descriptor extends RepoDescriptor {
     public void addBundle(BundleInfo bundleInfo) {
         if (bundleInfo.isSource()) {
             if (bundleInfo.getSymbolicNameTarget() == null || bundleInfo.getVersionTarget() == null) {
-                Message.verbose("The source bundle " + bundleInfo.getSymbolicName()
-                        + " did declare its target. Ignoring it");
+                if (getLogLevel() <= Message.MSG_VERBOSE) {
+                    Message.verbose("The source bundle " + bundleInfo.getSymbolicName()
+                            + " did declare its target. Ignoring it");
+                }
                 return;
             }
-            Map/*<String, URI>*/ byVersion = (Map) sourceURIs.get(bundleInfo.getSymbolicNameTarget());
+            Map/* <String, URI> */byVersion = (Map) sourceURIs.get(bundleInfo
+                    .getSymbolicNameTarget());
             if (byVersion == null) {
                 byVersion = new HashMap();
                 sourceURIs.put(bundleInfo.getSymbolicNameTarget(), byVersion);
             }
             URI sourceUri = getArtifactURI(bundleInfo);
             if (sourceUri == null) {
-                Message.verbose("The source bundle " + bundleInfo.getSymbolicName()
-                    + " has no actual artifact. Ignoring it");
+                if (getLogLevel() <= Message.MSG_VERBOSE) {
+                    Message.verbose("The source bundle " + bundleInfo.getSymbolicName()
+                            + " has no actual artifact. Ignoring it");
+                }
                 return;
             }
             URI old = (URI) byVersion.put(bundleInfo.getVersionTarget().toString(), sourceUri);
             if (old != null && !old.equals(sourceUri)) {
-                Message.verbose("Duplicate source for the bundle "
-                        + bundleInfo.getSymbolicNameTarget() + "@" + bundleInfo.getVersionTarget()
-                        + " : " + sourceUri + " is replacing " + old);
+                if (getLogLevel() <= Message.MSG_VERBOSE) {
+                    Message.verbose("Duplicate source for the bundle "
+                            + bundleInfo.getSymbolicNameTarget() + "@"
+                            + bundleInfo.getVersionTarget() + " : " + sourceUri + " is replacing "
+                            + old);
+                }
             }
             return;
         }
@@ -115,27 +122,30 @@ public class P2Descriptor extends RepoDescriptor {
 
     public void finish() {
         artifactUrlPatterns = null;
-        Iterator itModules = getModules().iterator();
-        while (itModules.hasNext()) {
-            DefaultModuleDescriptor md = (DefaultModuleDescriptor) itModules.next();
-            String org = md.getModuleRevisionId().getOrganisation();
-            if (!org.equals(BundleInfo.BUNDLE_TYPE)) {
-                continue;
+        Set/* <String> */bundleNames = getCapabilityValues(BundleInfo.BUNDLE_TYPE);
+        if (bundleNames == null) {
+            return;
+        }
+        Iterator itBundleNames = bundleNames.iterator();
+        while (itBundleNames.hasNext()) {
+            String bundleName = (String) itBundleNames.next();
+            Set/* <ModuleDescriptorWrapper> */modules = findModule(BundleInfo.BUNDLE_TYPE,
+                bundleName);
+            Iterator itModules = modules.iterator();
+            while (itModules.hasNext()) {
+                ModuleDescriptorWrapper mdw = (ModuleDescriptorWrapper) itModules.next();
+                String symbolicName = mdw.getBundleInfo().getSymbolicName();
+                Map/* <String, URI> */byVersion = (Map) sourceURIs.get(symbolicName);
+                if (byVersion == null) {
+                    continue;
+                }
+                String rev = mdw.getBundleInfo().getVersion().toString();
+                URI source = (URI) byVersion.get(rev);
+                if (source == null) {
+                    continue;
+                }
+                mdw.setSource(source);
             }
-            String symbolicName = md.getModuleRevisionId().getName();
-            Map/*<String, URI>*/ byVersion = (Map) sourceURIs.get(symbolicName);
-            if (byVersion == null) {
-                continue;
-            }
-            String rev = md.getRevision();
-            URI source = (URI) byVersion.get(rev);
-            if (source == null) {
-                continue;
-            }
-            String compression = md.getAllArtifacts()[0].getExtraAttribute("compression");
-            DefaultArtifact sourceArtifact = BundleInfoAdapter.buildArtifact(
-                md.getModuleRevisionId(), getBaseUri(), source, "source", compression);
-            md.addArtifact(BundleInfoAdapter.CONF_NAME_DEFAULT, sourceArtifact);
         }
         sourceURIs = null;
     }

@@ -24,6 +24,8 @@ import java.text.ParseException;
 
 import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.osgi.repo.AbstractOSGiResolver;
+import org.apache.ivy.osgi.repo.RepoDescriptor;
+import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
 public class UpdateSiteResolver extends AbstractOSGiResolver {
@@ -33,6 +35,8 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
     private Long metadataTtl;
 
     private Boolean forceMetadataUpdate;
+
+    private String logLevel;
 
     public void setUrl(String url) {
         this.url = url;
@@ -46,6 +50,10 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
         this.forceMetadataUpdate = forceMetadataUpdate;
     }
 
+    public void setLogLevel(String logLevel) {
+        this.logLevel = logLevel;
+    }
+
     protected void init() {
         if (url == null) {
             throw new RuntimeException("Missing url");
@@ -57,10 +65,28 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
         if (forceMetadataUpdate != null) {
             options.setForce(forceMetadataUpdate.booleanValue());
         }
+        int log = Message.MSG_INFO;
+        if (logLevel != null) {
+            if ("debug".equalsIgnoreCase(logLevel)) {
+                log = Message.MSG_DEBUG;
+            } else if ("verbose".equalsIgnoreCase(logLevel)) {
+                log = Message.MSG_VERBOSE;
+            } else if ("info".equalsIgnoreCase(logLevel)) {
+                log = Message.MSG_INFO;
+            } else if ("warn".equalsIgnoreCase(logLevel)) {
+                log = Message.MSG_WARN;
+            } else if ("error".equalsIgnoreCase(logLevel)) {
+                log = Message.MSG_ERR;
+            } else {
+                throw new RuntimeException("Unknown log level: " + logLevel);
+            }
+        }
         UpdateSiteLoader loader = new UpdateSiteLoader(getRepositoryCacheManager(),
                 getEventManager(), options);
+        loader.setLogLevel(log);
+        RepoDescriptor repoDescriptor;
         try {
-            setRepoDescriptor(loader.load(new URI(url)));
+            repoDescriptor = loader.load(new URI(url));
         } catch (IOException e) {
             throw new RuntimeException("IO issue while trying to read the update site ("
                     + e.getMessage() + ")");
@@ -71,5 +97,10 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
         } catch (URISyntaxException e) {
             throw new RuntimeException("Illformed url (" + e.getMessage() + ")", e);
         }
+        if (repoDescriptor == null) {
+            setRepoDescriptor(FAILING_REPO_DESCRIPTOR);
+            throw new RuntimeException("No update site was found at the location: " + url);
+        }
+        setRepoDescriptor(repoDescriptor);
     }
 }

@@ -58,6 +58,8 @@ public class UpdateSiteLoader {
 
     private final CacheResourceOptions options;
 
+    private int logLevel = Message.MSG_INFO;
+
     public UpdateSiteLoader(RepositoryCacheManager repositoryCacheManager,
             EventManager eventManager, CacheResourceOptions options) {
         this.repositoryCacheManager = repositoryCacheManager;
@@ -65,6 +67,10 @@ public class UpdateSiteLoader {
         if (eventManager != null) {
             urlRepository.addTransferListener(eventManager);
         }
+    }
+
+    public void setLogLevel(int logLevel) {
+        this.logLevel = logLevel;
     }
 
     public RepoDescriptor load(URI repoUri) throws IOException, ParseException, SAXException {
@@ -75,7 +81,7 @@ public class UpdateSiteLoader {
                 throw new RuntimeException("Cannot make an uri for the repo");
             }
         }
-        Message.verbose("Loading the update site " + repoUri);
+        Message.info("Loading the update site " + repoUri);
         // first look for a p2 repository
         RepoDescriptor repo = loadP2(repoUri);
         if (repo != null) {
@@ -97,6 +103,7 @@ public class UpdateSiteLoader {
     private P2Descriptor loadP2(URI repoUri) throws IOException, ParseException, SAXException {
         P2Descriptor p2Descriptor = new P2Descriptor(repoUri,
                 ExecutionEnvironmentProfileProvider.getInstance());
+        p2Descriptor.setLogLevel(logLevel);
         if (!populateP2Descriptor(repoUri, p2Descriptor)) {
             return null;
         }
@@ -116,7 +123,9 @@ public class UpdateSiteLoader {
 
         boolean contentExists = readComposite(repoUri, "compositeContent", p2Descriptor);
         if (!contentExists) {
-            contentExists = readJarOrXml(repoUri, "content", new P2MetadataParser(p2Descriptor));
+            P2MetadataParser metadataParser = new P2MetadataParser(p2Descriptor);
+            metadataParser.setLogLevel(logLevel);
+            contentExists = readJarOrXml(repoUri, "content", metadataParser);
         }
 
         return artifactExists || contentExists;

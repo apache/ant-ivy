@@ -63,6 +63,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     private static final String CAPABILITY_EXTRA_ATTR = "osgi_bundle";
 
+    protected static final RepoDescriptor FAILING_REPO_DESCRIPTOR = new RepoDescriptor(null, null);
+
     private RepoDescriptor repoDescriptor = null;
 
     private URLRepository repository = new URLRepository();
@@ -106,6 +108,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     protected void ensureInit() {
         if (repoDescriptor == null) {
             init();
+        } else if (repoDescriptor == FAILING_REPO_DESCRIPTOR) {
+            throw new RuntimeException("The repository " + getName() + " already failed to load");
         }
     }
 
@@ -129,7 +133,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             throw new RuntimeException("Unsupported OSGi module Id: " + mrid.getModuleId());
         }
         String id = mrid.getName();
-        Set/* <ModuleDescriptor> */mds = getRepoDescriptor().findModule(osgiType, id);
+        Collection/* <ModuleDescriptor> */mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
+                .findModule(osgiType, id));
         if (mds == null || mds.isEmpty()) {
             Message.verbose("\t " + id + " not found.");
             return null;
@@ -150,11 +155,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return found;
     }
 
-    public ResolvedResource[] findBundle(DependencyDescriptor dd, ResolveData data, Set/*
-                                                                                        * <
-                                                                                        * ModuleDescriptor
-                                                                                        * >
-                                                                                        */mds) {
+    public ResolvedResource[] findBundle(DependencyDescriptor dd, ResolveData data,
+            Collection/* < ModuleDescriptor > */mds) {
         ResolvedResource[] ret = new ResolvedResource[mds.size()];
         int i = 0;
         Iterator itMd = mds.iterator();
@@ -170,11 +172,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return ret;
     }
 
-    public ResolvedResource[] findCapability(DependencyDescriptor dd, ResolveData data, Set/*
-                                                                                            * <
-                                                                                            * ModuleDescriptor
-                                                                                            * >
-                                                                                            */mds) {
+    public ResolvedResource[] findCapability(DependencyDescriptor dd, ResolveData data,
+            Collection/* < ModuleDescriptor > */mds) {
         ResolvedResource[] ret = new ResolvedResource[mds.size()];
         int i = 0;
         Iterator itMd = mds.iterator();
@@ -321,7 +320,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     protected Collection findNames(Map tokenValues, String token) {
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
-            return getRepoDescriptor().getModuleByCapbilities().keySet();
+            return getRepoDescriptor().getCapabilities();
         }
 
         String osgiType = (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
@@ -329,42 +328,19 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             return Collections.EMPTY_LIST;
         }
 
-        String rev = (String) tokenValues.get(IvyPatternHelper.REVISION_KEY);
-
         if (IvyPatternHelper.MODULE_KEY.equals(token)) {
-            Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapbilities = getRepoDescriptor()
-                    .getModuleByCapbilities();
-            if (osgiType != null) {
-                Map/* <String, Set<ModuleDescriptor>> */moduleByCapabilityValue = (Map) moduleByCapbilities
-                        .get(osgiType);
-                if (moduleByCapabilityValue == null) {
-                    return Collections.EMPTY_LIST;
-                }
-                Set/* <String> */capabilityValues = new HashSet();
-                return moduleByCapabilityValue.keySet();
-            } else {
-                Set/* <String> */capabilityValues = new HashSet();
-                Iterator/* <Map<String, Set<ModuleDescriptor>>> */it = ((Collection) moduleByCapbilities
-                        .values()).iterator();
-                while (it.hasNext()) {
-                    Map/* <String, Set<ModuleDescriptor>> */moduleByCapbilityValue = (Map) it
-                            .next();
-                    filterCapabilityValues(capabilityValues, moduleByCapbilityValue, tokenValues,
-                        rev);
-                }
-                return capabilityValues;
-            }
+            return getRepoDescriptor().getCapabilityValues(osgiType);
         }
 
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
             List/* <String> */versions = new ArrayList/* <String> */();
-            Set/* <ModuleDescriptor> */mds = getRepoDescriptor().findModule(osgiType, name);
+            Set/* <ModuleDescriptorWrapper> */mds = getRepoDescriptor().findModule(osgiType, name);
             if (mds != null) {
                 Iterator itMd = mds.iterator();
                 while (itMd.hasNext()) {
-                    ModuleDescriptor md = (ModuleDescriptor) itMd.next();
-                    versions.add(md.getRevision());
+                    ModuleDescriptorWrapper md = (ModuleDescriptorWrapper) itMd.next();
+                    versions.add(md.getBundleInfo().getVersion().toString());
                 }
             }
             return versions;
@@ -378,34 +354,27 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 return Collections.singletonList(BundleInfoAdapter.CONF_USE_PREFIX + name);
             }
-            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = getRepoDescriptor()
-                    .findModule(osgiType, name);
-            if (bundleCapabilities == null) {
+            Collection/* <ModuleDescriptor> */mds = ModuleDescriptorWrapper
+                    .unwrap(getRepoDescriptor().findModule(osgiType, name));
+            if (mds == null) {
                 return Collections.EMPTY_LIST;
             }
             String version = (String) tokenValues.get(IvyPatternHelper.REVISION_KEY);
             if (version == null) {
                 return Collections.EMPTY_LIST;
             }
-            Version v;
-            try {
-                v = new Version(version);
-            } catch (ParseException e) {
-                return Collections.EMPTY_LIST;
-            }
-            BundleCapabilityAndLocation found = null;
-            Iterator itBundle = bundleCapabilities.iterator();
+            ModuleDescriptor found = null;
+            Iterator itBundle = mds.iterator();
             while (itBundle.hasNext()) {
-                BundleCapabilityAndLocation bundleCapability = (BundleCapabilityAndLocation) itBundle
-                        .next();
-                if (bundleCapability.getVersion().equals(v)) {
-                    found = bundleCapability;
+                ModuleDescriptor md = (ModuleDescriptor) itBundle.next();
+                if (md.getRevision().equals(version)) {
+                    found = md;
                 }
             }
             if (found == null) {
                 return Collections.EMPTY_LIST;
             }
-            List/* <String> */confs = BundleInfoAdapter.getConfigurations(found.getBundleInfo());
+            List/* <String> */confs = Arrays.asList(found.getConfigurationsNames());
             return confs;
         }
         return Collections.EMPTY_LIST;
@@ -502,18 +471,18 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         tokenSet.remove(IvyPatternHelper.REVISION_KEY);
         String rev = (String) criteria.get(IvyPatternHelper.REVISION_KEY);
         if (rev == null) {
-            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = getRepoDescriptor()
-                    .findModule(osgiType, module);
-            if (bundleCapabilities == null) {
+            Set/* <ModuleDescriptorWrapper> */mdws = getRepoDescriptor().findModule(osgiType,
+                module);
+            if (mdws == null || mdws.isEmpty()) {
                 return Collections.EMPTY_SET;
             }
             Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
-            Iterator itBundle = bundleCapabilities.iterator();
+            Iterator itBundle = mdws.iterator();
             while (itBundle.hasNext()) {
-                BundleCapabilityAndLocation capability = (BundleCapabilityAndLocation) itBundle
-                        .next();
+                ModuleDescriptorWrapper mdw = (ModuleDescriptorWrapper) itBundle.next();
                 Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
-                newCriteria.put(IvyPatternHelper.REVISION_KEY, capability.getVersion().toString());
+                newCriteria.put(IvyPatternHelper.REVISION_KEY, mdw.getBundleInfo().getVersion()
+                        .toString());
                 tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
             }
             return tokenValues;
