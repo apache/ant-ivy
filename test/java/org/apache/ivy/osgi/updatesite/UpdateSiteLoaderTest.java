@@ -57,7 +57,7 @@ public class UpdateSiteLoaderTest extends TestCase {
     public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
         RepoDescriptor site = loader.load(new URI(
                 "http://www.apache.org/dist/ant/ivyde/updatesite/"));
-        assertFalse(site.getModules().hasNext());
+        assertTrue(site.getModules().hasNext());
         for (Iterator it = site.getModules(); it.hasNext();) {
             ModuleDescriptor md = ((ModuleDescriptorWrapper) it.next()).getModuleDescriptor();
             String name = md.getModuleRevisionId().getName();
@@ -67,15 +67,9 @@ public class UpdateSiteLoaderTest extends TestCase {
 
     public void testM2Eclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
-        RepoDescriptor site = loader.load(new URI("http://m2eclipse.sonatype.org/sites/m2e/"));
-        assertTrue(CollectionUtils.toList(site.getModules()).size() > 50);
-        Iterator itModules = site.getModules();
-        while (itModules.hasNext()) {
-            ModuleDescriptor md = ((ModuleDescriptorWrapper) itModules.next())
-                    .getModuleDescriptor();
-            String name = md.getModuleRevisionId().getName();
-            assertTrue(name, name.indexOf("org.maven") != -1);
-        }
+        RepoDescriptor site = loader.load(new URI(
+                "http://download.eclipse.org/technology/m2e/releases/"));
+        assertTrue(CollectionUtils.toList(site.getModules()).size() > 20);
     }
 
     public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException,

@@ -18,12 +18,10 @@
 package org.apache.ivy.osgi.repo;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +34,7 @@ public class RepoDescriptor {
 
     private final Map/* <String, Map<String, Set<ModuleDescriptor>>> */moduleByCapabilities = new HashMap();
 
-    private final List/* <ModuleDescriptor> */modules = new ArrayList();
+    private final Set/* <ModuleDescriptor> */modules = new HashSet();
 
     private final ExecutionEnvironmentProfileProvider profileProvider;
 
