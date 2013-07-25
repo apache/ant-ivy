@@ -82,7 +82,7 @@ public class ArtifactLockStrategyTest extends TestCase {
     private RepositoryCacheManager newCacheManager(IvySettings settings) {
         DefaultRepositoryCacheManager cacheManager 
             = new DefaultRepositoryCacheManager("cache", settings, new File("build/test/cache"));
-        cacheManager.setLockStrategy(new ArtifactLockStrategy());
+        cacheManager.setLockStrategy(new CreateFileLockStrategy(false));
         return cacheManager;
     }
     

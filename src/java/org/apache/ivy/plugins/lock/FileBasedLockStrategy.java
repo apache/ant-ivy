@@ -20,7 +20,6 @@ package org.apache.ivy.plugins.lock;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +33,6 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
     /**
      * The locker to use to make file lock attempts.
-     * <p>
-     * Two implementations of FileLocker are provided below, according to our tests the
-     * CreateFileLocker is both performing better and much more reliable than NIOFileLocker.
-     * </p>
      */
     private FileLocker locker;
     
@@ -183,26 +178,31 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             this.debugLocking = debugLocking;
         }
 
+        private static class LockData {
+            private RandomAccessFile raf;
+            private FileLock l;
+
+            LockData(RandomAccessFile raf, FileLock l) {
+                this.raf = raf;
+                this.l = l;
+            }
+        }
+
         public boolean tryLock(File file) {
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
                     RandomAccessFile raf =
                         new RandomAccessFile(file, "rw");            
-                    FileChannel channel = raf.getChannel();
-                    try {
-                        FileLock l = channel.tryLock();
-                        if (l != null) {
-                            synchronized (this) {
-                                locks.put(file, l);
-                            }
-                            return true;
-                        } else {
-                            if (debugLocking) {
-                                debugLocking("failed to acquire lock on " + file);
-                            }
+                    FileLock l = raf.getChannel().tryLock();
+                    if (l != null) {
+                        synchronized (this) {
+                            locks.put(file, new LockData(raf, l));
                         }
-                    } finally {
-                        raf.close();
+                        return true;
+                    } else {
+                        if (debugLocking) {
+                            debugLocking("failed to acquire lock on " + file);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -215,12 +215,15 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
         public void unlock(File file) {
             synchronized (this) {
-                FileLock l = (FileLock) locks.get(file);
-                if (l == null) {
+                LockData data = (LockData) locks.get(file);
+                if (data == null) {
                     throw new IllegalArgumentException("file not previously locked: " + file);
                 }
+
                 try {
-                    l.release();
+                    locks.remove(file);
+                    data.l.release();
+                    data.raf.close();
                 } catch (IOException e) {
                     Message.error(
                         "problem while releasing lock on " + file + ": " + e.getMessage());

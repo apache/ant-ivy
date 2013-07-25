@@ -74,8 +74,9 @@ import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
-import org.apache.ivy.plugins.lock.ArtifactLockStrategy;
+import org.apache.ivy.plugins.lock.CreateFileLockStrategy;
 import org.apache.ivy.plugins.lock.LockStrategy;
+import org.apache.ivy.plugins.lock.NIOFileLockStrategy;
 import org.apache.ivy.plugins.lock.NoLockStrategy;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
@@ -255,7 +256,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addLatestStrategy("latest-osgi", osgiLatestStrategy);
 
         addLockStrategy("no-lock", new NoLockStrategy());
-        addLockStrategy("artifact-lock", new ArtifactLockStrategy(debugLocking()));
+        addLockStrategy("artifact-lock", new CreateFileLockStrategy(debugLocking()));
+        addLockStrategy("artifact-lock-nio", new NIOFileLockStrategy(debugLocking()));
 
         addConflictManager("latest-revision", new LatestConflictManager("latest-revision",
             latestRevisionStrategy));

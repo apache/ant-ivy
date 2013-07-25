@@ -17,22 +17,11 @@
  */
 package org.apache.ivy.plugins.lock;
 
-import java.io.File;
+public class NIOFileLockStrategy extends ArtifactLockStrategy {
 
-import org.apache.ivy.core.module.descriptor.Artifact;
-
-public abstract class ArtifactLockStrategy extends FileBasedLockStrategy {
-    
-    protected ArtifactLockStrategy(FileLocker locker, boolean debugLocking) {
-        super(locker, debugLocking);
+    public NIOFileLockStrategy(boolean debugLocking) {
+        super(new NIOFileLocker(debugLocking), debugLocking);
+        setName("artifact-lock-nio");
     }
 
-    public boolean lockArtifact(Artifact artifact, File artifactFileToDownload) 
-            throws InterruptedException {
-        return acquireLock(new File(artifactFileToDownload.getAbsolutePath() + ".lck"));
-    }
-
-    public void unlockArtifact(Artifact artifact, File artifactFileToDownload) {
-        releaseLock(new File(artifactFileToDownload.getAbsolutePath() + ".lck"));
-    }
 }

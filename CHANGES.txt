@@ -41,6 +41,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Flavio Coutinho da Costa
 	Stefan De Boey
 	Mykhailo Delegan
+	Charles Duffy
 	Martin Eigenbrodt
 	Stephen Evanchik
 	Robin Fernandes
@@ -143,10 +144,12 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
 - NEW: symlinkmass feature based on symlink feature of ivy:retrieve (IVY-1252) (Thanks to Gene Smith)
 
+- IMPROVEMENT: New LockStrategy available based on NIO FileLocks (IVY-1424)
 - IMPROVEMENT: Optional <include> ivysettings directives (IVY-1392) (thanks to Yanus Poluektovich)
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories
 
+- FIX: NIO FileLocker released locks too early (IVY-1424) (thanks to Charles Duffy)
 - FIX: Ssh Resolver doesn't work with Java 7 (IVY-1408) (thanks to Mykhailo Delegan)
 - FIX: Parsing publication date in Ant tasks not thread-safe (IVY-1412)
 - FIX: NullPointerException when using httpclient and server doesn't return content-type header (IVY-1400) (thanks to Frederic Riviere)
