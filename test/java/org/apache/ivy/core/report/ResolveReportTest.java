@@ -20,6 +20,7 @@ package org.apache.ivy.core.report;
 import java.io.File;
 import java.util.Arrays;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
@@ -174,10 +175,17 @@ public class ResolveReportTest extends TestCase {
 
         assertEquals(2, fixedMd.getDependencies().length);
 
-        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1", "default",
-            new String[] {"*"});
-        checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "1.1", "compile",
-            new String[] {"default"});
+        try {
+            checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1",
+                "default", new String[] {"*"});
+            checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "1.1",
+                "compile", new String[] {"default"});
+        } catch (AssertionFailedError e) {
+            checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "1.1",
+                "default", new String[] {"*"});
+            checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1",
+                "compile", new String[] {"default"});
+        }
     }
 
     public void testFixedMdKeep() throws Exception {
