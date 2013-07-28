@@ -751,6 +751,13 @@
                             ]
                         },
                         {
+                          "id":"use/fixdeps",
+                          "title":"fixdeps",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/info",
                           "title":"info",
                           "children": [

@@ -22,28 +22,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
-import org.apache.ivy.core.module.descriptor.ExcludeRule;
-import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.util.filter.Filter;
 
@@ -61,9 +58,9 @@ public class ResolveReport {
     /**
      * the list of all dependencies resolved, ordered from the more dependent to the less dependent
      */
-    private List/*<IvyNode>*/ dependencies = new ArrayList();
+    private List/* <IvyNode> */dependencies = new ArrayList();
 
-    private List/*<Artifact>*/ artifacts = new ArrayList();
+    private List/* <Artifact> */artifacts = new ArrayList();
 
     private long resolveTime;
 
@@ -103,9 +100,8 @@ public class ResolveReport {
         return hasError;
     }
 
-    public void output(
-            ReportOutputter[] outputters, ResolutionCacheManager cacheMgr, ResolveOptions options)
-            throws IOException {
+    public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr,
+            ResolveOptions options) throws IOException {
         for (int i = 0; i < outputters.length; i++) {
             outputters[i].output(this, cacheMgr, options);
         }
@@ -139,8 +135,8 @@ public class ResolveReport {
      * @return the list of reports, never <code>null</code>
      */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
-        return ConfigurationResolveReport.filterOutMergedArtifacts(
-            getArtifactsReports(DownloadStatus.FAILED, true));
+        return ConfigurationResolveReport.filterOutMergedArtifacts(getArtifactsReports(
+            DownloadStatus.FAILED, true));
     }
 
     /**
@@ -157,8 +153,8 @@ public class ResolveReport {
      * specific download status, and also remove the download report for the evicted modules.
      * 
      * @param downloadStatus
-     *            the status of download to retreive. Set it to <code>null</code> for no
-     *            restriction on the download status
+     *            the status of download to retreive. Set it to <code>null</code> for no restriction
+     *            on the download status
      * @param withEvicted
      *            set it to <code>true</code> if the report for the evicted modules have to be
      *            retrieved, <code>false</code> to exclude reports from modules evicted in all
@@ -166,13 +162,13 @@ public class ResolveReport {
      * @return the list of reports, never <code>null</code>
      * @see ConfigurationResolveReport#getArtifactsReports(DownloadStatus, boolean)
      */
-    public ArtifactDownloadReport[] getArtifactsReports(
-            DownloadStatus downloadStatus, boolean withEvicted) {
+    public ArtifactDownloadReport[] getArtifactsReports(DownloadStatus downloadStatus,
+            boolean withEvicted) {
         Collection all = new LinkedHashSet();
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
-            ArtifactDownloadReport[] reports = 
-                report.getArtifactsReports(downloadStatus, withEvicted);
+            ArtifactDownloadReport[] reports = report.getArtifactsReports(downloadStatus,
+                withEvicted);
             all.addAll(Arrays.asList(reports));
         }
         return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
@@ -187,7 +183,6 @@ public class ResolveReport {
         return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
     }
 
-    
     public void checkIfChanged() {
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
@@ -195,7 +190,6 @@ public class ResolveReport {
         }
     }
 
-    
     /** Can only be called if checkIfChanged has been called */
     public boolean hasChanged() {
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
@@ -332,7 +326,51 @@ public class ResolveReport {
         return resolveId;
     }
 
-    public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings) {
+    /**
+     * Get every configuration which extends the specified one. The returned list also includes the
+     * specified one.
+     * 
+     * @param extended
+     * @return
+     */
+    private String[] getExtendingConfs(String extended) {
+        String[] allConfs = md.getConfigurationsNames();
+        Set/* <String> */extendingConfs = new HashSet();
+        extendingConfs.add(extended);
+        for (int i = 0; i < allConfs.length; i++) {
+            gatherExtendingConfs(extendingConfs, allConfs[i], extended);
+        }
+        return (String[]) extendingConfs.toArray(new String[extendingConfs.size()]);
+    }
+
+    private boolean gatherExtendingConfs(Set/* <String> */extendingConfs, String conf,
+            String extended) {
+        if (extendingConfs.contains(conf)) {
+            return true;
+        }
+        String[] ext = md.getConfiguration(conf).getExtends();
+        if (ext == null || ext.length == 0) {
+            return false;
+        }
+        for (int i = 0; i < ext.length; i++) {
+            if (extendingConfs.contains(ext[i])) {
+                extendingConfs.add(conf);
+                return true;
+            }
+            if (ext[i].equals(extended)) {
+                extendingConfs.add(conf);
+                return true;
+            }
+            if (gatherExtendingConfs(extendingConfs, ext[i], extended)) {
+                extendingConfs.add(conf);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings,
+            List/* <ModuleId> */midToKeep) {
         DefaultModuleDescriptor fixedmd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
                 md.getStatus(), new Date());
 
@@ -342,9 +380,34 @@ public class ResolveReport {
             fixedmd.addConfiguration(new Configuration(resolvedConf[i]));
         }
 
-        // get dependencies
+        if (midToKeep != null && !midToKeep.isEmpty()) {
+            // add dependency we want to keep from the original module descriptor
+            DependencyDescriptor[] deps = md.getDependencies();
+            for (int i = 0; i < deps.length; i++) {
+                if (midToKeep.contains(deps[i].getDependencyId())) {
+                    DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
+                            deps[i].getDependencyRevisionId(), true, false, false);
+                    String[] confs = deps[i].getModuleConfigurations();
+                    for (int j = 0; j < confs.length; j++) {
+                        String[] extendedConf = getExtendingConfs(confs[j]);
+                        String[] depConfs = deps[i].getDependencyConfigurations(confs[j]);
+                        for (int k = 0; k < extendedConf.length; k++) {
+                            for (int l = 0; l < depConfs.length; l++) {
+                                dep.addDependencyConfiguration(extendedConf[k], depConfs[l]);
+                            }
+                        }
+                    }
+                    fixedmd.addDependency(dep);
+                }
+            }
+        }
+
+        // add resolved dependencies
         for (int i = 0; i < dependencies.size(); i++) {
             IvyNode node = (IvyNode) dependencies.get(i);
+            if (midToKeep != null && midToKeep.contains(node.getModuleId())) {
+                continue;
+            }
             String[] rootConfs = node.getRootModuleConfigurations();
             for (int j = 0; j < rootConfs.length; j++) {
                 if (node.isEvicted(rootConfs[j])) {

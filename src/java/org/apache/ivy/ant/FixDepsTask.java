@@ -19,8 +19,11 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.tools.ant.BuildException;
@@ -29,8 +32,31 @@ public class FixDepsTask extends IvyPostResolveTask {
 
     private File dest;
 
+    private List/* <Keep> */keeps = new ArrayList();
+
     public void setToFile(File dest) {
         this.dest = dest;
+    }
+
+    public static class Keep {
+
+        private String org;
+
+        private String module;
+
+        public void setOrg(String org) {
+            this.org = org;
+        }
+
+        public void setModule(String module) {
+            this.module = module;
+        }
+    }
+
+    public Keep createKeep() {
+        Keep k = new Keep();
+        keeps.add(k);
+        return k;
     }
 
     public void doExecute() throws BuildException {
@@ -45,7 +71,13 @@ public class FixDepsTask extends IvyPostResolveTask {
         }
 
         ResolveReport report = getResolvedReport();
-        ModuleDescriptor md = report.toFixedModuleDescriptor(getSettings());
+
+        List/*<ModuleId>*/ midToKeep = new ArrayList();
+        for (int i = 0; i < keeps.size(); i++) {
+            midToKeep.add(ModuleId.newInstance(((Keep) keeps.get(i)).org, ((Keep) keeps.get(i)).module)); 
+        }
+        
+        ModuleDescriptor md = report.toFixedModuleDescriptor(getSettings(), midToKeep);
         try {
             XmlModuleDescriptorWriter.write(md, dest);
         } catch (IOException e) {
