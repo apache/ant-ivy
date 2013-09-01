@@ -41,7 +41,7 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
     }
 
     public Iterator/* <ManifestAndLocation> */iterator() {
-        return new FSManifestIterator(root);
+        return new FSManifestIterator();
     }
 
     abstract protected List/* <T> */listBundleFiles(Object/* T */dir) throws IOException;
@@ -71,7 +71,7 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
 
         private Object/* T */currentDir = null;
 
-        FSManifestIterator(Object /* T */root) {
+        FSManifestIterator() {
             dirs.add(Collections.singleton(root).iterator());
         }
 

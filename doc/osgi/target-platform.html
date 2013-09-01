@@ -35,17 +35,32 @@
   </tr>
 </table>
 
-<hr />
-<center><b>TODO - WORK IN PROGRESS</b></center>
-<hr />
+The concept of "target platform" is a concept introduced by Eclipse&#153; to describe the set of bundle which will run together in an OSGi&#153; environement. Then when developping an OSGi bundle, we expect it to run in a such "target platform".
 
-Building an OSGi&#153; bundle with standard tools like <tt>javac</tt> and a classpath computed by Apache Ivy&#153; can be erroneous as these tools doesn't take into account the package visibility enforced by the OSGi metadata. Then switching to OSGi dedicated tools like the Eclipse&#153; JDT can be prefered. This kind of tools still need a "target platform", a set of jars against to compile and then later run. A target platform can be easily managed with Ivy and its OSGi capabilities.
+When developping a single OSGi bundle, a single ivy.xml (together with the use of the <a href="../use/fixdeps.html">fixdeps</a> task) is sufficent to describe precisely how the bundle requirements.
 
-<ul>Some links of interest:
-  <li><a href="../resolver/obr.html">OSGi Bundle Repository Resolver</a></li>
-  <li><a href="../resolver/updatesite.html">Eclipse updatesite Resolver</a></li>
-  <li><a href="../use/retrieve.html">Ant ivy:retrieve task</a></li>
+But when developping several bundles, it will be error prone to declare for each bundle its dependencies. Because once deployed in an OSGi environement, the bindings are sensitive to the available bundles. So when developping, we must ensure that the set of bundles will be the same set as the one at deploy time.
+
+The concept of "target platform" is a perfect fit to describe the set of bundles to resolve against. Here is a recipe to handle it with just Ant+Ivy.
+
+<h1>A Target Platform Project</h1>
+
+First you need a project (basically a folder) in which you will manage your target platform. In this project you'll need 3 files:
+<ul>
+<li>an <a href="../samples/target-platform/ivy.xml">ivy.xml</a> in which you will describe the bundles you need,</li>
+<li>an <a href="../samples/target-platform/ivysettings.xml">ivysettings.xml</a> which will describe where to download bundles from,</li>
+<li>and a <a href="../samples/target-platform/build.xml">build.xml</a> with which you'll manage your target platform.</li>
 </ul>
+
+In the build there is a first important target: <tt>'update-dependencies'</tt>. Since the OSGi dependencies are very sensible to the available resources to resolve against, it is important to make the resolve as tight and reproductible as possible. First this target will do a resolve with the <tt>ivy.xml</tt>: a resolve which is very sensible to the content of the remote repo, thus not much reproductible. And it is will generate an <tt>ivy-fixed.xml</tt> from the resolved depedencies: this Ivy file contains only fixed non transitive dependencies (see the <a href="../use/fixdeps.html">fixdeps</a> task for further info). With that <tt>ivy-fixed.xml</tt> file, resolves are then reproductible and will always generate the same set of artifacts.
+
+Once generated, it is recommended to share that <tt>ivy-fixed.xml</tt> file into you version control system (subversion, git, etc...). The target <tt>'update-dependencies'</tt> is then to be launched each time you edit the <tt>ivy.xml</tt>, when you want to change the content of your target platform.
+
+The second target <tt>'generate-target-platform'</tt> will generate an <tt>obr.xml</tt>, a OSGi Bundle repository descriptor. This file will list every artifact wich has been resolved by the <tt>ivy-fixed.xml</tt>. Then each of your bundles you develop will do its resolve against that <tt>obr.xml</tt> (see the <a href="../resolver/obr.html">obr resolver</a>).
+
+The generated <tt>obr.xml</tt> contains paths to the local filesystem, so it is recommended to not share it between developpers.
+
+If it is required to develop your plugin with the Eclipse PDE plugin, you can then use the alternative target <tt>generate-retrieved-target-platform</tt>. It has the same principle than the <tt>'generate-target-platform'</tt> but the artifacts are also retrieved in a single folder, just like are plugins in an Eclipse install. That way you can define your target platform within Eclipse quite easily.
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

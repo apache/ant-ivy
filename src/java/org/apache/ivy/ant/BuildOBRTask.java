@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.Iterator;
 
 import javax.xml.transform.TransformerConfigurationException;
@@ -32,6 +33,7 @@ import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.obr.xml.OBRXMLWriter;
+import org.apache.ivy.osgi.repo.ArtifactReportManifestIterable;
 import org.apache.ivy.osgi.repo.FSManifestIterable;
 import org.apache.ivy.osgi.repo.ResolverManifestIterable;
 import org.apache.ivy.plugins.resolver.BasicResolver;
@@ -41,7 +43,7 @@ import org.apache.tools.ant.BuildException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class BuildBundleRepoDescriptorTask extends IvyTask {
+public class BuildOBRTask extends IvyCacheTask {
 
     private String resolverName = null;
 
@@ -134,9 +136,16 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
             File basedir = ((DefaultRepositoryCacheManager) cacheManager).getBasedir();
             it = new FSManifestIterable(basedir).iterator();
         } else {
-            throw new BuildException(
-                    "No resolver, cache or basedir specified: "
-                            + "please provide one of them through the attribute 'resolver', 'cache' or 'dir'");
+            prepareAndCheck();
+            try {
+                it = new ArtifactReportManifestIterable(getArtifactReports()).iterator();
+            } catch (ParseException e) {
+                throw new BuildException("Impossible to parse the artifact reports: "
+                        + e.getMessage(), e);
+            } catch (IOException e) {
+                throw new BuildException("Impossible to read the artifact reports: "
+                        + e.getMessage(), e);
+            }
         }
 
         OutputStream out;
@@ -155,7 +164,7 @@ public class BuildBundleRepoDescriptorTask extends IvyTask {
 
         class AntMessageLogger2 extends AntMessageLogger {
             AntMessageLogger2() {
-                super(BuildBundleRepoDescriptorTask.this);
+                super(BuildOBRTask.this);
             }
         }
         IvyContext.getContext().getMessageLogger();

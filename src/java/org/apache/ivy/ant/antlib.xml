@@ -44,7 +44,7 @@
 	<taskdef name="findrevision" classname="org.apache.ivy.ant.IvyFindRevision"/>
 	<taskdef name="buildnumber" classname="org.apache.ivy.ant.IvyBuildNumber"/>
 	<taskdef name="cleancache" classname="org.apache.ivy.ant.IvyCleanCache"/>
-    <taskdef name="buildobr" classname="org.apache.ivy.ant.BuildBundleRepoDescriptorTask" />
+    <taskdef name="buildobr" classname="org.apache.ivy.ant.BuildOBRTask" />
     <taskdef name="convertmanifest" classname="org.apache.ivy.ant.ConvertManifestTask" />
     <taskdef name="fixdeps" classname="org.apache.ivy.ant.FixDepsTask" />
     <taskdef name="dependencytree" classname="org.apache.ivy.ant.IvyDependencyTree"/>
