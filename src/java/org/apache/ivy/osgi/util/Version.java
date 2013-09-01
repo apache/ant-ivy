@@ -83,22 +83,22 @@ public class Version implements Comparable/* <Version> */{
                 }
                 String[] splits = input.split("\\.");
                 if (splits == null || splits.length == 0 || splits.length > 4) {
-                    throw new RuntimeException("Ill formed OSGi version");
+                    throw new RuntimeException(new ParseException("Ill formed OSGi version", 0));
                 }
                 try {
                     major = Integer.parseInt(splits[0]);
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("Major part of an OSGi version should be an integer");
+                    throw new RuntimeException(new ParseException("Major part of an OSGi version should be an integer", 0));
                 }
                 try {
                     minor = splits.length >= 2 ? Integer.parseInt(splits[1]) : 0;
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("Minor part of an OSGi version should be an integer");
+                    throw new RuntimeException(new ParseException("Minor part of an OSGi version should be an integer", 0));
                 }
                 try {
                     patch = splits.length >= 3 ? Integer.parseInt(splits[2]) : 0;
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("Patch part of an OSGi version should be an integer");
+                    throw new RuntimeException(new ParseException("Patch part of an OSGi version should be an integer", 0));
                 }
                 qualifier = splits.length == 4 ? splits[3] : null;
                 splitted = true;

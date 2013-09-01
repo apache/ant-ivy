@@ -45,7 +45,15 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
                 throw new RuntimeException("Uncomparable versions:" + o1.getRevision() + " and "
                         + o2.getRevision() + " (" + e.getMessage() + ")");
             }
-            return v1.compareTo(v2);
+            try {
+                return v1.compareTo(v2);
+            } catch (RuntimeException e) {
+                if (e.getCause() instanceof ParseException) {
+                    throw new RuntimeException("Uncomparable versions:" + o1.getRevision() + " and "
+                            + o2.getRevision() + " (" + e.getMessage() + ")");
+                }
+                throw e;
+            }
         }
 
     }
