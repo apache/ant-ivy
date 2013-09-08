@@ -112,4 +112,9 @@ public class ManifestHeaderTest extends TestCase {
             ManifestHeaderValue.writeParseException(System.out, value, e);
         }
     }
+
+    public void testSpaceInValue() throws Exception {
+        ManifestHeaderValue value = new ManifestHeaderValue("glassfish javax.servlet.3.1.0.b33");
+        assertEquals("glassfish javax.servlet.3.1.0.b33", value.getSingleValue());
+    }
 }

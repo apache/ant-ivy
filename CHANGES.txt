@@ -151,6 +151,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: add support for source bundles from p2 repositories
 - IMPROVEMENT: add support for source URI from OBR repositories
 
+- FIX: ParseException when "Bundle-Description" is present in OSGI MANIFEST.MF (IVY-1438)
 - FIX: NIO FileLocker released locks too early (IVY-1424) (thanks to Charles Duffy)
 - FIX: Ssh Resolver doesn't work with Java 7 (IVY-1408) (thanks to Mykhailo Delegan)
 - FIX: Parsing publication date in Ant tasks not thread-safe (IVY-1412)

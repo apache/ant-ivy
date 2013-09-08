@@ -189,8 +189,6 @@ public class ManifestHeaderValue {
         private void parseValueOrParameter() throws ParseException {
             // true if the value/parameter parsing has started, white spaces skipped
             boolean start = false;
-            // true if the value/parameter parsing is ended, then only white spaces are allowed
-            boolean end = false;
             do {
                 switch (readNext()) {
                     case '\0':
@@ -210,15 +208,10 @@ public class ManifestHeaderValue {
                     case '\n':
                     case '\r':
                         if (start) {
-                            end = true;
+                            buffer.append(c);
                         }
                         break;
                     default:
-                        if (end) {
-                            error("Expecting the end of a value or of an parameter name");
-                            // try to recover: restart the parsing of the value or parameter
-                            end = false;
-                        }
                         start = true;
                         buffer.append(c);
                 }
