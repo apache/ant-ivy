@@ -131,6 +131,13 @@
                             ]
                         },
                         {
+                          "id":"compatibility",
+                          "title":"Compatibility",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"install",
                           "title":"Installation",
                           "children": [
