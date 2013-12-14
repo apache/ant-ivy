@@ -52,7 +52,11 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         cacheManager.setBasedir(f);
 
         artifact = createArtifact("org", "module", "rev", "name", "type", "ext");
-        origin = new ArtifactOrigin(artifact, true, "/some/where");
+        
+        Artifact originArtifact = createArtifact("org", "module", "rev", "name", "pom.original", "pom");
+        origin = new ArtifactOrigin(originArtifact, true, "file:/some/where.pom");
+
+        cacheManager.saveArtifactOrigin(originArtifact, origin);
         cacheManager.saveArtifactOrigin(artifact, origin);
     }
 
@@ -66,6 +70,7 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
     public void testArtifactOrigin() {
         ArtifactOrigin found = cacheManager.getSavedArtifactOrigin(artifact);
         assertEquals(origin, found);
+        assertEquals("pom", found.getArtifact().getExt());
 
         artifact = createArtifact("org", "module", "rev", "name", "type2", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);

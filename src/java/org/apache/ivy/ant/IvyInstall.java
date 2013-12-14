@@ -57,6 +57,8 @@ public class IvyInstall extends IvyTask {
 
     private boolean haltOnFailure = true;
 
+    private boolean installOriginalMetadata = false;
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -107,7 +109,8 @@ public class IvyInstall extends IvyTask {
                     .setOverwrite(overwrite)
                     .setConfs(conf.split(","))
                     .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
-                    .setMatcherName(matcher));
+                    .setMatcherName(matcher)
+                    .setInstallOriginalMetadata(installOriginalMetadata));
         } catch (Exception e) {
             throw new BuildException("impossible to install " + mrid + ": " + e, e);
         }
@@ -218,4 +221,11 @@ public class IvyInstall extends IvyTask {
         this.conf = conf;
     }
 
+    public boolean isInstallOriginalMetadata() {
+        return installOriginalMetadata;
+    }
+    
+    public void setInstallOriginalMetadata(boolean installOriginalMetadata) {
+        this.installOriginalMetadata = installOriginalMetadata;
+    }
 }

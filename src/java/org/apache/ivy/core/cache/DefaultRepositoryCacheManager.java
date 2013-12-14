@@ -23,11 +23,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -39,6 +42,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -465,6 +469,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
         cdf.setProperty(getIsLocalKey(artifact), String.valueOf(origin.isLocal()));
         cdf.setProperty(getLocationKey(artifact), origin.getLocation());
+        cdf.setProperty(getOriginalKey(artifact), getPrefixKey(origin.getArtifact()));
         if (origin.getLastChecked() != null) {
             cdf.setProperty(getLastCheckedKey(artifact), origin.getLastChecked().toString());
         }
@@ -478,9 +483,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         cdf.remove(getLocationKey(artifact));
         cdf.remove(getIsLocalKey(artifact));
         cdf.remove(getLastCheckedKey(artifact));
+        cdf.remove(getOriginalKey(artifact));
         cdf.save();
     }
 
+    private static final Pattern ARTIFACT_KEY_PATTERN = 
+            Pattern.compile(".*:(.*)#(.*)#(.*)#(.*)(\\.location)?");
+    
     public ArtifactOrigin getSavedArtifactOrigin(Artifact artifact) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (!lockMetadataArtifact(mrid)) {
@@ -493,6 +502,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             String local = cdf.getProperty(getIsLocalKey(artifact));
             String lastChecked = cdf.getProperty(getLastCheckedKey(artifact));
             String exists = cdf.getProperty(getExistsKey(artifact));
+            String original = cdf.getProperty(getOriginalKey(artifact));
 
             boolean isLocal = Boolean.valueOf(local).booleanValue();
 
@@ -501,6 +511,72 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 return ArtifactOrigin.unkwnown(artifact);
             }
 
+            if (original != null) {
+                // original artifact key artifact:[name]#[type]#[ext]#[hashcode]
+                java.util.regex.Matcher m = ARTIFACT_KEY_PATTERN.matcher(original);
+                if (m.matches()) {
+                    String origName = m.group(1); 
+                    String origType = m.group(2); 
+                    String origExt = m.group(3); 
+
+                    ArtifactRevisionId originArtifactId = ArtifactRevisionId.newInstance(
+                        artifact.getModuleRevisionId(), origName, origType, origExt);
+                    // second check: verify the hashcode of the cached artifact
+                    if (m.group(4).equals("" + originArtifactId.hashCode())) {
+                        try {
+                            artifact = new DefaultArtifact(originArtifactId, 
+                                artifact.getPublicationDate(), new URL(location), true);
+                        } catch (MalformedURLException e) {
+                            Message.debug(e);
+                        }
+                    }
+                }
+            } else {
+                // Fallback if cached with old version:
+                
+                // if the origin artifact has another extension (e.g. .pom) then make a synthetic
+                // origin artifact for it
+                if (!location.endsWith("." + artifact.getExt())) {
+                    // try to find other cached artifact info with same location. This must be the
+                    // origin. We must parse the key as we do not know for sure what the original 
+                    // artifact is named.
+                    Iterator it = cdf.entrySet().iterator();
+                    String ownLocationKey = getLocationKey(artifact);
+                    while (it.hasNext()) {
+                        Map.Entry entry = (Map.Entry) it.next();
+                        if (entry.getValue().equals(location)
+                                && !ownLocationKey.equals(entry.getKey())) {
+                            // found a match, key is artifact:[name]#[type]#[ext]#[hashcode].location
+                            java.util.regex.Matcher m = ARTIFACT_KEY_PATTERN.matcher(
+                                (String) entry.getKey());
+                            if (m.matches()) {
+                                String origName = m.group(1); 
+                                String origType = m.group(2); 
+                                String origExt = m.group(3); 
+
+                                // first check: the type should end in .original
+                                if (!origType.endsWith(".original")) {
+                                    continue;
+                                }
+                                
+                                ArtifactRevisionId originArtifactId = ArtifactRevisionId.newInstance(
+                                    artifact.getModuleRevisionId(), origName, origType, origExt);
+                                // second check: verify the hashcode of the cached artifact
+                                if (m.group(4).equals("" + originArtifactId.hashCode())) {
+                                    try {
+                                        artifact = new DefaultArtifact(originArtifactId, 
+                                            artifact.getPublicationDate(), new URL(location), true);
+                                    } catch (MalformedURLException e) {
+                                        Message.debug(e);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
             ArtifactOrigin origin = new ArtifactOrigin(artifact, isLocal, location);
             if (lastChecked != null) {
                 origin.setLastChecked(Long.valueOf(lastChecked));
@@ -576,6 +652,18 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private String getExistsKey(Artifact artifact) {
         String prefix = getPrefixKey(artifact);
         return prefix + ".exists";
+    }
+
+    /**
+     * Returns the key used to identify the original artifact.
+     * 
+     * @param artifact
+     *            the artifact to generate the key from. Cannot be null.
+     * @return the key to be used to reference the original artifact.
+     */
+    private String getOriginalKey(Artifact artifact) {
+        String prefix = getPrefixKey(artifact);
+        return prefix + ".original";
     }
 
     private PropertiesFile getCachedDataFile(ModuleDescriptor md) {
@@ -675,6 +763,17 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                             madr.setSize(ivyFile.length());
                             madr.setArtifactOrigin(
                                 getSavedArtifactOrigin(depMD.getMetadataArtifact()));
+                            if (madr.getArtifactOrigin().isExists()) {
+                                if (madr.getArtifactOrigin().isLocal() 
+                                        && madr.getArtifactOrigin().getArtifact().getUrl() != null) {
+                                    madr.setOriginalLocalFile(
+                                        new File(madr.getArtifactOrigin().getArtifact().getUrl().toURI()));
+                                } else {
+                                    // find locally cached file
+                                    madr.setOriginalLocalFile(
+                                        getArchiveFileInCache(madr.getArtifactOrigin().getArtifact()));
+                                }
+                            }
                             return new ResolvedModuleRevision(
                                 resolver, artResolver, depMD, madr);
                         } else {

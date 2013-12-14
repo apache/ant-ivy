@@ -21,6 +21,9 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.install.InstallOptions;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -180,6 +183,35 @@ public class IvyInstallTest extends TestCase {
         install.execute();
 
         assertFalse(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+    }
+
+    public void testInstallWithOriginalMetadata() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        install.setOrganisation("org.apache");
+        install.setModule("test");
+        install.setRevision("1.0");
+        install.setFrom("test");
+        install.setTo("install");
+        install.setHaltonfailure(false);
+        
+        try {
+            install.execute();
+        } catch (BuildException be) {
+            fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
+        }
+        
+        assertFalse(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
+        
+        install.setInstallOriginalMetadata(true);
+        
+        try {
+            install.setOverwrite(true);
+            install.execute();
+        } catch (BuildException be) {
+            fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
+        }
+        
+        assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
     
     public void testIVY843() {

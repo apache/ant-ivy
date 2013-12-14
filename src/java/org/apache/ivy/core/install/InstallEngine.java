@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -29,6 +30,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
@@ -153,10 +155,27 @@ public class InstallEngine {
                         }
                         
                         // publish metadata
-                        File localIvyFile = dependencies[i]
-                                                    .getModuleRevision().getReport().getLocalFile();
+                        MetadataArtifactDownloadReport artifactDownloadReport = dependencies[i]
+                                .getModuleRevision().getReport();
+                        File localIvyFile = artifactDownloadReport.getLocalFile();
                         toResolver.publish(
                             depmd.getMetadataArtifact(), localIvyFile, options.isOverwrite());
+                        
+                        if (options.isInstallOriginalMetadata()) {
+                            if (artifactDownloadReport.getArtifactOrigin() != null
+                                    && artifactDownloadReport.getArtifactOrigin().isExists()
+                                    && !ArtifactOrigin.isUnknown(artifactDownloadReport.getArtifactOrigin())
+                                    && artifactDownloadReport.getArtifactOrigin().getArtifact() != null
+                                    && artifactDownloadReport.getArtifactOrigin().getArtifact()
+                                        .getType().endsWith(".original")
+                                    && !artifactDownloadReport.getArtifactOrigin().getArtifact()
+                                        .getType().equals(depmd.getMetadataArtifact().getType()+".original")) {
+                                // publish original metadata artifact, too, as it has a different type
+                                toResolver.publish(artifactDownloadReport.getArtifactOrigin().getArtifact(),
+                                    artifactDownloadReport.getOriginalLocalFile(), 
+                                    options.isOverwrite());
+                            }
+                        }
                         
                         // end module publish
                         toResolver.commitPublishTransaction();

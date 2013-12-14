@@ -25,6 +25,7 @@ public class InstallOptions {
     private boolean transitive = true;
     private boolean validate = true;
     private boolean overwrite = false;
+    private boolean installOriginalMetadata = false;
     private String[] confs = {"*"};
     private Filter artifactFilter = FilterHelper.NO_FILTER;
     private String matcherName = PatternMatcher.EXACT;
@@ -69,6 +70,13 @@ public class InstallOptions {
     }
     public InstallOptions setConfs(String[] conf) {
         this.confs = conf;
+        return this;
+    }
+    public boolean isInstallOriginalMetadata() {
+        return installOriginalMetadata;
+    }
+    public InstallOptions setInstallOriginalMetadata(boolean installOriginalMetadata) {
+        this.installOriginalMetadata = installOriginalMetadata;
         return this;
     }
 }

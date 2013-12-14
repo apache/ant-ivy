@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -52,6 +53,28 @@ public class InstallTest extends TestCase {
         assertFalse(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar").exists());
     }
 
+    public void testMaven() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
+
+        ResolveReport rr = ivy.install(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), ivy.getSettings()
+                .getDefaultResolver().getName(), "install", new InstallOptions());
+
+        assertTrue(new File("build/test/install/org.apache/test/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/org.apache/test/test-1.0.jar").exists());
+        
+        // the original descriptor is not installed
+        assertFalse(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
+
+        ivy.install(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), ivy.getSettings()
+            .getDefaultResolver().getName(), "install", new InstallOptions()
+                .setInstallOriginalMetadata(true)
+                .setOverwrite(true));
+        
+        // the original descriptor is installed now, too
+        assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
+    }
+    
     public void testNoValidate() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
