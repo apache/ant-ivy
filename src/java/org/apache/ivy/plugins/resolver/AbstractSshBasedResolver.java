@@ -56,6 +56,16 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
     }
 
     /**
+     * Determines whether a local SSH agent may be used for authentication
+     *
+     * @param allowedAgentUse
+     *            true if an agent may be used if available
+     */
+    public void setAllowedAgentUse(boolean allowedAgentUse) {
+        getSshBasedRepository().setAllowedAgentUse(allowedAgentUse);
+    }
+
+    /**
      * Optional password file. If set the repository will use it as an encypted property file, to
      * load username and passwd entries, and to store them if the user choose to do so. Defaults to
      * user.dir/.ivy/[host].sftp.passwd, set it to null to disable this feature.

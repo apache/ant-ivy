@@ -39,6 +39,10 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+import com.jcraft.jsch.agentproxy.AgentProxyException;
+import com.jcraft.jsch.agentproxy.Connector;
+import com.jcraft.jsch.agentproxy.ConnectorFactory;
+import com.jcraft.jsch.agentproxy.RemoteIdentityRepository;
 
 /**
  * a class to cache SSH Connections and Channel for the SSH Repository each session is defined by
@@ -106,7 +110,7 @@ public final class SshCache {
         /**
          * attach an sftp channel to this cache entry
          * 
-         * @param channelSftp
+         * @param newChannel
          *            to attach
          */
         public void setChannelSftp(ChannelSftp newChannel) {
@@ -287,6 +291,25 @@ public final class SshCache {
     }
 
     /**
+     * Attempts to connect to a local SSH agent (using either UNIX sockets or PuTTY's Pageant)
+     *
+     * @param jsch
+     *          Connection to be attached to an available local agent
+     * @return
+     *          true if connected to agent, false otherwise
+     */
+    private boolean attemptAgentUse(JSch jsch) {
+        try {
+            Connector con = ConnectorFactory.getDefault().createConnector();
+            jsch.setIdentityRepository(new RemoteIdentityRepository(con));
+            return true;
+        } catch (AgentProxyException e) {
+            Message.verbose(":: SSH :: Failure connecting to agent :: " + e.toString());
+            return false;
+        }
+    }
+
+    /**
      * Gets a session from the cache or establishes a new session if necessary
      * 
      * @param host
@@ -303,10 +326,13 @@ public final class SshCache {
      *            to use for accessing the pemFile (optional)
      * @param passFile
      *            to store credentials
+     * @param allowedAgentUse
+     *            Whether to communicate with an agent for authentication
      * @return session or null if not successful
      */
     public Session getSession(String host, int port, String username, String userPassword,
-            File pemFile, String pemPassword, File passFile) throws IOException {
+            File pemFile, String pemPassword, File passFile, boolean allowedAgentUse)
+                    throws IOException {
         Checks.checkNotNull(host, "host");
         Checks.checkNotNull(username, "user");
         Entry entry = getCacheEntry(username, host, port);
@@ -322,6 +348,9 @@ public final class SshCache {
                     session = jsch.getSession(username, host, port);
                 } else {
                     session = jsch.getSession(username, host);
+                }
+                if (allowedAgentUse) {
+                    attemptAgentUse(jsch);
                 }
                 if (pemFile != null) {
                     jsch.addIdentity(pemFile.getAbsolutePath(), pemPassword);

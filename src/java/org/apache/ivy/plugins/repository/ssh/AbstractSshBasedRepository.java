@@ -47,6 +47,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     private int port = -1;
 
+    private boolean allowedAgentUse = false;
+
     public AbstractSshBasedRepository() {
         super();
     }
@@ -106,7 +108,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
              }
         }
         return SshCache.getInstance().getSession(host, port, user, userPassword, getKeyFile(),
-            getKeyFilePassword(), getPassFile());
+            getKeyFilePassword(), getPassFile(), isAllowedAgentUse());
     }
 
     /**
@@ -137,7 +139,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         } catch (URISyntaxException e) {
             Message.error(e.getMessage());
             Message.error("The uri '" + source + "' is in the wrong format.");
-            Message.error("Please use " + getRepositoryScheme() + "://user:pass@hostname/path/to/repository");
+            Message.error("Please use " + getRepositoryScheme()
+                + "://user:pass@hostname/path/to/repository");
             return null;
         }
     }
@@ -297,6 +300,22 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
      */
     public File getPassFile() {
         return passFile;
+    }
+
+    /**
+     * @return allowedAgentUse
+     *            Whether use of a local SSH agent for authentication is allowed
+     */
+    public boolean isAllowedAgentUse() {
+        return allowedAgentUse;
+    }
+
+    /**
+     * @param allowedAgentUse
+     *            Whether use of a local SSH agent for authentication is allowed
+     */
+    public void setAllowedAgentUse(boolean allowedAgentUse) {
+        this.allowedAgentUse = allowedAgentUse;
     }
 
     protected abstract String getRepositoryScheme();
