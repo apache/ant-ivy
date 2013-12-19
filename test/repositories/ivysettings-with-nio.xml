@@ -1,0 +1,50 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivysettings>
+	<properties file="${ivy.settings.dir}/ivysettings.properties" />
+	<settings defaultResolver="test"/>
+	<caches lockStrategy="artifact-lock-nio" defaultCacheDir="${cache.dir}" />
+	<resolvers>
+		<chain name="test">
+			<filesystem name="1">
+				<ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+				<artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+			</filesystem>
+			<dual name="2">
+				<filesystem name="2-ivy">
+					<ivy pattern="${ivy.settings.dir}/2/[module]/ivy-[revision].xml"/>
+				</filesystem>
+				<filesystem name="2-artifact">
+					<artifact pattern="${ivy.settings.dir}/2/[module]/[artifact]-[revision].[ext]"/>
+					<artifact pattern="${ivy.settings.dir}/2/[module]/[artifact].[ext]"/>
+				</filesystem>
+			</dual>
+			<ibiblio name="m2" m2compatible="true" useMavenMetadata="true" 
+			         root="file:${ivy.settings.dir}/m2" />
+		</chain>
+		<filesystem name="install">
+			<ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+		</filesystem>
+		<filesystem name="transactional">
+			<ivy pattern="${ivy.basedir}/build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+		</filesystem>
+	</resolvers>
+</ivysettings>

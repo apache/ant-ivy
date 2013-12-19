@@ -30,15 +30,17 @@ import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.apache.tools.ant.taskdefs.Parallel;
 
 public class IvyResolveTest extends TestCase {
     private File cache;
 
+    private Project project;
     private IvyResolve resolve;
 
     protected void setUp() throws Exception {
         createCache();
-        Project project = new Project();
+        project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
 
@@ -60,6 +62,24 @@ public class IvyResolveTest extends TestCase {
         del.setProject(new Project());
         del.setDir(cache);
         del.execute();
+    }
+    
+    public void testIVY1454() throws Exception {
+        // run init in parent thread, then resolve in children
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-with-nio.xml");
+        project.setProperty("ivy.log.locking", "true");
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        
+        Parallel parallel = new Parallel();
+        parallel.setThreadCount(4);
+        parallel.addTask(resolve);
+        parallel.addTask(resolve);
+        parallel.addTask(resolve);
+        parallel.addTask(resolve);
+        parallel.execute();
+        
+        assertTrue(getResolvedIvyFileInCache(
+            ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
     
     public void testIVY779() throws Exception {

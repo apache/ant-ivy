@@ -21,8 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.ivy.util.Message;
 
@@ -37,8 +40,13 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
     private FileLocker locker;
     
     private long timeout = DEFAULT_TIMEOUT;
-    
-    private Map/*<File, Integer>*/ currentLockCounters = new HashMap();
+
+    /**
+     * Lock counter list must be static: locks are implicitly shared to the
+     * entire process, so the list too much be.
+     */
+    private static ConcurrentMap/*<File, Map<Thread, Integer>>*/ currentLockHolders
+        = new ConcurrentHashMap();
     
     protected FileBasedLockStrategy() {
         this(new CreateFileLocker(false), false);
@@ -53,31 +61,52 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         this.locker = locker;
     }
 
-        
     protected boolean acquireLock(File file) throws InterruptedException {
+        Thread currentThread = Thread.currentThread();
         if (isDebugLocking()) {
             debugLocking("acquiring lock on " + file);
         }
         long start = System.currentTimeMillis();
         do {
-            synchronized (this) {
-                if (hasLock(file)) {
-                    int holdLocks = incrementLock(file);
+            synchronized (currentLockHolders) {
+                if (isDebugLocking()) {
+                    debugLocking("entered synchronized area (locking)");
+                }
+                int lockCount = hasLock(file, currentThread);
+                if (isDebugLocking()) {
+                    debugLocking("current status for " + file
+                        + " is " + lockCount
+                        + " held locks: "
+                        + getCurrentLockHolderNames(file));
+                }
+                if (lockCount < 0) {
+                    /* Another thread in this process holds the lock; we need to wait */
+                    if (isDebugLocking()) {
+                        debugLocking("waiting for another thread to release the lock: "
+                                + getCurrentLockHolderNames(file));
+                    }
+                } else if (lockCount > 0) {
+                    int holdLocks = incrementLock(file, currentThread);
                     if (isDebugLocking()) {
                         debugLocking("reentrant lock acquired on " + file 
                             + " in " + (System.currentTimeMillis() - start) + "ms"
                             + " - hold locks = " + holdLocks);
                     }
                     return true;
-                }
-                if (locker.tryLock(file)) {
-                    if (isDebugLocking()) {
-                        debugLocking("lock acquired on " + file 
-                            + " in " + (System.currentTimeMillis() - start) + "ms");
+                } else {
+                    /* No prior lock on this file is held at all */
+                    if (locker.tryLock(file)) {
+                        if (isDebugLocking()) {
+                            debugLocking("lock acquired on " + file 
+                                + " in " + (System.currentTimeMillis() - start) + "ms");
+                        }
+                        incrementLock(file, currentThread);
+                        return true;                        
                     }
-                    incrementLock(file);
-                    return true;
                 }
+            }
+            if (isDebugLocking()) {
+                debugLocking("failed to acquire lock; sleeping for retry...");
             }
             Thread.sleep(SLEEP_TIME);
         } while (System.currentTimeMillis() - start < timeout);
@@ -85,8 +114,15 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
     }
 
     protected void releaseLock(File file) {
-        synchronized (this) {
-            int holdLocks = decrementLock(file);
+        Thread currentThread = Thread.currentThread();
+        if (isDebugLocking()) {
+            debugLocking("releasing lock on " + file);
+        }
+        synchronized (currentLockHolders) {
+            if (isDebugLocking()) {
+                debugLocking("entered synchronized area (unlocking)");
+            }
+            int holdLocks = decrementLock(file, currentThread);
             if (holdLocks == 0) {
                 locker.unlock(file);
                 if (isDebugLocking()) {
@@ -106,25 +142,105 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         Message.info(Thread.currentThread() + " " + System.currentTimeMillis() + " " + msg);
     }
 
-    private boolean hasLock(File file) {
-        Integer c = (Integer) currentLockCounters.get(file);
-        return c != null && c.intValue() > 0;
+    /** Determine the state of the lockfile.
+     * 
+     * Must be called from within a synchronized block.
+     * 
+     * Three possibilities exist:
+     *  - The lock is held by the current thread (>0)
+     *  - The lock is held by one or more different threads (-1)
+     *  - The lock is not held at all (0).
+     * 
+     * @param file file to lock
+     * @param forThread thread for which lock status is being queried
+     */
+    private int hasLock(File file, Thread forThread) {
+        Map locksPerThread = (Map) currentLockHolders.get(file);
+        if (locksPerThread == null) {
+            return 0;
+        }
+        if (locksPerThread.isEmpty()) {
+            return 0;
+        }
+        Integer counterObj = (Integer) locksPerThread.get(forThread);
+        int counter = counterObj == null ? 0 : counterObj.intValue();
+        if (counter > 0) {
+            return counter;
+        } else {
+            return -1;
+        }
     }
     
-    private int incrementLock(File file) {
-        Integer c = (Integer) currentLockCounters.get(file);
-        int holdLocks = c == null ? 1 : c.intValue() + 1;
-        currentLockCounters.put(file, new Integer(holdLocks));
+    /** Record that this thread holds the lock.
+     * 
+     * Asserts that the lock has been previously grabbed by this thread.
+     * Must be called from a synchronized block in which the lock was grabbed. 
+     * 
+     * @param file file which has been locked
+     * @param forThread thread for which locking occurred
+     * @return number of times this thread has grabbed the lock
+     */
+    private int incrementLock(File file, Thread forThread) {
+        Map locksPerThread = (Map) currentLockHolders.get(file);
+        if (locksPerThread == null) {
+            locksPerThread = new ConcurrentHashMap();
+            currentLockHolders.put(file, locksPerThread);
+        }
+        Integer c = (Integer) locksPerThread.get(forThread);
+        int holdLocks = c == null ? 1 : c.intValue() + 1; 
+        locksPerThread.put(forThread, new Integer(holdLocks));
         return holdLocks;
     }
-
-    private int decrementLock(File file) {
-        Integer c = (Integer) currentLockCounters.get(file);
-        int dc = c == null ? 0 : c.intValue() - 1;
-        currentLockCounters.put(file, new Integer(dc));
-        return dc;
+    
+    /** Decrease depth of this thread's lock.
+     * 
+     * Must be called within a synchronized block.
+     * 
+     * If this returns 0, the caller is responsible for releasing the lock
+     * within that same block. 
+     * 
+     * @param file file for which lock depth is being decreased
+     * @param forThread thread for which lock depth is being decreased
+     * @return remaining depth of this lock
+     */
+    private int decrementLock(File file, Thread forThread) {
+        ConcurrentHashMap locksPerThread = (ConcurrentHashMap) currentLockHolders.get(file);
+        if (locksPerThread == null) {
+            throw new RuntimeException("Calling decrementLock on a thread which holds no locks");
+        }
+        Integer c = (Integer) locksPerThread.get(forThread);
+        int oldHeldLocks = c == null ? 0 : c.intValue();
+        if (oldHeldLocks <= 0) {
+            throw new RuntimeException("Calling decrementLock on a thread which holds no locks");
+        }
+        int newHeldLocks = oldHeldLocks - 1;
+        if (newHeldLocks > 0) {
+            locksPerThread.put(forThread, new Integer(newHeldLocks));
+        } else {
+            locksPerThread.remove(forThread);
+        }
+        return newHeldLocks;
     }
 
+    /** Return a string naming the threads which currently hold this lock.
+     */
+    protected String getCurrentLockHolderNames(File file) {
+        StringBuilder sb = new StringBuilder();
+        ConcurrentHashMap m = (ConcurrentHashMap) currentLockHolders.get(file);
+        if (m == null) {
+            return "(NULL)";
+        }
+        Enumeration threads = m.keys();
+        while (threads.hasMoreElements()) {
+            Thread t = (Thread) threads.nextElement();
+            sb.append(t.toString());
+            if (threads.hasMoreElements()) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+    
     public static interface FileLocker {
         boolean tryLock(File f);
         void unlock(File f);
@@ -171,7 +287,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      */
     public static class NIOFileLocker implements FileLocker {
         
-        private Map locks = new HashMap();
+        private Map locks = new ConcurrentHashMap();
         private boolean debugLocking;
         
         public NIOFileLocker(boolean debugLocking) {
@@ -191,8 +307,9 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         public boolean tryLock(File file) {
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
+                    // this must not be closed until unlock
                     RandomAccessFile raf =
-                        new RandomAccessFile(file, "rw");            
+                        new RandomAccessFile(file, "rw");
                     FileLock l = raf.getChannel().tryLock();
                     if (l != null) {
                         synchronized (this) {
