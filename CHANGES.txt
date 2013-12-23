@@ -162,6 +162,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Parsing publication date in Ant tasks not thread-safe (IVY-1412)
 - FIX: NullPointerException when using httpclient and server doesn't return content-type header (IVY-1400) (thanks to Frederic Riviere)
 - FIX: Properly handle evicted nodes in ResolveReport
+- FIX: Artifact repository locking did not correctly handle threaded use (IVY-1454) (thanks to Carsten Pfeiffer)
 
    2.3.0
 =====================================
