@@ -82,6 +82,9 @@ public class RequirementAdapter {
         }
         BundleRequirement requirement = new BundleRequirement(type, name, range, resolution);
         info.addRequirement(requirement);
+        if (BundleInfo.EXECUTION_ENVIRONMENT_TYPE.equals(type)) {
+            info.addExecutionEnvironment(name);
+        }
     }
 
     private VersionRange getVersionRange() {
@@ -96,7 +99,8 @@ public class RequirementAdapter {
             throws UnsupportedFilterException, ParseException {
         String att = compareFilter.getLeftValue();
         if (BundleInfo.PACKAGE_TYPE.equals(att) || BundleInfo.BUNDLE_TYPE.equals(att)
-                || "symbolicname".equals(att) || BundleInfo.SERVICE_TYPE.equals(att)) {
+                || BundleInfo.EXECUTION_ENVIRONMENT_TYPE.equals(att) || "symbolicname".equals(att)
+                || BundleInfo.SERVICE_TYPE.equals(att)) {
             if (not) {
                 throw new UnsupportedFilterException(
                         "Not filter on requirement comparaison is not supported");

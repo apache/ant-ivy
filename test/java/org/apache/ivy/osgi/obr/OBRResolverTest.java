@@ -47,6 +47,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
+import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.osgi.core.OSGiManifestParser;
 import org.apache.ivy.osgi.repo.AbstractOSGiResolver.RequirementStrategy;
@@ -78,6 +79,10 @@ public class OBRResolverTest extends TestCase {
             .newInstance(BundleInfo.BUNDLE_TYPE,
                 "org.apache.ivy.osgi.testbundle.exporting.ambiguity", "3.3.3");
 
+    private static final ModuleRevisionId MRID_TEST_BUNDLE_IMPORTING_JREPACKAGE = ModuleRevisionId
+            .newInstance(BundleInfo.BUNDLE_TYPE,
+                "org.apache.ivy.osgi.testbundle.importing.jrepackage", "1.2.3");
+
     private IvySettings settings;
 
     private File cache;
@@ -91,6 +96,8 @@ public class OBRResolverTest extends TestCase {
     private OBRResolver bundleUrlResolver;
 
     private DualResolver dualResolver;
+
+    private ExecutionEnvironmentProfileProvider profileProvider = ExecutionEnvironmentProfileProvider.getInstance();
 
     public void setUp() throws Exception {
         settings = new IvySettings();
@@ -272,6 +279,13 @@ public class OBRResolverTest extends TestCase {
                 MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }
 
+    public void testResolveRequireJre() throws Exception {
+        String jarName = "org.apache.ivy.osgi.testbundle.requirejre_2.2.2.jar";
+        bundleResolver.setRequirementStrategy(RequirementStrategy.noambiguity);
+        genericTestResolve(jarName, "default",
+            new ModuleRevisionId[] {MRID_TEST_BUNDLE_IMPORTING_JREPACKAGE});
+    }
+
     private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids)
             throws Exception {
         genericTestResolve(jarName, conf, expectedMrids, null);
@@ -284,7 +298,7 @@ public class OBRResolverTest extends TestCase {
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
         bundleInfo.setUri(new File("test/test-repo/bundlerepo/" + jarName).toURI());
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-            OSGiManifestParser.getInstance(), null, bundleInfo, null);
+            OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertFalse("resolve failed " + resolveReport.getAllProblemMessages(),
@@ -316,7 +330,7 @@ public class OBRResolverTest extends TestCase {
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
         bundleInfo.setUri(new File("test/test-repo/bundlerepo/" + jarName).toURI());
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-            OSGiManifestParser.getInstance(), null, bundleInfo, null);
+            OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertTrue(resolveReport.hasError());

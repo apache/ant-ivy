@@ -47,6 +47,7 @@ public class ModuleDescriptorWrapper {
             ExecutionEnvironmentProfileProvider profileProvider) {
         this.bundleInfo = bundleInfo;
         this.baseUri = baseUri;
+        this.profileProvider = profileProvider;
     }
 
     public void setSource(URI source) {
@@ -103,5 +104,10 @@ public class ModuleDescriptorWrapper {
             return false;
         }
         return bundleInfo.equals(((ModuleDescriptorWrapper) obj).bundleInfo);
+    }
+
+    @Override
+    public String toString() {
+        return getModuleDescriptor().toString();
     }
 }

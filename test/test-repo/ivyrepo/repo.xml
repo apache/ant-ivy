@@ -99,4 +99,13 @@
         <require name="bundle" filter="(&amp;(symbolicname=org.apache.ivy.osgi.testbundle.importing.version)(version&gt;=3.2.1))" />
         <require name="package" filter="(package=org.apache.ivy.osgi.testbundle.importing.version)" />
     </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.importing.jrepackage" version="1.2.3"
+        uri="ivy:///org.apache.ivy.osgi/testbundle-importing-jrepackage?rev=1.2.3&amp;type=jar&amp;art=testbundle-importing-jrepackage&amp;ext=jar">
+        <require name="package" filter="(package=javax.xml.parsers)" />
+    </resource>
+    <resource symbolicname="org.apache.ivy.osgi.testbundle.requirejre" version="2.2.2"
+        uri="ivy:///org.apache.ivy.osgi/testbundle-requirejre?rev=2.2.2&amp;type=jar&amp;art=testbundle-requirejre&amp;ext=jar">
+        <require name="bundle" filter="(&amp;(symbolicname=org.apache.ivy.osgi.testbundle.importing.jrepackage)(version&gt;=1.2.3))" />
+        <require name="ee" filter="(ee=JavaSE-1.7)" />
+    </resource>
 </repository>

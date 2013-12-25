@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 public class ExecutionEnvironmentProfile {
 
-    private Set/* <String> */pkgNames = new TreeSet/* <String> */();
+    private Set<String> pkgNames = new TreeSet<String>();
 
     private final String name;
 
@@ -40,7 +40,7 @@ public class ExecutionEnvironmentProfile {
         }
     }
 
-    public Set/* <String> */getPkgNames() {
+    public Set<String> getPkgNames() {
         return pkgNames;
     }
 

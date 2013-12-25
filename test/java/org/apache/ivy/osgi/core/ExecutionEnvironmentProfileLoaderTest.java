@@ -26,8 +26,8 @@ import junit.framework.TestCase;
 public class ExecutionEnvironmentProfileLoaderTest extends TestCase {
 
     public void testLoad() throws Exception {
-        Map/* <String, ExecutionEnvironmentProfile> */ profiles = ExecutionEnvironmentProfileProvider.loadDefaultProfileList();
-        assertEquals(9, profiles.size());
+        Map<String, ExecutionEnvironmentProfile> profiles = ExecutionEnvironmentProfileProvider.loadDefaultProfileList();
+        assertEquals(11, profiles.size());
 
         assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGI_MINIMUM-1.0")).getPkgNames().size());
         assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGI_MINIMUM-1.1")).getPkgNames().size());
@@ -35,8 +35,10 @@ public class ExecutionEnvironmentProfileLoaderTest extends TestCase {
         assertEquals(3, ((ExecutionEnvironmentProfile) profiles.get("CDC-1.1_Foundation-1.1")).getPkgNames().size());
         assertEquals(24, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.2")).getPkgNames().size());
         assertEquals(40, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.3")).getPkgNames().size());
-        assertEquals(95, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.4")).getPkgNames().size());
-        assertEquals(120, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.5")).getPkgNames().size());
-        assertEquals(154, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.6")).getPkgNames().size());
+        assertEquals(96, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.4")).getPkgNames().size());
+        assertEquals(122, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.5")).getPkgNames().size());
+        assertEquals(158, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.6")).getPkgNames().size());
+        assertEquals(159, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.7")).getPkgNames().size());
+        assertEquals(159, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.8")).getPkgNames().size());
     }
 }

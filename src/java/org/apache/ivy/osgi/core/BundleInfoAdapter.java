@@ -142,7 +142,7 @@ public class BundleInfoAdapter {
                 Iterator itPkg = profile.getPkgNames().iterator();
                 while (itPkg.hasNext()) {
                     String pkg = (String) itPkg.next();
-                    ArtifactId id = new ArtifactId(ModuleId.newInstance(BundleInfo.BUNDLE_TYPE, pkg),
+                    ArtifactId id = new ArtifactId(ModuleId.newInstance(BundleInfo.PACKAGE_TYPE, pkg),
                             PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
                             PatternMatcher.ANY_EXPRESSION);
                     DefaultExcludeRule rule = new DefaultExcludeRule(id,
@@ -298,6 +298,11 @@ public class BundleInfoAdapter {
 
             if (BundleInfo.PACKAGE_TYPE.equals(type) && exportedPkgNames.contains(name)) {
                 // don't declare package exported by the current bundle
+                continue;
+            }
+
+            if (BundleInfo.EXECUTION_ENVIRONMENT_TYPE.equals(type)) {
+                // execution environment are handled elsewhere
                 continue;
             }
 

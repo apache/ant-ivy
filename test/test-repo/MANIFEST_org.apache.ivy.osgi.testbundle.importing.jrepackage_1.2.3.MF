@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.apache.ivy.osgi.testbundle.importing.jrepackage
+Bundle-Version: 1.2.3
+Import-Package: javax.xml.parsers

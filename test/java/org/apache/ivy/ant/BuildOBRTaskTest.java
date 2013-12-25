@@ -91,7 +91,7 @@ public class BuildOBRTaskTest extends TestCase {
 
         BundleRepoDescriptor obr = readObr(obrFile);
 
-        assertEquals(12, CollectionUtils.toList(obr.getModules()).size());
+        assertEquals(14, CollectionUtils.toList(obr.getModules()).size());
     }
 
     public void testEmptyDir() throws Exception {

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.apache.ivy.osgi.testbundle.requirejre
+Bundle-Version: 2.2.2
+Require-Bundle: org.apache.ivy.osgi.testbundle.importing.jrepackage;bundle-version="1.2.3"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -34,7 +33,7 @@ public class ExecutionEnvironmentProfileProvider {
 
     private static final String PACKAGE_PREFIX = "org/apache/ivy/osgi/core/";
 
-    private Map/* <String, ExecutionEnvironmentProfile> */profileList;
+    private Map<String, ExecutionEnvironmentProfile> profileList;
 
     private static final ExecutionEnvironmentProfileProvider INSTANCE;
 
@@ -58,7 +57,7 @@ public class ExecutionEnvironmentProfileProvider {
         return (ExecutionEnvironmentProfile) profileList.get(profile);
     }
 
-    public static Map/* <String, ExecutionEnvironmentProfile> */loadDefaultProfileList()
+    public static Map<String, ExecutionEnvironmentProfile> loadDefaultProfileList()
             throws IOException {
         ClassLoader loader = ExecutionEnvironmentProfileProvider.class.getClassLoader();
         InputStream defaultProfilesFile = loader.getResourceAsStream(PACKAGE_PREFIX
@@ -73,10 +72,8 @@ public class ExecutionEnvironmentProfileProvider {
         } finally {
             defaultProfilesFile.close();
         }
-        Map/* <String, ExecutionEnvironmentProfile> */profiles = new HashMap();
-        Iterator itProp = props.entrySet().iterator();
-        while (itProp.hasNext()) {
-            Entry/* <String, String> */prop = (Entry) itProp.next();
+        Map<String, ExecutionEnvironmentProfile> profiles = new HashMap<String, ExecutionEnvironmentProfile>();
+        for (Entry<Object, Object> prop : props.entrySet()) {
             String propName = (String) prop.getKey();
             if (propName.endsWith(".pkglist")) {
                 String profileName = propName.substring(0, propName.length() - 8);
@@ -88,12 +85,8 @@ public class ExecutionEnvironmentProfileProvider {
         return profiles;
     }
 
-    private static ExecutionEnvironmentProfile loadProfile(Properties props, Map/*
-                                                                                 * <String,
-                                                                                 * ExecutionEnvironmentProfile
-                                                                                 * >
-                                                                                 */profiles,
-            String name) {
+    private static ExecutionEnvironmentProfile loadProfile(Properties props,
+            Map<String, ExecutionEnvironmentProfile> profiles, String name) {
 
         ExecutionEnvironmentProfile profile = new ExecutionEnvironmentProfile(name);
 
@@ -106,9 +99,8 @@ public class ExecutionEnvironmentProfileProvider {
                 // not loaded yet, so load it now
                 extendedProfile = loadProfile(props, profiles, extendedProfileName);
             }
-            Iterator itExtended = extendedProfile.getPkgNames().iterator();
-            while (itExtended.hasNext()) {
-                profile.addPkgName((String) itExtended.next());
+            for (String pkgName : extendedProfile.getPkgNames()) {
+                profile.addPkgName(pkgName);
             }
         }
 

@@ -18,8 +18,7 @@
 package org.apache.ivy.osgi.core;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +37,8 @@ public class BundleInfo {
 
     public static final String BUNDLE_TYPE = "bundle";
 
+    public static final String EXECUTION_ENVIRONMENT_TYPE = "ee";
+
     public static final String SERVICE_TYPE = "service";
 
     private String symbolicName;
@@ -48,11 +49,11 @@ public class BundleInfo {
 
     private Version version;
 
-    private Set/* <BundleRequirement> */requirements = new LinkedHashSet/* <BundleRequirement> */();
+    private Set<BundleRequirement> requirements = new LinkedHashSet<BundleRequirement>();
 
-    private Set/* <BundleCapability> */capabilities = new LinkedHashSet/* <BundleCapability> */();
+    private Set<BundleCapability> capabilities = new LinkedHashSet<BundleCapability>();
 
-    private List/* <String> */executionEnvironments = Collections.EMPTY_LIST;
+    private List<String> executionEnvironments = new ArrayList<String>();
 
     private String description;
 
@@ -76,7 +77,7 @@ public class BundleInfo {
 
     private boolean hasInnerClasspath;
 
-    private List/* <String> */classpath;
+    private List<String> classpath;
 
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
@@ -177,7 +178,7 @@ public class BundleInfo {
         requirements.add(requirement);
     }
 
-    public Set/* <BundleRequirement> */getRequirements() {
+    public Set<BundleRequirement> getRequirements() {
         return requirements;
     }
 
@@ -185,16 +186,24 @@ public class BundleInfo {
         capabilities.add(capability);
     }
 
-    public Set/* <BundleCapability> */getCapabilities() {
+    public Set<BundleCapability> getCapabilities() {
         return capabilities;
     }
 
-    public List/* <String> */getExecutionEnvironments() {
+    public List<String> getExecutionEnvironments() {
         return executionEnvironments;
     }
 
-    public void setExecutionEnvironments(List/* <String> */executionEnvironment) {
-        this.executionEnvironments = executionEnvironment;
+    public void setExecutionEnvironments(List<String> executionEnvironments) {
+        this.executionEnvironments = executionEnvironments;
+        for (String executionEnvironment : executionEnvironments) {
+            addRequirement(new BundleRequirement(EXECUTION_ENVIRONMENT_TYPE, executionEnvironment,
+                    null, null));
+        }
+    }
+
+    public void addExecutionEnvironment(String name) {
+        executionEnvironments.add(name);
     }
 
     public void setSourceURI(URI sourceURI) {
@@ -237,11 +246,11 @@ public class BundleInfo {
         return hasInnerClasspath;
     }
 
-    public void setClasspath(List/* <String> */classpath) {
+    public void setClasspath(List<String> classpath) {
         this.classpath = classpath;
     }
 
-    public List/* <String> */getClasspath() {
+    public List<String> getClasspath() {
         return classpath;
     }
 
@@ -345,11 +354,9 @@ public class BundleInfo {
         return true;
     }
 
-    public Set/* <BundleRequirement> */getRequires() {
-        Set/* <BundleRequirement> */set = new LinkedHashSet/* <BundleRequirement> */();
-        Iterator itRequirements = requirements.iterator();
-        while (itRequirements.hasNext()) {
-            BundleRequirement requirement = (BundleRequirement) itRequirements.next();
+    public Set<BundleRequirement> getRequires() {
+        Set<BundleRequirement> set = new LinkedHashSet<BundleRequirement>();
+        for (BundleRequirement requirement : requirements) {
             if (requirement.getType().equals(BUNDLE_TYPE)) {
                 set.add(requirement);
             }
@@ -357,11 +364,9 @@ public class BundleInfo {
         return set;
     }
 
-    public Set/* <BundleRequirement> */getImports() {
-        Set/* <BundleRequirement> */set = new LinkedHashSet/* <BundleRequirement> */();
-        Iterator itRequirements = requirements.iterator();
-        while (itRequirements.hasNext()) {
-            BundleRequirement requirement = (BundleRequirement) itRequirements.next();
+    public Set<BundleRequirement> getImports() {
+        Set<BundleRequirement> set = new LinkedHashSet<BundleRequirement> ();
+        for (BundleRequirement requirement : requirements) {
             if (requirement.getType().equals(PACKAGE_TYPE)) {
                 set.add(requirement);
             }
@@ -369,11 +374,9 @@ public class BundleInfo {
         return set;
     }
 
-    public Set/* <ExportPackage> */getExports() {
-        Set/* <ExportPackage> */set = new LinkedHashSet/* <ExportPackage> */();
-        Iterator itCapabilities = capabilities.iterator();
-        while (itCapabilities.hasNext()) {
-            BundleCapability capability = (BundleCapability) itCapabilities.next();
+    public Set<ExportPackage> getExports() {
+        Set<ExportPackage> set = new LinkedHashSet<ExportPackage>();
+        for (BundleCapability capability : capabilities) {
             if (PACKAGE_TYPE.equals(capability.getType())) {
                 set.add((ExportPackage) capability);
             }
@@ -381,11 +384,9 @@ public class BundleInfo {
         return set;
     }
 
-    public Set/* <BundleCapability> */getServices() {
-        Set/* <BundleCapability> */set = new LinkedHashSet/* <BundleCapability> */();
-        Iterator itCapabilities = capabilities.iterator();
-        while (itCapabilities.hasNext()) {
-            BundleCapability capability = (BundleCapability) itCapabilities.next();
+    public Set<BundleCapability> getServices() {
+        Set<BundleCapability> set = new LinkedHashSet<BundleCapability>();
+        for (BundleCapability capability : capabilities) {
             if (SERVICE_TYPE.equals(capability.getType())) {
                 set.add(capability);
             }
