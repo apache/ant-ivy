@@ -99,9 +99,7 @@ public class ExecutionEnvironmentProfileProvider {
                 // not loaded yet, so load it now
                 extendedProfile = loadProfile(props, profiles, extendedProfileName);
             }
-            for (String pkgName : extendedProfile.getPkgNames()) {
-                profile.addPkgName(pkgName);
-            }
+            profile.pkgNames.addAll(extendedProfile.pkgNames);
         }
 
         // load the actual list
@@ -110,11 +108,24 @@ public class ExecutionEnvironmentProfileProvider {
         for (int i = 0; i < packages.length; i++) {
             String pkg = packages[i].trim();
             if (pkg.length() != 0) {
-                profile.addPkgName(pkg);
+                profile.pkgNames.add(pkg);
             }
         }
 
         profiles.put(name, profile);
+
+        String aliasList = props.getProperty(name + ".aliases");
+        if (aliasList != null) {
+            String[] aliases = aliasList.split(",");
+            for (int i = 0; i < aliases.length; i++) {
+                String alias = aliases[i].trim();
+                if (alias.length() != 0) {
+                    ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(alias);
+                    profileAlias.pkgNames = profile.pkgNames;
+                    profiles.put(alias, profileAlias);
+                }
+            }
+        }
 
         Message.verbose("Execution environment profile " + profile.getName() + " loaded");
 
