@@ -164,6 +164,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Properly handle evicted nodes in ResolveReport
 - FIX: Artifact repository locking did not correctly handle threaded use (IVY-1454) (thanks to Carsten Pfeiffer)
 - FIX: Better support for "Bundle-RequiredExecutionEnvironment" from an OSGi MANIFEST.MF
+- FIX: When inheriting a module descriptor, also merge the exclude rules
 
    2.3.0
 =====================================

@@ -477,6 +477,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (extendTypes.contains("licenses")) {
                     mergeLicenses(parent.getLicenses());
                 }
+                if (extendTypes.contains("excludes")) {
+                    mergeExcludes(parent.getAllExcludeRules());
+                }
             }
 
         }
@@ -491,6 +494,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             mergeDependencies(parent.getDependencies());
             mergeDescription(parent.getDescription());
             mergeLicenses(parent.getLicenses());
+            mergeExcludes(parent.getAllExcludeRules());
         }
 
         /**
@@ -595,6 +599,16 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void mergeLicenses(License[] licenses) {
             for (int i = 0; i < licenses.length; i++) {
                 getMd().addLicense(licenses[i]);
+            }
+        }
+        
+        /**
+         * Describes how to merge exclude rules
+         * @param excludeRules exclude rules going to be inherited
+         */
+        public void mergeExcludes(ExcludeRule[] excludeRules) {
+            for (int i = 0; i < excludeRules.length; i++) {
+                getMd().addExcludeRule(excludeRules[i]);
             }
         }
 
