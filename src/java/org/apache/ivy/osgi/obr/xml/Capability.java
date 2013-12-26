@@ -22,7 +22,7 @@ import java.util.List;
 
 public class Capability {
 
-    private List/* <CapabilityProperty> */properties = new ArrayList/* <CapabilityProperty> */();
+    private List<CapabilityProperty> properties = new ArrayList<CapabilityProperty>();
 
     private String name;
 
@@ -38,7 +38,18 @@ public class Capability {
         properties.add(new CapabilityProperty(n, value, type));
     }
 
-    public List/* <CapabilityProperty> */getProperties() {
+    public List<CapabilityProperty> getProperties() {
         return properties;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(name);
+        for (CapabilityProperty p : properties) {
+            buffer.append(" ");
+            buffer.append(p);
+        }
+        return buffer.toString();
     }
 }
