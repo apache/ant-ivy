@@ -46,7 +46,8 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
         return INSTANCE;
     }
 
-    private ExecutionEnvironmentProfileProvider profileProvider;
+    private ExecutionEnvironmentProfileProvider profileProvider = ExecutionEnvironmentProfileProvider
+            .getInstance();
 
     public void add(ExecutionEnvironmentProfileProvider pp) {
         this.profileProvider = pp;
