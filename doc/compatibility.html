@@ -39,6 +39,10 @@ Ivy doesn't require much of Ant and should run correctly on pretty old versions.
 
 The required versions of the Apache HttpClient, Jsch or any optional dependency are to be checked against Ivy's dependency descriptor. In Ivy's source, check for the ivy.xml file at the root. Or the pom.xml of <tt>org.apache.ivy#ivy</tt> in the Maven Central repository.
 
+<h1>Environment / Configuration Requirements</h1>
+
+Ivy does not at this time support multithreaded use. It thus should not be used with the ant <tt>&lt;parallel&gt;</tt> task.
+
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

@@ -70,7 +70,8 @@ public class IvyResolveTest extends TestCase {
         resolve.execute();
     }
     
-    public void testIVY1454() throws Exception {
+    /* disabled: Ivy is not thread-safe, and this usage is not supported at this time */
+    public void disabledIVY1454() throws Exception {
         // run init in parent thread, then resolve in children
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-with-nio.xml");
         project.setProperty("ivy.log.locking", "true");

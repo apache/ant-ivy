@@ -140,6 +140,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    trunk
 =====================================
 - DOCUMENTATION: Broken link in <dependency> documentation (IVY-1405)
+- DOCUMENTATION: Explicitly document that threaded use is not supported.
 
 - NEW: the buildobr task can now work a set of resolved artifacts: useful for managing an OSGi target platform
 - NEW: fixdeps task: serializes transitively resolved dependencies into an ivy.xml file
