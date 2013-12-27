@@ -63,10 +63,12 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.LocalizableResource;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
+import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
@@ -962,11 +964,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 try {
                     ResolvedResource artifactRef = resourceResolver.resolve(artifact);
                     if (artifactRef != null) {
-                        origin = new ArtifactOrigin(
-                            artifact,
-                            artifactRef.getResource().isLocal(),
-                            artifactRef.getResource().getName());
-                        if (useOrigin && artifactRef.getResource().isLocal()) {
+                        Resource artifactRes = artifactRef.getResource();
+                        origin = new ArtifactOrigin(artifact, artifactRes.isLocal(),
+                                artifactRes.getName());
+                        if (useOrigin && artifactRes.isLocal()) {
+                            if (artifactRes instanceof LocalizableResource) {
+                                origin.setLocation(((LocalizableResource) artifactRes).getFile().getAbsolutePath());
+                            }
                             saveArtifactOrigin(artifact, origin);
                             archiveFile = getArchiveFileInCache(artifact, origin);
                             adr.setDownloadStatus(DownloadStatus.NO);
@@ -976,7 +980,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         } else {
                             // refresh archive file now that we better now its origin
                             archiveFile = getArchiveFileInCache(artifact, origin, useOrigin);
-                            if (ResourceHelper.equals(artifactRef.getResource(), archiveFile)) {
+                            if (ResourceHelper.equals(artifactRes, archiveFile)) {
                                 throw new IllegalStateException("invalid settings for '"
                                     + resourceResolver
                                     + "': pointing repository to ivy cache is forbidden !");
@@ -985,8 +989,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                                 listener.startArtifactDownload(this, artifactRef, artifact, origin);
                             }
 
-                            resourceDownloader.download(
-                                artifact, artifactRef.getResource(), archiveFile);
+                            resourceDownloader.download(artifact, artifactRes, archiveFile);
                             adr.setSize(archiveFile.length());
                             saveArtifactOrigin(artifact, origin);
                             adr.setDownloadTimeMillis(System.currentTimeMillis() - start);

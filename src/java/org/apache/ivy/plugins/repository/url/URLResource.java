@@ -17,16 +17,19 @@
  */
 package org.apache.ivy.plugins.repository.url;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.ivy.plugins.repository.LocalizableResource;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 
-public class URLResource implements Resource {
+public class URLResource implements LocalizableResource {
     private URL url;
 
     private boolean init = false;
@@ -92,10 +95,21 @@ public class URLResource implements Resource {
     }
 
     public boolean isLocal() {
-        return false;
+        return url.getProtocol().equals("file");
     }
 
     public InputStream openStream() throws IOException {
         return URLHandlerRegistry.getDefault().openStream(url);
+    }
+
+    public File getFile() {
+        if (!isLocal()) {
+            throw new IllegalStateException("Cannot get the local file for the not local resource " + url);
+        }
+        try {
+            return new File(url.toURI());
+        } catch (URISyntaxException e) {
+            return new File(url.getPath());            
+        }
     }
 }

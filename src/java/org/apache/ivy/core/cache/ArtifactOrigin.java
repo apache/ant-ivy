@@ -92,7 +92,11 @@ public class ArtifactOrigin {
     public String getLocation() {
         return location;
     }
-    
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     /**
      * Return the artifact that this location is pointing at.
      * 

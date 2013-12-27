@@ -355,6 +355,6 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(ar);
 
         assertEquals(artifact, ar.getArtifact());
-        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+        assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 }
