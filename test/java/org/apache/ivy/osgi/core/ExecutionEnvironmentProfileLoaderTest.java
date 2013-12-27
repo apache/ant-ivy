@@ -27,26 +27,28 @@ public class ExecutionEnvironmentProfileLoaderTest extends TestCase {
 
     public void testLoad() throws Exception {
         Map<String, ExecutionEnvironmentProfile> profiles = ExecutionEnvironmentProfileProvider.loadDefaultProfileList();
-        assertEquals(19, profiles.size());
+        assertEquals(21, profiles.size());
 
-        assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGI_MINIMUM-1.0")).getPkgNames().size());
-        assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGi/Minimum-1.0")).getPkgNames().size());
-        assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGI_MINIMUM-1.1")).getPkgNames().size());
-        assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGi/Minimum-1.1")).getPkgNames().size());
-        assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGI_MINIMUM-1.2")).getPkgNames().size());
-        assertEquals(0, ((ExecutionEnvironmentProfile) profiles.get("OSGi/Minimum-1.2")).getPkgNames().size());
-        assertEquals(1, ((ExecutionEnvironmentProfile) profiles.get("CDC-1.0_Foundation-1.0")).getPkgNames().size());
-        assertEquals(3, ((ExecutionEnvironmentProfile) profiles.get("CDC-1.1_Foundation-1.1")).getPkgNames().size());
-        assertEquals(24, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.2")).getPkgNames().size());
-        assertEquals(24, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.2")).getPkgNames().size());
-        assertEquals(40, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.3")).getPkgNames().size());
-        assertEquals(40, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.3")).getPkgNames().size());
-        assertEquals(96, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.4")).getPkgNames().size());
-        assertEquals(96, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.4")).getPkgNames().size());
-        assertEquals(122, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.5")).getPkgNames().size());
-        assertEquals(122, ((ExecutionEnvironmentProfile) profiles.get("J2SE-1.5")).getPkgNames().size());
-        assertEquals(158, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.6")).getPkgNames().size());
-        assertEquals(159, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.7")).getPkgNames().size());
-        assertEquals(159, ((ExecutionEnvironmentProfile) profiles.get("JavaSE-1.8")).getPkgNames().size());
+        assertEquals(0, profiles.get("OSGI_MINIMUM-1.0").getPkgNames().size());
+        assertEquals(0, profiles.get("OSGi/Minimum-1.0").getPkgNames().size());
+        assertEquals(0, profiles.get("OSGI_MINIMUM-1.1").getPkgNames().size());
+        assertEquals(0, profiles.get("OSGi/Minimum-1.1").getPkgNames().size());
+        assertEquals(0, profiles.get("OSGI_MINIMUM-1.2").getPkgNames().size());
+        assertEquals(0, profiles.get("OSGi/Minimum-1.2").getPkgNames().size());
+        assertEquals(1, profiles.get("CDC-1.0_Foundation-1.0").getPkgNames().size());
+        assertEquals(1, profiles.get("CDC-1.0/Foundation-1.0").getPkgNames().size());
+        assertEquals(3, profiles.get("CDC-1.1_Foundation-1.1").getPkgNames().size());
+        assertEquals(3, profiles.get("CDC-1.1/Foundation-1.1").getPkgNames().size());
+        assertEquals(24, profiles.get("J2SE-1.2").getPkgNames().size());
+        assertEquals(24, profiles.get("JavaSE-1.2").getPkgNames().size());
+        assertEquals(40, profiles.get("J2SE-1.3").getPkgNames().size());
+        assertEquals(40, profiles.get("JavaSE-1.3").getPkgNames().size());
+        assertEquals(96, profiles.get("J2SE-1.4").getPkgNames().size());
+        assertEquals(96, profiles.get("JavaSE-1.4").getPkgNames().size());
+        assertEquals(122, profiles.get("J2SE-1.5").getPkgNames().size());
+        assertEquals(122, profiles.get("J2SE-1.5").getPkgNames().size());
+        assertEquals(158, profiles.get("JavaSE-1.6").getPkgNames().size());
+        assertEquals(159, profiles.get("JavaSE-1.7").getPkgNames().size());
+        assertEquals(159, profiles.get("JavaSE-1.8").getPkgNames().size());
     }
 }
