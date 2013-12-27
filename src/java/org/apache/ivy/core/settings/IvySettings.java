@@ -299,7 +299,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addSystemProperties();
     }
 
-    private void addSystemProperties() {
+    private synchronized void addSystemProperties() {
         try {
             addAllVariables((Map) System.getProperties().clone());
         } catch (AccessControlException ex) {
@@ -313,7 +313,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Call this method to ask ivy to configure some variables using either a remote or a local
      * properties file
      */
-    public void configureRepositories(boolean remote) {
+    public synchronized void configureRepositories(boolean remote) {
         if (!repositoriesConfigured) {
             Properties props = new Properties();
             boolean configured = false;
@@ -349,11 +349,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public void typeDefs(InputStream stream) throws IOException {
+    public synchronized void typeDefs(InputStream stream) throws IOException {
         typeDefs(stream, false);
     }
 
-    public void typeDefs(InputStream stream, boolean silentFail) throws IOException {
+    public synchronized void typeDefs(InputStream stream, boolean silentFail) throws IOException {
         try {
             Properties p = new Properties();
             p.load(stream);
@@ -363,18 +363,18 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public void typeDefs(Properties p) {
+    public synchronized void typeDefs(Properties p) {
         typeDefs(p, false);
     }
 
-    public void typeDefs(Properties p, boolean silentFail) {
+    public synchronized void typeDefs(Properties p, boolean silentFail) {
         for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             typeDef(name, p.getProperty(name), silentFail);
         }
     }
 
-    public void load(File settingsFile) throws ParseException, IOException {
+    public synchronized void load(File settingsFile) throws ParseException, IOException {
         Message.info(":: loading settings :: file = " + settingsFile);
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsFile);
@@ -399,7 +399,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         dumpSettings();
     }
 
-    public void load(URL settingsURL) throws ParseException, IOException {
+    public synchronized void load(URL settingsURL) throws ParseException, IOException {
         Message.info(":: loading settings :: url = " + settingsURL);
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsURL);
@@ -424,7 +424,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * 
      * @throws IOException
      */
-    public void defaultInit() throws IOException {
+    public synchronized void defaultInit() throws IOException {
         if (getVariable("ivy.default.ivy.user.dir") != null) {
             setDefaultIvyUserDir(Checks.checkAbsolute(
                     getVariable("ivy.default.ivy.user.dir"), "ivy.default.ivy.user.dir"));
@@ -438,11 +438,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         dumpSettings();
     }
 
-    public void loadDefault() throws ParseException, IOException {
+    public synchronized void loadDefault() throws ParseException, IOException {
         load(getDefaultSettingsURL());
     }
 
-    public void loadDefault14() throws ParseException, IOException {
+    public synchronized void loadDefault14() throws ParseException, IOException {
         load(getDefault14SettingsURL());
     }
 
@@ -472,7 +472,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return XmlSettingsParser.class.getResource(file);
     }
 
-    public void setSettingsVariables(File settingsFile) {
+    public synchronized void setSettingsVariables(File settingsFile) {
         try {
             setVariable("ivy.settings.dir", new File(settingsFile.getAbsolutePath()).getParent());
             setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
@@ -502,7 +502,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         setVariable(deprecatedKey, getVariable(newKey));
     }
 
-    public void setSettingsVariables(URL settingsURL) {
+    public synchronized void setSettingsVariables(URL settingsURL) {
         String settingsURLStr = settingsURL.toExternalForm();
         setVariable("ivy.settings.url", settingsURLStr);
         setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
@@ -542,19 +542,19 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         moduleSettings.dump("\t\t");
     }
 
-    public void loadProperties(URL url) throws IOException {
+    public synchronized void loadProperties(URL url) throws IOException {
         loadProperties(url, true);
     }
 
-    public void loadProperties(URL url, boolean overwrite) throws IOException {
+    public synchronized void loadProperties(URL url, boolean overwrite) throws IOException {
         loadProperties(url.openStream(), overwrite);
     }
 
-    public void loadProperties(File file) throws IOException {
+    public synchronized void loadProperties(File file) throws IOException {
         loadProperties(file, true);
     }
 
-    public void loadProperties(File file, boolean overwrite) throws IOException {
+    public synchronized void loadProperties(File file, boolean overwrite) throws IOException {
         loadProperties(new FileInputStream(file), overwrite);
     }
 
@@ -574,33 +574,34 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public void setVariable(String varName, String value) {
+    public synchronized void setVariable(String varName, String value) {
         setVariable(varName, value, true);
     }
 
-    public void setVariable(String varName, String value, boolean overwrite) {
+    public synchronized void setVariable(String varName, String value, boolean overwrite) {
         setVariable(varName, value, overwrite, null, null);
     }
 
-    public void setVariable(String varName, String value, boolean overwrite, String ifSetVar, String unlessSetVar) {
+    public synchronized void setVariable(String varName, String value, boolean overwrite,
+            String ifSetVar, String unlessSetVar) {
         if (ifSetVar != null && variableContainer.getVariable(ifSetVar) == null) {
             Message.verbose("Not setting '" + varName + "' to '" + value + "' since '" + ifSetVar
                 + "' is not set.");
             return;
         }
         if (unlessSetVar != null && variableContainer.getVariable(unlessSetVar) != null) {
-            Message.verbose("Not setting '" + varName + "' to '" + value + "' since '" + unlessSetVar
-                + "' is set.");
+            Message.verbose("Not setting '" + varName + "' to '" + value + "' since '"
+                    + unlessSetVar + "' is set.");
             return;
         }
         variableContainer.setVariable(varName, value, overwrite);
     }
 
-    public void addAllVariables(Map variables) {
+    public synchronized void addAllVariables(Map variables) {
         addAllVariables(variables, true);
     }
 
-    public void addAllVariables(Map variables, boolean overwrite) {
+    public synchronized void addAllVariables(Map variables, boolean overwrite) {
         for (Iterator iter = variables.keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
             String val = (String) variables.get(key);
@@ -616,7 +617,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @return the string where all current ivy variables have been substituted by their value
      *         If the input str doesn't use any variable, the same object is returned
      */
-    public String substitute(String str) {
+    public synchronized String substitute(String str) {
         return IvyPatternHelper.substituteVariables(str, variableContainer);
     }
 
@@ -629,7 +630,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @return a new map of strings in which all current ivy variables in values have been
      *         substituted by their value
      */
-    public Map/*<String, String>*/ substitute(Map/*<String, String>*/ strings) {
+    public synchronized Map/*<String, String>*/ substitute(Map/*<String, String>*/ strings) {
         Map substituted = new LinkedHashMap();
         for (Iterator it = strings.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry) it.next();
@@ -644,15 +645,15 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * 
      * @return
      */
-    public IvyVariableContainer getVariables() {
+    public synchronized IvyVariableContainer getVariables() {
         return variableContainer;
     }
 
-    public Class typeDef(String name, String className) {
+    public synchronized Class typeDef(String name, String className) {
         return typeDef(name, className, false);
     }
 
-    public Class typeDef(String name, String className, boolean silentFail) {
+    public synchronized Class typeDef(String name, String className, boolean silentFail) {
         Class clazz = classForName(className, silentFail);
         if (clazz != null) {
             typeDefs.put(name, clazz);
@@ -687,42 +688,42 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return classloader;
     }
 
-    public void addClasspathURL(URL url) {
+    public synchronized void addClasspathURL(URL url) {
         classpathURLs.add(url);
         classloader = null;
     }
 
-    public Map getTypeDefs() {
+    public synchronized Map getTypeDefs() {
         return typeDefs;
     }
 
-    public Class getTypeDef(String name) {
+    public synchronized Class getTypeDef(String name) {
         return (Class) typeDefs.get(name);
     }
 
     // methods which match ivy conf method signature specs
-    public void addConfigured(DependencyResolver resolver) {
+    public synchronized void addConfigured(DependencyResolver resolver) {
         addResolver(resolver);
     }
 
-    public void addConfigured(ModuleDescriptorParser parser) {
+    public synchronized void addConfigured(ModuleDescriptorParser parser) {
         ModuleDescriptorParserRegistry.getInstance().addParser(parser);
     }
     
-    public void addConfigured(SignatureGenerator generator) {
+    public synchronized void addConfigured(SignatureGenerator generator) {
         addSignatureGenerator(generator);
     }
     
-    public void addSignatureGenerator(SignatureGenerator generator) {
+    public synchronized void addSignatureGenerator(SignatureGenerator generator) {
         init(generator);
         signatureGenerators.put(generator.getName(), generator);
     }
     
-    public SignatureGenerator getSignatureGenerator(String name) {
+    public synchronized SignatureGenerator getSignatureGenerator(String name) {
         return (SignatureGenerator) signatureGenerators.get(name);
     }
 
-    public void addResolver(DependencyResolver resolver) {
+    public synchronized void addResolver(DependencyResolver resolver) {
         if (resolver == null) {
             throw new NullPointerException("null resolver");
         }
@@ -746,7 +747,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public void setDefaultCache(File cacheDirectory) {
+    public synchronized void setDefaultCache(File cacheDirectory) {
         setVariable("ivy.cache.dir", cacheDirectory.getAbsolutePath(), false);
         defaultCache = cacheDirectory;
         if (defaultRepositoryCacheManager != null) {
@@ -758,7 +759,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public void setDefaultResolver(String resolverName) {
+    public synchronized void setDefaultResolver(String resolverName) {
         checkResolverName(resolverName);
         if (resolverName != null && !resolverName.equals(defaultResolverName)) {
             defaultResolver = null;
@@ -776,7 +777,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * regular expressions as explained in Pattern class may be used in attributes
      */
-    public void addModuleConfiguration(Map attributes, PatternMatcher matcher, 
+    public synchronized void addModuleConfiguration(Map attributes, PatternMatcher matcher, 
             String resolverName, String branch, String conflictManager, String resolveMode) {
         checkResolverName(resolverName);
         moduleSettings.defineRule(
@@ -796,21 +797,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @return the resolved File.
      *
      */
-    public File resolveFile(String fileName) {
+    public synchronized File resolveFile(String fileName) {
         return FileUtil.resolveFile(baseDir, fileName);
     }
     
-    public void setBaseDir(File baseDir) {
+    public synchronized void setBaseDir(File baseDir) {
         this.baseDir = baseDir.getAbsoluteFile();
         setVariable("ivy.basedir", this.baseDir.getAbsolutePath());
         setVariable("basedir", this.baseDir.getAbsolutePath(), false);
     }
     
-    public File getBaseDir() {
+    public synchronized File getBaseDir() {
         return baseDir;
     }
 
-    public File getDefaultIvyUserDir() {
+    public synchronized File getDefaultIvyUserDir() {
         if (defaultUserDir == null) {
             if (getVariable("ivy.home") != null) {
                 setDefaultIvyUserDir(Checks.checkAbsolute(getVariable("ivy.home"), "ivy.home"));
@@ -824,13 +825,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultUserDir;
     }
 
-    public void setDefaultIvyUserDir(File defaultUserDir) {
+    public synchronized void setDefaultIvyUserDir(File defaultUserDir) {
         this.defaultUserDir = defaultUserDir;
         setVariable("ivy.default.ivy.user.dir", this.defaultUserDir.getAbsolutePath());
         setVariable("ivy.home", this.defaultUserDir.getAbsolutePath());
     }
 
-    public File getDefaultCache() {
+    public synchronized File getDefaultCache() {
         if (defaultCache == null) {
             String cache = getVariable("ivy.cache.dir");
             if (cache != null) {
@@ -843,7 +844,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultCache;
     }
     
-    public void setDefaultRepositoryCacheBasedir(String repositoryCacheRoot) {
+    public synchronized void setDefaultRepositoryCacheBasedir(String repositoryCacheRoot) {
         setVariable("ivy.cache.repository", repositoryCacheRoot, true);
         if (defaultRepositoryCacheManager != null
                 && "default-cache".equals(defaultRepositoryCacheManager.getName())
@@ -853,7 +854,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
     
-    public void setDefaultResolutionCacheBasedir(String resolutionCacheRoot) {
+    public synchronized void setDefaultResolutionCacheBasedir(String resolutionCacheRoot) {
         setVariable("ivy.cache.resolution", resolutionCacheRoot, true);
         if (resolutionCacheManager != null
                 && resolutionCacheManager instanceof DefaultResolutionCacheManager) {
@@ -862,7 +863,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
     
-    public File getDefaultRepositoryCacheBasedir() {
+    public synchronized File getDefaultRepositoryCacheBasedir() {
         String repositoryCacheRoot = getVariable("ivy.cache.repository");
         if (repositoryCacheRoot != null) {
             return Checks.checkAbsolute(repositoryCacheRoot, "ivy.cache.repository");
@@ -871,7 +872,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public File getDefaultResolutionCacheBasedir() {
+    public synchronized File getDefaultResolutionCacheBasedir() {
         String resolutionCacheRoot = getVariable("ivy.cache.resolution");
         if (resolutionCacheRoot != null) {
             return Checks.checkAbsolute(resolutionCacheRoot, "ivy.cache.resolution");
@@ -880,11 +881,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public void setDictatorResolver(DependencyResolver resolver) {
+    public synchronized void setDictatorResolver(DependencyResolver resolver) {
         dictatorResolver = resolver;
     }
 
-    public DependencyResolver getResolver(ModuleRevisionId mrid) {
+    public synchronized DependencyResolver getResolver(ModuleRevisionId mrid) {
         if (dictatorResolver != null) {
             return dictatorResolver;
         }
@@ -892,11 +893,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return getResolver(resolverName);
     }
 
-    public boolean hasResolver(String resolverName) {
+    public synchronized boolean hasResolver(String resolverName) {
         return resolversMap.containsKey(resolverName);
     }
 
-    public DependencyResolver getResolver(String resolverName) {
+    public synchronized DependencyResolver getResolver(String resolverName) {
         if (dictatorResolver != null) {
             return dictatorResolver;
         }
@@ -907,7 +908,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return resolver;
     }
 
-    public DependencyResolver getDefaultResolver() {
+    public synchronized DependencyResolver getDefaultResolver() {
         if (dictatorResolver != null) {
             return dictatorResolver;
         }
@@ -917,7 +918,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultResolver;
     }
 
-    public String getResolverName(ModuleRevisionId mrid) {
+    public synchronized String getResolverName(ModuleRevisionId mrid) {
         ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(mrid, new Filter() {
             public boolean accept(Object o) {
                 return ((ModuleSettings) o).getResolverName() != null;
@@ -926,7 +927,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return ms == null ? defaultResolverName : ms.getResolverName();
     }
 
-    public String getDefaultBranch(ModuleId moduleId) {
+    public synchronized String getDefaultBranch(ModuleId moduleId) {
         ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
             public boolean accept(Object o) {
                 return ((ModuleSettings) o).getBranch() != null;
@@ -935,15 +936,15 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return ms == null ? getDefaultBranch() : ms.getBranch();
     }
 
-    public String getDefaultBranch() {
+    public synchronized String getDefaultBranch() {
         return defaultBranch;
     }
 
-    public void setDefaultBranch(String defaultBranch) {
+    public synchronized void setDefaultBranch(String defaultBranch) {
         this.defaultBranch = defaultBranch;
     }
 
-    public ConflictManager getConflictManager(ModuleId moduleId) {
+    public synchronized ConflictManager getConflictManager(ModuleId moduleId) {
         ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
             public boolean accept(Object o) {
                 return ((ModuleSettings) o).getConflictManager() != null;
@@ -962,7 +963,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public String getResolveMode(ModuleId moduleId) {
+    public synchronized String getResolveMode(ModuleId moduleId) {
         ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
             public boolean accept(Object o) {
                 return ((ModuleSettings) o).getResolveMode() != null;
@@ -971,140 +972,140 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return ms == null ? getDefaultResolveMode() : ms.getResolveMode();
     }
 
-    public String getDefaultResolveMode() {
+    public synchronized String getDefaultResolveMode() {
         return defaultResolveMode;
     }
     
-    public void setDefaultResolveMode(String defaultResolveMode) {
+    public synchronized void setDefaultResolveMode(String defaultResolveMode) {
         this.defaultResolveMode = defaultResolveMode;
     }
 
-    public void addConfigured(ConflictManager cm) {
+    public synchronized void addConfigured(ConflictManager cm) {
         addConflictManager(cm.getName(), cm);
     }
 
-    public ConflictManager getConflictManager(String name) {
+    public synchronized ConflictManager getConflictManager(String name) {
         if ("default".equals(name)) {
             return getDefaultConflictManager();
         }
         return (ConflictManager) conflictsManager.get(name);
     }
 
-    public void addConflictManager(String name, ConflictManager cm) {
+    public synchronized void addConflictManager(String name, ConflictManager cm) {
         init(cm);
         conflictsManager.put(name, cm);
     }
 
-    public void addConfigured(LatestStrategy latest) {
+    public synchronized void addConfigured(LatestStrategy latest) {
         addLatestStrategy(latest.getName(), latest);
     }
 
-    public LatestStrategy getLatestStrategy(String name) {
+    public synchronized LatestStrategy getLatestStrategy(String name) {
         if ("default".equals(name)) {
             return getDefaultLatestStrategy();
         }
         return (LatestStrategy) latestStrategies.get(name);
     }
 
-    public void addLatestStrategy(String name, LatestStrategy latest) {
+    public synchronized void addLatestStrategy(String name, LatestStrategy latest) {
         init(latest);
         latestStrategies.put(name, latest);
     }
 
-    public void addConfigured(LockStrategy lockStrategy) {
+    public synchronized void addConfigured(LockStrategy lockStrategy) {
         addLockStrategy(lockStrategy.getName(), lockStrategy);
     }
 
-    public LockStrategy getLockStrategy(String name) {
+    public synchronized LockStrategy getLockStrategy(String name) {
         if ("default".equals(name)) {
             return getDefaultLockStrategy();
         }
         return (LockStrategy) lockStrategies.get(name);
     }
 
-    public void addLockStrategy(String name, LockStrategy lockStrategy) {
+    public synchronized void addLockStrategy(String name, LockStrategy lockStrategy) {
         init(lockStrategy);
         lockStrategies.put(name, lockStrategy);
     }
 
-    public void addConfigured(Namespace ns) {
+    public synchronized void addConfigured(Namespace ns) {
         addNamespace(ns);
     }
 
-    public Namespace getNamespace(String name) {
+    public synchronized Namespace getNamespace(String name) {
         if ("system".equals(name)) {
             return getSystemNamespace();
         }
         return (Namespace) namespaces.get(name);
     }
 
-    public Namespace getSystemNamespace() {
+    public final Namespace getSystemNamespace() {
         return Namespace.SYSTEM_NAMESPACE;
     }
 
-    public void addNamespace(Namespace ns) {
+    public synchronized void addNamespace(Namespace ns) {
         init(ns);
         namespaces.put(ns.getName(), ns);
     }
 
-    public void addConfigured(PatternMatcher m) {
+    public synchronized void addConfigured(PatternMatcher m) {
         addMatcher(m);
     }
 
-    public PatternMatcher getMatcher(String name) {
+    public synchronized PatternMatcher getMatcher(String name) {
         return (PatternMatcher) matchers.get(name);
     }
 
-    public void addMatcher(PatternMatcher m) {
+    public synchronized void addMatcher(PatternMatcher m) {
         init(m);
         matchers.put(m.getName(), m);
     }
 
-    public void addConfigured(RepositoryCacheManager c) {
+    public synchronized void addConfigured(RepositoryCacheManager c) {
         addRepositoryCacheManager(c);
     }
 
-    public RepositoryCacheManager getRepositoryCacheManager(String name) {
+    public synchronized RepositoryCacheManager getRepositoryCacheManager(String name) {
         return (RepositoryCacheManager) repositoryCacheManagers.get(name);
     }
 
-    public void addRepositoryCacheManager(RepositoryCacheManager c) {
+    public synchronized void addRepositoryCacheManager(RepositoryCacheManager c) {
         init(c);
         repositoryCacheManagers.put(c.getName(), c);
     }
 
-    public RepositoryCacheManager[] getRepositoryCacheManagers() {
+    public synchronized RepositoryCacheManager[] getRepositoryCacheManagers() {
         return (RepositoryCacheManager[]) repositoryCacheManagers.values().toArray(
             new RepositoryCacheManager[repositoryCacheManagers.size()]);
     }
 
-    public void addConfigured(ReportOutputter outputter) {
+    public synchronized void addConfigured(ReportOutputter outputter) {
         addReportOutputter(outputter);
     }
 
-    public ReportOutputter getReportOutputter(String name) {
+    public synchronized ReportOutputter getReportOutputter(String name) {
         return (ReportOutputter) reportOutputters.get(name);
     }
 
-    public void addReportOutputter(ReportOutputter outputter) {
+    public synchronized void addReportOutputter(ReportOutputter outputter) {
         init(outputter);
         reportOutputters.put(outputter.getName(), outputter);
     }
 
-    public ReportOutputter[] getReportOutputters() {
+    public synchronized ReportOutputter[] getReportOutputters() {
         return (ReportOutputter[]) reportOutputters.values().toArray(
             new ReportOutputter[reportOutputters.size()]);
     }
 
-    public void addConfigured(VersionMatcher vmatcher) {
+    public synchronized void addConfigured(VersionMatcher vmatcher) {
         addVersionMatcher(vmatcher);
     }
 
-    public VersionMatcher getVersionMatcher(String name) {
+    public synchronized VersionMatcher getVersionMatcher(String name) {
         return (VersionMatcher) versionMatchers.get(name);
     }
 
-    public void addVersionMatcher(VersionMatcher vmatcher) {
+    public synchronized void addVersionMatcher(VersionMatcher vmatcher) {
         init(vmatcher);
         versionMatchers.put(vmatcher.getName(), vmatcher);
 
@@ -1118,43 +1119,43 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public VersionMatcher[] getVersionMatchers() {
+    public synchronized VersionMatcher[] getVersionMatchers() {
         return (VersionMatcher[]) versionMatchers.values().toArray(
             new VersionMatcher[versionMatchers.size()]);
     }
 
-    public VersionMatcher getVersionMatcher() {
+    public synchronized VersionMatcher getVersionMatcher() {
         if (versionMatcher == null) {
             configureDefaultVersionMatcher();
         }
         return versionMatcher;
     }
 
-    public void configureDefaultVersionMatcher() {
+    public synchronized void configureDefaultVersionMatcher() {
         addVersionMatcher(new LatestVersionMatcher());
         addVersionMatcher(new SubVersionMatcher());
         addVersionMatcher(new VersionRangeMatcher());
     }
 
-    public CircularDependencyStrategy getCircularDependencyStrategy() {
+    public synchronized CircularDependencyStrategy getCircularDependencyStrategy() {
         if (circularDependencyStrategy == null) {
             circularDependencyStrategy = getCircularDependencyStrategy("default");
         }
         return circularDependencyStrategy;
     }
 
-    public CircularDependencyStrategy getCircularDependencyStrategy(String name) {
+    public synchronized CircularDependencyStrategy getCircularDependencyStrategy(String name) {
         if ("default".equals(name)) {
             name = "warn";
         }
         return (CircularDependencyStrategy) circularDependencyStrategies.get(name);
     }
 
-    public void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
+    public synchronized void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
         circularDependencyStrategy = strategy;
     }
 
-    public void addConfigured(CircularDependencyStrategy strategy) {
+    public synchronized void addConfigured(CircularDependencyStrategy strategy) {
         addCircularDependencyStrategy(strategy);
     }
 
@@ -1168,7 +1169,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
     }
 
-    public StatusManager getStatusManager() {
+    public synchronized StatusManager getStatusManager() {
         if (statusManager == null) {
             statusManager = StatusManager.newDefaultInstance();
         }
@@ -1183,7 +1184,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Returns the file names of the files that should be ignored when 
      * creating a file listing.
      */
-    public String[] getIgnorableFilenames() {
+    public synchronized String[] getIgnorableFilenames() {
         return (String[]) listingIgnore.toArray(new String[listingIgnore.size()]);
     }
     
@@ -1193,31 +1194,31 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * 
      * @param names
      */
-    public void filterIgnore(Collection names) {
+    public synchronized void filterIgnore(Collection names) {
         names.removeAll(listingIgnore);
     }
     
-    public boolean isCheckUpToDate() {
+    public synchronized boolean isCheckUpToDate() {
         return checkUpToDate;
     }
 
-    public void setCheckUpToDate(boolean checkUpToDate) {
+    public synchronized void setCheckUpToDate(boolean checkUpToDate) {
         this.checkUpToDate = checkUpToDate;
     }
     
-    public boolean doValidate() {
+    public synchronized boolean doValidate() {
         return validate;
     }
 
-    public void setValidate(boolean validate) {
+    public synchronized void setValidate(boolean validate) {
         this.validate = validate;
     }
 
-    public String getVariable(String name) {
+    public synchronized String getVariable(String name) {
         return variableContainer.getVariable(name);
     }
 
-    public ConflictManager getDefaultConflictManager() {
+    public synchronized ConflictManager getDefaultConflictManager() {
         if (defaultConflictManager == null) {
             defaultConflictManager = new LatestConflictManager(getDefaultLatestStrategy());
             ((LatestConflictManager) defaultConflictManager).setSettings(this);
@@ -1225,33 +1226,33 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultConflictManager;
     }
 
-    public void setDefaultConflictManager(ConflictManager defaultConflictManager) {
+    public synchronized void setDefaultConflictManager(ConflictManager defaultConflictManager) {
         this.defaultConflictManager = defaultConflictManager;
     }
 
-    public LatestStrategy getDefaultLatestStrategy() {
+    public synchronized LatestStrategy getDefaultLatestStrategy() {
         if (defaultLatestStrategy == null) {
             defaultLatestStrategy = new LatestRevisionStrategy();
         }
         return defaultLatestStrategy;
     }
 
-    public void setDefaultLatestStrategy(LatestStrategy defaultLatestStrategy) {
+    public synchronized void setDefaultLatestStrategy(LatestStrategy defaultLatestStrategy) {
         this.defaultLatestStrategy = defaultLatestStrategy;
     }
 
-    public LockStrategy getDefaultLockStrategy() {
+    public synchronized LockStrategy getDefaultLockStrategy() {
         if (defaultLockStrategy == null) {
             defaultLockStrategy = new NoLockStrategy();
         }
         return defaultLockStrategy;
     }
 
-    public void setDefaultLockStrategy(LockStrategy defaultLockStrategy) {
+    public synchronized void setDefaultLockStrategy(LockStrategy defaultLockStrategy) {
         this.defaultLockStrategy = defaultLockStrategy;
     }
 
-    public RepositoryCacheManager getDefaultRepositoryCacheManager() {
+    public synchronized RepositoryCacheManager getDefaultRepositoryCacheManager() {
         if (defaultRepositoryCacheManager == null) {
             defaultRepositoryCacheManager 
                 = new DefaultRepositoryCacheManager(
@@ -1261,11 +1262,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultRepositoryCacheManager;
     }
 
-    public void setDefaultRepositoryCacheManager(RepositoryCacheManager cache) {
+    public synchronized void setDefaultRepositoryCacheManager(RepositoryCacheManager cache) {
         this.defaultRepositoryCacheManager = cache;
     }
 
-    public ResolutionCacheManager getResolutionCacheManager() {
+    public synchronized ResolutionCacheManager getResolutionCacheManager() {
         if (resolutionCacheManager == null) {
             resolutionCacheManager 
                 = new DefaultResolutionCacheManager(getDefaultResolutionCacheBasedir());
@@ -1274,47 +1275,47 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return resolutionCacheManager;
     }
     
-    public void setResolutionCacheManager(ResolutionCacheManager resolutionCacheManager) {
+    public synchronized void setResolutionCacheManager(ResolutionCacheManager resolutionCacheManager) {
         this.resolutionCacheManager = resolutionCacheManager;
     }
 
-    public void addTrigger(Trigger trigger) {
+    public synchronized void addTrigger(Trigger trigger) {
         init(trigger);
         triggers.add(trigger);
     }
 
-    public List getTriggers() {
+    public synchronized List getTriggers() {
         return triggers;
     }
 
-    public void addConfigured(Trigger trigger) {
+    public synchronized void addConfigured(Trigger trigger) {
         addTrigger(trigger);
     }
 
-    public boolean isUseRemoteConfig() {
+    public synchronized boolean isUseRemoteConfig() {
         return useRemoteConfig;
     }
 
-    public void setUseRemoteConfig(boolean useRemoteConfig) {
+    public synchronized void setUseRemoteConfig(boolean useRemoteConfig) {
         this.useRemoteConfig = useRemoteConfig;
     }
 
-    public boolean logModulesInUse() {
+    public synchronized boolean logModulesInUse() {
         String var = getVariable("ivy.log.modules.in.use");
         return var == null || Boolean.valueOf(var).booleanValue();
     }
 
-    public boolean logModuleWhenFound() {
+    public synchronized boolean logModuleWhenFound() {
         String var = getVariable("ivy.log.module.when.found");
         return var == null || Boolean.valueOf(var).booleanValue();
     }
 
-    public boolean logResolvedRevision() {
+    public synchronized boolean logResolvedRevision() {
         String var = getVariable("ivy.log.resolved.revision");
         return var == null || Boolean.valueOf(var).booleanValue();
     }
 
-    public boolean debugConflictResolution() {
+    public synchronized boolean debugConflictResolution() {
         if (debugConflictResolution == null) {
             String var = getVariable("ivy.log.conflict.resolution");
             debugConflictResolution = Boolean.valueOf(var != null
@@ -1323,7 +1324,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return debugConflictResolution.booleanValue();
     }
 
-    public final boolean debugLocking() {
+    public synchronized boolean debugLocking() {
         if (debugLocking == null) {
             String var = getVariable("ivy.log.locking");
             debugLocking = Boolean.valueOf(var != null
@@ -1332,7 +1333,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return debugLocking.booleanValue();
     }
 
-    public boolean dumpMemoryUsage() {
+    public synchronized boolean dumpMemoryUsage() {
         if (dumpMemoryUsage == null) {
             String var = getVariable("ivy.log.memory");
             dumpMemoryUsage = Boolean.valueOf(var != null
@@ -1342,11 +1343,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
 
-    public boolean logNotConvertedExclusionRule() {
+    public synchronized boolean logNotConvertedExclusionRule() {
         return logNotConvertedExclusionRule;
     }
 
-    public void setLogNotConvertedExclusionRule(boolean logNotConvertedExclusionRule) {
+    public synchronized void setLogNotConvertedExclusionRule(boolean logNotConvertedExclusionRule) {
         this.logNotConvertedExclusionRule = logNotConvertedExclusionRule;
     }
 
@@ -1399,23 +1400,23 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public long getInterruptTimeout() {
+    public final long getInterruptTimeout() {
         return INTERUPT_TIMEOUT;
     }
 
-    public Collection getResolvers() {
+    public synchronized Collection getResolvers() {
         return resolversMap.values();
     }
 
-    public Collection getResolverNames() {
+    public synchronized Collection getResolverNames() {
         return resolversMap.keySet();
     }
 
-    public Collection getMatcherNames() {
+    public synchronized Collection getMatcherNames() {
         return matchers.keySet();
     }
 
-    public IvyVariableContainer getVariableContainer() {
+    public synchronized IvyVariableContainer getVariableContainer() {
         return variableContainer;
     }
 
@@ -1424,42 +1425,42 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * 
      * @param variables
      */
-    public void setVariableContainer(IvyVariableContainer variables) {
+    public synchronized void setVariableContainer(IvyVariableContainer variables) {
         variableContainer = variables;
     }
 
     
-    public RelativeUrlResolver getRelativeUrlResolver() {
+    public synchronized RelativeUrlResolver getRelativeUrlResolver() {
         return new NormalRelativeUrlResolver();
     }
 
-    public void setDefaultCacheIvyPattern(String defaultCacheIvyPattern) {
+    public synchronized void setDefaultCacheIvyPattern(String defaultCacheIvyPattern) {
         CacheUtil.checkCachePattern(defaultCacheIvyPattern);
         this.defaultCacheIvyPattern = defaultCacheIvyPattern;
     }
     
-    public String getDefaultCacheIvyPattern() {
+    public synchronized String getDefaultCacheIvyPattern() {
         return defaultCacheIvyPattern;
     }
 
-    public void setDefaultCacheArtifactPattern(String defaultCacheArtifactPattern) {
+    public synchronized void setDefaultCacheArtifactPattern(String defaultCacheArtifactPattern) {
         CacheUtil.checkCachePattern(defaultCacheArtifactPattern);
         this.defaultCacheArtifactPattern = defaultCacheArtifactPattern;
     }
     
-    public String getDefaultCacheArtifactPattern() {
+    public synchronized String getDefaultCacheArtifactPattern() {
         return defaultCacheArtifactPattern;
     }
 
-    public void setDefaultUseOrigin(boolean useOrigin) {
+    public synchronized void setDefaultUseOrigin(boolean useOrigin) {
         defaultUseOrigin = useOrigin;
     }
     
-    public boolean isDefaultUseOrigin() {
+    public synchronized boolean isDefaultUseOrigin() {
         return defaultUseOrigin;
     }
     
-    public void useDeprecatedUseOrigin() {
+    public synchronized void useDeprecatedUseOrigin() {
         Message.deprecated("useOrigin option is deprecated when calling resolve, use useOrigin"
             + " setting on the cache implementation instead");
         setDefaultUseOrigin(true);
@@ -1473,7 +1474,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @throws IllegalStateException
      *             if the settings is not valid.
      */
-    public void validate() {
+    public synchronized void validate() {
         validateAll(resolversMap.values());
         validateAll(conflictsManager.values());
         validateAll(latestStrategies.values());
