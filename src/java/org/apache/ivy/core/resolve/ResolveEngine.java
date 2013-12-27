@@ -1078,18 +1078,26 @@ public class ResolveEngine {
          */
         if (evictedInSelected || (selectedNodes.isEmpty() 
                         && !node.getParent().getNode().equals(ancestor.getNode()))) {
-            // In this case we need to compute selected nodes again. 
-            Collection deps = ancestor.getNode().getDependencies(
-                node.getRootModuleConf(), 
-                ancestor.getNode().getConfigurations(node.getRootModuleConf()), 
-                ancestor.getRequestedConf());
-            for (Iterator iter = deps.iterator(); iter.hasNext();) {
-                IvyNode dep = (IvyNode) iter.next();
-                if (dep.getModuleId().equals(node.getModuleId())) {
-                    conflicts.add(dep);
+            IvyContext context = IvyContext.getContext();
+            ResolveData data = context.getResolveData();
+            VisitNode oldVisitNode = data.getCurrentVisitNode();
+            data.setCurrentVisitNode(ancestor);
+            try {
+                // In this case we need to compute selected nodes again.
+                Collection deps = ancestor.getNode().getDependencies(
+                    node.getRootModuleConf(), 
+                    ancestor.getNode().getConfigurations(node.getRootModuleConf()), 
+                    ancestor.getRequestedConf());
+                for (Iterator iter = deps.iterator(); iter.hasNext();) {
+                    IvyNode dep = (IvyNode) iter.next();
+                    if (dep.getModuleId().equals(node.getModuleId())) {
+                        conflicts.add(dep);
+                    }
+                    conflicts.addAll(
+                        dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
                 }
-                conflicts.addAll(
-                    dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+            } finally {
+                data.setCurrentVisitNode(oldVisitNode);
             }
         } else if (selectedNodes.isEmpty()) {
             /*

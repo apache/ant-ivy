@@ -64,6 +64,12 @@ public class IvyResolveTest extends TestCase {
         del.execute();
     }
     
+    public void testIVY1455() throws Exception {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1455/ivysettings.xml");
+        resolve.setFile(new File("test/repositories/IVY-1455/ivy.xml"));
+        resolve.execute();
+    }
+    
     public void testIVY1454() throws Exception {
         // run init in parent thread, then resolve in children
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-with-nio.xml");
@@ -77,9 +83,6 @@ public class IvyResolveTest extends TestCase {
         parallel.addTask(resolve);
         parallel.addTask(resolve);
         parallel.execute();
-        
-        assertTrue(getResolvedIvyFileInCache(
-            ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
     
     public void testIVY779() throws Exception {
