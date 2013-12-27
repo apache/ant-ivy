@@ -359,7 +359,7 @@ public abstract class BasicResolver extends AbstractResolver {
         // the metadata artifact which was used to cache the original metadata file
         Artifact requestedMetadataArtifact = ivyRef == null ? systemMd.getMetadataArtifact()
                 : parser.getMetadataArtifact(
-                    ModuleRevisionId.newInstance(systemMrid, ivyRef.getRevision()),
+                    ModuleRevisionId.newInstance(systemMrid, systemMd.getRevision()),
                     ivyRef.getResource());
 
         cacheManager.originalToCachedModuleDescriptor(this, ivyRef, requestedMetadataArtifact, rmr,
@@ -608,9 +608,11 @@ public abstract class BasicResolver extends AbstractResolver {
                     + md.getModuleRevisionId().getBranch() + "'; ");
             ok = false;
         }
-        if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")) {
+        if (ivyRef.getRevision() != null
+                && !ivyRef.getRevision().startsWith("working@")
+                && !mrid.getRevision().equals(md.getModuleRevisionId().getRevision())) {
             ModuleRevisionId expectedMrid = ModuleRevisionId
-                    .newInstance(mrid, ivyRef.getRevision());
+                    .newInstance(mrid, mrid.getRevision());
             if (!getSettings().getVersionMatcher().accept(expectedMrid, md)) {
                 Message.error("\t" + getName() + ": bad revision found in " + ivyRef.getResource()
                         + ": expected='" + ivyRef.getRevision() + " found='"

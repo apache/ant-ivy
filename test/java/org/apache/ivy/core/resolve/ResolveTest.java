@@ -4785,6 +4785,17 @@ public class ResolveTest extends TestCase {
 
         assertTrue(report.hasError());
     }
+    
+    public void testNamespaceMapping5() throws Exception {
+        // Verifies that mapping version numbers works
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/namespace/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace5.xml"),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("systemorg3", "systemmod3", "1.0");
+        assertTrue(getIvyFileInCache(mrid).exists());
+    }
 
     public void testIVY151() throws Exception {
         Ivy ivy = new Ivy();

@@ -168,6 +168,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Better support for "Bundle-RequiredExecutionEnvironment" from an OSGi MANIFEST.MF
 - FIX: When inheriting a module descriptor, also merge the exclude rules
 - FIX: Correct application of mediators (ie. override) during conflict resolution (IVY-1455)
+- FIX: Fix revision number mapping across namespaces (IVY-1423)
 
    2.3.0
 =====================================

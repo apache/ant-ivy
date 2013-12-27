@@ -60,6 +60,16 @@
 					<dest module="systemmod2"/>
 				</tosystem>
 			</rule>
+			<rule>
+				<fromsystem>
+					<src org="systemorg3" module="systemmod3" rev="1.0"/>
+					<dest org="C" module="C" rev="1.0.0"/>
+				</fromsystem>
+				<tosystem>
+					<src org="C" module="C" rev="1.0.0"/>
+					<dest org="systemorg3" module="systemmod3" rev="1.0"/>
+				</tosystem>
+			</rule>
 		</namespace>
 	</namespaces>
 	<resolvers>
