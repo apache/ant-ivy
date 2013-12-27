@@ -34,7 +34,7 @@ import java.util.Stack;
  * </p>
  */
 public class MessageLoggerEngine implements MessageLogger {
-    private final Stack/*<MessageLogger>*/ loggerStack = new Stack();
+    private final ThreadLocal/*<Stack<MessageLogger>>*/ loggerStacks = new ThreadLocal();
     
     private MessageLogger defaultLogger = null;
 
@@ -43,6 +43,15 @@ public class MessageLoggerEngine implements MessageLogger {
     private List warns = new ArrayList();
 
     private List errors = new ArrayList();
+    
+    private Stack getLoggerStack() {
+        Stack stack = (Stack) loggerStacks.get();
+        if (stack == null) {
+            stack = new Stack();
+            loggerStacks.set(stack);
+        }
+        return stack;
+    }
     
     public MessageLoggerEngine() {
     }
@@ -66,7 +75,7 @@ public class MessageLoggerEngine implements MessageLogger {
      */
     public void pushLogger(MessageLogger logger) {
         Checks.checkNotNull(logger, "logger");
-        loggerStack.push(logger);
+        getLoggerStack().push(logger);
     }
     
     /**
@@ -76,8 +85,8 @@ public class MessageLoggerEngine implements MessageLogger {
      * </p>
      */
     public void popLogger() {
-        if (!loggerStack.isEmpty()) {
-            loggerStack.pop();
+        if (!getLoggerStack().isEmpty()) {
+            getLoggerStack().pop();
         }
     }
 
@@ -86,10 +95,10 @@ public class MessageLoggerEngine implements MessageLogger {
      * @return the current logger, or the default one if there is no logger in the stack
      */
     public MessageLogger peekLogger() {
-        if (loggerStack.isEmpty()) {
+        if (getLoggerStack().isEmpty()) {
             return getDefaultLogger();
         }
-        return (MessageLogger) loggerStack.peek();
+        return (MessageLogger) getLoggerStack().peek();
     }
 
     private MessageLogger getDefaultLogger() {
@@ -130,7 +139,7 @@ public class MessageLoggerEngine implements MessageLogger {
     
     public void clearProblems() {
         getDefaultLogger().clearProblems();
-        for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
+        for (Iterator iter = getLoggerStack().iterator(); iter.hasNext();) {
             MessageLogger l = (MessageLogger) iter.next();
             l.clearProblems();
         }
@@ -142,7 +151,7 @@ public class MessageLoggerEngine implements MessageLogger {
     public void setShowProgress(boolean progress) {
         getDefaultLogger().setShowProgress(progress);
         // updates all loggers in the stack
-        for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
+        for (Iterator iter = getLoggerStack().iterator(); iter.hasNext();) {
             MessageLogger l = (MessageLogger) iter.next();
             l.setShowProgress(progress);
         }
