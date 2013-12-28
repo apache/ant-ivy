@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.obr.xml;
 
 import java.io.OutputStream;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
@@ -62,7 +61,7 @@ public class OBRXMLWriter {
         return hd;
     }
 
-    public static void writeManifests(Iterator/* <ManifestAndLocation> */it,
+    public static void writeManifests(Iterable<ManifestAndLocation> manifestAndLocations,
             ContentHandler handler, boolean quiet) throws SAXException {
         int level = quiet ? Message.MSG_DEBUG : Message.MSG_WARN;
         handler.startDocument();
@@ -70,8 +69,7 @@ public class OBRXMLWriter {
         handler.startElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY, atts);
         int nbOk = 0;
         int nbRejected = 0;
-        while (it.hasNext()) {
-            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) it.next();
+        for (ManifestAndLocation manifestAndLocation : manifestAndLocations) {
             BundleInfo bundleInfo;
             try {
                 bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
@@ -94,13 +92,12 @@ public class OBRXMLWriter {
                 + (nbRejected > 1 ? "s" : "") + " rejected.");
     }
 
-    public static void writeBundles(Iterator/* <BundleInfo> */it, ContentHandler handler)
+    public static void writeBundles(Iterable<BundleInfo> bundleInfos, ContentHandler handler)
             throws SAXException {
         handler.startDocument();
         AttributesImpl atts = new AttributesImpl();
         handler.startElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY, atts);
-        while (it.hasNext()) {
-            BundleInfo bundleInfo = (BundleInfo) it.next();
+        for (BundleInfo bundleInfo : bundleInfos) {
             saxBundleInfo(bundleInfo, handler);
         }
         handler.endElement("", RepositoryHandler.REPOSITORY, RepositoryHandler.REPOSITORY);
@@ -116,14 +113,10 @@ public class OBRXMLWriter {
             addAttr(atts, ResourceHandler.URI, bundleInfo.getUri().toString());
         }
         handler.startElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE, atts);
-        Iterator itCapabilities = bundleInfo.getCapabilities().iterator();
-        while (itCapabilities.hasNext()) {
-            BundleCapability capability = (BundleCapability) itCapabilities.next();
+        for (BundleCapability capability : bundleInfo.getCapabilities()) {
             saxCapability(capability, handler);
         }
-        Iterator itRequirement = bundleInfo.getRequirements().iterator();
-        while (itRequirement.hasNext()) {
-            BundleRequirement requirement = (BundleRequirement) itRequirement.next();
+        for (BundleRequirement requirement : bundleInfo.getRequirements()) {
             saxRequirement(requirement, handler);
         }
         handler.endElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE);
@@ -144,12 +137,10 @@ public class OBRXMLWriter {
             if (v != null) {
                 saxCapabilityProperty("version", v.toString(), handler);
             }
-            Set/* <String> */uses = ((ExportPackage) capability).getUses();
+            Set<String> uses = ((ExportPackage) capability).getUses();
             if (uses != null && !uses.isEmpty()) {
                 StringBuffer builder = new StringBuffer();
-                Iterator itUse = uses.iterator();
-                while (itUse.hasNext()) {
-                    String use = (String) itUse.next();
+                for (String use : uses) {
                     if (builder.length() != 0) {
                         builder.append(',');
                     }

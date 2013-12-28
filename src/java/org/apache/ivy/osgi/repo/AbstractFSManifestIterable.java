@@ -32,27 +32,27 @@ import java.util.jar.Manifest;
 import org.apache.ivy.util.Message;
 
 // T is the type of the resource "path"
-public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <ManifestAndLocation> */{
+public abstract class AbstractFSManifestIterable<T> implements Iterable<ManifestAndLocation> {
 
-    private final Object/* T */root;
+    private final T root;
 
-    public AbstractFSManifestIterable(Object /* T */root) {
+    public AbstractFSManifestIterable(T root) {
         this.root = root;
     }
 
-    public Iterator/* <ManifestAndLocation> */iterator() {
+    public Iterator<ManifestAndLocation> iterator() {
         return new FSManifestIterator();
     }
 
-    abstract protected List/* <T> */listBundleFiles(Object/* T */dir) throws IOException;
+    abstract protected List<T> listBundleFiles(T dir) throws IOException;
 
-    abstract protected List/* <T> */listDirs(Object/* T */dir) throws IOException;
+    abstract protected List<T> listDirs(T dir) throws IOException;
 
-    abstract protected InputStream getInputStream(Object/* T */f) throws IOException;
+    abstract protected InputStream getInputStream(T f) throws IOException;
 
-    abstract protected URI buildBundleURI(Object/* T */location) throws IOException;
+    abstract protected URI buildBundleURI(T location) throws IOException;
 
-    class FSManifestIterator implements Iterator/* <ManifestAndLocation> */{
+    class FSManifestIterator implements Iterator<ManifestAndLocation> {
 
         private ManifestAndLocation next = null;
 
@@ -62,17 +62,17 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
          * the stack is an iterator on the children on the root. The last iterator in the stack
          * points to {@link #currentDir}.
          */
-        private Stack/* <Iterator<T>> */dirs = new Stack/* <Iterator<T>> */();
+        private Stack<Iterator<T>> dirs = new Stack<Iterator<T>>();
 
         /**
          * The bundles files being lookup.
          */
-        private Iterator/* <T> */bundleCandidates = null;
+        private Iterator<T> bundleCandidates = null;
 
-        private Object/* T */currentDir = null;
+        private T currentDir = null;
 
         FSManifestIterator() {
-            dirs.add(Collections.singleton(root).iterator());
+            dirs.add(Collections.<T>singleton(root).iterator());
         }
 
         /**
@@ -84,8 +84,8 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
                 // no current directory
                 if (currentDir == null) {
                     // so get the next one
-                    if (((Iterator) dirs.peek()).hasNext()) {
-                        currentDir = ((Iterator) dirs.peek()).next();
+                    if (dirs.peek().hasNext()) {
+                        currentDir = dirs.peek().next();
                         try {
                             bundleCandidates = listBundleFiles(currentDir).iterator();
                         } catch (IOException e) {
@@ -100,7 +100,7 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
                         dirs.pop();
                     }
                 } else if (bundleCandidates.hasNext()) {
-                    Object/* T */bundleCandidate = bundleCandidates.next();
+                    T bundleCandidate = bundleCandidates.next();
                     JarInputStream in = null;
                     try {
                         in = new JarInputStream(getInputStream(bundleCandidate));
@@ -131,7 +131,7 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
                         dirs.add(listDirs(currentDir).iterator());
                     } catch (IOException e) {
                         Message.warn("Unlistable dir: " + currentDir + " (" + e + ")");
-                        dirs.add(Collections.EMPTY_LIST.iterator());
+                        dirs.add(Collections.<T> emptyList().iterator());
                     }
                     currentDir = null;
                 }
@@ -139,7 +139,7 @@ public abstract class AbstractFSManifestIterable /* <T> implements Iterable/* <M
             return true;
         }
 
-        public Object next() {
+        public ManifestAndLocation next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }

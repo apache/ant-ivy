@@ -30,7 +30,7 @@ import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.util.ResolverHelper;
 
-public class RepositoryManifestIterable extends AbstractFSManifestIterable/* <String> */{
+public class RepositoryManifestIterable extends AbstractFSManifestIterable<String> {
 
     private final Repository repo;
 
@@ -45,7 +45,7 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable/* <St
         this.repo = repo;
     }
 
-    protected URI buildBundleURI(Object/* String */location) throws IOException {
+    protected URI buildBundleURI(String location) throws IOException {
         Resource resource = repo.getResource((String) location);
         // We have a resource to transform into an URI, let's use some heuristics
         try {
@@ -55,19 +55,19 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable/* <St
         }
     }
 
-    protected InputStream getInputStream(Object/* String */f) throws IOException {
+    protected InputStream getInputStream(String f) throws IOException {
         return repo.getResource((String) f).openStream();
     }
 
-    protected List/* <String> */listBundleFiles(Object/* String */dir) throws IOException {
+    protected List<String> listBundleFiles(String dir) throws IOException {
         return asList(ResolverHelper.listAll(repo, (String) dir));
     }
 
-    protected List/* <String> */listDirs(Object/* String */dir) throws IOException {
+    protected List<String> listDirs(String dir) throws IOException {
         return asList(ResolverHelper.listAll(repo, (String) dir));
     }
 
-    private List/* <String> */asList(String[] array) {
-        return array == null ? Collections.EMPTY_LIST : Arrays./* <String> */asList(array);
+    private List<String> asList(String[] array) {
+        return array == null ? Collections.<String> emptyList() : Arrays.<String> asList(array);
     }
 }

@@ -18,14 +18,13 @@
 package org.apache.ivy.osgi.updatesite;
 
 import java.net.URI;
-import java.util.Iterator;
 
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-import org.apache.ivy.osgi.repo.RepoDescriptor;
+import org.apache.ivy.osgi.repo.EditableRepoDescriptor;
 import org.apache.ivy.osgi.updatesite.xml.EclipseFeature;
 import org.apache.ivy.osgi.updatesite.xml.EclipsePlugin;
 
-public class UpdateSiteDescriptor extends RepoDescriptor {
+public class UpdateSiteDescriptor extends EditableRepoDescriptor {
 
     public UpdateSiteDescriptor(URI baseUri, ExecutionEnvironmentProfileProvider profileProvider) {
         super(baseUri, profileProvider);
@@ -34,9 +33,8 @@ public class UpdateSiteDescriptor extends RepoDescriptor {
     public void addFeature(EclipseFeature feature) {
         addBundle(PluginAdapter.featureAsBundle(getBaseUri(), feature));
 
-        Iterator itPlugins = feature.getPlugins().iterator();
-        while (itPlugins.hasNext()) {
-            addBundle(PluginAdapter.pluginAsBundle(getBaseUri(), (EclipsePlugin) itPlugins.next()));
+        for (EclipsePlugin plugin : feature.getPlugins()) {
+            addBundle(PluginAdapter.pluginAsBundle(getBaseUri(), plugin));
         }
     }
 

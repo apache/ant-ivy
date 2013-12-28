@@ -26,7 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.updatesite.UpdateSiteDescriptor;
 import org.apache.ivy.osgi.updatesite.xml.FeatureParser.FeatureHandler;
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.SAXException;
 
@@ -43,7 +43,7 @@ public class UpdateSiteDigestParser {
         return handler.repoDescriptor;
     }
 
-    static class DigestHandler extends DelegetingHandler {
+    static class DigestHandler extends DelegatingHandler {
 
         private static final String DIGEST = "digest";
 
@@ -53,9 +53,9 @@ public class UpdateSiteDigestParser {
             super(DIGEST);
             repoDescriptor = new UpdateSiteDescriptor(site.getUri(),
                     ExecutionEnvironmentProfileProvider.getInstance());
-            addChild(new FeatureHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    repoDescriptor.addFeature(((FeatureHandler) child).feature);
+            addChild(new FeatureHandler(), new ChildElementHandler<FeatureHandler>() {
+                public void childHanlded(FeatureHandler child) {
+                    repoDescriptor.addFeature(child.feature);
                 }
             });
         }

@@ -31,7 +31,7 @@ public class UpdateSite {
 
     private URI digestUri;
 
-    private List/* <EclipseFeature> */features = new ArrayList();
+    private List<EclipseFeature> features = new ArrayList<EclipseFeature>();
 
     public void setUri(URI uri) {
         this.uri = uri;
@@ -61,7 +61,7 @@ public class UpdateSite {
         features.add(feature);
     }
 
-    public List getFeatures() {
+    public List<EclipseFeature> getFeatures() {
         return features;
     }
 

@@ -27,16 +27,16 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class P2CompositeParser implements XMLInputParser {
 
-    private Set/* <String> */childLocations = new LinkedHashSet();
+    private Set<String> childLocations = new LinkedHashSet<String>();
 
-    public Set getChildLocations() {
+    public Set<String> getChildLocations() {
         return childLocations;
     }
 
@@ -50,7 +50,7 @@ public class P2CompositeParser implements XMLInputParser {
         childLocations.addAll(handler.childLocations);
     }
 
-    static class RepositoryHandler extends DelegetingHandler {
+    private static class RepositoryHandler extends DelegatingHandler {
 
         private static final String REPOSITORY = "repository";
 
@@ -60,13 +60,13 @@ public class P2CompositeParser implements XMLInputParser {
         //
         // private static final String VERSION = "version";
 
-        List/* <String> */childLocations;
+        List<String> childLocations;
 
         public RepositoryHandler() {
             super(REPOSITORY);
-            addChild(new ChildrenHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    childLocations = ((ChildrenHandler) child).childLocations;
+            addChild(new ChildrenHandler(), new ChildElementHandler<ChildrenHandler>() {
+                public void childHanlded(ChildrenHandler child) {
+                    childLocations = child.childLocations;
                 }
             });
         }
@@ -77,31 +77,31 @@ public class P2CompositeParser implements XMLInputParser {
         // }
     }
 
-    static class ChildrenHandler extends DelegetingHandler {
+    private static class ChildrenHandler extends DelegatingHandler {
 
         private static final String CHILDREN = "children";
 
         private static final String SIZE = "size";
 
-        List/* <String> */childLocations;
+        List<String> childLocations;
 
         public ChildrenHandler() {
             super(CHILDREN);
-            addChild(new ChildHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    childLocations.add(((ChildHandler) child).location);
+            addChild(new ChildHandler(), new ChildElementHandler<ChildHandler>() {
+                public void childHanlded(ChildHandler child) {
+                    childLocations.add(child.location);
                 }
             });
         }
 
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            childLocations = new ArrayList(size);
+            childLocations = new ArrayList<String>(size);
         }
 
     }
 
-    static class ChildHandler extends DelegetingHandler {
+    private static class ChildHandler extends DelegatingHandler {
 
         private static final String CHILD = "child";
 

@@ -18,7 +18,6 @@
 package org.apache.ivy.osgi.obr.xml;
 
 import java.text.ParseException;
-import java.util.Iterator;
 
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
@@ -54,9 +53,7 @@ public class RequirementAdapter {
             ParseException {
         if (filter instanceof AndFilter) {
             AndFilter andFilter = (AndFilter) filter;
-            Iterator itFilter = andFilter.getSubFilters().iterator();
-            while (itFilter.hasNext()) {
-                RequirementFilter subFilter = (RequirementFilter) itFilter.next();
+            for (RequirementFilter subFilter : andFilter.getSubFilters()) {
                 extractFilter(subFilter);
             }
         } else if (filter instanceof CompareFilter) {

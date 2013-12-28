@@ -17,31 +17,31 @@
  */
 package org.apache.ivy.osgi.p2;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.xml.sax.Attributes;
 
 public class PropertiesParser {
 
-    static class PropertiesHandler extends DelegetingHandler {
+    static class PropertiesHandler extends DelegatingHandler {
 
         private static final String PROPERTIES = "properties";
 
         private static final String SIZE = "size";
 
-        Map properties;
+        Map<String, String> properties;
 
-
-        public PropertiesHandler(final List/*<String>*/ props) {
+        public PropertiesHandler(String... props) {
             super(PROPERTIES);
-            addChild(new PropertyHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    String name = ((PropertyHandler) child).name;
-                    if (props == null || props.contains(name)) {
-                        properties.put(name, ((PropertyHandler) child).value);
+            final List<String> propList = Arrays.asList(props);
+            addChild(new PropertyHandler(), new ChildElementHandler<PropertyHandler>() {
+                public void childHanlded(PropertyHandler child) {
+                    if (propList.isEmpty() || propList.contains(child.name)) {
+                        properties.put(child.name, child.value);
                     }
                 }
             });
@@ -49,12 +49,12 @@ public class PropertiesParser {
 
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            properties = new HashMap(size);
+            properties = new HashMap<String, String>(size);
         }
 
     }
 
-    static class PropertyHandler extends DelegetingHandler {
+    static class PropertyHandler extends DelegatingHandler {
 
         private static final String PROPERTY = "property";
 

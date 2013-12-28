@@ -31,13 +31,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FSManifestIterable extends AbstractFSManifestIterable/* <File> */{
+public class FSManifestIterable extends AbstractFSManifestIterable<File> {
 
     /**
      * List of directory name that usually contains jars but are not bundles
      */
-    public static final Set/* <String> */NON_BUNDLE_DIRS = new HashSet/* <String> */(
-            Arrays.asList(new String[] {"source", "sources", "javadoc", "javadocs", "doc", "docs"}));
+    public static final Set<String> NON_BUNDLE_DIRS = new HashSet<String>(Arrays.asList("source",
+        "sources", "javadoc", "javadocs", "doc", "docs"));
 
     /**
      * Default directory filter that doesn't select .svn directories, neither the directories that
@@ -88,9 +88,9 @@ public class FSManifestIterable extends AbstractFSManifestIterable/* <File> */{
         this.bundleFilter = bundleFilter;
     }
 
-    protected URI buildBundleURI(Object/* File */location) {
+    protected URI buildBundleURI(File location) {
         try {
-            return new URI(((File) location).toURI().toURL().toExternalForm());
+            return new URI(location.toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             throw new RuntimeException("Unexpected file to url conversion error", e);
         } catch (URISyntaxException e) {
@@ -98,12 +98,12 @@ public class FSManifestIterable extends AbstractFSManifestIterable/* <File> */{
         }
     }
 
-    protected InputStream getInputStream(Object/* File */f) throws FileNotFoundException {
+    protected InputStream getInputStream(File f) throws FileNotFoundException {
         return new FileInputStream((File) f);
     }
 
-    protected List/* <File> */listBundleFiles(Object/* File */dir) {
-        return Arrays.asList(((File) dir).listFiles(new FileFilter() {
+    protected List<File> listBundleFiles(File dir) {
+        return Arrays.asList(dir.listFiles(new FileFilter() {
             public boolean accept(File f) {
                 if (!f.isFile()) {
                     return false;
@@ -113,8 +113,8 @@ public class FSManifestIterable extends AbstractFSManifestIterable/* <File> */{
         }));
     }
 
-    protected List/* <File> */listDirs(Object/* File */dir) {
-        return Arrays.asList(((File) dir).listFiles(new FileFilter() {
+    protected List<File> listDirs(File dir) {
+        return Arrays.asList(dir.listFiles(new FileFilter() {
             public boolean accept(File f) {
                 if (!f.isDirectory()) {
                     return false;

@@ -35,6 +35,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.obr.xml.OBRXMLWriter;
 import org.apache.ivy.osgi.repo.ArtifactReportManifestIterable;
 import org.apache.ivy.osgi.repo.FSManifestIterable;
+import org.apache.ivy.osgi.repo.ManifestAndLocation;
 import org.apache.ivy.osgi.repo.ResolverManifestIterable;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -98,7 +99,7 @@ public class BuildOBRTask extends IvyCacheTask {
             throw new BuildException("No output file specified: use the attribute 'out'");
         }
 
-        Iterator/* <ManifestAndLocation> */it;
+        Iterable<ManifestAndLocation> it;
         if (resolverName != null) {
             if (baseDir != null) {
                 throw new BuildException("specify only one of 'resolver' or 'baseDir'");
@@ -116,7 +117,7 @@ public class BuildOBRTask extends IvyCacheTask {
                 throw new BuildException("the type of resolver '"
                         + resolver.getClass().getName() + "' is not supported.");
             }
-            it = new ResolverManifestIterable((BasicResolver) resolver).iterator();
+            it = new ResolverManifestIterable((BasicResolver) resolver);
         } else if (baseDir != null) {
             if (cacheName != null) {
                 throw new BuildException("specify only one of 'baseDir' or 'cache'");
@@ -124,7 +125,7 @@ public class BuildOBRTask extends IvyCacheTask {
             if (!baseDir.isDirectory()) {
                 throw new BuildException(baseDir + " is not a directory");
             }
-            it = new FSManifestIterable(baseDir).iterator();
+            it = new FSManifestIterable(baseDir);
         } else if (cacheName != null) {
             Ivy ivy = getIvyInstance();
             RepositoryCacheManager cacheManager = ivy.getSettings().getRepositoryCacheManager(
@@ -134,11 +135,11 @@ public class BuildOBRTask extends IvyCacheTask {
                         + cacheManager.getClass().getName() + "' is not supported.");
             }
             File basedir = ((DefaultRepositoryCacheManager) cacheManager).getBasedir();
-            it = new FSManifestIterable(basedir).iterator();
+            it = new FSManifestIterable(basedir);
         } else {
             prepareAndCheck();
             try {
-                it = new ArtifactReportManifestIterable(getArtifactReports()).iterator();
+                it = new ArtifactReportManifestIterable(getArtifactReports());
             } catch (ParseException e) {
                 throw new BuildException("Impossible to parse the artifact reports: "
                         + e.getMessage(), e);

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,15 +74,17 @@ public class BundleInfoAdapter {
      *            uri to help build the absolute url if the bundle info has a relative uri.
      * @param bundle
      * @param profileProvider
-     * @param parser 
+     * @param parser
      * @return
      * @throws ProfileNotFoundException
      */
-    public static DefaultModuleDescriptor toModuleDescriptor(ModuleDescriptorParser parser, URI baseUri, BundleInfo bundle,
-            ExecutionEnvironmentProfileProvider profileProvider) throws ProfileNotFoundException {
+    public static DefaultModuleDescriptor toModuleDescriptor(ModuleDescriptorParser parser,
+            URI baseUri, BundleInfo bundle, ExecutionEnvironmentProfileProvider profileProvider)
+            throws ProfileNotFoundException {
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(parser, null);
         md.addExtraAttributeNamespace("o", Ivy.getIvyHomeURL() + "osgi");
-        ModuleRevisionId mrid = asMrid(BundleInfo.BUNDLE_TYPE, bundle.getSymbolicName(), bundle.getVersion());
+        ModuleRevisionId mrid = asMrid(BundleInfo.BUNDLE_TYPE, bundle.getSymbolicName(),
+            bundle.getVersion());
         md.setResolvedPublicationDate(new Date());
         md.setModuleRevisionId(mrid);
 
@@ -91,18 +92,14 @@ public class BundleInfoAdapter {
         md.addConfiguration(CONF_OPTIONAL);
         md.addConfiguration(CONF_TRANSITIVE_OPTIONAL);
 
-        Set/* <String> */exportedPkgNames = new HashSet/* <String> */(bundle.getExports().size());
-        Iterator itExport = bundle.getExports().iterator();
-        while (itExport.hasNext()) {
-            ExportPackage exportPackage = (ExportPackage) itExport.next();
+        Set<String> exportedPkgNames = new HashSet<String>(bundle.getExports().size());
+        for (ExportPackage exportPackage : bundle.getExports()) {
             md.getExtraInfo().put(EXTRA_INFO_EXPORT_PREFIX + exportPackage.getName(),
                 exportPackage.getVersion().toString());
             exportedPkgNames.add(exportPackage.getName());
             String[] confDependencies = new String[exportPackage.getUses().size() + 1];
             int i = 0;
-            Iterator itUse = exportPackage.getUses().iterator();
-            while (itUse.hasNext()) {
-                String use = (String) itUse.next();
+            for (String use : exportPackage.getUses()) {
                 confDependencies[i++] = CONF_USE_PREFIX + use;
             }
             confDependencies[i] = CONF_NAME_DEFAULT;
@@ -131,19 +128,15 @@ public class BundleInfoAdapter {
         }
 
         if (profileProvider != null) {
-            Iterator itEnv = bundle.getExecutionEnvironments().iterator();
-            while (itEnv.hasNext()) {
-                String env = (String) itEnv.next();
+            for (String env : bundle.getExecutionEnvironments()) {
                 ExecutionEnvironmentProfile profile = profileProvider.getProfile(env);
                 if (profile == null) {
                     throw new ProfileNotFoundException("Execution environment profile " + env
                             + " not found");
                 }
-                Iterator itPkg = profile.getPkgNames().iterator();
-                while (itPkg.hasNext()) {
-                    String pkg = (String) itPkg.next();
-                    ArtifactId id = new ArtifactId(ModuleId.newInstance(BundleInfo.PACKAGE_TYPE, pkg),
-                            PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
+                for (String pkg : profile.getPkgNames()) {
+                    ArtifactId id = new ArtifactId(ModuleId.newInstance(BundleInfo.PACKAGE_TYPE,
+                        pkg), PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
                             PatternMatcher.ANY_EXPRESSION);
                     DefaultExcludeRule rule = new DefaultExcludeRule(id,
                             ExactOrRegexpPatternMatcher.INSTANCE, null);
@@ -159,7 +152,8 @@ public class BundleInfoAdapter {
         return md;
     }
 
-    public static DefaultArtifact buildArtifact(ModuleRevisionId mrid, URI baseUri, URI uri, String type, String compression) {
+    public static DefaultArtifact buildArtifact(ModuleRevisionId mrid, URI baseUri, URI uri,
+            String type, String compression) {
         DefaultArtifact artifact;
         if ("ivy".equals(uri.getScheme())) {
             artifact = decodeIvyURI(uri);
@@ -167,7 +161,7 @@ public class BundleInfoAdapter {
             if (!uri.isAbsolute()) {
                 uri = baseUri.resolve(uri);
             }
-            Map extraAtt = new HashMap();
+            Map<String, String> extraAtt = new HashMap<String, String>();
             if (compression != null) {
                 extraAtt.put("compression", compression);
             }
@@ -181,15 +175,13 @@ public class BundleInfoAdapter {
         return artifact;
     }
 
-    public static List/*<String>*/ getConfigurations(BundleInfo bundle) {
-        List/*<String>*/ confs = new ArrayList();
-        confs.add(CONF_DEFAULT);
-        confs.add(CONF_OPTIONAL);
-        confs.add(CONF_TRANSITIVE_OPTIONAL);
+    public static List<String> getConfigurations(BundleInfo bundle) {
+        List<String> confs = new ArrayList<String>();
+        confs.add(CONF_NAME_DEFAULT);
+        confs.add(CONF_NAME_OPTIONAL);
+        confs.add(CONF_NAME_TRANSITIVE_OPTIONAL);
 
-        Iterator itExport = bundle.getExports().iterator();
-        while (itExport.hasNext()) {
-            ExportPackage exportPackage = (ExportPackage) itExport.next();
+        for (ExportPackage exportPackage : bundle.getExports()) {
             confs.add(CONF_USE_PREFIX + exportPackage.getName());
         }
 
@@ -248,7 +240,8 @@ public class BundleInfoAdapter {
 
         String path = uri.getPath();
         if (!path.startsWith("/")) {
-            throw new IllegalArgumentException("An ivy url should be of the form ivy:///org/module but was : " + uri);
+            throw new IllegalArgumentException(
+                    "An ivy url should be of the form ivy:///org/module but was : " + uri);
         }
         int i = path.indexOf('/', 1);
         if (i < 0) {
@@ -289,10 +282,8 @@ public class BundleInfoAdapter {
     }
 
     private static void requirementAsDependency(DefaultModuleDescriptor md, BundleInfo bundleInfo,
-            Set/* <String> */exportedPkgNames) {
-        Iterator itReq = bundleInfo.getRequirements().iterator();
-        while (itReq.hasNext()) {
-            BundleRequirement requirement = (BundleRequirement) itReq.next();
+            Set<String> exportedPkgNames) {
+        for (BundleRequirement requirement : bundleInfo.getRequirements()) {
             String type = requirement.getType();
             String name = requirement.getName();
 

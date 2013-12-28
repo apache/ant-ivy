@@ -18,7 +18,6 @@
 package org.apache.ivy.osgi.updatesite;
 
 import java.net.URI;
-import java.util.Iterator;
 
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
@@ -42,17 +41,13 @@ public class PluginAdapter {
         b.setDescription(feature.getDescription());
         b.setLicense(feature.getLicense());
 
-        Iterator itPlugins = feature.getPlugins().iterator();
-        while (itPlugins.hasNext()) {
-            EclipsePlugin plugin = (EclipsePlugin) itPlugins.next();
+        for (EclipsePlugin plugin : feature.getPlugins()) {
             BundleRequirement r = new BundleRequirement(BundleInfo.BUNDLE_TYPE, plugin.getId(),
                     new VersionRange(plugin.getVersion()), null);
             b.addRequirement(r);
         }
 
-        Iterator itRequires = feature.getRequires().iterator();
-        while (itRequires.hasNext()) {
-            Require require = (Require) itRequires.next();
+        for (Require require : feature.getRequires()) {
             String id;
             if (require.getPlugin() != null) {
                 id = require.getPlugin();

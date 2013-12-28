@@ -29,7 +29,7 @@ import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.obr.filter.RequirementFilterParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
@@ -50,7 +50,7 @@ public class OBRXMLParser {
         return handler.repo;
     }
 
-    static class RepositoryHandler extends DelegetingHandler {
+    static class RepositoryHandler extends DelegatingHandler {
 
         static final String REPOSITORY = "repository";
 
@@ -65,9 +65,9 @@ public class OBRXMLParser {
         public RepositoryHandler(URI baseUri) {
             super(REPOSITORY);
             this.baseUri = baseUri;
-            addChild(new ResourceHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    repo.addBundle(((ResourceHandler) child).bundleInfo);
+            addChild(new ResourceHandler(), new ChildElementHandler<ResourceHandler>() {
+                public void childHanlded(ResourceHandler child) {
+                    repo.addBundle(child.bundleInfo);
                 }
             });
         }
@@ -82,7 +82,7 @@ public class OBRXMLParser {
         }
     }
 
-    static class ResourceHandler extends DelegetingHandler {
+    static class ResourceHandler extends DelegatingHandler {
 
         private static final String DEFAULT_VERSION = "1.0.0";
 
@@ -106,8 +106,8 @@ public class OBRXMLParser {
             setSkipOnError(true); // if anything bad happen in any children, just ignore the
                                   // resource
 
-            addChild(new ResourceSourceHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+            addChild(new ResourceSourceHandler(), new ChildElementHandler<ResourceSourceHandler>() {
+                public void childHanlded(ResourceSourceHandler child) {
                     String uri = child.getBufferedChars().trim();
                     if (!uri.endsWith(".jar")) {
                         // the maven plugin is putting some useless source url sometimes...
@@ -125,23 +125,26 @@ public class OBRXMLParser {
                     }
                 }
             });
-            addChild(new ResourceDescriptionHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setDescription(child.getBufferedChars().trim());
-                }
-            });
-            addChild(new ResourceDocumentationHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setDocumentation(child.getBufferedChars().trim());
-                }
-            });
-            addChild(new ResourceLicenseHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    bundleInfo.setLicense(child.getBufferedChars().trim());
-                }
-            });
-            addChild(new ResourceSizeHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+            addChild(new ResourceDescriptionHandler(),
+                new ChildElementHandler<ResourceDescriptionHandler>() {
+                    public void childHanlded(ResourceDescriptionHandler child) {
+                        bundleInfo.setDescription(child.getBufferedChars().trim());
+                    }
+                });
+            addChild(new ResourceDocumentationHandler(),
+                new ChildElementHandler<ResourceDocumentationHandler>() {
+                    public void childHanlded(ResourceDocumentationHandler child) {
+                        bundleInfo.setDocumentation(child.getBufferedChars().trim());
+                    }
+                });
+            addChild(new ResourceLicenseHandler(),
+                new ChildElementHandler<ResourceLicenseHandler>() {
+                    public void childHanlded(ResourceLicenseHandler child) {
+                        bundleInfo.setLicense(child.getBufferedChars().trim());
+                    }
+                });
+            addChild(new ResourceSizeHandler(), new ChildElementHandler<ResourceSizeHandler>() {
+                public void childHanlded(ResourceSizeHandler child) {
                     String size = child.getBufferedChars().trim();
                     try {
                         bundleInfo.setSize(Integer.valueOf(size));
@@ -152,21 +155,21 @@ public class OBRXMLParser {
                     }
                 }
             });
-            addChild(new CapabilityHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) throws SAXParseException {
+            addChild(new CapabilityHandler(), new ChildElementHandler<CapabilityHandler>() {
+                public void childHanlded(CapabilityHandler child) throws SAXParseException {
 
                     try {
-                        CapabilityAdapter.adapt(bundleInfo, ((CapabilityHandler) child).capability);
+                        CapabilityAdapter.adapt(bundleInfo, child.capability);
                     } catch (ParseException e) {
                         throw new SAXParseException("Invalid capability: " + e.getMessage(), child
                                 .getLocator());
                     }
                 }
             });
-            addChild(new RequireHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) throws SAXParseException {
+            addChild(new RequireHandler(), new ChildElementHandler<RequireHandler>() {
+                public void childHanlded(RequireHandler child) throws SAXParseException {
                     try {
-                        RequirementAdapter.adapt(bundleInfo, ((RequireHandler) child).requirement);
+                        RequirementAdapter.adapt(bundleInfo, child.requirement);
                     } catch (UnsupportedFilterException e) {
                         throw new SAXParseException("Unsupported requirement filter: "
                                 + ((RequireHandler) child).filter + " (" + e.getMessage() + ")",
@@ -178,8 +181,8 @@ public class OBRXMLParser {
                     }
                 }
             });
-            addChild(new ExtendHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) throws SAXParseException {
+            addChild(new ExtendHandler(), new ChildElementHandler<ExtendHandler>() {
+                public void childHanlded(ExtendHandler child) throws SAXParseException {
                     // TODO handle fragment host
                 }
             });
@@ -226,7 +229,7 @@ public class OBRXMLParser {
 
     }
 
-    static class ResourceSourceHandler extends DelegetingHandler {
+    static class ResourceSourceHandler extends DelegatingHandler {
 
         static final String SOURCE = "source";
 
@@ -237,7 +240,7 @@ public class OBRXMLParser {
 
     }
 
-    static class ResourceDescriptionHandler extends DelegetingHandler {
+    static class ResourceDescriptionHandler extends DelegatingHandler {
 
         static final String DESCRIPTION = "description";
 
@@ -248,7 +251,7 @@ public class OBRXMLParser {
 
     }
 
-    static class ResourceDocumentationHandler extends DelegetingHandler {
+    static class ResourceDocumentationHandler extends DelegatingHandler {
 
         static final String DOCUMENTATION = "documentation";
 
@@ -258,7 +261,7 @@ public class OBRXMLParser {
         }
     }
 
-    static class ResourceLicenseHandler extends DelegetingHandler {
+    static class ResourceLicenseHandler extends DelegatingHandler {
 
         static final String LICENSE = "license";
 
@@ -269,7 +272,7 @@ public class OBRXMLParser {
 
     }
 
-    static class ResourceSizeHandler extends DelegetingHandler {
+    static class ResourceSizeHandler extends DelegatingHandler {
 
         static final String SIZE = "size";
 
@@ -279,7 +282,7 @@ public class OBRXMLParser {
         }
     }
 
-    static class CapabilityHandler extends DelegetingHandler {
+    static class CapabilityHandler extends DelegatingHandler {
 
         static final String CAPABILITY = "capability";
 
@@ -289,15 +292,16 @@ public class OBRXMLParser {
 
         public CapabilityHandler() {
             super(CAPABILITY);
-            addChild(new CapabilityPropertyHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    String name = ((CapabilityPropertyHandler) child).name;
-                    String value = ((CapabilityPropertyHandler) child).value;
-                    String type = ((CapabilityPropertyHandler) child).type;
+            addChild(new CapabilityPropertyHandler(),
+                new ChildElementHandler<CapabilityPropertyHandler>() {
+                    public void childHanlded(CapabilityPropertyHandler child) {
+                        String name = child.name;
+                        String value = child.value;
+                        String type = child.type;
 
-                    capability.addProperty(name, value, type);
-                }
-            });
+                        capability.addProperty(name, value, type);
+                    }
+                });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -307,7 +311,7 @@ public class OBRXMLParser {
 
     }
 
-    static class CapabilityPropertyHandler extends DelegetingHandler {
+    static class CapabilityPropertyHandler extends DelegatingHandler {
 
         static final String CAPABILITY_PROPERTY = "p";
 
@@ -334,7 +338,7 @@ public class OBRXMLParser {
         }
     }
 
-    static class AbstractRequirementHandler extends DelegetingHandler {
+    static class AbstractRequirementHandler extends DelegatingHandler {
 
         static final String NAME = "name";
 

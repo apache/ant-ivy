@@ -26,7 +26,7 @@ import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
@@ -44,7 +44,7 @@ public class EclipseUpdateSiteParser {
         return handler.updatesite;
     }
 
-    static class SiteHandler extends DelegetingHandler {
+    private static class SiteHandler extends DelegatingHandler {
 
         private static final String SITE = "site";
 
@@ -67,9 +67,9 @@ public class EclipseUpdateSiteParser {
             // updateSite.setDescription(child.getBufferedChars().trim());
             // }
             // });
-            addChild(new FeatureHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    updatesite.addFeature(((FeatureHandler) child).feature);
+            addChild(new FeatureHandler(), new ChildElementHandler<FeatureHandler>() {
+                public void childHanlded(FeatureHandler child) {
+                    updatesite.addFeature(child.feature);
                 }
             });
             // addChild(new ArchiveHandler(), new ChildElementHandler() {
@@ -125,23 +125,23 @@ public class EclipseUpdateSiteParser {
         }
     }
 
-    static class DescriptionHandler extends DelegetingHandler {
+    //    private static class DescriptionHandler extends DelegetingHandler {
+    //
+    //        private static final String DESCRIPTION = "description";
+    //
+    //        private static final String URL = "url";
+    //
+    //        public DescriptionHandler() {
+    //            super(DESCRIPTION);
+    //            setBufferingChar(true);
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) {
+    //            String url = atts.getValue(URL);
+    //        }
+    //    }
 
-        private static final String DESCRIPTION = "description";
-
-        private static final String URL = "url";
-
-        public DescriptionHandler() {
-            super(DESCRIPTION);
-            setBufferingChar(true);
-        }
-
-        protected void handleAttributes(Attributes atts) {
-            String url = atts.getValue(URL);
-        }
-    }
-
-    static class FeatureHandler extends DelegetingHandler {
+    private static class FeatureHandler extends DelegatingHandler {
 
         private static final String FEATURE = "feature";
 
@@ -169,9 +169,9 @@ public class EclipseUpdateSiteParser {
 
         public FeatureHandler() {
             super(FEATURE);
-            addChild(new CategoryHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    feature.addCategory(((CategoryHandler) child).name);
+            addChild(new CategoryHandler(), new ChildElementHandler<CategoryHandler>() {
+                public void childHanlded(CategoryHandler child) {
+                    feature.addCategory(child.name);
                 }
             });
         }
@@ -201,7 +201,7 @@ public class EclipseUpdateSiteParser {
 
     }
 
-    static class CategoryHandler extends DelegetingHandler {
+    private static class CategoryHandler extends DelegatingHandler {
 
         private static final String CATEGORY = "category";
 
@@ -218,60 +218,60 @@ public class EclipseUpdateSiteParser {
         }
     }
 
-    static class ArchiveHandler extends DelegetingHandler {
+    //    private static class ArchiveHandler extends DelegetingHandler {
+    //
+    //        private static final String ARCHIVE = "archive";
+    //
+    //        private static final String URL = "url";
+    //
+    //        private static final String PATH = "path";
+    //
+    //        private Archive archive;
+    //
+    //        public ArchiveHandler() {
+    //            super(ARCHIVE);
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) throws SAXException {
+    //            archive = new Archive();
+    //
+    //            String path = atts.getValue(PATH);
+    //            archive.setPath(path);
+    //
+    //            String url = atts.getValue(URL);
+    //            archive.setURL(url);
+    //
+    //        }
+    //    }
 
-        private static final String ARCHIVE = "archive";
-
-        private static final String URL = "url";
-
-        private static final String PATH = "path";
-
-        private Archive archive;
-
-        public ArchiveHandler() {
-            super(ARCHIVE);
-        }
-
-        protected void handleAttributes(Attributes atts) throws SAXException {
-            archive = new Archive();
-
-            String path = atts.getValue(PATH);
-            archive.setPath(path);
-
-            String url = atts.getValue(URL);
-            archive.setURL(url);
-
-        }
-    }
-
-    static class CategoryDefHandler extends DelegetingHandler {
-
-        private static final String CATEGORY_DEF = "category-def";
-
-        private static final String NAME = "name";
-
-        private static final String LABEL = "label";
-
-        private CategoryDef categoryDef;
-
-        public CategoryDefHandler() {
-            super(CATEGORY_DEF);
-            addChild(new DescriptionHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    categoryDef.setDescription(child.getBufferedChars().trim());
-                }
-            });
-        }
-
-        protected void handleAttributes(Attributes atts) throws SAXException {
-            categoryDef = new CategoryDef();
-
-            String name = atts.getValue(NAME);
-            categoryDef.setName(name);
-
-            String label = atts.getValue(LABEL);
-            categoryDef.setLabel(label);
-        }
-    }
+    //    private static class CategoryDefHandler extends DelegetingHandler {
+    //
+    //        private static final String CATEGORY_DEF = "category-def";
+    //
+    //        private static final String NAME = "name";
+    //
+    //        private static final String LABEL = "label";
+    //
+    //        private CategoryDef categoryDef;
+    //
+    //        public CategoryDefHandler() {
+    //            super(CATEGORY_DEF);
+    //            addChild(new DescriptionHandler(), new ChildElementHandler<DescriptionHandler>() {
+    //                public void childHanlded(DescriptionHandler child) {
+    //                    categoryDef.setDescription(child.getBufferedChars().trim());
+    //                }
+    //            });
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) throws SAXException {
+    //            categoryDef = new CategoryDef();
+    //
+    //            String name = atts.getValue(NAME);
+    //            categoryDef.setName(name);
+    //
+    //            String label = atts.getValue(LABEL);
+    //            categoryDef.setLabel(label);
+    //        }
+    //    }
 
 }

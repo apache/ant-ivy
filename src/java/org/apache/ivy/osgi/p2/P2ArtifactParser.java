@@ -21,14 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.osgi.p2.PropertiesParser.PropertiesHandler;
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
@@ -54,7 +52,7 @@ public class P2ArtifactParser implements XMLInputParser {
         }
     }
 
-    static class RepositoryHandler extends DelegetingHandler {
+    private static class RepositoryHandler extends DelegatingHandler {
 
         private static final String REPOSITORY = "repository";
 
@@ -64,20 +62,18 @@ public class P2ArtifactParser implements XMLInputParser {
         //
         // private static final String VERSION = "version";
 
-        private Map/* <String, String> */patternsByClassifier = new HashMap();
+        private Map<String, String> patternsByClassifier = new HashMap<String, String>();
 
         public RepositoryHandler(final P2Descriptor p2Descriptor, String repoUrl) {
             super(REPOSITORY);
-            // addChild(new PropertiesHandler(), new ChildElementHandler() {
-            // public void childHanlded(DelegetingHandler child) {
+            // addChild(new PropertiesHandler(), new ChildElementHandler<PropertiesHandler>() {
+            // public void childHanlded(PropertiesHandler child) {
             // }
             // });
-            addChild(new MappingsHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    Iterator it = ((MappingsHandler) child).outputByFilter.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Entry entry = (Entry) it.next();
-                        String filter = (String) entry.getKey();
+            addChild(new MappingsHandler(), new ChildElementHandler<MappingsHandler>() {
+                public void childHanlded(MappingsHandler child) {
+                    for (Entry<String, String> entry : child.outputByFilter.entrySet()) {
+                        String filter = entry.getKey();
                         if (filter.startsWith("(& (classifier=") && filter.endsWith("")) {
                             String classifier = filter.substring(15, filter.length() - 2);
                             patternsByClassifier.put(classifier, entry.getValue());
@@ -89,8 +85,8 @@ public class P2ArtifactParser implements XMLInputParser {
                 }
             });
             addChild(new ArtifactsHandler(p2Descriptor, patternsByClassifier, repoUrl),
-                new ChildElementHandler() {
-                    public void childHanlded(DelegetingHandler child) {
+                new ChildElementHandler<ArtifactsHandler>() {
+                    public void childHanlded(ArtifactsHandler child) {
                         // nothing to do
                     }
                 });
@@ -102,31 +98,31 @@ public class P2ArtifactParser implements XMLInputParser {
         // }
     }
 
-    static class MappingsHandler extends DelegetingHandler {
+    private static class MappingsHandler extends DelegatingHandler {
 
         private static final String MAPPINGS = "mappings";
 
         private static final String SIZE = "size";
 
-        Map/* <String, String> */outputByFilter;
+        Map<String, String> outputByFilter;
 
         public MappingsHandler() {
             super(MAPPINGS);
-            addChild(new RuleHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    outputByFilter.put(((RuleHandler) child).filter, ((RuleHandler) child).output);
+            addChild(new RuleHandler(), new ChildElementHandler<RuleHandler>() {
+                public void childHanlded(RuleHandler child) {
+                    outputByFilter.put(child.filter, child.output);
                 }
             });
         }
 
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            outputByFilter = new HashMap(size);
+            outputByFilter = new HashMap<String, String>(size);
         }
 
     }
 
-    static class RuleHandler extends DelegetingHandler {
+    private static class RuleHandler extends DelegatingHandler {
 
         private static final String RULE = "rule";
 
@@ -149,19 +145,19 @@ public class P2ArtifactParser implements XMLInputParser {
 
     }
 
-    static class ArtifactsHandler extends DelegetingHandler {
+    private static class ArtifactsHandler extends DelegatingHandler {
 
         private static final String ARTIFACTS = "artifacts";
 
         // private static final String SIZE = "size";
 
         public ArtifactsHandler(final P2Descriptor p2Descriptor,
-                final Map/* <String, String> */patternsByClassifier, final String repoUrl) {
+                final Map<String, String> patternsByClassifier, final String repoUrl) {
             super(ARTIFACTS);
-            addChild(new ArtifactHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    P2Artifact a = ((ArtifactHandler) child).p2Artifact;
-                    String url = (String) patternsByClassifier.get(a.getClassifier());
+            addChild(new ArtifactHandler(), new ChildElementHandler<ArtifactHandler>() {
+                public void childHanlded(ArtifactHandler child) {
+                    P2Artifact a = child.p2Artifact;
+                    String url = patternsByClassifier.get(a.getClassifier());
                     if (url.startsWith("${repoUrl}")) { // try to avoid costly regexp
                         url = repoUrl + url.substring(10);
                     } else {
@@ -179,7 +175,7 @@ public class P2ArtifactParser implements XMLInputParser {
 
     }
 
-    static class ArtifactHandler extends DelegetingHandler {
+    private static class ArtifactHandler extends DelegatingHandler {
 
         private static final String ARTIFACT = "artifact";
 
@@ -193,8 +189,8 @@ public class P2ArtifactParser implements XMLInputParser {
 
         public ArtifactHandler() {
             super(ARTIFACT);
-            // addChild(new PropertiesHandler(), new ChildElementHandler() {
-            // public void childHanlded(DelegetingHandler child) {
+            // addChild(new PropertiesHandler(), new ChildElementHandler<PropertiesHandler>() {
+            // public void childHanlded(PropertiesHandler child) {
             // }
             // });
         }

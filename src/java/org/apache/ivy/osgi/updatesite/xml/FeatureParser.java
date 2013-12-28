@@ -21,12 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.osgi.util.DelegetingHandler;
+import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
@@ -45,7 +44,7 @@ public class FeatureParser {
         return handler.feature;
     }
 
-    static class FeatureHandler extends DelegetingHandler {
+    static class FeatureHandler extends DelegatingHandler {
 
         private static final String FEATURE = "feature";
 
@@ -81,38 +80,37 @@ public class FeatureParser {
 
         public FeatureHandler() {
             super(FEATURE);
-            addChild(new DescriptionHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+            addChild(new DescriptionHandler(), new ChildElementHandler<DescriptionHandler>() {
+                public void childHanlded(DescriptionHandler child) {
                     feature.setDescription(child.getBufferedChars().trim());
                 }
             });
-            addChild(new LicenseHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+            addChild(new LicenseHandler(), new ChildElementHandler<LicenseHandler>() {
+                public void childHanlded(LicenseHandler child) {
                     feature.setLicense(child.getBufferedChars().trim());
                 }
             });
-            addChild(new CopyrightHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
+            addChild(new CopyrightHandler(), new ChildElementHandler<CopyrightHandler>() {
+                public void childHanlded(CopyrightHandler child) {
                     feature.setCopyright(child.getBufferedChars().trim());
                 }
             });
-            addChild(new PluginHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    feature.addPlugin(((PluginHandler) child).plugin);
+            addChild(new PluginHandler(), new ChildElementHandler<PluginHandler>() {
+                public void childHanlded(PluginHandler child) {
+                    feature.addPlugin(child.plugin);
                 }
             });
-            addChild(new RequiresHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    Iterator itRequire = ((RequiresHandler) child).requires.iterator();
-                    while (itRequire.hasNext()) {
-                        feature.addRequire((Require) itRequire.next());
+            addChild(new RequiresHandler(), new ChildElementHandler<RequiresHandler>() {
+                public void childHanlded(RequiresHandler child) {
+                    for (Require require : child.requires) {
+                        feature.addRequire(require);
                     }
                 }
             });
-            addChild(new UrlHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                }
-            });
+            //            addChild(new UrlHandler(), new ChildElementHandler<UrlHandler>() {
+            //                public void childHanlded(UrlHandler child) {
+            //                }
+            //            });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -141,7 +139,7 @@ public class FeatureParser {
 
     }
 
-    static class PluginHandler extends DelegetingHandler {
+    private static class PluginHandler extends DelegatingHandler {
 
         private static final String PLUGIN = "plugin";
 
@@ -180,11 +178,11 @@ public class FeatureParser {
         }
     }
 
-    static class DescriptionHandler extends DelegetingHandler {
+    private static class DescriptionHandler extends DelegatingHandler {
 
         private static final String DESCRIPTION = "description";
 
-        private static final String URL = "url";
+        //        private static final String URL = "url";
 
         public DescriptionHandler() {
             super(DESCRIPTION);
@@ -192,15 +190,15 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String url = atts.getValue(URL);
+            //            String url = atts.getValue(URL);
         }
     }
 
-    static class LicenseHandler extends DelegetingHandler {
+    private static class LicenseHandler extends DelegatingHandler {
 
         private static final String LICENSE = "license";
 
-        private static final String URL = "url";
+        //        private static final String URL = "url";
 
         public LicenseHandler() {
             super(LICENSE);
@@ -208,16 +206,16 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String url = atts.getValue(URL);
+            //            String url = atts.getValue(URL);
         }
 
     }
 
-    static class CopyrightHandler extends DelegetingHandler {
+    private static class CopyrightHandler extends DelegatingHandler {
 
         private static final String COPYRIGHT = "copyright";
 
-        private static final String URL = "url";
+        //        private static final String URL = "url";
 
         public CopyrightHandler() {
             super(COPYRIGHT);
@@ -225,27 +223,27 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String url = atts.getValue(URL);
+            //            String url = atts.getValue(URL);
         }
     }
 
-    static class RequiresHandler extends DelegetingHandler {
+    static class RequiresHandler extends DelegatingHandler {
 
         private static final String REQUIRES = "requires";
 
-        List requires = new ArrayList();
+        List<Require> requires = new ArrayList<Require>();
 
         public RequiresHandler() {
             super(REQUIRES);
-            addChild(new ImportHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                    requires.add(((ImportHandler) child).require);
+            addChild(new ImportHandler(), new ChildElementHandler<ImportHandler>() {
+                public void childHanlded(ImportHandler child) {
+                    requires.add(child.require);
                 }
             });
         }
     }
 
-    static class ImportHandler extends DelegetingHandler {
+    private static class ImportHandler extends DelegatingHandler {
 
         Require require;
 
@@ -283,110 +281,110 @@ public class FeatureParser {
         }
     }
 
-    static class IncludesHandler extends DelegetingHandler {
+    //    private static class IncludesHandler extends DelegetingHandler {
+    //
+    //        private static final String INCLUDES = "includes";
+    //
+    //        private static final String FILTER = "filter";
+    //
+    //        private static final String OPTIONAL = "optional";
+    //
+    //        private static final String VERSION = "version";
+    //
+    //        private static final String ID = "id";
+    //
+    //        public IncludesHandler() {
+    //            super(INCLUDES);
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) throws SAXException {
+    //            String id = atts.getValue(ID);
+    //            String version = atts.getValue(VERSION);
+    //            String optional = atts.getValue(OPTIONAL);
+    //            String filter = atts.getValue(FILTER);
+    //        }
+    //
+    //    }
 
-        private static final String INCLUDES = "includes";
+    //    private static class InstallHandlerHandler extends DelegetingHandler {
+    //
+    //        private static final String INSTALL_HANDLER = "install-handler";
+    //
+    //        private static final String URL = "url";
+    //
+    //        private static final String LIBRARY = "library";
+    //
+    //        private static final String HANDLER = "handler";
+    //
+    //        public InstallHandlerHandler() {
+    //            super(INSTALL_HANDLER);
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) throws SAXException {
+    //            String handler = atts.getValue(HANDLER);
+    //            String library = atts.getValue(LIBRARY);
+    //            String url = atts.getValue(URL);
+    //        }
+    //
+    //    }
 
-        private static final String FILTER = "filter";
+    //    private static class UrlHandler extends DelegetingHandler {
+    //
+    //        private static final String URL = "url";
+    //
+    //        public UrlHandler() {
+    //            super(URL);
+    //            addChild(new UpdateHandler(), new ChildElementHandler<UpdateHandler>() {
+    //                public void childHanlded(UpdateHandler child) {
+    //                }
+    //            });
+    //            addChild(new DiscoveryHandler(), new ChildElementHandler<DiscoveryHandler>() {
+    //                public void childHanlded(DiscoveryHandler child) {
+    //                }
+    //            });
+    //        }
+    //
+    //    }
 
-        private static final String OPTIONAL = "optional";
+    //    private static class UpdateHandler extends DelegetingHandler {
+    //
+    //        private static final String UPDATE = "update";
+    //
+    //        private static final String LABEL = "label";
+    //
+    //        private static final String URL = "url";
+    //
+    //        public UpdateHandler() {
+    //            super(UPDATE);
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) throws SAXException {
+    //            String label = atts.getValue(LABEL);
+    //            String url = atts.getValue(URL);
+    //        }
+    //
+    //    }
 
-        private static final String VERSION = "version";
-
-        private static final String ID = "id";
-
-        public IncludesHandler() {
-            super(INCLUDES);
-        }
-
-        protected void handleAttributes(Attributes atts) throws SAXException {
-            String id = atts.getValue(ID);
-            String version = atts.getValue(VERSION);
-            String optional = atts.getValue(OPTIONAL);
-            String filter = atts.getValue(FILTER);
-        }
-
-    }
-
-    static class InstallHandlerHandler extends DelegetingHandler {
-
-        private static final String INSTALL_HANDLER = "install-handler";
-
-        private static final String URL = "url";
-
-        private static final String LIBRARY = "library";
-
-        private static final String HANDLER = "handler";
-
-        public InstallHandlerHandler() {
-            super(INSTALL_HANDLER);
-        }
-
-        protected void handleAttributes(Attributes atts) throws SAXException {
-            String handler = atts.getValue(HANDLER);
-            String library = atts.getValue(LIBRARY);
-            String url = atts.getValue(URL);
-        }
-
-    }
-
-    static class UrlHandler extends DelegetingHandler {
-
-        private static final String URL = "url";
-
-        public UrlHandler() {
-            super(URL);
-            addChild(new UpdateHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                }
-            });
-            addChild(new DiscoveryHandler(), new ChildElementHandler() {
-                public void childHanlded(DelegetingHandler child) {
-                }
-            });
-        }
-
-    }
-
-    static class UpdateHandler extends DelegetingHandler {
-
-        private static final String UPDATE = "update";
-
-        private static final String LABEL = "label";
-
-        private static final String URL = "url";
-
-        public UpdateHandler() {
-            super(UPDATE);
-        }
-
-        protected void handleAttributes(Attributes atts) throws SAXException {
-            String label = atts.getValue(LABEL);
-            String url = atts.getValue(URL);
-        }
-
-    }
-
-    static class DiscoveryHandler extends DelegetingHandler {
-
-        private static final String DISCOVERY = "discovery";
-
-        private static final String URL = "url";
-
-        private static final String LABEL = "label";
-
-        private static final String TYPE = "type";
-
-        public DiscoveryHandler() {
-            super(DISCOVERY);
-        }
-
-        protected void handleAttributes(Attributes atts) throws SAXException {
-            String type = atts.getValue(TYPE);
-            String label = atts.getValue(LABEL);
-            String url = atts.getValue(URL);
-        }
-
-    }
+    //    private static class DiscoveryHandler extends DelegetingHandler {
+    //
+    //        private static final String DISCOVERY = "discovery";
+    //
+    //        private static final String URL = "url";
+    //
+    //        private static final String LABEL = "label";
+    //
+    //        private static final String TYPE = "type";
+    //
+    //        public DiscoveryHandler() {
+    //            super(DISCOVERY);
+    //        }
+    //
+    //        protected void handleAttributes(Attributes atts) throws SAXException {
+    //            String type = atts.getValue(TYPE);
+    //            String label = atts.getValue(LABEL);
+    //            String url = atts.getValue(URL);
+    //        }
+    //
+    //    }
 
 }

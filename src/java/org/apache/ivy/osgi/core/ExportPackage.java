@@ -24,7 +24,7 @@ import org.apache.ivy.osgi.util.Version;
 
 public class ExportPackage extends BundleCapability {
 
-    private final Set/* <String> */uses = new HashSet/* <String> */();
+    private final Set<String> uses = new HashSet<String>();
 
     public ExportPackage(String name, Version version) {
         super(BundleInfo.PACKAGE_TYPE, name, version);
@@ -38,7 +38,7 @@ public class ExportPackage extends BundleCapability {
         return super.getVersion() == null ? BundleInfo.DEFAULT_VERSION : super.getVersion();
     }
 
-    public Set/* <String> */getUses() {
+    public Set<String> getUses() {
         return uses;
     }
 

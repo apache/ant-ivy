@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class ManifestHeaderValue {
 
-    private List/* <ManifestHeaderElement> */elements = new ArrayList/* <ManifestHeaderElement> */();
+    private List<ManifestHeaderElement> elements = new ArrayList<ManifestHeaderElement>();
 
     ManifestHeaderValue() {
         // just for unit testing
@@ -52,7 +52,7 @@ public class ManifestHeaderValue {
         }
     }
 
-    public List/* <ManifestHeaderElement> */getElements() {
+    public List<ManifestHeaderElement> getElements() {
         return elements;
     }
 
@@ -60,22 +60,19 @@ public class ManifestHeaderValue {
         if (elements.isEmpty()) {
             return null;
         }
-        List/* <String> */values = ((ManifestHeaderElement) getElements().iterator().next())
-                .getValues();
+        List<String> values = getElements().iterator().next().getValues();
         if (values.isEmpty()) {
             return null;
         }
-        return (String) values.iterator().next();
+        return values.iterator().next();
     }
 
-    public List/* <String> */getValues() {
+    public List<String> getValues() {
         if (elements.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
-        List/* <String> */list = new ArrayList/* <String> */();
-        Iterator itElements = getElements().iterator();
-        while (itElements.hasNext()) {
-            ManifestHeaderElement element = (ManifestHeaderElement) itElements.next();
+        List<String> list = new ArrayList<String>();
+        for (ManifestHeaderElement element : getElements()) {
             list.addAll(element.getValues());
         }
         return list;
@@ -388,9 +385,7 @@ public class ManifestHeaderValue {
         if (other.elements.size() != elements.size()) {
             return false;
         }
-        Iterator itElements = elements.iterator();
-        while (itElements.hasNext()) {
-            ManifestHeaderElement element = (ManifestHeaderElement) itElements.next();
+        for (ManifestHeaderElement element : elements) {
             if (!other.elements.contains(element)) {
                 return false;
             }
@@ -400,7 +395,7 @@ public class ManifestHeaderValue {
 
     public String toString() {
         String string = "";
-        Iterator/* <ManifestHeaderElement> */it = elements.iterator();
+        Iterator<ManifestHeaderElement> it = elements.iterator();
         while (it.hasNext()) {
             string = string.concat(it.next().toString());
             if (it.hasNext()) {

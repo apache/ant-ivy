@@ -63,7 +63,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     private static final String CAPABILITY_EXTRA_ATTR = "osgi_bundle";
 
-    protected static final RepoDescriptor FAILING_REPO_DESCRIPTOR = new RepoDescriptor(null, null);
+    protected static final RepoDescriptor FAILING_REPO_DESCRIPTOR = new EditableRepoDescriptor(
+            null, null);
 
     private RepoDescriptor repoDescriptor = null;
 
@@ -115,11 +116,12 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     abstract protected void init();
 
-    private RepoDescriptor getRepoDescriptor() {
+    public RepoDescriptor getRepoDescriptor() {
         ensureInit();
         return repoDescriptor;
     }
 
+    @Override
     public boolean isAllownomd() {
         // this a repo based resolver, we always have md
         return false;
@@ -133,7 +135,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             throw new RuntimeException("Unsupported OSGi module Id: " + mrid.getModuleId());
         }
         String id = mrid.getName();
-        Collection/* <ModuleDescriptor> */mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
+        Collection<ModuleDescriptor> mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
                 .findModule(osgiType, id));
         if (mds == null || mds.isEmpty()) {
             Message.verbose("\t " + id + " not found.");
@@ -156,12 +158,10 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     }
 
     public ResolvedResource[] findBundle(DependencyDescriptor dd, ResolveData data,
-            Collection/* < ModuleDescriptor > */mds) {
+            Collection<ModuleDescriptor> mds) {
         ResolvedResource[] ret = new ResolvedResource[mds.size()];
         int i = 0;
-        Iterator itMd = mds.iterator();
-        while (itMd.hasNext()) {
-            ModuleDescriptor md = (ModuleDescriptor) itMd.next();
+        for (ModuleDescriptor md : mds) {
             MetadataArtifactDownloadReport report = new MetadataArtifactDownloadReport(null);
             report.setDownloadStatus(DownloadStatus.NO);
             report.setSearched(true);
@@ -173,12 +173,10 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     }
 
     public ResolvedResource[] findCapability(DependencyDescriptor dd, ResolveData data,
-            Collection/* < ModuleDescriptor > */mds) {
+            Collection<ModuleDescriptor> mds) {
         ResolvedResource[] ret = new ResolvedResource[mds.size()];
         int i = 0;
-        Iterator itMd = mds.iterator();
-        while (itMd.hasNext()) {
-            ModuleDescriptor md = (ModuleDescriptor) itMd.next();
+        for (ModuleDescriptor md : mds) {
             IvyNode node = data.getNode(md.getModuleRevisionId());
             if (node != null && node.getDescriptor() != null) {
                 // already resolved import, no need to go further
@@ -226,6 +224,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return new MDResolvedResource(null, capabilityMd.getRevision(), rmr);
     }
 
+    @Override
     public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, Date date) {
         ResolvedResource found = super.findResource(rress, rmdparser, mrid, date);
@@ -236,29 +235,24 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             // several candidates with different symbolic name : make an warning about the ambiguity
             if (rress.length != 1) {
                 // several candidates with different symbolic name ?
-                Map/* <String, List<MDResolvedResource>> */matching = new HashMap();
+                Map<String, List<MDResolvedResource>> matching = new HashMap<String, List<MDResolvedResource>>();
                 for (int i = 0; i < rress.length; i++) {
                     String name = ((MDResolvedResource) rress[i]).getResolvedModuleRevision()
                             .getDescriptor().getExtraAttribute(CAPABILITY_EXTRA_ATTR);
-                    List/* <MDResolvedResource> */list = (List) matching.get(name);
+                    List<MDResolvedResource> list = matching.get(name);
                     if (list == null) {
-                        list = new ArrayList/* <MDResolvedResource> */();
+                        list = new ArrayList<MDResolvedResource>();
                         matching.put(name, list);
                     }
-                    list.add(rress[i]);
+                    list.add((MDResolvedResource) rress[i]);
                 }
                 if (matching.keySet().size() != 1) {
                     if (requirementStrategy == RequirementStrategy.first) {
                         Message.warn("Ambiguity for the '" + osgiType + "' requirement "
                                 + mrid.getName() + ";version=" + mrid.getRevision());
-                        Iterator itMatching = matching.entrySet().iterator();
-                        while (itMatching.hasNext()) {
-                            Entry/* <String, List<MDResolvedResource>> */entry = (Entry) itMatching
-                                    .next();
+                        for (Entry<String, List<MDResolvedResource>> entry : matching.entrySet()) {
                             Message.warn("\t" + entry.getKey());
-                            Iterator itB = ((List) entry.getValue()).iterator();
-                            while (itB.hasNext()) {
-                                MDResolvedResource c = (MDResolvedResource) itB.next();
+                            for (MDResolvedResource c : entry.getValue()) {
                                 Message.warn("\t\t" + c.getRevision()
                                         + (found == c ? " (selected)" : ""));
                             }
@@ -266,14 +260,9 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                     } else if (requirementStrategy == RequirementStrategy.noambiguity) {
                         Message.error("Ambiguity for the '" + osgiType + "' requirement "
                                 + mrid.getName() + ";version=" + mrid.getRevision());
-                        Iterator itMatching = matching.entrySet().iterator();
-                        while (itMatching.hasNext()) {
-                            Entry/* <String, List<MDResolvedResource>> */entry = (Entry) itMatching
-                                    .next();
+                        for (Entry<String, List<MDResolvedResource>> entry : matching.entrySet()) {
                             Message.error("\t" + entry.getKey());
-                            Iterator itB = ((List) entry.getValue()).iterator();
-                            while (itB.hasNext()) {
-                                MDResolvedResource c = (MDResolvedResource) itB.next();
+                            for (MDResolvedResource c : entry.getValue()) {
                                 Message.error("\t\t" + c.getRevision()
                                         + (found == c ? " (best match)" : ""));
                             }
@@ -303,6 +292,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return new ResolvedResource(resource, artifact.getModuleRevisionId().getRevision());
     }
 
+    @Override
     protected void checkModuleDescriptorRevision(ModuleDescriptor systemMd,
             ModuleRevisionId systemMrid) {
         String osgiType = systemMrid.getOrganisation();
@@ -313,11 +303,13 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
     }
 
+    @Override
     protected Collection/* <String> */filterNames(Collection/* <String> */names) {
         getSettings().filterIgnore(names);
         return names;
     }
 
+    @Override
     protected Collection findNames(Map tokenValues, String token) {
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
             return getRepoDescriptor().getCapabilities();
@@ -334,12 +326,10 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
-            List/* <String> */versions = new ArrayList/* <String> */();
-            Set/* <ModuleDescriptorWrapper> */mds = getRepoDescriptor().findModule(osgiType, name);
+            List<String> versions = new ArrayList<String>();
+            Set<ModuleDescriptorWrapper> mds = getRepoDescriptor().findModule(osgiType, name);
             if (mds != null) {
-                Iterator itMd = mds.iterator();
-                while (itMd.hasNext()) {
-                    ModuleDescriptorWrapper md = (ModuleDescriptorWrapper) itMd.next();
+                for (ModuleDescriptorWrapper md : mds) {
                     versions.add(md.getBundleInfo().getVersion().toString());
                 }
             }
@@ -354,8 +344,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 return Collections.singletonList(BundleInfoAdapter.CONF_USE_PREFIX + name);
             }
-            Collection/* <ModuleDescriptor> */mds = ModuleDescriptorWrapper
-                    .unwrap(getRepoDescriptor().findModule(osgiType, name));
+            Collection<ModuleDescriptor> mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
+                    .findModule(osgiType, name));
             if (mds == null) {
                 return Collections.EMPTY_LIST;
             }
@@ -364,9 +354,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                 return Collections.EMPTY_LIST;
             }
             ModuleDescriptor found = null;
-            Iterator itBundle = mds.iterator();
-            while (itBundle.hasNext()) {
-                ModuleDescriptor md = (ModuleDescriptor) itBundle.next();
+            for (ModuleDescriptor md : mds) {
                 if (md.getRevision().equals(version)) {
                     found = md;
                 }
@@ -374,7 +362,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (found == null) {
                 return Collections.EMPTY_LIST;
             }
-            List/* <String> */confs = Arrays.asList(found.getConfigurationsNames());
+            List<String> confs = Arrays.asList(found.getConfigurationsNames());
             return confs;
         }
         return Collections.EMPTY_LIST;
@@ -384,18 +372,15 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
      * Populate capabilityValues with capability values for which at least one module match the
      * expected revision
      */
-    private void filterCapabilityValues(Set/* <String> */capabilityValues,
-            Map/* <String, Set<ModuleDescriptor>> */moduleByCapbilityValue,
-            Map/* <String, String */tokenValues, String rev) {
+    private void filterCapabilityValues(Set<String> capabilityValues,
+            Map<String, Set<ModuleDescriptor>> moduleByCapbilityValue,
+            Map<String, String> tokenValues, String rev) {
         if (rev == null) {
             // no revision, all match then
             capabilityValues.addAll(moduleByCapbilityValue.keySet());
         } else {
-            Iterator/* <Entry<String, Set<ModuleDescriptor>>> */it = moduleByCapbilityValue
-                    .entrySet().iterator();
-            while (it.hasNext()) {
-                Entry/* <String, Set<ModuleDescriptor>> */entry = (Entry) it.next();
-                Iterator/* <ModuleDescriptor> */itModules = ((Set) entry.getValue()).iterator();
+            for (Entry<String, Set<ModuleDescriptor>> entry : moduleByCapbilityValue.entrySet()) {
+                Iterator<ModuleDescriptor> itModules = entry.getValue().iterator();
                 boolean moduleMatchRev = false;
                 while (!moduleMatchRev && itModules.hasNext()) {
                     ModuleDescriptor md = (ModuleDescriptor) itModules.next();
@@ -409,121 +394,111 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
     }
 
+    @Override
     public Map[] listTokenValues(String[] tokens, Map criteria) {
-        Set/* <String> */tokenSet = new HashSet/* <String> */(Arrays.asList(tokens));
-        Set/* <Map<String, String>> */listTokenValues = listTokenValues(tokenSet, criteria);
+        Set<String> tokenSet = new HashSet<String>(Arrays.asList(tokens));
+        Set<Map<String, String>> listTokenValues = listTokenValues(tokenSet, criteria);
         return (Map[]) listTokenValues.toArray(new Map[listTokenValues.size()]);
     }
 
-    private Set/* <Map<String, String>> */listTokenValues(Set/* <String> */tokens, Map/*
-                                                                                       * <String,
-                                                                                       * String>
-                                                                                       */criteria) {
+    private Set<Map<String, String>> listTokenValues(Set<String> tokens,
+            Map<String, String> criteria) {
         if (tokens.isEmpty()) {
-            return Collections./* <Map<String, String>> */singleton(criteria);
+            return Collections.singleton(criteria);
         }
 
-        Set/* <String> */tokenSet = new HashSet/* <String> */(tokens);
+        Set<String> remainingTokens = new HashSet<String>(tokens);
 
-        Map/* <String, String> */values = new HashMap/* <String, String> */();
+        Map<String, String> values = new HashMap<String, String>();
 
-        tokenSet.remove(IvyPatternHelper.ORGANISATION_KEY);
-        String osgiType = (String) criteria.get(IvyPatternHelper.ORGANISATION_KEY);
+        remainingTokens.remove(IvyPatternHelper.ORGANISATION_KEY);
+        String osgiType = criteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null || osgiType.length() == 0) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         values.put(IvyPatternHelper.ORGANISATION_KEY, osgiType);
 
         if (osgiType == null) {
-            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
-            Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
+            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            Map<String, String> newCriteria = new HashMap<String, String>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.BUNDLE_TYPE);
-            tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
-            newCriteria = new HashMap/* <String, String> */(criteria);
+            tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
+            newCriteria = new HashMap<String, String>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.PACKAGE_TYPE);
-            tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
-            newCriteria = new HashMap/* <String, String> */(criteria);
+            tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
+            newCriteria = new HashMap<String, String>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.SERVICE_TYPE);
-            tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
+            tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             return tokenValues;
         }
 
-        Set/* <String> */capabilities = getRepoDescriptor().getCapabilityValues(osgiType);
+        Set<String> capabilities = getRepoDescriptor().getCapabilityValues(osgiType);
         if (capabilities == null || capabilities.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
-        tokenSet.remove(IvyPatternHelper.MODULE_KEY);
-        String module = (String) criteria.get(IvyPatternHelper.MODULE_KEY);
+        remainingTokens.remove(IvyPatternHelper.MODULE_KEY);
+        String module = criteria.get(IvyPatternHelper.MODULE_KEY);
         if (module == null) {
-            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
-            Iterator itNames = capabilities.iterator();
-            while (itNames.hasNext()) {
-                String name = (String) itNames.next();
-                Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
+            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            for (String name : capabilities) {
+                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
                 newCriteria.put(IvyPatternHelper.MODULE_KEY, name);
-                tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
+                tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             }
             return tokenValues;
         }
         values.put(IvyPatternHelper.MODULE_KEY, module);
 
-        tokenSet.remove(IvyPatternHelper.REVISION_KEY);
-        String rev = (String) criteria.get(IvyPatternHelper.REVISION_KEY);
+        remainingTokens.remove(IvyPatternHelper.REVISION_KEY);
+        String rev = criteria.get(IvyPatternHelper.REVISION_KEY);
         if (rev == null) {
-            Set/* <ModuleDescriptorWrapper> */mdws = getRepoDescriptor().findModule(osgiType,
-                module);
+            Set<ModuleDescriptorWrapper> mdws = getRepoDescriptor().findModule(osgiType, module);
             if (mdws == null || mdws.isEmpty()) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
-            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
-            Iterator itBundle = mdws.iterator();
-            while (itBundle.hasNext()) {
-                ModuleDescriptorWrapper mdw = (ModuleDescriptorWrapper) itBundle.next();
-                Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
+            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            for (ModuleDescriptorWrapper mdw : mdws) {
+                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
                 newCriteria.put(IvyPatternHelper.REVISION_KEY, mdw.getBundleInfo().getVersion()
                         .toString());
-                tokenValues.addAll(listTokenValues(tokenSet, newCriteria));
+                tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             }
             return tokenValues;
         }
         values.put(IvyPatternHelper.REVISION_KEY, rev);
 
-        tokenSet.remove(IvyPatternHelper.CONF_KEY);
-        String conf = (String) criteria.get(IvyPatternHelper.CONF_KEY);
+        remainingTokens.remove(IvyPatternHelper.CONF_KEY);
+        String conf = criteria.get(IvyPatternHelper.CONF_KEY);
         if (conf == null) {
             if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 values.put(IvyPatternHelper.CONF_KEY, BundleInfoAdapter.CONF_USE_PREFIX + module);
-                return Collections./* <Map<String, String>> */singleton(values);
+                return Collections.singleton(values);
             }
-            Set/* <BundleCapabilityAndLocation> */bundleCapabilities = getRepoDescriptor()
-                    .findModule(osgiType, module);
-            if (bundleCapabilities == null) {
-                return Collections.EMPTY_SET;
+            Set<ModuleDescriptorWrapper> bundles = getRepoDescriptor().findModule(osgiType, module);
+            if (bundles == null) {
+                return Collections.emptySet();
             }
             Version v;
             try {
                 v = new Version(rev);
             } catch (ParseException e) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
-            BundleCapabilityAndLocation found = null;
-            Iterator itBundle = bundleCapabilities.iterator();
-            while (itBundle.hasNext()) {
-                BundleCapabilityAndLocation bundleCapability = (BundleCapabilityAndLocation) itBundle
-                        .next();
-                if (bundleCapability.getVersion().equals(v)) {
-                    found = bundleCapability;
+            ModuleDescriptorWrapper found = null;
+            for (ModuleDescriptorWrapper bundle : bundles) {
+                if (bundle.getBundleInfo().getVersion().equals(v)) {
+                    found = bundle;
                 }
             }
             if (found == null) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
-            Set/* <Map<String, String>> */tokenValues = new HashSet/* <Map<String, String>> */();
-            List/* <String> */configurations = BundleInfoAdapter.getConfigurations(found
-                    .getBundleInfo());
+            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            List<String> configurations = BundleInfoAdapter
+                    .getConfigurations(found.getBundleInfo());
             for (int i = 0; i < configurations.size(); i++) {
-                Map/* <String, String> */newCriteria = new HashMap/* <String, String> */(criteria);
+                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
                 newCriteria.put(IvyPatternHelper.CONF_KEY, configurations.get(i));
                 tokenValues.add(newCriteria);
             }
@@ -531,7 +506,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
         values.put(IvyPatternHelper.CONF_KEY, conf);
 
-        return Collections./* <Map<String, String>> */singleton(values);
+        return Collections.singleton(values);
     }
 
     protected long get(Resource resource, File dest) throws IOException {

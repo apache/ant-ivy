@@ -30,23 +30,23 @@ import java.util.jar.Manifest;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.util.Message;
 
-public class ArtifactReportManifestIterable /* implements Iterable<ManifestAndLocation> */{
+public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocation> {
 
-    private final List/* <ArtifactDownloadReport> */artifactReports;
+    private final List<ArtifactDownloadReport> artifactReports;
 
-    public ArtifactReportManifestIterable(List/* <ArtifactDownloadReport> */artifactReports) {
+    public ArtifactReportManifestIterable(List<ArtifactDownloadReport> artifactReports) {
         this.artifactReports = artifactReports;
     }
 
-    public Iterator/* <ManifestAndLocation> */iterator() {
+    public Iterator<ManifestAndLocation> iterator() {
         return new ArtifactReportManifestIterator();
     }
 
-    class ArtifactReportManifestIterator implements Iterator/* <ManifestAndLocation> */{
+    class ArtifactReportManifestIterator implements Iterator<ManifestAndLocation> {
 
         private ManifestAndLocation next = null;
 
-        private Iterator it;
+        private Iterator<ArtifactDownloadReport> it;
 
         public ArtifactReportManifestIterator() {
             it = artifactReports.iterator();
@@ -85,7 +85,7 @@ public class ArtifactReportManifestIterable /* implements Iterable<ManifestAndLo
             return true;
         }
 
-        public Object next() {
+        public ManifestAndLocation next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }

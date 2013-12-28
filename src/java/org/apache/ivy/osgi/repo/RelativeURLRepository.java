@@ -42,7 +42,7 @@ public class RelativeURLRepository extends URLRepository {
         this.baseUrl = baseUrl;
     }
 
-    private Map/* <String, Resource> */resourcesCache = new HashMap/* <String, Resource> */();
+    private Map<String, Resource> resourcesCache = new HashMap<String, Resource>();
 
     public Resource getResource(String source) throws IOException {
         source = encode(source);

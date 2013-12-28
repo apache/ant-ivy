@@ -29,11 +29,7 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 
 public class OsgiLatestStrategy extends ComparatorLatestStrategy {
 
-    final class MridComparator implements Comparator/* <ModuleRevisionId> */{
-
-        public int compare(Object o1, Object o2) {
-            return compare((ModuleRevisionId) o1, (ModuleRevisionId) o2);
-        }
+    final class MridComparator implements Comparator<ModuleRevisionId> {
 
         public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
             Version v1;
@@ -49,8 +45,8 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
                 return v1.compareTo(v2);
             } catch (RuntimeException e) {
                 if (e.getCause() instanceof ParseException) {
-                    throw new RuntimeException("Uncomparable versions:" + o1.getRevision() + " and "
-                            + o2.getRevision() + " (" + e.getMessage() + ")");
+                    throw new RuntimeException("Uncomparable versions:" + o1.getRevision()
+                            + " and " + o2.getRevision() + " (" + e.getMessage() + ")");
                 }
                 throw e;
             }
@@ -58,11 +54,7 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
 
     }
 
-    final class ArtifactInfoComparator implements Comparator/* <ArtifactInfo> */{
-
-        public int compare(Object o1, Object o2) {
-            return compare((ArtifactInfo) o1, (ArtifactInfo) o2);
-        }
+    final class ArtifactInfoComparator implements Comparator<ArtifactInfo> {
 
         public int compare(ArtifactInfo o1, ArtifactInfo o2) {
             String rev1 = o1.getRevision();
@@ -79,7 +71,7 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
             VersionMatcher vmatcher = IvyContext.getContext().getSettings().getVersionMatcher();
             ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("", "", rev1);
             ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("", "", rev2);
-            
+
             if (vmatcher.isDynamic(mrid1)) {
                 int c = vmatcher.compare(mrid1, mrid2, mridComparator);
                 return c >= 0 ? 1 : -1;
@@ -92,9 +84,9 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
         }
     }
 
-    private final Comparator/* <ModuleRevisionId> */mridComparator = new MridComparator();
+    private final Comparator<ModuleRevisionId> mridComparator = new MridComparator();
 
-    private final Comparator/* <ArtifactInfo> */artifactInfoComparator = new ArtifactInfoComparator();
+    private final Comparator<ArtifactInfo> artifactInfoComparator = new ArtifactInfoComparator();
 
     public OsgiLatestStrategy() {
         setComparator(artifactInfoComparator);

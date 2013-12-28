@@ -20,24 +20,23 @@ package org.apache.ivy.osgi.p2;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
+import org.apache.ivy.osgi.repo.EditableRepoDescriptor;
 import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
-import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 
-public class P2Descriptor extends RepoDescriptor {
+public class P2Descriptor extends EditableRepoDescriptor {
 
     private long timestamp;
 
-    private Map/* <String, Map<Version, String>> */artifactUrlPatterns = new HashMap();
+    private Map<String, Map<Version, String>> artifactUrlPatterns = new HashMap<String, Map<Version, String>>();
 
-    private Map/* <String, Map<String, URI>> */sourceURIs = new HashMap();
+    private Map<String, Map<String, URI>> sourceURIs = new HashMap<String, Map<String, URI>>();
 
     public P2Descriptor(URI repoUri, ExecutionEnvironmentProfileProvider profileProvider) {
         super(repoUri, profileProvider);
@@ -56,10 +55,9 @@ public class P2Descriptor extends RepoDescriptor {
                 }
                 return;
             }
-            Map/* <String, URI> */byVersion = (Map) sourceURIs.get(bundleInfo
-                    .getSymbolicNameTarget());
+            Map<String, URI> byVersion = sourceURIs.get(bundleInfo.getSymbolicNameTarget());
             if (byVersion == null) {
-                byVersion = new HashMap();
+                byVersion = new HashMap<String, URI>();
                 sourceURIs.put(bundleInfo.getSymbolicNameTarget(), byVersion);
             }
             URI sourceUri = getArtifactURI(bundleInfo);
@@ -70,7 +68,7 @@ public class P2Descriptor extends RepoDescriptor {
                 }
                 return;
             }
-            URI old = (URI) byVersion.put(bundleInfo.getVersionTarget().toString(), sourceUri);
+            URI old = byVersion.put(bundleInfo.getVersionTarget().toString(), sourceUri);
             if (old != null && !old.equals(sourceUri)) {
                 if (getLogLevel() <= Message.MSG_VERBOSE) {
                     Message.verbose("Duplicate source for the bundle "
@@ -89,10 +87,10 @@ public class P2Descriptor extends RepoDescriptor {
     }
 
     private URI getArtifactURI(BundleInfo bundleInfo) {
-        Map/* <Version, String> */urlPatternsByVersion = (Map) artifactUrlPatterns.get(bundleInfo
+        Map<Version, String> urlPatternsByVersion = artifactUrlPatterns.get(bundleInfo
                 .getSymbolicName());
         if (urlPatternsByVersion != null) {
-            String urlPattern = (String) urlPatternsByVersion.get(bundleInfo.getVersion());
+            String urlPattern = urlPatternsByVersion.get(bundleInfo.getVersion());
             if (urlPattern != null) {
                 String url = urlPattern.replaceAll("\\$\\{id\\}", bundleInfo.getSymbolicName());
                 url = url.replaceAll("\\$\\{version\\}", bundleInfo.getVersion().toString());
@@ -112,9 +110,9 @@ public class P2Descriptor extends RepoDescriptor {
             // we only support OSGi bundle, no Eclipse feature or anything else
             return;
         }
-        Map/* <Version, String> */byVersion = (Map) artifactUrlPatterns.get(id);
+        Map<Version, String> byVersion = artifactUrlPatterns.get(id);
         if (byVersion == null) {
-            byVersion = new HashMap();
+            byVersion = new HashMap<Version, String>();
             artifactUrlPatterns.put(id, byVersion);
         }
         byVersion.put(version, url);
@@ -122,20 +120,15 @@ public class P2Descriptor extends RepoDescriptor {
 
     public void finish() {
         artifactUrlPatterns = null;
-        Set/* <String> */bundleNames = getCapabilityValues(BundleInfo.BUNDLE_TYPE);
+        Set<String> bundleNames = getCapabilityValues(BundleInfo.BUNDLE_TYPE);
         if (bundleNames == null) {
             return;
         }
-        Iterator itBundleNames = bundleNames.iterator();
-        while (itBundleNames.hasNext()) {
-            String bundleName = (String) itBundleNames.next();
-            Set/* <ModuleDescriptorWrapper> */modules = findModule(BundleInfo.BUNDLE_TYPE,
-                bundleName);
-            Iterator itModules = modules.iterator();
-            while (itModules.hasNext()) {
-                ModuleDescriptorWrapper mdw = (ModuleDescriptorWrapper) itModules.next();
+        for (String bundleName : bundleNames) {
+            Set<ModuleDescriptorWrapper> modules = findModule(BundleInfo.BUNDLE_TYPE, bundleName);
+            for (ModuleDescriptorWrapper mdw : modules) {
                 String symbolicName = mdw.getBundleInfo().getSymbolicName();
-                Map/* <String, URI> */byVersion = (Map) sourceURIs.get(symbolicName);
+                Map<String, URI> byVersion = sourceURIs.get(symbolicName);
                 if (byVersion == null) {
                     continue;
                 }

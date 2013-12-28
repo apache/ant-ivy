@@ -44,7 +44,7 @@ import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
-public class ResolverManifestIterable { //implements Iterable/* <ManifestAndLocation> */{
+public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
 
     // We should support the interface DependencyResolver, but the API is not convenient to get
     // references to artifact
@@ -54,11 +54,11 @@ public class ResolverManifestIterable { //implements Iterable/* <ManifestAndLoca
         this.resolver = resolver;
     }
 
-    public Iterator/* <ManifestAndLocation> */iterator() {
+    public Iterator<ManifestAndLocation> iterator() {
         return new ResolverManifestIterator();
     }
 
-    class ResolverManifestIterator implements Iterator/* <ManifestAndLocation> */{
+    class ResolverManifestIterator implements Iterator<ManifestAndLocation> {
 
         private OrganisationEntry[] organisations;
 
@@ -188,7 +188,7 @@ public class ResolverManifestIterable { //implements Iterable/* <ManifestAndLoca
             return true;
         }
 
-        public Object next() {
+        public ManifestAndLocation next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }

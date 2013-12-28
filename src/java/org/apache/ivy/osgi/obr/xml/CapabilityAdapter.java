@@ -18,7 +18,6 @@
 package org.apache.ivy.osgi.obr.xml;
 
 import java.text.ParseException;
-import java.util.Iterator;
 
 import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
@@ -49,9 +48,7 @@ public class CapabilityAdapter {
         String pkgName = null;
         Version version = null;
         String uses = null;
-        Iterator itCapability = capability.getProperties().iterator();
-        while (itCapability.hasNext()) {
-            CapabilityProperty property = (CapabilityProperty) itCapability.next();
+        for (CapabilityProperty property : capability.getProperties()) {
             String propName = property.getName();
             if ("package".equals(propName)) {
                 pkgName = property.getValue();
@@ -84,9 +81,7 @@ public class CapabilityAdapter {
         String name = null;
         Version version = null;
 
-        Iterator itCapability = capability.getProperties().iterator();
-        while (itCapability.hasNext()) {
-            CapabilityProperty property = (CapabilityProperty) itCapability.next();
+        for (CapabilityProperty property : capability.getProperties()) {
             String propName = property.getName();
             if ("service".equals(propName)) {
                 name = property.getValue();

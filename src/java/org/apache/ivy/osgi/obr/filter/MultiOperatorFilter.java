@@ -18,14 +18,13 @@
 package org.apache.ivy.osgi.obr.filter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.osgi.obr.xml.RequirementFilter;
 
 public abstract class MultiOperatorFilter extends RequirementFilter {
 
-    private List/* <RequirementFilter> */subFilters = new ArrayList/* <RequirementFilter> */();
+    private List<RequirementFilter> subFilters = new ArrayList<RequirementFilter>();
 
     public MultiOperatorFilter() {
         // default constructor
@@ -43,9 +42,7 @@ public abstract class MultiOperatorFilter extends RequirementFilter {
     public void append(StringBuffer builder) {
         builder.append('(');
         builder.append(operator());
-        Iterator itSubFilters = subFilters.iterator();
-        while (itSubFilters.hasNext()) {
-            RequirementFilter filter = (RequirementFilter) itSubFilters.next();
+        for (RequirementFilter filter : subFilters) {
             filter.append(builder);
         }
         builder.append(')');
@@ -55,16 +52,14 @@ public abstract class MultiOperatorFilter extends RequirementFilter {
         subFilters.add(subFilter2);
     }
 
-    public List/* <RequirementFilter> */getSubFilters() {
+    public List<RequirementFilter> getSubFilters() {
         return subFilters;
     }
 
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        Iterator itSubFilters = subFilters.iterator();
-        while (itSubFilters.hasNext()) {
-            RequirementFilter subFilter = (RequirementFilter) itSubFilters.next();
+        for (RequirementFilter subFilter : subFilters) {
             result = prime * result + ((subFilter == null) ? 0 : subFilter.hashCode());
         }
         return result;

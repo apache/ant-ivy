@@ -108,7 +108,7 @@ public class BundleRepoTest extends TestCase {
         StreamResult stream = new StreamResult(out);
         hd.setResult(stream);
 
-        OBRXMLWriter.writeManifests(it.iterator(), hd, false);
+        OBRXMLWriter.writeManifests(it, hd, false);
 
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
         BundleRepoDescriptor repo2 = OBRXMLParser.parse(bundlerepo.toURI(), in);

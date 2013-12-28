@@ -39,7 +39,7 @@ public class ParseUtil {
             value = "";
         }
 
-        final List list = new ArrayList();
+        final List<String> list = new ArrayList<String>();
 
         final int CHAR = 1;
         final int DELIMITER = 2;

@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
@@ -138,7 +137,7 @@ public class ManifestParser {
 
         bundleInfo.setDescription(description);
 
-        List/* <String> */environments = new ManifestHeaderValue(
+        List<String> environments = new ManifestHeaderValue(
                 mainAttributes.getValue(BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT)).getValues();
         bundleInfo.setExecutionEnvironments(environments);
 
@@ -151,9 +150,7 @@ public class ManifestParser {
 
         ManifestHeaderValue exportElements = new ManifestHeaderValue(
                 mainAttributes.getValue(EXPORT_PACKAGE));
-        Iterator itExports = exportElements.getElements().iterator();
-        while (itExports.hasNext()) {
-            ManifestHeaderElement exportElement = (ManifestHeaderElement) itExports.next();
+        for (ManifestHeaderElement exportElement : exportElements.getElements()) {
             String vExport = (String) exportElement.getAttributes().get(ATTR_VERSION);
             Version v = null;
             try {
@@ -163,9 +160,7 @@ public class ManifestParser {
                         + vExport + " (" + e.getMessage() + ")", 0);
             }
 
-            Iterator itNames = exportElement.getValues().iterator();
-            while (itNames.hasNext()) {
-                String name = (String) itNames.next();
+            for (String name : exportElement.getValues()) {
                 ExportPackage export = new ExportPackage(name, v);
                 String uses = (String) exportElement.getDirectives().get(ATTR_USE);
                 if (uses != null) {
@@ -208,11 +203,9 @@ public class ManifestParser {
     private static void parseRequirement(BundleInfo bundleInfo, Attributes mainAttributes,
             String headerName, String type, String versionAttr) throws ParseException {
         ManifestHeaderValue elements = new ManifestHeaderValue(mainAttributes.getValue(headerName));
-        Iterator itElement = elements.getElements().iterator();
-        while (itElement.hasNext()) {
-            ManifestHeaderElement element = (ManifestHeaderElement) itElement.next();
-            String resolution = (String) element.getDirectives().get(ATTR_RESOLUTION);
-            String attVersion = (String) element.getAttributes().get(versionAttr);
+        for (ManifestHeaderElement element : elements.getElements()) {
+            String resolution = element.getDirectives().get(ATTR_RESOLUTION);
+            String attVersion = element.getAttributes().get(versionAttr);
             VersionRange version = null;
             try {
                 version = versionRangeOf(attVersion);
@@ -221,9 +214,7 @@ public class ManifestParser {
                         + attVersion + " (" + e.getMessage() + ")", 0);
             }
 
-            Iterator itNames = element.getValues().iterator();
-            while (itNames.hasNext()) {
-                String name = (String) itNames.next();
+            for (String name : element.getValues()) {
                 bundleInfo.addRequirement(new BundleRequirement(type, name, version, resolution));
             }
         }
@@ -232,9 +223,7 @@ public class ManifestParser {
     private static void parseCapability(BundleInfo bundleInfo, Attributes mainAttributes,
             String headerName, String type) throws ParseException {
         ManifestHeaderValue elements = new ManifestHeaderValue(mainAttributes.getValue(headerName));
-        Iterator itElement = elements.getElements().iterator();
-        while (itElement.hasNext()) {
-            ManifestHeaderElement element = (ManifestHeaderElement) itElement.next();
+        for (ManifestHeaderElement element : elements.getElements()) {
             String attVersion = (String) element.getAttributes().get(ATTR_VERSION);
             Version version = null;
             try {
@@ -244,9 +233,7 @@ public class ManifestParser {
                         + attVersion + " (" + e.getMessage() + ")", 0);
             }
 
-            Iterator itNames = element.getValues().iterator();
-            while (itNames.hasNext()) {
-                String name = (String) itNames.next();
+            for (String name : element.getValues()) {
                 BundleCapability export = new BundleCapability(type, name, version);
                 bundleInfo.addCapability(export);
             }

@@ -18,7 +18,6 @@
 package org.apache.ivy.osgi.util;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -32,16 +31,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class DelegetingHandler extends DefaultHandler implements DTDHandler, ContentHandler,
+public class DelegatingHandler extends DefaultHandler implements DTDHandler, ContentHandler,
         ErrorHandler {
 
-    private DelegetingHandler/* <?> */delegate = null;
+    private DelegatingHandler delegate = null;
 
-    private DelegetingHandler/* <?> */parent;
+    DelegatingHandler parent;
 
-    private final Map/* <String, DelegetingHandler<?>> */saxHandlerMapping = new HashMap();
+    private final Map<String, DelegatingHandler> saxHandlerMapping = new HashMap<String, DelegatingHandler>();
 
-    private final Map/* <String, ChildElementHandler<?>> */childHandlerMapping = new HashMap();
+    private final Map<String, ChildElementHandler<?>> childHandlerMapping = new HashMap<String, DelegatingHandler.ChildElementHandler<?>>();
 
     private final String tagName;
 
@@ -57,12 +56,13 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
 
     private Locator locator;
 
-    public DelegetingHandler(String name) {
+    public DelegatingHandler(String name) {
         this.tagName = name;
         charBuffer.setLength(0);
     }
 
-    protected void addChild(DelegetingHandler saxHandler, ChildElementHandler elementHandler) {
+    protected <DH extends DelegatingHandler> void addChild(DH saxHandler,
+            ChildElementHandler<DH> elementHandler) {
         saxHandlerMapping.put(saxHandler.getName(), saxHandler);
         childHandlerMapping.put(saxHandler.getName(), elementHandler);
         saxHandler.parent = this;
@@ -72,7 +72,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         return tagName;
     }
 
-    public DelegetingHandler getParent() {
+    public DelegatingHandler getParent() {
         return parent;
     }
 
@@ -94,9 +94,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
 
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
-        Iterator itHandler = saxHandlerMapping.values().iterator();
-        while (itHandler.hasNext()) {
-            DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
+        for (DelegatingHandler subHandler : saxHandlerMapping.values()) {
             subHandler.setDocumentLocator(locator);
         }
     }
@@ -117,9 +115,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
 
     public void skip() {
         skip = true;
-        Iterator itHandler = saxHandlerMapping.values().iterator();
-        while (itHandler.hasNext()) {
-            DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
+        for (DelegatingHandler subHandler : saxHandlerMapping.values()) {
             subHandler.stopDelegating();
         }
     }
@@ -128,9 +124,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         parent.delegate = null;
         skip = false;
         started = false;
-        Iterator itHandler = saxHandlerMapping.values().iterator();
-        while (itHandler.hasNext()) {
-            DelegetingHandler/* <?> */subHandler = (DelegetingHandler) itHandler.next();
+        for (DelegatingHandler/* <?> */subHandler : saxHandlerMapping.values()) {
             subHandler.stopDelegating();
         }
     }
@@ -220,7 +214,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
                     return;
                 }
                 // time now to delegate for a new element
-                delegate = (DelegetingHandler) saxHandlerMapping.get(localName);
+                delegate = (DelegatingHandler) saxHandlerMapping.get(localName);
                 if (delegate != null) {
                     skipOnError(new SkipOnErrorCallback() {
                         public void call() throws SAXException {
@@ -255,7 +249,7 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
     public final void endElement(final String uri, final String localName, final String n)
             throws SAXException {
         if (delegate != null) {
-            final DelegetingHandler savedDelegate = delegate;
+            final DelegatingHandler savedDelegate = delegate;
             // we are already delegating, let's continue
             skipOnError(new SkipOnErrorCallback() {
                 public void call() throws SAXException {
@@ -264,12 +258,11 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
             });
             if (delegate == null) {
                 // we just stopped delegating, it means that the child has ended
-                final ChildElementHandler childHandler = (ChildElementHandler) childHandlerMapping
-                        .get(localName);
+                final ChildElementHandler<?> childHandler = childHandlerMapping.get(localName);
                 if (childHandler != null) {
                     skipOnError(new SkipOnErrorCallback() {
                         public void call() throws SAXException {
-                            childHandler.childHanlded(savedDelegate);
+                            childHandler._childHanlded(savedDelegate);
                         }
                     });
                 }
@@ -292,9 +285,15 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
-    public static interface ChildElementHandler/* <DH extends DelegatingHandler> */{
+    public static abstract class ChildElementHandler<DH extends DelegatingHandler> {
 
-        public void childHanlded(/* DH */DelegetingHandler child) throws SAXParseException;
+        public abstract void childHanlded(DH child) throws SAXParseException;
+
+        // because we know what we're doing
+        @SuppressWarnings("unchecked")
+        private void _childHanlded(DelegatingHandler delegate) throws SAXParseException {
+            childHanlded((DH) delegate);
+        }
 
     }
 
@@ -527,12 +526,9 @@ public class DelegetingHandler extends DefaultHandler implements DTDHandler, Con
         return "[line " + locator.getLineNumber() + " col. " + locator.getColumnNumber() + "] ";
     }
 
-    private void skipOnError(DelegetingHandler/* <?> */currentHandler, Class/*
-                                                                             * <? extends
-                                                                             * delegatingHandler>
-                                                                             */handlerClassToSkip,
-            String message) {
-        DelegetingHandler/* <?> */handlerToSkip = currentHandler;
+    private void skipOnError(DelegatingHandler currentHandler,
+            Class<? extends DelegatingHandler> handlerClassToSkip, String message) {
+        DelegatingHandler handlerToSkip = currentHandler;
         while (!(handlerClassToSkip.isAssignableFrom(handlerToSkip.getClass()))) {
             handlerToSkip = handlerToSkip.getParent();
         }

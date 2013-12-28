@@ -22,7 +22,7 @@ import java.text.ParseException;
 /**
  * Provides OSGi version support.
  */
-public class Version implements Comparable/* <Version> */{
+public class Version implements Comparable<Version> {
 
     private int major;
 
@@ -88,17 +88,20 @@ public class Version implements Comparable/* <Version> */{
                 try {
                     major = Integer.parseInt(splits[0]);
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException(new ParseException("Major part of an OSGi version should be an integer", 0));
+                    throw new RuntimeException(new ParseException(
+                            "Major part of an OSGi version should be an integer", 0));
                 }
                 try {
                     minor = splits.length >= 2 ? Integer.parseInt(splits[1]) : 0;
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException(new ParseException("Minor part of an OSGi version should be an integer", 0));
+                    throw new RuntimeException(new ParseException(
+                            "Minor part of an OSGi version should be an integer", 0));
                 }
                 try {
                     patch = splits.length >= 3 ? Integer.parseInt(splits[2]) : 0;
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException(new ParseException("Patch part of an OSGi version should be an integer", 0));
+                    throw new RuntimeException(new ParseException(
+                            "Patch part of an OSGi version should be an integer", 0));
                 }
                 qualifier = splits.length == 4 ? splits[3] : null;
                 splitted = true;
@@ -199,10 +202,6 @@ public class Version implements Comparable/* <Version> */{
             return diff;
         }
         return 0;
-    }
-
-    public int compareTo(Object obj) {
-        return compareTo((Version) obj);
     }
 
     public int compareTo(Version other) {

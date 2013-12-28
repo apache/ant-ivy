@@ -26,7 +26,7 @@ import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.core.ManifestParser;
 import org.apache.ivy.util.Message;
 
-public class BundleRepoDescriptor extends RepoDescriptor {
+public class BundleRepoDescriptor extends EditableRepoDescriptor {
 
     private String name;
 
@@ -52,9 +52,9 @@ public class BundleRepoDescriptor extends RepoDescriptor {
         return lastModified;
     }
 
-    public void populate(Iterator/* <ManifestAndLocation> */it) {
+    public void populate(Iterator<ManifestAndLocation> it) {
         while (it.hasNext()) {
-            ManifestAndLocation manifestAndLocation = (ManifestAndLocation) it.next();
+            ManifestAndLocation manifestAndLocation = it.next();
             try {
                 BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation
                         .getManifest());

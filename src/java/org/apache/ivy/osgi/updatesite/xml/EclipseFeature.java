@@ -28,9 +28,9 @@ public class EclipseFeature {
 
     private Version version;
 
-    private List/* <EclipsePlugin> */plugins = new ArrayList();
+    private List<EclipsePlugin> plugins = new ArrayList<EclipsePlugin>();
 
-    private List/* <Require> */requires = new ArrayList();
+    private List<Require> requires = new ArrayList<Require>();
 
     private String url;
 
@@ -123,7 +123,7 @@ public class EclipseFeature {
         plugins.add(plugin);
     }
 
-    public List getPlugins() {
+    public List<EclipsePlugin> getPlugins() {
         return plugins;
     }
 
@@ -131,7 +131,7 @@ public class EclipseFeature {
         requires.add(require);
     }
 
-    public List getRequires() {
+    public List<Require> getRequires() {
         return requires;
     }
 

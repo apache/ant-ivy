@@ -136,9 +136,7 @@ public class UpdateSiteLoader {
         P2CompositeParser p2CompositeParser = new P2CompositeParser();
         boolean exist = readJarOrXml(repoUri, name, p2CompositeParser);
         if (exist) {
-            Iterator itChildLocation = p2CompositeParser.getChildLocations().iterator();
-            while (itChildLocation.hasNext()) {
-                String childLocation = (String) itChildLocation.next();
+            for (String childLocation : p2CompositeParser.getChildLocations()) {
                 if (!childLocation.endsWith("/")) {
                     childLocation += "/";
                 }

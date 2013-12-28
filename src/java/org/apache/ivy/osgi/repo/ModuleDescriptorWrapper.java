@@ -21,11 +21,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
@@ -77,28 +77,26 @@ public class ModuleDescriptorWrapper {
         return md;
     }
 
-    public static Collection/* <DefaultModuleDescriptor> */unwrap(Collection/*
-                                                                             * <ModuleDescriptorWrapper
-                                                                             * >
-                                                                             */collection) {
+    public static Collection<ModuleDescriptor> unwrap(Collection<ModuleDescriptorWrapper> collection) {
         if (collection == null) {
             return null;
         }
         if (collection.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
-        List/* <DefaultModuleDescriptor> */unwrapped = new ArrayList();
-        Iterator itWrapped = collection.iterator();
-        while (itWrapped.hasNext()) {
-            unwrapped.add(((ModuleDescriptorWrapper) itWrapped.next()).getModuleDescriptor());
+        List<ModuleDescriptor> unwrapped = new ArrayList<ModuleDescriptor>();
+        for (ModuleDescriptorWrapper wrapped : collection) {
+            unwrapped.add(wrapped.getModuleDescriptor());
         }
         return unwrapped;
     }
 
+    @Override
     public int hashCode() {
         return bundleInfo.hashCode();
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof ModuleDescriptorWrapper)) {
             return false;
