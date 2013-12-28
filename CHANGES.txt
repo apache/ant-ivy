@@ -149,6 +149,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
 - NEW: symlinkmass feature based on symlink feature of ivy:retrieve (IVY-1252) (Thanks to Gene Smith)
 - NEW: Agent authentication for SSH and SFTP transports (IVY-1421)
+- NEW: New OSGi resolver 'osgi-agg': a chain resolver dedicated to better handle OSGi dependencies
 
 - IMPROVEMENT: New LockStrategy available based on NIO FileLocks (IVY-1424)
 - IMPROVEMENT: Optional <include> ivysettings directives (IVY-1392) (thanks to Yanus Poluektovich)

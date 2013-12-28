@@ -386,6 +386,13 @@
                                   ]
                               },
                               {
+                                "id":"resolver/osgiagg",
+                                "title":"Aggregated OSGi Repository",
+                                "children": [
+
+                                  ]
+                              },
+                              {
                                 "id":"resolver/updatesite",
                                 "title":"Eclipse updatesite",
                                 "children": [

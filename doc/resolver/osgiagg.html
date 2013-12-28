@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<table class="resolver">
+<tr><td class="title">Tag</td><td class="value">osgi-agg</td></tr>
+<tr><td class="title">Handle latest</td><td class="value">yes</td></tr>
+<tr><td class="title">Handle publish</td><td class="value">no</td></tr>
+</table>
+
+<span class="since">since 2.4</span>
+
+<span class="tagdoc" id="ivysettings.resolvers.osgi-agg">This resolver is one of the resolver which supports <a href="../osgi.html">OSGi&#153;</a> dependencies.
+
+This resolvers is like a classic <a href="">chain</a> resolver, but which better support OSGi metadata.
+
+<h1>Attributes</h1>
+This resolver shares the <a href="../settings/resolvers.html#common">common attributes</a> of composite resolvers.
+
+<h1>Elements</h1>
+As sub element, this resolver accept any kind of OSGi resolver: <a href="../obr.html">obr</a>, <a href="../updatesite.html">updatesite</a>, or any other <tt>osgi-agg</tt>.
+
+<h1>Examples</h1>
+<code type="xml">
+<updatesite name="ivyde-updatesite" url="http://www.apache.org/dist/ant/ivyde/updatesite" />
+<obr name="felix-repo" repoXmlURL="http://felix.apache.org/obr/releases.xml" />
+<osgi-agg name="all-osgi">
+    <resolver ref="ivyde-updatesite" />
+    <resolver ref="felix-repo" />
+</osgi-agg>
+</code>
+An aggregated OSGi reporsory composed of the Apache IvyDE Eclipse update site and the Felix OBR.
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
