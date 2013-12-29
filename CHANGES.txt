@@ -170,6 +170,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: When inheriting a module descriptor, also merge the exclude rules
 - FIX: Correct application of mediators (ie. override) during conflict resolution (IVY-1455)
 - FIX: Fix revision number mapping across namespaces (IVY-1423)
+- FIX: fix a NPE when loading a composite P2 repository with no children
 
    2.3.0
 =====================================

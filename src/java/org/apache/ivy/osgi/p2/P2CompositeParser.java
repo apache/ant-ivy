@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +61,7 @@ public class P2CompositeParser implements XMLInputParser {
         //
         // private static final String VERSION = "version";
 
-        List<String> childLocations;
+        List<String> childLocations = Collections.emptyList();
 
         public RepositoryHandler() {
             super(REPOSITORY);
