@@ -17,14 +17,21 @@
  */
 package org.apache.ivy.osgi.updatesite;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheResourceOptions;
+import org.apache.ivy.core.cache.DownloadListener;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.repo.AbstractOSGiResolver;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
@@ -65,7 +72,7 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
         if (forceMetadataUpdate != null) {
             options.setForce(forceMetadataUpdate.booleanValue());
         }
-        int log = Message.MSG_INFO;
+        final int log;
         if (logLevel != null) {
             if ("debug".equalsIgnoreCase(logLevel)) {
                 log = Message.MSG_DEBUG;
@@ -80,7 +87,34 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
             } else {
                 throw new RuntimeException("Unknown log level: " + logLevel);
             }
+        } else {
+            log = Message.MSG_INFO;
         }
+        options.setListener(new DownloadListener() {
+            public void startArtifactDownload(RepositoryCacheManager cache, ResolvedResource rres,
+                    Artifact artifact, ArtifactOrigin origin) {
+                if (log <= Message.MSG_INFO) {
+                    Message.info("\tdownloading " + rres.getResource().getName());
+                }
+            }
+            
+            public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
+                if (log <= Message.MSG_VERBOSE) {
+                    Message.verbose("\ttrying to download " + artifact);
+                }
+            }
+            
+            public void endArtifactDownload(RepositoryCacheManager cache, Artifact artifact,
+                    ArtifactDownloadReport adr, File archiveFile) {
+                if (log <= Message.MSG_VERBOSE) {
+                    if (adr.isDownloaded()) {
+                        Message.verbose("\tdownloaded to " + archiveFile.getAbsolutePath());
+                    } else {
+                        Message.verbose("\tnothing to download");                        
+                    }
+                }                
+            }
+        });
         UpdateSiteLoader loader = new UpdateSiteLoader(getRepositoryCacheManager(),
                 getEventManager(), options);
         loader.setLogLevel(log);
