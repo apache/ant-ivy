@@ -108,7 +108,13 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     protected void ensureInit() {
         if (repoDescriptor == null) {
-            init();
+            try {
+                init();
+            } catch (Exception e) {
+                repoDescriptor = FAILING_REPO_DESCRIPTOR;
+                throw new RuntimeException("Error while loading the OSGi repo descriptor"
+                        + e.getMessage() + " (" + e.getClass().getName() + ")", e);
+            }
         } else if (repoDescriptor == FAILING_REPO_DESCRIPTOR) {
             throw new RuntimeException("The repository " + getName() + " already failed to load");
         }
