@@ -8,4 +8,6 @@ lib
 test/jar-repos
 test/test-repo/bundlerepo/*.jar
 test/test-repo/ivyrepo/org.apache.ivy.osgi
-
+.DS_Store
+doc/samples/target-platform/bundles
+doc/samples/target-platform/cache
