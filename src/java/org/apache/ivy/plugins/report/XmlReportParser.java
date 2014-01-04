@@ -22,7 +22,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -65,9 +64,10 @@ public class XmlReportParser {
 
             private boolean isDefault;
 
-            private SortedMap revisionsMap = new TreeMap(); // Use a TreeMap to order by
+            // Use a TreeMap to order by
+            private SortedMap<Integer, List<ArtifactDownloadReport>> revisionsMap = new TreeMap<Integer, List<ArtifactDownloadReport>>();
 
-            private List revisionArtifacts = null;
+            private List<ArtifactDownloadReport> revisionArtifacts = null;
 
             public void startElement(String uri, String localName, String qName,
                     Attributes attributes) throws SAXException {
@@ -75,7 +75,7 @@ public class XmlReportParser {
                     organisation = attributes.getValue("organisation");
                     module = attributes.getValue("name");
                 } else if ("revision".equals(qName)) {
-                    revisionArtifacts = new ArrayList();
+                    revisionArtifacts = new ArrayList<ArtifactDownloadReport>();
                     branch = attributes.getValue("branch");
                     revision = attributes.getValue("name");
                     isDefault = Boolean.valueOf(attributes.getValue("default")).booleanValue();
@@ -194,7 +194,7 @@ public class XmlReportParser {
                     String name = attributes.getValue("module");
                     String branch = attributes.getValue("branch");
                     String revision = attributes.getValue("revision");
-                    Map extraAttributes = new HashMap();
+                    Map<String, String> extraAttributes = new HashMap<String, String>();
                     for (int i = 0; i < attributes.getLength(); i++) {
                         String attName = attributes.getQName(i);
                         if (attName.startsWith("extra-")) {
@@ -212,12 +212,9 @@ public class XmlReportParser {
                     throws SAXException {
                 if ("dependencies".equals(qname)) {
                     // add the artifacts in the correct order
-                    for (Iterator it = revisionsMap.values().iterator(); it.hasNext();) {
-                        List artifactReports = (List) it.next();
+                    for (List<ArtifactDownloadReport> artifactReports : revisionsMap.values()) {
                         SaxXmlReportParser.this.artifactReports.addAll(artifactReports);
-                        for (Iterator iter = artifactReports.iterator(); iter.hasNext();) {
-                            ArtifactDownloadReport artifactReport 
-                                = (ArtifactDownloadReport) iter.next();
+                        for (ArtifactDownloadReport artifactReport : artifactReports) {
                             if (artifactReport.getDownloadStatus() != DownloadStatus.FAILED) {
                                 artifacts.add(artifactReport.getArtifact());
                             }
@@ -233,17 +230,17 @@ public class XmlReportParser {
             }
         }
 
-        private List/*<ModuleRevisionId>*/ mrids;
+        private List<ModuleRevisionId> mrids = new ArrayList<ModuleRevisionId>();
 
-        private List/*<ModuleRevisionId>*/ defaultMrids;
+        private List<ModuleRevisionId> defaultMrids = new ArrayList<ModuleRevisionId>();
 
-        private List/*<ModuleRevisionId>*/ realMrids;
+        private List<ModuleRevisionId> realMrids = new ArrayList<ModuleRevisionId>();
 
-        private List/*<Artifact>*/ artifacts;
+        private List<Artifact> artifacts = new ArrayList<Artifact>();
 
-        private List/*<ArtifactDownloadReport>*/ artifactReports;
-        
-        private Map/*<ModuleRevisionId,MetadataArtifactDownloadReport>*/ metadataReports;
+        private List<ArtifactDownloadReport> artifactReports = new ArrayList<ArtifactDownloadReport>();
+
+        private Map<ModuleRevisionId, MetadataArtifactDownloadReport> metadataReports = new HashMap<ModuleRevisionId, MetadataArtifactDownloadReport>();
 
         private ModuleRevisionId mRevisionId;
 
@@ -252,12 +249,6 @@ public class XmlReportParser {
         private boolean hasError = false;
         
         SaxXmlReportParser(File report) {
-            artifacts = new ArrayList();
-            artifactReports = new ArrayList();
-            mrids = new ArrayList();
-            defaultMrids = new ArrayList();
-            realMrids = new ArrayList();
-            metadataReports = new HashMap();
             this.report = report;
         }
 
@@ -270,19 +261,19 @@ public class XmlReportParser {
             return (str != null) && str.equalsIgnoreCase("true");
         }
 
-        public List getArtifacts() {
+        public List<Artifact> getArtifacts() {
             return artifacts;
         }
 
-        public List getArtifactReports() {
+        public List<ArtifactDownloadReport> getArtifactReports() {
             return artifactReports;
         }
 
-        public List getModuleRevisionIds() {
+        public List<ModuleRevisionId> getModuleRevisionIds() {
             return mrids;
         }
 
-        public List getRealModuleRevisionIds() {
+        public List<ModuleRevisionId> getRealModuleRevisionIds() {
             return realMrids;
         }
 
@@ -291,7 +282,7 @@ public class XmlReportParser {
         }
 
         public MetadataArtifactDownloadReport getMetadataArtifactReport(ModuleRevisionId id) {
-            return (MetadataArtifactDownloadReport) metadataReports.get(id);
+            return metadataReports.get(id);
         }
     }
 

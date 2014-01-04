@@ -19,7 +19,6 @@ package org.apache.ivy.core.sort;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class SortEngine {
      *             if a circular dependency exists and circular dependency strategy decide to throw
      *             an exception
      */
-    public List/* <IvyNode> */sortNodes(Collection/* <IvyNode> */nodes, SortOptions options) {
+    public List<IvyNode> sortNodes(Collection<IvyNode> nodes, SortOptions options) {
         /*
          * here we want to use the sort algorithm which work on module descriptors : so we first put
          * dependencies on a map from descriptors to dependency, then we sort the keySet (i.e. a
@@ -63,28 +62,27 @@ public class SortEngine {
          * corresponding dependency
          */
 
-        Map dependenciesMap = new LinkedHashMap();
-        List nulls = new ArrayList();
-        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        Map<ModuleDescriptor, List<IvyNode>> dependenciesMap = new LinkedHashMap<ModuleDescriptor, List<IvyNode>>();
+        List<IvyNode> nulls = new ArrayList<IvyNode>();
+        for (IvyNode node : nodes) {
             if (node.getDescriptor() == null) {
                 nulls.add(node);
             } else {
-                List n = (List) dependenciesMap.get(node.getDescriptor());
+                List<IvyNode> n = dependenciesMap.get(node.getDescriptor());
                 if (n == null) {
-                    n = new ArrayList();
+                    n = new ArrayList<IvyNode>();
                     dependenciesMap.put(node.getDescriptor(), n);
                 }
                 n.add(node);
             }
         }
-        List list = sortModuleDescriptors(dependenciesMap.keySet(), options);
+        List<ModuleDescriptor> list = sortModuleDescriptors(dependenciesMap.keySet(), options);
         final double adjustFactor = 1.3;
-        List ret = new ArrayList((int) (list.size() * adjustFactor + nulls.size()));
+        List<IvyNode> ret = new ArrayList<IvyNode>((int) (list.size() * adjustFactor + nulls.size()));
         // attempt to adjust the size to avoid too much list resizing
         for (int i = 0; i < list.size(); i++) {
             ModuleDescriptor md = (ModuleDescriptor) list.get(i);
-            List n = (List) dependenciesMap.get(md);
+            List<IvyNode> n = dependenciesMap.get(md);
             ret.addAll(n);
         }
         ret.addAll(0, nulls);
@@ -105,8 +103,9 @@ public class SortEngine {
      *             if a circular dependency exists and circular dependency strategy decide to throw
      *             an exception
      */
-    public List sortModuleDescriptors(Collection moduleDescriptors, SortOptions options) 
-                    throws CircularDependencyException {
+    public List<ModuleDescriptor> sortModuleDescriptors(
+            Collection<ModuleDescriptor> moduleDescriptors, SortOptions options)
+            throws CircularDependencyException {
         Checks.checkNotNull(options, "options");
         ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors,
                 getVersionMatcher(), options.getNonMatchingVersionReporter(), 

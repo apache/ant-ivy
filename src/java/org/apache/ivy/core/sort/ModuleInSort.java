@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.sort;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,7 +50,7 @@ class ModuleInSort {
 
     private boolean isSorted = false;
 
-    private List loopElements = new LinkedList();
+    private List<ModuleInSort> loopElements = new LinkedList<ModuleInSort>();
 
     private boolean isLoopIntermediateElement = false;
 
@@ -111,7 +110,7 @@ class ModuleInSort {
      */
     public boolean checkLoop(ModuleInSort futurCaller, CircularDependencyStrategy depStrategy) {
         if (caller != null) {
-            LinkedList elemOfLoop = new LinkedList();
+            LinkedList<ModuleRevisionId> elemOfLoop = new LinkedList<ModuleRevisionId>();
             elemOfLoop.add(this.module.getModuleRevisionId());
             for (ModuleInSort stackEl = futurCaller; stackEl != this; stackEl = stackEl.caller) {
                 elemOfLoop.add(stackEl.module.getModuleRevisionId());
@@ -136,7 +135,7 @@ class ModuleInSort {
      * @param sorted
      *            The list of sorted elements on which this module will be added
      */
-    public void addToSortedListIfRequired(List sorted) {
+    public void addToSortedListIfRequired(List<ModuleDescriptor> sorted) {
         if (!isLoopIntermediateElement) {
             addToSortList(sorted);
         }
@@ -146,9 +145,8 @@ class ModuleInSort {
      * Add this module to the sorted list. If current is the 'root' of a loop, then all elements of
      * that loops are added before.
      */
-    private void addToSortList(List sortedList) {
-        for (Iterator it = loopElements.iterator(); it.hasNext();) {
-            ModuleInSort moduleInLoop = (ModuleInSort) it.next();
+    private void addToSortList(List<ModuleDescriptor> sortedList) {
+        for (ModuleInSort moduleInLoop : loopElements) {
             moduleInLoop.addToSortList(sortedList);
         }
         if (!this.isSorted()) {

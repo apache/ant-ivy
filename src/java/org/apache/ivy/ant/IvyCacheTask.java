@@ -23,7 +23,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,11 +43,10 @@ import org.apache.tools.ant.BuildException;
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
-    protected List getArtifactReports() throws BuildException, ParseException, IOException {
-        Collection artifacts = getAllArtifactReports();
-        List ret = new ArrayList();
-        for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-            ArtifactDownloadReport artifactReport = (ArtifactDownloadReport) iter.next();
+    protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException, ParseException, IOException {
+        Collection<ArtifactDownloadReport> artifacts = getAllArtifactReports();
+        List<ArtifactDownloadReport> ret = new ArrayList<ArtifactDownloadReport>();
+        for (ArtifactDownloadReport artifactReport : artifacts) {
             if (getArtifactFilter().accept(artifactReport.getArtifact())) {
                 ret.add(artifactReport);
             }
@@ -57,9 +55,9 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         return ret;
     }
 
-    private Collection getAllArtifactReports() throws ParseException, IOException {
+    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException, IOException {
         String[] confs = splitConfs(getConf());
-        Collection all = new LinkedHashSet();
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
 
         ResolveReport report = getResolvedReport();
         if (report != null) {
@@ -71,9 +69,8 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
                     throw new BuildException("bad confs provided: " + confs[i]
                             + " not found among " + Arrays.asList(report.getConfigurations()));
                 }
-                Set revisions = configurationReport.getModuleRevisionIds();
-                for (Iterator it = revisions.iterator(); it.hasNext();) {
-                    ModuleRevisionId revId = (ModuleRevisionId) it.next();
+                Set<ModuleRevisionId> revisions = configurationReport.getModuleRevisionIds();
+                for (ModuleRevisionId revId : revisions) {
                     ArtifactDownloadReport[] aReports 
                         = configurationReport.getDownloadReports(revId);
                     all.addAll(Arrays.asList(aReports));

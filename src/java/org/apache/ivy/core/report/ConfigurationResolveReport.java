@@ -56,15 +56,15 @@ public class ConfigurationResolveReport {
 
     private final ResolveOptions options;
 
-    private Map/*<IvyNode, List<ArtifactDownloadReport>>*/ dependencyReports = new LinkedHashMap();
+    private Map<IvyNode, List<ArtifactDownloadReport>> dependencyReports = new LinkedHashMap<IvyNode, List<ArtifactDownloadReport>>();
 
-    private Map/*<ModuleRevisionId, IvyNode>*/ dependencies = new LinkedHashMap();
+    private Map<ModuleRevisionId, IvyNode> dependencies = new LinkedHashMap<ModuleRevisionId, IvyNode>();
 
     private final ResolveEngine resolveEngine;
 
-    private Map/*<ModuleId, Collection<IvyNode>>*/ modulesIdsMap = new LinkedHashMap();
+    private Map<ModuleId, Collection<IvyNode>> modulesIdsMap = new LinkedHashMap<ModuleId, Collection<IvyNode>>();
 
-    private List modulesIds;
+    private List<ModuleId> modulesIds;
 
     private Boolean hasChanged = null;
 
@@ -96,8 +96,8 @@ public class ConfigurationResolveReport {
             try {
                 XmlReportParser parser = new XmlReportParser();
                 parser.parse(previousReportFile);
-                List previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
-                HashSet previousDepSet = new HashSet(previousDeps);
+                List<ModuleRevisionId> previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
+                HashSet<ModuleRevisionId> previousDepSet = new HashSet<ModuleRevisionId>(previousDeps);
                 hasChanged = Boolean.valueOf(!previousDepSet.equals(getModuleRevisionIds()));
             } catch (Exception e) {
                 Message.warn("Error while parsing configuration resolve report "
@@ -122,10 +122,9 @@ public class ConfigurationResolveReport {
      * 
      * @return all non evicted and non error dependency mrids
      */
-    public Set getModuleRevisionIds() {
-        Set mrids = new LinkedHashSet();
-        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+    public Set<ModuleRevisionId> getModuleRevisionIds() {
+        Set<ModuleRevisionId> mrids = new LinkedHashSet<ModuleRevisionId>();
+        for (IvyNode node : getDependencies()) {
             if (!node.isEvicted(getConfiguration()) && !node.hasProblem()) {
                 mrids.add(node.getResolvedId());
             }
@@ -136,7 +135,7 @@ public class ConfigurationResolveReport {
     public void addDependency(IvyNode node) {
         dependencies.put(node.getId(), node);
         dependencies.put(node.getResolvedId(), node);
-        dependencyReports.put(node, Collections.EMPTY_LIST);
+        dependencyReports.put(node, Collections.<ArtifactDownloadReport>emptyList());
     }
 
     public void updateDependency(ModuleRevisionId mrid, IvyNode node) {
@@ -146,14 +145,14 @@ public class ConfigurationResolveReport {
     public void addDependency(IvyNode node, DownloadReport report) {
         dependencies.put(node.getId(), node);
         dependencies.put(node.getResolvedId(), node);
-        List adrs = new ArrayList();
+        List<ArtifactDownloadReport> adrs = new ArrayList<ArtifactDownloadReport>();
         Artifact[] artifacts = node.getArtifacts(conf);
-        for (int i = 0; i < artifacts.length; i++) {
-            ArtifactDownloadReport artifactReport = report.getArtifactReport(artifacts[i]);
+        for (Artifact artifact : artifacts) {
+            ArtifactDownloadReport artifactReport = report.getArtifactReport(artifact);
             if (artifactReport != null) {
                 adrs.add(artifactReport);
             } else {
-                Message.debug("no report found for " + artifacts[i]);
+                Message.debug("no report found for " + artifact);
             }
         }
         dependencyReports.put(node, adrs);
@@ -172,55 +171,51 @@ public class ConfigurationResolveReport {
     }
 
     public IvyNode[] getUnresolvedDependencies() {
-        List unresolved = new ArrayList();
-        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        List<IvyNode> unresolved = new ArrayList<IvyNode>();
+        for (IvyNode node : getDependencies()) {
             if (node.hasProblem()) {
                 unresolved.add(node);
             }
         }
-        return (IvyNode[]) unresolved.toArray(new IvyNode[unresolved.size()]);
+        return unresolved.toArray(new IvyNode[unresolved.size()]);
     }
 
-    private Collection getDependencies() {
-        return new LinkedHashSet(dependencies.values());
+    private Collection<IvyNode> getDependencies() {
+        return new LinkedHashSet<IvyNode>(dependencies.values());
     }
 
     public IvyNode[] getEvictedNodes() {
-        List evicted = new ArrayList();
-        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        List<IvyNode> evicted = new ArrayList<IvyNode>();
+        for (IvyNode node : getDependencies()) {
             if (node.isEvicted(conf)) {
                 evicted.add(node);
             }
         }
-        return (IvyNode[]) evicted.toArray(new IvyNode[evicted.size()]);
+        return evicted.toArray(new IvyNode[evicted.size()]);
     }
 
-    private Set/*<ModuleRevisionId>*/ getEvictedMrids() {
-        Set/*<ModuleRevisionId>*/ evicted = new LinkedHashSet();
+    private Set<ModuleRevisionId> getEvictedMrids() {
+        Set<ModuleRevisionId> evicted = new LinkedHashSet<ModuleRevisionId>();
         IvyNode[] evictedNodes = getEvictedNodes();
-        for (int i = 0; i < evictedNodes.length; i++) {
-            evicted.add(evictedNodes[i].getId());
+        for (IvyNode node : evictedNodes) {
+            evicted.add(node.getId());
         }
         return evicted;
     }
 
     public IvyNode[] getDownloadedNodes() {
-        List downloaded = new ArrayList();
-        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        List<IvyNode> downloaded = new ArrayList<IvyNode>();
+        for (IvyNode node  : getDependencies()) {
             if (node.isDownloaded() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
         }
-        return (IvyNode[]) downloaded.toArray(new IvyNode[downloaded.size()]);
+        return downloaded.toArray(new IvyNode[downloaded.size()]);
     }
 
     public IvyNode[] getSearchedNodes() {
-        List downloaded = new ArrayList();
-        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        List<IvyNode> downloaded = new ArrayList<IvyNode>();
+        for (IvyNode node : getDependencies()) {
             if (node.isSearched() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
@@ -229,15 +224,15 @@ public class ConfigurationResolveReport {
     }
 
     public ArtifactDownloadReport[] getDownloadReports(ModuleRevisionId mrid) {
-        Collection col = (Collection) dependencyReports.get(getDependency(mrid));
+        Collection<ArtifactDownloadReport> col = dependencyReports.get(getDependency(mrid));
         if (col == null) {
             return new ArtifactDownloadReport[0];
         }
-        return (ArtifactDownloadReport[]) col.toArray(new ArtifactDownloadReport[col.size()]);
+        return col.toArray(new ArtifactDownloadReport[col.size()]);
     }
 
     public IvyNode getDependency(ModuleRevisionId mrid) {
-        return (IvyNode) dependencies.get(mrid);
+        return dependencies.get(mrid);
     }
 
     /**
@@ -245,31 +240,30 @@ public class ConfigurationResolveReport {
      * 
      * @return a list of ModuleId
      */
-    public List/* <ModuleId> */getModuleIds() {
+    public List<ModuleId> getModuleIds() {
         if (modulesIds == null) {
-            List sortedDependencies = resolveEngine.getSortEngine().sortNodes(
+            List<IvyNode> sortedDependencies = resolveEngine.getSortEngine().sortNodes(
                 getDependencies(), SortOptions.SILENT);
             Collections.reverse(sortedDependencies);
-            for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
-                IvyNode dependency = (IvyNode) iter.next();
+            for (IvyNode dependency : sortedDependencies) {
                 ModuleId mid = dependency.getResolvedId().getModuleId();
-                Collection deps = (Collection) modulesIdsMap.get(mid);
+                Collection<IvyNode> deps = modulesIdsMap.get(mid);
                 if (deps == null) {
-                    deps = new LinkedHashSet();
+                    deps = new LinkedHashSet<IvyNode>();
                     modulesIdsMap.put(mid, deps);
                 }
                 deps.add(dependency);
             }
-            modulesIds = new ArrayList(modulesIdsMap.keySet());
+            modulesIds = new ArrayList<ModuleId>(modulesIdsMap.keySet());
         }
         return Collections.unmodifiableList(modulesIds);
     }
 
-    public Collection/* <IvyNode> */getNodes(ModuleId mid) {
+    public Collection<IvyNode> getNodes(ModuleId mid) {
         if (modulesIds == null) {
             getModuleIds();
         }
-        return (Collection) modulesIdsMap.get(mid);
+        return modulesIdsMap.get(mid);
     }
 
     public ResolveEngine getResolveEngine() {
@@ -278,8 +272,7 @@ public class ConfigurationResolveReport {
 
     public int getArtifactsNumber() {
         int total = 0;
-        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection) iter.next();
+        for (Collection<ArtifactDownloadReport> reports  : dependencyReports.values()) {
             total += reports == null ? 0 : reports.size();
         }
         return total;
@@ -309,15 +302,13 @@ public class ConfigurationResolveReport {
      */
     public ArtifactDownloadReport[] getArtifactsReports(
             DownloadStatus downloadStatus, boolean withEvicted) {
-        Collection all = new LinkedHashSet();
-        Collection evictedMrids = null;
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
+        Collection<ModuleRevisionId> evictedMrids = null;
         if (!withEvicted) {
             evictedMrids = getEvictedMrids();
         }
-        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection) iter.next();
-            for (Iterator itReport  = reports.iterator(); itReport.hasNext();) {
-                ArtifactDownloadReport report = (ArtifactDownloadReport) itReport.next();
+        for (Collection<ArtifactDownloadReport> reports : dependencyReports.values()) {
+            for (ArtifactDownloadReport report : reports) {
                 if (downloadStatus != null && report.getDownloadStatus() != downloadStatus) {
                     continue;
                 }
@@ -327,7 +318,7 @@ public class ConfigurationResolveReport {
                 }
             }
         }
-        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+        return all.toArray(new ArtifactDownloadReport[all.size()]);
     }
 
     /**
@@ -360,15 +351,15 @@ public class ConfigurationResolveReport {
 
     public static ArtifactDownloadReport[] filterOutMergedArtifacts(
             ArtifactDownloadReport[] allFailedReports) {
-        Collection adrs = new ArrayList(Arrays.asList(allFailedReports));
-        for (Iterator iterator = adrs.iterator(); iterator.hasNext();) {
+        Collection<ArtifactDownloadReport> adrs = new ArrayList<ArtifactDownloadReport>(Arrays.asList(allFailedReports));
+        for (Iterator<ArtifactDownloadReport> iterator = adrs.iterator(); iterator.hasNext();) {
             ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
             
             if (adr.getArtifact().getExtraAttribute("ivy:merged") != null) {
                 iterator.remove();
             }
         }
-        return (ArtifactDownloadReport[]) adrs.toArray(new ArtifactDownloadReport[adrs.size()]);
+        return adrs.toArray(new ArtifactDownloadReport[adrs.size()]);
     }
 
 }

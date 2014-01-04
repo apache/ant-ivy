@@ -18,11 +18,11 @@
 package org.apache.ivy.core.sort;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
@@ -40,11 +40,11 @@ public class ModuleDescriptorSorter {
 
     private final CollectionOfModulesToSort moduleDescriptors;
 
-    private final List sorted = new LinkedList();
+    private final List<ModuleDescriptor> sorted = new LinkedList<ModuleDescriptor>();
 
     private final CircularDependencyStrategy circularDepStrategy;
 
-    public ModuleDescriptorSorter(Collection modulesDescriptorsToSort, VersionMatcher matcher,
+    public ModuleDescriptorSorter(Collection<ModuleDescriptor> modulesDescriptorsToSort, VersionMatcher matcher,
             NonMatchingVersionReporter nonMatchingVersionReporter,
             CircularDependencyStrategy circularDepStrategy) {
         this.circularDepStrategy = circularDepStrategy;
@@ -58,12 +58,10 @@ public class ModuleDescriptorSorter {
      * @return sorted module
      * @throws CircularDependencyException
      */
-    public List sortModuleDescriptors() throws CircularDependencyException {
+    public List<ModuleDescriptor> sortModuleDescriptors() throws CircularDependencyException {
         Message.debug("Nbr of module to sort : " + moduleDescriptors.size());
-        Iterator moduleDescriptorsIterator = moduleDescriptors.iterator();
-        while (moduleDescriptorsIterator.hasNext()) {
-            ModuleInSort next = (ModuleInSort) moduleDescriptorsIterator.next();
-            sortModuleDescriptorsHelp(next, next);
+        for (ModuleInSort m : moduleDescriptors) {
+            sortModuleDescriptorsHelp(m, m);
         }
         return sorted;
     }

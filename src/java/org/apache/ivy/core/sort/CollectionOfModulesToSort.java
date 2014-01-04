@@ -35,13 +35,13 @@ import org.apache.ivy.plugins.version.VersionMatcher;
  * dedicated function to retrieve module descriptors based on dependencies descriptors.<br>
  * <i>This class is designed to be used internally by the ModuleDescriptorSorter.</i>
  */
-class CollectionOfModulesToSort {
+class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
 
-    private final List moduleDescriptors; // List<ModuleInSort>
+    private final List<ModuleInSort> moduleDescriptors;
 
     private final VersionMatcher versionMatcher;
 
-    private final Map modulesByModuleId; // Map<ModuleId , Collection<ModuleInSort>
+    private final Map<ModuleId , Collection<ModuleInSort>> modulesByModuleId;
 
     private final NonMatchingVersionReporter nonMatchingVersionReporter;
 
@@ -53,14 +53,13 @@ class CollectionOfModulesToSort {
      *            collection
      * @param nonMatchingVersionReporter
      */
-    public CollectionOfModulesToSort(Collection modulesToSort, VersionMatcher matcher,
+    public CollectionOfModulesToSort(Collection<ModuleDescriptor> modulesToSort, VersionMatcher matcher,
             NonMatchingVersionReporter nonMatchingVersionReporter) {
         this.versionMatcher = matcher;
         this.nonMatchingVersionReporter = nonMatchingVersionReporter;
-        this.modulesByModuleId = new HashMap();
-        moduleDescriptors = new ArrayList(modulesToSort.size());
-        for (Iterator it = modulesToSort.iterator(); it.hasNext();) {
-            ModuleDescriptor md = (ModuleDescriptor) it.next();
+        this.modulesByModuleId = new HashMap<ModuleId, Collection<ModuleInSort>>();
+        moduleDescriptors = new ArrayList<ModuleInSort>(modulesToSort.size());
+        for (ModuleDescriptor md : modulesToSort) {
             ModuleInSort mdInSort = new ModuleInSort(md);
             moduleDescriptors.add(mdInSort);
             addToModulesByModuleId(md, mdInSort);
@@ -69,15 +68,15 @@ class CollectionOfModulesToSort {
 
     private void addToModulesByModuleId(ModuleDescriptor md, ModuleInSort mdInSort) {
         ModuleId mdId = md.getModuleRevisionId().getModuleId();
-        List mdInSortAsList = new LinkedList();
+        List<ModuleInSort> mdInSortAsList = new LinkedList<ModuleInSort>();
         mdInSortAsList.add(mdInSort);
-        List previousList = (List) modulesByModuleId.put(mdId, mdInSortAsList);
+        Collection<ModuleInSort> previousList = modulesByModuleId.put(mdId, mdInSortAsList);
         if (previousList != null) {
             mdInSortAsList.addAll(previousList);
         }
     }
 
-    public Iterator iterator() {
+    public Iterator<ModuleInSort> iterator() {
         return moduleDescriptors.iterator();
     }
 
@@ -93,13 +92,12 @@ class CollectionOfModulesToSort {
      *         returns null.
      */
     public ModuleInSort getModuleDescriptorDependency(DependencyDescriptor descriptor) {
-        Collection modulesOfSameId = (Collection) modulesByModuleId.get(descriptor
+        Collection<ModuleInSort> modulesOfSameId = modulesByModuleId.get(descriptor
                 .getDependencyId());
         if (modulesOfSameId == null) {
             return null;
         }
-        for (Iterator it = modulesOfSameId.iterator(); it.hasNext();) {
-            ModuleInSort mdInSort = (ModuleInSort) it.next();
+        for (ModuleInSort mdInSort : modulesOfSameId) {
             if (mdInSort.match(descriptor, versionMatcher)) {
                 return mdInSort;
             } else {
