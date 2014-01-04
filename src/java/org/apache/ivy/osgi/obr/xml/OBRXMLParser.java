@@ -25,9 +25,11 @@ import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.ivy.osgi.core.BundleArtifact;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-import org.apache.ivy.osgi.obr.filter.RequirementFilterParser;
+import org.apache.ivy.osgi.filter.OSGiFilter;
+import org.apache.ivy.osgi.filter.OSGiFilterParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.osgi.util.Version;
@@ -117,7 +119,7 @@ public class OBRXMLParser {
                         return;
                     }
                     try {
-                        bundleInfo.setSourceURI(new URI(uri));
+                        bundleInfo.addArtifact(new BundleArtifact(true, new URI(uri), null));
                     } catch (URISyntaxException e) {
                         log(Message.MSG_WARN, "Incorrect uri " + uri + ". The source of "
                                 + bundleInfo.getSymbolicName() + " is then ignored.");
@@ -212,7 +214,7 @@ public class OBRXMLParser {
             String uri = atts.getValue(URI);
             if (uri != null) {
                 try {
-                    bundleInfo.setUri(new URI(uri));
+                    bundleInfo.addArtifact(new BundleArtifact(false, new URI(uri), null));
                 } catch (URISyntaxException e) {
                     log(Message.MSG_ERR, "Incorrect uri " + uri + ". The resource " + symbolicname
                             + " is then ignored.");
@@ -350,7 +352,7 @@ public class OBRXMLParser {
 
         Requirement requirement;
 
-        RequirementFilter filter;
+        OSGiFilter filter;
 
         public AbstractRequirementHandler(String name) {
             super(name);
@@ -363,7 +365,7 @@ public class OBRXMLParser {
             filter = null;
             if (filterText != null) {
                 try {
-                    filter = RequirementFilterParser.parse(filterText);
+                    filter = OSGiFilterParser.parse(filterText);
                 } catch (ParseException e) {
                     throw new SAXParseException("Requirement with illformed filter: " + filterText,
                             getLocator());

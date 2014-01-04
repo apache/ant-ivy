@@ -24,7 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -114,24 +113,34 @@ public class UpdateSiteLoader {
     private boolean populateP2Descriptor(URI repoUri, P2Descriptor p2Descriptor)
             throws IOException, ParseException, SAXException {
         Message.verbose("Loading P2 repository " + repoUri);
+        boolean contentExists = readContent(repoUri, p2Descriptor);
+        boolean artifactExists = readArtifacts(repoUri, p2Descriptor);
+        return artifactExists || contentExists;
+    }
 
-        boolean artifactExists = readComposite(repoUri, "compositeArtifacts", p2Descriptor);
-        if (!artifactExists) {
-            artifactExists = readJarOrXml(repoUri, "artifacts", new P2ArtifactParser(p2Descriptor,
-                    repoUri.toURL().toExternalForm()));
-        }
-
-        boolean contentExists = readComposite(repoUri, "compositeContent", p2Descriptor);
+    private boolean readContent(URI repoUri, P2Descriptor p2Descriptor)
+            throws IOException, ParseException, SAXException {
+        boolean contentExists = readCompositeContent(repoUri, "compositeContent", p2Descriptor);
         if (!contentExists) {
             P2MetadataParser metadataParser = new P2MetadataParser(p2Descriptor);
             metadataParser.setLogLevel(logLevel);
             contentExists = readJarOrXml(repoUri, "content", metadataParser);
         }
-
-        return artifactExists || contentExists;
+        return contentExists;
     }
 
-    private boolean readComposite(URI repoUri, String name, P2Descriptor p2Descriptor)
+    private boolean readArtifacts(URI repoUri, P2Descriptor p2Descriptor)
+            throws IOException, ParseException, SAXException {
+        boolean artifactExists = readCompositeArtifact(repoUri, "compositeArtifacts", p2Descriptor);
+        if (!artifactExists) {
+            artifactExists = readJarOrXml(repoUri, "artifacts", new P2ArtifactParser(p2Descriptor,
+                    repoUri.toURL().toExternalForm()));
+        }
+
+        return artifactExists;
+    }
+
+    private boolean readCompositeContent(URI repoUri, String name, P2Descriptor p2Descriptor)
             throws IOException, ParseException, SAXException {
         P2CompositeParser p2CompositeParser = new P2CompositeParser();
         boolean exist = readJarOrXml(repoUri, name, p2CompositeParser);
@@ -141,7 +150,23 @@ public class UpdateSiteLoader {
                     childLocation += "/";
                 }
                 URI childUri = repoUri.resolve(childLocation);
-                populateP2Descriptor(childUri, p2Descriptor);
+                readContent(childUri, p2Descriptor);
+            }
+        }
+        return exist;
+    }
+
+    private boolean readCompositeArtifact(URI repoUri, String name, P2Descriptor p2Descriptor)
+            throws IOException, ParseException, SAXException {
+        P2CompositeParser p2CompositeParser = new P2CompositeParser();
+        boolean exist = readJarOrXml(repoUri, name, p2CompositeParser);
+        if (exist) {
+            for (String childLocation : p2CompositeParser.getChildLocations()) {
+                if (!childLocation.endsWith("/")) {
+                    childLocation += "/";
+                }
+                URI childUri = repoUri.resolve(childLocation);
+                readArtifacts(childUri, p2Descriptor);
             }
         }
         return exist;
@@ -273,9 +298,7 @@ public class UpdateSiteLoader {
         UpdateSiteDescriptor repoDescriptor = new UpdateSiteDescriptor(site.getUri(),
                 ExecutionEnvironmentProfileProvider.getInstance());
 
-        Iterator itFeatures = site.getFeatures().iterator();
-        while (itFeatures.hasNext()) {
-            EclipseFeature feature = (EclipseFeature) itFeatures.next();
+        for (EclipseFeature feature : site.getFeatures()) {
             URL url = site.getUri().resolve(feature.getUrl()).toURL();
 
             URLResource res = new URLResource(url);

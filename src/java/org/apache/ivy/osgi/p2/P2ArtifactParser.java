@@ -19,18 +19,27 @@ package org.apache.ivy.osgi.p2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.ivy.osgi.filter.OSGiFilter;
+import org.apache.ivy.osgi.filter.OSGiFilterParser;
+import org.apache.ivy.osgi.p2.PropertiesParser.PropertiesHandler;
 import org.apache.ivy.osgi.util.DelegatingHandler;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class P2ArtifactParser implements XMLInputParser {
 
@@ -62,7 +71,7 @@ public class P2ArtifactParser implements XMLInputParser {
         //
         // private static final String VERSION = "version";
 
-        private Map<String, String> patternsByClassifier = new HashMap<String, String>();
+        private Map<OSGiFilter, String> artifactPatterns = new LinkedHashMap<OSGiFilter, String>();
 
         public RepositoryHandler(final P2Descriptor p2Descriptor, String repoUrl) {
             super(REPOSITORY);
@@ -73,18 +82,18 @@ public class P2ArtifactParser implements XMLInputParser {
             addChild(new MappingsHandler(), new ChildElementHandler<MappingsHandler>() {
                 public void childHanlded(MappingsHandler child) {
                     for (Entry<String, String> entry : child.outputByFilter.entrySet()) {
-                        String filter = entry.getKey();
-                        if (filter.startsWith("(& (classifier=") && filter.endsWith("")) {
-                            String classifier = filter.substring(15, filter.length() - 2);
-                            patternsByClassifier.put(classifier, entry.getValue());
-                        } else {
+                        OSGiFilter filter;
+                        try {
+                            filter = OSGiFilterParser.parse(entry.getKey());
+                        } catch (ParseException e) {
                             throw new IllegalStateException();
                         }
+                        artifactPatterns.put(filter, entry.getValue());
 
                     }
                 }
             });
-            addChild(new ArtifactsHandler(p2Descriptor, patternsByClassifier, repoUrl),
+            addChild(new ArtifactsHandler(p2Descriptor, artifactPatterns, repoUrl),
                 new ChildElementHandler<ArtifactsHandler>() {
                     public void childHanlded(ArtifactsHandler child) {
                         // nothing to do
@@ -117,7 +126,7 @@ public class P2ArtifactParser implements XMLInputParser {
 
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            outputByFilter = new HashMap<String, String>(size);
+            outputByFilter = new LinkedHashMap<String, String>(size);
         }
 
     }
@@ -152,18 +161,41 @@ public class P2ArtifactParser implements XMLInputParser {
         // private static final String SIZE = "size";
 
         public ArtifactsHandler(final P2Descriptor p2Descriptor,
-                final Map<String, String> patternsByClassifier, final String repoUrl) {
+                final Map<OSGiFilter, String> artifactPatterns, final String repoUrl) {
             super(ARTIFACTS);
             addChild(new ArtifactHandler(), new ChildElementHandler<ArtifactHandler>() {
-                public void childHanlded(ArtifactHandler child) {
-                    P2Artifact a = child.p2Artifact;
-                    String url = patternsByClassifier.get(a.getClassifier());
-                    if (url.startsWith("${repoUrl}")) { // try to avoid costly regexp
-                        url = repoUrl + url.substring(10);
-                    } else {
+                public void childHanlded(ArtifactHandler child) throws SAXParseException {
+                    String url = getPattern(child.p2Artifact, child.properties);
+                    if (url != null) {
                         url = url.replaceAll("\\$\\{repoUrl\\}", repoUrl);
+                        url = url.replaceAll("\\$\\{id\\}", child.p2Artifact.getId());
+                        url = url.replaceAll("\\$\\{version\\}", child.p2Artifact.getVersion()
+                                .toString());
+                        URI uri;
+                        try {
+                            uri = new URL(url).toURI();
+                        } catch (MalformedURLException e) {
+                            throw new SAXParseException("Incorrect artifact url '" + url + "' ("
+                                    + e.getMessage() + ")", getLocator(), e);
+                        } catch (URISyntaxException e) {
+                            throw new SAXParseException("Incorrect artifact url '" + url + "' ("
+                                    + e.getMessage() + ")", getLocator(), e);
+                        }
+                        p2Descriptor.addArtifactUrl(child.p2Artifact.getClassifier(),
+                            child.p2Artifact.getId(), child.p2Artifact.getVersion(), uri,
+                            child.properties.get("format"));
                     }
-                    p2Descriptor.addArtifactUrl(a.getClassifier(), a.getId(), a.getVersion(), url);
+                }
+
+                private String getPattern(P2Artifact p2Artifact, Map<String, String> properties) {
+                    Map<String, String> props = new HashMap<String, String>(properties);
+                    props.put("classifier", p2Artifact.getClassifier());
+                    for (Entry<OSGiFilter, String> pattern : artifactPatterns.entrySet()) {
+                        if (pattern.getKey().eval(props)) {
+                            return pattern.getValue();
+                        }
+                    }
+                    return null;
                 }
             });
         }
@@ -185,14 +217,17 @@ public class P2ArtifactParser implements XMLInputParser {
 
         private static final String VERSION = "version";
 
-        P2Artifact p2Artifact;
+        private P2Artifact p2Artifact;
+
+        private Map<String, String> properties;
 
         public ArtifactHandler() {
             super(ARTIFACT);
-            // addChild(new PropertiesHandler(), new ChildElementHandler<PropertiesHandler>() {
-            // public void childHanlded(PropertiesHandler child) {
-            // }
-            // });
+            addChild(new PropertiesHandler(), new ChildElementHandler<PropertiesHandler>() {
+                public void childHanlded(PropertiesHandler child) {
+                    properties = child.properties;
+                }
+            });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {

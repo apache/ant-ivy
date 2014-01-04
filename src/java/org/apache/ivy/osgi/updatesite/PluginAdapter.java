@@ -19,6 +19,7 @@ package org.apache.ivy.osgi.updatesite;
 
 import java.net.URI;
 
+import org.apache.ivy.osgi.core.BundleArtifact;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
 import org.apache.ivy.osgi.updatesite.xml.EclipseFeature;
@@ -31,12 +32,14 @@ public class PluginAdapter {
     public static BundleInfo featureAsBundle(URI baseUri, EclipseFeature feature) {
         BundleInfo b = new BundleInfo(feature.getId(), feature.getVersion());
 
+        URI uri;
         if (feature.getUrl() == null) {
-            b.setUri(baseUri.resolve("features/" + feature.getId() + '_' + feature.getVersion()
-                    + ".jar"));
+            uri = baseUri.resolve("features/" + feature.getId() + '_' + feature.getVersion()
+                    + ".jar");
         } else {
-            b.setUri(baseUri.resolve(feature.getUrl()));
+            uri = baseUri.resolve(feature.getUrl());
         }
+        b.addArtifact(new BundleArtifact(false, uri, null));
 
         b.setDescription(feature.getDescription());
         b.setLicense(feature.getLicense());
@@ -70,7 +73,8 @@ public class PluginAdapter {
     public static BundleInfo pluginAsBundle(URI baseUri, EclipsePlugin plugin) {
         BundleInfo b = new BundleInfo(plugin.getId(), plugin.getVersion());
 
-        b.setUri(baseUri.resolve("plugins/" + plugin.getId() + '_' + plugin.getVersion() + ".jar"));
+        URI uri = baseUri.resolve("plugins/" + plugin.getId() + '_' + plugin.getVersion() + ".jar");
+        b.addArtifact(new BundleArtifact(false, uri, null));
 
         return b;
     }

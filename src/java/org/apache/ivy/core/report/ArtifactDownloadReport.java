@@ -56,7 +56,7 @@ public class ArtifactDownloadReport {
 
     private long downloadTimeMillis;
 
-    private File uncompressedLocalDir;
+    private File unpackedLocalFile;
 
     public ArtifactDownloadReport(Artifact artifact) {
         this.artifact = artifact;
@@ -158,17 +158,12 @@ public class ArtifactDownloadReport {
         return DownloadStatus.SUCCESSFUL == downloadStatus;
     }
 
-    public Artifact buildUncompressedArtifact() {
-        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(),
-                artifact.getName(), artifact.getType() + "_uncompressed", "");
+    public void setUnpackedLocalFile(File unpackedLocalFile) {
+        this.unpackedLocalFile = unpackedLocalFile;
     }
 
-    public void setUncompressedLocalDir(File uncompressedLocalDir) {
-        this.uncompressedLocalDir = uncompressedLocalDir;
-    }
-
-    public File getUncompressedLocalDir() {
-        return uncompressedLocalDir;
+    public File getUnpackedLocalFile() {
+        return unpackedLocalFile;
     }
 
     public int hashCode() {

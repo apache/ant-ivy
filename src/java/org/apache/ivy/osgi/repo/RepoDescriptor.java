@@ -26,7 +26,7 @@ public abstract class RepoDescriptor {
 
     abstract public Set<String> getCapabilities();
 
-    abstract public Set<ModuleDescriptorWrapper> findModule(String requirement, String value);
+    abstract public Set<ModuleDescriptorWrapper> findModules(String requirement, String value);
 
     abstract public Set<String> getCapabilityValues(String capabilityName);
 

@@ -29,6 +29,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.osgi.core.BundleArtifact;
 import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
@@ -73,7 +74,7 @@ public class OBRXMLWriter {
             BundleInfo bundleInfo;
             try {
                 bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
-                bundleInfo.setUri(manifestAndLocation.getUri());
+                bundleInfo.addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
                 nbOk++;
             } catch (ParseException e) {
                 nbRejected++;
@@ -109,8 +110,9 @@ public class OBRXMLWriter {
         AttributesImpl atts = new AttributesImpl();
         addAttr(atts, ResourceHandler.SYMBOLIC_NAME, bundleInfo.getSymbolicName());
         addAttr(atts, ResourceHandler.VERSION, bundleInfo.getRawVersion());
-        if (bundleInfo.getUri() != null) {
-            addAttr(atts, ResourceHandler.URI, bundleInfo.getUri().toString());
+        if (!bundleInfo.getArtifacts().isEmpty()) {
+            // TODO handle several artifacts
+            addAttr(atts, ResourceHandler.URI, bundleInfo.getArtifacts().get(0).getUri().toString());
         }
         handler.startElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE, atts);
         for (BundleCapability capability : bundleInfo.getCapabilities()) {

@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.ivy.osgi.core.BundleCapability;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
+import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 
 public class EditableRepoDescriptor extends RepoDescriptor {
@@ -67,12 +68,25 @@ public class EditableRepoDescriptor extends RepoDescriptor {
         return moduleByCapabilities.keySet();
     }
 
-    public Set<ModuleDescriptorWrapper> findModule(String requirement, String value) {
+    public Set<ModuleDescriptorWrapper> findModules(String requirement, String value) {
         Map<String, Set<ModuleDescriptorWrapper>> modules = moduleByCapabilities.get(requirement);
         if (modules == null) {
             return null;
         }
         return modules.get(value);
+    }
+
+    public ModuleDescriptorWrapper findModule(String symbolicName, Version version) {
+        Set<ModuleDescriptorWrapper> modules = findModules(BundleInfo.BUNDLE_TYPE, symbolicName);
+        if (modules == null) {
+            return null;
+        }
+        for (ModuleDescriptorWrapper module : modules) {
+            if (module.getBundleInfo().getVersion().equals(version)) {
+                return module;
+            }
+        }
+        return null;
     }
 
     public Set<String> getCapabilityValues(String capabilityName) {
@@ -84,7 +98,7 @@ public class EditableRepoDescriptor extends RepoDescriptor {
         return modules.keySet();
     }
 
-    public void add(String type, String value, ModuleDescriptorWrapper md) {
+    private void add(String type, String value, ModuleDescriptorWrapper md) {
         modules.add(md);
         Map<String, Set<ModuleDescriptorWrapper>> map = moduleByCapabilities.get(type);
         if (map == null) {
@@ -106,6 +120,13 @@ public class EditableRepoDescriptor extends RepoDescriptor {
     }
 
     public void addBundle(BundleInfo bundleInfo) {
+        ModuleDescriptorWrapper module = findModule(bundleInfo.getSymbolicName(),
+            bundleInfo.getVersion());
+        if (module != null) {
+            Message.debug("Duplicate module " + bundleInfo.getSymbolicName() + "@"
+                    + bundleInfo.getVersion());
+            return;
+        }
         ModuleDescriptorWrapper md = new ModuleDescriptorWrapper(bundleInfo, baseUri,
                 profileProvider);
         add(BundleInfo.BUNDLE_TYPE, bundleInfo.getSymbolicName(), md);

@@ -142,7 +142,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
         String id = mrid.getName();
         Collection<ModuleDescriptor> mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
-                .findModule(osgiType, id));
+                .findModules(osgiType, id));
         if (mds == null || mds.isEmpty()) {
             Message.verbose("\t " + id + " not found.");
             return null;
@@ -333,7 +333,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
             List<String> versions = new ArrayList<String>();
-            Set<ModuleDescriptorWrapper> mds = getRepoDescriptor().findModule(osgiType, name);
+            Set<ModuleDescriptorWrapper> mds = getRepoDescriptor().findModules(osgiType, name);
             if (mds != null) {
                 for (ModuleDescriptorWrapper md : mds) {
                     versions.add(md.getBundleInfo().getVersion().toString());
@@ -351,7 +351,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                 return Collections.singletonList(BundleInfoAdapter.CONF_USE_PREFIX + name);
             }
             Collection<ModuleDescriptor> mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
-                    .findModule(osgiType, name));
+                    .findModules(osgiType, name));
             if (mds == null) {
                 return Collections.EMPTY_LIST;
             }
@@ -459,7 +459,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         remainingTokens.remove(IvyPatternHelper.REVISION_KEY);
         String rev = criteria.get(IvyPatternHelper.REVISION_KEY);
         if (rev == null) {
-            Set<ModuleDescriptorWrapper> mdws = getRepoDescriptor().findModule(osgiType, module);
+            Set<ModuleDescriptorWrapper> mdws = getRepoDescriptor().findModules(osgiType, module);
             if (mdws == null || mdws.isEmpty()) {
                 return Collections.emptySet();
             }
@@ -481,7 +481,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                 values.put(IvyPatternHelper.CONF_KEY, BundleInfoAdapter.CONF_USE_PREFIX + module);
                 return Collections.singleton(values);
             }
-            Set<ModuleDescriptorWrapper> bundles = getRepoDescriptor().findModule(osgiType, module);
+            Set<ModuleDescriptorWrapper> bundles = getRepoDescriptor().findModules(osgiType, module);
             if (bundles == null) {
                 return Collections.emptySet();
             }

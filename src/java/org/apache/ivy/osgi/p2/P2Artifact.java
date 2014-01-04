@@ -44,4 +44,10 @@ public class P2Artifact {
     public Version getVersion() {
         return version;
     }
+
+    @Override
+    public String toString() {
+        return id + "@" + version + " (" + classifier + ")";
+    }
+
 }

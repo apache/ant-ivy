@@ -47,6 +47,8 @@ public class P2DescriptorTest extends TestCase {
 
     private UpdateSiteResolver p2ZippedResolver;
 
+    private UpdateSiteResolver p2WithPackedResolver;
+
     private Ivy ivy;
 
     private ResolveData data;
@@ -66,6 +68,13 @@ public class P2DescriptorTest extends TestCase {
         p2ZippedResolver.setSettings(settings);
         settings.addResolver(p2ZippedResolver);
 
+        p2WithPackedResolver = new UpdateSiteResolver();
+        p2WithPackedResolver.setName("p2-with-packed");
+        p2WithPackedResolver.setUrl(new File("test/test-p2/packed").toURI().toURL()
+                .toExternalForm());
+        p2WithPackedResolver.setSettings(settings);
+        settings.addResolver(p2WithPackedResolver);
+
         cache = new File("build/cache");
         cache.mkdirs();
         settings.setDefaultCache(cache);
@@ -81,6 +90,11 @@ public class P2DescriptorTest extends TestCase {
         }
 
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        ivy.getLoggerEngine().sumupProblems();
     }
 
     public void testResolveSource() throws Exception {
@@ -139,7 +153,6 @@ public class P2DescriptorTest extends TestCase {
         assertEquals(1, rmr.getDescriptor().getAllArtifacts().length);
 
         DownloadOptions options = new DownloadOptions();
-        options.setUncompress(true);
         DownloadReport report = p2ZippedResolver.download(rmr.getDescriptor().getAllArtifacts(),
             options);
         assertNotNull(report);
@@ -152,7 +165,7 @@ public class P2DescriptorTest extends TestCase {
 
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-        assertNull(ar.getUncompressedLocalDir());
+        assertNull(ar.getUnpackedLocalFile());
     }
 
     public void testResolveZipped() throws Exception {
@@ -169,7 +182,6 @@ public class P2DescriptorTest extends TestCase {
         assertEquals(2, rmr.getDescriptor().getAllArtifacts().length);
 
         DownloadOptions options = new DownloadOptions();
-        options.setUncompress(true);
         DownloadReport report = p2ZippedResolver.download(rmr.getDescriptor().getAllArtifacts(),
             options);
         assertNotNull(report);
@@ -180,10 +192,39 @@ public class P2DescriptorTest extends TestCase {
             Artifact artifact = rmr.getDescriptor().getAllArtifacts()[i];
             ArtifactDownloadReport ar = report.getArtifactReport(artifact);
             assertNotNull(ar);
-    
+
             assertEquals(artifact, ar.getArtifact());
             assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-            assertNotNull(ar.getUncompressedLocalDir());
+            assertNotNull(ar.getUnpackedLocalFile());
         }
+    }
+
+    public void testResolvePacked() throws Exception {
+        settings.setDefaultResolver("p2-with-packed");
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.junit",
+            "4.10.0.v4_10_0_v20120426-0900");
+
+        ResolvedModuleRevision rmr = p2WithPackedResolver.getDependency(
+            new DefaultDependencyDescriptor(mrid, false), data);
+        assertNotNull(rmr);
+        assertEquals(mrid, rmr.getId());
+
+        assertEquals(1, rmr.getDescriptor().getAllArtifacts().length);
+
+        DownloadOptions options = new DownloadOptions();
+        DownloadReport report = p2WithPackedResolver.download(
+            rmr.getDescriptor().getAllArtifacts(), options);
+        assertNotNull(report);
+
+        assertEquals(1, report.getArtifactsReports().length);
+
+        Artifact artifact = rmr.getDescriptor().getAllArtifacts()[0];
+        ArtifactDownloadReport ar = report.getArtifactReport(artifact);
+        assertNotNull(ar);
+
+        assertEquals(artifact, ar.getArtifact());
+        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+        assertNotNull(ar.getUnpackedLocalFile());
     }
 }

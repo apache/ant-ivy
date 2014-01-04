@@ -111,19 +111,30 @@ public class BundleInfoAdapter {
         requirementAsDependency(md, bundle, exportedPkgNames);
 
         if (baseUri != null) {
-            // TODO handle:
-            // Eclipse-BundleShape ::= ( 'jar' | 'dir' )
-            String compression = bundle.hasInnerClasspath() ? "zip" : null;
-            URI uri = bundle.getUri();
-            if (uri != null) {
-                DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, "jar", compression);
-                md.addArtifact(CONF_NAME_DEFAULT, artifact);
-            }
-            URI sourceURI = bundle.getSourceURI();
-            if (sourceURI != null) {
-                DefaultArtifact artifact = buildArtifact(mrid, baseUri, sourceURI, "source",
-                    compression);
-                md.addArtifact(CONF_NAME_DEFAULT, artifact);
+            for (BundleArtifact bundleArtifact : bundle.getArtifacts()) {
+                String type = "jar";
+                String ext = "jar";
+                String packaging = null;
+                if (bundle.hasInnerClasspath()) {
+                    packaging = "zip";
+                }
+                if ("packed".equals(bundleArtifact.getFormat())) {
+                    ext = "jar.pack.gz";
+                    if (packaging != null) {
+                        packaging += ",pack200";
+                    } else {
+                        packaging = "pack200";
+                    }
+                }
+                if (bundleArtifact.isSource()) {
+                    type = "source";
+                }
+                URI uri = bundleArtifact.getUri();
+                if (uri != null) {
+                    DefaultArtifact artifact = buildArtifact(mrid, baseUri, uri, type, ext,
+                        packaging);
+                    md.addArtifact(CONF_NAME_DEFAULT, artifact);
+                }
             }
         }
 
@@ -153,7 +164,7 @@ public class BundleInfoAdapter {
     }
 
     public static DefaultArtifact buildArtifact(ModuleRevisionId mrid, URI baseUri, URI uri,
-            String type, String compression) {
+            String type, String ext, String packaging) {
         DefaultArtifact artifact;
         if ("ivy".equals(uri.getScheme())) {
             artifact = decodeIvyURI(uri);
@@ -162,11 +173,11 @@ public class BundleInfoAdapter {
                 uri = baseUri.resolve(uri);
             }
             Map<String, String> extraAtt = new HashMap<String, String>();
-            if (compression != null) {
-                extraAtt.put("compression", compression);
+            if (packaging != null) {
+                extraAtt.put("packaging", packaging);
             }
             try {
-                artifact = new DefaultArtifact(mrid, null, mrid.getName(), type, "jar", new URL(
+                artifact = new DefaultArtifact(mrid, null, mrid.getName(), type, ext, new URL(
                         uri.toString()), extraAtt);
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Unable to make the uri into the url", e);

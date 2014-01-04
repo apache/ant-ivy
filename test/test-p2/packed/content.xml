@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<repository name='Test repo of IvyDE (metadata)' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1311544192366'/>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <units size='1'>
+    <unit id='org.junit' version='4.10.0.v4_10_0_v20120426-0900' singleton='false'>
+      <update id='org.junit' range='[0.0.0,4.10.0.v4_10_0_v20120426-0900)' severity='0'/>
+      <properties size='5'>
+        <property name='df_LT.pluginName' value='JUnit Testing Framework'/>
+        <property name='df_LT.providerName' value='Eclipse Orbit'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='32'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.junit' version='4.10.0.v4_10_0_v20120426-0900'/>
+        <provided namespace='osgi.bundle' name='org.junit' version='4.10.0.v4_10_0_v20120426-0900'/>
+        <provided namespace='java.package' name='junit.extensions' version='4.10.0'/>
+        <provided namespace='java.package' name='junit.framework' version='4.10.0'/>
+        <provided namespace='java.package' name='junit.runner' version='4.10.0'/>
+        <provided namespace='java.package' name='junit.textui' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.categories' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.max' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.results' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.runners' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.theories' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.theories.internal' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.experimental.theories.suppliers' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.builders' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.matchers' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.requests' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.runners' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.runners.model' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.runners.rules' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.internal.runners.statements' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.matchers' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.rules' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.runner' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.runner.manipulation' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.runner.notification' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.runners' version='4.10.0'/>
+        <provided namespace='java.package' name='org.junit.runners.model' version='4.10.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='1'>
+        <required namespace='osgi.bundle' name='org.hamcrest.core' range='1.1.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.junit' version='4.10.0.v4_10_0_v20120426-0900'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.junit&#xA;Bundle-Version: 4.10.0.v4_10_0_v20120426-0900
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+  </units>
+</repository>

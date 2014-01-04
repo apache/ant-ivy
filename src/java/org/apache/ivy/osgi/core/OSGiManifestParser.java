@@ -65,7 +65,7 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
         Manifest m = new Manifest(res.openStream());
         BundleInfo bundleInfo = ManifestParser.parseManifest(m);
         try {
-            bundleInfo.setUri(new URI(res.getName()));
+            bundleInfo.addArtifact(new BundleArtifact(false, new URI(res.getName()), null));
         } catch (URISyntaxException e) {
             throw new RuntimeException("Unsupported repository, resources names are not uris", e);
         }

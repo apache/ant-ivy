@@ -23,8 +23,6 @@ public class CacheDownloadOptions {
 
     private boolean force = false;
 
-    private boolean uncompress = false;
-
     public DownloadListener getListener() {
         return listener;
     }
@@ -40,15 +38,6 @@ public class CacheDownloadOptions {
 
     public CacheDownloadOptions setForce(boolean force) {
         this.force = force;
-        return this;
-    }
-
-    public boolean isUncompress() {
-        return uncompress;
-    }
-
-    public CacheDownloadOptions setUncompress(boolean uncompress) {
-        this.uncompress = uncompress;
         return this;
     }
 }

@@ -73,30 +73,39 @@ public class ManifestParser {
 
     public static BundleInfo parseJarManifest(InputStream jarStream) throws IOException,
             ParseException {
-        final JarInputStream jis = new JarInputStream(jarStream);
-        final BundleInfo parseManifest = parseManifest(jis.getManifest());
-        jis.close();
-        return parseManifest;
+        JarInputStream jis = new JarInputStream(jarStream);
+        Manifest manifest = jis.getManifest();
+        if (manifest == null) {
+            return null;
+        }
+        BundleInfo bundleInfo = parseManifest(manifest);
+        return bundleInfo;
     }
 
     public static BundleInfo parseManifest(File manifestFile) throws IOException, ParseException {
-        final FileInputStream fis = new FileInputStream(manifestFile);
-        final BundleInfo parseManifest = parseManifest(fis);
-        fis.close();
-        return parseManifest;
+        FileInputStream fis = new FileInputStream(manifestFile);
+        try {
+            BundleInfo parseManifest = parseManifest(fis);
+            return parseManifest;
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
     }
 
     public static BundleInfo parseManifest(String manifest) throws IOException, ParseException {
-        final ByteArrayInputStream bais = new ByteArrayInputStream(manifest.getBytes("UTF-8"));
-        final BundleInfo parseManifest = parseManifest(bais);
+        ByteArrayInputStream bais = new ByteArrayInputStream(manifest.getBytes("UTF-8"));
+        BundleInfo parseManifest = parseManifest(bais);
         bais.close();
         return parseManifest;
     }
 
     public static BundleInfo parseManifest(InputStream manifestStream) throws IOException,
             ParseException {
-        final BundleInfo parseManifest = parseManifest(new Manifest(manifestStream));
-        manifestStream.close();
+        BundleInfo parseManifest = parseManifest(new Manifest(manifestStream));
         return parseManifest;
     }
 

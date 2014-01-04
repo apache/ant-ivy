@@ -335,7 +335,7 @@ public class ResolveReport {
      */
     private String[] getExtendingConfs(String extended) {
         String[] allConfs = md.getConfigurationsNames();
-        Set/* <String> */extendingConfs = new HashSet();
+        Set<String> extendingConfs = new HashSet<String>();
         extendingConfs.add(extended);
         for (int i = 0; i < allConfs.length; i++) {
             gatherExtendingConfs(extendingConfs, allConfs[i], extended);
@@ -343,7 +343,7 @@ public class ResolveReport {
         return (String[]) extendingConfs.toArray(new String[extendingConfs.size()]);
     }
 
-    private boolean gatherExtendingConfs(Set/* <String> */extendingConfs, String conf,
+    private boolean gatherExtendingConfs(Set<String> extendingConfs, String conf,
             String extended) {
         if (extendingConfs.contains(conf)) {
             return true;
@@ -370,14 +370,14 @@ public class ResolveReport {
     }
 
     public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings,
-            List/* <ModuleId> */midToKeep) {
+            List<ModuleId> midToKeep) {
         DefaultModuleDescriptor fixedmd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
                 md.getStatus(), new Date());
 
         // copy configurations
-        String[] resolvedConf = getConfigurations();
-        for (int i = 0; i < resolvedConf.length; i++) {
-            fixedmd.addConfiguration(new Configuration(resolvedConf[i]));
+        List<String> resolvedConfs = Arrays.asList(getConfigurations());
+        for (String conf : resolvedConfs) {
+            fixedmd.addConfiguration(new Configuration(conf));
         }
 
         if (midToKeep != null && !midToKeep.isEmpty()) {
@@ -387,13 +387,18 @@ public class ResolveReport {
                 if (midToKeep.contains(deps[i].getDependencyId())) {
                     DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
                             deps[i].getDependencyRevisionId(), true, false, false);
-                    String[] confs = deps[i].getModuleConfigurations();
-                    for (int j = 0; j < confs.length; j++) {
-                        String[] extendedConf = getExtendingConfs(confs[j]);
-                        String[] depConfs = deps[i].getDependencyConfigurations(confs[j]);
-                        for (int k = 0; k < extendedConf.length; k++) {
-                            for (int l = 0; l < depConfs.length; l++) {
-                                dep.addDependencyConfiguration(extendedConf[k], depConfs[l]);
+                    List<String> confs = Arrays.asList(deps[i].getModuleConfigurations());
+                    if (confs.size() == 1 && confs.get(0).equals("*")) {
+                        confs = resolvedConfs;
+                    }
+                    for (String conf : confs) {
+                        String[] extendedConfs = getExtendingConfs(conf);
+                        String[] depConfs = deps[i].getDependencyConfigurations(conf);
+                        for (String extendedConf : extendedConfs) {
+                            if (resolvedConfs.contains(extendedConf)) {
+                                for (String depConf : depConfs) {
+                                    dep.addDependencyConfiguration(extendedConf, depConf);
+                                }
                             }
                         }
                     }

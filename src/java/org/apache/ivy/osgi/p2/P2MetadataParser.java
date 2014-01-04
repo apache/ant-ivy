@@ -67,7 +67,7 @@ public class P2MetadataParser implements XMLInputParser {
 
     private class RepositoryHandler extends DelegatingHandler {
 
-        private static final String P2_TIMESTAMP = "p2.timestamp";
+        //        private static final String P2_TIMESTAMP = "p2.timestamp";
 
         private static final String REPOSITORY = "repository";
 
@@ -83,15 +83,15 @@ public class P2MetadataParser implements XMLInputParser {
 
         public RepositoryHandler(final P2Descriptor p2Descriptor) {
             super(REPOSITORY);
-            addChild(new PropertiesHandler(P2_TIMESTAMP),
-                new ChildElementHandler<PropertiesHandler>() {
-                    public void childHanlded(PropertiesHandler child) {
-                        String timestamp = child.properties.get(P2_TIMESTAMP);
-                        if (timestamp != null) {
-                            p2Descriptor.setTimestamp(Long.parseLong(timestamp));
-                        }
-                    }
-                });
+            //            addChild(new PropertiesHandler(P2_TIMESTAMP),
+            //                new ChildElementHandler<PropertiesHandler>() {
+            //                    public void childHanlded(PropertiesHandler child) {
+            //                        String timestamp = child.properties.get(P2_TIMESTAMP);
+            //                        if (timestamp != null) {
+            //                            p2Descriptor.setTimestamp(Long.parseLong(timestamp));
+            //                        }
+            //                    }
+            //                });
             addChild(new UnitsHandler(), new ChildElementHandler<UnitsHandler>() {
                 public void childHanlded(UnitsHandler child) {
                     for (BundleInfo bundle : child.bundles) {

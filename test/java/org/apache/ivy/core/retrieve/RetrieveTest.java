@@ -307,11 +307,10 @@ public class RetrieveTest extends TestCase {
         assertEquals(3, artifactsToCopy.size());
     }
 
-    public void testUncompress() throws Exception {
+    public void testUnpack() throws Exception {
         ResolveOptions roptions = getResolveOptions(new String[] {"*"});
-        roptions.setUncompress(true);
 
-        URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI()
+        URL url = new File("test/repositories/1/packaging/module1/ivys/ivy-1.0.xml").toURI()
                 .toURL();
 
         // normal resolve, the file goes in the cache
@@ -323,10 +322,9 @@ public class RetrieveTest extends TestCase {
         String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
         RetrieveOptions options = getRetrieveOptions();
-        options.setUncompress(true);
         ivy.retrieve(md.getModuleRevisionId(), pattern, options);
 
-        File dest = new File("build/test/retrieve/compression/module2/default/jars/module2-1.0");
+        File dest = new File("build/test/retrieve/packaging/module2/default/jars/module2-1.0");
         assertTrue(dest.exists());
         assertTrue(dest.isDirectory());
         File[] jarContents = dest.listFiles();
@@ -336,11 +334,10 @@ public class RetrieveTest extends TestCase {
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
     }
 
-    public void testUncompressSync() throws Exception {
+    public void testUnpackSync() throws Exception {
         ResolveOptions roptions = getResolveOptions(new String[] {"*"});
-        roptions.setUncompress(true);
 
-        URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI()
+        URL url = new File("test/repositories/1/packaging/module1/ivys/ivy-1.0.xml").toURI()
                 .toURL();
 
         // normal resolve, the file goes in the cache
@@ -352,11 +349,10 @@ public class RetrieveTest extends TestCase {
         String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
         RetrieveOptions options = getRetrieveOptions();
-        options.setUncompress(true);
         options.setSync(true);
         ivy.retrieve(md.getModuleRevisionId(), pattern, options);
 
-        File dest = new File("build/test/retrieve/compression/module2/default/jars/module2-1.0");
+        File dest = new File("build/test/retrieve/packaging/module2/default/jars/module2-1.0");
         assertTrue(dest.exists());
         assertTrue(dest.isDirectory());
         File[] jarContents = dest.listFiles();

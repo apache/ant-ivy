@@ -5539,11 +5539,10 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
     }
 
-    public void testUncompress() throws Exception {
+    public void testUnpack() throws Exception {
         ResolveOptions options = getResolveOptions(new String[] {"*"});
-        options.setUncompress(true);
 
-        URL url = new File("test/repositories/1/compression/module1/ivys/ivy-1.0.xml").toURI().toURL();
+        URL url = new File("test/repositories/1/packaging/module1/ivys/ivy-1.0.xml").toURI().toURL();
 
         // normal resolve, the file goes in the cache
         ResolveReport report = ivy.resolve(url, options);
@@ -5551,16 +5550,16 @@ public class ResolveTest extends TestCase {
 
         ArtifactDownloadReport adr = report.getAllArtifactsReports()[0];
         File cacheDir = ivy.getSettings().getDefaultRepositoryCacheBasedir();
-        assertEquals(new File(cacheDir, "compression/module2/jars/module2-1.0.jar"),
+        assertEquals(new File(cacheDir, "packaging/module2/jars/module2-1.0.jar"),
             adr.getLocalFile());
-        assertEquals(new File(cacheDir, "compression/module2/jar_uncompresseds/module2-1.0"),
-            adr.getUncompressedLocalDir());
+        assertEquals(new File(cacheDir, "packaging/module2/jar_unpackeds/module2-1.0"),
+            adr.getUnpackedLocalFile());
 
-        File[] jarContents = adr.getUncompressedLocalDir().listFiles();
+        File[] jarContents = adr.getUnpackedLocalFile().listFiles();
         Arrays.sort(jarContents);
-        assertEquals(new File(adr.getUncompressedLocalDir(), "META-INF"), jarContents[0]);
-        assertEquals(new File(adr.getUncompressedLocalDir(), "test.txt"), jarContents[1]);
-        assertEquals(new File(adr.getUncompressedLocalDir(), "META-INF/MANIFEST.MF"),
+        assertEquals(new File(adr.getUnpackedLocalFile(), "META-INF"), jarContents[0]);
+        assertEquals(new File(adr.getUnpackedLocalFile(), "test.txt"), jarContents[1]);
+        assertEquals(new File(adr.getUnpackedLocalFile(), "META-INF/MANIFEST.MF"),
             jarContents[0].listFiles()[0]);
     }
 }

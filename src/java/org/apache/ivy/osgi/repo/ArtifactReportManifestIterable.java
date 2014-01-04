@@ -55,26 +55,58 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
         public boolean hasNext() {
             while (next == null && it.hasNext()) {
                 ArtifactDownloadReport report = (ArtifactDownloadReport) it.next();
-                File artifact = report.getLocalFile();
-                JarInputStream in = null;
-                try {
-                    in = new JarInputStream(new FileInputStream(artifact));
-                    Manifest manifest = in.getManifest();
-                    if (manifest != null) {
-                        next = new ManifestAndLocation(manifest, artifact.toURI());
+                if (report.getUnpackedLocalFile() != null
+                        && report.getUnpackedLocalFile().isDirectory()) {
+                    FileInputStream in = null;
+                    try {
+                        in = new FileInputStream(new File(report.getUnpackedLocalFile(),
+                                "META-INF/MANIFEST.MF"));
+                        next = new ManifestAndLocation(new Manifest(in), report
+                                .getUnpackedLocalFile().toURI());
                         return true;
+                    } catch (FileNotFoundException e) {
+                        Message.debug(
+                            "Bundle directory file just removed: " + report.getUnpackedLocalFile(),
+                            e);
+                    } catch (IOException e) {
+                        Message.debug("The Manifest in the bundle directory could not be read: "
+                                + report.getUnpackedLocalFile(), e);
+                    } finally {
+                        if (in != null) {
+                            try {
+                                in.close();
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                        }
                     }
-                    Message.debug("No manifest in jar: " + artifact);
-                } catch (FileNotFoundException e) {
-                    Message.debug("Jar file just removed: " + artifact, e);
-                } catch (IOException e) {
-                    Message.warn("Unreadable jar: " + artifact, e);
-                } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (IOException e) {
-                            // Don't care
+                } else {
+                    File artifact;
+                    if (report.getUnpackedLocalFile() != null) {
+                        artifact = report.getUnpackedLocalFile();
+                    } else {
+                        artifact = report.getLocalFile();
+                    }
+                    JarInputStream in = null;
+                    try {
+                        in = new JarInputStream(new FileInputStream(artifact));
+                        Manifest manifest = in.getManifest();
+                        if (manifest != null) {
+                            next = new ManifestAndLocation(manifest, artifact.toURI());
+                            return true;
+                        }
+                        Message.debug("No manifest in jar: " + artifact);
+                    } catch (FileNotFoundException e) {
+                        Message.debug("Jar file just removed: " + artifact, e);
+                    } catch (IOException e) {
+                        Message.warn("Unreadable jar: " + artifact, e);
+                    } finally {
+                        if (in != null) {
+                            try {
+                                in.close();
+                            } catch (IOException e) {
+                                // Don't care
+                            }
                         }
                     }
                 }

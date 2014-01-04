@@ -117,7 +117,6 @@ public class ResolveOptions extends LogOptions {
      *  True if the resolve should compare the new resolution against the previous report 
      **/  
     private boolean checkIfChanged = false;
-    private boolean uncompress;
 
     public ResolveOptions() {
     }
@@ -305,15 +304,6 @@ public class ResolveOptions extends LogOptions {
 
     public static String getDefaultResolveId(ModuleId moduleId) {
         return moduleId.getOrganisation() + "-" + moduleId.getName();
-    }
-
-    public ResolveOptions setUncompress(boolean uncompress) {
-        this.uncompress = uncompress;
-        return this;
-    }
-
-    public boolean isUncompress() {
-        return uncompress;
     }
 
 }

@@ -86,10 +86,10 @@ public class AggregatedRepoDescriptor extends RepoDescriptor {
     }
 
     @Override
-    public Set<ModuleDescriptorWrapper> findModule(String requirement, String value) {
+    public Set<ModuleDescriptorWrapper> findModules(String requirement, String value) {
         Set<ModuleDescriptorWrapper> ret = new HashSet<ModuleDescriptorWrapper>();
         for (RepoDescriptor repo : repos) {
-            Set<ModuleDescriptorWrapper> modules = repo.findModule(requirement, value);
+            Set<ModuleDescriptorWrapper> modules = repo.findModules(requirement, value);
             if (modules != null) {
                 ret.addAll(modules);
             }

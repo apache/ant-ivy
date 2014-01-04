@@ -21,6 +21,7 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.Iterator;
 
+import org.apache.ivy.osgi.core.BundleArtifact;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.core.ManifestParser;
@@ -58,7 +59,7 @@ public class BundleRepoDescriptor extends EditableRepoDescriptor {
             try {
                 BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation
                         .getManifest());
-                bundleInfo.setUri(manifestAndLocation.getUri());
+                bundleInfo.addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
                 addBundle(bundleInfo);
             } catch (ParseException e) {
                 Message.error("Rejected " + manifestAndLocation.getUri() + ": " + e.getMessage());

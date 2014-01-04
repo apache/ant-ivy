@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarInputStream;
@@ -45,6 +44,7 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.osgi.core.BundleArtifact;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
@@ -97,7 +97,8 @@ public class OBRResolverTest extends TestCase {
 
     private DualResolver dualResolver;
 
-    private ExecutionEnvironmentProfileProvider profileProvider = ExecutionEnvironmentProfileProvider.getInstance();
+    private ExecutionEnvironmentProfileProvider profileProvider = ExecutionEnvironmentProfileProvider
+            .getInstance();
 
     public void setUp() throws Exception {
         settings = new IvySettings();
@@ -154,20 +155,20 @@ public class OBRResolverTest extends TestCase {
     }
 
     public void testSimpleResolve() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle",
-            "1.2.3");
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
+            "org.apache.ivy.osgi.testbundle", "1.2.3");
         genericTestResolveDownload(bundleResolver, mrid);
     }
 
     public void testSimpleUrlResolve() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle",
-            "1.2.3");
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
+            "org.apache.ivy.osgi.testbundle", "1.2.3");
         genericTestResolveDownload(bundleUrlResolver, mrid);
     }
 
     public void testResolveDual() throws Exception {
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle",
-            "1.2.3");
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
+            "org.apache.ivy.osgi.testbundle", "1.2.3");
         genericTestResolveDownload(dualResolver, mrid);
     }
 
@@ -296,25 +297,25 @@ public class OBRResolverTest extends TestCase {
         JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
-        bundleInfo.setUri(new File("test/test-repo/bundlerepo/" + jarName).toURI());
+        bundleInfo.addArtifact(new BundleArtifact(false, new File("test/test-repo/bundlerepo/"
+                + jarName).toURI(), null));
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
             OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertFalse("resolve failed " + resolveReport.getAllProblemMessages(),
             resolveReport.hasError());
-        Set/* <ModuleRevisionId> */actual = new HashSet/* <ModuleRevisionId> */();
-        List/* <Artifact> */artifacts = resolveReport.getArtifacts();
-        Iterator itArtfact = artifacts.iterator();
-        while (itArtfact.hasNext()) {
-            Artifact artfact = (Artifact) itArtfact.next();
+        Set<ModuleRevisionId> actual = new HashSet<ModuleRevisionId>();
+        List<Artifact> artifacts = resolveReport.getArtifacts();
+        for (Artifact artfact : artifacts) {
             actual.add(artfact.getModuleRevisionId());
         }
-        Set/* <ModuleRevisionId> */expected = new HashSet(Arrays.asList(expectedMrids));
+        Set<ModuleRevisionId> expected = new HashSet<ModuleRevisionId>(Arrays.asList(expectedMrids));
         if (expected2Mrids != null) {
             // in this use case, we have two choices, let's try the second one
             try {
-                Set/* <ModuleRevisionId> */expected2 = new HashSet(Arrays.asList(expected2Mrids));
+                Set<ModuleRevisionId> expected2 = new HashSet<ModuleRevisionId>(
+                        Arrays.asList(expected2Mrids));
                 assertEquals(expected2, actual);
                 return; // test passed
             } catch (AssertionFailedError e) {
@@ -328,7 +329,8 @@ public class OBRResolverTest extends TestCase {
         JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName));
         BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
-        bundleInfo.setUri(new File("test/test-repo/bundlerepo/" + jarName).toURI());
+        bundleInfo.addArtifact(new BundleArtifact(false, new File("test/test-repo/bundlerepo/"
+                + jarName).toURI(), null));
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
             OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
         ResolveReport resolveReport = ivy.resolve(md,

@@ -131,8 +131,8 @@ public class RetrieveEngine {
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
                 File archive = artifact.getLocalFile();
-                if (options.isUncompress() && artifact.getUncompressedLocalDir() != null) {
-                    archive = artifact.getUncompressedLocalDir();
+                if (artifact.getUnpackedLocalFile() != null) {
+                    archive = artifact.getUnpackedLocalFile();
                 }
                 if (archive == null) {
                     Message.verbose("\tno local file available for " + artifact + ": skipping");
@@ -333,7 +333,7 @@ public class RetrieveEngine {
 
                 Artifact artifact = adr.getArtifact();
                 String ext = artifact.getExt();
-                if (options.isUncompress() && adr.getUncompressedLocalDir() != null) {
+                if (adr.getUnpackedLocalFile() != null) {
                     ext = "";
                 }
 

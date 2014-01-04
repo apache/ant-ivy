@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.osgi.core;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -63,8 +62,6 @@ public class BundleInfo {
 
     private Integer size;
 
-    private URI uri;
-
     private boolean isSource = false;
 
     /** the symbolic name of the bundle it is source of */
@@ -73,11 +70,11 @@ public class BundleInfo {
     /** the version of the bundle it is source of */
     private Version versionTarget;
 
-    private URI sourceURI;
-
     private boolean hasInnerClasspath;
 
     private List<String> classpath;
+
+    private List<BundleArtifact> artifacts = new ArrayList<BundleArtifact>();
 
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
@@ -97,7 +94,7 @@ public class BundleInfo {
         builder.append(", version=");
         builder.append(version);
         builder.append("]");
-        if (isSource) {
+        if (symbolicNameTarget != null) {
             builder.append(" source of ");
             builder.append(symbolicNameTarget);
             builder.append("@");
@@ -116,14 +113,6 @@ public class BundleInfo {
 
     public Version getRawVersion() {
         return version;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-
-    public URI getUri() {
-        return uri;
     }
 
     public void setId(String id) {
@@ -206,14 +195,6 @@ public class BundleInfo {
         executionEnvironments.add(name);
     }
 
-    public void setSourceURI(URI sourceURI) {
-        this.sourceURI = sourceURI;
-    }
-
-    public URI getSourceURI() {
-        return sourceURI;
-    }
-
     public void setSource(boolean isSource) {
         this.isSource = isSource;
     }
@@ -254,6 +235,18 @@ public class BundleInfo {
         return classpath;
     }
 
+    public void addArtifact(BundleArtifact artifact) {
+        artifacts.add(artifact);
+    }
+
+    public void removeArtifact(BundleArtifact same) {
+        artifacts.remove(same);
+    }
+
+    public List<BundleArtifact> getArtifacts() {
+        return artifacts;
+    }
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -263,11 +256,9 @@ public class BundleInfo {
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result
                 + ((executionEnvironments == null) ? 0 : executionEnvironments.hashCode());
-        result = prime * result + (isSource ? 1231 : 1237);
         result = prime * result
                 + ((symbolicNameTarget == null) ? 0 : symbolicNameTarget.hashCode());
         result = prime * result + ((versionTarget == null) ? 0 : versionTarget.hashCode());
-        result = prime * result + ((sourceURI == null) ? 0 : sourceURI.hashCode());
         return result;
     }
 
@@ -334,13 +325,6 @@ public class BundleInfo {
         } else if (!versionTarget.equals(other.versionTarget)) {
             return false;
         }
-        if (sourceURI == null) {
-            if (other.sourceURI != null) {
-                return false;
-            }
-        } else if (!sourceURI.equals(other.sourceURI)) {
-            return false;
-        }
         if (hasInnerClasspath != other.hasInnerClasspath) {
             return false;
         }
@@ -365,7 +349,7 @@ public class BundleInfo {
     }
 
     public Set<BundleRequirement> getImports() {
-        Set<BundleRequirement> set = new LinkedHashSet<BundleRequirement> ();
+        Set<BundleRequirement> set = new LinkedHashSet<BundleRequirement>();
         for (BundleRequirement requirement : requirements) {
             if (requirement.getType().equals(PACKAGE_TYPE)) {
                 set.add(requirement);

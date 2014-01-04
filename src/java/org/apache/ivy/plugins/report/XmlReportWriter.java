@@ -302,9 +302,9 @@ public class XmlReportWriter {
                 out.print(" location=\"" 
                     + XMLHelper.escape(adr[i].getLocalFile().getAbsolutePath()) + "\"");
             }
-            if (adr[i].getUncompressedLocalDir() != null) {
-                out.print(" uncompressedDir=\""
-                        + XMLHelper.escape(adr[i].getUncompressedLocalDir().getAbsolutePath())
+            if (adr[i].getUnpackedLocalFile() != null) {
+                out.print(" unpackedFile=\""
+                        + XMLHelper.escape(adr[i].getUnpackedLocalFile().getAbsolutePath())
                         + "\"");
             }
 

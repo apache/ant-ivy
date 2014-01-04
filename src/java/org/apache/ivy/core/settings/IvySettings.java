@@ -53,6 +53,8 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.pack.ArchivePacking;
+import org.apache.ivy.core.pack.PackingRegistry;
 import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
 import org.apache.ivy.core.resolve.ResolveEngineSettings;
@@ -214,6 +216,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private boolean defaultUseOrigin;
 
     private String defaultResolveMode = ResolveOptions.RESOLVEMODE_DEFAULT;
+
+    private PackingRegistry packingRegistry = new PackingRegistry();
 
     public IvySettings() {
         this(new IvyVariableContainerImpl());
@@ -1507,4 +1511,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return Namespace.SYSTEM_NAMESPACE;
     }
 
+    public synchronized void addConfigured(ArchivePacking packing) {
+        init(packing);
+        packingRegistry.register(packing);
+    }
+
+    public PackingRegistry getPackingRegistry() {
+        return packingRegistry;
+    }
 }

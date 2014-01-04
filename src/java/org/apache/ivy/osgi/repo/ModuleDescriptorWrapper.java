@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.core.BundleInfo;
@@ -41,17 +40,11 @@ public class ModuleDescriptorWrapper {
 
     private ExecutionEnvironmentProfileProvider profileProvider;
 
-    private URI source;
-
     public ModuleDescriptorWrapper(BundleInfo bundleInfo, URI baseUri,
             ExecutionEnvironmentProfileProvider profileProvider) {
         this.bundleInfo = bundleInfo;
         this.baseUri = baseUri;
         this.profileProvider = profileProvider;
-    }
-
-    public void setSource(URI source) {
-        this.source = source;
     }
 
     public BundleInfo getBundleInfo() {
@@ -66,12 +59,6 @@ public class ModuleDescriptorWrapper {
                 }
                 md = BundleInfoAdapter.toModuleDescriptor(OSGiManifestParser.getInstance(),
                     baseUri, bundleInfo, profileProvider);
-                if (source != null) {
-                    String compression = md.getAllArtifacts()[0].getExtraAttribute("compression");
-                    DefaultArtifact sourceArtifact = BundleInfoAdapter.buildArtifact(
-                        md.getModuleRevisionId(), baseUri, source, "source", compression);
-                    md.addArtifact(BundleInfoAdapter.CONF_NAME_DEFAULT, sourceArtifact);
-                }
             }
         }
         return md;
@@ -108,4 +95,5 @@ public class ModuleDescriptorWrapper {
     public String toString() {
         return getModuleDescriptor().toString();
     }
+
 }

@@ -17,17 +17,19 @@
  */
 package org.apache.ivy.osgi.obr.xml;
 
+import org.apache.ivy.osgi.filter.OSGiFilter;
+
 public class Requirement {
 
     private final String name;
 
     private boolean optional;
 
-    private final RequirementFilter filter;
+    private final OSGiFilter filter;
 
     private boolean multiple = false;
 
-    public Requirement(String name, RequirementFilter filter) {
+    public Requirement(String name, OSGiFilter filter) {
         this.name = name;
         this.filter = filter;
     }
@@ -36,7 +38,7 @@ public class Requirement {
         return name;
     }
 
-    public RequirementFilter getFilter() {
+    public OSGiFilter getFilter() {
         return filter;
     }
 

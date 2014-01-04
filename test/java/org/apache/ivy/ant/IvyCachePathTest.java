@@ -239,13 +239,12 @@ public class IvyCachePathTest extends TestCase {
         path.execute();
     }
 
-    public void testUncompress() throws Exception {
+    public void testUnpack() throws Exception {
         project.setProperty("ivy.dep.file",
-            "test/repositories/1/compression/module1/ivys/ivy-1.0.xml");
-        path.setPathid("testUncompress");
-        path.setUncompress(true);
+            "test/repositories/1/packaging/module1/ivys/ivy-1.0.xml");
+        path.setPathid("testUnpack");
         path.execute();
-        Object ref = project.getReference("testUncompress");
+        Object ref = project.getReference("testUnpack");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -255,9 +254,8 @@ public class IvyCachePathTest extends TestCase {
 
     public void testOSGi() throws Exception {
         project.setProperty("ivy.dep.file",
-            "test/repositories/1/compression/module5/ivys/ivy-1.0.xml");
+            "test/repositories/1/packaging/module5/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");
-        path.setUncompress(true);
         path.setOsgi(true);
         path.execute();
         Object ref = project.getReference("testOSGi");
@@ -266,18 +264,17 @@ public class IvyCachePathTest extends TestCase {
         Path p = (Path) ref;
         assertEquals(4, p.size());
         File cacheDir = path.getSettings().getDefaultRepositoryCacheBasedir();
-        File uncompressed = new File(cacheDir, "compression/module3/jar_uncompresseds/module3-1.0");
-        assertEquals(new File(uncompressed, "lib/ant-antlr.jar"), new File(p.list()[0]));
-        assertEquals(new File(uncompressed, "lib/ant-apache-bcel.jar"), new File(p.list()[1]));
-        assertEquals(new File(uncompressed, "lib/ant-apache-bsf.jar"), new File(p.list()[2]));
-        assertEquals(new File(uncompressed, "lib/ant-apache-log4j.jar"), new File(p.list()[3]));
+        File unpacked = new File(cacheDir, "packaging/module3/jar_unpackeds/module3-1.0");
+        assertEquals(new File(unpacked, "lib/ant-antlr.jar"), new File(p.list()[0]));
+        assertEquals(new File(unpacked, "lib/ant-apache-bcel.jar"), new File(p.list()[1]));
+        assertEquals(new File(unpacked, "lib/ant-apache-bsf.jar"), new File(p.list()[2]));
+        assertEquals(new File(unpacked, "lib/ant-apache-log4j.jar"), new File(p.list()[3]));
     }
 
     public void testOSGi2() throws Exception {
         project.setProperty("ivy.dep.file",
-            "test/repositories/1/compression/module6/ivys/ivy-1.0.xml");
+            "test/repositories/1/packaging/module6/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");
-        path.setUncompress(true);
         path.setOsgi(true);
         path.execute();
         Object ref = project.getReference("testOSGi");
@@ -286,8 +283,8 @@ public class IvyCachePathTest extends TestCase {
         Path p = (Path) ref;
         assertEquals(1, p.size());
         File cacheDir = path.getSettings().getDefaultRepositoryCacheBasedir();
-        File uncompressed = new File(cacheDir, "compression/module4/jar_uncompresseds/module4-1.0");
-        assertEquals(uncompressed, new File(p.list()[0]));
+        File unpacked = new File(cacheDir, "packaging/module4/jar_unpackeds/module4-1.0");
+        assertEquals(unpacked, new File(p.list()[0]));
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision,

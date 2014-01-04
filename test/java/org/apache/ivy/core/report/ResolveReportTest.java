@@ -79,8 +79,7 @@ public class ResolveReportTest extends TestCase {
     private void checkFixedMdDependency(DependencyDescriptor dep, String org, String mod,
             String rev, String conf, String[] targetConfs) {
         assertEquals(ModuleRevisionId.newInstance(org, mod, rev), dep.getDependencyRevisionId());
-        assertEquals(Arrays.asList(new String[] {conf}),
-            Arrays.asList(dep.getModuleConfigurations()));
+        assertTrue(Arrays.asList(dep.getModuleConfigurations()).contains(conf));
         assertEquals(Arrays.asList(targetConfs),
             Arrays.asList(dep.getDependencyConfigurations(conf)));
     }
@@ -205,8 +204,10 @@ public class ResolveReportTest extends TestCase {
 
         assertEquals(1, fixedMd.getDependencies().length);
 
-        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "[1.0,2.0[", "*",
-            new String[] {"*"});
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "[1.0,2.0[",
+            "default", new String[] {"*"});
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "[1.0,2.0[",
+            "compile", new String[] {"*"});
     }
 
 }

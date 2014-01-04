@@ -38,7 +38,7 @@ public class ManifestParserTest extends TestCase {
         assertEquals("20080101", bundleInfo.getVersion().qualifier());
         assertEquals("1.0.0.20080101", bundleInfo.getVersion().toString());
         assertEquals(2, bundleInfo.getRequires().size());
-        Set/* <BundleRequirement> */expectedRequires = new HashSet/* <BundleRequirement> */();
+        Set<BundleRequirement> expectedRequires = new HashSet<BundleRequirement>();
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.bravo",
                 new VersionRange("2.0.0"), null));
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.delta",
@@ -59,7 +59,7 @@ public class ManifestParserTest extends TestCase {
         assertEquals("20080202", bundleInfo.getVersion().qualifier());
         assertEquals("2.0.0.20080202", bundleInfo.getVersion().toString());
         assertEquals(1, bundleInfo.getRequires().size());
-        expectedRequires = new HashSet/* <BundleRequirement> */();
+        expectedRequires = new HashSet<BundleRequirement>();
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.charlie",
                 new VersionRange("3.0.0"), null));
         assertEquals(1, bundleInfo.getExports().size());
@@ -77,14 +77,15 @@ public class ManifestParserTest extends TestCase {
         } finally {
             in.close();
         }
-        List/* <String> */cp = bundleInfo.getClasspath();
+        List<String> cp = bundleInfo.getClasspath();
         assertNotNull(cp);
         assertEquals(4, cp.size());
         assertEquals(
             Arrays.asList(new String[] {"lib/ant-antlr.jar", "lib/ant-apache-bcel.jar",
                     "lib/ant-apache-bsf.jar", "lib/ant-apache-log4j.jar"}), cp);
 
-        in = this.getClass().getResourceAsStream("/org/apache/ivy/osgi/core/MANIFEST_classpath2.MF");
+        in = this.getClass()
+                .getResourceAsStream("/org/apache/ivy/osgi/core/MANIFEST_classpath2.MF");
         try {
             bundleInfo = ManifestParser.parseManifest(in);
         } finally {
