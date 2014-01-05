@@ -26,7 +26,6 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
-import org.apache.ivy.util.Message;
 
 public class PackagingManager implements IvySettingsAware {
 
@@ -80,7 +79,6 @@ public class PackagingManager implements IvySettingsAware {
         }
 
         String[] packings = packaging.split(",");
-        Message.info("\tUnpacking " + artifact.getId());
         InputStream in = null;
         try {
             in = new FileInputStream(localFile);
