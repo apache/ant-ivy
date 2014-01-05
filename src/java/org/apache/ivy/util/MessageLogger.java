@@ -79,9 +79,9 @@ public interface MessageLogger {
 
     public abstract void error(String msg);
 
-    public abstract List/*<String>*/ getProblems();
-    public abstract List/*<String>*/ getWarns();
-    public abstract List/*<String>*/ getErrors();
+    public abstract List<String> getProblems();
+    public abstract List<String> getWarns();
+    public abstract List<String> getErrors();
 
     /**
      * Clears the list of problems, warns and errors.

@@ -135,7 +135,7 @@ public final class Message {
         }
     }
 
-    public static List getProblems() {
+    public static List<String> getProblems() {
         return getLogger().getProblems();
     }
 

@@ -28,7 +28,6 @@ import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.util.CollectionUtils;
-import org.apache.ivy.util.Message;
 
 public class OBRParserTest extends TestCase {
 
@@ -38,13 +37,6 @@ public class OBRParserTest extends TestCase {
         BundleRepoDescriptor repo = OBRXMLParser.parse(testObr.toURI(), new FileInputStream(
                 new File(testObr, "obr.xml")));
         assertNotNull(repo);
-        System.out.println(CollectionUtils.toList(repo.getModules()).size() + " bundles successfully parsed, "
-                + Message.getProblems().size() + " errors");
-        Iterator itPb = Message.getProblems().iterator();
-        while (itPb.hasNext()) {
-            Object error = itPb.next();
-            System.err.println(error);
-        }
         assertEquals("OBR/Releases", repo.getName());
         assertEquals("1253581430652", repo.getLastModified());
     }
@@ -54,26 +46,32 @@ public class OBRParserTest extends TestCase {
                 new File(testObr, "sources.xml")));
         assertNotNull(repo);
         assertEquals(2, CollectionUtils.toList(repo.getModules()).size());
-        Iterator itModule = repo.getModules();
+        Iterator<ModuleDescriptorWrapper> itModule = repo.getModules();
         while (itModule.hasNext()) {
-            ModuleDescriptor md = ((ModuleDescriptorWrapper) itModule.next()).getModuleDescriptor();
+            ModuleDescriptor md = itModule.next().getModuleDescriptor();
             if (md.getModuleRevisionId().getName().equals("org.apache.felix.eventadmin")) {
                 assertEquals(1, md.getAllArtifacts().length);
             } else {
                 assertEquals("org.apache.felix.bundlerepository", md.getModuleRevisionId()
                         .getName());
                 assertEquals(2, md.getAllArtifacts().length);
+                String type0 = md.getAllArtifacts()[0].getType();
                 String url0 = md.getAllArtifacts()[0].getUrl().toExternalForm();
+                String type1 = md.getAllArtifacts()[1].getType();
                 String url1 = md.getAllArtifacts()[1].getUrl().toExternalForm();
                 String jarUrl = "http://repo1.maven.org/maven2/org/apache/felix/"
                         + "org.apache.felix.bundlerepository/1.0.3/org.apache.felix.bundlerepository-1.0.3.jar";
                 String srcUrl = "http://oscar-osgi.sf.net/obr2/org.apache.felix.bundlerepository/"
                         + "org.apache.felix.bundlerepository-1.0.3-src.jar";
-                if (url0.equals(srcUrl)) {
-                    assertEquals(jarUrl, url1);
-                } else {
+                if (type0.equals("jar")) {
                     assertEquals(jarUrl, url0);
+                    assertEquals("source", type1);
                     assertEquals(srcUrl, url1);
+                } else {
+                    assertEquals("jar", type1);
+                    assertEquals(jarUrl, url1);
+                    assertEquals("source", type0);
+                    assertEquals(srcUrl, url0);
                 }
             }
         }
