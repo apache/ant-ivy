@@ -39,10 +39,15 @@ public class Pack200Packing extends StreamPacking {
     @Override
     public String getUnpackedExtension(String ext) {
         if (ext.endsWith("pack.gz")) {
-            return ext.substring(0, ext.length() - 7);
-        }
-        if (ext.endsWith("pack")) {
-            return ext.substring(0, ext.length() - 4);
+            ext = ext.substring(0, ext.length() - 7);
+            if (ext.endsWith(".")) {
+                ext = ext.substring(0, ext.length() - 1);
+            }
+        } else if (ext.endsWith("pack")) {
+            ext = ext.substring(0, ext.length() - 4);
+            if (ext.endsWith(".")) {
+                ext = ext.substring(0, ext.length() - 1);
+            }
         }
         return ext;
     }

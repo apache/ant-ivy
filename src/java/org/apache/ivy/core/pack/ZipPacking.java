@@ -39,7 +39,10 @@ public class ZipPacking extends ArchivePacking {
     @Override
     public String getUnpackedExtension(String ext) {
         if (ext.endsWith("zip") || ext.endsWith("jar") || ext.endsWith("war")) {
-            return ext.substring(0, ext.length() - 3);
+            ext = ext.substring(0, ext.length() - 3);
+            if (ext.endsWith(".")) {
+                ext = ext.substring(0, ext.length() - 1);
+            }
         }
         return ext;
     }

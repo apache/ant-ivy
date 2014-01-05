@@ -287,6 +287,25 @@ public class IvyCachePathTest extends TestCase {
         assertEquals(unpacked, new File(p.list()[0]));
     }
 
+    public void testPackedOSGi() throws Exception {
+        project.setProperty("ivy.dep.file",
+            "test/repositories/1/packaging/module8/ivys/ivy-1.0.xml");
+        path.setPathid("testOSGi");
+        path.setOsgi(true);
+        path.execute();
+        Object ref = project.getReference("testOSGi");
+        assertNotNull(ref);
+        assertTrue(ref instanceof Path);
+        Path p = (Path) ref;
+        assertEquals(4, p.size());
+        File cacheDir = path.getSettings().getDefaultRepositoryCacheBasedir();
+        File unpacked = new File(cacheDir, "packaging/module7/jar_unpackeds/module7-1.0");
+        assertEquals(new File(unpacked, "lib/ant-antlr.jar"), new File(p.list()[0]));
+        assertEquals(new File(unpacked, "lib/ant-apache-bcel.jar"), new File(p.list()[1]));
+        assertEquals(new File(unpacked, "lib/ant-apache-bsf.jar"), new File(p.list()[2]));
+        assertEquals(new File(unpacked, "lib/ant-apache-log4j.jar"), new File(p.list()[3]));
+    }
+
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
         return TestHelper.getArchiveFileInCache(path.getIvyInstance(), organisation, module,
