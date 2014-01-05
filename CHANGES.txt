@@ -158,6 +158,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: add support for source URI from OBR repositories
 - IMPROVEMENT: Also copy original metadata artifact (e.g. POM) on ivy:install (IVY-1431) (Thanks to Erwin Tratar)
 - IMPROVEMENT: useOrigin will do avoid copy with url resolvers configured with a 'file:/' URL
+- IMPROVEMENT: add support for source artifacts in buildobr task
 
 - FIX: In IvyDE, Ivy fails to parse ivy-settings.xml file if it contains <pgp> element (thanks to Gregory Amerson) (IVY-1441)
 - FIX: ParseException when "Bundle-Description" is present in OSGi MANIFEST.MF (IVY-1438)

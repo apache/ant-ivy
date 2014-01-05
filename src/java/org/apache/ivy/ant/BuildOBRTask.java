@@ -23,7 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -60,6 +61,8 @@ public class BuildOBRTask extends IvyCacheTask {
 
     private boolean quiet;
 
+    private List<String> sourceTypes = Arrays.asList("source", "sources", "src");
+
     public void setResolver(String resolverName) {
         this.resolverName = resolverName;
     }
@@ -88,9 +91,23 @@ public class BuildOBRTask extends IvyCacheTask {
         this.quiet = quiet;
     }
 
+    public void setSourceType(String sourceType) {
+        this.sourceTypes = Arrays.asList(sourceType.split(","));
+    }
+
     protected void prepareTask() {
+        // if browsing a folder, not need for an Ivy instance
         if (baseDir == null) {
             super.prepareTask();
+        }
+        // ensure the configured source type get also resolved
+        if (getType() != null && !getType().equals("*") && sourceTypes != null && !sourceTypes.isEmpty()) {
+            StringBuilder buffer = new StringBuilder(getType());
+            for (String sourceType : sourceTypes) {
+                buffer.append(",");
+                buffer.append(sourceType);
+            }
+            setType(buffer.toString());
         }
     }
 
@@ -139,7 +156,7 @@ public class BuildOBRTask extends IvyCacheTask {
         } else {
             prepareAndCheck();
             try {
-                it = new ArtifactReportManifestIterable(getArtifactReports());
+                it = new ArtifactReportManifestIterable(getArtifactReports(), sourceTypes);
             } catch (ParseException e) {
                 throw new BuildException("Impossible to parse the artifact reports: "
                         + e.getMessage(), e);

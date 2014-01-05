@@ -21,21 +21,38 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.util.Message;
 
 public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocation> {
 
-    private final List<ArtifactDownloadReport> artifactReports;
+    private final Map<ModuleRevisionId, List<ArtifactDownloadReport>> artifactReports = new HashMap<ModuleRevisionId, List<ArtifactDownloadReport>>();
 
-    public ArtifactReportManifestIterable(List<ArtifactDownloadReport> artifactReports) {
-        this.artifactReports = artifactReports;
+    private List<String> sourceTypes;
+
+    public ArtifactReportManifestIterable(List<ArtifactDownloadReport> reports,
+            List<String> sourceTypes) {
+        this.sourceTypes = sourceTypes;
+        for (ArtifactDownloadReport report : reports) {
+            ModuleRevisionId mrid = report.getArtifact().getModuleRevisionId();
+            List<ArtifactDownloadReport> moduleReports = artifactReports.get(mrid);
+            if (moduleReports == null) {
+                moduleReports = new ArrayList<ArtifactDownloadReport>();
+                artifactReports.put(mrid, moduleReports);
+            }
+            moduleReports.add(report);
+        }
     }
 
     public Iterator<ManifestAndLocation> iterator() {
@@ -46,31 +63,51 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
 
         private ManifestAndLocation next = null;
 
-        private Iterator<ArtifactDownloadReport> it;
+        private Iterator<ModuleRevisionId> it;
 
         public ArtifactReportManifestIterator() {
-            it = artifactReports.iterator();
+            it = artifactReports.keySet().iterator();
         }
 
         public boolean hasNext() {
             while (next == null && it.hasNext()) {
-                ArtifactDownloadReport report = (ArtifactDownloadReport) it.next();
-                if (report.getUnpackedLocalFile() != null
-                        && report.getUnpackedLocalFile().isDirectory()) {
+                ModuleRevisionId mrid = it.next();
+                List<ArtifactDownloadReport> reports = artifactReports.get(mrid);
+                ArtifactDownloadReport jar = null;
+                ArtifactDownloadReport source = null;
+                for (ArtifactDownloadReport report : reports) {
+                    if (sourceTypes != null && sourceTypes.contains(report.getArtifact().getType())) {
+                        source = report;
+                    } else {
+                        jar = report;
+                    }
+                }
+                if (jar == null) {
+                    // didn't found any suitable jar
+                    continue;
+                }
+                URI sourceURI = null;
+                if (source != null) {
+                    if (source.getUnpackedLocalFile() != null) {
+                        sourceURI = source.getUnpackedLocalFile().toURI();
+                    } else {
+                        sourceURI = source.getLocalFile().toURI();
+                    }
+                }
+                if (jar.getUnpackedLocalFile() != null && jar.getUnpackedLocalFile().isDirectory()) {
                     FileInputStream in = null;
                     try {
-                        in = new FileInputStream(new File(report.getUnpackedLocalFile(),
+                        in = new FileInputStream(new File(jar.getUnpackedLocalFile(),
                                 "META-INF/MANIFEST.MF"));
-                        next = new ManifestAndLocation(new Manifest(in), report
-                                .getUnpackedLocalFile().toURI());
+                        next = new ManifestAndLocation(new Manifest(in), jar.getUnpackedLocalFile()
+                                .toURI(), sourceURI);
                         return true;
                     } catch (FileNotFoundException e) {
                         Message.debug(
-                            "Bundle directory file just removed: " + report.getUnpackedLocalFile(),
-                            e);
+                            "Bundle directory file just removed: " + jar.getUnpackedLocalFile(), e);
                     } catch (IOException e) {
                         Message.debug("The Manifest in the bundle directory could not be read: "
-                                + report.getUnpackedLocalFile(), e);
+                                + jar.getUnpackedLocalFile(), e);
                     } finally {
                         if (in != null) {
                             try {
@@ -82,17 +119,17 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
                     }
                 } else {
                     File artifact;
-                    if (report.getUnpackedLocalFile() != null) {
-                        artifact = report.getUnpackedLocalFile();
+                    if (jar.getUnpackedLocalFile() != null) {
+                        artifact = jar.getUnpackedLocalFile();
                     } else {
-                        artifact = report.getLocalFile();
+                        artifact = jar.getLocalFile();
                     }
                     JarInputStream in = null;
                     try {
                         in = new JarInputStream(new FileInputStream(artifact));
                         Manifest manifest = in.getManifest();
                         if (manifest != null) {
-                            next = new ManifestAndLocation(manifest, artifact.toURI());
+                            next = new ManifestAndLocation(manifest, artifact.toURI(), sourceURI);
                             return true;
                         }
                         Message.debug("No manifest in jar: " + artifact);

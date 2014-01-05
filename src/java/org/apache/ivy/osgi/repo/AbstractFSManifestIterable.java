@@ -107,7 +107,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
                         Manifest manifest = in.getManifest();
                         if (manifest != null) {
                             next = new ManifestAndLocation(manifest,
-                                    buildBundleURI(bundleCandidate));
+                                    buildBundleURI(bundleCandidate), null);
                         } else {
                             Message.debug("No manifest in jar: " + bundleCandidate);
                         }

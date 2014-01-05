@@ -181,7 +181,7 @@ public class ResolverManifestIterable implements Iterable<ManifestAndLocation> {
                     Message.debug("No manifest on " + artifact);
                 } else {
                     URI uri = BundleInfoAdapter.buildIvyURI(artifact);
-                    next = new ManifestAndLocation(manifest, uri);
+                    next = new ManifestAndLocation(manifest, uri, null);
                 }
                 artifact = null;
             }

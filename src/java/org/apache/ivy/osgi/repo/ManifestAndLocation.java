@@ -29,9 +29,15 @@ public class ManifestAndLocation {
      */
     private final URI uri;
 
-    public ManifestAndLocation(Manifest manifest, URI uri) {
+    /**
+     * location of the source jar
+     */
+    private final URI sourceURI;
+
+    public ManifestAndLocation(Manifest manifest, URI uri, URI sourceURI) {
         this.manifest = manifest;
         this.uri = uri;
+        this.sourceURI = sourceURI;
     }
 
     public URI getUri() {
@@ -42,4 +48,7 @@ public class ManifestAndLocation {
         return manifest;
     }
 
+    public URI getSourceURI() {
+        return sourceURI;
+    }
 }

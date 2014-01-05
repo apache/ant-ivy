@@ -40,6 +40,7 @@ import org.apache.ivy.osgi.obr.xml.OBRXMLParser.CapabilityPropertyHandler;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser.RepositoryHandler;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser.RequireHandler;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser.ResourceHandler;
+import org.apache.ivy.osgi.obr.xml.OBRXMLParser.ResourceSourceHandler;
 import org.apache.ivy.osgi.repo.ManifestAndLocation;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
@@ -75,6 +76,9 @@ public class OBRXMLWriter {
             try {
                 bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
                 bundleInfo.addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
+                if (manifestAndLocation.getSourceURI() != null) {
+                    bundleInfo.addArtifact(new BundleArtifact(true, manifestAndLocation.getSourceURI(), null));
+                }
                 nbOk++;
             } catch (ParseException e) {
                 nbRejected++;
@@ -110,11 +114,21 @@ public class OBRXMLWriter {
         AttributesImpl atts = new AttributesImpl();
         addAttr(atts, ResourceHandler.SYMBOLIC_NAME, bundleInfo.getSymbolicName());
         addAttr(atts, ResourceHandler.VERSION, bundleInfo.getRawVersion());
-        if (!bundleInfo.getArtifacts().isEmpty()) {
-            // TODO handle several artifacts
-            addAttr(atts, ResourceHandler.URI, bundleInfo.getArtifacts().get(0).getUri().toString());
+        for (BundleArtifact artifact : bundleInfo.getArtifacts()) {
+            if (!artifact.isSource()) {
+                addAttr(atts, ResourceHandler.URI, bundleInfo.getArtifacts().get(0).getUri().toString());
+                break;
+            }
         }
         handler.startElement("", ResourceHandler.RESOURCE, ResourceHandler.RESOURCE, atts);
+        for (BundleArtifact artifact : bundleInfo.getArtifacts()) {
+            if (artifact.isSource()) {
+                startElement(handler, ResourceSourceHandler.SOURCE);
+                characters(handler, artifact.getUri().toString());
+                endElement(handler, ResourceSourceHandler.SOURCE);
+                break;
+            }
+        }
         for (BundleCapability capability : bundleInfo.getCapabilities()) {
             saxCapability(capability, handler);
         }
@@ -253,6 +267,19 @@ public class OBRXMLWriter {
         if (value != null) {
             atts.addAttribute("", name, name, "CDATA", value.toString());
         }
+    }
+
+    private static void startElement(ContentHandler handler, String name) throws SAXException {
+        handler.startElement("", name, name, new AttributesImpl());
+    }
+
+    private static void endElement(ContentHandler handler, String name) throws SAXException {
+        handler.endElement("", name, name);
+    }
+
+    private static void characters(ContentHandler handler, String value) throws SAXException {
+        char[] chars = value.toCharArray();
+        handler.characters(chars, 0, chars.length);
     }
 
 }
