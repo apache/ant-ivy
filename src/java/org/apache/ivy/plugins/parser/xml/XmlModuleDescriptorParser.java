@@ -26,12 +26,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -230,7 +229,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         private StringBuffer buffer;
         private String descriptorVersion;
         private String[] publicationsDefaultConf;
-        private Deque<ExtraInfoHolder> extraInfoStack = new LinkedList<ExtraInfoHolder>();
+        private Stack<ExtraInfoHolder> extraInfoStack = new Stack<ExtraInfoHolder>();
         
         public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings) {
             super(parser);
