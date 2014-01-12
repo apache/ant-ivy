@@ -194,6 +194,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd.lastModified = md.getLastModified();
         nmd.extraAttributesNamespaces = md.getExtraAttributesNamespaces();
         nmd.extraInfo = md.getExtraInfo();
+        nmd.extraInfos = md.getExtraInfos();
         nmd.namespace = ns;
 
         return nmd;
@@ -255,6 +256,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private Map/* <String,String> */extraAttributesNamespaces = new LinkedHashMap();
 
     private Map/* <String,String> */extraInfo = new HashMap();
+
+    private List<ExtraInfoHolder> extraInfos = new ArrayList<ExtraInfoHolder>();
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -839,5 +842,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public Map getExtraInfo() {
         return extraInfo;
+    }
+
+    public List<ExtraInfoHolder> getExtraInfos() {
+        return extraInfos;
+    }
+
+    public void addExtraInfo(ExtraInfoHolder extraInfo) {
+        extraInfos.add(extraInfo);
     }
 }

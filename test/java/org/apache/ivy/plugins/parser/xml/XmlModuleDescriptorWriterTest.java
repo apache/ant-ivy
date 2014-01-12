@@ -110,6 +110,34 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
             '\r', '\n');
         assertEquals(expected, wrote);
     }
+    
+    public void testExtraInfos() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(),
+            XmlModuleDescriptorWriterTest.class.getResource("test-extrainfo.xml"), false);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-extrainfo.xml").replaceAll("\r\n", "\n")
+                .replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+
+    public void testExtraInfosWithNestedElement() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(),
+            XmlModuleDescriptorWriterTest.class.getResource("test-extrainfo-nested.xml"), false);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-extrainfo-nested.xml").replaceAll("\r\n", "\n")
+                .replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
 
 	public void testExtends() throws Exception {
 		ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(

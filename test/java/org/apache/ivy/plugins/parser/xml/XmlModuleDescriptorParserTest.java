@@ -32,6 +32,7 @@ import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
+import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
@@ -488,6 +489,60 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md);
         assertEquals(1, md.getExtraInfo().size());
         assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+    }
+    
+    public void testExtraInfos() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extrainfo.xml"), true);
+        assertNotNull(md);
+        assertEquals(2, md.getExtraInfo().size());
+        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+        assertEquals(2, md.getExtraInfos().size());
+        ExtraInfoHolder firstExtraInfoElement = md.getExtraInfos().get(0);
+        assertEquals("e:someExtra", firstExtraInfoElement.getName());
+        assertEquals("56576", firstExtraInfoElement.getContent());
+        assertEquals(0, firstExtraInfoElement.getAttributes().size());
+        assertEquals(0, firstExtraInfoElement.getNestedExtraInfoHolder().size());
+        ExtraInfoHolder secondExtraInfoElement = md.getExtraInfos().get(1);
+        assertEquals("e:someExtraWithAttributes", secondExtraInfoElement.getName());
+        assertEquals("", secondExtraInfoElement.getContent());
+        assertEquals(2, secondExtraInfoElement.getAttributes().size());
+        assertEquals("foo", secondExtraInfoElement.getAttributes().get("attr1"));
+        assertEquals("bar", secondExtraInfoElement.getAttributes().get("attr2"));
+        assertEquals(0, secondExtraInfoElement.getNestedExtraInfoHolder().size());
+    }
+    
+    public void testExtraInfosNested() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-extrainfo-nested.xml"), true);
+        assertNotNull(md);
+        assertEquals(4, md.getExtraInfo().size());
+        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+        assertEquals(2, md.getExtraInfos().size());
+        ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
+        assertEquals("e:someExtra", someExtraElement.getName());
+        assertEquals("56576", someExtraElement.getContent());
+        assertEquals(0, someExtraElement.getAttributes().size());
+        assertEquals(0, someExtraElement.getNestedExtraInfoHolder().size());
+        ExtraInfoHolder someExtraElementWithAttributes = md.getExtraInfos().get(1);
+        assertEquals("e:someExtraWithAttributes", someExtraElementWithAttributes.getName());
+        assertEquals("", someExtraElementWithAttributes.getContent());
+        assertEquals(2, someExtraElementWithAttributes.getAttributes().size());
+        assertEquals("foo", someExtraElementWithAttributes.getAttributes().get("attr1"));
+        assertEquals("bar", someExtraElementWithAttributes.getAttributes().get("attr2"));
+        assertEquals(1, someExtraElementWithAttributes.getNestedExtraInfoHolder().size());
+        ExtraInfoHolder anotherExtraInfoElement = someExtraElementWithAttributes.getNestedExtraInfoHolder().get(0);
+        assertEquals("e:anotherExtraInfo", anotherExtraInfoElement.getName());
+        assertEquals("", anotherExtraInfoElement.getContent());
+        assertEquals(1, anotherExtraInfoElement.getAttributes().size());
+        assertEquals("foobar", anotherExtraInfoElement.getAttributes().get("myattribute"));
+        assertEquals(1, anotherExtraInfoElement.getNestedExtraInfoHolder().size());
+        ExtraInfoHolder yetAnotherExtraInfoElement = anotherExtraInfoElement.getNestedExtraInfoHolder().get(0);
+        assertEquals("e:yetAnotherExtraInfo", yetAnotherExtraInfoElement.getName());
+        assertEquals("", yetAnotherExtraInfoElement.getContent());
+        assertEquals(1, yetAnotherExtraInfoElement.getAttributes().size());
+        assertEquals("value", yetAnotherExtraInfoElement.getAttributes().get("anAttribute"));
+        assertEquals(0, yetAnotherExtraInfoElement.getNestedExtraInfoHolder().size());
     }
     
     public void testBug60() throws Exception {

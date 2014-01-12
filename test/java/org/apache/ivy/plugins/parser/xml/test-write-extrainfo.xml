@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+	<info organisation="myorg"
+		module="mymodule"
+		revision="myrev"
+		status="integration"
+		publication="20041101110000"
+		e:attr1="value1"
+	>
+		<license name="MyLicense" url="http://www.my.org/mymodule/mylicense.html" />
+		<description homepage="http://www.my.org/mymodule/">
+		This module is &lt;b>great&lt;/b> !&lt;br/>
+	You can use it especially with myconf1 and myconf2, and myconf4 is not too bad too.
+		</description>
+		<e:someExtra>56576</e:someExtra>
+		<e:someExtraWithAttributes attr1="foo" attr2="bar"/>
+	</info>
+	<configurations>
+		<conf name="myconf1" visibility="public" description="desc 1" e:attr2="value2"/>
+		<conf name="myconf2" visibility="public" description="desc 2"/>
+		<conf name="myconf3" visibility="private" description="desc 3"/>
+		<conf name="myconf4" visibility="public" description="desc 4" extends="myconf1,myconf2"/>
+		<conf name="myoldconf" visibility="public" description="my old desc" deprecated="20050115"/>
+	</configurations>
+	<publications>
+		<artifact name="myartifact1" type="jar" ext="jar" conf="myconf1,myconf2,myconf3,myconf4,myoldconf" e:attr3="value3"/>
+		<artifact name="myartifact2" type="jar" ext="jar" conf="myconf1"/>
+		<artifact name="myartifact3" type="jar" ext="jar" conf="myconf1,myconf2,myconf3"/>
+		<artifact name="myartifact4" type="jar" ext="jar" conf="myconf1,myconf3"/>
+	</publications>
+	<dependencies>
+		<dependency org="myorg" name="mymodule2" rev="2.0" conf="*->*" e:attr4="value4"/>
+		<dependency org="myorg" name="mymodule3" rev="2.0" changing="true" transitive="false" conf="*->*"/>
+		<dependency org="yourorg" name="yourmodule1" branch="trunk" rev="1.1" branchConstraint="branch1" revConstraint="1+" conf="myconf1->myconf1"/>
+		<dependency org="yourorg" name="yourmodule2" rev="2+" conf="myconf1->yourconf1"/>
+		<dependency org="yourorg" name="yourmodule3" rev="3.1" conf="myconf1->yourconf1,yourconf2"/>
+		<dependency org="yourorg" name="yourmodule4" rev="4.1" conf="myconf1->yourconf1,yourconf2;myconf2->yourconf1,yourconf2"/>
+		<dependency org="yourorg" name="yourmodule5" rev="5.1" conf="myconf1->yourconf1;myconf2->yourconf1,yourconf2"/>
+		<dependency org="yourorg" name="yourmodule6" rev="latest.integration" conf="myconf1->yourconf1;myconf2->yourconf1,yourconf2"/>
+		<dependency org="yourorg" name="yourmodule7" rev="7.1" conf="myconf1->yourconf1;myconf2->yourconf1,yourconf2"/>
+		<dependency org="yourorg" name="yourmodule8" rev="8.1" conf="*->*">
+			<artifact name="yourartifact8-1" type="jar" ext="jar" e:attr5="value5"/>
+			<artifact name="yourartifact8-2" type="jar" ext="jar"/>
+		</dependency>
+		<dependency org="yourorg" name="yourmodule9" rev="9.1" conf="myconf1->default;myconf2->default;myconf3->default">
+			<artifact name="yourartifact9-1" type="jar" ext="jar" conf="myconf1,myconf2"/>
+			<artifact name="yourartifact9-2" type="jar" ext="jar" conf="myconf2,myconf3"/>
+		</dependency>
+		<dependency org="yourorg" name="yourmodule10" rev="10.1" conf="*->*">
+			<include name="your.*" type="jar" ext="jar" matcher="exact"/>
+			<include name="*" type="*" ext="xml" matcher="exact"/>
+			<exclude org="*" module="*" name="toexclude" type="*" ext="*" matcher="exact"/>
+		</dependency>
+		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->*"/>
+		<exclude org="*" module="*servlet*" artifact="*" type="*" ext="*" conf="myconf1" matcher="glob"/>
+		<exclude org="acme" module="test" artifact="test" type="source" ext="jar" matcher="exact"/>
+		<override org="yourorg" module=".*1" matcher="regexp" branch="BRANCH" rev="1.0"/>
+	</dependencies>
+</ivy-module>

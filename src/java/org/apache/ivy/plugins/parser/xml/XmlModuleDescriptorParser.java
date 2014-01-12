@@ -26,7 +26,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +49,7 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
+import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
@@ -227,6 +230,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         private StringBuffer buffer;
         private String descriptorVersion;
         private String[] publicationsDefaultConf;
+        private Deque<ExtraInfoHolder> extraInfoStack = new LinkedList<ExtraInfoHolder>();
         
         public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings) {
             super(parser);
@@ -313,9 +317,17 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     // nothing to do, we don't store this
                 } else if (state == State.INFO && "repository".equals(qName)) {
                     // nothing to do, we don't store this
-                } else if (state == State.INFO && isOtherNamespace(qName)) {
+                } else if (state == State.EXTRA_INFO || state == State.INFO
+                        && isOtherNamespace(qName)) {
                     buffer = new StringBuffer();
                     state = State.EXTRA_INFO;
+                    ExtraInfoHolder extraInfo = new ExtraInfoHolder();
+                    extraInfo.setName(qName);
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        extraInfo.getAttributes().put(attributes.getQName(i),
+                            attributes.getValue(i));
+                    }
+                    extraInfoStack.push(extraInfo);
                 } else if ("configurations".equals(qName)) {
                     configurationStarted(attributes);
                 } else if ("publications".equals(qName)) {
@@ -1194,9 +1206,18 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 buffer = null;
                 state = State.INFO;
             } else if (state == State.EXTRA_INFO) {
-                getMd().addExtraInfo(qName, buffer == null ? "" : buffer.toString());
+                String content = buffer == null ? "" : buffer.toString();
                 buffer = null;
-                state = State.INFO;
+                getMd().addExtraInfo(qName, content);
+                ExtraInfoHolder extraInfo = extraInfoStack.pop();
+                extraInfo.setContent(content);
+                if (extraInfoStack.isEmpty()) {
+                    getMd().addExtraInfo(extraInfo);
+                    state = State.INFO;
+                } else {
+                    ExtraInfoHolder parentHolder = extraInfoStack.peek();
+                    parentHolder.getNestedExtraInfoHolder().add(extraInfo);
+                }
             } else if (state == State.DESCRIPTION) {
                 if (buffer.toString().endsWith("<" + qName + ">")) {
                     buffer.deleteCharAt(buffer.length() - 1);

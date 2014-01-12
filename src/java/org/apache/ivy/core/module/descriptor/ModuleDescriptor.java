@@ -21,8 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -263,5 +265,14 @@ public interface ModuleDescriptor
      * The key is the name of the tag, the value is its content.
      * @return
      */
+    @Deprecated
     Map/*<String,String>*/ getExtraInfo();
+    
+
+    /**
+     * Returns a list of extras infos (tag name, attributes and content).
+     * All the tags except the description are given.
+     * @return
+     */
+    List<ExtraInfoHolder> getExtraInfos();
 }

@@ -36,6 +36,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.ExtendsDescriptor;
+import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -507,19 +508,8 @@ public final class XmlModuleDescriptorWriter {
                     out.println(" />");
                 }
             }
-            for (Iterator it = md.getExtraInfo().entrySet().iterator(); it.hasNext();) {
-                Map.Entry extraDescr = (Map.Entry) it.next();
-                if (extraDescr.getValue() == null 
-                        || ((String) extraDescr.getValue()).length() == 0) {
-                    continue;
-                }
-                out.print("\t\t<");
-                out.print(extraDescr.getKey());
-                out.print(">");
-                out.print(XMLHelper.escape((String) extraDescr.getValue()));
-                out.print("</");
-                out.print(extraDescr.getKey());
-                out.println(">");
+            for (ExtraInfoHolder extraInfo : md.getExtraInfos()) {
+                printExtraInfoElement(out, extraInfo, 2);
             }
             out.println("\t</info>");
         } else {
@@ -527,9 +517,50 @@ public final class XmlModuleDescriptorWriter {
         }
 
     }
+    
+    private static void printExtraInfoElement(PrintWriter out, ExtraInfoHolder extraInfo, int indent) {
+        for (int i = 1; i <= indent; i++) {
+            out.print("\t");
+        }
+        out.print("<");
+        out.print(extraInfo.getName());
+        for (Entry<String, String> entry : extraInfo.getAttributes().entrySet()) {
+            out.print(" ");
+            out.print(entry.getKey());
+            out.print("=");
+            out.print("\"");
+            out.print(entry.getValue());
+            out.print("\"");
+        }
+        boolean requireClosingTag = false;
+        if (extraInfo.getContent() != null && extraInfo.getContent().trim().length() > 0) {
+            out.print(">");
+            out.print(XMLHelper.escape(extraInfo.getContent()));
+            requireClosingTag = true;
+        }
+        if (!extraInfo.getNestedExtraInfoHolder().isEmpty()) {
+            out.println(">");
+            for (ExtraInfoHolder nestedElement : extraInfo.getNestedExtraInfoHolder()) {
+                printExtraInfoElement(out, nestedElement, indent + 1);
+            }
+            requireClosingTag = true;
+            // prepare indentation for closing tag
+            for (int i = 1; i <= indent; i++) {
+                out.print("\t");
+            }
+        }
+        if (requireClosingTag) {
+            out.print("</");
+            out.print(extraInfo.getName());
+            out.println(">");
+        } else {
+            out.println("/>");
+        }
+    }
 
     private static boolean requireInnerInfoElement(ModuleDescriptor md) {
         return md.getExtraInfo().size() > 0 
+                || md.getExtraInfos().size() > 0
                 || md.getHomePage() != null 
                 || (md.getDescription() != null && md.getDescription().trim().length() > 0) 
                 || md.getLicenses().length > 0
