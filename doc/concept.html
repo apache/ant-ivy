@@ -279,7 +279,27 @@ If you really want to use relative paths, the base directory used to actually lo
 <li>In an Ivy file, paths are relative to the Ivy file itself (the only possible path in an Ivy file is for configurations declaration inclusion)</li>
 <li>In settings files, paths for file inclusion (namely properties file loading and settings inclusion) are relative to the directory in which the settings file is located. All other paths must be absolute unless explicitly noted.</li>
 <li>In Ivy Ant tasks and Ivy parameters or options, paths are relative to Ivy base directory, which when called from Ant is the same as your Ant basedir.</li>
-</ul></textarea>
+</ul>
+
+<h1><a name="packaging">Packaging</a></h1>
+
+Most of the artifacts found in a repository are jars. They can be downoaded and used as is. But some other kind of artifacts required some <i>unpacking</i> after being downloaded and before being used. Such artifacts can be zipped folders and packed jars. Ivy supports that kind of artifact with <b>packaging</b>.
+
+A <i>packaged</i> artifact needs to be declared as such in the module descriptor via the attribute <a href="ivyfile/artifact.html">packaging</a>. The value of that attribute defined which kind of unpacking algorithm must be used. Here are the list of currently supported algorithms:
+<ul>
+    <li><tt>zip</tt>, <tt>jar</tt> or <tt>war</tt>: the artifact will be uncompressed as a folder</li>
+    <li><tt>pack200</tt>: the artifact will be unpacked to a file via the <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html">pack200</a> algorithm</li>
+</ul>
+
+So, if in an <tt>ivy.xml</tt>, there would be declared a such artifact:
+<code>
+    <artifact name="mymodule" type="jar" ext="jar.pack.gz" packaging="pack200" />
+</code>
+A file <tt>mymodule-1.2.3.jar.pack.gz</tt> would be download into the cache, and also uncompressed in the cache to <tt>mymodule-1.2.3.jar</tt>. Then any post resolve task which supports it, like the <a href="use/cachepath.html">cachepath</a>, will use the uncompressed file instead of the orginal compressed file.
+
+It is possible to chain packing algorithm. The attribute <a href="ivyfile/artifact.html">packaging</a> of a artifact expects a comma separated list of packing types, in packing order. For instance, an artifact '<tt>mymodule-1.2.3.jar.pack.gz</tt>' can have the packaging '<tt>jar,pack200</tt>', so it would be uncompressed as a folder '<tt>mymodule-1.2.3</tt>'.
+
+</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>
