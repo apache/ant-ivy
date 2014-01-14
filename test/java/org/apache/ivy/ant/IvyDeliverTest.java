@@ -147,9 +147,10 @@ public class IvyDeliverTest extends TestCase {
                 mergeLine = mergeLine.trim();
                 expectedLine = expectedLine.trim();
 
-                if (!mergeLine.startsWith("<info"))
+                if (!mergeLine.startsWith("<info")) {
                     assertEquals("published descriptor matches at line[" + lineNo + "]",
                         expectedLine.trim(), mergeLine.trim());
+                }
 
                 ++lineNo;
             }

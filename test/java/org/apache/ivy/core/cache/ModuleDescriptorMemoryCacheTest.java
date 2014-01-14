@@ -157,8 +157,9 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
 
         public ModuleDescriptor provideModule(ParserSettings ivySettings, File descriptorFile,
                 boolean validate) {
-            if (ivySettings != null)
+            if (ivySettings != null) {
                 ivySettings.substitute("${val}");
+            }
             called = true;
             return result;
         }

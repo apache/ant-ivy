@@ -594,8 +594,9 @@ public final class XmlModuleDescriptorUpdater {
             if (attributes.getIndex("branch") == -1) {
                 if (newBranch != null) {
                     // erase an existing branch attribute if its new value is blank
-                    if (!newBranch.trim().equals(""))
+                    if (!newBranch.trim().equals("")) {
                         write(" branch=\"" + newBranch + "\"");
+                    }
                 } else if (options.isUpdateBranch() && systemMrid.getBranch() != null) {
                     // this dependency is on a specific branch, we set it explicitly in the updated
                     // file

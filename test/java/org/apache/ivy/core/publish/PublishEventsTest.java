@@ -149,8 +149,9 @@ public class PublishEventsTest extends TestCase {
             ivy = null;
         }
         publishEngine = null;
-        if (dataFile != null)
+        if (dataFile != null) {
             dataFile.delete();
+        }
         dataFile = null;
         ivyFile = null;
     }
@@ -240,8 +241,9 @@ public class PublishEventsTest extends TestCase {
         // set an error to be thrown during publication of the data file.
         this.publishError = new IOException("boom!");
         // we don't care which artifact is attempted; either will fail with an IOException.
-        for (Iterator it = expectedPublications.values().iterator(); it.hasNext();)
+        for (Iterator it = expectedPublications.values().iterator(); it.hasNext();) {
             ((PublishTestCase) it.next()).expectedSuccess = false;
+        }
 
         try {
             publishEngine.publish(publishModule.getModuleRevisionId(), publishSources, "default",
@@ -341,9 +343,10 @@ public class PublishEventsTest extends TestCase {
                         expectedArtifact.getExt(), "default",
                         String.valueOf(test.expectedOverwrite)};
 
-                for (int i = 0; i < attributes.length; ++i)
+                for (int i = 0; i < attributes.length; ++i) {
                     assertEquals("event declares correct value for " + attributes[i], values[i],
                         event.getAttributes().get(attributes[i]));
+                }
                 // we test file separately, since it is hard to guaranteean exact path match, but we
                 // want
                 // to make sure that both paths point to the same canonical location on the
@@ -474,8 +477,9 @@ public class PublishEventsTest extends TestCase {
                 test.currentTestCase.expectedData.exists());
 
             // simulate a publisher error if the current test case demands it.
-            if (test.publishError != null)
+            if (test.publishError != null) {
                 throw test.publishError;
+            }
 
             // all assertions pass. increment the publication count
             test.currentTestCase.published = true;
