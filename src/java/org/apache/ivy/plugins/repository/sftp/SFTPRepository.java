@@ -35,12 +35,12 @@ import org.apache.ivy.plugins.repository.ssh.SshCache;
 import org.apache.ivy.util.Message;
 
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.SftpProgressMonitor;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
 
 /**
  * SFTP Repository, allow to use a repository accessed by sftp protocol. It supports all operations:

@@ -21,9 +21,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
-
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;

@@ -21,9 +21,6 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.core.install.InstallOptions;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;

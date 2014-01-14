@@ -17,9 +17,9 @@
  */
 package org.apache.ivy.plugins.version;
 
-import org.apache.ivy.core.module.id.ModuleRevisionId;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class PatternVersionMatcherTest extends TestCase {
     public void testSingleMatch() {

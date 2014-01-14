@@ -19,11 +19,11 @@ package org.apache.ivy;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.ParseException;
-
-import junit.framework.TestCase;
 
 public class MainTest extends TestCase {
 

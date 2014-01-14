@@ -19,8 +19,6 @@ package org.apache.ivy.osgi.core;
 
 import java.util.Map;
 
-import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
-
 import junit.framework.TestCase;
 
 public class ExecutionEnvironmentProfileLoaderTest extends TestCase {

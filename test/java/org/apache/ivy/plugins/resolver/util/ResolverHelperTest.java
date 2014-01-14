@@ -20,9 +20,9 @@ package org.apache.ivy.plugins.resolver.util;
 import java.io.File;
 import java.util.Arrays;
 
-import org.apache.ivy.plugins.repository.file.FileRepository;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.plugins.repository.file.FileRepository;
 
 public class ResolverHelperTest extends TestCase {
 

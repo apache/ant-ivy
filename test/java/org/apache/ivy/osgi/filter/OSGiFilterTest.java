@@ -22,10 +22,6 @@ import java.text.ParseException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.ivy.osgi.filter.AndFilter;
-import org.apache.ivy.osgi.filter.CompareFilter;
-import org.apache.ivy.osgi.filter.NotFilter;
-import org.apache.ivy.osgi.filter.OSGiFilterParser;
 import org.apache.ivy.osgi.filter.CompareFilter.Operator;
 
 public class OSGiFilterTest extends TestCase {

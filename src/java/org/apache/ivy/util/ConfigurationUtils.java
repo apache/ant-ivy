@@ -23,8 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 
 /**
  * Class containing several utility methods for working with configurations.

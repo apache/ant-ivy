@@ -20,10 +20,10 @@ package org.apache.ivy.util.url;
 import java.io.File;
 import java.net.URL;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
-
-import junit.framework.TestCase;
 
 /**
  * Test HttpClientHandler

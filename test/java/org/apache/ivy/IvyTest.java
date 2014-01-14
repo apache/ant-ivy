@@ -19,14 +19,14 @@ package org.apache.ivy;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.MockMessageLogger;
-
-import junit.framework.TestCase;
 
 public class IvyTest extends TestCase {
     private File cache;

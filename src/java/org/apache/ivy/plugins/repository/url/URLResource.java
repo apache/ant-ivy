@@ -26,8 +26,8 @@ import java.net.URL;
 
 import org.apache.ivy.plugins.repository.LocalizableResource;
 import org.apache.ivy.plugins.repository.Resource;
-import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class URLResource implements LocalizableResource {
     private URL url;

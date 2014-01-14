@@ -20,14 +20,14 @@ package org.apache.ivy.core.module.id;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.NoFilter;
-
-import junit.framework.TestCase;
 
 public class ModuleRulesTest extends TestCase {
     private ModuleRules rules;

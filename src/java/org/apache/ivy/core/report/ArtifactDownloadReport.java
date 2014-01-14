@@ -21,7 +21,6 @@ import java.io.File;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 
 /**
  * Report on the download of an artifact from a repository to a local (cached) file.

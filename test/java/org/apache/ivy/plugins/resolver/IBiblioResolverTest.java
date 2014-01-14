@@ -18,7 +18,6 @@
 package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
