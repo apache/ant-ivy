@@ -54,7 +54,7 @@ public class IvyResolve extends IvyTask {
     private String organisation = null;
 
     private String module = null;
-    
+
     private String branch = null;
 
     private String revision = null;
@@ -82,14 +82,14 @@ public class IvyResolve extends IvyTask {
     private String failureProperty = null;
 
     private boolean useOrigin = false;
-    
+
     private String resolveMode = null;
 
     private String resolveId = null;
-    
+
     private String log = ResolveOptions.LOG_DEFAULT;
 
-    private boolean checkIfChanged = true; //for backward compatibility
+    private boolean checkIfChanged = true; // for backward compatibility
 
     private List/* <IvyDependency> */dependencies = new ArrayList();
 
@@ -120,7 +120,7 @@ public class IvyResolve extends IvyTask {
     public void setRevision(String revision) {
         this.revision = revision;
     }
-    
+
     public String getBranch() {
         return branch;
     }
@@ -176,7 +176,7 @@ public class IvyResolve extends IvyTask {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public boolean isRefresh() {
         return refresh;
     }
@@ -184,7 +184,7 @@ public class IvyResolve extends IvyTask {
     public void setRefresh(boolean refresh) {
         this.refresh = refresh;
     }
-    
+
     public String getLog() {
         return log;
     }
@@ -258,11 +258,12 @@ public class IvyResolve extends IvyTask {
                     throw new BuildException("'file' not allowed with child elements");
                 }
                 if (!getAllowedLogOptions().contains(log)) {
-                    throw new BuildException("invalid option for 'log': " + log 
-                        + ". Available options are " + getAllowedLogOptions());
+                    throw new BuildException("invalid option for 'log': " + log
+                            + ". Available options are " + getAllowedLogOptions());
                 }
 
-                ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "", Ivy.getWorkingRevision());
+                ModuleRevisionId mrid = ModuleRevisionId.newInstance("", "",
+                    Ivy.getWorkingRevision());
                 DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(mrid, null);
 
                 Iterator itDeps = dependencies.iterator();
@@ -286,7 +287,8 @@ public class IvyResolve extends IvyTask {
                     conflict.addConflict(md, settings);
                 }
 
-                report = ivy.resolve(md, getResolveOptions(ivy, new String[] {"default"}, settings));
+                report = ivy
+                        .resolve(md, getResolveOptions(ivy, new String[] {"default"}, settings));
             } else if (isInline()) {
                 if (organisation == null) {
                     throw new BuildException("'organisation' is required when using inline mode");
@@ -298,8 +300,8 @@ public class IvyResolve extends IvyTask {
                     throw new BuildException("'file' not allowed when using inline mode");
                 }
                 if (!getAllowedLogOptions().contains(log)) {
-                    throw new BuildException("invalid option for 'log': " + log 
-                        + ". Available options are " + getAllowedLogOptions());
+                    throw new BuildException("invalid option for 'log': " + log
+                            + ". Available options are " + getAllowedLogOptions());
                 }
                 for (int i = 0; i < confs.length; i++) {
                     if ("*".equals(confs[i])) {
@@ -309,10 +311,10 @@ public class IvyResolve extends IvyTask {
                 if (revision == null) {
                     revision = "latest.integration";
                 }
-                report = ivy.resolve(ModuleRevisionId
-                        .newInstance(organisation, module, branch, revision), 
-                        getResolveOptions(ivy, confs, settings), changing);
-                
+                report = ivy.resolve(
+                    ModuleRevisionId.newInstance(organisation, module, branch, revision),
+                    getResolveOptions(ivy, confs, settings), changing);
+
             } else {
                 if (organisation != null) {
                     throw new BuildException(
@@ -393,11 +395,10 @@ public class IvyResolve extends IvyTask {
                     getProject().setProperty("ivy.revision." + resolveId, mdRev);
                     settings.setVariable("ivy.revision." + resolveId, mdRev);
                     if (getCheckIfChanged()) {
-                        //hasChanged has already been set earlier
+                        // hasChanged has already been set earlier
                         getProject().setProperty("ivy.deps.changed." + resolveId,
                             hasChanged.toString());
-                        settings.setVariable("ivy.deps.changed." + resolveId, 
-                            hasChanged.toString());
+                        settings.setVariable("ivy.deps.changed." + resolveId, hasChanged.toString());
                     }
                     getProject().setProperty("ivy.resolved.configurations." + resolveId,
                         mergeConfs(confs));
@@ -406,14 +407,14 @@ public class IvyResolve extends IvyTask {
                     if (file != null) {
                         getProject().setProperty("ivy.resolved.file." + resolveId,
                             file.getAbsolutePath());
-                        settings.setVariable(
-                            "ivy.resolved.file." + resolveId, file.getAbsolutePath());
+                        settings.setVariable("ivy.resolved.file." + resolveId,
+                            file.getAbsolutePath());
                     }
                 }
             }
         } catch (MalformedURLException e) {
-            throw new BuildException(
-                    "unable to convert given ivy file to url: " + file + ": " + e, e);
+            throw new BuildException("unable to convert given ivy file to url: " + file + ": " + e,
+                    e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: " + e, e);
@@ -424,28 +425,21 @@ public class IvyResolve extends IvyTask {
         }
     }
 
-    protected Collection/*<String>*/ getAllowedLogOptions() {
-        return Arrays.asList(new String [] {
-                LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY, LogOptions.LOG_QUIET});
+    protected Collection/* <String> */getAllowedLogOptions() {
+        return Arrays.asList(new String[] {LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
+                LogOptions.LOG_QUIET});
     }
 
     private ResolveOptions getResolveOptions(Ivy ivy, String[] confs, IvySettings settings) {
         if (useOrigin) {
             settings.useDeprecatedUseOrigin();
         }
-        return ((ResolveOptions) new ResolveOptions()
-                .setLog(log))
-                .setConfs(confs)
+        return ((ResolveOptions) new ResolveOptions().setLog(log)).setConfs(confs)
                 .setValidate(doValidate(settings))
-                .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
-                .setRevision(revision)
-                .setDate(getPubDate(pubdate, null))
-                .setUseCacheOnly(useCacheOnly)
-                .setRefresh(refresh)
-                .setTransitive(transitive)
-                .setResolveMode(resolveMode)
-                .setResolveId(resolveId)
-                .setCheckIfChanged(checkIfChanged);
+                .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type)).setRevision(revision)
+                .setDate(getPubDate(pubdate, null)).setUseCacheOnly(useCacheOnly)
+                .setRefresh(refresh).setTransitive(transitive).setResolveMode(resolveMode)
+                .setResolveId(resolveId).setCheckIfChanged(checkIfChanged);
     }
 
     public String getModule() {

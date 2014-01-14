@@ -25,15 +25,15 @@ public class ModuleIdTest extends TestCase {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
-        
+
         assertEquals(org, moduleId.getOrganisation());
         assertEquals(name, moduleId.getName());
     }
-    
+
     public void testModuleIdIllegalArgumentException() {
         String org = "apache";
         String name = "some-new-module";
-        
+
         try {
             new ModuleId(null, name);
         } catch (IllegalArgumentException iae) {
@@ -53,7 +53,7 @@ public class ModuleIdTest extends TestCase {
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
         ModuleId moduleId2 = new ModuleId(org, name);
-        
+
         assertTrue(moduleId.equals(moduleId));
         assertTrue(moduleId.equals(moduleId2));
         assertTrue(moduleId2.equals(moduleId));
@@ -64,17 +64,17 @@ public class ModuleIdTest extends TestCase {
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
         ModuleId moduleId2 = new ModuleId(null, name);
-        
+
         assertFalse(moduleId.equals(null));
         assertFalse(moduleId.equals(moduleId2));
         assertFalse(moduleId2.equals(moduleId));
     }
-    
+
     public void testEncodeToString() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
-        
+
         assertEquals(org + ModuleId.ENCODE_SEPARATOR + name, moduleId.encodeToString());
     }
 
@@ -82,19 +82,18 @@ public class ModuleIdTest extends TestCase {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
-        
+
         ModuleId moduleId2 = ModuleId.decode(moduleId.encodeToString());
         assertEquals(moduleId, moduleId2);
     }
 
-    
     public void testCompareToNullObject() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
 
         try {
-            moduleId.compareTo(null);            
+            moduleId.compareTo(null);
             fail("A NullPointerException was expected.");
         } catch (NullPointerException npe) {
             // success
@@ -107,7 +106,7 @@ public class ModuleIdTest extends TestCase {
         ModuleId moduleId = new ModuleId(org, name);
 
         try {
-            moduleId.compareTo(new String());            
+            moduleId.compareTo(new String());
             fail("A ClassCastException was expected.");
         } catch (ClassCastException cce) {
             // success
@@ -132,7 +131,7 @@ public class ModuleIdTest extends TestCase {
 
         assertTrue(moduleId.compareTo(moduleId2) < 0);
     }
-    
+
     public void testCompareToGreatherThan() {
         String org = "apache";
         String name = "some-new-module";
@@ -140,7 +139,7 @@ public class ModuleIdTest extends TestCase {
         String name2 = "the-new-module";
         ModuleId moduleId2 = new ModuleId(org, name2);
         System.out.println(moduleId + "\n" + moduleId2);
-        
+
         assertTrue(moduleId2.compareTo(moduleId) > 0);
     }
 }

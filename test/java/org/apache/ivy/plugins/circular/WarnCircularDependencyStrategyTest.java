@@ -32,11 +32,12 @@ import org.apache.ivy.util.MockMessageLogger;
 
 public class WarnCircularDependencyStrategyTest extends TestCase {
     private CircularDependencyStrategy strategy;
+
     private MockMessageLogger mockMessageImpl;
 
     protected void setUp() throws Exception {
         strategy = WarnCircularDependencyStrategy.getInstance();
-        
+
         resetLogger();
     }
 
@@ -44,27 +45,27 @@ public class WarnCircularDependencyStrategyTest extends TestCase {
         mockMessageImpl = new MockMessageLogger();
         Message.setDefaultLogger(mockMessageImpl);
     }
-    
+
     public void testLog() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.0, #B;1.0"));
-        
+
         mockMessageImpl.assertLogWarningContains("circular dependency found: #A;1.0->#B;1.0");
     }
-    
+
     public void testRemoveDuplicates() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
-        
+
         // should only log the circular dependency once
         assertEquals(1, mockMessageImpl.getLogs().size());
     }
-    
+
     public void testRemoveDuplicates2() throws Exception {
         setResolveContext("1");
         resetLogger();
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
-        
+
         // should only log the circular dependency once
         assertEquals(1, mockMessageImpl.getLogs().size());
 
@@ -75,7 +76,7 @@ public class WarnCircularDependencyStrategyTest extends TestCase {
         assertEquals(1, mockMessageImpl.getLogs().size());
 
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
-        
+
         // should not log the message again
         assertEquals(1, mockMessageImpl.getLogs().size());
     }
@@ -83,8 +84,7 @@ public class WarnCircularDependencyStrategyTest extends TestCase {
     private void setResolveContext(String resolveId) {
         IvySettings settings = new IvySettings();
         IvyContext.getContext().setResolveData(
-            new ResolveData(
-                new ResolveEngine(settings, new EventManager(), new SortEngine(settings)), 
-                new ResolveOptions().setResolveId(resolveId)));
+            new ResolveData(new ResolveEngine(settings, new EventManager(),
+                    new SortEngine(settings)), new ResolveOptions().setResolveId(resolveId)));
     }
 }

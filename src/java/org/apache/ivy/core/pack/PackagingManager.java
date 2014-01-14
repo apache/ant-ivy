@@ -71,7 +71,8 @@ public class PackagingManager implements IvySettingsAware {
         return unpacked;
     }
 
-    public void unpackArtifact(Artifact artifact, File localFile, File archiveFile) throws IOException {
+    public void unpackArtifact(Artifact artifact, File localFile, File archiveFile)
+            throws IOException {
         String packaging = artifact.getExtraAttribute("packaging");
         if (packaging == null) {
             // not declared as packed, nothing to do

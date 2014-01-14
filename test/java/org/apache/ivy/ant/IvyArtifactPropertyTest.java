@@ -65,8 +65,8 @@ public class IvyArtifactPropertyTest extends TestCase {
         prop.execute();
         String val = project.getProperty("mod1.2.mod1.2-2.0");
         assertNotNull(val);
-        assertEquals(new File("build/cache/mod1.2/mod1.2-2.0.jar").getCanonicalPath(), 
-                    new File(val).getCanonicalPath());
+        assertEquals(new File("build/cache/mod1.2/mod1.2-2.0.jar").getCanonicalPath(),
+            new File(val).getCanonicalPath());
     }
 
     public void testWithResolveId() throws Exception {
@@ -89,7 +89,7 @@ public class IvyArtifactPropertyTest extends TestCase {
 
         String val = project.getProperty("mod1.2.mod1.2-2.0");
         assertNotNull(val);
-        assertEquals(new File("build/cache/mod1.2/mod1.2-2.0.jar").getCanonicalPath(), 
+        assertEquals(new File("build/cache/mod1.2/mod1.2-2.0.jar").getCanonicalPath(),
             new File(val).getCanonicalPath());
     }
 

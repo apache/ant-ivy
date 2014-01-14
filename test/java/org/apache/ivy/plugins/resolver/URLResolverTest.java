@@ -123,14 +123,14 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         resolver.setSettings(settings);
         String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
         resolver.addIvyPattern(rootpath + "[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern(rootpath + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(rootpath
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver
-                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -141,16 +141,17 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
     public void testLatestFileWithOpaqueURL() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);
-        String rootpath = new File("test/repositories/1").getAbsoluteFile().toURI().toURL().toExternalForm();
+        String rootpath = new File("test/repositories/1").getAbsoluteFile().toURI().toURL()
+                .toExternalForm();
         resolver.addIvyPattern(rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern(rootpath + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(rootpath
+                + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver
-                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -318,8 +319,9 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
                 + "/maven/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
 
-        assertNull(resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("unknown", "unknown", "1.0"), false), data));
+        assertNull(resolver.getDependency(
+            new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("unknown", "unknown",
+                "1.0"), false), data));
     }
 
     public void testDownloadWithUseOriginIsTrue() throws Exception {
@@ -345,8 +347,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, 
-            new DownloadOptions());
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

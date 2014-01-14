@@ -53,13 +53,15 @@ import org.apache.ivy.util.FileUtil;
  * 
  */
 public class FileSystemResolverTest extends AbstractDependencyResolverTest {
-    //CheckStyle:MagicNumberCheck OFF
+    // CheckStyle:MagicNumberCheck OFF
 
     private static final String FS = System.getProperty("file.separator");
 
     private static final String REL_IVY_PATTERN = "test" + FS + "repositories" + FS + "1" + FS
-                + "[organisation]" + FS + "[module]" + FS + "ivys" + FS + "ivy-[revision].xml";
-    private static final String IVY_PATTERN = new File(".").getAbsolutePath() + FS + REL_IVY_PATTERN;
+            + "[organisation]" + FS + "[module]" + FS + "ivys" + FS + "ivy-[revision].xml";
+
+    private static final String IVY_PATTERN = new File(".").getAbsolutePath() + FS
+            + REL_IVY_PATTERN;
 
     private IvySettings settings;
 
@@ -109,9 +111,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-            .addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
@@ -124,8 +125,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact},
-            getDownloadOptions());
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, getDownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -148,21 +148,24 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
-    
+
     public void testFindIvyFileRefWithMultipleIvyPatterns() throws Exception {
         // cfr IVY-676
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
-        resolver.addIvyPattern(settings.getBaseDir() + "/test/repositories/multi-ivypattern/ivy1/ivy-[revision].xml");
-        resolver.addIvyPattern(settings.getBaseDir() + "/test/repositories/multi-ivypattern/ivy2/ivy-[revision].xml");
-        
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/multi-ivypattern/ivy1/ivy-[revision].xml");
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/multi-ivypattern/ivy2/ivy-[revision].xml");
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0+");
-        ResolvedResource ivyRef = resolver.findIvyFileRef(
-            new DefaultDependencyDescriptor(mrid, false), data);
-        
+        ResolvedResource ivyRef = resolver.findIvyFileRef(new DefaultDependencyDescriptor(mrid,
+                false), data);
+
         // check that the found ivy file is the one from the first pattern!
-        assertEquals(new File("test/repositories/multi-ivypattern/ivy1/ivy-1.0.xml").getCanonicalPath(), 
+        assertEquals(
+            new File("test/repositories/multi-ivypattern/ivy1/ivy-1.0.xml").getCanonicalPath(),
             new File(ivyRef.getResource().getName()).getCanonicalPath());
     }
 
@@ -177,14 +180,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         resolver.setM2compatible(true);
         assertEquals("test", resolver.getName());
 
-        resolver
-            .addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/m2/"
+        resolver.addIvyPattern(settings.getBaseDir() + "/test/repositories/m2/"
                 + "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/m2/"
-                    + "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/m2/"
+                + "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
@@ -202,10 +201,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("test");
         resolver.setSettings(settings);
 
-        resolver.addIvyPattern(settings.getBaseDir() + "/test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
 
         resolver.setChecksums("sha1, md5");
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
@@ -250,8 +249,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
 
-        resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS + "checkmodified" + FS
-                + "ivy-[revision].xml");
+        resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS
+                + "checkmodified" + FS + "ivy-[revision].xml");
         File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
         FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null,
             true);
@@ -278,8 +277,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
-        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr
-                .getPublicationDate());
+        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(),
+            rmr.getPublicationDate());
 
         // should now get the new version
         resolver.setCheckmodified(true);
@@ -297,10 +296,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
 
-        resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS + "norevision" + FS
-                + "ivy-[module].xml");
-        resolver.addArtifactPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS + "norevision" + FS
-                + "[artifact].[ext]");
+        resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS
+                + "norevision" + FS + "ivy-[module].xml");
+        resolver.addArtifactPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS
+                + "norevision" + FS + "[artifact].[ext]");
         File modify = new File("test/repositories/norevision/ivy-mod1.1.xml");
         File artifact = new File("test/repositories/norevision/mod1.1.jar");
 
@@ -368,10 +367,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
 
-        resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS + "checkmodified" + FS
-                + "ivy-[revision].xml");
-        resolver.addArtifactPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS + "checkmodified" + FS
-                + "[artifact]-[revision].[ext]");
+        resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS
+                + "checkmodified" + FS + "ivy-[revision].xml");
+        resolver.addArtifactPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS
+                + "checkmodified" + FS + "[artifact]-[revision].[ext]");
         File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
         File artifact = new File("test/repositories/checkmodified/mod1.1-1.0.jar");
 
@@ -415,8 +414,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
-        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr
-                .getPublicationDate());
+        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(),
+            rmr.getPublicationDate());
 
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
@@ -447,17 +446,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         resolver.setLatestStrategy(new LatestTimeStrategy());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver
-                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -472,17 +468,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         resolver.setLatestStrategy(new LatestRevisionStrategy());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver
-                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -497,17 +490,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(new File("src/java").getAbsolutePath() + "/../../" + REL_IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/src/../test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/src/../test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         resolver.setLatestStrategy(new LatestRevisionStrategy());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver
-                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
-                    "mod1.1", "latest.integration"), false), data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), data);
         assertNotNull(rmr);
 
         assertEquals(mrid, rmr.getId());
@@ -522,10 +512,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         resolver.setLatestStrategy(new LatestTimeStrategy());
 
@@ -546,10 +534,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         resolver.setLatestStrategy(new LatestRevisionStrategy());
 
@@ -570,12 +556,11 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             assertEquals("test", resolver.getName());
 
-            resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS + "1" + FS + "[organisation]"
-                    + FS + "[module]" + FS + "[revision]" + FS + "[artifact].[ext]");
-            resolver
-                    .addArtifactPattern(
-                        settings.getBaseDir() + FS + "test/repositories/1/"
-                        + "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir() + FS + "test" + FS + "repositories" + FS
+                    + "1" + FS + "[organisation]" + FS + "[module]" + FS + "[revision]" + FS
+                    + "[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir() + FS + "test/repositories/1/"
+                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
@@ -603,16 +588,17 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             assertEquals("test", resolver.getName());
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
             File ivyFile = new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml");
-            File artifactFile = new File("test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext");
+            File artifactFile = new File(
+                    "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext");
             touch(ivyFile);
             touch(artifactFile);
-            
+
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
@@ -642,27 +628,27 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setName("test");
             resolver.setSettings(settings);
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
                     "myext");
             File src = new File("test/repositories/ivysettings.xml");
-            
+
             resolver.beginPublishTransaction(mrid, false);
-            
+
             // files should not be available until the transaction is committed
             resolver.publish(ivyArtifact, src, false);
             assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
 
             resolver.publish(artifact, src, false);
             assertFalse(new File(
-                "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
-                .exists());
+                    "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
+                    .exists());
 
             resolver.commitPublishTransaction();
 
@@ -681,31 +667,34 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setName("test");
             resolver.setSettings(settings);
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[branch]/[revision]/[artifact].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[branch]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[branch]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[branch]/[revision]/[artifact]-[revision].[ext]");
 
-            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "mybranch", "myrevision");
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "mybranch",
+                "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
                     "myext");
             File src = new File("test/repositories/ivysettings.xml");
-            
+
             resolver.beginPublishTransaction(mrid, false);
-            
+
             // files should not be available until the transaction is committed
             resolver.publish(ivyArtifact, src, false);
-            assertFalse(new File("test/repositories/1/myorg/mymodule/mybranch/myrevision/ivy.xml").exists());
+            assertFalse(new File("test/repositories/1/myorg/mymodule/mybranch/myrevision/ivy.xml")
+                    .exists());
 
             resolver.publish(artifact, src, false);
             assertFalse(new File(
-                "test/repositories/1/myorg/mymodule/mybranch/myrevision/myartifact-myrevision.myext")
-                .exists());
+                    "test/repositories/1/myorg/mymodule/mybranch/myrevision/myartifact-myrevision.myext")
+                    .exists());
 
             resolver.commitPublishTransaction();
 
-            assertTrue(new File("test/repositories/1/myorg/mymodule/mybranch/myrevision/ivy.xml").exists());
+            assertTrue(new File("test/repositories/1/myorg/mymodule/mybranch/myrevision/ivy.xml")
+                    .exists());
             assertTrue(new File(
                     "test/repositories/1/myorg/mymodule/mybranch/myrevision/myartifact-myrevision.myext")
                     .exists());
@@ -713,40 +702,43 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
-    
+
     public void testPublishTransactionWithSubDirectories() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
             resolver.setName("test");
             resolver.setSettings(settings);
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[type]/[artifact].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[type]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[type]/[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[type]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
                     "myext");
             File src = new File("test/repositories/ivysettings.xml");
-            
+
             resolver.beginPublishTransaction(mrid, false);
-            
+
             // files should not be available until the transaction is committed
             resolver.publish(ivyArtifact, src, false);
-            assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy/ivy.xml").exists());
+            assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy/ivy.xml")
+                    .exists());
 
             resolver.publish(artifact, src, false);
             assertFalse(new File(
-                "test/repositories/1/myorg/mymodule/myrevision/mytype/myartifact-myrevision.myext")
-                .exists());
+                    "test/repositories/1/myorg/mymodule/myrevision/mytype/myartifact-myrevision.myext")
+                    .exists());
 
             resolver.commitPublishTransaction();
 
-            assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy/ivy.xml").exists());
-            assertTrue(
-                new File("test/repositories/1/myorg/mymodule/myrevision/mytype/myartifact-myrevision.myext").exists());
+            assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy/ivy.xml")
+                    .exists());
+            assertTrue(new File(
+                    "test/repositories/1/myorg/mymodule/myrevision/mytype/myartifact-myrevision.myext")
+                    .exists());
         } finally {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
@@ -759,27 +751,37 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setM2compatible(true);
             resolver.setSettings(settings);
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
-            ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "mymodule", "myrevision");
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "mymodule",
+                "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
-            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype", "myext");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
             File src = new File("test/repositories/ivysettings.xml");
-            
+
             resolver.beginPublishTransaction(mrid, false);
-            
+
             // files should not be available until the transaction is committed
             resolver.publish(ivyArtifact, src, false);
-            assertFalse(new File("test/repositories/m2/org/apache/mymodule/myrevision/ivy-myrevision.xml").exists());
+            assertFalse(new File(
+                    "test/repositories/m2/org/apache/mymodule/myrevision/ivy-myrevision.xml")
+                    .exists());
             resolver.publish(artifact, src, false);
-            assertFalse(new File("test/repositories/m2/org/apache/mymodule/myrevision/myartifact-myrevision.myext").exists());
+            assertFalse(new File(
+                    "test/repositories/m2/org/apache/mymodule/myrevision/myartifact-myrevision.myext")
+                    .exists());
 
             resolver.commitPublishTransaction();
-            assertTrue(new File("test/repositories/m2/org/apache/mymodule/myrevision/ivy-myrevision.xml").exists());
-            assertTrue(new File("test/repositories/m2/org/apache/mymodule/myrevision/myartifact-myrevision.myext").exists());
+            assertTrue(new File(
+                    "test/repositories/m2/org/apache/mymodule/myrevision/ivy-myrevision.xml")
+                    .exists());
+            assertTrue(new File(
+                    "test/repositories/m2/org/apache/mymodule/myrevision/myartifact-myrevision.myext")
+                    .exists());
         } finally {
             FileUtil.forceDelete(new File("test/repositories/m2/org/apache/mymodule"));
         }
@@ -791,10 +793,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setName("test");
             resolver.setSettings(settings);
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
@@ -823,8 +825,9 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setTransactional("true");
 
             resolver.addArtifactPattern(
-                // this pattern is not supported for transaction publish
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[artifact]-[revision].[ext]");
+            // this pattern is not supported for transaction publish
+            settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
@@ -832,7 +835,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             File src = new File("test/repositories/ivysettings.xml");
             try {
                 resolver.beginPublishTransaction(mrid, false);
-                
+
                 resolver.publish(artifact, src, false);
                 fail("publishing with transaction=true and an unsupported pattern should raise an exception");
             } catch (IllegalStateException ex) {
@@ -851,10 +854,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setTransactional("true");
 
             // the two patterns are inconsistent and thus not supported for transactions
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]-[module]/[revision]/[artifact]-[revision].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]-[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
@@ -881,8 +884,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             resolver.setTransactional("true");
 
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
@@ -891,7 +894,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             try {
                 // overwrite transaction not supported
                 resolver.beginPublishTransaction(mrid, true);
-                
+
                 resolver.publish(artifact, src, true);
                 fail("publishing with transaction=true and overwrite mode should raise an exception");
             } catch (IllegalStateException ex) {
@@ -901,7 +904,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
-    
+
     public void testDisableTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -909,10 +912,10 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             resolver.setSettings(settings);
             resolver.setTransactional("false");
 
-            resolver.addIvyPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
-            resolver.addArtifactPattern(
-                settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addIvyPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(settings.getBaseDir()
+                    + "/test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
@@ -920,18 +923,18 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                     "myext");
             File src = new File("test/repositories/ivysettings.xml");
             resolver.beginPublishTransaction(mrid, false);
-            
+
             // with transactions disabled the file should be available as soon as they are published
             resolver.publish(ivyArtifact, src, false);
             assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
-            
+
             resolver.publish(artifact, src, false);
             assertTrue(new File(
-                "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
-                .exists());
+                    "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
+                    .exists());
 
             resolver.commitPublishTransaction();
-            
+
             assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
             assertTrue(new File(
                     "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
@@ -941,7 +944,6 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
-
     public void testListing() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -949,15 +951,12 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
 
         OrganisationEntry[] orgs = resolver.listOrganisations();
-        ResolverTestHelper.assertOrganisationEntriesContains(resolver, 
-            new String[] {"org1", "org2", "org6", "org9", "orgfailure", "yourorg", "IVY-644"},
-            orgs);
+        ResolverTestHelper.assertOrganisationEntriesContains(resolver, new String[] {"org1",
+                "org2", "org6", "org9", "orgfailure", "yourorg", "IVY-644"}, orgs);
 
         OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "org1");
         ModuleEntry[] mods = resolver.listModules(org);
@@ -971,8 +970,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
         mod = ResolverTestHelper.getEntry(mods, "mod1.2");
         revs = resolver.listRevisions(mod);
-        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"0.9", "1.0", "1.1", "2.0",
-                "2.1", "2.2"}, revs);
+        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"0.9", "1.0", "1.1",
+                "2.0", "2.1", "2.2"}, revs);
     }
 
     public void testDownloadWithUseOriginIsTrue() throws Exception {
@@ -983,10 +982,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver
-                .addArtifactPattern(
-                    settings.getBaseDir() + "/test/repositories/1/"
-                    + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/"
+                + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
@@ -999,8 +996,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact},
-            getDownloadOptions());
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, getDownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

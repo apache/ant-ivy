@@ -25,36 +25,37 @@ public class PatternVersionMatcherTest extends TestCase {
     public void testSingleMatch() {
         PatternVersionMatcher pvm = new PatternVersionMatcher();
         pvm.addMatch(generateRegexpMatch1());
-        
+
         assertAccept(pvm, "foo(1,3)", "1.4.1", false);
         assertAccept(pvm, "foo(1,3)", "1.3", false);
         assertAccept(pvm, "foo(1,3)", "2.3.1", false);
-        
+
         assertAccept(pvm, "foo(1,3)", "1.3.1", true);
     }
-    
+
     public void testMultipleMatchEqualRevisions() {
         PatternVersionMatcher pvm = new PatternVersionMatcher();
         pvm.addMatch(generateRegexpMatch1());
         pvm.addMatch(generateRegexpMatch2());
-        
-        assertAccept(pvm, "foo(1,3)", "1.3", true);                
-        assertAccept(pvm, "foo(1,3)", "1.3.1", true);        
+
+        assertAccept(pvm, "foo(1,3)", "1.3", true);
+        assertAccept(pvm, "foo(1,3)", "1.3.1", true);
     }
-    
+
     public void testMultipleMatchNonEqualRevisions() {
         PatternVersionMatcher pvm = new PatternVersionMatcher();
         pvm.addMatch(generateRegexpMatch1());
         pvm.addMatch(generateRegexpMatch3());
-        
+
         assertAccept(pvm, "foo(1,3)", "1.3", false);
         assertAccept(pvm, "bar(1,3)", "1.3", true);
-        assertAccept(pvm, "foo(1,3)", "1.3.1", true);           
+        assertAccept(pvm, "foo(1,3)", "1.3.1", true);
     }
 
     /**
-     * Generates a Match instance that has the following xml representation:
-     * <match revision="foo" pattern="${major}\.${minor}\.\d+" args="major, minor" matcher="regexp" />
+     * Generates a Match instance that has the following xml representation: <match revision="foo"
+     * pattern="${major}\.${minor}\.\d+" args="major, minor" matcher="regexp" />
+     * 
      * @return
      */
     private Match generateRegexpMatch1() {
@@ -68,8 +69,9 @@ public class PatternVersionMatcherTest extends TestCase {
     }
 
     /**
-     * Generates a Match instance that has the following xml representation:
-     * <match revision="foo" pattern="${major}\.${minor}" args="major, minor" matcher="regexp" />
+     * Generates a Match instance that has the following xml representation: <match revision="foo"
+     * pattern="${major}\.${minor}" args="major, minor" matcher="regexp" />
+     * 
      * @return
      */
     private Match generateRegexpMatch2() {
@@ -81,7 +83,7 @@ public class PatternVersionMatcherTest extends TestCase {
 
         return match;
     }
-    
+
     private Match generateRegexpMatch3() {
         Match match = new Match();
         match.setRevision("bar");
@@ -91,7 +93,6 @@ public class PatternVersionMatcherTest extends TestCase {
 
         return match;
     }
-    
 
     private void assertAccept(PatternVersionMatcher matcher, String askedVersion,
             String depVersion, boolean b) {

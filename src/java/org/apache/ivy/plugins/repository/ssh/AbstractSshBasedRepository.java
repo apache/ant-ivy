@@ -53,14 +53,12 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         super();
     }
 
-
     /**
-     * hashmap of user/hosts with credentials.
-     * key is hostname, value is Credentials
+     * hashmap of user/hosts with credentials. key is hostname, value is Credentials
      **/
     private static HashMap credentialsCache = new HashMap();
 
-    private static final  int MAX_CREDENTILAS_CACHE_SIZE = 100;
+    private static final int MAX_CREDENTILAS_CACHE_SIZE = 100;
 
     /**
      * get a new session using the default attributes if the given String is a full uri, use the
@@ -95,17 +93,17 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         }
         if (host == null) {
             throw new IllegalArgumentException(
-                "missing host information. host should be provided either "
-                + "directly on the repository or in the connection URI");
+                    "missing host information. host should be provided either "
+                            + "directly on the repository or in the connection URI");
         }
         if (user == null) {
-             Credentials c = requestCredentials(host);
-             if (c != null) {
-                 user = c.getUserName();
-                 userPassword = c.getPasswd();
-             } else {
-                 Message.error("username is not set");
-             }
+            Credentials c = requestCredentials(host);
+            if (c != null) {
+                user = c.getUserName();
+                userPassword = c.getPasswd();
+            } else {
+                Message.error("username is not set");
+            }
         }
         return SshCache.getInstance().getSession(host, port, user, userPassword, getKeyFile(),
             getKeyFilePassword(), getPassFile(), isAllowedAgentUse());
@@ -121,8 +119,9 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     private URI parseURI(String source) {
         try {
             URI uri = new URI(source);
-            if (uri.getScheme() != null && !uri.getScheme().toLowerCase(Locale.US).equals(
-                    getRepositoryScheme().toLowerCase(Locale.US))) {
+            if (uri.getScheme() != null
+                    && !uri.getScheme().toLowerCase(Locale.US)
+                            .equals(getRepositoryScheme().toLowerCase(Locale.US))) {
                 throw new URISyntaxException(source, "Wrong scheme in URI. Expected "
                         + getRepositoryScheme() + " as scheme!");
             }
@@ -132,43 +131,42 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
             if (uri.getPath() == null) {
                 throw new URISyntaxException(source, "Missing path in URI");
             }
-            //if (uri.getUserInfo() == null && getUser() == null) {
-            //    throw new URISyntaxException(source, "Missing username in URI or in resolver");
-            //}
+            // if (uri.getUserInfo() == null && getUser() == null) {
+            // throw new URISyntaxException(source, "Missing username in URI or in resolver");
+            // }
             return uri;
         } catch (URISyntaxException e) {
             Message.error(e.getMessage());
             Message.error("The uri '" + source + "' is in the wrong format.");
             Message.error("Please use " + getRepositoryScheme()
-                + "://user:pass@hostname/path/to/repository");
+                    + "://user:pass@hostname/path/to/repository");
             return null;
         }
     }
 
     /**
-     *  Called, when user was not found in URL.
-     * Maintain static hashe of credentials and retrieve or ask credentials
-     * for host.
-     *
-     * @param host 
-     *       host for which we want to get credentials.
-     * @return credentials for given host 
+     * Called, when user was not found in URL. Maintain static hashe of credentials and retrieve or
+     * ask credentials for host.
+     * 
+     * @param host
+     *            host for which we want to get credentials.
+     * @return credentials for given host
      **/
     private Credentials requestCredentials(String host) {
-      Object o =  credentialsCache.get(host);
-      if (o == null) { 
-         Credentials c = CredentialsUtil.promptCredentials(
-             new Credentials(null, host, user, userPassword), getPassFile());
-         if (c != null) {
-            if (credentialsCache.size() > MAX_CREDENTILAS_CACHE_SIZE) {
-              credentialsCache.clear();
+        Object o = credentialsCache.get(host);
+        if (o == null) {
+            Credentials c = CredentialsUtil.promptCredentials(new Credentials(null, host, user,
+                    userPassword), getPassFile());
+            if (c != null) {
+                if (credentialsCache.size() > MAX_CREDENTILAS_CACHE_SIZE) {
+                    credentialsCache.clear();
+                }
+                credentialsCache.put(host, c);
             }
-            credentialsCache.put(host, c);
-         }
-         return c;
-      } else {
-         return (Credentials) o;
-      }
+            return c;
+        } else {
+            return (Credentials) o;
+        }
     }
 
     /**
@@ -303,8 +301,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * @return allowedAgentUse
-     *            Whether use of a local SSH agent for authentication is allowed
+     * @return allowedAgentUse Whether use of a local SSH agent for authentication is allowed
      */
     public boolean isAllowedAgentUse() {
         return allowedAgentUse;

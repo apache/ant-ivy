@@ -49,8 +49,8 @@ public class SortTest extends TestCase {
     private DefaultModuleDescriptor md4;
 
     private SortEngine sortEngine;
-    
-    private SimpleSortEngineSettings settings; 
+
+    private SimpleSortEngineSettings settings;
 
     private SilentNonMatchingVersionReporter nonMatchReporter;
 
@@ -61,7 +61,7 @@ public class SortTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        md1 = createModuleDescriptorToSort("md1", null);   // The revison is often not set in the
+        md1 = createModuleDescriptorToSort("md1", null); // The revison is often not set in the
         // ivy.xml file that are ordered
         md2 = createModuleDescriptorToSort("md2", "rev2"); // But somtimes they are set
         md3 = createModuleDescriptorToSort("md3", "rev3");
@@ -70,9 +70,9 @@ public class SortTest extends TestCase {
         settings = new SimpleSortEngineSettings();
         settings.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
         settings.setVersionMatcher(new ExactVersionMatcher());
-        
+
         sortEngine = new SortEngine(settings);
-        
+
         nonMatchReporter = new SilentNonMatchingVersionReporter();
     }
 
@@ -130,19 +130,19 @@ public class SortTest extends TestCase {
         }
     }
 
-    //Test IVY-624
+    // Test IVY-624
     public void testCircularDependencyInfiniteLoop() throws Exception {
         addDependency(md1, "md2", "rev2");
         addDependency(md1, "md3", "rev3");
-        addDependency(md2, "md3", "rev3");        
+        addDependency(md2, "md3", "rev3");
         addDependency(md3, "md4", "rev4");
         addDependency(md4, "md1", "rev1");
         addDependency(md4, "md2", "rev2");
         List toSort = Arrays.asList(new Object[] {md1, md2, md3, md4});
         sortModuleDescriptors(toSort, nonMatchReporter);
-        //If it ends, it's ok.
+        // If it ends, it's ok.
     }
-    
+
     /**
      * In case of Circular dependency a warning is generated.
      */
@@ -163,17 +163,17 @@ public class SortTest extends TestCase {
             public void handleCircularDependency(ModuleRevisionId[] mrids) {
                 assertEquals("handleCircularDependency is expected to be called only once", 0,
                     nbOfCall);
-                String assertMsg = "incorrect cicular dependency invocation" 
+                String assertMsg = "incorrect cicular dependency invocation"
                         + CircularDependencyHelper.formatMessage(mrids);
                 final int expectedLength = 3;
-                assertEquals(assertMsg, expectedLength , mrids.length);
+                assertEquals(assertMsg, expectedLength, mrids.length);
                 if (mrids[0].equals(md2.getModuleRevisionId())) {
-                    assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[1]);
-                    assertEquals(assertMsg , md2.getModuleRevisionId() , mrids[2]);
+                    assertEquals(assertMsg, md3.getModuleRevisionId(), mrids[1]);
+                    assertEquals(assertMsg, md2.getModuleRevisionId(), mrids[2]);
                 } else {
-                    assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[0]);
-                    assertEquals(assertMsg , md2.getModuleRevisionId() , mrids[1]);
-                    assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[2]);
+                    assertEquals(assertMsg, md3.getModuleRevisionId(), mrids[0]);
+                    assertEquals(assertMsg, md2.getModuleRevisionId(), mrids[1]);
+                    assertEquals(assertMsg, md3.getModuleRevisionId(), mrids[2]);
                 }
                 nbOfCall++;
             }
@@ -202,7 +202,7 @@ public class SortTest extends TestCase {
         addDependency(md4, "md3", "latest.integration");
 
         settings.setVersionMatcher(new LatestVersionMatcher());
-        
+
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {{md1, md2,
                 md3, md4}};
 
@@ -266,8 +266,7 @@ public class SortTest extends TestCase {
                 Assert.assertEquals("reportNonMatchingVersion has not be called", 1, nbOfCall);
             }
         }
-        NonMatchingVersionReporterMock nonMatchingVersionReporterMock = 
-            new NonMatchingVersionReporterMock();
+        NonMatchingVersionReporterMock nonMatchingVersionReporterMock = new NonMatchingVersionReporterMock();
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
         sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
         nonMatchingVersionReporterMock.validate();
@@ -275,12 +274,11 @@ public class SortTest extends TestCase {
 
     private List sortModuleDescriptors(List toSort,
             NonMatchingVersionReporter nonMatchingVersionReporter) {
-        return sortEngine.sortModuleDescriptors(toSort, 
+        return sortEngine.sortModuleDescriptors(toSort,
             new SortOptions().setNonMatchingVersionReporter(nonMatchingVersionReporter));
     }
 
-    private DefaultModuleDescriptor createModuleDescriptorToSort(String moduleName,
-            String revision) {
+    private DefaultModuleDescriptor createModuleDescriptorToSort(String moduleName, String revision) {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", moduleName, revision);
         return new DefaultModuleDescriptor(mrid, "integration", new Date());
     }

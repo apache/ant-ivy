@@ -33,9 +33,8 @@ public class MRIDTransformationRule implements NamespaceTransformer {
         private Matcher[] matchers = new Matcher[TYPES.length];
 
         public boolean match(MRIDRule src, ModuleRevisionId mrid) {
-            //CheckStyle:MagicNumber| OFF
-            matchers[0] = Pattern.compile(getPattern(src.getOrg()))
-                    .matcher(mrid.getOrganisation());
+            // CheckStyle:MagicNumber| OFF
+            matchers[0] = Pattern.compile(getPattern(src.getOrg())).matcher(mrid.getOrganisation());
             if (!matchers[0].matches()) {
                 return false;
             }
@@ -46,8 +45,8 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             if (mrid.getBranch() == null) {
                 matchers[2] = null;
             } else {
-                matchers[2] = Pattern.compile(getPattern(src.getBranch())).matcher(
-                    mrid.getBranch());
+                matchers[2] = Pattern.compile(getPattern(src.getBranch()))
+                        .matcher(mrid.getBranch());
                 if (!matchers[2].matches()) {
                     return false;
                 }
@@ -58,7 +57,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             }
 
             return true;
-            //CheckStyle:MagicNumber| ON
+            // CheckStyle:MagicNumber| ON
         }
 
         public ModuleRevisionId apply(MRIDRule dest, ModuleRevisionId mrid) {
@@ -67,8 +66,8 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             String branch = applyRules(dest.getBranch(), "b");
             String rev = applyRules(dest.getRev(), "r");
 
-            return ModuleRevisionId.newInstance(org, mod, branch, rev, 
-                                                mrid.getQualifiedExtraAttributes());
+            return ModuleRevisionId.newInstance(org, mod, branch, rev,
+                mrid.getQualifiedExtraAttributes());
         }
 
         private String applyRules(String str, String type) {

@@ -23,16 +23,19 @@ import java.util.List;
 import java.util.Map;
 
 public class ExtraInfoHolder {
-    
+
     private String name;
+
     private Map<String, String> attributes = new LinkedHashMap<String, String>();
+
     private String content;
+
     private List<ExtraInfoHolder> nestedExtraInfoHolder = new ArrayList<ExtraInfoHolder>();
 
     public ExtraInfoHolder() {
-        
+
     }
-    
+
     public ExtraInfoHolder(String name, String content) {
         this.name = name;
         this.content = content;

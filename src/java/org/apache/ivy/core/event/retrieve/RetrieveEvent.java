@@ -23,10 +23,11 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 
 public class RetrieveEvent extends IvyEvent {
     private ModuleRevisionId mrid;
+
     private RetrieveOptions options;
 
-    protected RetrieveEvent(String name, ModuleRevisionId mrid, 
-            String[] confs, RetrieveOptions options) {
+    protected RetrieveEvent(String name, ModuleRevisionId mrid, String[] confs,
+            RetrieveOptions options) {
         super(name);
         this.mrid = mrid;
         addMridAttributes(mrid);
@@ -39,7 +40,7 @@ public class RetrieveEvent extends IvyEvent {
     public ModuleRevisionId getModuleRevisionId() {
         return mrid;
     }
-    
+
     public RetrieveOptions getOptions() {
         return options;
     }

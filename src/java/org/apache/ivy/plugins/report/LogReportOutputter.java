@@ -44,8 +44,7 @@ public class LogReportOutputter implements ReportOutputter {
         return CONSOLE;
     }
 
-    public void output(
-            ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) 
+    public void output(ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options)
             throws IOException {
         IvySettings settings = IvyContext.getContext().getSettings();
 
@@ -63,15 +62,13 @@ public class LogReportOutputter implements ReportOutputter {
                     List nodeConfs = new ArrayList(confs.length);
                     for (int j = 0; j < confs.length; j++) {
                         String conf = confs[j];
-                        if (report.getConfigurationReport(conf).getModuleRevisionIds().contains(
-                            node.getResolvedId())) {
+                        if (report.getConfigurationReport(conf).getModuleRevisionIds()
+                                .contains(node.getResolvedId())) {
                             nodeConfs.add(conf);
                         }
                     }
-                    Message
-                            .info("\t" + node + " from "
-                                    + node.getModuleRevision().getResolver().getName() + " in "
-                                    + nodeConfs);
+                    Message.info("\t" + node + " from "
+                            + node.getModuleRevision().getResolver().getName() + " in " + nodeConfs);
                 }
             }
         }
@@ -105,7 +102,7 @@ public class LogReportOutputter implements ReportOutputter {
         }
 
         if (ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             char[] sep = new char[69];
             Arrays.fill(sep, '-');
             Message.rawinfo("\t" + new String(sep));
@@ -116,7 +113,7 @@ public class LogReportOutputter implements ReportOutputter {
             append(line, "artifacts", 15);
             line.append("|");
             Message.rawinfo(line.toString());
-    
+
             line = new StringBuffer("\t");
             append(line, "conf", 18);
             append(line, "number", 7);
@@ -126,11 +123,11 @@ public class LogReportOutputter implements ReportOutputter {
             line.append("|");
             append(line, "number", 7);
             append(line, "dwnlded", 7);
-            //CheckStyle:MagicNumber| ON
+            // CheckStyle:MagicNumber| ON
             line.append("|");
             Message.rawinfo(line.toString());
             Message.rawinfo("\t" + new String(sep));
-    
+
             String[] confs = report.getConfigurations();
             for (int i = 0; i < confs.length; i++) {
                 output(report.getConfigurationReport(confs[i]));
@@ -168,7 +165,7 @@ public class LogReportOutputter implements ReportOutputter {
 
     public void output(ConfigurationResolveReport report) {
         StringBuffer line = new StringBuffer("\t");
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         append(line, report.getConfiguration(), 18);
         append(line, String.valueOf(report.getNodesNumber()), 7);
         append(line, String.valueOf(report.getSearchedNodes().length), 7);
@@ -177,7 +174,7 @@ public class LogReportOutputter implements ReportOutputter {
         line.append("|");
         append(line, String.valueOf(report.getArtifactsNumber()), 7);
         append(line, String.valueOf(report.getDownloadedArtifactsReports().length), 7);
-        //CheckStyle:MagicNumber| ON
+        // CheckStyle:MagicNumber| ON
         line.append("|");
 
         Message.rawinfo(line.toString());

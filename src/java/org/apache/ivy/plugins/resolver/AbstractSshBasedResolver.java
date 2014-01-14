@@ -57,7 +57,7 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
 
     /**
      * Determines whether a local SSH agent may be used for authentication
-     *
+     * 
      * @param allowedAgentUse
      *            true if an agent may be used if available
      */

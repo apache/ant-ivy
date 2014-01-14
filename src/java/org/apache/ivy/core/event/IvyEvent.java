@@ -116,12 +116,12 @@ public class IvyEvent {
     }
 
     public int hashCode() {
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         int hash = 37;
         hash = 13 * hash + getSource().hashCode();
         hash = 13 * hash + getName().hashCode();
         hash = 13 * hash + attributes.hashCode();
-        //CheckStyle:MagicNumber| ON
+        // CheckStyle:MagicNumber| ON
         return hash;
     }
 }

@@ -139,8 +139,8 @@ public class IvyInfo extends IvyTask {
                 setProperties(md, mrid);
             }
         } catch (MalformedURLException e) {
-            throw new BuildException(
-                    "unable to convert given ivy file to url: " + file + ": " + e, e);
+            throw new BuildException("unable to convert given ivy file to url: " + file + ": " + e,
+                    e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: " + e, e);
@@ -159,18 +159,18 @@ public class IvyInfo extends IvyTask {
         getProject().setProperty(property + ".status", md.getStatus());
         if (md.getPublicationDate() != null) {
             getProject().setProperty(property + ".publication",
-                                     Long.toString(md.getPublicationDate().getTime()));
+                Long.toString(md.getPublicationDate().getTime()));
         }
 
         Map extra = mrid.getExtraAttributes();
         for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
             Entry entry = (Entry) iter.next();
-            getProject().setProperty(
-                property + ".extra." + entry.getKey(), (String) entry.getValue());
+            getProject().setProperty(property + ".extra." + entry.getKey(),
+                (String) entry.getValue());
         }
 
-        getProject().setProperty(
-                property + ".configurations", mergeConfs(md.getConfigurationsNames()));
+        getProject().setProperty(property + ".configurations",
+            mergeConfs(md.getConfigurationsNames()));
 
         // store the public configurations in a separate property
         Configuration[] configs = md.getConfigurations();
@@ -183,27 +183,29 @@ public class IvyInfo extends IvyTask {
 
             if (configs[i].getDescription() != null) {
                 getProject().setProperty(property + ".configuration." + name + ".desc",
-                                         configs[i].getDescription());
+                    configs[i].getDescription());
             }
         }
-        String[] publicConfigs =
-                (String[]) publicConfigsList.toArray(new String[publicConfigsList.size()]);
+        String[] publicConfigs = (String[]) publicConfigsList.toArray(new String[publicConfigsList
+                .size()]);
         getProject().setProperty(property + ".public.configurations", mergeConfs(publicConfigs));
 
         Artifact[] artifacts = md.getAllArtifacts();
         for (int i = 0; i < artifacts.length; i++) {
             int id = i + 1;
-            getProject().setProperty(property + ".artifact." + id + ".name", artifacts[i].getName());
-            getProject().setProperty(property + ".artifact." + id + ".type", artifacts[i].getType());
+            getProject()
+                    .setProperty(property + ".artifact." + id + ".name", artifacts[i].getName());
+            getProject()
+                    .setProperty(property + ".artifact." + id + ".type", artifacts[i].getType());
             getProject().setProperty(property + ".artifact." + id + ".ext", artifacts[i].getExt());
             getProject().setProperty(property + ".artifact." + id + ".conf",
-                                     mergeConfs(artifacts[i].getConfigurations()));
+                mergeConfs(artifacts[i].getConfigurations()));
 
             Map artiExtra = artifacts[i].getExtraAttributes();
             for (Iterator iter = artiExtra.entrySet().iterator(); iter.hasNext();) {
                 Entry entry = (Entry) iter.next();
                 getProject().setProperty(property + ".artifact." + id + ".extra." + entry.getKey(),
-                                         (String) entry.getValue());
+                    (String) entry.getValue());
             }
         }
     }

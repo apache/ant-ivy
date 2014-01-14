@@ -52,41 +52,38 @@ public class ResolveEngineTest extends TestCase {
     }
 
     public void testInlineResolveWithNonExistingModule() throws Exception {
-        ResolveEngine engine = new ResolveEngine(ivy.getSettings(), 
-            ivy.getEventManager(), ivy.getSortEngine());
-        
+        ResolveEngine engine = new ResolveEngine(ivy.getSettings(), ivy.getEventManager(),
+                ivy.getSortEngine());
+
         ResolveOptions options = new ResolveOptions();
         options.setConfs(new String[] {"*"});
-        
+
         ModuleRevisionId mRevId = ModuleRevisionId.newInstance("org1XX", "mod1.0XX", "1.0XX");
         ResolveReport report = engine.resolve(mRevId, options, true);
-        
+
         assertNotNull("The ResolveReport may never be null", report);
         assertTrue(report.hasError());
     }
-    
+
     public void testLocateThenDownload() throws Exception {
-        ResolveEngine engine = new ResolveEngine(ivy.getSettings(), 
-            ivy.getEventManager(), ivy.getSortEngine());
-        
-        testLocateThenDownload(
-            engine, 
-            DefaultArtifact.newIvyArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date()), 
+        ResolveEngine engine = new ResolveEngine(ivy.getSettings(), ivy.getEventManager(),
+                ivy.getSortEngine());
+
+        testLocateThenDownload(engine,
+            DefaultArtifact.newIvyArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date()),
             new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"));
-        testLocateThenDownload(
-            engine, 
-            new DefaultArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date(), "mod1.1", "jar", "jar"), 
-            new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"));
+        testLocateThenDownload(engine,
+            new DefaultArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date(), "mod1.1",
+                    "jar", "jar"), new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"));
     }
 
     private void testLocateThenDownload(ResolveEngine engine, Artifact artifact, File artifactFile) {
         ArtifactOrigin origin = engine.locate(artifact);
         assertNotNull(origin);
         assertTrue(origin.isLocal());
-        assertEquals(
-            artifactFile.getAbsolutePath(), 
+        assertEquals(artifactFile.getAbsolutePath(),
             new File(origin.getLocation()).getAbsolutePath());
-        
+
         ArtifactDownloadReport r = engine.download(origin, new DownloadOptions());
         assertNotNull(r);
         assertEquals(DownloadStatus.SUCCESSFUL, r.getDownloadStatus());

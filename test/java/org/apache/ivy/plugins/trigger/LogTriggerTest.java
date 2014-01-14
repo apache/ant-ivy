@@ -31,60 +31,61 @@ import org.apache.ivy.util.MockMessageLogger;
 
 public class LogTriggerTest extends TestCase {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    
+
     private StartResolveEvent ev;
+
     private LogTrigger trigger;
+
     private File testDir;
 
     protected void setUp() {
-        ev = new StartResolveEvent(
-            DefaultModuleDescriptor.newBasicInstance(ModuleRevisionId.parse("o#A;1"), new Date()), 
-            new String[] {"c"});
+        ev = new StartResolveEvent(DefaultModuleDescriptor.newBasicInstance(
+            ModuleRevisionId.parse("o#A;1"), new Date()), new String[] {"c"});
         trigger = new LogTrigger();
         trigger.setEvent(ev.getName());
         testDir = new File("build/test/trigger");
         testDir.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         FileUtil.forceDelete(testDir);
     }
 
     public void testMessage() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
-        
+
         MockMessageLogger mockLogger = new MockMessageLogger();
         Message.setDefaultLogger(mockLogger);
         trigger.progress(ev);
-        
+
         mockLogger.assertLogInfoContains("msg: o A 1");
     }
-    
+
     public void testFile() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
         File f = new File(testDir, "test.log");
         trigger.setFile(f);
-        
+
         trigger.progress(ev);
-        
+
         assertTrue(f.exists());
         assertEquals("msg: o A 1" + LINE_SEPARATOR, FileUtil.readEntirely(f));
 
         trigger.progress(ev);
-        
-        assertEquals("msg: o A 1" + LINE_SEPARATOR + "msg: o A 1" + LINE_SEPARATOR, 
+
+        assertEquals("msg: o A 1" + LINE_SEPARATOR + "msg: o A 1" + LINE_SEPARATOR,
             FileUtil.readEntirely(f));
     }
-    
+
     public void testFileNoAppend() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
         File f = new File(testDir, "test.log");
         trigger.setFile(f);
         trigger.setAppend(false);
-        
+
         trigger.progress(ev);
         trigger.progress(ev);
-        
+
         assertTrue(f.exists());
         assertEquals("msg: o A 1" + LINE_SEPARATOR, FileUtil.readEntirely(f));
     }

@@ -78,12 +78,10 @@ public abstract class IvyTask extends Task {
                         + " doesn't reference an ivy:settings", getLocation());
             }
             if (!(antIvyEngine instanceof IvyAntSettings)) {
-                throw new BuildException(
-                        antIvyEngineRef.getRefId()
-                                + " has been defined in a different classloader.  "
-                                + "Please use the same loader when defining your task, or "
-                                + "redeclare your ivy:settings in this classloader",
-                        getLocation());
+                throw new BuildException(antIvyEngineRef.getRefId()
+                        + " has been defined in a different classloader.  "
+                        + "Please use the same loader when defining your task, or "
+                        + "redeclare your ivy:settings in this classloader", getLocation());
             }
         } else {
             antIvyEngine = IvyAntSettings.getDefaultInstance(this);
@@ -191,8 +189,8 @@ public abstract class IvyTask extends Task {
             try {
                 return DateUtil.parse(date);
             } catch (Exception ex) {
-                throw new BuildException("Publication date provided in bad format. Should be '" 
-                                + DateUtil.DATE_FORMAT_PATTERN + "' and not '" + date + "'!");
+                throw new BuildException("Publication date provided in bad format. Should be '"
+                        + DateUtil.DATE_FORMAT_PATTERN + "' and not '" + date + "'!");
             }
         } else {
             return def;
@@ -246,7 +244,7 @@ public abstract class IvyTask extends Task {
      */
     protected void prepareTask() {
         getProject().setProperty("ivy.version", Ivy.getIvyVersion());
-        
+
         // push current project and Ivy on the stack in context
         IvyContext.pushNewCopyContext();
         IvyContext.getContext().setIvy(getIvyInstance());
@@ -287,14 +285,13 @@ public abstract class IvyTask extends Task {
     public String toString() {
         return getClass().getName() + ":" + getTaskName();
     }
-    
 
     /**
      * Informs the user that the cache attribute is not supported any more.
      */
     protected void cacheAttributeNotSupported() {
         throw new BuildException(
-            "cache attribute is not supported any more. See IVY-685 for details.");
+                "cache attribute is not supported any more. See IVY-685 for details.");
     }
 
 }

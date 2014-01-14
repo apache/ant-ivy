@@ -39,8 +39,7 @@ import org.apache.tools.ant.taskdefs.Delete;
  * Not a Junit test, performance depends on the machine on which the test is run...
  */
 public class TestPerformance {
-    private static final String PATTERN = 
-            "build/test/perf/[module]/[artifact]-[revision].[ext]";
+    private static final String PATTERN = "build/test/perf/[module]/[artifact]-[revision].[ext]";
 
     private final Ivy ivy;
 
@@ -100,8 +99,9 @@ public class TestPerformance {
 
             int prevCurDep = curDep;
             for (int ver = 0; ver < versions; ver++) {
-                DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId
-                        .newInstance("apache", "mod" + nb, "1." + ver), "integration", new Date());
+                DefaultModuleDescriptor md = new DefaultModuleDescriptor(
+                        ModuleRevisionId.newInstance("apache", "mod" + nb, "1." + ver),
+                        "integration", new Date());
 
                 curDep = prevCurDep;
                 for (int i = 0; i < deps && curDep < nbModules; i++) {
@@ -125,10 +125,8 @@ public class TestPerformance {
                 }
                 XmlModuleDescriptorWriter.write(md, new File("build/test/perf/mod" + nb + "/ivy-1."
                         + ver + ".xml"));
-                FileUtil
-                        .copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"),
-                            new File("build/test/perf/mod" + nb + "/mod" + nb + "-1." + ver
-                                    + ".jar"), null);
+                FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"),
+                    new File("build/test/perf/mod" + nb + "/mod" + nb + "-1." + ver + ".jar"), null);
             }
             nb++;
         }

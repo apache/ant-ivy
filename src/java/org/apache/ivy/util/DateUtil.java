@@ -22,18 +22,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtil {
-    
+
     private DateUtil() {
-        //Utility class
+        // Utility class
     }
-    
+
     public static final String DATE_FORMAT_PATTERN = "yyyyMMddHHmmss";
-    
+
     public static String format(Date date) {
         SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT_PATTERN);
         return format.format(date);
     }
-    
+
     public static Date parse(String date) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT_PATTERN);
         return format.parse(date);

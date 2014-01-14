@@ -44,11 +44,11 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * Utility class used to deal with file related operations, like copy, full reading, symlink, ...
  */
 public final class FileUtil {
-    
+
     private FileUtil() {
-        //Utility class
+        // Utility class
     }
-    
+
     // according to tests by users, 64kB seems to be a good value for the buffer used during copy
     // further improvements could be obtained using NIO API
     private static final int BUFFER_SIZE = 64 * 1024;
@@ -57,7 +57,8 @@ public final class FileUtil {
 
     private static final Pattern ALLOWED_PATH_PATTERN = Pattern.compile("[\\w-./\\\\:~ %\\(\\)]+");
 
-    public static void symlinkInMass(Map/* <File, File> */destToSrcMap, boolean overwrite) throws IOException {
+    public static void symlinkInMass(Map/* <File, File> */destToSrcMap, boolean overwrite)
+            throws IOException {
 
         // This pattern could be more forgiving if somebody wanted it to be...
         // ...but this should satisfy 99+% of all needs, without letting unsafe operations be done.
@@ -70,7 +71,7 @@ public final class FileUtil {
 
             Iterator keyItr = destToSrcMap.entrySet().iterator();
             while (keyItr.hasNext()) {
-                Entry/*<File, File>*/ entry = (Entry) keyItr.next();
+                Entry/* <File, File> */entry = (Entry) keyItr.next();
                 File destFile = (File) entry.getKey();
                 File srcFile = (File) entry.getValue();
                 if (!ALLOWED_PATH_PATTERN.matcher(srcFile.getAbsolutePath()).matches()) {
@@ -83,7 +84,8 @@ public final class FileUtil {
                 }
 
                 // Add to our buffer of commands
-                sb.append("ln -s -f \"" + srcFile.getAbsolutePath() + "\"  \"" + destFile.getAbsolutePath() + "\";");
+                sb.append("ln -s -f \"" + srcFile.getAbsolutePath() + "\"  \""
+                        + destFile.getAbsolutePath() + "\";");
                 if (keyItr.hasNext()) {
                     sb.append("\n");
                 }
@@ -144,16 +146,16 @@ public final class FileUtil {
 
                 throw new IOException("error symlinking " + src + " to " + dest + ":\n" + error);
             }
-            
+
             // check if the creation of the symbolic link was successful
             if (!dest.exists()) {
                 throw new IOException("error symlinking: " + dest + " doesn't exists");
             }
-            
+
             // check if the result is a true symbolic link
             if (dest.getAbsolutePath().equals(dest.getCanonicalPath())) {
                 dest.delete(); // just make sure we do delete the invalid symlink!
-                throw new IOException("error symlinking: " + dest + " isn't a symlink"); 
+                throw new IOException("error symlinking: " + dest + " isn't a symlink");
             }
         } catch (IOException e) {
             Message.verbose("symlink failed; falling back to copy", e);
@@ -171,7 +173,8 @@ public final class FileUtil {
         if (src.isDirectory()) {
             if (dest.exists()) {
                 if (!dest.isDirectory()) {
-                    throw new IOException("impossible to copy: destination is not a directory: " + dest);
+                    throw new IOException("impossible to copy: destination is not a directory: "
+                            + dest);
                 }
             } else {
                 dest.mkdirs();
@@ -279,13 +282,13 @@ public final class FileUtil {
         copy(src, new FileOutputStream(dest), l);
     }
 
-    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l) 
+    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l)
             throws IOException {
         copy(src, dest, l, true);
     }
-    
-    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l, boolean autoClose)
-            throws IOException {
+
+    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l,
+            boolean autoClose) throws IOException {
         CopyProgressEvent evt = null;
         if (l != null) {
             evt = new CopyProgressEvent();
@@ -387,7 +390,7 @@ public final class FileUtil {
     public static String readEntirely(File f) throws IOException {
         return readEntirely(new FileInputStream(f));
     }
-    
+
     /**
      * Reads the entire content of the {@link InputStream} and returns it as a String.
      * <p>
@@ -468,11 +471,12 @@ public final class FileUtil {
      * Returns a collection of all Files being contained in the given directory, recursively,
      * including directories.
      * 
-     * @param  dir  The directory from which all files, including files in subdirectory)
-     *              are extracted.
-     * @param ignore a Collection of filenames which must be excluded from listing
-     * @return  A collectoin containing all the files of the given directory and it's
-     *              subdirectories.
+     * @param dir
+     *            The directory from which all files, including files in subdirectory) are
+     *            extracted.
+     * @param ignore
+     *            a Collection of filenames which must be excluded from listing
+     * @return A collectoin containing all the files of the given directory and it's subdirectories.
      */
     public static Collection listAll(File dir, Collection ignore) {
         return listAll(dir, new ArrayList(), ignore);
@@ -482,7 +486,7 @@ public final class FileUtil {
         if (ignore.contains(file.getName())) {
             return list;
         }
-        
+
         if (file.exists()) {
             list.add(file);
         }
@@ -500,81 +504,86 @@ public final class FileUtil {
         if (!result.isAbsolute()) {
             result = new File(file, filename);
         }
-        
+
         return normalize(result.getPath());
     }
-    
-    //////////////////////////////////////////////
-    // The following code comes from Ant FileUtils
-    //////////////////////////////////////////////
-    
-   /**
-    * &quot;Normalize&quot; the given absolute path.
-    *
-    * <p>This includes:
-    * <ul>
-    *   <li>Uppercase the drive letter if there is one.</li>
-    *   <li>Remove redundant slashes after the drive spec.</li>
-    *   <li>Resolve all ./, .\, ../ and ..\ sequences.</li>
-    *   <li>DOS style paths that start with a drive letter will have
-    *     \ as the separator.</li>
-    * </ul>
-    * Unlike {@link File#getCanonicalPath()} this method
-    * specifically does not resolve symbolic links.
-    *
-    * @param path the path to be normalized.
-    * @return the normalized version of the path.
-    *
-    * @throws java.lang.NullPointerException if path is null.
-    */
-    public static File normalize(final String path) {
-       Stack s = new Stack();
-       String[] dissect = dissect(path);
-       s.push(dissect[0]);
 
-       StringTokenizer tok = new StringTokenizer(dissect[1], File.separator);
-       while (tok.hasMoreTokens()) {
-           String thisToken = tok.nextToken();
-           if (".".equals(thisToken)) {
-               continue;
-           }
-           if ("..".equals(thisToken)) {
-               if (s.size() < 2) {
-                   // Cannot resolve it, so skip it.
-                   return new File(path);
-               }
-               s.pop();
-           } else { // plain component
-               s.push(thisToken);
-           }
-       }
-       StringBuffer sb = new StringBuffer();
-       for (int i = 0; i < s.size(); i++) {
-           if (i > 1) {
-               // not before the filesystem root and not after it, since root
-               // already contains one
-               sb.append(File.separatorChar);
-           }
-           sb.append(s.elementAt(i));
-       }
-       return new File(sb.toString());
-   }
-    
+    // ////////////////////////////////////////////
+    // The following code comes from Ant FileUtils
+    // ////////////////////////////////////////////
+
+    /**
+     * &quot;Normalize&quot; the given absolute path.
+     * 
+     * <p>
+     * This includes:
+     * <ul>
+     * <li>Uppercase the drive letter if there is one.</li>
+     * <li>Remove redundant slashes after the drive spec.</li>
+     * <li>Resolve all ./, .\, ../ and ..\ sequences.</li>
+     * <li>DOS style paths that start with a drive letter will have \ as the separator.</li>
+     * </ul>
+     * Unlike {@link File#getCanonicalPath()} this method specifically does not resolve symbolic
+     * links.
+     * 
+     * @param path
+     *            the path to be normalized.
+     * @return the normalized version of the path.
+     * 
+     * @throws java.lang.NullPointerException
+     *             if path is null.
+     */
+    public static File normalize(final String path) {
+        Stack s = new Stack();
+        String[] dissect = dissect(path);
+        s.push(dissect[0]);
+
+        StringTokenizer tok = new StringTokenizer(dissect[1], File.separator);
+        while (tok.hasMoreTokens()) {
+            String thisToken = tok.nextToken();
+            if (".".equals(thisToken)) {
+                continue;
+            }
+            if ("..".equals(thisToken)) {
+                if (s.size() < 2) {
+                    // Cannot resolve it, so skip it.
+                    return new File(path);
+                }
+                s.pop();
+            } else { // plain component
+                s.push(thisToken);
+            }
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < s.size(); i++) {
+            if (i > 1) {
+                // not before the filesystem root and not after it, since root
+                // already contains one
+                sb.append(File.separatorChar);
+            }
+            sb.append(s.elementAt(i));
+        }
+        return new File(sb.toString());
+    }
+
     /**
      * Dissect the specified absolute path.
-     * @param path the path to dissect.
+     * 
+     * @param path
+     *            the path to dissect.
      * @return String[] {root, remaining path}.
-     * @throws java.lang.NullPointerException if path is null.
+     * @throws java.lang.NullPointerException
+     *             if path is null.
      * @since Ant 1.7
      */
     private static String[] dissect(String path) {
         char sep = File.separatorChar;
         path = path.replace('/', sep).replace('\\', sep);
 
-//        // make sure we are dealing with an absolute path
-//        if (!isAbsolutePath(path)) {
-//            throw new BuildException(path + " is not an absolute path");
-//        }
+        // // make sure we are dealing with an absolute path
+        // if (!isAbsolutePath(path)) {
+        // throw new BuildException(path + " is not an absolute path");
+        // }
         String root = null;
         int colon = path.indexOf(':');
         if (colon > 0) { // && (ON_DOS || ON_NETWARE)) {
@@ -583,7 +592,7 @@ public final class FileUtil {
             root = path.substring(0, next);
             char[] ca = path.toCharArray();
             root += sep;
-            //remove the initial separator; the root has it.
+            // remove the initial separator; the root has it.
             next = (ca[next] == sep) ? next + 1 : next;
 
             StringBuffer sbPath = new StringBuffer();
@@ -627,6 +636,5 @@ public final class FileUtil {
         }
         return l;
     }
-
 
 }

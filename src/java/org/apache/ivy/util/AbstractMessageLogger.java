@@ -31,44 +31,55 @@ public abstract class AbstractMessageLogger implements MessageLogger {
     private List errors = new ArrayList();
 
     private boolean showProgress = true;
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#debug(java.lang.String)
      */
     public void debug(String msg) {
         log(msg, Message.MSG_DEBUG);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#verbose(java.lang.String)
      */
     public void verbose(String msg) {
         log(msg, Message.MSG_VERBOSE);
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#deprecated(java.lang.String)
      */
     public void deprecated(String msg) {
         log("DEPRECATED: " + msg, Message.MSG_WARN);
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#info(java.lang.String)
      */
     public void info(String msg) {
         log(msg, Message.MSG_INFO);
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#info(java.lang.String)
      */
     public void rawinfo(String msg) {
         rawlog(msg, Message.MSG_INFO);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#warn(java.lang.String)
      */
     public void warn(String msg) {
@@ -77,7 +88,9 @@ public abstract class AbstractMessageLogger implements MessageLogger {
         getWarns().add(msg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#error(java.lang.String)
      */
     public void error(String msg) {
@@ -88,14 +101,18 @@ public abstract class AbstractMessageLogger implements MessageLogger {
         getErrors().add(msg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#getProblems()
      */
     public List getProblems() {
         return problems;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#sumupProblems()
      */
     public void sumupProblems() {
@@ -117,7 +134,9 @@ public abstract class AbstractMessageLogger implements MessageLogger {
         return warns;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#progress()
      */
     public void progress() {
@@ -126,15 +145,18 @@ public abstract class AbstractMessageLogger implements MessageLogger {
         }
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#endProgress()
      */
     public void endProgress() {
         endProgress("");
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#endProgress(java.lang.String)
      */
     public void endProgress(String msg) {
@@ -143,15 +165,18 @@ public abstract class AbstractMessageLogger implements MessageLogger {
         }
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#isShowProgress()
      */
     public boolean isShowProgress() {
         return showProgress;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.util.MessageLogger#setShowProgress(boolean)
      */
     public void setShowProgress(boolean progress) {
@@ -162,9 +187,12 @@ public abstract class AbstractMessageLogger implements MessageLogger {
      * Indicates a progression for a long running task
      */
     protected abstract void doProgress();
+
     /**
      * Indicates the end of a long running task
-     * @param msg the message associated with long running task end.
+     * 
+     * @param msg
+     *            the message associated with long running task end.
      */
     protected abstract void doEndProgress(String msg);
 

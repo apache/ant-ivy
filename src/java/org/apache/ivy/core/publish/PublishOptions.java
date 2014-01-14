@@ -52,7 +52,7 @@ public class PublishOptions {
     private boolean overwrite;
 
     private boolean update;
-    
+
     private boolean merge = true;
 
     private String[] confs;
@@ -134,11 +134,11 @@ public class PublishOptions {
         this.update = update;
         return this;
     }
-    
+
     public boolean isMerge() {
         return merge;
     }
-    
+
     public PublishOptions setMerge(boolean merge) {
         this.merge = merge;
         return this;
@@ -165,7 +165,7 @@ public class PublishOptions {
     public String getPubBranch() {
         return pubBranch;
     }
-    
+
     public PublishOptions setPubbranch(String pubbranch) {
         this.pubBranch = pubbranch;
         return this;
@@ -174,7 +174,7 @@ public class PublishOptions {
     public boolean isWarnOnMissing() {
         return warnonmissing;
     }
-    
+
     public PublishOptions setWarnOnMissing(boolean warnonmissing) {
         this.warnonmissing = warnonmissing;
         return this;

@@ -41,11 +41,11 @@ public class ArtifactDownloadReport {
      * </p>
      */
     public static final String MISSING_ARTIFACT = "missing artifact";
-    
+
     private Artifact artifact;
 
     private ArtifactOrigin origin;
-    
+
     private File localFile;
 
     private DownloadStatus downloadStatus;
@@ -109,7 +109,7 @@ public class ArtifactDownloadReport {
     public void setDownloadDetails(String message) {
         downloadDetails = message;
     }
-    
+
     public String getDownloadDetails() {
         return downloadDetails;
     }
@@ -117,21 +117,20 @@ public class ArtifactDownloadReport {
     public void setDownloadTimeMillis(long l) {
         downloadTimeMillis = l;
     }
-    
+
     public long getDownloadTimeMillis() {
         return downloadTimeMillis;
     }
-    
+
     public String toString() {
         if (downloadStatus == DownloadStatus.SUCCESSFUL) {
             return "[SUCCESSFUL ] " + artifact + " (" + downloadTimeMillis + "ms)";
         } else if (downloadStatus == DownloadStatus.FAILED) {
             if (downloadDetails == MISSING_ARTIFACT) {
-                return "[NOT FOUND  ] " + artifact
-                + " (" + downloadTimeMillis + "ms)";
+                return "[NOT FOUND  ] " + artifact + " (" + downloadTimeMillis + "ms)";
             } else {
-                return "[FAILED     ] " + artifact + ": " + downloadDetails
-                    + " (" + downloadTimeMillis + "ms)";
+                return "[FAILED     ] " + artifact + ": " + downloadDetails + " ("
+                        + downloadTimeMillis + "ms)";
             }
         } else if (downloadStatus == DownloadStatus.NO) {
             return "[NOT REQUIRED] " + artifact;
@@ -141,8 +140,8 @@ public class ArtifactDownloadReport {
     }
 
     /**
-     * Returns the File where the artifact is available on the local filesystem, 
-     * or <code>null</code> if and only if the artifact caching failed.
+     * Returns the File where the artifact is available on the local filesystem, or
+     * <code>null</code> if and only if the artifact caching failed.
      * 
      * @return the file where the artifact is now available on the local filesystem.
      */
@@ -153,7 +152,7 @@ public class ArtifactDownloadReport {
     public void setLocalFile(File localFile) {
         this.localFile = localFile;
     }
-    
+
     public boolean isDownloaded() {
         return DownloadStatus.SUCCESSFUL == downloadStatus;
     }

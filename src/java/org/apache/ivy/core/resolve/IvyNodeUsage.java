@@ -73,39 +73,41 @@ public class IvyNodeUsage {
         }
 
         public int hashCode() {
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             int hash = 33;
             hash += getNode().hashCode() * 17;
             hash += getConf().hashCode() * 17;
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             return hash;
         }
-        
+
         public String toString() {
             return "NodeConf(" + conf + ")";
         }
     }
-    
+
     private static final class Depender {
         private DependencyDescriptor dd;
+
         private String dependerConf;
-        
+
         public Depender(DependencyDescriptor dd, String dependerConf) {
             this.dd = dd;
             this.dependerConf = dependerConf;
         }
-        
+
         public String toString() {
             return dd + " [" + dependerConf + "]";
         }
-        
+
         public boolean equals(Object obj) {
-            if (! (obj  instanceof Depender)) {
+            if (!(obj instanceof Depender)) {
                 return false;
             }
             Depender other = (Depender) obj;
             return other.dd == dd && other.dependerConf.equals(dependerConf);
         }
+
         public int hashCode() {
             int hash = 33;
             hash += dd.hashCode() * 13;
@@ -113,7 +115,7 @@ public class IvyNodeUsage {
             return hash;
         }
     }
-    
+
     private IvyNode node;
 
     // Map (String rootConfName -> Set(String confName))
@@ -123,12 +125,12 @@ public class IvyNodeUsage {
 
     // Map (NodeConf in -> Set(String conf))
     private Map requiredConfs = new HashMap();
-    
-    private Map /*<String, Set<Depender>>*/ dependers = new HashMap();
-    
+
+    private Map /* <String, Set<Depender>> */dependers = new HashMap();
+
     // Map (String rootModuleConf -> IvyNodeBlacklist)
     private Map blacklisted = new HashMap();
-    
+
     public IvyNodeUsage(IvyNode node) {
         this.node = node;
     }
@@ -140,7 +142,7 @@ public class IvyNodeUsage {
     protected void setRequiredConfs(IvyNode parent, String parentConf, Collection confs) {
         requiredConfs.put(new NodeConf(parent, parentConf), new HashSet(confs));
     }
-    
+
     /**
      * Returns the configurations of the dependency required in a given root module configuration.
      * 
@@ -150,7 +152,7 @@ public class IvyNodeUsage {
     protected Set getConfigurations(String rootModuleConf) {
         return (Set) rootModuleConfs.get(rootModuleConf);
     }
-    
+
     protected Set addAndGetConfigurations(String rootModuleConf) {
         Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
         if (depConfs == null) {
@@ -159,19 +161,18 @@ public class IvyNodeUsage {
         }
         return depConfs;
     }
-    
-    protected Set /*<String>*/ getRootModuleConfigurations() {
+
+    protected Set /* <String> */getRootModuleConfigurations() {
         return rootModuleConfs.keySet();
     }
 
-
-    public void updateDataFrom(Collection/*<IvyNodeUsage>*/ usages, String rootModuleConf) {
+    public void updateDataFrom(Collection/* <IvyNodeUsage> */usages, String rootModuleConf) {
         for (Iterator iterator = usages.iterator(); iterator.hasNext();) {
             IvyNodeUsage usage = (IvyNodeUsage) iterator.next();
             updateDataFrom(usage, rootModuleConf);
         }
     }
-    
+
     private void updateDataFrom(IvyNodeUsage usage, String rootModuleConf) {
         // update requiredConfs
         updateMapOfSet(usage.requiredConfs, requiredConfs);
@@ -202,16 +203,16 @@ public class IvyNodeUsage {
         }
     }
 
-//    protected void addDependencyArtifacts(String rootModuleConf,
-//            DependencyArtifactDescriptor[] dependencyArtifacts) {
-//        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
-//            this.dependencyArtifacts);
-//    }
-//
-//    protected void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
-//        addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
-//    }
-//
+    // protected void addDependencyArtifacts(String rootModuleConf,
+    // DependencyArtifactDescriptor[] dependencyArtifacts) {
+    // addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
+    // this.dependencyArtifacts);
+    // }
+    //
+    // protected void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
+    // addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
+    // }
+    //
     private void addObjectsForConf(String rootModuleConf, Object objectToAdd, Map map) {
         Set set = (Set) map.get(rootModuleConf);
         if (set == null) {
@@ -233,8 +234,8 @@ public class IvyNodeUsage {
         Set dependencyArtifacts = new HashSet();
         for (Iterator iterator = dependersInConf.iterator(); iterator.hasNext();) {
             Depender depender = (Depender) iterator.next();
-            DependencyArtifactDescriptor[] dads = 
-                depender.dd.getDependencyArtifacts(depender.dependerConf);
+            DependencyArtifactDescriptor[] dads = depender.dd
+                    .getDependencyArtifacts(depender.dependerConf);
             dependencyArtifacts.addAll(Arrays.asList(dads));
         }
         return dependencyArtifacts;
@@ -248,10 +249,9 @@ public class IvyNodeUsage {
         Set dependencyIncludes = new HashSet();
         for (Iterator iterator = dependersInConf.iterator(); iterator.hasNext();) {
             Depender depender = (Depender) iterator.next();
-            IncludeRule[] rules = 
-                depender.dd.getIncludeRules(depender.dependerConf);
+            IncludeRule[] rules = depender.dd.getIncludeRules(depender.dependerConf);
             if (rules == null || rules.length == 0) {
-                // no include rule in at least one depender -> we must include everything, 
+                // no include rule in at least one depender -> we must include everything,
                 // and so return no include rule at all
                 return null;
             }
@@ -267,7 +267,7 @@ public class IvyNodeUsage {
     protected void blacklist(IvyNodeBlacklist bdata) {
         blacklisted.put(bdata.getRootModuleConf(), bdata);
     }
-    
+
     /**
      * Indicates if this node has been blacklisted in the given root module conf.
      * <p>
@@ -310,7 +310,7 @@ public class IvyNodeUsage {
      *         the given root module conf, <code>false</code> otherwise.
      */
     public boolean hasTransitiveDepender(String rootModuleConf) {
-        Set/*<Depender>*/ dependersSet = (Set) dependers.get(rootModuleConf);
+        Set/* <Depender> */dependersSet = (Set) dependers.get(rootModuleConf);
         if (dependersSet == null) {
             return false;
         }
@@ -322,5 +322,5 @@ public class IvyNodeUsage {
         }
         return false;
     }
-    
+
 }

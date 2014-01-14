@@ -51,18 +51,18 @@ import org.apache.ivy.util.filter.NoFilter;
  * </p>
  */
 public class ModuleRules {
-    private Map/*<MapMatcher,Object>*/ rules = new LinkedHashMap();
-    
+    private Map/* <MapMatcher,Object> */rules = new LinkedHashMap();
+
     /**
      * Constructs an empty ModuleRules.
      */
     public ModuleRules() {
     }
 
-    private ModuleRules(Map/*<MapMatcher,Object>*/ rules) {
+    private ModuleRules(Map/* <MapMatcher,Object> */rules) {
         this.rules = new LinkedHashMap(rules);
     }
-    
+
     /**
      * Defines a new rule for the given condition.
      * 
@@ -74,19 +74,18 @@ public class ModuleRules {
     public void defineRule(MapMatcher condition, Object rule) {
         Checks.checkNotNull(condition, "condition");
         Checks.checkNotNull(rule, "rule");
-        
+
         rules.put(condition, rule);
     }
 
     /**
-     * Returns the rule object matching the given {@link ModuleId}, or <code>null</code>
-     * if no rule applies.
+     * Returns the rule object matching the given {@link ModuleId}, or <code>null</code> if no rule
+     * applies.
      * 
      * @param mid
-     *            the {@link ModuleId} to search the rule for. 
-     *            Must not be <code>null</code>.
-     * @return the rule object matching the given {@link ModuleId}, or <code>null</code>
-     *         if no rule applies.
+     *            the {@link ModuleId} to search the rule for. Must not be <code>null</code>.
+     * @return the rule object matching the given {@link ModuleId}, or <code>null</code> if no rule
+     *         applies.
      * @see #getRule(ModuleId, Filter)
      */
     public Object getRule(ModuleId mid) {
@@ -94,12 +93,11 @@ public class ModuleRules {
     }
 
     /**
-     * Returns the rules objects matching the given {@link ModuleId}, or an empty array
-     * if no rule applies.
+     * Returns the rules objects matching the given {@link ModuleId}, or an empty array if no rule
+     * applies.
      * 
      * @param mid
-     *            the {@link ModuleId} to search the rule for. 
-     *            Must not be <code>null</code>.
+     *            the {@link ModuleId} to search the rule for. Must not be <code>null</code>.
      * @return an array of rule objects matching the given {@link ModuleId}.
      */
     public Object[] getRules(ModuleId mid) {
@@ -107,68 +105,68 @@ public class ModuleRules {
     }
 
     /**
-     * Returns the rule object matching the given {@link ModuleRevisionId}, or <code>null</code>
-     * if no rule applies.
+     * Returns the rule object matching the given {@link ModuleRevisionId}, or <code>null</code> if
+     * no rule applies.
      * 
      * @param mrid
-     *            the {@link ModuleRevisionId} to search the rule for. 
-     *            Must not be <code>null</code>.
-     * @return the rule object matching the given {@link ModuleRevisionId}, or <code>null</code>
-     *         if no rule applies.
+     *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
+     *            .
+     * @return the rule object matching the given {@link ModuleRevisionId}, or <code>null</code> if
+     *         no rule applies.
      * @see #getRule(ModuleRevisionId, Filter)
      */
     public Object getRule(ModuleRevisionId mrid) {
         return getRule(mrid, NoFilter.INSTANCE);
     }
-    
+
     /**
      * Returns the rule object matching the given {@link ModuleId} and accepted by the given
      * {@link Filter}, or <code>null</code> if no rule applies.
      * 
      * @param mrid
-     *            the {@link ModuleRevisionId} to search the rule for. 
-     *            Must not be <code>null</code>.
+     *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
+     *            .
      * @param filter
      *            the filter to use to filter the rule to return. The {@link Filter#accept(Object)}
-     *            method will be called only with rule objects matching the given
-     *            {@link ModuleId}, and the first rule object accepted by the filter will
-     *            be returned. Must not be <code>null</code>.
-     * @return the rule object matching the given {@link ModuleId}, or <code>null</code>
-     *         if no rule applies.
+     *            method will be called only with rule objects matching the given {@link ModuleId},
+     *            and the first rule object accepted by the filter will be returned. Must not be
+     *            <code>null</code>.
+     * @return the rule object matching the given {@link ModuleId}, or <code>null</code> if no rule
+     *         applies.
      * @see #getRule(ModuleRevisionId, Filter)
      */
     public Object getRule(ModuleId mid, Filter filter) {
         Checks.checkNotNull(mid, "mid");
         return getRule(mid.getAttributes(), filter);
     }
-    
+
     /**
      * Returns the rule object matching the given {@link ModuleRevisionId} and accepted by the given
      * {@link Filter}, or <code>null</code> if no rule applies.
      * 
      * @param mrid
-     *            the {@link ModuleRevisionId} to search the rule for. 
-     *            Must not be <code>null</code>.
+     *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
+     *            .
      * @param filter
      *            the filter to use to filter the rule to return. The {@link Filter#accept(Object)}
      *            method will be called only with rule objects matching the given
-     *            {@link ModuleRevisionId}, and the first rule object accepted by the filter will
-     *            be returned. Must not be <code>null</code>.
-     * @return the rule object matching the given {@link ModuleRevisionId}, or <code>null</code>
-     *         if no rule applies.
+     *            {@link ModuleRevisionId}, and the first rule object accepted by the filter will be
+     *            returned. Must not be <code>null</code>.
+     * @return the rule object matching the given {@link ModuleRevisionId}, or <code>null</code> if
+     *         no rule applies.
      * @see #getRule(ModuleRevisionId)
      */
     public Object getRule(ModuleRevisionId mrid, Filter filter) {
         Checks.checkNotNull(mrid, "mrid");
-        Checks.checkNotNull(filter, "filter");        
-        Map moduleAttributes = mrid.getAttributes();       
+        Checks.checkNotNull(filter, "filter");
+        Map moduleAttributes = mrid.getAttributes();
         return getRule(moduleAttributes, filter);
     }
 
     private Object getRule(Map moduleAttributes, Filter filter) {
         for (Iterator iter = rules.entrySet().iterator(); iter.hasNext();) {
             Map.Entry ruleEntry = (Entry) iter.next();
-            MapMatcher midm = (MapMatcher) ruleEntry.getKey();            
+            MapMatcher midm = (MapMatcher) ruleEntry.getKey();
             if (midm.matches(moduleAttributes)) {
                 Object rule = ruleEntry.getValue();
                 if (filter.accept(rule)) {
@@ -179,16 +177,13 @@ public class ModuleRules {
         return null;
     }
 
-    
-    
-    
     /**
      * Returns the rules object matching the given {@link ModuleRevisionId} and accepted by the
      * given {@link Filter}, or an empty array if no rule applies.
      * 
      * @param mrid
-     *            the {@link ModuleRevisionId} to search the rule for. 
-     *            Must not be <code>null</code>.
+     *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
+     *            .
      * @param filter
      *            the filter to use to filter the rule to return. The {@link Filter#accept(Object)}
      *            method will be called only with rule objects matching the given
@@ -197,17 +192,16 @@ public class ModuleRules {
      */
     public Object[] getRules(ModuleRevisionId mrid, Filter filter) {
         Checks.checkNotNull(mrid, "mrid");
-        Checks.checkNotNull(filter, "filter");      
+        Checks.checkNotNull(filter, "filter");
         Map moduleAttributes = mrid.getAttributes();
         return getRules(moduleAttributes, filter);
     }
 
-    
     private Object[] getRules(Map moduleAttributes, Filter filter) {
         List matchingRules = new ArrayList();
         for (Iterator iter = rules.entrySet().iterator(); iter.hasNext();) {
             Map.Entry ruleEntry = (Entry) iter.next();
-            MapMatcher midm = (MapMatcher) ruleEntry.getKey();            
+            MapMatcher midm = (MapMatcher) ruleEntry.getKey();
             if (midm.matches(moduleAttributes)) {
                 Object rule = ruleEntry.getValue();
                 if (filter.accept(rule)) {
@@ -235,7 +229,7 @@ public class ModuleRules {
             }
         }
     }
-    
+
     /**
      * Returns an unmodifiable view of all the rules defined on this ModuleRules.
      * <p>
@@ -245,7 +239,7 @@ public class ModuleRules {
      * 
      * @return an unmodifiable view of all the rules defined on this ModuleRules.
      */
-    public Map/*<MapMatcher,Object>*/ getAllRules() {
+    public Map/* <MapMatcher,Object> */getAllRules() {
         return Collections.unmodifiableMap(rules);
     }
 

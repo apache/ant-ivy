@@ -27,11 +27,12 @@ import org.apache.oro.text.regex.Perl5Matcher;
 /**
  * A pattern matcher matching input using unix-like glob matcher expressions. Meta characters are:
  * <ul>
- * <li> * - Matches zero or more characters</li>
- * <li> ? - Matches exactly one character.</li>
+ * <li>* - Matches zero or more characters</li>
+ * <li>? - Matches exactly one character.</li>
  * </ul>
- * <p/> <b> Note that this matcher is available only with <a
- * href="http://jakarta.apache.org/oro"Apache Jakarta Oro 2.0.8</a> in your classpath.</b>
+ * <p/>
+ * <b> Note that this matcher is available only with <a href="http://jakarta.apache.org/oro"Apache
+ * Jakarta Oro 2.0.8</a> in your classpath.</b>
  * 
  * @see <a
  *      href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
@@ -56,10 +57,11 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
 
     private static class GlobMatcher implements Matcher {
         private Pattern pattern;
+
         private String expression;
 
         private Boolean exact;
-        
+
         public GlobMatcher(String expression) throws PatternSyntaxException {
             this.expression = expression;
             try {
@@ -82,10 +84,10 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
             }
             return exact.booleanValue();
         }
-        
+
         private Boolean calculateExact() {
             Boolean result = Boolean.TRUE;
-            
+
             char[] expressionChars = expression.toCharArray();
             for (int i = 0; i < expressionChars.length; i++) {
                 char ch = expressionChars[i];
@@ -94,7 +96,7 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
                     break;
                 }
             }
-            
+
             return result;
         }
     }

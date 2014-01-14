@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.filter;
 
 import java.util.Map;
 
-
 public class OrFilter extends MultiOperatorFilter {
 
     public OrFilter() {

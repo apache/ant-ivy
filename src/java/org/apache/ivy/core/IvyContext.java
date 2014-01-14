@@ -41,11 +41,11 @@ import org.apache.ivy.util.MessageLogger;
  */
 public class IvyContext {
 
-    private static ThreadLocal/*<Stack<IvyContext>>*/ current = new ThreadLocal();
+    private static ThreadLocal/* <Stack<IvyContext>> */current = new ThreadLocal();
 
     private Ivy defaultIvy;
 
-    private WeakReference/*<Ivy>*/ ivy = new WeakReference(null);
+    private WeakReference/* <Ivy> */ivy = new WeakReference(null);
 
     private Map contextMap = new HashMap();
 
@@ -54,7 +54,7 @@ public class IvyContext {
     private ResolveData resolveData;
 
     private DependencyDescriptor dd;
-    
+
     public IvyContext() {
     }
 
@@ -74,8 +74,8 @@ public class IvyContext {
         }
         return (IvyContext) cur.peek();
     }
-    
-    private static Stack/*<IvyContext>*/ getCurrentStack() {
+
+    private static Stack/* <IvyContext> */getCurrentStack() {
         Stack cur = (Stack) current.get();
         if (cur == null) {
             cur = new Stack();
@@ -90,6 +90,7 @@ public class IvyContext {
      * {@link #popContext()} should usually be called when the job for which this context has been
      * pushed is finished.
      * </p>
+     * 
      * @return the newly pushed context
      */
     public static IvyContext pushNewContext() {
@@ -103,12 +104,13 @@ public class IvyContext {
      * {@link #popContext()} should usually be called when the job for which this context has been
      * pushed is finished.
      * </p>
-    * @return the newly pushed context
+     * 
+     * @return the newly pushed context
      */
     public static IvyContext pushNewCopyContext() {
         return pushContext(new IvyContext(getContext()));
     }
-    
+
     /**
      * Changes the context associated with this thread. This is especially useful when launching a
      * new thread, to associate it with the same context as the initial one. Do not forget to call
@@ -116,13 +118,13 @@ public class IvyContext {
      * 
      * @param context
      *            the new context to use in this thread.
-    * @return the pushed context
+     * @return the pushed context
      */
     public static IvyContext pushContext(IvyContext context) {
         getCurrentStack().push(context);
         return context;
     }
-    
+
     /**
      * Pops one context used with this thread. This is usually called after having finished a task
      * for which a call to {@link #pushNewContext()} or {@link #pushContext(IvyContext)} was done
@@ -133,7 +135,6 @@ public class IvyContext {
     public static IvyContext popContext() {
         return (IvyContext) getCurrentStack().pop();
     }
-
 
     /**
      * Reads the first object from the list saved under given key in the first context from the
@@ -201,7 +202,7 @@ public class IvyContext {
                 defaultIvy.configureDefault();
             } catch (Exception e) {
                 Message.debug(e);
-                //???
+                // ???
             }
         }
         return defaultIvy;
@@ -254,7 +255,6 @@ public class IvyContext {
             }
         }
     }
-
 
     /**
      * Removes and returns first object from the list saved under given key in the context. If value
@@ -342,7 +342,6 @@ public class IvyContext {
         return operatingThread;
     }
 
-
     public MessageLogger getMessageLogger() {
         // calling getIvy() instead of peekIvy() is not possible here: it will initialize a default
         // Ivy instance, with default settings, but settings themselves may log messages and lead to
@@ -363,7 +362,7 @@ public class IvyContext {
     public EventManager getEventManager() {
         return getIvy().getEventManager();
     }
-    
+
     public void checkInterrupted() {
         getIvy().checkInterrupted();
     }
@@ -371,7 +370,7 @@ public class IvyContext {
     public void setResolveData(ResolveData data) {
         this.resolveData = data;
     }
-    
+
     public ResolveData getResolveData() {
         return resolveData;
     }
@@ -379,7 +378,7 @@ public class IvyContext {
     public void setDependencyDescriptor(DependencyDescriptor dd) {
         this.dd = dd;
     }
-    
+
     public DependencyDescriptor getDependencyDescriptor() {
         return dd;
     }

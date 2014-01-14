@@ -37,11 +37,10 @@ import org.apache.tools.ant.util.FileNameMapper;
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
  */
 public class IvyRetrieve extends IvyPostResolveTask {
-    
+
     private static final Collection OVERWRITEMODE_VALUES = Arrays.asList(new String[] {
             RetrieveOptions.OVERWRITEMODE_ALWAYS, RetrieveOptions.OVERWRITEMODE_NEVER,
-            RetrieveOptions.OVERWRITEMODE_NEWER, RetrieveOptions.OVERWRITEMODE_DIFFERENT
-    });
+            RetrieveOptions.OVERWRITEMODE_NEWER, RetrieveOptions.OVERWRITEMODE_DIFFERENT});
 
     private String pattern;
 
@@ -52,13 +51,13 @@ public class IvyRetrieve extends IvyPostResolveTask {
     private boolean symlink = false;
 
     private boolean symlinkmass = false;
-    
+
     private String overwriteMode = RetrieveOptions.OVERWRITEMODE_NEWER;
 
     private String pathId = null;
 
     private String setId = null;
-    
+
     private Mapper mapper = null;
 
     public String getPattern() {
@@ -89,28 +88,22 @@ public class IvyRetrieve extends IvyPostResolveTask {
         prepareAndCheck();
 
         if (!getAllowedLogOptions().contains(getLog())) {
-            throw new BuildException("invalid option for 'log': " + getLog() 
-                + ". Available options are " + getAllowedLogOptions());
+            throw new BuildException("invalid option for 'log': " + getLog()
+                    + ". Available options are " + getAllowedLogOptions());
         }
 
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
             Filter artifactFilter = getArtifactFilter();
             RetrieveReport report = getIvyInstance().retrieve(
-                    getResolvedMrid(),
-                    ((RetrieveOptions) new RetrieveOptions()
-                            .setLog(getLog()))
-                            .setConfs(splitConfs(getConf()))
-                            .setDestArtifactPattern(pattern)
-                            .setDestIvyPattern(ivypattern)
-                            .setArtifactFilter(artifactFilter)
-                            .setSync(sync)
-                            .setOverwriteMode(getOverwriteMode())
-                            .setUseOrigin(isUseOrigin())
-                            .setMakeSymlinks(symlink)
-                            .setMakeSymlinksInMass(symlinkmass)
-                            .setResolveId(getResolveId())
-                            .setMapper(mapper == null ? null : new MapperAdapter(mapper)));
+                getResolvedMrid(),
+                ((RetrieveOptions) new RetrieveOptions().setLog(getLog()))
+                        .setConfs(splitConfs(getConf())).setDestArtifactPattern(pattern)
+                        .setDestIvyPattern(ivypattern).setArtifactFilter(artifactFilter)
+                        .setSync(sync).setOverwriteMode(getOverwriteMode())
+                        .setUseOrigin(isUseOrigin()).setMakeSymlinks(symlink)
+                        .setMakeSymlinksInMass(symlinkmass).setResolveId(getResolveId())
+                        .setMapper(mapper == null ? null : new MapperAdapter(mapper)));
 
             int targetsCopied = report.getNbrArtifactsCopied();
             boolean haveTargetsBeenCopied = targetsCopied > 0;
@@ -121,7 +114,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 Path path = new Path(getProject());
                 getProject().addReference(getPathId(), path);
 
-                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext(); ) {
+                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext();) {
                     path.createPathElement().setLocation((File) iter.next());
                 }
             }
@@ -133,7 +126,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
                 fileset.setDir(report.getRetrieveRoot());
 
-                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext(); ) {
+                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext();) {
                     PatternSet.NameEntry ne = fileset.createInclude();
                     ne.setName(getPath(report.getRetrieveRoot(), (File) iter.next()));
                 }
@@ -143,9 +136,9 @@ public class IvyRetrieve extends IvyPostResolveTask {
         }
     }
 
-    protected Collection/*<String>*/ getAllowedLogOptions() {
-        return Arrays.asList(new String [] {
-                LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY, LogOptions.LOG_QUIET});
+    protected Collection/* <String> */getAllowedLogOptions() {
+        return Arrays.asList(new String[] {LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
+                LogOptions.LOG_QUIET});
     }
 
     public String getIvypattern() {
@@ -180,8 +173,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     public void setOverwriteMode(String overwriteMode) {
         if (!OVERWRITEMODE_VALUES.contains(overwriteMode)) {
-            throw new IllegalArgumentException("invalid overwriteMode value '" + overwriteMode + "'. "
-                + "Valid values are " + OVERWRITEMODE_VALUES);
+            throw new IllegalArgumentException("invalid overwriteMode value '" + overwriteMode
+                    + "'. " + "Valid values are " + OVERWRITEMODE_VALUES);
         }
         this.overwriteMode = overwriteMode;
     }
@@ -192,8 +185,9 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Add a mapper to convert the file names.
-     *
-     * @param mapper a <code>Mapper</code> value.
+     * 
+     * @param mapper
+     *            a <code>Mapper</code> value.
      */
     public void addMapper(Mapper mapper) {
         if (this.mapper != null) {
@@ -204,7 +198,9 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Add a nested filenamemapper.
-     * @param fileNameMapper the mapper to add.
+     * 
+     * @param fileNameMapper
+     *            the mapper to add.
      */
     public void add(FileNameMapper fileNameMapper) {
         Mapper m = new Mapper(getProject());
@@ -214,9 +210,11 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Returns the path of the file relative to the given base directory.
-     *
-     * @param base the parent directory to which the file must be evaluated.
-     * @param file the file for which the path should be returned
+     * 
+     * @param base
+     *            the parent directory to which the file must be evaluated.
+     * @param file
+     *            the file for which the path should be returned
      * @return the path of the file relative to the given base directory.
      */
     private String getPath(File base, File file) {
@@ -232,5 +230,5 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
         return file.getAbsolutePath().substring(beginIndex);
     }
-    
+
 }

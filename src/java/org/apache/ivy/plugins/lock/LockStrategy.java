@@ -31,8 +31,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * <p>
  * </p>
  * The lock methods should return true when the lock is either actually acquired or not performed by
- * the strategy.
- * </p>
+ * the strategy. </p>
  * <p>
  * Locking used in the locking strategy must support reentrant lock. Reentrant locking should be
  * performed for the whole strategy.
@@ -42,6 +41,7 @@ public interface LockStrategy {
 
     /**
      * Returns the name of the strategy
+     * 
      * @return the name of the strategy
      */
     String getName();
@@ -57,8 +57,8 @@ public interface LockStrategy {
      * @throws InterruptedException
      *             if the thread is interrupted while waiting to acquire the lock
      */
-    boolean lockArtifact(Artifact artifact, File artifactFileToDownload) 
-        throws InterruptedException;
+    boolean lockArtifact(Artifact artifact, File artifactFileToDownload)
+            throws InterruptedException;
 
     /**
      * Release the lock acquired for an artifact download.

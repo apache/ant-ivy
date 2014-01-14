@@ -42,11 +42,13 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     private static final String OPEN_INC = "[";
 
     private static final String OPEN_EXC = "]";
+
     private static final String OPEN_EXC_MAVEN = "(";
 
     private static final String CLOSE_INC = "]";
 
     private static final String CLOSE_EXC = "[";
+
     private static final String CLOSE_EXC_MAVEN = ")";
 
     private static final String LOWER_INFINITE = "(";
@@ -173,14 +175,14 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     private boolean isLower(ModuleRevisionId askedMrid, String revision,
             ModuleRevisionId foundMrid, boolean inclusive) {
         ModuleRevisionId mRevId = ModuleRevisionId.newInstance(askedMrid, revision);
-        int result = comparator.compare(mRevId, foundMrid);        
+        int result = comparator.compare(mRevId, foundMrid);
         return result <= (inclusive ? 0 : -1);
     }
 
     private boolean isUpper(ModuleRevisionId askedMrid, String revision,
             ModuleRevisionId foundMrid, boolean inclusive) {
         ModuleRevisionId mRevId = ModuleRevisionId.newInstance(askedMrid, revision);
-        int result = comparator.compare(mRevId, foundMrid);        
+        int result = comparator.compare(mRevId, foundMrid);
         return result >= (inclusive ? 0 : 1);
     }
 

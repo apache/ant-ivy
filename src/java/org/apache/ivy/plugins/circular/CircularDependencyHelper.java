@@ -29,9 +29,9 @@ public final class CircularDependencyHelper {
 
     /** CircularDependencyHelper is not designed to be an instance */
     private CircularDependencyHelper() {
-        
+
     }
-    
+
     /**
      * Returns a string representation of this circular dependency graph
      * 

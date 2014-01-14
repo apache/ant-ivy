@@ -30,7 +30,6 @@ public interface ExtendableItem {
      */
     String getAttribute(String attName);
 
-
     /**
      * Gets the value of an extra attribute Can be used only to access the value of an extra
      * attribute, not a standard one (like organisation, revision)
@@ -51,7 +50,6 @@ public interface ExtendableItem {
      */
     Map getAttributes();
 
-    
     /**
      * Returns a Map of all extra attributes of this extendable item. The Map keys are
      * <b>unqualified</b> attribute names as Strings, and values are corresponding attribute values

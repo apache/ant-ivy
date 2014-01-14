@@ -481,7 +481,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                 values.put(IvyPatternHelper.CONF_KEY, BundleInfoAdapter.CONF_USE_PREFIX + module);
                 return Collections.singleton(values);
             }
-            Set<ModuleDescriptorWrapper> bundles = getRepoDescriptor().findModules(osgiType, module);
+            Set<ModuleDescriptorWrapper> bundles = getRepoDescriptor()
+                    .findModules(osgiType, module);
             if (bundles == null) {
                 return Collections.emptySet();
             }

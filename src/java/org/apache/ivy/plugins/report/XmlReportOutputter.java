@@ -35,13 +35,12 @@ import org.apache.ivy.util.Message;
  */
 public class XmlReportOutputter implements ReportOutputter {
     private XmlReportWriter writer = new XmlReportWriter();
-    
+
     public String getName() {
         return XML;
     }
 
-    public void output(
-            ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) 
+    public void output(ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options)
             throws IOException {
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
@@ -49,29 +48,28 @@ public class XmlReportOutputter implements ReportOutputter {
         }
     }
 
-    public void output(ConfigurationResolveReport report, String resolveId, 
-            String[] confs, ResolutionCacheManager cacheMgr) 
-            throws IOException {
-        File reportFile = cacheMgr.getConfigurationResolveReportInCache(
-            resolveId, report.getConfiguration());
+    public void output(ConfigurationResolveReport report, String resolveId, String[] confs,
+            ResolutionCacheManager cacheMgr) throws IOException {
+        File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId,
+            report.getConfiguration());
         File reportParentDir = reportFile.getParentFile();
         reportParentDir.mkdirs();
         OutputStream stream = new FileOutputStream(reportFile);
         writer.output(report, confs, stream);
         stream.close();
 
-        Message.verbose("\treport for " + report.getModuleDescriptor().getModuleRevisionId()
-            + " " + report.getConfiguration() + " produced in " + reportFile);
+        Message.verbose("\treport for " + report.getModuleDescriptor().getModuleRevisionId() + " "
+                + report.getConfiguration() + " produced in " + reportFile);
 
         File reportXsl = new File(reportParentDir, "ivy-report.xsl");
         File reportCss = new File(reportParentDir, "ivy-report.css");
         if (!reportXsl.exists()) {
-            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.xsl"), reportXsl,
-                null);
+            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.xsl"),
+                reportXsl, null);
         }
         if (!reportCss.exists()) {
-            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), reportCss,
-                null);
+            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"),
+                reportCss, null);
         }
     }
 }

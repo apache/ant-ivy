@@ -50,8 +50,7 @@ public class RequirementAdapter {
         adapter.adapt(info, requirement.isOptional());
     }
 
-    private void extractFilter(OSGiFilter filter) throws UnsupportedFilterException,
-            ParseException {
+    private void extractFilter(OSGiFilter filter) throws UnsupportedFilterException, ParseException {
         if (filter instanceof AndFilter) {
             AndFilter andFilter = (AndFilter) filter;
             for (OSGiFilter subFilter : andFilter.getSubFilters()) {

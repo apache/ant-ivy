@@ -67,31 +67,31 @@ public class P2MetadataParser implements XMLInputParser {
 
     private class RepositoryHandler extends DelegatingHandler {
 
-        //        private static final String P2_TIMESTAMP = "p2.timestamp";
+        // private static final String P2_TIMESTAMP = "p2.timestamp";
 
         private static final String REPOSITORY = "repository";
 
-        //        private static final String NAME = "name";
+        // private static final String NAME = "name";
         //
-        //        private static final String TYPE = "type";
+        // private static final String TYPE = "type";
         //
-        //        private static final String VERSION = "version";
+        // private static final String VERSION = "version";
         //
-        //        private static final String DESCRIPTION = "description";
+        // private static final String DESCRIPTION = "description";
         //
-        //        private static final String PROVIDER = "provider";
+        // private static final String PROVIDER = "provider";
 
         public RepositoryHandler(final P2Descriptor p2Descriptor) {
             super(REPOSITORY);
-            //            addChild(new PropertiesHandler(P2_TIMESTAMP),
-            //                new ChildElementHandler<PropertiesHandler>() {
-            //                    public void childHanlded(PropertiesHandler child) {
-            //                        String timestamp = child.properties.get(P2_TIMESTAMP);
-            //                        if (timestamp != null) {
-            //                            p2Descriptor.setTimestamp(Long.parseLong(timestamp));
-            //                        }
-            //                    }
-            //                });
+            // addChild(new PropertiesHandler(P2_TIMESTAMP),
+            // new ChildElementHandler<PropertiesHandler>() {
+            // public void childHanlded(PropertiesHandler child) {
+            // String timestamp = child.properties.get(P2_TIMESTAMP);
+            // if (timestamp != null) {
+            // p2Descriptor.setTimestamp(Long.parseLong(timestamp));
+            // }
+            // }
+            // });
             addChild(new UnitsHandler(), new ChildElementHandler<UnitsHandler>() {
                 public void childHanlded(UnitsHandler child) {
                     for (BundleInfo bundle : child.bundles) {
@@ -105,13 +105,13 @@ public class P2MetadataParser implements XMLInputParser {
             });
         }
 
-        //        protected void handleAttributes(Attributes atts) {
-        //            String name = atts.getValue(NAME);
-        //            String type = atts.getValue(TYPE);
-        //            String version = atts.getValue(VERSION);
-        //            String description = atts.getValue(DESCRIPTION);
-        //            String provider = atts.getValue(PROVIDER);
-        //        }
+        // protected void handleAttributes(Attributes atts) {
+        // String name = atts.getValue(NAME);
+        // String type = atts.getValue(TYPE);
+        // String version = atts.getValue(VERSION);
+        // String description = atts.getValue(DESCRIPTION);
+        // String provider = atts.getValue(PROVIDER);
+        // }
     }
 
     private class ReferencesHandler extends DelegatingHandler {
@@ -142,11 +142,11 @@ public class P2MetadataParser implements XMLInputParser {
 
         private static final String REPOSITORY = "repository";
 
-        //        private static final String TYPE = "type";
+        // private static final String TYPE = "type";
         //
-        //        private static final String OPTIONS = "options";
+        // private static final String OPTIONS = "options";
         //
-        //        private static final String NAME = "name";
+        // private static final String NAME = "name";
 
         private static final String URI = "uri";
 
@@ -156,18 +156,18 @@ public class P2MetadataParser implements XMLInputParser {
             super(REPOSITORY);
         }
 
-        //        int type;
+        // int type;
         //
-        //        int options;
+        // int options;
         //
-        //        String name;
+        // String name;
 
         URI uri;
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            //            type = Integer.parseInt(atts.getValue(TYPE));
-            //            options = Integer.parseInt(atts.getValue(OPTIONS));
-            //            name = atts.getValue(NAME);
+            // type = Integer.parseInt(atts.getValue(TYPE));
+            // options = Integer.parseInt(atts.getValue(OPTIONS));
+            // name = atts.getValue(NAME);
 
             String uriAtt = atts.getValue(URI);
             String urlAtt = atts.getValue(URL);
@@ -565,7 +565,7 @@ public class P2MetadataParser implements XMLInputParser {
 
         private static final String OPTIONAL = "optional";
 
-        //        private static final String GREEDY = "greedy";
+        // private static final String GREEDY = "greedy";
 
         String namespace;
 
@@ -573,19 +573,19 @@ public class P2MetadataParser implements XMLInputParser {
 
         VersionRange range;
 
-        //        String filter;
+        // String filter;
         //
-        //        boolean greedy;
+        // boolean greedy;
 
         boolean optional;
 
         public RequiredHandler() {
             super(REQUIRED);
-            //            addChild(new FilterHandler(), new ChildElementHandler<FilterHandler>() {
-            //                public void childHanlded(FilterHandler child) {
-            //                    filter = child.getBufferedChars().trim();
-            //                }
-            //            });
+            // addChild(new FilterHandler(), new ChildElementHandler<FilterHandler>() {
+            // public void childHanlded(FilterHandler child) {
+            // filter = child.getBufferedChars().trim();
+            // }
+            // });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXParseException {
@@ -596,7 +596,7 @@ public class P2MetadataParser implements XMLInputParser {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-            //            greedy = getOptionalBooleanAttribute(atts, GREEDY, Boolean.TRUE).booleanValue();
+            // greedy = getOptionalBooleanAttribute(atts, GREEDY, Boolean.TRUE).booleanValue();
             optional = getOptionalBooleanAttribute(atts, OPTIONAL, Boolean.FALSE).booleanValue();
         }
 
@@ -676,24 +676,24 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    //    private static class TouchpointHandler extends DelegetingHandler {
+    // private static class TouchpointHandler extends DelegetingHandler {
     //
-    //        private static final String TOUCHPOINT = "touchpoint";
+    // private static final String TOUCHPOINT = "touchpoint";
     //
-    //        private static final String ID = "id";
+    // private static final String ID = "id";
     //
-    //        private static final String VERSION = "version";
+    // private static final String VERSION = "version";
     //
-    //        public TouchpointHandler() {
-    //            super(TOUCHPOINT);
-    //        }
+    // public TouchpointHandler() {
+    // super(TOUCHPOINT);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) {
-    //            String id = atts.getValue(ID);
-    //            String version = atts.getValue(VERSION);
-    //        }
+    // protected void handleAttributes(Attributes atts) {
+    // String id = atts.getValue(ID);
+    // String version = atts.getValue(VERSION);
+    // }
     //
-    //    }
+    // }
 
     private class TouchpointDataHandler extends DelegatingHandler {
 
@@ -772,152 +772,152 @@ public class P2MetadataParser implements XMLInputParser {
 
     }
 
-    //    private static class LicensesHandler extends DelegetingHandler {
+    // private static class LicensesHandler extends DelegetingHandler {
     //
-    //        private static final String LICENSES = "licenses";
+    // private static final String LICENSES = "licenses";
     //
-    //        private static final String SIZE = "size";
+    // private static final String SIZE = "size";
     //
-    //        public LicensesHandler() {
-    //            super(LICENSES);
-    //            addChild(new LicenseHandler(), new ChildElementHandler() {
-    //                public void childHanlded(DelegetingHandler child) {
-    //                }
-    //            });
-    //        }
+    // public LicensesHandler() {
+    // super(LICENSES);
+    // addChild(new LicenseHandler(), new ChildElementHandler() {
+    // public void childHanlded(DelegetingHandler child) {
+    // }
+    // });
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) {
-    //            String size = atts.getValue(SIZE);
-    //        }
+    // protected void handleAttributes(Attributes atts) {
+    // String size = atts.getValue(SIZE);
+    // }
     //
-    //    }
+    // }
 
-    //    private static class LicenseHandler extends DelegetingHandler {
+    // private static class LicenseHandler extends DelegetingHandler {
     //
-    //        private static final String LICENSE = "license";
+    // private static final String LICENSE = "license";
     //
-    //        private static final String URI = "uri";
+    // private static final String URI = "uri";
     //
-    //        private static final String URL = "url";
+    // private static final String URL = "url";
     //
-    //        public LicenseHandler() {
-    //            super(LICENSE);
-    //            setBufferingChar(true);
-    //        }
+    // public LicenseHandler() {
+    // super(LICENSE);
+    // setBufferingChar(true);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) {
-    //            String uri = atts.getValue(URI);
-    //            String url = atts.getValue(URL);
-    //        }
+    // protected void handleAttributes(Attributes atts) {
+    // String uri = atts.getValue(URI);
+    // String url = atts.getValue(URL);
+    // }
     //
-    //    }
+    // }
 
-    //    private static class CopyrightHandler extends DelegetingHandler {
+    // private static class CopyrightHandler extends DelegetingHandler {
     //
-    //        private static final String COPYRIGHT = "copyright";
+    // private static final String COPYRIGHT = "copyright";
     //
-    //        private static final String URI = "uri";
+    // private static final String URI = "uri";
     //
-    //        private static final String URL = "url";
+    // private static final String URL = "url";
     //
-    //        public CopyrightHandler() {
-    //            super(COPYRIGHT);
-    //        }
+    // public CopyrightHandler() {
+    // super(COPYRIGHT);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) {
-    //            String uri = atts.getValue(URI);
-    //            String url = atts.getValue(URL);
-    //        }
+    // protected void handleAttributes(Attributes atts) {
+    // String uri = atts.getValue(URI);
+    // String url = atts.getValue(URL);
+    // }
     //
-    //    }
+    // }
 
-    //    private class ChangesHandler extends DelegetingHandler {
+    // private class ChangesHandler extends DelegetingHandler {
     //
-    //        private static final String CHANGES = "changes";
+    // private static final String CHANGES = "changes";
     //
-    //        private static final String SIZE = "size";
+    // private static final String SIZE = "size";
     //
-    //        public ChangesHandler() {
-    //            super(CHANGES);
-    //            addChild(new ChangeHandler(), new ChildElementHandler<ChangeHandler>() {
-    //                public void childHanlded(ChangeHandler child) {
-    //                }
-    //            });
-    //        }
+    // public ChangesHandler() {
+    // super(CHANGES);
+    // addChild(new ChangeHandler(), new ChildElementHandler<ChangeHandler>() {
+    // public void childHanlded(ChangeHandler child) {
+    // }
+    // });
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) {
-    //            int size = Integer.parseInt(atts.getValue(SIZE));
-    //        }
-    //    }
+    // protected void handleAttributes(Attributes atts) {
+    // int size = Integer.parseInt(atts.getValue(SIZE));
+    // }
+    // }
 
-    //    private class ChangeHandler extends DelegetingHandler {
+    // private class ChangeHandler extends DelegetingHandler {
     //
-    //        private static final String CHANGE = "change";
+    // private static final String CHANGE = "change";
     //
-    //        public ChangeHandler() {
-    //            super(CHANGE);
-    //        }
-    //    }
+    // public ChangeHandler() {
+    // super(CHANGE);
+    // }
+    // }
 
-    //    private class FromHandler extends AbstractRequirementHandler {
+    // private class FromHandler extends AbstractRequirementHandler {
     //
-    //        private static final String FROM = "from";
+    // private static final String FROM = "from";
     //
-    //        public FromHandler() {
-    //            super(FROM);
-    //        }
+    // public FromHandler() {
+    // super(FROM);
+    // }
     //
-    //    }
+    // }
 
-    //    private class ToHandler extends AbstractRequirementHandler {
+    // private class ToHandler extends AbstractRequirementHandler {
     //
-    //        private static final String TO = "to";
+    // private static final String TO = "to";
     //
-    //        public ToHandler() {
-    //            super(TO);
-    //        }
+    // public ToHandler() {
+    // super(TO);
+    // }
     //
-    //    }
+    // }
 
-    //    private class PatchScopeHandler extends DelegetingHandler {
+    // private class PatchScopeHandler extends DelegetingHandler {
     //
-    //        private static final String PATCH_SCOPE = "patchScope";
+    // private static final String PATCH_SCOPE = "patchScope";
     //
-    //        private static final String SIZE = "size";
+    // private static final String SIZE = "size";
     //
-    //        public PatchScopeHandler() {
-    //            super(PATCH_SCOPE);
-    //            addChild(new PatchScopeHandler(), new ChildElementHandler<PatchScopeHandler>() {
-    //                public void childHanlded(PatchScopeHandler child) {
-    //                }
-    //            });
-    //        }
+    // public PatchScopeHandler() {
+    // super(PATCH_SCOPE);
+    // addChild(new PatchScopeHandler(), new ChildElementHandler<PatchScopeHandler>() {
+    // public void childHanlded(PatchScopeHandler child) {
+    // }
+    // });
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) {
-    //            int size = Integer.parseInt(atts.getValue(SIZE));
-    //        }
-    //    }
+    // protected void handleAttributes(Attributes atts) {
+    // int size = Integer.parseInt(atts.getValue(SIZE));
+    // }
+    // }
 
-    //    private class ScopeHandler extends DelegetingHandler {
+    // private class ScopeHandler extends DelegetingHandler {
     //
-    //        private static final String SCOPE = "scope";
+    // private static final String SCOPE = "scope";
     //
-    //        public ScopeHandler() {
-    //            super(SCOPE);
-    //            addChild(new RequiresHandler(), new ChildElementHandler<RequiresHandler>() {
-    //                public void childHanlded(RequiresHandler child) {
-    //                }
-    //            });
-    //        }
-    //    }
+    // public ScopeHandler() {
+    // super(SCOPE);
+    // addChild(new RequiresHandler(), new ChildElementHandler<RequiresHandler>() {
+    // public void childHanlded(RequiresHandler child) {
+    // }
+    // });
+    // }
+    // }
 
-    //    private  class LifeCycleHandler extends AbstractRequirementHandler {
+    // private class LifeCycleHandler extends AbstractRequirementHandler {
     //
-    //        private static final String LIFE_CYCLE = "lifeCycle";
+    // private static final String LIFE_CYCLE = "lifeCycle";
     //
-    //        public LifeCycleHandler() {
-    //            super(LIFE_CYCLE);
-    //        }
-    //    }
+    // public LifeCycleHandler() {
+    // super(LIFE_CYCLE);
+    // }
+    // }
 
 }

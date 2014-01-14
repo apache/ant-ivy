@@ -36,6 +36,7 @@ public interface RepositoryCacheManager {
 
     /**
      * Returns the name of the repository cache manager.
+     * 
      * @return the name of the repository cache manager.
      */
     public abstract String getName();
@@ -52,13 +53,13 @@ public interface RepositoryCacheManager {
      * @param artifactResolverName
      *            artifact resolver name
      */
-    public abstract void saveResolvers(
-            ModuleDescriptor descriptor, String metadataResolverName, String artifactResolverName);
+    public abstract void saveResolvers(ModuleDescriptor descriptor, String metadataResolverName,
+            String artifactResolverName);
 
     /**
      * Returns the artifact origin of the given artifact as saved in this cache.
      * <p>
-     * If the origin is unknown, the returned ArtifactOrigin instance will return true when 
+     * If the origin is unknown, the returned ArtifactOrigin instance will return true when
      * {@link ArtifactOrigin#isUnknown(ArtifactOrigin)} is called.
      * 
      * @param artifact
@@ -82,10 +83,10 @@ public interface RepositoryCacheManager {
      * @return the ResolvedModuleRevision corresponding to the module found, null if none correct
      *         has been found in cache
      */
-    public abstract ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 
-            CacheMetadataOptions options, String expectedResolver);
-    
+    public abstract ResolvedModuleRevision findModuleInCache(DependencyDescriptor dd,
+            ModuleRevisionId requestedRevisionId, CacheMetadataOptions options,
+            String expectedResolver);
+
     /**
      * Downloads an artifact to this cache.
      * 
@@ -97,13 +98,11 @@ public interface RepositoryCacheManager {
      * @param resourceDownloader
      *            a resource downloader to use if actual download of the resource is needed
      * @param options
-     *            a set of options to adjust the download 
+     *            a set of options to adjust the download
      * @return a report indicating how the download was performed
      */
-    public abstract ArtifactDownloadReport download(
-            Artifact artifact, 
-            ArtifactResourceResolver resourceResolver, 
-            ResourceDownloader resourceDownloader, 
+    public abstract ArtifactDownloadReport download(Artifact artifact,
+            ArtifactResourceResolver resourceResolver, ResourceDownloader resourceDownloader,
             CacheDownloadOptions options);
 
     /**
@@ -155,8 +154,8 @@ public interface RepositoryCacheManager {
      *             if an exception occurred while parsing the module descriptor
      */
     public ResolvedModuleRevision cacheModuleDescriptor(DependencyResolver resolver,
-            ResolvedResource orginalMetadataRef, DependencyDescriptor dd, 
-            Artifact requestedMetadataArtifact,  ResourceDownloader downloader, 
+            ResolvedResource orginalMetadataRef, DependencyDescriptor dd,
+            Artifact requestedMetadataArtifact, ResourceDownloader downloader,
             CacheMetadataOptions options) throws ParseException;
 
     /**
@@ -176,7 +175,7 @@ public interface RepositoryCacheManager {
     public void originalToCachedModuleDescriptor(DependencyResolver resolver,
             ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
             ResolvedModuleRevision rmr, ModuleDescriptorWriter writer);
-    
+
     /**
      * Cleans the whole cache.
      */
@@ -185,9 +184,11 @@ public interface RepositoryCacheManager {
     /**
      * Caches a dynamic revision constraint resolution.
      * 
-     * @param dynamicMrid the dynamic module revision id
-     * @param revision the resolved revision
+     * @param dynamicMrid
+     *            the dynamic module revision id
+     * @param revision
+     *            the resolved revision
      */
     public void saveResolvedRevision(ModuleRevisionId dynamicMrid, String revision);
-    
+
 }

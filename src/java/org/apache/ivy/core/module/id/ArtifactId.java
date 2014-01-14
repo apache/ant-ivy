@@ -32,9 +32,12 @@ public class ArtifactId {
     private String ext;
 
     /**
-     * @param mid  The ModuleId, which is the base of this artifact.
-     * @param name  The name of the artifact.
-     * @param type  The type of the artifact.
+     * @param mid
+     *            The ModuleId, which is the base of this artifact.
+     * @param name
+     *            The name of the artifact.
+     * @param type
+     *            The type of the artifact.
      */
     public ArtifactId(ModuleId mid, String name, String type, String ext) {
         this.mid = mid;
@@ -55,23 +58,22 @@ public class ArtifactId {
 
     /** {@inheritDoc} */
     public int hashCode() {
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         int hash = 17;
         hash += getModuleId().hashCode() * 37;
         hash += getName().hashCode() * 37;
         hash += getType().hashCode() * 37;
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         return hash;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return getModuleId()
-            + "!" + getShortDescription();
+        return getModuleId() + "!" + getShortDescription();
     }
-    
+
     public String getShortDescription() {
-        return getName() + "." + getExt() 
+        return getName() + "." + getExt()
                 + (getType().equals(getExt()) ? "" : "(" + getType() + ")");
     }
 

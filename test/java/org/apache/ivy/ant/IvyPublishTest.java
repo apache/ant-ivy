@@ -88,8 +88,8 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testMergeParent() throws IOException, ParseException {
-        //publish the parent descriptor first, so that it can be found while
-        //we are reading the child descriptor.
+        // publish the parent descriptor first, so that it can be found while
+        // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -102,9 +102,10 @@ public class IvyPublishTest extends TestCase {
         File art = new File("build/test/publish/resolve-simple-1.0.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         pubParent.execute();
-        
-        //update=true implies merge=true
-        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+
+        // update=true implies merge=true
+        project.setProperty("ivy.dep.file",
+            "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
         publish.setResolver("1");
         publish.setUpdate(true);
         publish.setOrganisation("apache");
@@ -126,33 +127,33 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("ivy-extends-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine(); 
-            mergeLine != null && expectedLine != null; 
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("ivy-extends-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
         }
     }
-    
+
     public void testMergeParentWithoutPublishingParent() throws IOException, ParseException {
-        //here we directly publish a module extending ivy-multiconf.xml, 
-        //the module parent is not published not yet in cache
-        //See : IVY-1248
-       
-        //update=true implies merge=true
-        //project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        // here we directly publish a module extending ivy-multiconf.xml,
+        // the module parent is not published not yet in cache
+        // See : IVY-1248
+
+        // update=true implies merge=true
+        // project.setProperty("ivy.dep.file",
+        // "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
         publish.setResolver("1");
         publish.setUpdate(true);
         publish.setOrganisation("apache");
@@ -174,37 +175,37 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("ivy-extends-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine(); 
-            mergeLine != null && expectedLine != null; 
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("ivy-extends-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
         }
     }
-    
-    public void testMergeParentWithoutPublishingParentForceDeliver() throws IOException, ParseException {
-        //here we directly publish a module extending ivy-multiconf.xml, 
-        //the module parent is not published not yet in cache
-        //See : IVY-1248
-        
+
+    public void testMergeParentWithoutPublishingParentForceDeliver() throws IOException,
+            ParseException {
+        // here we directly publish a module extending ivy-multiconf.xml,
+        // the module parent is not published not yet in cache
+        // See : IVY-1248
+
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
         resolve.execute();
-        
-        //update=true implies merge=true
+
+        // update=true implies merge=true
         publish.setResolver("1");
         publish.setUpdate(true);
         publish.setOrganisation("apache");
@@ -228,37 +229,36 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("ivy-extends-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine(); 
-            mergeLine != null && expectedLine != null; 
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("ivy-extends-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
         }
     }
-    
+
     public void testMergeParentWithoutLocationAttribute() throws IOException, ParseException {
-        //See : IVY-XXX
-        
-        
+        // See : IVY-XXX
+
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/extends/child1/ivy-child1.xml"));
         resolve.execute();
-       
-        //update=true implies merge=true
-        //project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+
+        // update=true implies merge=true
+        // project.setProperty("ivy.dep.file",
+        // "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
         publish.setResolver("1");
         publish.setUpdate(true);
         publish.setPubrevision("1.2");
@@ -277,30 +277,28 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("extends/child1/ivy-child1-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine(); 
-            mergeLine != null && expectedLine != null; 
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("extends/child1/ivy-child1-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
         }
     }
 
-    
     public void testMinimalMerge() throws IOException, ParseException {
-        //publish the parent descriptor first, so that it can be found while
-        //we are reading the child descriptor.
+        // publish the parent descriptor first, so that it can be found while
+        // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -314,7 +312,7 @@ public class IvyPublishTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         pubParent.execute();
 
-        //update=true implies merge=true
+        // update=true implies merge=true
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-minimal.xml");
         publish.setResolver("1");
         publish.setUpdate(true);
@@ -337,20 +335,19 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("ivy-extends-minimal-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine();
-            mergeLine != null && expectedLine != null;
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("ivy-extends-minimal-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
@@ -358,8 +355,8 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testMergeExtraAttributes() throws IOException, ParseException {
-        //publish the parent descriptor first, so that it can be found while
-        //we are reading the child descriptor.
+        // publish the parent descriptor first, so that it can be found while
+        // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -373,8 +370,9 @@ public class IvyPublishTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         pubParent.execute();
 
-        //update=true implies merge=true
-        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-extra-attributes.xml");
+        // update=true implies merge=true
+        project.setProperty("ivy.dep.file",
+            "test/java/org/apache/ivy/ant/ivy-extends-extra-attributes.xml");
         res = new IvyResolve();
         res.setProject(project);
         res.execute();
@@ -401,20 +399,19 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine();
-            mergeLine != null && expectedLine != null;
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
@@ -422,9 +419,10 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testMergeExtraAttributesFromParent() throws IOException, ParseException {
-        //publish the parent descriptor first, so that it can be found while
-        //we are reading the child descriptor.
-        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf-extra-attributes.xml");
+        // publish the parent descriptor first, so that it can be found while
+        // we are reading the child descriptor.
+        project.setProperty("ivy.dep.file",
+            "test/java/org/apache/ivy/ant/ivy-multiconf-extra-attributes.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
         res.execute();
@@ -437,8 +435,9 @@ public class IvyPublishTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         pubParent.execute();
 
-        //update=true implies merge=true
-        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-extra-attributes-parent.xml");
+        // update=true implies merge=true
+        project.setProperty("ivy.dep.file",
+            "test/java/org/apache/ivy/ant/ivy-extends-extra-attributes-parent.xml");
         res = new IvyResolve();
         res.setProject(project);
         res.execute();
@@ -465,20 +464,19 @@ public class IvyPublishTest extends TestCase {
 
         BufferedReader merged = new BufferedReader(new FileReader(published));
         BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-            .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
-        for (String mergeLine = merged.readLine(),
-                    expectedLine = expected.readLine();
-            mergeLine != null && expectedLine != null;
-            mergeLine = merged.readLine(),
-            expectedLine = expected.readLine()) {
+                .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
+        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                .readLine()) {
 
-            //strip timestamps for the comparison
+            // strip timestamps for the comparison
             if (mergeLine.indexOf("<info") >= 0) {
                 mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
             }
-            //discard whitespace-only lines
+            // discard whitespace-only lines
             if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                    mergeLine);
             }
 
             ++lineNo;
@@ -530,10 +528,13 @@ public class IvyPublishTest extends TestCase {
             assertTrue(ex.getMessage().indexOf("resolve-simple.jar") != -1);
             // should have do the ivy delivering
             assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
-            
+
             // should not have published the files with "1" resolver
-            assertFalse(new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").exists());
-            assertFalse(new File("test/repositories/1/apache/resolve-simple/jars/resolve-simple-1.2.jar").exists());
+            assertFalse(new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml")
+                    .exists());
+            assertFalse(new File(
+                    "test/repositories/1/apache/resolve-simple/jars/resolve-simple-1.2.jar")
+                    .exists());
         }
     }
 
@@ -544,7 +545,7 @@ public class IvyPublishTest extends TestCase {
         res.execute();
 
         // in this test case one artifact is available, and the other one is missing
-        // since we use a transactional resolver, no file should be published at all 
+        // since we use a transactional resolver, no file should be published at all
         File art = new File("build/test/publish/multi1-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         publish.setPubrevision("1.2");
@@ -572,7 +573,7 @@ public class IvyPublishTest extends TestCase {
         res.execute();
 
         // in this test case one artifact is available, and the other one is missing
-        // this should be detected early and no file should be published at all 
+        // this should be detected early and no file should be published at all
         File art = new File("build/test/publish/multi1-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         publish.setPubrevision("1.2");
@@ -669,10 +670,11 @@ public class IvyPublishTest extends TestCase {
 
         // should have do the ivy delivering
         assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
-        
+
         // should have published the files with "1" resolver
         assertTrue(new File("test/repositories/1/apache/publish-public/ivys/ivy-1.2.xml").exists());
-        assertTrue(new File("test/repositories/1/apache/publish-public/jars/publish-public-1.2.jar").exists());
+        assertTrue(new File("test/repositories/1/apache/publish-public/jars/publish-public-1.2.jar")
+                .exists());
     }
 
     public void testCustom() throws Exception {
@@ -838,7 +840,7 @@ public class IvyPublishTest extends TestCase {
             publish.execute();
             fail("shouldn't publish ivy file with bad revision");
         } catch (BuildException ex) {
-            //normal
+            // normal
         }
     }
 

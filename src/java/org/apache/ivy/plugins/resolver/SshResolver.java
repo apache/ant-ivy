@@ -23,14 +23,14 @@ import org.apache.ivy.plugins.repository.ssh.SshRepository;
  * Resolver for SSH resolver for ivy
  */
 public class SshResolver extends AbstractSshBasedResolver {
-    
+
     public SshResolver() {
         setRepository(new SshRepository());
     }
-    
+
     /**
-     * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions
-     * of the published files.
+     * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of
+     * the published files.
      */
     public void setPublishPermissions(String permissions) {
         ((SshRepository) getRepository()).setPublishPermissions(permissions);
@@ -54,9 +54,9 @@ public class SshResolver extends AbstractSshBasedResolver {
     /**
      * set the command to get a directory listing the command has to be a shell command working on
      * the target system and has to produce a listing of filenames, with each filename on a new line
-     * the term %arg can be used in the command to substitue the path to be listed 
-     * (e.g. "ls -1 %arg | grep -v CVS" to get a listing without CVS directory) if %arg is not
-     * part of the command, the path will be appended to the command default is: "ls -1"
+     * the term %arg can be used in the command to substitue the path to be listed (e.g.
+     * "ls -1 %arg | grep -v CVS" to get a listing without CVS directory) if %arg is not part of the
+     * command, the path will be appended to the command default is: "ls -1"
      */
     public void setListCommand(String cmd) {
         ((SshRepository) getRepository()).setListCommand(cmd);
@@ -64,10 +64,10 @@ public class SshResolver extends AbstractSshBasedResolver {
 
     /**
      * set the command to check for existence of a file the command has to be a shell command
-     * working on the target system and has to create an exit status of 0 for an existent file 
-     * and <> 0 for a non existing file given as argument the term %arg can be used in the command
-     * to substitue the path to be listed if %arg is not part of the command, the path will be 
-     * appended to the command default is: "ls"
+     * working on the target system and has to create an exit status of 0 for an existent file and
+     * <> 0 for a non existing file given as argument the term %arg can be used in the command to
+     * substitue the path to be listed if %arg is not part of the command, the path will be appended
+     * to the command default is: "ls"
      */
     public void setExistCommand(String cmd) {
         ((SshRepository) getRepository()).setExistCommand(cmd);

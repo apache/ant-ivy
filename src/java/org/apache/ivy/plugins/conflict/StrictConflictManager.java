@@ -31,7 +31,7 @@ public class StrictConflictManager extends AbstractConflictManager {
 
     public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
         VersionMatcher versionMatcher = getSettings().getVersionMatcher();
-        
+
         IvyNode lastNode = null;
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
@@ -40,7 +40,7 @@ public class StrictConflictManager extends AbstractConflictManager {
                 // dynamic revision, not enough information to resolve conflict
                 return null;
             }
-            
+
             if (lastNode != null && !lastNode.equals(node)) {
                 throw new StrictConflictException(lastNode, node);
             }

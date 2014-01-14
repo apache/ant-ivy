@@ -75,10 +75,9 @@ import org.apache.ivy.util.filter.FilterHelper;
  * And that should be enough in most cases!
  */
 public class Ivy14 {
-    //CheckStyle:ParameterNumberCheck OFF
+    // CheckStyle:ParameterNumberCheck OFF
     // don't check parameter numbers, since this class is here for backward compatibility
-    
-    
+
     private Ivy ivy;
 
     public Ivy14() {
@@ -109,15 +108,13 @@ public class Ivy14 {
             String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver,
             boolean validate, boolean resolveDynamicRevisions) throws IOException, ParseException {
         ivy.deliver(mrid, revision, destIvyPattern, new DeliverOptions(status, pubdate,
-                pdrResolver, validate,
-                resolveDynamicRevisions, null));
+                pdrResolver, validate, resolveDynamicRevisions, null));
     }
 
     public void deliver(ModuleRevisionId mrid, String revision, File cache, String destIvyPattern,
             String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver,
             boolean validate) throws IOException, ParseException {
-        deliver(mrid, revision, cache, destIvyPattern, status, 
-            pubdate, pdrResolver, validate, true);
+        deliver(mrid, revision, cache, destIvyPattern, status, pubdate, pdrResolver, validate, true);
     }
 
     public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, File cache,
@@ -126,22 +123,19 @@ public class Ivy14 {
         return ivy.getRetrieveEngine().determineArtifactsToCopy(
             new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
             destFilePattern,
-            new RetrieveOptions().setConfs(confs).setDestIvyPattern(
-                destIvyPattern).setArtifactFilter(artifactFilter));
+            new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern)
+                    .setArtifactFilter(artifactFilter));
     }
 
     public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, File cache,
             String destFilePattern, String destIvyPattern) throws ParseException, IOException {
         return ivy.getRetrieveEngine().determineArtifactsToCopy(
-            new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-            destFilePattern,
-            new RetrieveOptions().setConfs(confs).setDestIvyPattern(
-                destIvyPattern));
+            new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), destFilePattern,
+            new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern));
     }
 
     public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
-        Message.deprecated(
-            "using cache and useOrigin when calling download is not supported anymore");
+        Message.deprecated("using cache and useOrigin when calling download is not supported anymore");
         return ivy.getResolveEngine().download(artifact, new DownloadOptions());
     }
 
@@ -182,12 +176,8 @@ public class Ivy14 {
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
             boolean validate, boolean overwrite, Filter artifactFilter, File cache,
             String matcherName) throws IOException {
-        return ivy.install(mrid, from, to, 
-            new InstallOptions()
-                .setTransitive(transitive)
-                .setValidate(validate)
-                .setOverwrite(overwrite)
-                .setArtifactFilter(artifactFilter)
+        return ivy.install(mrid, from, to, new InstallOptions().setTransitive(transitive)
+                .setValidate(validate).setOverwrite(overwrite).setArtifactFilter(artifactFilter)
                 .setMatcherName(matcherName));
     }
 
@@ -254,41 +244,44 @@ public class Ivy14 {
             Collection srcArtifactPattern, String resolverName, String srcIvyPattern,
             String status, Date pubdate, Artifact[] extraArtifacts, boolean validate,
             boolean overwrite, boolean update, String conf) throws IOException {
-        return ivy.publish(mrid, srcArtifactPattern, resolverName, new PublishOptions()
-                .setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
-                .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
-                .setUpdate(update).setValidate(validate).setOverwrite(overwrite).setConfs(
-                    splitConfs(conf)));
+        return ivy.publish(
+            mrid,
+            srcArtifactPattern,
+            resolverName,
+            new PublishOptions().setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
+                    .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
+                    .setUpdate(update).setValidate(validate).setOverwrite(overwrite)
+                    .setConfs(splitConfs(conf)));
     }
 
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache,
             String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate,
             boolean overwrite) throws IOException {
         return ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName,
-            new PublishOptions()
-                    .setPubrevision(pubrevision).setSrcIvyPattern(srcIvyPattern).setValidate(
-                        validate).setOverwrite(overwrite));
+            new PublishOptions().setPubrevision(pubrevision).setSrcIvyPattern(srcIvyPattern)
+                    .setValidate(validate).setOverwrite(overwrite));
     }
 
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache,
             String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate)
             throws IOException {
         return ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName,
-            new PublishOptions()
-                    .setPubrevision(pubrevision).setSrcIvyPattern(srcIvyPattern).setValidate(
-                        validate));
+            new PublishOptions().setPubrevision(pubrevision).setSrcIvyPattern(srcIvyPattern)
+                    .setValidate(validate));
     }
 
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache,
             String srcArtifactPattern, String resolverName, String srcIvyPattern, String status,
             Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite,
             boolean update, String conf) throws IOException {
-        return ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName,
-            new PublishOptions()
-                    .setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
-                    .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts).setUpdate(
-                        update).setValidate(validate).setOverwrite(overwrite).setConfs(
-                        splitConfs(conf)));
+        return ivy.publish(
+            mrid,
+            Collections.singleton(srcArtifactPattern),
+            resolverName,
+            new PublishOptions().setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
+                    .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
+                    .setUpdate(update).setValidate(validate).setOverwrite(overwrite)
+                    .setConfs(splitConfs(conf)));
     }
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
@@ -299,8 +292,10 @@ public class Ivy14 {
             boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin,
             boolean download, boolean outputReport, Filter artifactFilter) throws ParseException,
             IOException {
-        return ivy.resolve(md, newResolveOptions(confs, null, cache, date, validate, useCacheOnly,
-            transitive, useOrigin, download, outputReport, artifactFilter));
+        return ivy.resolve(
+            md,
+            newResolveOptions(confs, null, cache, date, validate, useCacheOnly, transitive,
+                useOrigin, download, outputReport, artifactFilter));
     }
 
     private ResolveOptions newResolveOptions(String[] confs, String revision, File cache,
@@ -309,85 +304,105 @@ public class Ivy14 {
         if (useOrigin) {
             ivy.getSettings().useDeprecatedUseOrigin();
         }
-        return new ResolveOptions().setConfs(confs).setRevision(revision)
-                .setValidate(validate).setUseCacheOnly(useCacheOnly).setTransitive(transitive)
-                .setDownload(download).setOutputReport(outputReport)
-                .setArtifactFilter(artifactFilter);
+        return new ResolveOptions().setConfs(confs).setRevision(revision).setValidate(validate)
+                .setUseCacheOnly(useCacheOnly).setTransitive(transitive).setDownload(download)
+                .setOutputReport(outputReport).setArtifactFilter(artifactFilter);
     }
 
     public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date,
             boolean validate, boolean useCacheOnly, boolean transitive, boolean download,
             boolean outputReport, Filter artifactFilter) throws ParseException, IOException {
-        return ivy.resolve(md, newResolveOptions(confs, null, cache, date, validate, useCacheOnly,
-            transitive, false, download, outputReport, artifactFilter));
+        return ivy.resolve(
+            md,
+            newResolveOptions(confs, null, cache, date, validate, useCacheOnly, transitive, false,
+                download, outputReport, artifactFilter));
     }
 
     public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date,
             boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter)
             throws ParseException, IOException {
-        return ivy.resolve(md, newResolveOptions(confs, null, cache, date, validate, useCacheOnly,
-            transitive, false, true, true, artifactFilter));
+        return ivy.resolve(
+            md,
+            newResolveOptions(confs, null, cache, date, validate, useCacheOnly, transitive, false,
+                true, true, artifactFilter));
     }
 
     public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date,
             boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException,
             IOException {
-        return ivy.resolve(md, newResolveOptions(confs, null, cache, date, validate, useCacheOnly,
-            true, false, true, true, artifactFilter));
+        return ivy.resolve(
+            md,
+            newResolveOptions(confs, null, cache, date, validate, useCacheOnly, true, false, true,
+                true, artifactFilter));
     }
 
     public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive,
             boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly,
             boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
-        return ivy.resolve(mrid, newResolveOptions(confs, null, cache, date, validate,
-            useCacheOnly, transitive, useOrigin, true, true, artifactFilter), changing);
+        return ivy.resolve(
+            mrid,
+            newResolveOptions(confs, null, cache, date, validate, useCacheOnly, transitive,
+                useOrigin, true, true, artifactFilter), changing);
     }
 
     public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive,
             boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly,
             Filter artifactFilter) throws ParseException, IOException {
-        return ivy.resolve(mrid, newResolveOptions(confs, null, cache, date, validate,
-            useCacheOnly, transitive, false, true, true, artifactFilter), changing);
+        return ivy.resolve(
+            mrid,
+            newResolveOptions(confs, null, cache, date, validate, useCacheOnly, transitive, false,
+                true, true, artifactFilter), changing);
     }
 
     public ResolveReport resolve(ModuleRevisionId mrid, String[] confs) throws ParseException,
             IOException {
-        return ivy.resolve(mrid, newResolveOptions(confs, null,
-            ivy.getSettings().getDefaultCache(), null, true, false, true, false, true, true,
-            FilterHelper.NO_FILTER), false);
+        return ivy.resolve(
+            mrid,
+            newResolveOptions(confs, null, ivy.getSettings().getDefaultCache(), null, true, false,
+                true, false, true, true, FilterHelper.NO_FILTER), false);
     }
 
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache,
             Date date, boolean validate, boolean useCacheOnly, boolean transitive,
             boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
-        return ivy.resolve(ivySource, newResolveOptions(confs, revision, cache, date, validate,
-            useCacheOnly, transitive, useOrigin, true, true, artifactFilter));
+        return ivy.resolve(
+            ivySource,
+            newResolveOptions(confs, revision, cache, date, validate, useCacheOnly, transitive,
+                useOrigin, true, true, artifactFilter));
     }
 
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache,
             Date date, boolean validate, boolean useCacheOnly, boolean transitive,
             Filter artifactFilter) throws ParseException, IOException {
-        return ivy.resolve(ivySource, newResolveOptions(confs, revision, cache, date, validate,
-            useCacheOnly, transitive, false, true, true, artifactFilter));
+        return ivy.resolve(
+            ivySource,
+            newResolveOptions(confs, revision, cache, date, validate, useCacheOnly, transitive,
+                false, true, true, artifactFilter));
     }
 
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache,
             Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter)
             throws ParseException, IOException {
-        return ivy.resolve(ivySource, newResolveOptions(confs, revision, cache, date, validate,
-            useCacheOnly, true, false, true, true, artifactFilter));
+        return ivy.resolve(
+            ivySource,
+            newResolveOptions(confs, revision, cache, date, validate, useCacheOnly, true, false,
+                true, true, artifactFilter));
     }
 
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache,
             Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
-        return ivy.resolve(ivySource, newResolveOptions(confs, revision, cache, date, validate,
-            useCacheOnly, true, false, true, true, FilterHelper.NO_FILTER));
+        return ivy.resolve(
+            ivySource,
+            newResolveOptions(confs, revision, cache, date, validate, useCacheOnly, true, false,
+                true, true, FilterHelper.NO_FILTER));
     }
 
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache,
             Date date, boolean validate) throws ParseException, IOException {
-        return ivy.resolve(ivySource, newResolveOptions(confs, revision, cache, date, validate,
-            false, true, false, true, true, FilterHelper.NO_FILTER));
+        return ivy.resolve(
+            ivySource,
+            newResolveOptions(confs, revision, cache, date, validate, false, true, false, true,
+                true, FilterHelper.NO_FILTER));
     }
 
     public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
@@ -399,9 +414,10 @@ public class Ivy14 {
             boolean makeSymlinks) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
-                    destIvyPattern).setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(
-                    useOrigin).setMakeSymlinks(makeSymlinks));
+                destFilePattern,
+                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern)
+                        .setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(useOrigin)
+                        .setMakeSymlinks(makeSymlinks));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -411,9 +427,9 @@ public class Ivy14 {
             String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
-                    destIvyPattern).setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(
-                    useOrigin));
+                destFilePattern,
+                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern)
+                        .setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(useOrigin));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -423,8 +439,9 @@ public class Ivy14 {
             String destIvyPattern, Filter artifactFilter) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
-                    destIvyPattern).setArtifactFilter(artifactFilter));
+                destFilePattern,
+                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern)
+                        .setArtifactFilter(artifactFilter));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -434,8 +451,8 @@ public class Ivy14 {
             String destIvyPattern) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
-                    destIvyPattern));
+                destFilePattern,
+                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -455,14 +472,15 @@ public class Ivy14 {
     }
 
     public List sortModuleDescriptors(Collection moduleDescriptors) {
-        return ivy.sortModuleDescriptors(moduleDescriptors, 
-            new SortOptions()
-                .setNonMatchingVersionReporter(new SilentNonMatchingVersionReporter()));
+        return ivy
+                .sortModuleDescriptors(moduleDescriptors, new SortOptions()
+                        .setNonMatchingVersionReporter(new SilentNonMatchingVersionReporter()));
     }
 
     public List sortNodes(Collection nodes) {
-        return ivy.sortNodes(nodes, new SortOptions()
-                .setNonMatchingVersionReporter(new SilentNonMatchingVersionReporter()));
+        return ivy
+                .sortNodes(nodes, new SortOptions()
+                        .setNonMatchingVersionReporter(new SilentNonMatchingVersionReporter()));
     }
 
     public String substitute(String str) {
@@ -480,5 +498,5 @@ public class Ivy14 {
         return confs;
     }
 
-    //CheckStyle:ParameterNumberCheck ON
+    // CheckStyle:ParameterNumberCheck ON
 }

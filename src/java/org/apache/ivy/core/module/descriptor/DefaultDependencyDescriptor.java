@@ -46,10 +46,12 @@ import org.apache.ivy.util.Checks;
  * method.
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
-    private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\+[^\\(]+)?(\\(.*\\))?");
+    private static final Pattern SELF_FALLBACK_PATTERN = Pattern
+            .compile("@(\\+[^\\(]+)?(\\(.*\\))?");
 
-    private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\+[^\\(]+)?(\\(.*\\))?");
-    
+    private static final Pattern THIS_FALLBACK_PATTERN = Pattern
+            .compile("#(\\+[^\\(]+)?(\\(.*\\))?");
+
     /**
      * Transforms the given dependency descriptor of the given namespace and return a new dependency
      * descriptor in the system namespace. <i>Note that exclude rules are not converted in system
@@ -83,11 +85,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             NamespaceTransformer t, boolean fromSystem) {
         ModuleRevisionId transformParentId = t.transform(dd.getParentRevisionId());
         ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
-        ModuleRevisionId transformDynamicMrid = 
-            t.transform(dd.getDynamicConstraintDependencyRevisionId());
-        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(
-            null, transformMrid, transformDynamicMrid, 
-            dd.isForce(), dd.isChanging(), dd.isTransitive());
+        ModuleRevisionId transformDynamicMrid = t.transform(dd
+                .getDynamicConstraintDependencyRevisionId());
+        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(null, transformMrid,
+                transformDynamicMrid, dd.isForce(), dd.isChanging(), dd.isTransitive());
 
         newdd.parentId = transformParentId;
         ModuleRevisionId sourceModule = dd.getSourceModule();
@@ -106,18 +107,18 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             } else {
                 throw new IllegalArgumentException(
                         "dependency descriptor transformation does not support * module confs "
-                        + "with descriptors which aren't DefaultDependencyDescriptor");
+                                + "with descriptors which aren't DefaultDependencyDescriptor");
             }
         } else {
             for (int i = 0; i < moduleConfs.length; i++) {
-                newdd.confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                        .getDependencyConfigurations(moduleConfs[i]))));
-                newdd.getExcludeRules().put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                        .getExcludeRules(moduleConfs[i]))));
-                newdd.getIncludeRules().put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                        .getIncludeRules(moduleConfs[i]))));
-                newdd.getDependencyArtifacts().put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                        .getDependencyArtifacts(moduleConfs[i]))));
+                newdd.confs.put(moduleConfs[i],
+                    new ArrayList(Arrays.asList(dd.getDependencyConfigurations(moduleConfs[i]))));
+                newdd.getExcludeRules().put(moduleConfs[i],
+                    new ArrayList(Arrays.asList(dd.getExcludeRules(moduleConfs[i]))));
+                newdd.getIncludeRules().put(moduleConfs[i],
+                    new ArrayList(Arrays.asList(dd.getIncludeRules(moduleConfs[i]))));
+                newdd.getDependencyArtifacts().put(moduleConfs[i],
+                    new ArrayList(Arrays.asList(dd.getDependencyArtifacts(moduleConfs[i]))));
             }
         }
         if (fromSystem) {
@@ -130,16 +131,16 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private ModuleRevisionId dynamicRevId;
 
-    private Map/*<String,List<String>>*/ confs = new LinkedHashMap();
+    private Map/* <String,List<String>> */confs = new LinkedHashMap();
 
     // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
     private Map dependencyArtifacts; // initialized on demand only for memory consumption reason
 
     // Map (String masterConf -> Collection(IncludeRule))
-    private Map includeRules;  // initialized on demand only for memory consumption reason
+    private Map includeRules; // initialized on demand only for memory consumption reason
 
     // Map (String masterConf -> Collection(ExcludeRule))
-    private Map excludeRules;  // initialized on demand only for memory consumption reason
+    private Map excludeRules; // initialized on demand only for memory consumption reason
 
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently of
@@ -165,18 +166,18 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private final ModuleDescriptor md;
 
     private DependencyDescriptor asSystem = this;
-    
+
     private ModuleRevisionId sourceModule;
-    
+
     private DefaultDependencyDescriptor(DefaultDependencyDescriptor dd, ModuleRevisionId revision) {
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(revision, "revision");
-        
+
         if (!revision.getModuleId().equals(dd.getDependencyId())) {
             throw new IllegalArgumentException(
-                "new ModuleRevisionId MUST have the same ModuleId as original one."
-                + " original = " + dd.getDependencyId()
-                + " new = " + revision.getModuleId());
+                    "new ModuleRevisionId MUST have the same ModuleId as original one."
+                            + " original = " + dd.getDependencyId() + " new = "
+                            + revision.getModuleId());
         }
         md = dd.md;
         parentId = dd.parentId;
@@ -187,15 +188,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         isTransitive = dd.isTransitive;
         namespace = dd.namespace;
         confs.putAll(dd.confs);
-        excludeRules = dd.excludeRules == null ? null : new LinkedHashMap(dd.excludeRules); 
-        includeRules = dd.includeRules == null ? null : new LinkedHashMap(dd.includeRules); 
-        dependencyArtifacts = dd.dependencyArtifacts == null 
-                                ? null : new LinkedHashMap(dd.dependencyArtifacts);
+        excludeRules = dd.excludeRules == null ? null : new LinkedHashMap(dd.excludeRules);
+        includeRules = dd.includeRules == null ? null : new LinkedHashMap(dd.includeRules);
+        dependencyArtifacts = dd.dependencyArtifacts == null ? null : new LinkedHashMap(
+                dd.dependencyArtifacts);
         sourceModule = dd.sourceModule;
     }
-    
-    public DefaultDependencyDescriptor(
-            ModuleDescriptor md, ModuleRevisionId mrid, boolean force,
+
+    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force,
             boolean changing, boolean transitive) {
         this(md, mrid, mrid, force, changing, transitive);
     }
@@ -208,12 +208,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         this(null, mrid, mrid, force, changing, true);
     }
 
-    public DefaultDependencyDescriptor(
-            ModuleDescriptor md, ModuleRevisionId mrid, ModuleRevisionId dynamicConstraint, 
-            boolean force, boolean changing, boolean transitive) {
+    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid,
+            ModuleRevisionId dynamicConstraint, boolean force, boolean changing, boolean transitive) {
         Checks.checkNotNull(mrid, "mrid");
         Checks.checkNotNull(dynamicConstraint, "dynamicConstraint");
-        
+
         this.md = md;
         revId = mrid;
         dynamicRevId = dynamicConstraint;
@@ -230,7 +229,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     public ModuleRevisionId getDependencyRevisionId() {
         return revId;
     }
-    
+
     public ModuleRevisionId getDynamicConstraintDependencyRevisionId() {
         return dynamicRevId;
     }
@@ -260,12 +259,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             Configuration c = md.getConfiguration(moduleConfiguration);
             if (c instanceof ConfigurationIntersection) {
                 ConfigurationIntersection intersection = (ConfigurationIntersection) c;
-                Set /*<String>*/ intersectedDepConfs = new HashSet();
+                Set /* <String> */intersectedDepConfs = new HashSet();
                 String[] intersected = intersection.getIntersectedConfigurationNames();
                 for (int i = 0; i < intersected.length; i++) {
-                    Collection depConfs = 
-                         getDependencyConfigurationsIncludingExtending(
-                                 intersected[i], requestedConfiguration);
+                    Collection depConfs = getDependencyConfigurationsIncludingExtending(
+                        intersected[i], requestedConfiguration);
                     if (intersectedDepConfs.isEmpty()) {
                         intersectedDepConfs.addAll(depConfs);
                     } else {
@@ -273,45 +271,35 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                             intersectedDepConfs.remove("*");
                             intersectedDepConfs.addAll(depConfs);
                         } else if (depConfs.contains("*")) {
-                            // nothing to do, intersection of 'something' 
-                            // with 'everything' is 'something'                            
+                            // nothing to do, intersection of 'something'
+                            // with 'everything' is 'something'
                         } else {
-                            Set /*<String>*/ intersectedDepConfsCopy = intersectedDepConfs;
+                            Set /* <String> */intersectedDepConfsCopy = intersectedDepConfs;
                             intersectedDepConfs = new HashSet();
                             for (Iterator it = intersectedDepConfsCopy.iterator(); it.hasNext();) {
                                 String intersectedDepConf = (String) it.next();
                                 if (depConfs.contains(intersectedDepConf)) {
-                                    // the conf is present in both sets, 
+                                    // the conf is present in both sets,
                                     // so it is in the intersection
                                     intersectedDepConfs.add(intersectedDepConf);
                                     continue;
                                 }
                                 /*
-                                we do not handle special confs like *!sg or [cond]* in right hand 
-                                confs yet: it would require supporting parenthesis grouping in 
-                                configurations intersection interpretation 
-                                 
-                                for (Iterator it2 = depConfs.iterator(); it2.hasNext();) {
-                                    String depConf = (String) it2.next();
-                                    if (depConf.startsWith("*")) {
-                                        if (intersectedDepConf
-                                                .indexOf("(" + depConf + ")") != -1) {
-                                            intersectedDepConfs.add(intersectedDepConf);
-                                        } else {
-                                            intersectedDepConfs.add(
-                                                "(" + intersectedDepConf + ")+(" + depConf + ")");
-                                        }
-                                    } else if (intersectedDepConf.startsWith("*")) {
-                                        if (depConf
-                                            .indexOf("(" + intersectedDepConf + ")") != -1) {
-                                            intersectedDepConfs.add(depConf);
-                                        } else {
-                                            intersectedDepConfs.add(
-                                                depConf + "+" + intersectedDepConf);
-                                        }
-                                    }
-                                }
-                                */
+                                 * we do not handle special confs like *!sg or [cond]* in right hand
+                                 * confs yet: it would require supporting parenthesis grouping in
+                                 * configurations intersection interpretation
+                                 * 
+                                 * for (Iterator it2 = depConfs.iterator(); it2.hasNext();) { String
+                                 * depConf = (String) it2.next(); if (depConf.startsWith("*")) { if
+                                 * (intersectedDepConf .indexOf("(" + depConf + ")") != -1) {
+                                 * intersectedDepConfs.add(intersectedDepConf); } else {
+                                 * intersectedDepConfs.add( "(" + intersectedDepConf + ")+(" +
+                                 * depConf + ")"); } } else if (intersectedDepConf.startsWith("*"))
+                                 * { if (depConf .indexOf("(" + intersectedDepConf + ")") != -1) {
+                                 * intersectedDepConfs.add(depConf); } else {
+                                 * intersectedDepConfs.add( depConf + "+" + intersectedDepConf); } }
+                                 * }
+                                 */
                             }
                         }
                     }
@@ -326,30 +314,28 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                         for (Iterator it = defConfs.iterator(); it.hasNext();) {
                             String mappedConf = (String) it.next();
                             if (mappedConf != null && mappedConf.startsWith("@+")) {
-                                return new String[] {
-                                        moduleConfiguration + mappedConf.substring(1)};
+                                return new String[] {moduleConfiguration + mappedConf.substring(1)};
                             } else if (mappedConf != null && mappedConf.equals("@")) {
                                 return new String[] {moduleConfiguration};
                             }
                         }
                     }
                 }
-                return (String[]) intersectedDepConfs.toArray(
-                            new String[intersectedDepConfs.size()]);
+                return (String[]) intersectedDepConfs
+                        .toArray(new String[intersectedDepConfs.size()]);
             } else if (c instanceof ConfigurationGroup) {
                 ConfigurationGroup group = (ConfigurationGroup) c;
-                Set /*<String>*/ groupDepConfs = new HashSet();
+                Set /* <String> */groupDepConfs = new HashSet();
                 String[] members = group.getMembersConfigurationNames();
                 for (int i = 0; i < members.length; i++) {
-                    Collection depConfs = 
-                         getDependencyConfigurationsIncludingExtending(
-                             members[i], requestedConfiguration);
+                    Collection depConfs = getDependencyConfigurationsIncludingExtending(members[i],
+                        requestedConfiguration);
                     groupDepConfs.addAll(depConfs);
                 }
                 return (String[]) groupDepConfs.toArray(new String[groupDepConfs.size()]);
             }
         }
-        
+
         List confsList = (List) confs.get(moduleConfiguration);
         if (confsList == null) {
             // there is no mapping defined for this configuration, add the 'other' mappings.
@@ -391,24 +377,25 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return (String[]) ret.toArray(new String[ret.size()]);
     }
 
-    private Collection getDependencyConfigurationsIncludingExtending(
-            String conf, String requestedConfiguration) {
-        Set/*<String>*/ allDepConfs = new LinkedHashSet();
-        allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(conf, requestedConfiguration)));
+    private Collection getDependencyConfigurationsIncludingExtending(String conf,
+            String requestedConfiguration) {
+        Set/* <String> */allDepConfs = new LinkedHashSet();
+        allDepConfs
+                .addAll(Arrays.asList(getDependencyConfigurations(conf, requestedConfiguration)));
 
-        Collection extendingConfs = Configuration.findConfigurationExtending(conf, md.getConfigurations());
+        Collection extendingConfs = Configuration.findConfigurationExtending(conf,
+            md.getConfigurations());
         for (Iterator it = extendingConfs.iterator(); it.hasNext();) {
             Configuration extendingConf = (Configuration) it.next();
-            allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(
-                            extendingConf.getName(), requestedConfiguration)));
+            allDepConfs.addAll(Arrays.asList(getDependencyConfigurations(extendingConf.getName(),
+                requestedConfiguration)));
         }
         return allDepConfs;
     }
 
     protected static String replaceSelfFallbackPattern(final String conf,
             final String moduleConfiguration) {
-        return replaceFallbackConfigurationPattern(
-            SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
+        return replaceFallbackConfigurationPattern(SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
     }
 
     protected static String replaceThisFallbackPattern(final String conf,
@@ -434,10 +421,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         if (matcher.matches()) {
             String mappedConf = moduleConfiguration;
             if (matcher.group(1) != null) {
-                mappedConf =  mappedConf + matcher.group(1);
+                mappedConf = mappedConf + matcher.group(1);
             }
             if (matcher.group(2) != null) {
-                mappedConf =  mappedConf + matcher.group(2);
+                mappedConf = mappedConf + matcher.group(2);
             }
             return mappedConf;
         }
@@ -553,12 +540,12 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             if (masterConf.startsWith("!")) {
                 config = md.getConfiguration(masterConf.substring(1));
             } else {
-                config = md.getConfiguration(masterConf);                
+                config = md.getConfiguration(masterConf);
             }
             if (config == null) {
                 throw new IllegalArgumentException("Cannot add dependency '" + revId
-                    + "' to configuration '" + masterConf + "' of module "
-                    + md.getModuleRevisionId() + " because this configuration doesn't exist!");
+                        + "' to configuration '" + masterConf + "' of module "
+                        + md.getModuleRevisionId() + " because this configuration doesn't exist!");
             }
             if (config instanceof ConfigurationGroup) {
                 ConfigurationGroup group = (ConfigurationGroup) config;
@@ -607,8 +594,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      */
     public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
         if (namespace != null) {
-            artifactId = NameSpaceHelper.transform(artifactId, namespace
-                    .getFromSystemTransformer());
+            artifactId = NameSpaceHelper
+                    .transform(artifactId, namespace.getFromSystemTransformer());
         }
         ExcludeRule[] rules = getExcludeRules(moduleConfigurations);
         for (int i = 0; i < rules.length; i++) {
@@ -712,7 +699,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     public ModuleRevisionId getSourceModule() {
         return sourceModule;
     }
-    
+
     public DependencyDescriptor clone(ModuleRevisionId revision) {
         return new DefaultDependencyDescriptor(this, revision);
     }

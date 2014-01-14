@@ -27,13 +27,14 @@ import org.apache.ivy.util.CopyProgressListener;
 import junit.framework.TestCase;
 
 public class AbstractURLHandlerTest extends TestCase {
-    
+
     /**
      * JUnit test for IVY-923.
      */
     public void testNormalizeToStringWithSpaceURL() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
-        String normalizedUrl = handler.normalizeToString(new URL("http://ant.apache.org/ivy/url with space/ivy-1.0.xml"));
+        String normalizedUrl = handler.normalizeToString(new URL(
+                "http://ant.apache.org/ivy/url with space/ivy-1.0.xml"));
         assertEquals("http://ant.apache.org/ivy/url%20with%20space/ivy-1.0.xml", normalizedUrl);
     }
 
@@ -42,22 +43,25 @@ public class AbstractURLHandlerTest extends TestCase {
      */
     public void testNormalizeToStringWithPlusCharacter() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
-        String normalizedUrl = handler.normalizeToString(new URL("http://ant.apache.org/ivy/ivy-1.+.xml"));
+        String normalizedUrl = handler.normalizeToString(new URL(
+                "http://ant.apache.org/ivy/ivy-1.+.xml"));
         assertEquals("http://ant.apache.org/ivy/ivy-1.%2B.xml", normalizedUrl);
     }
 
-    public void testNormalizeToStringWithUnderscoreInHostname() throws Exception { 
+    public void testNormalizeToStringWithUnderscoreInHostname() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
-        String normalizedUrl = handler.normalizeToString(new URL("http://peat_hal.users.sourceforge.net/m2repository"));
+        String normalizedUrl = handler.normalizeToString(new URL(
+                "http://peat_hal.users.sourceforge.net/m2repository"));
         assertEquals("http://peat_hal.users.sourceforge.net/m2repository", normalizedUrl);
     }
-    
-    public void testNormalizeToStringWithUnderscoreInHostnameAndSpaceInPath() throws Exception { 
+
+    public void testNormalizeToStringWithUnderscoreInHostnameAndSpaceInPath() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
-        String normalizedUrl = handler.normalizeToString(new URL("http://peat_hal.users.sourceforge.net/m2 repository"));
+        String normalizedUrl = handler.normalizeToString(new URL(
+                "http://peat_hal.users.sourceforge.net/m2 repository"));
         assertEquals("http://peat_hal.users.sourceforge.net/m2%20repository", normalizedUrl);
     }
-    
+
     private static class TestURLHandler extends AbstractURLHandler {
 
         public void download(URL src, File dest, CopyProgressListener l) throws IOException {
@@ -79,6 +83,6 @@ public class AbstractURLHandlerTest extends TestCase {
         public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
             throw new UnsupportedOperationException();
         }
-        
+
     }
 }

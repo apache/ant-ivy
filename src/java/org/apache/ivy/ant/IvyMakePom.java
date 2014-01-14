@@ -42,17 +42,21 @@ import org.apache.tools.ant.Project;
 public class IvyMakePom extends IvyTask {
     public class Mapping {
         private String conf;
+
         private String scope;
-        
+
         public String getConf() {
             return conf;
         }
+
         public void setConf(String conf) {
             this.conf = conf;
         }
+
         public String getScope() {
             return scope;
         }
+
         public void setScope(String scope) {
             this.scope = scope;
         }
@@ -60,77 +64,96 @@ public class IvyMakePom extends IvyTask {
 
     public class Dependency {
         private String group = null;
+
         private String artifact = null;
+
         private String version = null;
+
         private String scope = null;
+
         private String type = null;
+
         private String classifier = null;
+
         private boolean optional = false;
-        
+
         public String getGroup() {
             return group;
         }
+
         public void setGroup(String group) {
             this.group = group;
         }
+
         public String getArtifact() {
             return artifact;
         }
+
         public void setArtifact(String artifact) {
             this.artifact = artifact;
         }
+
         public String getVersion() {
             return version;
         }
+
         public void setVersion(String version) {
             this.version = version;
         }
+
         public String getScope() {
             return scope;
         }
+
         public void setScope(String scope) {
             this.scope = scope;
         }
+
         public String getType() {
             return type;
         }
+
         public void setType(String type) {
             this.type = type;
         }
+
         public String getClassifier() {
             return classifier;
         }
+
         public void setClassifier(String classifier) {
             this.classifier = classifier;
         }
+
         public boolean getOptional() {
             return optional;
         }
+
         public void setOptional(boolean optional) {
             this.optional = optional;
-        }      
+        }
     }
-            
+
     private String artifactName;
-            
+
     private String artifactPackaging;
 
     private File pomFile = null;
 
     private File headerFile = null;
-    
+
     private File templateFile = null;
-    
+
     private boolean printIvyInfo = true;
 
     private String conf;
-   
+
     private File ivyFile = null;
-    
+
     private String description;
 
     private Collection mappings = new ArrayList();
-    
+
     private Collection dependencies = new ArrayList();
 
     public File getPomFile() {
@@ -156,15 +179,15 @@ public class IvyMakePom extends IvyTask {
     public void setHeaderFile(File headerFile) {
         this.headerFile = headerFile;
     }
-    
+
     public File getTemplateFile() {
         return templateFile;
     }
-    
+
     public void setTemplateFile(File templateFile) {
         this.templateFile = templateFile;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -184,11 +207,11 @@ public class IvyMakePom extends IvyTask {
     public String getConf() {
         return conf;
     }
-    
+
     public void setConf(String conf) {
         this.conf = conf;
     }
-    
+
     public String getArtifactName() {
         return artifactName;
     }
@@ -210,13 +233,13 @@ public class IvyMakePom extends IvyTask {
         this.mappings.add(mapping);
         return mapping;
     }
-    
+
     public Dependency createDependency() {
         Dependency dependency = new Dependency();
         this.dependencies.add(dependency);
         return dependency;
     }
-    
+
     public void doExecute() throws BuildException {
         try {
             if (ivyFile == null) {
@@ -239,25 +262,22 @@ public class IvyMakePom extends IvyTask {
                     + " from=" + ivyFile + " to=" + pomFile, e);
         }
     }
-    
+
     private PomWriterOptions getPomWriterOptions() throws IOException {
         PomWriterOptions options = new PomWriterOptions();
-        options.setConfs(splitConfs(conf))
-               .setArtifactName(getArtifactName())
-               .setArtifactPackaging(getArtifactPackaging())
-               .setPrintIvyInfo(isPrintIvyInfo())
-               .setDescription(getDescription())
-               .setExtraDependencies(getDependencies())
-               .setTemplate(getTemplateFile());
-        
+        options.setConfs(splitConfs(conf)).setArtifactName(getArtifactName())
+                .setArtifactPackaging(getArtifactPackaging()).setPrintIvyInfo(isPrintIvyInfo())
+                .setDescription(getDescription()).setExtraDependencies(getDependencies())
+                .setTemplate(getTemplateFile());
+
         if (!mappings.isEmpty()) {
             options.setMapping(new PomWriterOptions.ConfigurationScopeMapping(getMappingsMap()));
         }
-        
+
         if (headerFile != null) {
             options.setLicenseHeader(FileUtil.readEntirely(getHeaderFile()));
         }
-        
+
         return options;
     }
 
@@ -274,14 +294,14 @@ public class IvyMakePom extends IvyTask {
         }
         return mappingsMap;
     }
-    
+
     private List getDependencies() {
         List result = new ArrayList();
         for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
             Dependency dependency = (Dependency) iter.next();
-            result.add(new PomWriterOptions.ExtraDependency(dependency.getGroup(),
-                    dependency.getArtifact(), dependency.getVersion(), dependency.getScope(),
-                    dependency.getType(), dependency.getClassifier(), dependency.getOptional()));
+            result.add(new PomWriterOptions.ExtraDependency(dependency.getGroup(), dependency
+                    .getArtifact(), dependency.getVersion(), dependency.getScope(), dependency
+                    .getType(), dependency.getClassifier(), dependency.getOptional()));
         }
         return result;
     }

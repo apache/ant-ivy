@@ -26,6 +26,6 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 public interface SortEngineSettings {
 
     public CircularDependencyStrategy getCircularDependencyStrategy();
-    
+
     public VersionMatcher getVersionMatcher();
 }

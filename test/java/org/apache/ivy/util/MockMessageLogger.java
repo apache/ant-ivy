@@ -88,7 +88,7 @@ public class MockMessageLogger extends AbstractMessageLogger {
             String log = (String) iter.next();
             if (log.indexOf(message) != -1) {
                 throw new AssertionFailedError("logs contain unexpected message: '" + message
-                    + "' logs='\n" + join(_logs) + "'");
+                        + "' logs='\n" + join(_logs) + "'");
             }
         }
     }
@@ -96,6 +96,7 @@ public class MockMessageLogger extends AbstractMessageLogger {
     public void assertLogVerboseContains(String message) {
         assertLogContains(Message.MSG_VERBOSE + " " + message);
     }
+
     public void assertLogInfoContains(String message) {
         assertLogContains(Message.MSG_INFO + " " + message);
     }

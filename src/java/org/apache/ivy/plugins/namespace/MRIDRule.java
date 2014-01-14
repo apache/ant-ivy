@@ -60,8 +60,7 @@ public class MRIDRule {
     }
 
     public String toString() {
-        return "[ " + org + " " + module + (branch != null ? " " + branch : "") + " " + rev
-                + " ]";
+        return "[ " + org + " " + module + (branch != null ? " " + branch : "") + " " + rev + " ]";
     }
 
     public String getBranch() {

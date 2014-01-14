@@ -30,8 +30,8 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
 
     private final Map extraAttributes = new HashMap();
 
-    private final Map unmodifiableExtraAttributesView = 
-                                    Collections.unmodifiableMap(extraAttributes);
+    private final Map unmodifiableExtraAttributesView = Collections
+            .unmodifiableMap(extraAttributes);
 
     /*
      * this is the only place where extra attributes are stored in qualified form. In all other maps
@@ -39,8 +39,8 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
      */
     private final Map qualifiedExtraAttributes = new HashMap();
 
-    private final Map unmodifiableQualifiedExtraAttributesView = 
-                                    Collections.unmodifiableMap(qualifiedExtraAttributes);
+    private final Map unmodifiableQualifiedExtraAttributesView = Collections
+            .unmodifiableMap(qualifiedExtraAttributes);
 
     public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
         if (stdAttributes != null) {
@@ -66,10 +66,9 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
         return v;
     }
 
-
     protected void setExtraAttribute(String attName, String attValue) {
         qualifiedExtraAttributes.put(attName, attValue);
-        
+
         // unqualify att name if required
         int index = attName.indexOf(':');
         if (index != -1) {
@@ -87,11 +86,10 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
         return unmodifiableAttributesView;
     }
 
-
     public Map getExtraAttributes() {
         return unmodifiableExtraAttributesView;
     }
-    
+
     public Map getQualifiedExtraAttributes() {
         return unmodifiableQualifiedExtraAttributesView;
     }

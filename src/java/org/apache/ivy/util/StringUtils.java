@@ -27,11 +27,11 @@ import java.util.Locale;
  * to have such a dependency for only one feature
  */
 public final class StringUtils {
-    
+
     private StringUtils() {
-        //Utility class
+        // Utility class
     }
-    
+
     public static String uncapitalize(String string) {
         if (string == null || string.length() == 0) {
             return string;
@@ -41,7 +41,7 @@ public final class StringUtils {
         }
         return string.substring(0, 1).toLowerCase(Locale.US) + string.substring(1);
     }
-    
+
     /**
      * Returns the error message associated with the given Throwable. The error message returned
      * will try to be as precise as possible, handling cases where e.getMessage() is not meaningful,
@@ -65,7 +65,7 @@ public final class StringUtils {
         }
         return errMsg;
     }
-    
+
     /**
      * Returns the exception stack trace as a String.
      * 
@@ -84,16 +84,19 @@ public final class StringUtils {
     }
 
     /**
-     * Joins the given object array in one string, each separated by the given separator. 
+     * Joins the given object array in one string, each separated by the given separator.
      * 
      * Example:
+     * 
      * <pre>
      * join(new String[] {"one", "two", "three"}, ", ") -> "one, two, three"
      * </pre>
      * 
-     * @param  objs  The array of objects (<code>toString()</code> is used).
-     * @param  sep  The separator to use.
-     * @return  The concatinated string.
+     * @param objs
+     *            The array of objects (<code>toString()</code> is used).
+     * @param sep
+     *            The separator to use.
+     * @return The concatinated string.
      */
     public static String join(Object[] objs, String sep) {
         StringBuffer buf = new StringBuffer();
@@ -155,7 +158,7 @@ public final class StringUtils {
      * 
      * @param str
      *            the encrypted string to decrypt
-     * @return  The decrypted string.
+     * @return The decrypted string.
      */
     public static final String decrypt(String str) {
         if (str == null) {

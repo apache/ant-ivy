@@ -91,8 +91,8 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         List l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals("http://www.ibiblio.org/mymaven/[module]/jars/[artifact]-[revision].jar", l
-                .get(0));
+        assertEquals("http://www.ibiblio.org/mymaven/[module]/jars/[artifact]-[revision].jar",
+            l.get(0));
     }
 
     public void testInitFromConf() throws Exception {
@@ -115,8 +115,8 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals(
-            "http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar", l
-                    .get(0));
+            "http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar",
+            l.get(0));
 
         resolver = (IBiblioResolver) _settings.getResolver("ibiblioC");
         assertTrue(resolver.isM2compatible());
@@ -134,8 +134,8 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals("http://www.ibiblio.org/maven/[module]/jars/[artifact]-[revision].jar", l
-                .get(0));
+        assertEquals("http://www.ibiblio.org/maven/[module]/jars/[artifact]-[revision].jar",
+            l.get(0));
 
         resolver = (IBiblioResolver) _settings.getResolver("ibiblioE");
         assertTrue(resolver.isM2compatible());
@@ -190,8 +190,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact},
-            downloadOptions());
+        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -210,22 +209,24 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         resolver.setM2compatible(true);
         assertEquals("test", resolver.getName());
 
-        ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver, "commons-lang"));
+        ModuleEntry[] modules = resolver
+                .listModules(new OrganisationEntry(resolver, "commons-lang"));
         assertNotNull(modules);
         assertEquals(1, modules.length);
         assertEquals("commons-lang", modules[0].getModule());
-        
+
         RevisionEntry[] revisions = resolver.listRevisions(modules[0]);
         assertTrue(revisions.length > 0);
-        
+
         Map otherTokenValues = new HashMap();
         otherTokenValues.put(IvyPatternHelper.ORGANISATION_KEY, "commons-lang");
         String[] values = resolver.listTokenValues(IvyPatternHelper.MODULE_KEY, otherTokenValues);
         assertNotNull(values);
         assertEquals(1, values.length);
         assertEquals("commons-lang", values[0]);
-        
-        Map[] valuesMaps = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY}, otherTokenValues);
+
+        Map[] valuesMaps = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY},
+            otherTokenValues);
         Set vals = new HashSet();
         for (int i = 0; i < valuesMaps.length; i++) {
             vals.add(valuesMaps[i].get(IvyPatternHelper.MODULE_KEY));
@@ -332,8 +333,9 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("test");
         resolver.setSettings(_settings);
 
-        assertNull(resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("unknown", "unknown", "1.0"), false), _data));
+        assertNull(resolver.getDependency(
+            new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("unknown", "unknown",
+                "1.0"), false), _data));
     }
 
 }

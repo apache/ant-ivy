@@ -21,11 +21,11 @@ import org.apache.ivy.core.retrieve.FileNameMapper;
 import org.apache.tools.ant.types.Mapper;
 
 class MapperAdapter implements FileNameMapper {
-    
+
     private static final String[] EMPTY = new String[0];
-    
+
     private Mapper mapper;
-    
+
     MapperAdapter(Mapper mapper) {
         this.mapper = mapper;
     }
@@ -35,7 +35,7 @@ class MapperAdapter implements FileNameMapper {
         if (result == null) {
             result = EMPTY;
         }
-        
+
         return result;
     }
 

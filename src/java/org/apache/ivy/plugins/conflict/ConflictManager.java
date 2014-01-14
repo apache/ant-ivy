@@ -55,6 +55,6 @@ public interface ConflictManager {
      * @param foundBlacklisted
      *            the list of all ModuleRevisionId found which are blacklisted
      */
-    void handleAllBlacklistedRevisions(
-            DependencyDescriptor dd, Collection/*<ModuleRevisionId>*/ foundBlacklisted);
+    void handleAllBlacklistedRevisions(DependencyDescriptor dd,
+            Collection/* <ModuleRevisionId> */foundBlacklisted);
 }

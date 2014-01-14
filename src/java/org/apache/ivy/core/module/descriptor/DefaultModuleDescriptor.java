@@ -154,13 +154,14 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         ExtendsDescriptor[] ed = md.getInheritedDescriptors();
         for (int i = 0; i < ed.length; ++i) {
             ModuleDescriptor parentMd = ed[i].getParentMd();
-            DefaultModuleDescriptor parentNmd = new DefaultModuleDescriptor(parentMd.getParser(), parentMd.getResource());
+            DefaultModuleDescriptor parentNmd = new DefaultModuleDescriptor(parentMd.getParser(),
+                    parentMd.getResource());
             parentNmd.revId = t.transform(parentMd.getModuleRevisionId());
             parentNmd.resolvedRevId = t.transform(parentMd.getResolvedModuleRevisionId());
             parentNmd.status = parentMd.getStatus();
             parentNmd.publicationDate = parentMd.getPublicationDate();
             parentNmd.resolvedPublicationDate = parentMd.getResolvedPublicationDate();
-            
+
             nmd.inheritedDescriptors.add(new DefaultExtendsDescriptor(parentNmd, ed[i]
                     .getLocation(), ed[i].getExtendsTypes()));
         }

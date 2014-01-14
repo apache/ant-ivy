@@ -40,10 +40,11 @@ public class LogTrigger extends AbstractTrigger {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private String message = "";
-    
+
     private File file = null;
 
     private boolean append = true;
+
     /** encoding; set to null or empty means 'default' */
     private String encoding = "";
 
@@ -54,7 +55,8 @@ public class LogTrigger extends AbstractTrigger {
     /**
      * Logs the given message.
      * 
-     * @param message the message to log
+     * @param message
+     *            the message to log
      */
     protected void log(String message) {
         if (file == null) {
@@ -70,9 +72,8 @@ public class LogTrigger extends AbstractTrigger {
                 if (encoding == null || encoding.length() == 0) {
                     out = new FileWriter(filename, append);
                 } else {
-                    out = new BufferedWriter(
-                            new OutputStreamWriter(
-                                new FileOutputStream(filename, append), encoding));
+                    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename,
+                            append), encoding));
                 }
                 out.write(message, 0, message.length());
             } catch (IOException e) {
@@ -91,8 +92,9 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * Message to write.
-     *
-     * @param msg Sets the value for the message variable.
+     * 
+     * @param msg
+     *            Sets the value for the message variable.
      */
     public void setMessage(String msg) {
         this.message = msg;
@@ -100,7 +102,9 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * File to write to.
-     * @param file the file to write to, if not set, echo to standard Ivy logging
+     * 
+     * @param file
+     *            the file to write to, if not set, echo to standard Ivy logging
      */
     public void setFile(File file) {
         this.file = file;
@@ -108,16 +112,20 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * If true, append to existing file.
-     * @param append if true, append to existing file, default is false.
+     * 
+     * @param append
+     *            if true, append to existing file, default is false.
      */
     public void setAppend(boolean append) {
         this.append = append;
     }
 
     /**
-     * Declare the encoding to use when outputting to a file;
-     * Use "" for the platform's default encoding.
-     * @param encoding the character encoding to use.
+     * Declare the encoding to use when outputting to a file; Use "" for the platform's default
+     * encoding.
+     * 
+     * @param encoding
+     *            the character encoding to use.
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;

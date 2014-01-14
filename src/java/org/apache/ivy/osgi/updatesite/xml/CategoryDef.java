@@ -21,17 +21,17 @@ public class CategoryDef {
 
     public void setLabel(String label) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setName(String name) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setDescription(String trim) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

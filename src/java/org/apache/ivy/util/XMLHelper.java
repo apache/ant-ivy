@@ -41,17 +41,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLHelper {
 
-    static final String JAXP_SCHEMA_LANGUAGE 
-        = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+    static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
-    static final String JAXP_SCHEMA_SOURCE 
-        = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
-    static final String XERCES_LOAD_EXTERNAL_DTD
-        = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+    static final String XERCES_LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
-    static final String XML_NAMESPACE_PREFIXES
-        = "http://xml.org/sax/features/namespace-prefixes";
+    static final String XML_NAMESPACE_PREFIXES = "http://xml.org/sax/features/namespace-prefixes";
 
     static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
@@ -59,8 +55,8 @@ public abstract class XMLHelper {
 
     private static Boolean canDisableExternalDtds = null;
 
-    private static SAXParser newSAXParser(URL schema, InputStream schemaStream, 
-        boolean loadExternalDtds) throws ParserConfigurationException, SAXException {
+    private static SAXParser newSAXParser(URL schema, InputStream schemaStream,
+            boolean loadExternalDtds) throws ParserConfigurationException, SAXException {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
         parserFactory.setValidating(canUseSchemaValidation && (schema != null));
@@ -68,7 +64,7 @@ public abstract class XMLHelper {
             parserFactory.setFeature(XERCES_LOAD_EXTERNAL_DTD, false);
         }
         SAXParser parser = parserFactory.newSAXParser();
-        
+
         if (canUseSchemaValidation && (schema != null)) {
             try {
                 parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
@@ -81,23 +77,22 @@ public abstract class XMLHelper {
                 parser = parserFactory.newSAXParser();
             }
         }
-        
+
         parser.getXMLReader().setFeature(XML_NAMESPACE_PREFIXES, true);
         return parser;
     }
 
     private static boolean canDisableExternalDtds(SAXParserFactory parserFactory) {
-       if (canDisableExternalDtds == null) {
-           try {
-               parserFactory.getFeature(XERCES_LOAD_EXTERNAL_DTD);
-               canDisableExternalDtds = Boolean.TRUE;
-           } catch (Exception ex) {
-               canDisableExternalDtds = Boolean.FALSE;
-           }
-       }
-       return canDisableExternalDtds.booleanValue();
+        if (canDisableExternalDtds == null) {
+            try {
+                parserFactory.getFeature(XERCES_LOAD_EXTERNAL_DTD);
+                canDisableExternalDtds = Boolean.TRUE;
+            } catch (Exception ex) {
+                canDisableExternalDtds = Boolean.FALSE;
+            }
+        }
+        return canDisableExternalDtds.booleanValue();
     }
-
 
     /**
      * Convert an URL to a valid systemId according to RFC 2396.
@@ -119,8 +114,7 @@ public abstract class XMLHelper {
         parse(xmlURL, schema, handler, null);
     }
 
-    public static void parse(
-            URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
+    public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
         InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
         try {
@@ -136,21 +130,19 @@ public abstract class XMLHelper {
         }
     }
 
-    public static void parse(
-            InputStream xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler) 
-            throws SAXException, IOException, ParserConfigurationException {
+    public static void parse(InputStream xmlStream, URL schema, DefaultHandler handler,
+            LexicalHandler lHandler) throws SAXException, IOException, ParserConfigurationException {
         parse(new InputSource(xmlStream), schema, handler, lHandler);
     }
-    
-    public static void parse(
-            InputSource xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler)
-            throws SAXException, IOException, ParserConfigurationException {
+
+    public static void parse(InputSource xmlStream, URL schema, DefaultHandler handler,
+            LexicalHandler lHandler) throws SAXException, IOException, ParserConfigurationException {
         parse(xmlStream, schema, handler, lHandler, true);
     }
 
-    public static void parse(
-            InputSource xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler,
-            boolean loadExternalDtds) throws SAXException, IOException, ParserConfigurationException {
+    public static void parse(InputSource xmlStream, URL schema, DefaultHandler handler,
+            LexicalHandler lHandler, boolean loadExternalDtds) throws SAXException, IOException,
+            ParserConfigurationException {
         InputStream schemaStream = null;
         try {
             if (schema != null) {
@@ -183,26 +175,26 @@ public abstract class XMLHelper {
     public static boolean canUseSchemaValidation() {
         return canUseSchemaValidation;
     }
-    
+
     /**
-     * Escapes invalid XML characters in the given character data using XML entities.
-     * For the moment, only the following characters are being escaped: (<), (&), (') 
-     * and (").
+     * Escapes invalid XML characters in the given character data using XML entities. For the
+     * moment, only the following characters are being escaped: (<), (&), (') and (").
      * 
-     * Remark: we don't escape the (>) character to keep the readability of the
-     * configuration mapping! The XML spec only requires that the (&) and (<)
-     * characters are being escaped inside character data.
+     * Remark: we don't escape the (>) character to keep the readability of the configuration
+     * mapping! The XML spec only requires that the (&) and (<) characters are being escaped inside
+     * character data.
      * 
-     * @param text the character data to escape
+     * @param text
+     *            the character data to escape
      * @return the escaped character data
      */
     public static String escape(String text) {
         if (text == null) {
             return null;
         }
-        
+
         StringBuffer result = new StringBuffer(text.length());
-        
+
         char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -222,11 +214,10 @@ public abstract class XMLHelper {
                     result.append(chars[i]);
             }
         }
-        
+
         return result.toString();
     }
 
-    
     public static Document parseToDom(InputSource source, EntityResolver entityResolver)
             throws IOException, SAXException {
         DocumentBuilder docBuilder = getDocBuilder(entityResolver);
@@ -244,9 +235,8 @@ public abstract class XMLHelper {
             return docBuilder;
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
-        }        
+        }
     }
-
 
     private XMLHelper() {
     }

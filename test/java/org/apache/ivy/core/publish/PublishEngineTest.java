@@ -44,6 +44,7 @@ public class PublishEngineTest extends TestCase {
         System.setProperty("ivy.cache.dir", new File("build/test/publish/cache").getAbsolutePath());
         FileUtil.forceDelete(new File("build/test/publish"));
     }
+
     protected void tearDown() throws Exception {
         FileUtil.forceDelete(new File("build/test/publish"));
     }
@@ -52,18 +53,18 @@ public class PublishEngineTest extends TestCase {
         IvySettings settings = new IvySettings();
         final PublishEngine engine = new PublishEngine(settings, new EventManager());
         final int[] counter = new int[] {0};
-        
+
         final DefaultModuleDescriptor md = DefaultModuleDescriptor
-            .newDefaultInstance(ModuleRevisionId.parse("#A;1.0"));
+                .newDefaultInstance(ModuleRevisionId.parse("#A;1.0"));
         final FileSystemResolver resolver = new FileSystemResolver() {
             public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
                 super.publish(artifact, src, overwrite);
                 synchronized (PublishEngineTest.this) {
-                    counter[0] ++;
+                    counter[0]++;
                 }
                 sleepSilently(50);
                 synchronized (PublishEngineTest.this) {
-                    counter[0] ++;
+                    counter[0]++;
                 }
             }
         };
@@ -72,10 +73,9 @@ public class PublishEngineTest extends TestCase {
         String publishRepoDir = new File("build/test/publish/repo").getAbsolutePath();
         resolver.addIvyPattern(publishRepoDir + "/[module]/[revision]/[artifact].[ext]");
         resolver.addArtifactPattern(publishRepoDir + "/[module]/[revision]/[artifact].[ext]");
-        
-        FileUtil.copy(
-            new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), 
-            new File("build/test/publish/module/A.jar"), null);
+
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), new File(
+                "build/test/publish/module/A.jar"), null);
         XmlModuleDescriptorWriter.write(md, new File("build/test/publish/module/ivy.xml"));
 
         resolveAndAssertNotFound(settings, resolver, "#A;latest.integration", "before publishing");
@@ -84,13 +84,12 @@ public class PublishEngineTest extends TestCase {
         new Thread() {
             public void run() {
                 try {
-                    engine.publish(
-                        md, 
-                        Arrays.asList(new String[] {"build/test/publish/module/[artifact].[ext]"}), 
-                        resolver, 
-                        new PublishOptions().setSrcIvyPattern("build/test/publish/module/[artifact].[ext]"));
+                    engine.publish(md, Arrays
+                            .asList(new String[] {"build/test/publish/module/[artifact].[ext]"}),
+                        resolver, new PublishOptions()
+                                .setSrcIvyPattern("build/test/publish/module/[artifact].[ext]"));
                     synchronized (PublishEngineTest.this) {
-                        counter[0] ++;
+                        counter[0]++;
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -98,42 +97,41 @@ public class PublishEngineTest extends TestCase {
             }
         }.start();
 
-        while(true) {
+        while (true) {
             sleepSilently(5);
             synchronized (this) {
                 if (counter[0] == 5) {
                     break;
                 } else if (counter[0] < 4) {
-                    resolveAndAssertNotFound(settings, resolver, 
-                        "#A;latest.integration", "after "+(counter[0] / 2)+" artifacts published");
+                    resolveAndAssertNotFound(settings, resolver, "#A;latest.integration", "after "
+                            + (counter[0] / 2) + " artifacts published");
                 }
             }
         }
         resolveAndAssertFound(settings, resolver, "#A;1.0");
     }
-    private void resolveAndAssertNotFound(
-            IvySettings settings, FileSystemResolver resolver, String module, String context)
-            throws ParseException {
+
+    private void resolveAndAssertNotFound(IvySettings settings, FileSystemResolver resolver,
+            String module, String context) throws ParseException {
         ResolvedModuleRevision rmr = resolveModule(settings, resolver, module);
-        assertNull("module found " + context + ". module="+rmr, rmr);
+        assertNull("module found " + context + ". module=" + rmr, rmr);
     }
 
-    private void resolveAndAssertFound(
-            IvySettings settings, FileSystemResolver resolver, String module)
-            throws ParseException {
+    private void resolveAndAssertFound(IvySettings settings, FileSystemResolver resolver,
+            String module) throws ParseException {
         ResolvedModuleRevision rmr = resolveModule(settings, resolver, module);
         assertNotNull(rmr);
         assertEquals(module, rmr.getId().toString());
     }
-    private ResolvedModuleRevision resolveModule(
-            IvySettings settings, FileSystemResolver resolver, String module)
-            throws ParseException {
+
+    private ResolvedModuleRevision resolveModule(IvySettings settings, FileSystemResolver resolver,
+            String module) throws ParseException {
         return resolver.getDependency(
-            new DefaultDependencyDescriptor(ModuleRevisionId.parse(module), false), 
-            new ResolveData(
-                new ResolveEngine(settings, new EventManager(), new SortEngine(settings)), 
-                new ResolveOptions()));
+            new DefaultDependencyDescriptor(ModuleRevisionId.parse(module), false),
+            new ResolveData(new ResolveEngine(settings, new EventManager(),
+                    new SortEngine(settings)), new ResolveOptions()));
     }
+
     private void sleepSilently(int timeout) {
         try {
             Thread.sleep(timeout);

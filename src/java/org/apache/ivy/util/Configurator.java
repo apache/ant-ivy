@@ -33,25 +33,26 @@ import java.util.Stack;
 import org.apache.ivy.core.IvyPatternHelper;
 
 /**
- * Ant 1.6.1 like Configurator 
+ * Ant 1.6.1 like Configurator
  * <p>
- * This configurator is used to configure elements (initialised with
- * setRoot) using the behaviour defined by ant for its tasks. 
+ * This configurator is used to configure elements (initialised with setRoot) using the behaviour
+ * defined by ant for its tasks.
  * <p>
- * Example (based on <a
- * href="http://ant.apache.org/manual/develop.html#writingowntask">Ant Example</a>):
+ * Example (based on <a href="http://ant.apache.org/manual/develop.html#writingowntask">Ant
+ * Example</a>):
+ * 
  * <pre>
- * Configurator conf = new Configurator(); 
- * conf.typeDef("buildpath", "Sample$BuildPath");
- * conf.typeDef("xinterface", "Sample$XInterface"); 
- * Sample.MyFileSelector mfs = new Sample.MyFileSelector(); 
- * conf.setRoot(mfs); 
- * conf.startCreateChild("buildpath");
- * conf.setAttribute("path", "."); 
- * conf.setAttribute("url", "abc");
- * conf.startCreateChild("xinterface"); 
- * conf.setAttribute("count", "4"); 
- * conf.endCreateChild(); // xinterface 
+ * Configurator conf = new Configurator();
+ * conf.typeDef(&quot;buildpath&quot;, &quot;Sample$BuildPath&quot;);
+ * conf.typeDef(&quot;xinterface&quot;, &quot;Sample$XInterface&quot;);
+ * Sample.MyFileSelector mfs = new Sample.MyFileSelector();
+ * conf.setRoot(mfs);
+ * conf.startCreateChild(&quot;buildpath&quot;);
+ * conf.setAttribute(&quot;path&quot;, &quot;.&quot;);
+ * conf.setAttribute(&quot;url&quot;, &quot;abc&quot;);
+ * conf.startCreateChild(&quot;xinterface&quot;);
+ * conf.setAttribute(&quot;count&quot;, &quot;4&quot;);
+ * conf.endCreateChild(); // xinterface
  * conf.endCreateChild(); // buildpath
  * </pre>
  */
@@ -162,7 +163,7 @@ public class Configurator {
             children.add(child);
             return child;
         }
-        
+
         public MacroRecord recordChild(String name, Object object) {
             MacroRecord child = recordChild(name);
             child.object = object;
@@ -327,8 +328,7 @@ public class Configurator {
                     }
                     addCreateMethod(name, m);
                 } else if (m.getName().startsWith("addConfigured")
-                        && m.getParameterTypes().length == 1 
-                        && Void.TYPE.equals(m.getReturnType())) {
+                        && m.getParameterTypes().length == 1 && Void.TYPE.equals(m.getReturnType())) {
                     String name = StringUtils.uncapitalize(m.getName().substring(
                         "addConfigured".length()));
                     if (name.length() == 0) {
@@ -337,8 +337,7 @@ public class Configurator {
                     addAddConfiguredMethod(name, m);
                 } else if (m.getName().startsWith("add")
                         && !m.getName().startsWith("addConfigured")
-                        && m.getParameterTypes().length == 1 
-                        && Void.TYPE.equals(m.getReturnType())) {
+                        && m.getParameterTypes().length == 1 && Void.TYPE.equals(m.getReturnType())) {
                     String name = StringUtils.uncapitalize(m.getName().substring("add".length()));
                     if (name.length() == 0) {
                         addAddMethod(m);
@@ -378,7 +377,7 @@ public class Configurator {
         public void addSetMethod(String name, Method m) {
             Method current = (Method) setMethods.get(name);
             if (current != null && current.getParameterTypes()[0] == String.class) {
-                // setter methods with String attribute take precedence 
+                // setter methods with String attribute take precedence
                 return;
             }
             setMethods.put(name, m);
@@ -430,7 +429,7 @@ public class Configurator {
             return objName;
         }
     }
-    
+
     private FileResolver fileResolver = FileResolver.DEFAULT;
 
     private Map typedefs = new HashMap();
@@ -619,7 +618,7 @@ public class Configurator {
             if (od.getObject() instanceof Map) {
                 ((Map) od.getObject()).put(attributeName, value);
                 return;
-            } 
+            }
             throw new IllegalArgumentException("no set method found for " + attributeName + " on "
                     + od.getObject().getClass());
         }
@@ -641,8 +640,8 @@ public class Configurator {
             } else if (paramClass.equals(Class.class)) {
                 convertedValue = Class.forName(value);
             } else if (paramClass.equals(File.class)) {
-                convertedValue = fileResolver.resolveFile(
-                                        value, od.getObjectName() + "." + attributeName);
+                convertedValue = fileResolver.resolveFile(value, od.getObjectName() + "."
+                        + attributeName);
             } else {
                 convertedValue = paramClass.getConstructor(new Class[] {String.class}).newInstance(
                     new Object[] {value});
@@ -670,8 +669,8 @@ public class Configurator {
         }
         ObjectDescriptor od = (ObjectDescriptor) objectStack.peek();
         try {
-            od.getObject().getClass().getMethod("addText", new Class[] {String.class}).invoke(
-                od.getObject(), new Object[] {text});
+            od.getObject().getClass().getMethod("addText", new Class[] {String.class})
+                    .invoke(od.getObject(), new Object[] {text});
         } catch (Exception ex) {
             IllegalArgumentException iae = new IllegalArgumentException(
                     "impossible to add text on " + od.getObject().getClass());
@@ -712,8 +711,8 @@ public class Configurator {
         } catch (Exception ex) {
             IllegalArgumentException iae = new IllegalArgumentException(
                     "impossible to add configured child for " + name + " on "
-                            + parentOD.getObject().getClass() 
-                            + ": " + StringUtils.getErrorMessage(ex));
+                            + parentOD.getObject().getClass() + ": "
+                            + StringUtils.getErrorMessage(ex));
             iae.initCause(ex);
             throw iae;
         }
@@ -753,11 +752,11 @@ public class Configurator {
     public Class getTypeDef(String name) {
         return (Class) typedefs.get(name);
     }
-    
+
     public FileResolver getFileResolver() {
         return fileResolver;
     }
-    
+
     public void setFileResolver(FileResolver fileResolver) {
         Checks.checkNotNull(fileResolver, "fileResolver");
         this.fileResolver = fileResolver;

@@ -32,6 +32,7 @@ import java.util.Map;
 public final class ChecksumHelper {
 
     private static final int BUFFER_SIZE = 2048;
+
     private static Map algorithms = new HashMap();
     static {
         algorithms.put("md5", "MD5");
@@ -52,8 +53,9 @@ public final class ChecksumHelper {
      *             if an IO problem occur whle reading files or if the checksum is not compliant
      */
     public static void check(File dest, File checksumFile, String algorithm) throws IOException {
-        String csFileContent = FileUtil.readEntirely(
-            new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase(Locale.US);
+        String csFileContent = FileUtil
+                .readEntirely(new BufferedReader(new FileReader(checksumFile))).trim()
+                .toLowerCase(Locale.US);
         String expected;
         if (csFileContent.indexOf(' ') > -1
                 && (csFileContent.startsWith("md") || csFileContent.startsWith("sha"))) {
@@ -63,7 +65,7 @@ public final class ChecksumHelper {
             int spaceIndex = csFileContent.indexOf(' ');
             if (spaceIndex != -1) {
                 expected = csFileContent.substring(0, spaceIndex);
-                
+
                 // IVY-1155: support some strange formats like this one:
                 // http://repo2.maven.org/maven2/org/apache/pdfbox/fontbox/0.8.0-incubator/fontbox-0.8.0-incubator.jar.md5
                 if (expected.endsWith(":")) {
@@ -80,7 +82,7 @@ public final class ChecksumHelper {
                 expected = csFileContent;
             }
         }
-        
+
         String computed = computeAsString(dest, algorithm).trim().toLowerCase(Locale.US);
         if (!expected.equals(computed)) {
             throw new IOException("invalid " + algorithm + ": expected=" + expected + " computed="
@@ -113,7 +115,7 @@ public final class ChecksumHelper {
     public static boolean isKnownAlgorithm(String algorithm) {
         return algorithms.containsKey(algorithm);
     }
-    
+
     private static MessageDigest getMessageDigest(String algorithm) {
         String mdAlgorithm = (String) algorithms.get(algorithm);
         if (mdAlgorithm == null) {
@@ -127,8 +129,8 @@ public final class ChecksumHelper {
     }
 
     // byte to hex string converter
-    private static final char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-            'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+            'b', 'c', 'd', 'e', 'f'};
 
     /**
      * Convert a byte[] array to readable string format. This makes the "hex" readable!
@@ -146,7 +148,7 @@ public final class ChecksumHelper {
 
         StringBuffer out = new StringBuffer(in.length * 2);
 
-        //CheckStyle:MagicNumber OFF
+        // CheckStyle:MagicNumber OFF
         for (int i = 0; i < in.length; i++) {
             ch = (byte) (in[i] & 0xF0); // Strip off high nibble
             ch = (byte) (ch >>> 4); // shift the bits down
@@ -156,7 +158,7 @@ public final class ChecksumHelper {
             ch = (byte) (in[i] & 0x0F); // Strip off low nibble
             out.append(CHARS[(int) ch]); // convert the nibble to a String Character
         }
-        //CheckStyle:MagicNumber ON
+        // CheckStyle:MagicNumber ON
 
         return out.toString();
     }

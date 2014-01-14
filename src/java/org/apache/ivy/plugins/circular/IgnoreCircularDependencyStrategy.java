@@ -22,8 +22,7 @@ import org.apache.ivy.util.Message;
 
 public final class IgnoreCircularDependencyStrategy extends AbstractLogCircularDependencyStrategy {
 
-    private static final CircularDependencyStrategy INSTANCE = 
-           new IgnoreCircularDependencyStrategy();
+    private static final CircularDependencyStrategy INSTANCE = new IgnoreCircularDependencyStrategy();
 
     public static CircularDependencyStrategy getInstance() {
         return INSTANCE;
@@ -34,9 +33,8 @@ public final class IgnoreCircularDependencyStrategy extends AbstractLogCircularD
     }
 
     protected void logCircularDependency(ModuleRevisionId[] mrids) {
-        Message.verbose("circular dependency found: " 
-            + CircularDependencyHelper.formatMessage(mrids));
+        Message.verbose("circular dependency found: "
+                + CircularDependencyHelper.formatMessage(mrids));
     }
 
 }
-

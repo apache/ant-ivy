@@ -41,7 +41,7 @@ import org.apache.tools.ant.BuildException;
  * properties according to what was found.
  */
 public class IvyBuildNumber extends IvyTask {
-    
+
     public static class ResolvedModuleRevisionArtifactInfo implements ArtifactInfo {
         private ModuleRevisionId rmr;
 
@@ -157,16 +157,16 @@ public class IvyBuildNumber extends IvyTask {
         if (!prefix.endsWith(".") && prefix.length() > 0) {
             prefix = prefix + ".";
         }
-        
+
         SearchEngine searcher = new SearchEngine(settings);
-        
+
         PatternMatcher patternMatcher = new PatternMatcher() {
             private PatternMatcher exact = new ExactPatternMatcher();
+
             private PatternMatcher regexp = new ExactOrRegexpPatternMatcher();
-        
+
             public Matcher getMatcher(String expression) {
-                if (expression.equals(organisation)
-                        || expression.equals(module)
+                if (expression.equals(organisation) || expression.equals(module)
                         || expression.equals(branch)) {
                     return exact.getMatcher(expression);
                 }
@@ -179,37 +179,38 @@ public class IvyBuildNumber extends IvyTask {
         };
         ModuleRevisionId[] revisions;
         if (resolver == null) {
-            revisions = searcher.listModules(ModuleRevisionId.newInstance(organisation,
-                module, branch, ".*"), patternMatcher);
+            revisions = searcher.listModules(
+                ModuleRevisionId.newInstance(organisation, module, branch, ".*"), patternMatcher);
         } else {
             DependencyResolver depResolver = settings.getResolver(resolver);
             if (depResolver == null) {
                 throw new BuildException("Unknown resolver: " + resolver);
             }
-            revisions = searcher.listModules(depResolver, ModuleRevisionId.newInstance(organisation,
-                module, branch, ".*"), patternMatcher);
+            revisions = searcher.listModules(depResolver,
+                ModuleRevisionId.newInstance(organisation, module, branch, ".*"), patternMatcher);
         }
 
         ArtifactInfo[] infos = new ArtifactInfo[revisions.length];
         for (int i = 0; i < revisions.length; i++) {
             infos[i] = new ResolvedModuleRevisionArtifactInfo(revisions[i]);
         }
-        
+
         VersionMatcher matcher = settings.getVersionMatcher();
         LatestStrategy latestStrategy = settings.getLatestStrategy("latest-revision");
         List sorted = latestStrategy.sort(infos);
 
-        ModuleRevisionId askedMrid = ModuleRevisionId.newInstance(organisation,
-            module, branch, revision);
+        ModuleRevisionId askedMrid = ModuleRevisionId.newInstance(organisation, module, branch,
+            revision);
 
         String foundRevision = null;
         for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
-            ResolvedModuleRevisionArtifactInfo info = (ResolvedModuleRevisionArtifactInfo) iter.previous();
-            
+            ResolvedModuleRevisionArtifactInfo info = (ResolvedModuleRevisionArtifactInfo) iter
+                    .previous();
+
             if (!matcher.accept(askedMrid, info.rmr)) {
                 continue;
             }
-            
+
             if (matcher.needModuleDescriptor(askedMrid, info.rmr)) {
                 ResolvedModuleRevision rmr = ivy.findModule(info.rmr);
                 if (matcher.accept(askedMrid, rmr.getDescriptor())) {
@@ -218,12 +219,12 @@ public class IvyBuildNumber extends IvyTask {
             } else {
                 foundRevision = info.rmr.getRevision();
             }
-            
+
             if (foundRevision != null) {
                 break;
             }
         }
-        
+
         NewRevision newRevision = computeNewRevision(foundRevision);
         setProperty("revision", newRevision.getRevision());
         setProperty("new.revision", newRevision.getNewRevision());
@@ -238,8 +239,8 @@ public class IvyBuildNumber extends IvyTask {
     }
 
     private NewRevision computeNewRevision(String revision) {
-        String revPrefix = "latest.integration".equals(this.revision) ? "" 
-                : this.revision.substring(0, this.revision.length() - 1);
+        String revPrefix = "latest.integration".equals(this.revision) ? "" : this.revision
+                .substring(0, this.revision.length() - 1);
         if (revision != null && !revision.startsWith(revPrefix)) {
             throw new BuildException("invalid exception found in repository: '" + revision
                     + "' for '" + revPrefix + "'");
@@ -254,8 +255,8 @@ public class IvyBuildNumber extends IvyTask {
                 if (r == null) { // no number found
                     return new NewRevision(revision, defaultValue, null, null);
                 } else {
-                    long n = Long.parseLong(
-                        defaultValue.substring(r.getStartIndex(), r.getEndIndex()));
+                    long n = Long.parseLong(defaultValue.substring(r.getStartIndex(),
+                        r.getEndIndex()));
                     return new NewRevision(revision, defaultValue, null, String.valueOf(n));
                 }
             }
@@ -275,15 +276,14 @@ public class IvyBuildNumber extends IvyTask {
             }
         }
         long n = Long.parseLong(revision.substring(r.getStartIndex(), r.getEndIndex())) + 1;
-        return new NewRevision(revision, revision.substring(0, r.getStartIndex()) + n, String
-                .valueOf(n - 1), String.valueOf(n));
+        return new NewRevision(revision, revision.substring(0, r.getStartIndex()) + n,
+                String.valueOf(n - 1), String.valueOf(n));
     }
 
     private Range findFirstNumber(String str, int startIndex) {
         // let's find the first digit in the string
         int startNumberIndex = startIndex;
-        while (startNumberIndex < str.length() 
-                && !Character.isDigit(str.charAt(startNumberIndex))) {
+        while (startNumberIndex < str.length() && !Character.isDigit(str.charAt(startNumberIndex))) {
             startNumberIndex++;
         }
         if (startNumberIndex == str.length()) {

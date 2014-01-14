@@ -47,33 +47,21 @@ public class DefaultArtifact extends AbstractArtifact {
 
     public static Artifact cloneWithAnotherTypeAndExt(Artifact artifact, String newType,
             String newExt) {
-        return new DefaultArtifact(
-            ArtifactRevisionId.newInstance(
-                artifact.getModuleRevisionId(), 
-                artifact.getName(), newType, newExt, 
-                artifact.getQualifiedExtraAttributes()), 
-            artifact.getPublicationDate(), 
-            artifact.getUrl(), artifact.isMetadata());
+        return new DefaultArtifact(ArtifactRevisionId.newInstance(artifact.getModuleRevisionId(),
+            artifact.getName(), newType, newExt, artifact.getQualifiedExtraAttributes()),
+                artifact.getPublicationDate(), artifact.getUrl(), artifact.isMetadata());
     }
 
     public static Artifact cloneWithAnotherName(Artifact artifact, String name) {
-        return new DefaultArtifact(
-            ArtifactRevisionId.newInstance(
-                artifact.getModuleRevisionId(), 
-                name, artifact.getType(), artifact.getExt(), 
-                artifact.getQualifiedExtraAttributes()), 
-            artifact.getPublicationDate(), 
-            artifact.getUrl(), artifact.isMetadata());
+        return new DefaultArtifact(ArtifactRevisionId.newInstance(artifact.getModuleRevisionId(),
+            name, artifact.getType(), artifact.getExt(), artifact.getQualifiedExtraAttributes()),
+                artifact.getPublicationDate(), artifact.getUrl(), artifact.isMetadata());
     }
 
     public static Artifact cloneWithAnotherMrid(Artifact artifact, ModuleRevisionId mrid) {
-        return new DefaultArtifact(
-            ArtifactRevisionId.newInstance(
-                mrid, 
-                artifact.getName(), artifact.getType(), artifact.getExt(), 
-                artifact.getQualifiedExtraAttributes()), 
-            artifact.getPublicationDate(), 
-            artifact.getUrl(), artifact.isMetadata());
+        return new DefaultArtifact(ArtifactRevisionId.newInstance(mrid, artifact.getName(),
+            artifact.getType(), artifact.getExt(), artifact.getQualifiedExtraAttributes()),
+                artifact.getPublicationDate(), artifact.getUrl(), artifact.isMetadata());
     }
 
     private Date publicationDate;
@@ -81,16 +69,16 @@ public class DefaultArtifact extends AbstractArtifact {
     private ArtifactRevisionId arid;
 
     private URL url;
-    
+
     private boolean isMetadata = false;
 
-    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, 
-            String name, String type, String ext) {
+    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
+            String ext) {
         this(mrid, publicationDate, name, type, ext, null, null);
     }
 
-    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, 
-            String name, String type, String ext, boolean isMetadata) {
+    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
+            String ext, boolean isMetadata) {
         this(mrid, publicationDate, name, type, ext, null, null);
         this.isMetadata = isMetadata;
     }
@@ -102,11 +90,12 @@ public class DefaultArtifact extends AbstractArtifact {
 
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
             String ext, URL url, Map extraAttributes) {
-        this(ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes), 
-            publicationDate, url, false);
+        this(ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes),
+                publicationDate, url, false);
     }
-    public DefaultArtifact(
-            ArtifactRevisionId arid, Date publicationDate, URL url, boolean isMetadata) {
+
+    public DefaultArtifact(ArtifactRevisionId arid, Date publicationDate, URL url,
+            boolean isMetadata) {
         if (arid == null) {
             throw new NullPointerException("null arid not allowed");
         }

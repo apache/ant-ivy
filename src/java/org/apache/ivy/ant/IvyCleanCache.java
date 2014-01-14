@@ -30,9 +30,9 @@ public class IvyCleanCache extends IvyTask {
     public static final String NONE = "NONE";
 
     private boolean resolution = true;
-    
+
     private String cache = ALL;
-    
+
     public String getCache() {
         return cache;
     }
@@ -62,7 +62,6 @@ public class IvyCleanCache extends IvyTask {
     public void setResolution(boolean resolution) {
         this.resolution = resolution;
     }
-
 
     public void doExecute() throws BuildException {
         IvySettings settings = getIvyInstance().getSettings();

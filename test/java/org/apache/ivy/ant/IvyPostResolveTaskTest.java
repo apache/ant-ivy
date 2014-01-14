@@ -140,10 +140,8 @@ public class IvyPostResolveTaskTest extends TestCase {
         resolve.execute();
 
         ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
-        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar")
-                .exists());
-        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")
-                .exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         task.setConf("*");
         task.execute();
@@ -163,10 +161,8 @@ public class IvyPostResolveTaskTest extends TestCase {
         resolve.execute();
 
         ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
-        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar")
-                .exists());
-        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")
-                .exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         task.setConf("*"); // will trigger a resolve
         task.setKeep(false); // don't keep the resolve results
@@ -356,10 +352,8 @@ public class IvyPostResolveTaskTest extends TestCase {
 
         ResolveReport report1 = (ResolveReport) project
                 .getReference("ivy.resolved.report.testResolveId");
-        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar")
-                .exists());
-        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")
-                .exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         // perform another resolve
         resolve = new IvyResolve();
@@ -387,7 +381,7 @@ public class IvyPostResolveTaskTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(task.getIvyInstance(), organisation,
-            module, revision, artifact, type, ext);
+        return TestHelper.getArchiveFileInCache(task.getIvyInstance(), organisation, module,
+            revision, artifact, type, ext);
     }
 }

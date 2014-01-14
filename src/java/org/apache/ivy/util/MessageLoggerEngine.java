@@ -34,8 +34,8 @@ import java.util.Stack;
  * </p>
  */
 public class MessageLoggerEngine implements MessageLogger {
-    private final ThreadLocal/*<Stack<MessageLogger>>*/ loggerStacks = new ThreadLocal();
-    
+    private final ThreadLocal/* <Stack<MessageLogger>> */loggerStacks = new ThreadLocal();
+
     private MessageLogger defaultLogger = null;
 
     private List problems = new ArrayList();
@@ -43,7 +43,7 @@ public class MessageLoggerEngine implements MessageLogger {
     private List warns = new ArrayList();
 
     private List errors = new ArrayList();
-    
+
     private Stack getLoggerStack() {
         Stack stack = (Stack) loggerStacks.get();
         if (stack == null) {
@@ -52,20 +52,19 @@ public class MessageLoggerEngine implements MessageLogger {
         }
         return stack;
     }
-    
+
     public MessageLoggerEngine() {
     }
 
     /**
      * Sets the logger used when the stack is empty.
      * 
-     * @param defaultLogger the logger to use when the stack is empty.
+     * @param defaultLogger
+     *            the logger to use when the stack is empty.
      */
     public void setDefaultLogger(MessageLogger defaultLogger) {
         this.defaultLogger = defaultLogger;
     }
-
-
 
     /**
      * Push a logger on the stack.
@@ -77,7 +76,7 @@ public class MessageLoggerEngine implements MessageLogger {
         Checks.checkNotNull(logger, "logger");
         getLoggerStack().push(logger);
     }
-    
+
     /**
      * Pops a logger from the logger stack.
      * <p>
@@ -92,6 +91,7 @@ public class MessageLoggerEngine implements MessageLogger {
 
     /**
      * Returns the current logger, or the default one if there is no logger in the stack
+     * 
      * @return the current logger, or the default one if there is no logger in the stack
      */
     public MessageLogger peekLogger() {
@@ -113,7 +113,7 @@ public class MessageLoggerEngine implements MessageLogger {
         problems.add("WARN:  " + msg);
         warns.add(msg);
     }
-    
+
     public void error(String msg) {
         peekLogger().error(msg);
         problems.add("\tERROR: " + msg);
@@ -136,7 +136,7 @@ public class MessageLoggerEngine implements MessageLogger {
         MessageLoggerHelper.sumupProblems(this);
         clearProblems();
     }
-    
+
     public void clearProblems() {
         getDefaultLogger().clearProblems();
         for (Iterator iter = getLoggerStack().iterator(); iter.hasNext();) {
@@ -156,18 +156,18 @@ public class MessageLoggerEngine implements MessageLogger {
             l.setShowProgress(progress);
         }
     }
-    
+
     public boolean isShowProgress() {
         // testing the default logger is enough, all loggers should be in sync
         return getDefaultLogger().isShowProgress();
     }
 
     // delegation methods
-    
+
     public void debug(String msg) {
         peekLogger().debug(msg);
     }
-    
+
     public void deprecated(String msg) {
         peekLogger().deprecated(msg);
     }
@@ -204,5 +204,4 @@ public class MessageLoggerEngine implements MessageLogger {
         peekLogger().verbose(msg);
     }
 
-    
 }

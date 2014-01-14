@@ -49,7 +49,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private boolean inline = false;
 
     private String organisation;
-    
+
     private String branch = null;
 
     private String module;
@@ -57,7 +57,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private String revision = "latest.integration";
 
     private String resolveId;
-    
+
     private String type;
 
     private File file;
@@ -67,13 +67,13 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private boolean useOrigin = false;
 
     private Boolean keep = null;
-    
+
     private boolean refresh = false;
-    
+
     private String resolveMode = null;
 
     private String log = ResolveOptions.LOG_DEFAULT;
-    
+
     private boolean changing = false;
 
     private IvyResolve resolve = new IvyResolve();
@@ -85,7 +85,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     public void setUseOrigin(boolean useOrigin) {
         this.useOrigin = useOrigin;
     }
-    
+
     public String getLog() {
         return log;
     }
@@ -127,18 +127,18 @@ public abstract class IvyPostResolveTask extends IvyTask {
             if (organisation == null) {
                 throw new BuildException(
                         "no organisation provided for ivy cache task in inline mode: "
-                        + "It can either be set explicitely via the attribute 'organisation' "
-                        + "or via 'ivy.organisation' property");
+                                + "It can either be set explicitely via the attribute 'organisation' "
+                                + "or via 'ivy.organisation' property");
             }
             if (module == null) {
                 throw new BuildException(
                         "no module name provided for ivy cache task in inline mode: "
-                        + "It can either be set explicitely via the attribute 'module' "
-                        + "or via 'ivy.module' property");
+                                + "It can either be set explicitely via the attribute 'module' "
+                                + "or via 'ivy.module' property");
             }
             String[] toResolve = getConfsToResolve(getOrganisation(), getModule() + "-caller",
                 conf, true);
-            //When we make an inline resolution, we can not resolve private confs.
+            // When we make an inline resolution, we can not resolve private confs.
             for (int i = 0; i < toResolve.length; i++) {
                 if ("*".equals(toResolve[i])) {
                     toResolve[i] = "*(public)";
@@ -164,8 +164,9 @@ public abstract class IvyPostResolveTask extends IvyTask {
                         + getModule() + " " + getRevision() + " (" + conf + ")");
             }
             if ("*".equals(conf)) {
-                conf = StringUtils.join(getResolvedConfigurations(getOrganisation(), getModule()
-                        + "-caller", true), ", ");
+                conf = StringUtils.join(
+                    getResolvedConfigurations(getOrganisation(), getModule() + "-caller", true),
+                    ", ");
             }
         } else {
             Message.debug("using standard ensure resolved");
@@ -182,8 +183,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
             if ("*".equals(conf)) {
                 conf = getProperty(settings, "ivy.resolved.configurations");
                 if (conf == null) {
-                    throw new BuildException(
-                            "bad conf provided for ivy cache task: "
+                    throw new BuildException("bad conf provided for ivy cache task: "
                             + "'*' can only be used with a prior call to <resolve/>");
                 }
             }
@@ -191,20 +191,17 @@ public abstract class IvyPostResolveTask extends IvyTask {
         organisation = getProperty(organisation, settings, "ivy.organisation");
         module = getProperty(module, settings, "ivy.module");
         if (organisation == null) {
-            throw new BuildException(
-                    "no organisation provided for ivy cache task: "
+            throw new BuildException("no organisation provided for ivy cache task: "
                     + "It can either be set explicitely via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (module == null) {
-            throw new BuildException(
-                    "no module name provided for ivy cache task: "
+            throw new BuildException("no module name provided for ivy cache task: "
                     + "It can either be set explicitely via the attribute 'module' "
                     + "or via 'ivy.module' property or a prior call to <resolve/>");
         }
         if (conf == null) {
-            throw new BuildException(
-                    "no conf provided for ivy cache task: "
+            throw new BuildException("no conf provided for ivy cache task: "
                     + "It can either be set explicitely via the attribute 'conf' or "
                     + "via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
@@ -272,9 +269,9 @@ public abstract class IvyPostResolveTask extends IvyTask {
             } else {
                 confs = splitConfs(conf);
             }
-            
+
             HashSet rconfsSet = new HashSet(Arrays.asList(rconfs));
-            
+
             // for each resolved configuration, check if the report still exists
             ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
             for (Iterator it = rconfsSet.iterator(); it.hasNext();) {
@@ -289,7 +286,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                     it.remove();
                 }
             }
-            
+
             HashSet confsSet = new HashSet(Arrays.asList(confs));
             Message.debug("resolved configurations:   " + rconfsSet);
             Message.debug("asked configurations:      " + confsSet);
@@ -319,8 +316,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     }
 
     protected ModuleRevisionId getResolvedMrid() {
-        return new ModuleRevisionId(getResolvedModuleId(), getRevision() == null ? Ivy
-                .getWorkingRevision() : getRevision());
+        return new ModuleRevisionId(getResolvedModuleId(),
+                getRevision() == null ? Ivy.getWorkingRevision() : getRevision());
     }
 
     protected ModuleId getResolvedModuleId() {
@@ -436,11 +433,11 @@ public abstract class IvyPostResolveTask extends IvyTask {
     public boolean isKeep() {
         return this.keep == null ? !isInline() : this.keep.booleanValue();
     }
-    
+
     public void setChanging(boolean changing) {
         this.changing = changing;
     }
-    
+
     public boolean isChanging() {
         return this.changing;
     }
@@ -452,7 +449,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     public boolean isRefresh() {
         return refresh;
     }
-    
+
     public String getResolveMode() {
         return resolveMode;
     }

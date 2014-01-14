@@ -43,21 +43,29 @@ import org.apache.tools.ant.ProjectHelper;
 public class PackagerCacheEntry {
 
     private final ModuleRevisionId mr;
+
     private final File dir;
+
     private final File resourceCache;
+
     private final String resourceURL;
+
     private final boolean validate;
+
     private final boolean preserve;
+
     private final boolean restricted;
+
     private final boolean verbose;
+
     private final boolean quiet;
 
     private boolean built;
 
     // CheckStyle:ParameterNumber OFF
-    public PackagerCacheEntry(ModuleRevisionId mr, File rootDir,
-      File resourceCache, String resourceURL, boolean validate,
-      boolean preserve, boolean restricted, boolean verbose, boolean quiet) {
+    public PackagerCacheEntry(ModuleRevisionId mr, File rootDir, File resourceCache,
+            String resourceURL, boolean validate, boolean preserve, boolean restricted,
+            boolean verbose, boolean quiet) {
         this.mr = mr;
         this.dir = getSubdir(rootDir, this.mr);
         this.resourceCache = resourceCache;
@@ -68,6 +76,7 @@ public class PackagerCacheEntry {
         this.verbose = verbose;
         this.quiet = quiet;
     }
+
     // CheckStyle:ParameterNumber ON
 
     /**
@@ -85,8 +94,8 @@ public class PackagerCacheEntry {
     public synchronized void build(Resource packagerResource, Map properties) throws IOException {
         // Sanity check
         if (this.built) {
-            throw new IllegalStateException("build in directory `"
-              + this.dir + "' already completed");
+            throw new IllegalStateException("build in directory `" + this.dir
+                    + "' already completed");
         }
 
         // Remove work directory if it exists (e.g. left over from last time)
@@ -117,27 +126,27 @@ public class PackagerCacheEntry {
         // Execute the Ant build file
         Project project = new Project();
         project.init();
-        project.setUserProperty("ant.file" , new File(dir, "build.xml").getAbsolutePath());
+        project.setUserProperty("ant.file", new File(dir, "build.xml").getAbsolutePath());
         ProjectHelper.configureProject(project, new File(dir, "build.xml"));
         project.setBaseDir(dir);
-            
+
         // Configure logging verbosity
         BuildLogger logger = new DefaultLogger();
-        logger.setMessageOutputLevel(this.verbose ? Project.MSG_VERBOSE 
+        logger.setMessageOutputLevel(this.verbose ? Project.MSG_VERBOSE
                 : this.quiet ? Project.MSG_WARN : Project.MSG_INFO);
         logger.setOutputPrintStream(System.out);
         logger.setErrorPrintStream(System.err);
         project.addBuildListener(logger);
 
         // Set properties
-        project.setUserProperty("ivy.packager.organisation", 
-                                        "" + this.mr.getModuleId().getOrganisation());
+        project.setUserProperty("ivy.packager.organisation", ""
+                + this.mr.getModuleId().getOrganisation());
         project.setUserProperty("ivy.packager.module", "" + this.mr.getModuleId().getName());
         project.setUserProperty("ivy.packager.revision", "" + this.mr.getRevision());
         project.setUserProperty("ivy.packager.branch", "" + this.mr.getBranch());
         if (this.resourceCache != null) {
-            project.setUserProperty("ivy.packager.resourceCache", 
-                                        "" + this.resourceCache.getCanonicalPath());
+            project.setUserProperty("ivy.packager.resourceCache",
+                "" + this.resourceCache.getCanonicalPath());
         }
         if (this.resourceURL != null) {
             project.setUserProperty("ivy.packager.resourceURL", "" + getResourceURL());
@@ -153,7 +162,7 @@ public class PackagerCacheEntry {
                 project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
             }
         }
-        
+
         // Execute task
         Message.verbose("performing packager resolver build in " + this.dir);
         try {
@@ -174,17 +183,17 @@ public class PackagerCacheEntry {
 
     /**
      * Get a built artifact.
-     *
-     * @throws IllegalStateException if this entry's built has not
-     *  (yet) completed successfully
+     * 
+     * @throws IllegalStateException
+     *             if this entry's built has not (yet) completed successfully
      */
     public ResolvedResource getBuiltArtifact(Artifact artifact) {
         if (!this.built) {
             throw new IllegalStateException("build in directory `" + this.dir
-              + "' has not yet successfully completed");
+                    + "' has not yet successfully completed");
         }
-        return new ResolvedResource(
-          new BuiltFileResource(this.dir, artifact), this.mr.getRevision());
+        return new ResolvedResource(new BuiltFileResource(this.dir, artifact),
+                this.mr.getRevision());
     }
 
     public synchronized boolean cleanup() {
@@ -217,8 +226,8 @@ public class PackagerCacheEntry {
 
     private String getResourceURL() {
         String baseURL = IvyPatternHelper.substitute(resourceURL, mr.getOrganisation(),
-                mr.getName(), mr.getRevision(), null, null, null, null,
-                mr.getQualifiedExtraAttributes(), null);
+            mr.getName(), mr.getRevision(), null, null, null, null,
+            mr.getQualifiedExtraAttributes(), null);
         int slash = baseURL.lastIndexOf('/');
         if (slash != -1) {
             baseURL = baseURL.substring(0, slash + 1);
@@ -227,10 +236,7 @@ public class PackagerCacheEntry {
     }
 
     private static File getSubdir(File rootDir, ModuleRevisionId mr) {
-        return new File(rootDir,
-          mr.getOrganisation() + File.separatorChar
-          + mr.getName() + File.separatorChar
-          + mr.getRevision());
+        return new File(rootDir, mr.getOrganisation() + File.separatorChar + mr.getName()
+                + File.separatorChar + mr.getRevision());
     }
 }
-

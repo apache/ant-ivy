@@ -35,15 +35,15 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
         public int compare(Object o1, Object o2) {
             String rev1 = ((ModuleRevisionId) o1).getRevision();
             String rev2 = ((ModuleRevisionId) o2).getRevision();
-        
+
             rev1 = rev1.replaceAll("([a-zA-Z])(\\d)", "$1.$2");
             rev1 = rev1.replaceAll("(\\d)([a-zA-Z])", "$1.$2");
             rev2 = rev2.replaceAll("([a-zA-Z])(\\d)", "$1.$2");
             rev2 = rev2.replaceAll("(\\d)([a-zA-Z])", "$1.$2");
-        
+
             String[] parts1 = rev1.split("[\\._\\-\\+]");
             String[] parts2 = rev2.split("[\\._\\-\\+]");
-        
+
             int i = 0;
             for (; i < parts1.length && i < parts2.length; i++) {
                 if (parts1[i].equals(parts2[i])) {
@@ -96,7 +96,7 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
         public int compare(Object o1, Object o2) {
             String rev1 = ((ArtifactInfo) o1).getRevision();
             String rev2 = ((ArtifactInfo) o2).getRevision();
-        
+
             /*
              * The revisions can still be not resolved, so we use the current version matcher to
              * know if one revision is dynamic, and in this case if it should be considered greater
@@ -116,7 +116,7 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
                 int c = vmatcher.compare(mrid2, mrid1, mridComparator);
                 return c >= 0 ? -1 : 1;
             }
-        
+
             return mridComparator.compare(mrid1, mrid2);
         }
     }

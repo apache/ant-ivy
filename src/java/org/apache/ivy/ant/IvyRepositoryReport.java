@@ -80,8 +80,7 @@ public class IvyRepositoryReport extends IvyTask {
             throw new BuildException("xsl file is mandatory when using xsl generation");
         }
         if (module == null && PatternMatcher.EXACT.equals(matcher)) {
-            throw new BuildException(
-                    "no module name provided for ivy repository graph task: "
+            throw new BuildException("no module name provided for ivy repository graph task: "
                     + "It can either be set explicitely via the attribute 'module' or "
                     + "via 'ivy.module' property or a prior call to <resolve/>");
         } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
@@ -91,28 +90,26 @@ public class IvyRepositoryReport extends IvyTask {
 
         try {
             ModuleRevisionId criteria = null;
-            
+
             if ((revision == null) || settings.getVersionMatcher().isDynamic(mrid)) {
                 criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch, "*");
             } else {
-                criteria = new ModuleRevisionId(
-                    new ModuleId(organisation, module), branch, revision);
+                criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch,
+                        revision);
             }
-            
+
             ModuleRevisionId[] mrids = ivy.listModules(criteria, settings.getMatcher(matcher));
-            
+
             // replace all found revisions with the original requested revision
             Set modules = new HashSet();
             for (int i = 0; i < mrids.length; i++) {
                 modules.add(ModuleRevisionId.newInstance(mrids[i], revision));
             }
-            
+
             mrids = (ModuleRevisionId[]) modules.toArray(new ModuleRevisionId[modules.size()]);
             ModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true, false);
             String resolveId = ResolveOptions.getDefaultResolveId(md);
-            ResolveReport report = ivy.resolve(md, 
-                new ResolveOptions()
-                    .setResolveId(resolveId)
+            ResolveReport report = ivy.resolve(md, new ResolveOptions().setResolveId(resolveId)
                     .setValidate(doValidate(settings)));
 
             ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
@@ -170,8 +167,8 @@ public class IvyRepositoryReport extends IvyTask {
 
     private void gengraph(ResolutionCacheManager cache, String organisation, String module)
             throws IOException {
-        gen(cache, organisation, module, 
-            getGraphStylePath(cache.getResolutionCacheRoot()), "graphml");
+        gen(cache, organisation, module, getGraphStylePath(cache.getResolutionCacheRoot()),
+            "graphml");
     }
 
     private String getGraphStylePath(File cache) throws IOException {
@@ -183,8 +180,8 @@ public class IvyRepositoryReport extends IvyTask {
         return style.getAbsolutePath();
     }
 
-    private void gendot(
-            ResolutionCacheManager cache, String organisation, String module) throws IOException {
+    private void gendot(ResolutionCacheManager cache, String organisation, String module)
+            throws IOException {
         gen(cache, organisation, module, getDotStylePath(cache.getResolutionCacheRoot()), "dot");
     }
 
@@ -197,8 +194,8 @@ public class IvyRepositoryReport extends IvyTask {
         return style.getAbsolutePath();
     }
 
-    private void gen(ResolutionCacheManager cache, String organisation, String module, String style,
-            String ext) throws IOException {
+    private void gen(ResolutionCacheManager cache, String organisation, String module,
+            String style, String ext) throws IOException {
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());

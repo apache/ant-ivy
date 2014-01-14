@@ -53,7 +53,7 @@ public class ExactOrRegexpPatternMatcherTest extends AbstractPatternMatcherTest 
 
         matcher = patternMatcher.getMatcher("abc-123_ABC");
         assertTrue(matcher.isExact());
-        
+
         try {
             matcher = patternMatcher.getMatcher("(");
             fail("Should fail on invalid regexp syntax");

@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.resolve;
 
-
 /**
  * Information about a blacklisted module, providing context information in which it has been
  * blacklisted

@@ -52,7 +52,7 @@ import com.jcraft.jsch.agentproxy.RemoteIdentityRepository;
 public final class SshCache {
 
     private static final int SSH_DEFAULT_PORT = 22;
-    
+
     private SshCache() {
     };
 
@@ -188,8 +188,8 @@ public final class SshCache {
         if (port != -1 && port != SSH_DEFAULT_PORT) {
             portToUse = Integer.toString(port);
         }
-        return user.toLowerCase(Locale.US).trim() + "@" 
-                + host.toLowerCase(Locale.US).trim() + ":" + portToUse;
+        return user.toLowerCase(Locale.US).trim() + "@" + host.toLowerCase(Locale.US).trim() + ":"
+                + portToUse;
     }
 
     /**
@@ -292,11 +292,10 @@ public final class SshCache {
 
     /**
      * Attempts to connect to a local SSH agent (using either UNIX sockets or PuTTY's Pageant)
-     *
+     * 
      * @param jsch
-     *          Connection to be attached to an available local agent
-     * @return
-     *          true if connected to agent, false otherwise
+     *            Connection to be attached to an available local agent
+     * @return true if connected to agent, false otherwise
      */
     private boolean attemptAgentUse(JSch jsch) {
         try {
@@ -332,7 +331,7 @@ public final class SshCache {
      */
     public Session getSession(String host, int port, String username, String userPassword,
             File pemFile, String pemPassword, File passFile, boolean allowedAgentUse)
-                    throws IOException {
+            throws IOException {
         Checks.checkNotNull(host, "host");
         Checks.checkNotNull(username, "user");
         Entry entry = getCacheEntry(username, host, port);
@@ -358,12 +357,12 @@ public final class SshCache {
                 session.setUserInfo(new CfUserInfo(host, username, userPassword, pemFile,
                         pemPassword, passFile));
                 session.setDaemonThread(true);
-                
+
                 Properties config = new Properties();
                 config.setProperty("PreferredAuthentications",
-                        "publickey,keyboard-interactive,password");
+                    "publickey,keyboard-interactive,password");
                 session.setConfig(config);
-                
+
                 session.connect();
                 Message.verbose(":: SSH :: connected to " + host + "!");
                 setSession(username, host, port, session);
@@ -436,8 +435,9 @@ public final class SshCache {
 
         public String getPassphrase() {
             if (pemPassword == null && pemFile != null) {
-                Credentials c = CredentialsUtil.promptCredentials(new Credentials(null, pemFile
-                        .getAbsolutePath(), userName, pemPassword), passfile);
+                Credentials c = CredentialsUtil.promptCredentials(
+                    new Credentials(null, pemFile.getAbsolutePath(), userName, pemPassword),
+                    passfile);
                 if (c != null) {
                     userName = c.getUserName();
                     pemPassword = c.getPasswd();
@@ -446,7 +446,7 @@ public final class SshCache {
             return pemPassword;
         }
 
-        public String[] promptKeyboardInteractive(String destination, String name, 
+        public String[] promptKeyboardInteractive(String destination, String name,
                 String instruction, String[] prompt, boolean[] echo) {
             return new String[] {getPassword()};
         }

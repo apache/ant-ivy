@@ -101,7 +101,8 @@ public class BuildOBRTask extends IvyCacheTask {
             super.prepareTask();
         }
         // ensure the configured source type get also resolved
-        if (getType() != null && !getType().equals("*") && sourceTypes != null && !sourceTypes.isEmpty()) {
+        if (getType() != null && !getType().equals("*") && sourceTypes != null
+                && !sourceTypes.isEmpty()) {
             StringBuilder buffer = new StringBuilder(getType());
             for (String sourceType : sourceTypes) {
                 buffer.append(",");
@@ -131,8 +132,8 @@ public class BuildOBRTask extends IvyCacheTask {
                 throw new BuildException("the resolver '" + resolverName + "' was not found");
             }
             if (!(resolver instanceof BasicResolver)) {
-                throw new BuildException("the type of resolver '"
-                        + resolver.getClass().getName() + "' is not supported.");
+                throw new BuildException("the type of resolver '" + resolver.getClass().getName()
+                        + "' is not supported.");
             }
             it = new ResolverManifestIterable((BasicResolver) resolver);
         } else if (baseDir != null) {
@@ -148,8 +149,8 @@ public class BuildOBRTask extends IvyCacheTask {
             RepositoryCacheManager cacheManager = ivy.getSettings().getRepositoryCacheManager(
                 cacheName);
             if (!(cacheManager instanceof DefaultRepositoryCacheManager)) {
-                throw new BuildException("the type of cache '"
-                        + cacheManager.getClass().getName() + "' is not supported.");
+                throw new BuildException("the type of cache '" + cacheManager.getClass().getName()
+                        + "' is not supported.");
             }
             File basedir = ((DefaultRepositoryCacheManager) cacheManager).getBasedir();
             it = new FSManifestIterable(basedir);

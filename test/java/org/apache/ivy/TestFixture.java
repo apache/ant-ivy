@@ -34,7 +34,8 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 /**
  * Fixture easing the development of tests requiring to set up a simple repository with some
- * modules, using micro ivy format to describe the repository. <br/> Example of use:
+ * modules, using micro ivy format to describe the repository. <br/>
+ * Example of use:
  * 
  * <pre>
  * public class MyTest extends TestCase {
@@ -48,24 +49,21 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  *     protected void tearDown() throws Exception {
  *         fixture.clean();
  *     }
- *     
+ * 
  *     public void testXXX() throws Exception {
- *        fixture
- *            .addMD("#A;1-> { #B;[1.5,1.6] #C;2.5 }")
- *            .addMD("#B;1.5->#D;2.0")
- *            .addMD("#B;1.6->#D;2.0")
- *            .addMD("#C;2.5->#D;[1.0,1.6]")
- *            .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
- *            .init();
- *        ResolveReport r = fixture.resolve("#A;1");
- *        // assertions go here
+ *         fixture.addMD(&quot;#A;1-&gt; { #B;[1.5,1.6] #C;2.5 }&quot;).addMD(&quot;#B;1.5-&gt;#D;2.0&quot;)
+ *                 .addMD(&quot;#B;1.6-&gt;#D;2.0&quot;).addMD(&quot;#C;2.5-&gt;#D;[1.0,1.6]&quot;).addMD(&quot;#D;1.5&quot;)
+ *                 .addMD(&quot;#D;1.6&quot;).addMD(&quot;#D;2.0&quot;).init();
+ *         ResolveReport r = fixture.resolve(&quot;#A;1&quot;);
+ *         // assertions go here
  *     }
  * }
  * </pre>
  */
 public class TestFixture {
-    
+
     private Collection mds = new ArrayList();
+
     private Ivy ivy;
 
     public TestFixture() {
@@ -80,12 +78,12 @@ public class TestFixture {
             throw new RuntimeException(e);
         }
     }
-    
+
     public TestFixture addMD(String microIvy) {
         mds.add(TestHelper.parseMicroIvyDescriptor(microIvy));
         return this;
     }
-    
+
     public TestFixture init() throws IOException {
         TestHelper.fillRepository(getTestRepository(), mds);
         return this;
@@ -98,28 +96,28 @@ public class TestFixture {
     public IvySettings getSettings() {
         return ivy.getSettings();
     }
-    
+
     public Ivy getIvy() {
         return ivy;
     }
-    
+
     public void clean() {
         TestHelper.cleanTest();
     }
 
     public File getIvyFile(String mrid) {
         ResolvedResource r = getTestRepository().findIvyFileRef(
-            new DefaultDependencyDescriptor(ModuleRevisionId.parse(mrid), false), 
+            new DefaultDependencyDescriptor(ModuleRevisionId.parse(mrid), false),
             TestHelper.newResolveData(getSettings()));
         if (r == null) {
-            throw new IllegalStateException("module not found: "+mrid);
+            throw new IllegalStateException("module not found: " + mrid);
         }
         return ((FileResource) r.getResource()).getFile();
     }
 
-    public ResolveReport resolve(String mrid) 
-            throws MalformedURLException, ParseException, IOException {
+    public ResolveReport resolve(String mrid) throws MalformedURLException, ParseException,
+            IOException {
         return ivy.resolve(getIvyFile(mrid), TestHelper.newResolveOptions(getSettings()));
     }
-    
+
 }

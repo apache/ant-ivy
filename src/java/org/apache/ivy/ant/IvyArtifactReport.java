@@ -88,24 +88,17 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             if (getResolveId() != null) {
                 md = (ModuleDescriptor) getResolvedDescriptor(getResolveId());
             } else {
-                md = (ModuleDescriptor) getResolvedDescriptor(getOrganisation(), getModule()
-                        , false);
+                md = (ModuleDescriptor) getResolvedDescriptor(getOrganisation(), getModule(), false);
             }
             IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(
                 md,
-                ((ResolveOptions) new ResolveOptions()
-                        .setLog(getLog()))
-                        .setConfs(confs)
-                        .setResolveId(getResolveId())
-                        .setValidate(doValidate(getSettings())),
-                null);
+                ((ResolveOptions) new ResolveOptions().setLog(getLog())).setConfs(confs)
+                        .setResolveId(getResolveId()).setValidate(doValidate(getSettings())), null);
 
             Map artifactsToCopy = getIvyInstance().getRetrieveEngine().determineArtifactsToCopy(
                 ModuleRevisionId.newInstance(getOrganisation(), getModule(), getRevision()),
                 pattern,
-                ((RetrieveOptions) new RetrieveOptions()
-                        .setLog(getLog()))
-                        .setConfs(confs)
+                ((RetrieveOptions) new RetrieveOptions().setLog(getLog())).setConfs(confs)
                         .setResolveId(getResolveId()));
 
             Map moduleRevToArtifactsMap = new HashMap();
@@ -115,8 +108,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                         .getModuleRevisionId());
                 if (moduleRevArtifacts == null) {
                     moduleRevArtifacts = new HashSet();
-                    moduleRevToArtifactsMap.put(
-                        artifact.getArtifact().getModuleRevisionId(), moduleRevArtifacts);
+                    moduleRevToArtifactsMap.put(artifact.getArtifact().getModuleRevisionId(),
+                        moduleRevArtifacts);
                 }
                 moduleRevArtifacts.add(artifact);
             }
@@ -130,8 +123,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private void generateXml(IvyNode[] dependencies,
-            Map moduleRevToArtifactsMap, Map artifactsToCopy) {
+    private void generateXml(IvyNode[] dependencies, Map moduleRevToArtifactsMap,
+            Map artifactsToCopy) {
         try {
             FileOutputStream fileOuputStream = new FileOutputStream(tofile);
             try {
@@ -142,8 +135,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
 
                 for (int i = 0; i < dependencies.length; i++) {
                     IvyNode dependency = dependencies[i];
-                    if (dependency.getModuleRevision() == null 
-                            || dependency.isCompletelyEvicted()) {
+                    if (dependency.getModuleRevision() == null || dependency.isCompletelyEvicted()) {
                         continue;
                     }
 
@@ -154,9 +146,9 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                     if (artifactsOfModuleRev != null) {
                         for (Iterator iter = artifactsOfModuleRev.iterator(); iter.hasNext();) {
                             ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
-                            
+
                             RepositoryCacheManager cache = dependency.getModuleRevision()
-                                .getArtifactResolver().getRepositoryCacheManager();
+                                    .getArtifactResolver().getRepositoryCacheManager();
 
                             startArtifact(saxHandler, artifact.getArtifact());
 
@@ -200,17 +192,15 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         return saxHandler;
     }
 
-    private void startModule(TransformerHandler saxHandler, IvyNode dependency) 
-            throws SAXException {
+    private void startModule(TransformerHandler saxHandler, IvyNode dependency) throws SAXException {
         AttributesImpl moduleAttrs = new AttributesImpl();
         moduleAttrs.addAttribute(null, "organisation", "organisation", "CDATA", dependency
                 .getModuleId().getOrganisation());
         moduleAttrs.addAttribute(null, "name", "name", "CDATA", dependency.getModuleId().getName());
         ResolvedModuleRevision moduleRevision = dependency.getModuleRevision();
-        moduleAttrs.addAttribute(null, "rev", "rev", "CDATA", moduleRevision
-                .getId().getRevision());
-        moduleAttrs.addAttribute(null, "status", "status", "CDATA", moduleRevision
-                .getDescriptor().getStatus());
+        moduleAttrs.addAttribute(null, "rev", "rev", "CDATA", moduleRevision.getId().getRevision());
+        moduleAttrs.addAttribute(null, "status", "status", "CDATA", moduleRevision.getDescriptor()
+                .getStatus());
         saxHandler.startElement(null, "module", "module", moduleAttrs);
     }
 
@@ -223,10 +213,9 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         saxHandler.startElement(null, "artifact", "artifact", artifactAttrs);
     }
 
-    private void writeOriginLocationIfPresent(
-            RepositoryCacheManager cache, TransformerHandler saxHandler, 
-            ArtifactDownloadReport artifact) 
-            throws IOException, SAXException {
+    private void writeOriginLocationIfPresent(RepositoryCacheManager cache,
+            TransformerHandler saxHandler, ArtifactDownloadReport artifact) throws IOException,
+            SAXException {
         ArtifactOrigin origin = artifact.getArtifactOrigin();
         if (!ArtifactOrigin.isUnknown(origin)) {
             String originName = origin.getLocation();
@@ -249,13 +238,14 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private void writeCacheLocationIfPresent(RepositoryCacheManager cache, TransformerHandler saxHandler,
-            ArtifactDownloadReport artifact) throws SAXException {
+    private void writeCacheLocationIfPresent(RepositoryCacheManager cache,
+            TransformerHandler saxHandler, ArtifactDownloadReport artifact) throws SAXException {
         File archiveInCache = artifact.getLocalFile();
 
         if (archiveInCache != null) {
             saxHandler.startElement(null, "cache-location", "cache-location", new AttributesImpl());
-            char[] archiveInCacheAsChars = archiveInCache.getPath().replace('\\', '/').toCharArray();
+            char[] archiveInCacheAsChars = archiveInCache.getPath().replace('\\', '/')
+                    .toCharArray();
             saxHandler.characters(archiveInCacheAsChars, 0, archiveInCacheAsChars.length);
             saxHandler.endElement(null, "cache-location", "cache-location");
         }

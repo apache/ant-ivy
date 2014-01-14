@@ -21,11 +21,11 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.tools.ant.BuildFileTest;
 
 public class IvyRetrieveBuildFileTest extends BuildFileTest {
-    
+
     protected void setUp() throws Exception {
         configureProject("test/java/org/apache/ivy/ant/IvyRetrieveBuildFile.xml");
     }
-    
+
     public void testMultipleInlineRetrievesWithCacheCleaning() {
         executeTarget("testMultipleInlineRetrievesWithCacheCleaning");
         ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");

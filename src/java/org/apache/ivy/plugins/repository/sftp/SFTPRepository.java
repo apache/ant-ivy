@@ -123,10 +123,10 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             throw ex;
         } catch (URISyntaxException e) {
             IOException ex = new IOException("impossible to open stream for " + resource + " on "
-                + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+                    + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             ex.initCause(e);
             throw ex;
-        } 
+        }
     }
 
     public void get(String source, File destination) throws IOException {
@@ -142,7 +142,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             throw ex;
         } catch (URISyntaxException e) {
             IOException ex = new IOException("impossible to get " + source + " on " + getHost()
-                + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+                    + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             ex.initCause(e);
             throw ex;
         }
@@ -229,7 +229,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             IOException ex = new IOException("Failed to return a listing for '" + parent + "'");
             ex.initCause(usex);
             throw ex;
-        }            
+        }
         return null;
     }
 

@@ -24,11 +24,12 @@ import junit.framework.TestCase;
 
 public class ArtifactoryListingTest extends TestCase {
     // remote.test
-    
+
     public void testWicketListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
-        
-        List content = lister.listAll(new URL("http://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
+
+        List content = lister.listAll(new URL(
+                "http://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
         assertNotNull(content);
         assertEquals(5, content.size());
     }

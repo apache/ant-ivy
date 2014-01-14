@@ -21,7 +21,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 
 public class AntTestHelper {
-    // this is probably already available in some Ant class or helper... 
+    // this is probably already available in some Ant class or helper...
     public static Project newProject() {
         Project project = new Project();
         DefaultLogger logger = new DefaultLogger();

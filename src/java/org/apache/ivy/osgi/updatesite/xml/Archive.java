@@ -21,14 +21,12 @@ public class Archive {
 
     public void setPath(String path) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setURL(String url) {
         // TODO Auto-generated method stub
-        
+
     }
-    
-    
 
 }

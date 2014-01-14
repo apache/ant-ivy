@@ -72,7 +72,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
         private T currentDir = null;
 
         FSManifestIterator() {
-            dirs.add(Collections.<T>singleton(root).iterator());
+            dirs.add(Collections.<T> singleton(root).iterator());
         }
 
         /**

@@ -127,7 +127,7 @@ public class ApacheURLLister {
             }
 
             text = text.trim();
-            
+
             // handle complete URL listings
             if (href.startsWith("http:") || href.startsWith("https:")) {
                 try {
@@ -147,7 +147,7 @@ public class ApacheURLLister {
                 // we are only interested in sub-URLs, not parent URLs, so skip this one
                 continue;
             }
-            
+
             // absolute href: convert to relative one
             if (href.startsWith("/")) {
                 int slashIndex = href.substring(0, href.length() - 1).lastIndexOf('/');
@@ -174,8 +174,10 @@ public class ApacheURLLister {
             } else {
                 // text is not truncated, so it must match the url after stripping optional
                 // trailing slashes
-                String strippedHref = href.endsWith("/") ? href.substring(0, href.length() - 1) : href;
-                String strippedText = text.endsWith("/") ? text.substring(0, text.length() - 1) : text;
+                String strippedHref = href.endsWith("/") ? href.substring(0, href.length() - 1)
+                        : href;
+                String strippedText = text.endsWith("/") ? text.substring(0, text.length() - 1)
+                        : text;
                 if (!strippedHref.equalsIgnoreCase(strippedText)) {
                     continue;
                 }

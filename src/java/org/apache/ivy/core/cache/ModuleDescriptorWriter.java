@@ -25,6 +25,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 public interface ModuleDescriptorWriter {
-    public void write(ResolvedResource originalMdResource, ModuleDescriptor md, 
-            File src, File dest) throws IOException, ParseException;
+    public void write(ResolvedResource originalMdResource, ModuleDescriptor md, File src, File dest)
+            throws IOException, ParseException;
 }

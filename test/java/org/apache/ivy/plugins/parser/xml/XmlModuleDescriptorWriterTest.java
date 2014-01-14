@@ -60,8 +60,8 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
         assertTrue(dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
-            "\r\n", "\n").replace('\r', '\n');
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-simple.xml").replaceAll("\r\n", "\n").replace(
             '\r', '\n');
         assertEquals(expected, wrote);
@@ -77,8 +77,8 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
         assertTrue(dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
-            "\r\n", "\n").replace('\r', '\n');
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-info.xml").replaceAll("\r\n", "\n").replace(
             '\r', '\n');
         assertEquals(expected, wrote);
@@ -91,8 +91,8 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
         assertTrue(dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
-            "\r\n", "\n").replace('\r', '\n');
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-dependencies.xml").replaceAll("\r\n", "\n")
                 .replace('\r', '\n');
         assertEquals(expected, wrote);
@@ -104,13 +104,13 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
         assertTrue(dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
-            "\r\n", "\n").replace('\r', '\n');
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-full.xml").replaceAll("\r\n", "\n").replace(
             '\r', '\n');
         assertEquals(expected, wrote);
     }
-    
+
     public void testExtraInfos() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
@@ -139,18 +139,18 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
-	public void testExtends() throws Exception {
-		ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-		    new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-extends-all.xml"), false);
-		XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+    public void testExtends() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(),
+            XmlModuleDescriptorWriterTest.class.getResource("test-extends-all.xml"), false);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
-		assertTrue(dest.exists());
-		String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
-				.replaceAll("\r\n?", "\n");
-		String expected = readEntirely("test-write-extends.xml")
-				.replaceAll("\r\n?", "\n");
-		assertEquals(expected, wrote);
-	}
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest))).replaceAll(
+            "\r\n?", "\n");
+        String expected = readEntirely("test-write-extends.xml").replaceAll("\r\n?", "\n");
+        assertEquals(expected, wrote);
+    }
 
     /**
      * Test that the transitive attribute is written for non-transitive configurations.
@@ -172,8 +172,10 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
 
         // Then the transitive attribute must be set to false
         String output = FileUtil.readEntirely(dest);
-        String writtenConf = output.substring(output.indexOf("<configurations>") + 16, output.indexOf("</configurations>")).trim();
-        assertTrue("Transitive attribute not set to false: " + writtenConf, writtenConf.indexOf("transitive=\"false\"") >= 0);
+        String writtenConf = output.substring(output.indexOf("<configurations>") + 16,
+            output.indexOf("</configurations>")).trim();
+        assertTrue("Transitive attribute not set to false: " + writtenConf,
+            writtenConf.indexOf("transitive=\"false\"") >= 0);
     }
 
     /**
@@ -197,8 +199,10 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
 
         // Then the transitive attribute must NOT be written
         String output = FileUtil.readEntirely(dest);
-        String writtenConf = output.substring(output.indexOf("<configurations>") + 16, output.indexOf("</configurations>")).trim();
-        assertFalse("Transitive attribute set: " + writtenConf, writtenConf.indexOf("transitive=") >= 0);
+        String writtenConf = output.substring(output.indexOf("<configurations>") + 16,
+            output.indexOf("</configurations>")).trim();
+        assertFalse("Transitive attribute set: " + writtenConf,
+            writtenConf.indexOf("transitive=") >= 0);
     }
 
     private String readEntirely(String resource) throws IOException {

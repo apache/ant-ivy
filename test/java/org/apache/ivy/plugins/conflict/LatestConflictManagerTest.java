@@ -51,8 +51,8 @@ public class LatestConflictManagerTest extends TestCase {
 
     // Test case for issue IVY-388
     public void testIvy388() throws Exception {
-        ResolveReport report = ivy.resolve(LatestConflictManagerTest.class
-                .getResource("ivy-388.xml"), getResolveOptions());
+        ResolveReport report = ivy.resolve(
+            LatestConflictManagerTest.class.getResource("ivy-388.xml"), getResolveOptions());
 
         List deps = report.getDependencies();
         Iterator dependencies = deps.iterator();
@@ -75,8 +75,8 @@ public class LatestConflictManagerTest extends TestCase {
 
     // Test case for issue IVY-383
     public void testIvy383() throws Exception {
-        ResolveReport report = ivy.resolve(LatestConflictManagerTest.class
-                .getResource("ivy-383.xml"), getResolveOptions());
+        ResolveReport report = ivy.resolve(
+            LatestConflictManagerTest.class.getResource("ivy-383.xml"), getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
         Iterator iter = defaultReport.getModuleRevisionIds().iterator();
         while (iter.hasNext()) {
@@ -102,8 +102,9 @@ public class LatestConflictManagerTest extends TestCase {
         new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.2.jar")
                 .setLastModified(time + 2000);
 
-        ResolveReport report = ivy.resolve(LatestConflictManagerTest.class
-                .getResource("ivy-latest-time-1.xml"), getResolveOptions());
+        ResolveReport report = ivy.resolve(
+            LatestConflictManagerTest.class.getResource("ivy-latest-time-1.xml"),
+            getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
         Iterator iter = defaultReport.getModuleRevisionIds().iterator();
         while (iter.hasNext()) {
@@ -128,8 +129,9 @@ public class LatestConflictManagerTest extends TestCase {
         new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.2.jar")
                 .setLastModified(time + 2000);
 
-        ResolveReport report = ivy.resolve(LatestConflictManagerTest.class
-                .getResource("ivy-latest-time-2.xml"), getResolveOptions());
+        ResolveReport report = ivy.resolve(
+            LatestConflictManagerTest.class.getResource("ivy-latest-time-2.xml"),
+            getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
         Iterator iter = defaultReport.getModuleRevisionIds().iterator();
         while (iter.hasNext()) {
@@ -164,8 +166,9 @@ public class LatestConflictManagerTest extends TestCase {
         new File("test/repositories/IVY-407/MyCompany/C/ivy-1.0.2.xml")
                 .setLastModified(time + 4000);
 
-        ResolveReport report = ivy.resolve(LatestConflictManagerTest.class
-                .getResource("ivy-latest-time-transitivity.xml"), getResolveOptions());
+        ResolveReport report = ivy.resolve(
+            LatestConflictManagerTest.class.getResource("ivy-latest-time-transitivity.xml"),
+            getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
         Iterator iter = defaultReport.getModuleRevisionIds().iterator();
         while (iter.hasNext()) {

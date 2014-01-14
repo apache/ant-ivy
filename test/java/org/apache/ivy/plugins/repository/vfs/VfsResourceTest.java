@@ -86,24 +86,25 @@ public class VfsResourceTest extends TestCase {
     }
 
     /**
-    * Escape invalid URL characters (Copied from Wicket, just use StringUtils instead of Strings)
-    *
-    * @param queryString The orginal querystring
-    * @return url The querystring with invalid characters escaped 
-    */
+     * Escape invalid URL characters (Copied from Wicket, just use StringUtils instead of Strings)
+     * 
+     * @param queryString
+     *            The orginal querystring
+     * @return url The querystring with invalid characters escaped
+     */
     private String escapeUrl(String queryString) {
-        queryString = StringUtils.replace(queryString , " ", "%20");
-        queryString = StringUtils.replace(queryString , "\"", "%22");
-        queryString = StringUtils.replace(queryString , "%", "%26");
-        queryString = StringUtils.replace(queryString , "=", "%3D");
-        queryString = StringUtils.replace(queryString , "/", "%2F");
-        queryString = StringUtils.replace(queryString , "+", "%2B");
-        queryString = StringUtils.replace(queryString , "&", "%26");
-        queryString = StringUtils.replace(queryString , "~", "%7E");
-        queryString = StringUtils.replace(queryString , "?", "%3F");
+        queryString = StringUtils.replace(queryString, " ", "%20");
+        queryString = StringUtils.replace(queryString, "\"", "%22");
+        queryString = StringUtils.replace(queryString, "%", "%26");
+        queryString = StringUtils.replace(queryString, "=", "%3D");
+        queryString = StringUtils.replace(queryString, "/", "%2F");
+        queryString = StringUtils.replace(queryString, "+", "%2B");
+        queryString = StringUtils.replace(queryString, "&", "%26");
+        queryString = StringUtils.replace(queryString, "~", "%7E");
+        queryString = StringUtils.replace(queryString, "?", "%3F");
         return queryString;
-    }     
-    
+    }
+
     /**
      * Validating that resource can be created for files which don't physically exists - e.g.
      * resources that are going to created.

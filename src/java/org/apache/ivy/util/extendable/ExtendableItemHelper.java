@@ -49,8 +49,8 @@ public final class ExtendableItemHelper {
      *            the XML attributes names which are not extra but Ivy core ones
      * @return
      */
-    public static Map getExtraAttributes(
-            ParserSettings settings, Attributes attributes, String[] ignoredAttNames) {
+    public static Map getExtraAttributes(ParserSettings settings, Attributes attributes,
+            String[] ignoredAttNames) {
         Map ret = new HashMap();
         Collection ignored = Arrays.asList(ignoredAttNames);
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -61,8 +61,8 @@ public final class ExtendableItemHelper {
         return ret;
     }
 
-    public static void fillExtraAttributes(ParserSettings settings, DefaultExtendableItem item, 
-            Attributes attributes,  String[] ignoredAttNames) {
+    public static void fillExtraAttributes(ParserSettings settings, DefaultExtendableItem item,
+            Attributes attributes, String[] ignoredAttNames) {
         Map att = getExtraAttributes(settings, attributes, ignoredAttNames);
         for (Iterator iter = att.keySet().iterator(); iter.hasNext();) {
             String attName = (String) iter.next();

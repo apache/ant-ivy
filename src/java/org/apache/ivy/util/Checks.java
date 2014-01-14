@@ -25,7 +25,7 @@ import java.io.File;
 public final class Checks {
     private Checks() {
     }
-    
+
     /**
      * Checks that an object is not null, and throw an exception if the object is null.
      * 
@@ -49,7 +49,7 @@ public final class Checks {
         }
         return FileUtil.normalize(f.getPath());
     }
-    
+
     public static File checkAbsolute(String path, String fileName) {
         checkNotNull(path, fileName);
         File f = new File(path);

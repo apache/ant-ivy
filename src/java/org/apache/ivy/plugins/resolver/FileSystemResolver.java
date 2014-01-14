@@ -40,46 +40,49 @@ import org.apache.ivy.util.Message;
 public class FileSystemResolver extends RepositoryResolver {
 
     private static final String TRANSACTION_DESTINATION_SUFFIX = ".part";
-    private static final Pattern TRANSACTION_PATTERN = 
-        Pattern.compile("(.*[/\\\\]\\[revision\\])([/\\\\].+)");
-    
+
+    private static final Pattern TRANSACTION_PATTERN = Pattern
+            .compile("(.*[/\\\\]\\[revision\\])([/\\\\].+)");
+
     /**
      * Transactional mode.
      * 
-     * auto: use transaction if possible, only log verbose message if not
-     * true: always use transaction, fail if not supported
-     * false: never use transactions
+     * auto: use transaction if possible, only log verbose message if not true: always use
+     * transaction, fail if not supported false: never use transactions
      */
     private String transactional = "auto"; // one of 'auto', 'true' or 'false'
-    
+
     /**
      * When set indicates if this resolver supports transaction
      */
     private Boolean supportTransaction;
+
     /**
      * The pattern leading to the directory where files are published before being moved at the end
      * of a transaction
      */
     private String baseTransactionPattern;
+
     /**
      * Map between actual patterns and patterns used during the transaction to put files in a
      * temporary directory
      */
-    private Map/*<String,String>*/ fullTransactionPatterns = new HashMap();
+    private Map/* <String,String> */fullTransactionPatterns = new HashMap();
 
     /**
      * Location where files are published during the transaction
      */
     private File transactionTempDir;
+
     /**
      * Location where files should end up at the end of the transaction
      */
     private File transactionDestDir;
-    
+
     public FileSystemResolver() {
         setRepository(new FileRepository());
     }
-    
+
     public String getTypeName() {
         return "file";
     }
@@ -95,21 +98,17 @@ public class FileSystemResolver extends RepositoryResolver {
     private FileRepository getFileRepository() {
         return (FileRepository) getRepository();
     }
-    
 
     protected String getDestination(String pattern, Artifact artifact, ModuleRevisionId mrid) {
         if (supportTransaction() && isTransactionStarted()) {
-            
+
             String destPattern = (String) fullTransactionPatterns.get(pattern);
             if (destPattern == null) {
                 throw new IllegalArgumentException(
-                    "unsupported pattern for publish destination pattern: " + pattern 
-                    + ". supported patterns: " + fullTransactionPatterns.keySet());
+                        "unsupported pattern for publish destination pattern: " + pattern
+                                + ". supported patterns: " + fullTransactionPatterns.keySet());
             }
-            return IvyPatternHelper.substitute(
-                destPattern, 
-                mrid, 
-                artifact);
+            return IvyPatternHelper.substitute(destPattern, mrid, artifact);
         } else {
             return super.getDestination(pattern, artifact, mrid);
         }
@@ -121,15 +120,15 @@ public class FileSystemResolver extends RepositoryResolver {
 
     public void abortPublishTransaction() throws IOException {
         if (supportTransaction()) {
-            if (isTransactionStarted()) {                
+            if (isTransactionStarted()) {
                 try {
                     getFileRepository().delete(transactionTempDir);
                     Message.info("\tpublish aborted: deleted " + transactionTempDir);
                 } finally {
                     closeTransaction();
                 }
-            } else { 
-                Message.info("\tpublish aborted: nothing was started");                
+            } else {
+                Message.info("\tpublish aborted: nothing was started");
             }
         }
     }
@@ -141,27 +140,26 @@ public class FileSystemResolver extends RepositoryResolver {
             }
             if (transactionDestDir.exists()) {
                 throw new IOException(
-                    "impossible to commit transaction: transaction destination directory "
-                    + "already exists: " + transactionDestDir
-                    + "\npossible cause: usage of identifying tokens after the revision token");
+                        "impossible to commit transaction: transaction destination directory "
+                                + "already exists: "
+                                + transactionDestDir
+                                + "\npossible cause: usage of identifying tokens after the revision token");
             }
             try {
                 getFileRepository().move(transactionTempDir, transactionDestDir);
-                
-                Message.info("\tpublish commited: moved " + transactionTempDir 
-                    + " \n\t\tto " + transactionDestDir);
+
+                Message.info("\tpublish commited: moved " + transactionTempDir + " \n\t\tto "
+                        + transactionDestDir);
             } catch (IOException ex) {
                 IOException commitEx;
                 try {
                     getFileRepository().delete(transactionTempDir);
-                    commitEx = new IOException(
-                        "publish transaction commit error for " + transactionDestDir 
-                        + ": rolled back");
+                    commitEx = new IOException("publish transaction commit error for "
+                            + transactionDestDir + ": rolled back");
                 } catch (IOException deleteEx) {
-                    commitEx = new IOException(
-                        "publish transaction commit error for " + transactionDestDir 
-                        + ": rollback impossible either, "
-                        + "please remove " + transactionTempDir + " manually");
+                    commitEx = new IOException("publish transaction commit error for "
+                            + transactionDestDir + ": rollback impossible either, "
+                            + "please remove " + transactionTempDir + " manually");
                 }
                 commitEx.initCause(ex);
                 throw commitEx;
@@ -171,8 +169,8 @@ public class FileSystemResolver extends RepositoryResolver {
         }
     }
 
-    public void beginPublishTransaction(
-            ModuleRevisionId module, boolean overwrite) throws IOException {
+    public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
+            throws IOException {
         if (supportTransaction()) {
             if (isTransactionStarted()) {
                 throw new IllegalStateException("a transaction is already started and not closed!");
@@ -182,23 +180,23 @@ public class FileSystemResolver extends RepositoryResolver {
             } else {
                 initTransaction(module);
                 if (transactionDestDir.exists()) {
-                    unsupportedTransaction(
-                        "transaction destination directory already exists: " + transactionDestDir
-                        + "\npossible cause: usage of identifying tokens after the revision token");
+                    unsupportedTransaction("transaction destination directory already exists: "
+                            + transactionDestDir
+                            + "\npossible cause: usage of identifying tokens after the revision token");
                     closeTransaction();
                 } else {
-                    Message.verbose(
-                        "\tstarting transaction: publish during transaction will be done in \n\t\t" 
-                        + transactionTempDir 
-                        + "\n\tand on commit moved to \n\t\t" + transactionDestDir);
+                    Message.verbose("\tstarting transaction: publish during transaction will be done in \n\t\t"
+                            + transactionTempDir
+                            + "\n\tand on commit moved to \n\t\t"
+                            + transactionDestDir);
                 }
             }
         }
     }
-    
+
     protected Collection filterNames(Collection values) {
         if (supportTransaction()) {
-            values =  super.filterNames(values);
+            values = super.filterNames(values);
             for (Iterator iterator = values.iterator(); iterator.hasNext();) {
                 String v = (String) iterator.next();
                 if (v.endsWith(TRANSACTION_DESTINATION_SUFFIX)) {
@@ -210,7 +208,7 @@ public class FileSystemResolver extends RepositoryResolver {
             return super.filterNames(values);
         }
     }
-    
+
     public boolean supportTransaction() {
         if ("false".equals(transactional)) {
             return false;
@@ -223,13 +221,13 @@ public class FileSystemResolver extends RepositoryResolver {
         transactionTempDir = null;
         transactionDestDir = null;
     }
-    
+
     private void checkSupportTransaction() {
         if (supportTransaction == null) {
             supportTransaction = Boolean.FALSE;
             List ivyPatterns = getIvyPatterns();
             List artifactPatterns = getArtifactPatterns();
-            
+
             if (ivyPatterns.size() > 0) {
                 String pattern = (String) ivyPatterns.get(0);
                 Matcher m = TRANSACTION_PATTERN.matcher(pattern);
@@ -238,8 +236,8 @@ public class FileSystemResolver extends RepositoryResolver {
                     return;
                 } else {
                     baseTransactionPattern = m.group(1);
-                    fullTransactionPatterns.put(pattern, 
-                        m.group(1) + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
+                    fullTransactionPatterns.put(pattern, m.group(1)
+                            + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
                 }
             }
             if (artifactPatterns.size() > 0) {
@@ -251,16 +249,16 @@ public class FileSystemResolver extends RepositoryResolver {
                 } else if (baseTransactionPattern != null) {
                     if (!baseTransactionPattern.equals(m.group(1))) {
                         unsupportedTransaction("ivy pattern and artifact pattern "
-                            + "do not use the same directory for revision");
+                                + "do not use the same directory for revision");
                         return;
                     } else {
-                        fullTransactionPatterns.put(pattern, 
-                            m.group(1) + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
+                        fullTransactionPatterns.put(pattern, m.group(1)
+                                + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
                     }
                 } else {
                     baseTransactionPattern = m.group(1);
-                    fullTransactionPatterns.put(pattern, 
-                        m.group(1) + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
+                    fullTransactionPatterns.put(pattern, m.group(1)
+                            + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
                 }
             }
             supportTransaction = Boolean.TRUE;
@@ -270,8 +268,8 @@ public class FileSystemResolver extends RepositoryResolver {
     private void unsupportedTransaction(String msg) {
         String fullMsg = getName() + " do not support transaction. " + msg;
         if ("true".equals(transactional)) {
-            throw new IllegalStateException(fullMsg 
-                + ". Set transactional attribute to 'auto' or 'false' or fix the problem.");
+            throw new IllegalStateException(fullMsg
+                    + ". Set transactional attribute to 'auto' or 'false' or fix the problem.");
         } else {
             Message.verbose(fullMsg);
             supportTransaction = Boolean.FALSE;
@@ -283,14 +281,14 @@ public class FileSystemResolver extends RepositoryResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(module);
         }
-        
-        transactionTempDir = Checks.checkAbsolute(IvyPatternHelper.substitute(
-            baseTransactionPattern, 
-            ModuleRevisionId.newInstance(
-                mrid, mrid.getRevision() + TRANSACTION_DESTINATION_SUFFIX)),
-                "baseTransactionPattern");
-        transactionDestDir = Checks.checkAbsolute(IvyPatternHelper.substitute(
-            baseTransactionPattern, mrid), "baseTransactionPattern");
+
+        transactionTempDir = Checks.checkAbsolute(
+            IvyPatternHelper.substitute(
+                baseTransactionPattern,
+                ModuleRevisionId.newInstance(mrid, mrid.getRevision()
+                        + TRANSACTION_DESTINATION_SUFFIX)), "baseTransactionPattern");
+        transactionDestDir = Checks.checkAbsolute(
+            IvyPatternHelper.substitute(baseTransactionPattern, mrid), "baseTransactionPattern");
     }
 
     public String getTransactional() {
@@ -306,18 +304,18 @@ public class FileSystemResolver extends RepositoryResolver {
         p.setPattern(file.getAbsolutePath());
         super.addConfiguredIvy(p);
     }
-    
+
     public void addIvyPattern(String pattern) {
         File file = Checks.checkAbsolute(pattern, "ivy pattern");
         super.addIvyPattern(file.getAbsolutePath());
     }
-    
+
     public void addConfiguredArtifact(IvyPattern p) {
         File file = Checks.checkAbsolute(p.getPattern(), "artifact pattern");
         p.setPattern(file.getAbsolutePath());
         super.addConfiguredArtifact(p);
     }
-    
+
     public void addArtifactPattern(String pattern) {
         File file = Checks.checkAbsolute(pattern, "artifact pattern");
         super.addArtifactPattern(file.getAbsolutePath());

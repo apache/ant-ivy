@@ -26,52 +26,52 @@ import junit.framework.TestCase;
 public class NormalRelativeUrlResolverTest extends TestCase {
 
     private NormalRelativeUrlResolver t = new NormalRelativeUrlResolver();
-    
+
     public void testRelativeHttpURL() throws MalformedURLException {
         URL base = new URL("http://xxx/file.txt");
-        assertEquals(new URL("http://xxx/file2.txt"), t.getURL(base , "file2.txt"));
+        assertEquals(new URL("http://xxx/file2.txt"), t.getURL(base, "file2.txt"));
     }
-    
+
     public void testRelativeFileURL() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
-        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base , "file2.txt"));
+        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base, "file2.txt"));
     }
 
     public void testRelativeMixedURL() throws MalformedURLException {
         URL base = new URL("http://xxx/file.txt");
-        assertEquals(new URL("file://file2.txt"), t.getURL(base , "file://file2.txt"));
+        assertEquals(new URL("file://file2.txt"), t.getURL(base, "file://file2.txt"));
     }
 
     public void testFileAndUrlWithAbsoluteFile() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         File absFile = new File(".").getAbsoluteFile();
-        assertEquals(absFile.toURI().toURL(), t.getURL(base , absFile.toString() , null));
-        assertEquals(absFile.toURI().toURL(), t.getURL(base , absFile.toString() , ""));
-        assertEquals(absFile.toURI().toURL(), t.getURL(base , absFile.toString() , "somthing.txt"));
+        assertEquals(absFile.toURI().toURL(), t.getURL(base, absFile.toString(), null));
+        assertEquals(absFile.toURI().toURL(), t.getURL(base, absFile.toString(), ""));
+        assertEquals(absFile.toURI().toURL(), t.getURL(base, absFile.toString(), "somthing.txt"));
     }
 
     public void testFileAndUrlWithRelativeFile() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
-        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base , "file2.txt" , null));
-        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base , "file2.txt" , ""));
-        assertEquals(new URL("file://xxx/sub/file2.txt"), 
-                t.getURL(base , "sub/file2.txt" , "something"));
+        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base, "file2.txt", null));
+        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base, "file2.txt", ""));
+        assertEquals(new URL("file://xxx/sub/file2.txt"),
+            t.getURL(base, "sub/file2.txt", "something"));
     }
 
     public void testFileAndUrlWithAbsoluteUrl() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         URL otherBase = new URL("http://localhost:80/otherfile.txt");
         String absUrl = "http://ibiblio.org/dir/file.txt";
-        assertEquals(new URL(absUrl), t.getURL(base , null , absUrl));
-        assertEquals(new URL(absUrl), t.getURL(otherBase , null , absUrl));
+        assertEquals(new URL(absUrl), t.getURL(base, null, absUrl));
+        assertEquals(new URL(absUrl), t.getURL(otherBase, null, absUrl));
     }
-    
+
     public void testFileAndUrlWithRelativeUrl() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         URL otherBase = new URL("http://localhost:80/otherfile.txt");
-        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base , null , "file2.txt"));
-        assertEquals(new URL("http://localhost:80/file2.txt"), 
-                t.getURL(otherBase , null , "file2.txt"));
+        assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base, null, "file2.txt"));
+        assertEquals(new URL("http://localhost:80/file2.txt"),
+            t.getURL(otherBase, null, "file2.txt"));
     }
 
 }

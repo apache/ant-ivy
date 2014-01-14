@@ -104,12 +104,13 @@ public class URLResource implements LocalizableResource {
 
     public File getFile() {
         if (!isLocal()) {
-            throw new IllegalStateException("Cannot get the local file for the not local resource " + url);
+            throw new IllegalStateException("Cannot get the local file for the not local resource "
+                    + url);
         }
         try {
             return new File(url.toURI());
         } catch (URISyntaxException e) {
-            return new File(url.getPath());            
+            return new File(url.getPath());
         }
     }
 }

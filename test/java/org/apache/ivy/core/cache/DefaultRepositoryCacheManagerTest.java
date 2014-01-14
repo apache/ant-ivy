@@ -52,8 +52,9 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         cacheManager.setBasedir(f);
 
         artifact = createArtifact("org", "module", "rev", "name", "type", "ext");
-        
-        Artifact originArtifact = createArtifact("org", "module", "rev", "name", "pom.original", "pom");
+
+        Artifact originArtifact = createArtifact("org", "module", "rev", "name", "pom.original",
+            "pom");
         origin = new ArtifactOrigin(originArtifact, true, "file:/some/where.pom");
 
         cacheManager.saveArtifactOrigin(originArtifact, origin);

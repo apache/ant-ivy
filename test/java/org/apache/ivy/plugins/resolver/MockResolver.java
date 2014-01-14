@@ -40,8 +40,8 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 public class MockResolver extends AbstractResolver {
     static MockResolver buildMockResolver(ResolverSettings settings, String name,
             boolean findRevision, final Date publicationDate) {
-        return buildMockResolver(settings, name, findRevision, ModuleRevisionId.newInstance("test",
-            "test", "test"), publicationDate);
+        return buildMockResolver(settings, name, findRevision,
+            ModuleRevisionId.newInstance("test", "test", "test"), publicationDate);
     }
 
     static MockResolver buildMockResolver(ResolverSettings settings, String name,
@@ -56,10 +56,10 @@ public class MockResolver extends AbstractResolver {
         r.setName(name);
         r.setSettings(settings);
         if (findRevision) {
-            DefaultModuleDescriptor md = new DefaultModuleDescriptor(
-                mrid, "integration", publicationDate, isdefault);
-            r.rmr = new ResolvedModuleRevision(
-                r, r, md, new MetadataArtifactDownloadReport(md.getMetadataArtifact()));
+            DefaultModuleDescriptor md = new DefaultModuleDescriptor(mrid, "integration",
+                    publicationDate, isdefault);
+            r.rmr = new ResolvedModuleRevision(r, r, md, new MetadataArtifactDownloadReport(
+                    md.getMetadataArtifact()));
         }
         return r;
     }
@@ -79,16 +79,16 @@ public class MockResolver extends AbstractResolver {
         askedDeps.add(dd);
         return checkLatest(dd, rmr, data);
     }
-    
+
     private boolean shouldReturnResolvedModule(DependencyDescriptor dd, ResolvedModuleRevision mr) {
         // a resolved module revision has already been found by a prior dependency resolver
         // let's see if it should be returned and bypass this resolver
-        
+
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
         boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
         boolean shouldReturn = mr.isForce();
         shouldReturn |= !isDynamic && !mr.getDescriptor().isDefault();
-        
+
         return shouldReturn;
     }
 
@@ -106,7 +106,7 @@ public class MockResolver extends AbstractResolver {
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         return null;
     }
-    
+
     public RepositoryCacheManager getRepositoryCacheManager() {
         return null;
     }

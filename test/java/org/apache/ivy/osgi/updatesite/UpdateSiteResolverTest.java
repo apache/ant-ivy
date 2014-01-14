@@ -90,7 +90,8 @@ public class UpdateSiteResolverTest extends TestCase {
     }
 
     public void testListModules() throws Exception {
-        ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver, BundleInfo.BUNDLE_TYPE));
+        ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver,
+                BundleInfo.BUNDLE_TYPE));
         assertEquals(3, modules.length);
         modules = resolver.listModules(new OrganisationEntry(resolver, BundleInfo.PACKAGE_TYPE));
         assertEquals(64, modules.length);

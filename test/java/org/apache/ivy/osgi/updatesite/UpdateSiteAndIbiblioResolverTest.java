@@ -40,6 +40,7 @@ public class UpdateSiteAndIbiblioResolverTest extends TestCase {
     private IvySettings settings;
 
     private UpdateSiteResolver resolver;
+
     IBiblioResolver resolver2;
 
     private File cache;
@@ -64,8 +65,7 @@ public class UpdateSiteAndIbiblioResolverTest extends TestCase {
 
         resolver2 = new IBiblioResolver();
         resolver2.setName("maven2");
-        settings.setVariable("ivy.ibiblio.default.artifact.root",
-            "http://repo1.maven.org/maven2/");
+        settings.setVariable("ivy.ibiblio.default.artifact.root", "http://repo1.maven.org/maven2/");
         settings.setVariable("ivy.ibiblio.default.artifact.pattern",
             "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
         resolver2.setSettings(settings);
@@ -99,17 +99,16 @@ public class UpdateSiteAndIbiblioResolverTest extends TestCase {
         // Simple Dependency for ibiblio
         ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("log4j", "log4j", "1.2.16");
         ResolvedModuleRevision rmr1 = chain.getDependency(new DefaultDependencyDescriptor(mrid1,
-            false), data);
+                false), data);
 
         // Simple Dependency for updatesite
         ModuleRevisionId mrid2 = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy", "2.0.0.final_20090108225011");
         ResolvedModuleRevision rmr2 = chain.getDependency(new DefaultDependencyDescriptor(mrid2,
-            false), data);
+                false), data);
 
         assertNotNull(rmr1);
         assertNotNull(rmr2);
-
 
         Artifact[] artifacts1 = rmr1.getDescriptor().getArtifacts("default");
         Artifact[] artifacts2 = rmr2.getDescriptor().getArtifacts("default");

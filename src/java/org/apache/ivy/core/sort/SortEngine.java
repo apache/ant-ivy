@@ -43,7 +43,8 @@ public class SortEngine {
     }
 
     /**
-     * Same as {@link #sortModuleDescriptors(Collection, SortOptions)} but for <code>IvyNode</code>s.
+     * Same as {@link #sortModuleDescriptors(Collection, SortOptions)} but for <code>IvyNode</code>
+     * s.
      * 
      * @param nodes
      *            a Collection of nodes to sort
@@ -78,7 +79,8 @@ public class SortEngine {
         }
         List<ModuleDescriptor> list = sortModuleDescriptors(dependenciesMap.keySet(), options);
         final double adjustFactor = 1.3;
-        List<IvyNode> ret = new ArrayList<IvyNode>((int) (list.size() * adjustFactor + nulls.size()));
+        List<IvyNode> ret = new ArrayList<IvyNode>(
+                (int) (list.size() * adjustFactor + nulls.size()));
         // attempt to adjust the size to avoid too much list resizing
         for (int i = 0; i < list.size(); i++) {
             ModuleDescriptor md = (ModuleDescriptor) list.get(i);
@@ -108,13 +110,11 @@ public class SortEngine {
             throws CircularDependencyException {
         Checks.checkNotNull(options, "options");
         ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors,
-                getVersionMatcher(), options.getNonMatchingVersionReporter(), 
-                options.isUseCircularDependencyStrategy() 
-                    ? getCircularStrategy() : IgnoreCircularDependencyStrategy.getInstance());
+                getVersionMatcher(), options.getNonMatchingVersionReporter(),
+                options.isUseCircularDependencyStrategy() ? getCircularStrategy()
+                        : IgnoreCircularDependencyStrategy.getInstance());
         return sorter.sortModuleDescriptors();
     }
-
-
 
     protected CircularDependencyStrategy getCircularStrategy() {
         return settings.getCircularDependencyStrategy();

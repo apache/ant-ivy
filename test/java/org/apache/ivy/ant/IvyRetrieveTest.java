@@ -29,11 +29,9 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 public class IvyRetrieveTest extends TestCase {
-    private static final String IVY_RETRIEVE_PATTERN = 
-            "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
+    private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
 
-    private static final String RETRIEVE_PATTERN = 
-            "build/test/lib/[conf]/[artifact]-[revision].[type]";
+    private static final String RETRIEVE_PATTERN = "build/test/lib/[conf]/[artifact]-[revision].[type]";
 
     private File cache;
 
@@ -85,11 +83,11 @@ public class IvyRetrieveTest extends TestCase {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
         retrieve.getSettings().setValidate(false);
         retrieve.execute();
-        
+
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.2",
             "mod1.2", "jar", "jar", "default")).exists());
     }
-    
+
     public void testInline() throws Exception {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
@@ -152,15 +150,15 @@ public class IvyRetrieveTest extends TestCase {
         assertFalse(new File("build/test/lib/unknown").exists()); // even conf directory should
         // have been deleted
     }
-    
+
     public void testSyncWithIgnoreList() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
         retrieve.setSync(true);
-        
+
         new File("build/test/lib/.svn").mkdirs();
         new File("build/test/lib/.svn/test.txt").createNewFile();
         assertTrue(new File("build/test/lib/.svn/test.txt").exists());
-        
+
         retrieve.execute();
 
         assertTrue(new File("build/test/lib/.svn/test.txt").exists());
@@ -228,7 +226,7 @@ public class IvyRetrieveTest extends TestCase {
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0",
             "mod1.2", "jar", "jar")).exists());
     }
-    
+
     public void testUseOriginWithIvyPattern() throws Exception {
         // mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which
         // depends on mod1.2
@@ -249,14 +247,14 @@ public class IvyRetrieveTest extends TestCase {
         assertFalse(new File(IvyPatternHelper.substitute(ivyPattern, "org1", "mod1.2", "2.0",
             "ivy", "ivy", "xml")).exists());
     }
-    
+
     public void testRetrieveWithOriginalNamePattern() throws Exception {
         retrieve.setFile(new File("test/java/org/apache/ivy/ant/ivy-631.xml"));
         retrieve.setConf("default");
         retrieve.setPattern("build/test/lib/[conf]/[originalname].[ext]");
         retrieve.setSync(true);
         retrieve.execute();
-        
+
         assertTrue(new File("build/test/lib/default/mod1.2-2.2.jar").exists());
     }
 
@@ -393,8 +391,8 @@ public class IvyRetrieveTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(retrieve.getIvyInstance(), organisation,
-            module, revision, artifact, type, ext);
+        return TestHelper.getArchiveFileInCache(retrieve.getIvyInstance(), organisation, module,
+            revision, artifact, type, ext);
     }
 
 }

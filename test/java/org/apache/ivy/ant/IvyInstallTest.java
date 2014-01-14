@@ -38,9 +38,9 @@ public class IvyInstallTest extends TestCase {
     protected void setUp() throws Exception {
         createCache();
         cleanInstall();
-        
+
         project = AntTestHelper.newProject();
-        
+
         install = new IvyInstall();
         install.setProject(project);
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
@@ -66,7 +66,8 @@ public class IvyInstallTest extends TestCase {
     }
 
     public void testInstallDummyDefault() {
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        project.setProperty("ivy.settings.file",
+            "test/repositories/ivysettings-dummydefaultresolver.xml");
         install.setOrganisation("org1");
         install.setModule("mod1.4");
         install.setRevision("1.0.1");
@@ -86,7 +87,8 @@ public class IvyInstallTest extends TestCase {
     }
 
     public void testInstallWithAnyType() {
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        project.setProperty("ivy.settings.file",
+            "test/repositories/ivysettings-dummydefaultresolver.xml");
         install.setOrganisation("org8");
         install.setModule("mod8.1");
         install.setRevision("1.1");
@@ -96,11 +98,12 @@ public class IvyInstallTest extends TestCase {
 
         install.execute();
 
-        assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+        assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());
     }
-    
+
     public void testInstallWithMultipleType() {
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        project.setProperty("ivy.settings.file",
+            "test/repositories/ivysettings-dummydefaultresolver.xml");
         install.setOrganisation("org8");
         install.setModule("mod8.1");
         install.setRevision("1.1");
@@ -110,7 +113,7 @@ public class IvyInstallTest extends TestCase {
 
         install.execute();
 
-        assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+        assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());
     }
 
     /**
@@ -126,12 +129,12 @@ public class IvyInstallTest extends TestCase {
         install.setTransitive(true);
 
         install.execute();
-        
+
         assertTrue(new File("build/test/install/org1/mod1/jars/mod1-1.0.jar").exists());
         assertTrue(new File("build/test/install/org1/mod2/jars/mod2-1.0.jar").exists());
         assertTrue(new File("build/test/install/org1/mod3/jars/mod3-1.0.jar").exists());
     }
-    
+
     /**
      * Test retrieving artifacts under only the master and runtime configuration.
      */
@@ -151,7 +154,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod2/jars/mod2-1.0.jar").exists());
         assertFalse(new File("build/test/install/org1/mod3/jars/mod3-1.0.jar").exists());
     }
-    
+
     public void testInstallWithClassifiers() throws Exception {
         // IVY-1324
         project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml")
@@ -164,15 +167,19 @@ public class IvyInstallTest extends TestCase {
         install.setTo("IVY-1324");
 
         install.execute();
-        
-        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0-javadoc.jar").exists());        
-        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0-sources.jar").exists());        
-        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0.jar").exists());        
-        assertTrue(new File("build/test/install/org.apache/test-sources/ivy-1.0.xml").exists());        
+
+        assertTrue(new File(
+                "build/test/install/org.apache/test-sources/test-sources-1.0-javadoc.jar").exists());
+        assertTrue(new File(
+                "build/test/install/org.apache/test-sources/test-sources-1.0-sources.jar").exists());
+        assertTrue(new File("build/test/install/org.apache/test-sources/test-sources-1.0.jar")
+                .exists());
+        assertTrue(new File("build/test/install/org.apache/test-sources/ivy-1.0.xml").exists());
     }
 
     public void testInstallWithUnusedType() {
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        project.setProperty("ivy.settings.file",
+            "test/repositories/ivysettings-dummydefaultresolver.xml");
         install.setOrganisation("org8");
         install.setModule("mod8.1");
         install.setRevision("1.1");
@@ -182,7 +189,7 @@ public class IvyInstallTest extends TestCase {
 
         install.execute();
 
-        assertFalse(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());        
+        assertFalse(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());
     }
 
     public void testInstallWithOriginalMetadata() {
@@ -193,27 +200,27 @@ public class IvyInstallTest extends TestCase {
         install.setFrom("test");
         install.setTo("install");
         install.setHaltonfailure(false);
-        
+
         try {
             install.execute();
         } catch (BuildException be) {
             fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
         }
-        
+
         assertFalse(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
-        
+
         install.setInstallOriginalMetadata(true);
-        
+
         try {
             install.setOverwrite(true);
             install.execute();
         } catch (BuildException be) {
             fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
         }
-        
+
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
-    
+
     public void testIVY843() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-IVY843.xml");
         install.setOrganisation("org1");
@@ -223,9 +230,9 @@ public class IvyInstallTest extends TestCase {
         install.setTo("install");
 
         install.execute();
-        
+
         cleanCache();
-        
+
         install.setFrom("install");
         install.setTo("install2");
         install.execute();

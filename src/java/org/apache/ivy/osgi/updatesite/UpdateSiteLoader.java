@@ -118,8 +118,8 @@ public class UpdateSiteLoader {
         return artifactExists || contentExists;
     }
 
-    private boolean readContent(URI repoUri, P2Descriptor p2Descriptor)
-            throws IOException, ParseException, SAXException {
+    private boolean readContent(URI repoUri, P2Descriptor p2Descriptor) throws IOException,
+            ParseException, SAXException {
         boolean contentExists = readCompositeContent(repoUri, "compositeContent", p2Descriptor);
         if (!contentExists) {
             P2MetadataParser metadataParser = new P2MetadataParser(p2Descriptor);
@@ -129,8 +129,8 @@ public class UpdateSiteLoader {
         return contentExists;
     }
 
-    private boolean readArtifacts(URI repoUri, P2Descriptor p2Descriptor)
-            throws IOException, ParseException, SAXException {
+    private boolean readArtifacts(URI repoUri, P2Descriptor p2Descriptor) throws IOException,
+            ParseException, SAXException {
         boolean artifactExists = readCompositeArtifact(repoUri, "compositeArtifacts", p2Descriptor);
         if (!artifactExists) {
             artifactExists = readJarOrXml(repoUri, "artifacts", new P2ArtifactParser(p2Descriptor,

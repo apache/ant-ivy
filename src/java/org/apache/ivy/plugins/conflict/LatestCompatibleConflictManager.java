@@ -46,8 +46,9 @@ import org.apache.ivy.util.Message;
  * set of compatible dependencies, even if it requires stepping back to older revisions (as long as
  * they are in the set of compatibility).
  * <p>
- * Here is an example of what this conflict manager is able to do:<br/> 
+ * Here is an example of what this conflict manager is able to do:<br/>
  * <b>Available Modules</b>:
+ * 
  * <pre>
  * #A;2-&gt;{ #B;[1.0,1.5] #C;[2.0,2.5] }
  * #B;1.4-&gt;#D;1.5
@@ -55,11 +56,11 @@ import org.apache.ivy.util.Message;
  * #C;2.5-&gt;#D;[1.0,1.6]
  * </pre>
  * 
- * <b>Result</b>: #B;1.4, #C;2.5, #D;1.5<br/> 
- * <b>Details</b>The conflict manager finds that the latest matching version
- * of #B (1.5) depends on a version of #D incompatible with what is expected by the latest matching
- * version of #C. Hence the conflict manager blacklists #B;1.5, and the version range [1.0,1.5] is
- * resolved again to end up with #B;1.4 which depends on #D;1.5, which is fine to work with #C;2.5.
+ * <b>Result</b>: #B;1.4, #C;2.5, #D;1.5<br/>
+ * <b>Details</b>The conflict manager finds that the latest matching version of #B (1.5) depends on
+ * a version of #D incompatible with what is expected by the latest matching version of #C. Hence
+ * the conflict manager blacklists #B;1.5, and the version range [1.0,1.5] is resolved again to end
+ * up with #B;1.4 which depends on #D;1.5, which is fine to work with #C;2.5.
  * </p>
  */
 public class LatestCompatibleConflictManager extends LatestConflictManager {
@@ -70,17 +71,16 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         super(name, strategy);
     }
 
-
     public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
         if (conflicts.size() < 2) {
             return conflicts;
         }
         VersionMatcher versionMatcher = getSettings().getVersionMatcher();
-        
+
         Iterator iter = conflicts.iterator();
         IvyNode node = (IvyNode) iter.next();
         ModuleRevisionId mrid = node.getResolvedId();
-        
+
         if (versionMatcher.isDynamic(mrid)) {
             while (iter.hasNext()) {
                 IvyNode other = (IvyNode) iter.next();
@@ -96,7 +96,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             }
             // no incompatibility nor dynamic version found, let's return the latest static version
             if (conflicts.size() == 2) {
-                // very common special case of only two modules in conflict, 
+                // very common special case of only two modules in conflict,
                 // let's return the second one (static)
                 Iterator it = conflicts.iterator();
                 it.next();
@@ -152,43 +152,42 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      * @return true if the incompatible conflict has been handled, false otherwise (in which case
      *         resolveConflicts should return null)
      */
-    private boolean handleIncompatibleConflict(
-             IvyNode parent, Collection conflicts, IvyNode node, IvyNode other) {
-         // we never actually return anything else than false or throw an exception, 
-         // but returning a boolean make the calling code cleaner
-         try {
-             IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) 
-                 getStrategy().findLatest(
-                     toArtifactInfo(Arrays.asList(new IvyNode[] {node, other})), null);
-             if (latest != null) {
-                 IvyNode latestNode = latest.getNode();
-                 IvyNode oldestNode = latestNode == node ? other : node;
-                 blackListIncompatibleCallerAndRestartResolveIfPossible(
-                     getSettings(), parent, oldestNode, latestNode); 
-                 // if we arrive here, we haven't managed to blacklist all paths to the latest
-                 // node, we try with the oldest
-                 blackListIncompatibleCallerAndRestartResolveIfPossible(
-                     getSettings(), parent, latestNode, oldestNode); 
-                 // still not possible, we aren't able to find a solution to the incompatibility
-                 handleUnsolvableConflict(parent, conflicts, node, other);
-                 
-                 return true; // never actually reached
-             } else {
-                 return false;
-             }
-         } catch (NoConflictResolvedYetException ex) {
-             // we have not enough informations in the nodes to resolve conflict
-             // according to the resolveConflicts contract, resolveConflicts must return null
-             return false;
-         }
+    private boolean handleIncompatibleConflict(IvyNode parent, Collection conflicts, IvyNode node,
+            IvyNode other) {
+        // we never actually return anything else than false or throw an exception,
+        // but returning a boolean make the calling code cleaner
+        try {
+            IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) getStrategy().findLatest(
+                toArtifactInfo(Arrays.asList(new IvyNode[] {node, other})), null);
+            if (latest != null) {
+                IvyNode latestNode = latest.getNode();
+                IvyNode oldestNode = latestNode == node ? other : node;
+                blackListIncompatibleCallerAndRestartResolveIfPossible(getSettings(), parent,
+                    oldestNode, latestNode);
+                // if we arrive here, we haven't managed to blacklist all paths to the latest
+                // node, we try with the oldest
+                blackListIncompatibleCallerAndRestartResolveIfPossible(getSettings(), parent,
+                    latestNode, oldestNode);
+                // still not possible, we aren't able to find a solution to the incompatibility
+                handleUnsolvableConflict(parent, conflicts, node, other);
+
+                return true; // never actually reached
+            } else {
+                return false;
+            }
+        } catch (NoConflictResolvedYetException ex) {
+            // we have not enough informations in the nodes to resolve conflict
+            // according to the resolveConflicts contract, resolveConflicts must return null
+            return false;
+        }
     }
 
     private void blackListIncompatibleCallerAndRestartResolveIfPossible(IvySettings settings,
             IvyNode parent, IvyNode selected, IvyNode evicted) {
         Stack callerStack = new Stack();
         callerStack.push(evicted);
-        final Collection toBlacklist = blackListIncompatibleCaller(
-            settings.getVersionMatcher(), parent, selected, evicted, callerStack); 
+        final Collection toBlacklist = blackListIncompatibleCaller(settings.getVersionMatcher(),
+            parent, selected, evicted, callerStack);
         if (toBlacklist != null) {
             final StringBuffer blacklisted = new StringBuffer();
             for (Iterator iterator = toBlacklist.iterator(); iterator.hasNext();) {
@@ -200,18 +199,16 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                 }
             }
 
-            String rootModuleConf = 
-                parent.getData().getReport().getConfiguration();
-            evicted.markEvicted(
-                new EvictionData(rootModuleConf, parent, this, Collections.singleton(selected), 
-                    "with blacklisting of " + blacklisted));
+            String rootModuleConf = parent.getData().getReport().getConfiguration();
+            evicted.markEvicted(new EvictionData(rootModuleConf, parent, this, Collections
+                    .singleton(selected), "with blacklisting of " + blacklisted));
 
             if (settings.debugConflictResolution()) {
                 Message.debug("evicting " + evicted + " by "
-                    + evicted.getEvictedData(rootModuleConf));
+                        + evicted.getEvictedData(rootModuleConf));
             }
             throw new RestartResolveProcess("trying to handle incompatibilities between "
-                + selected + " and " + evicted);
+                    + selected + " and " + evicted);
         }
     }
 
@@ -254,11 +251,10 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      * @return the collection of blacklisting to do, null if a blacklist is not possible in at least
      *         one caller path
      */
-    private Collection/*<IvyNodeBlacklist>*/ blackListIncompatibleCaller(
-            VersionMatcher versionMatcher,
-            IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode, 
-            Stack/*<IvyNode>*/ callerStack) {
-        Collection/*<IvyNodeBlacklist>*/ blacklisted = new ArrayList/*<IvyNodeBlacklist>*/();
+    private Collection/* <IvyNodeBlacklist> */blackListIncompatibleCaller(
+            VersionMatcher versionMatcher, IvyNode conflictParent, IvyNode selectedNode,
+            IvyNode evictedNode, Stack/* <IvyNode> */callerStack) {
+        Collection/* <IvyNodeBlacklist> */blacklisted = new ArrayList/* <IvyNodeBlacklist> */();
         IvyNode node = (IvyNode) callerStack.peek();
         String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
         Caller[] callers = node.getCallers(rootModuleConf);
@@ -275,42 +271,38 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                             selectedNode, evictedNode, blacklisted, versionMatcher)) {
                     return null;
                 }
-            } else if(!handleIncompatibleCaller(callerStack, node, callerNode, conflictParent,
-                    selectedNode, evictedNode, blacklisted, versionMatcher)) {
+            } else if (!handleIncompatibleCaller(callerStack, node, callerNode, conflictParent,
+                selectedNode, evictedNode, blacklisted, versionMatcher)) {
                 return null;
             }
         }
-        if (blacklisted.isEmpty() 
-                && !callerStack.subList(0, callerStack.size() - 1).contains(node)) {
+        if (blacklisted.isEmpty() && !callerStack.subList(0, callerStack.size() - 1).contains(node)) {
             return null;
         }
         return blacklisted;
     }
 
-    protected void handleUnsolvableConflict(
-             IvyNode parent, Collection conflicts, IvyNode node1, IvyNode node2) {
-         throw new StrictConflictException(node1, node2);
+    protected void handleUnsolvableConflict(IvyNode parent, Collection conflicts, IvyNode node1,
+            IvyNode node2) {
+        throw new StrictConflictException(node1, node2);
     }
-    
-    public void handleAllBlacklistedRevisions(
-            DependencyDescriptor dd, Collection/*<ModuleRevisionId>*/ foundBlacklisted) {
+
+    public void handleAllBlacklistedRevisions(DependencyDescriptor dd,
+            Collection/* <ModuleRevisionId> */foundBlacklisted) {
         ResolveData resolveData = IvyContext.getContext().getResolveData();
-        Collection/*<IvyNode>*/ blacklisted = new HashSet();
+        Collection/* <IvyNode> */blacklisted = new HashSet();
         for (Iterator iterator = foundBlacklisted.iterator(); iterator.hasNext();) {
             ModuleRevisionId mrid = (ModuleRevisionId) iterator.next();
             blacklisted.add(resolveData.getNode(mrid));
         }
-        
+
         for (Iterator iterator = blacklisted.iterator(); iterator.hasNext();) {
             IvyNode node = (IvyNode) iterator.next();
-            IvyNodeBlacklist bdata = node.getBlacklistData(
-                resolveData.getReport().getConfiguration());
-            handleUnsolvableConflict(
-                bdata.getConflictParent(), 
-                Arrays.asList(new Object[] {
-                    bdata.getEvictedNode(), bdata.getSelectedNode()}), 
-                bdata.getEvictedNode(),
-                bdata.getSelectedNode());
+            IvyNodeBlacklist bdata = node.getBlacklistData(resolveData.getReport()
+                    .getConfiguration());
+            handleUnsolvableConflict(bdata.getConflictParent(),
+                Arrays.asList(new Object[] {bdata.getEvictedNode(), bdata.getSelectedNode()}),
+                bdata.getEvictedNode(), bdata.getSelectedNode());
         }
     }
 

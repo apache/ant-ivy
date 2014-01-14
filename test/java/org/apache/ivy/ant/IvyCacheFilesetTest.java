@@ -72,20 +72,21 @@ public class IvyCacheFilesetTest extends TestCase {
         DirectoryScanner directoryScanner = fs.getDirectoryScanner(project);
         assertEquals(1, directoryScanner.getIncludedFiles().length);
         assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")
-                .getAbsolutePath(), new File(directoryScanner.getBasedir(),
-                    directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
+                .getAbsolutePath(),
+            new File(directoryScanner.getBasedir(), directoryScanner.getIncludedFiles()[0])
+                    .getAbsolutePath());
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(fileset.getIvyInstance(), organisation,
-            module, revision, artifact, type, ext);
+        return TestHelper.getArchiveFileInCache(fileset.getIvyInstance(), organisation, module,
+            revision, artifact, type, ext);
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext, File cache) {
-        return TestHelper.getArchiveFileInCache(fileset.getIvyInstance(), organisation,
-            module, revision, artifact, type, ext);
+        return TestHelper.getArchiveFileInCache(fileset.getIvyInstance(), organisation, module,
+            revision, artifact, type, ext);
     }
 
     public void testEmptyConf() throws Exception {
@@ -115,7 +116,7 @@ public class IvyCacheFilesetTest extends TestCase {
 
     public void testInvalidPattern() throws Exception {
         try {
-            project.setProperty("ivy.settings.file", 
+            project.setProperty("ivy.settings.file",
                 "test/repositories/ivysettings-invalidcachepattern.xml");
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
             fileset.setSetid("simple-setid");
@@ -152,9 +153,10 @@ public class IvyCacheFilesetTest extends TestCase {
             FileSet fs = (FileSet) ref;
             DirectoryScanner directoryScanner = fs.getDirectoryScanner(project);
             assertEquals(1, directoryScanner.getIncludedFiles().length);
-            assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar",
-                cache2).getAbsolutePath(), new File(directoryScanner.getBasedir(),
-                    directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
+            assertEquals(
+                getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar", cache2)
+                        .getAbsolutePath(), new File(directoryScanner.getBasedir(),
+                        directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
         } finally {
             Delete del = new Delete();
             del.setProject(new Project());
@@ -163,15 +165,14 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
-    
     public void testGetBaseDir() {
         File base = null;
         base = fileset.getBaseDir(base, new File("x/aa/b/c"));
         assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
-        
+
         base = fileset.getBaseDir(base, new File("x/aa/b/d/e"));
         assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
-        
+
         base = fileset.getBaseDir(base, new File("x/ab/b/d"));
         assertEquals(new File("x").getAbsoluteFile(), base);
     }

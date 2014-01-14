@@ -175,8 +175,7 @@ public class VfsResource implements Resource {
     /**
      * Return a flag indicating whether a provided VFS resource physically exists
      * 
-     * @return <code>true</code> if the resource physically exists, <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if the resource physically exists, <code>false</code> otherwise.
      */
     public boolean physicallyExists() {
         // TODO: there is no need for this method anymore, replace it by calling exists();

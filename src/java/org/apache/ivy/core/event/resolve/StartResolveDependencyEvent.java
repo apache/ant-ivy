@@ -24,8 +24,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 public class StartResolveDependencyEvent extends ResolveDependencyEvent {
     public static final String NAME = "pre-resolve-dependency";
 
-    public StartResolveDependencyEvent(
-            DependencyResolver resolver, DependencyDescriptor dd, 
+    public StartResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd,
             ModuleRevisionId requestedRevisionId) {
         super(NAME, resolver, dd, requestedRevisionId);
     }

@@ -72,9 +72,10 @@ public class EndRetrieveEvent extends RetrieveEvent {
     public int getNbUpToDate() {
         return nbUpToDate;
     }
-    
+
     /**
      * Total size of all copied (or symlinked) artifacts, in bytes.
+     * 
      * @return Total size of all copied (or symlinked) artifacts, in bytes.
      */
     public long getTotalCopiedSize() {

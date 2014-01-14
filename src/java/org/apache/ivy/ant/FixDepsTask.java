@@ -72,11 +72,12 @@ public class FixDepsTask extends IvyPostResolveTask {
 
         ResolveReport report = getResolvedReport();
 
-        List/*<ModuleId>*/ midToKeep = new ArrayList();
+        List/* <ModuleId> */midToKeep = new ArrayList();
         for (int i = 0; i < keeps.size(); i++) {
-            midToKeep.add(ModuleId.newInstance(((Keep) keeps.get(i)).org, ((Keep) keeps.get(i)).module)); 
+            midToKeep.add(ModuleId.newInstance(((Keep) keeps.get(i)).org,
+                ((Keep) keeps.get(i)).module));
         }
-        
+
         ModuleDescriptor md = report.toFixedModuleDescriptor(getSettings(), midToKeep);
         try {
             XmlModuleDescriptorWriter.write(md, dest);

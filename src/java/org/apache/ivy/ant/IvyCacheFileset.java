@@ -49,8 +49,8 @@ public class IvyCacheFileset extends IvyCacheTask {
         if (useOrigin) {
             throw new UnsupportedOperationException(
                     "the cachefileset task does not support the useOrigin mode, since filesets "
-                    + "require to have only one root directory. Please use the the cachepath "
-                    + "task instead");
+                            + "require to have only one root directory. Please use the the cachepath "
+                            + "task instead");
         }
     }
 
@@ -94,21 +94,23 @@ public class IvyCacheFileset extends IvyCacheTask {
     /**
      * Returns the path of the file relative to the given base directory.
      * 
-     * @param base the parent directory to which the file must be evaluated.
-     * @param file the file for which the path should be returned
+     * @param base
+     *            the parent directory to which the file must be evaluated.
+     * @param file
+     *            the file for which the path should be returned
      * @return the path of the file relative to the given base directory.
      */
     private String getPath(File base, File file) {
         String absoluteBasePath = base.getAbsolutePath();
-        
+
         int beginIndex = absoluteBasePath.length();
-        
+
         // checks if the basePath ends with the file separator (which can for instance
         // happen if the basePath is the root on unix)
         if (!absoluteBasePath.endsWith(File.separator)) {
             beginIndex++; // skip the seperator char as well
         }
-        
+
         return file.getAbsolutePath().substring(beginIndex);
     }
 
@@ -134,7 +136,7 @@ public class IvyCacheFileset extends IvyCacheTask {
             while (bases.hasNext() && fileParents.hasNext()) {
                 File next = (File) bases.next();
                 if (next.equals(fileParents.next())) {
-                    result = next; 
+                    result = next;
                 } else {
                     break;
                 }
@@ -146,7 +148,7 @@ public class IvyCacheFileset extends IvyCacheTask {
     /**
      * @return a list of files, starting with the root and ending with the file itself
      */
-    private LinkedList/*<File>*/ getParents(File file) {
+    private LinkedList/* <File> */getParents(File file) {
         LinkedList r = new LinkedList();
         while (file != null) {
             r.addFirst(file);
@@ -162,7 +164,7 @@ public class IvyCacheFileset extends IvyCacheTask {
         public Iterator iterator() {
             return new EmptyIterator();
         }
-        
+
         public Object clone() {
             return new EmptyFileSet();
         }

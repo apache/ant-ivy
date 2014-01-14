@@ -29,7 +29,7 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 
     private long duration;
 
-    public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd, 
+    public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd,
             ModuleRevisionId requestedRevisionId, ResolvedModuleRevision module, long duration) {
         super(NAME, resolver, dd, requestedRevisionId);
         this.module = module;
@@ -41,12 +41,11 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
                     .getRevision());
             // now that we have loaded the dependency descriptor, we can put the extra attributes
             // contained in the descriptor too
-            addAttributes(
-                this.module.getDescriptor().getResolvedModuleRevisionId()
-                                                .getQualifiedExtraAttributes());
-            addAttributes(
-                this.module.getDescriptor().getResolvedModuleRevisionId().getExtraAttributes());
-            
+            addAttributes(this.module.getDescriptor().getResolvedModuleRevisionId()
+                    .getQualifiedExtraAttributes());
+            addAttributes(this.module.getDescriptor().getResolvedModuleRevisionId()
+                    .getExtraAttributes());
+
             addAttribute("resolved", "true");
         } else {
             addAttribute("resolved", "false");
@@ -56,7 +55,7 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
     public ResolvedModuleRevision getModule() {
         return module;
     }
-    
+
     /**
      * Returns the time elapsed to resolve the dependency.
      * <p>

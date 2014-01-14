@@ -75,9 +75,11 @@ public class OBRXMLWriter {
             BundleInfo bundleInfo;
             try {
                 bundleInfo = ManifestParser.parseManifest(manifestAndLocation.getManifest());
-                bundleInfo.addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
+                bundleInfo
+                        .addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
                 if (manifestAndLocation.getSourceURI() != null) {
-                    bundleInfo.addArtifact(new BundleArtifact(true, manifestAndLocation.getSourceURI(), null));
+                    bundleInfo.addArtifact(new BundleArtifact(true, manifestAndLocation
+                            .getSourceURI(), null));
                 }
                 nbOk++;
             } catch (ParseException e) {
@@ -116,7 +118,8 @@ public class OBRXMLWriter {
         addAttr(atts, ResourceHandler.VERSION, bundleInfo.getRawVersion());
         for (BundleArtifact artifact : bundleInfo.getArtifacts()) {
             if (!artifact.isSource()) {
-                addAttr(atts, ResourceHandler.URI, bundleInfo.getArtifacts().get(0).getUri().toString());
+                addAttr(atts, ResourceHandler.URI, bundleInfo.getArtifacts().get(0).getUri()
+                        .toString());
                 break;
             }
         }

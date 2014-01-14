@@ -51,17 +51,21 @@ import org.apache.tools.ant.types.Path;
 public class IvyBuildList extends IvyTask {
     public static final class OnMissingDescriptor {
         public static final String HEAD = "head";
+
         public static final String TAIL = "tail";
+
         public static final String SKIP = "skip";
+
         public static final String FAIL = "fail";
+
         public static final String WARN = "warn";
-        
+
         private OnMissingDescriptor() {
         }
     }
 
     public static final String DESCRIPTOR_REQUIRED = "required";
-    
+
     private List buildFileSets = new ArrayList(); // List (FileSet)
 
     private String reference;
@@ -87,7 +91,7 @@ public class IvyBuildList extends IvyTask {
     private boolean onlydirectdep = false;
 
     private String restartFrom = "*";
-        
+
     public void addFileset(FileSet buildFiles) {
         buildFileSets.add(buildFiles);
     }
@@ -148,7 +152,6 @@ public class IvyBuildList extends IvyTask {
         this.onlydirectdep = onlydirectdep;
     }
 
-    
     public void doExecute() throws BuildException {
         if (reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
@@ -192,7 +195,7 @@ public class IvyBuildList extends IvyTask {
             // Only accept one (first) module
             restartFromModuleNames.add(st.nextToken());
         }
-        
+
         for (ListIterator iter = buildFileSets.listIterator(); iter.hasNext();) {
             FileSet fs = (FileSet) iter.next();
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
@@ -205,8 +208,8 @@ public class IvyBuildList extends IvyTask {
                 } else {
                     try {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
-                                .parseDescriptor(
-                                    settings, ivyFile.toURI().toURL(), doValidate(settings));
+                                .parseDescriptor(settings, ivyFile.toURI().toURL(),
+                                    doValidate(settings));
                         buildFiles.put(md, buildFile);
                         mds.add(md);
                         Message.debug("Add " + md.getModuleRevisionId().getModuleId());
@@ -225,12 +228,12 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        List leafModuleDescriptors = 
-            convertModuleNamesToModuleDescriptors(mds, leafModuleNames, "leaf");
-        List rootModuleDescriptors = 
-            convertModuleNamesToModuleDescriptors(mds, rootModuleNames, "root");
-        List restartFromModuleDescriptors = 
-            convertModuleNamesToModuleDescriptors(mds, restartFromModuleNames, "restartFrom");
+        List leafModuleDescriptors = convertModuleNamesToModuleDescriptors(mds, leafModuleNames,
+            "leaf");
+        List rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mds, rootModuleNames,
+            "root");
+        List restartFromModuleDescriptors = convertModuleNamesToModuleDescriptors(mds,
+            restartFromModuleNames, "restartFrom");
 
         if (!rootModuleDescriptors.isEmpty()) {
             Message.info("Filtering modules based on roots " + rootModuleNames);
@@ -247,7 +250,7 @@ public class IvyBuildList extends IvyTask {
             for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
                 File buildFile = (File) iter.next();
                 addBuildFile(path, buildFile);
-            }            
+            }
         }
         for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
             File buildFile = (File) iter.next();
@@ -262,8 +265,8 @@ public class IvyBuildList extends IvyTask {
         if (!restartFromModuleDescriptors.isEmpty()) {
             boolean foundRestartFrom = false;
             List keptModules = new ArrayList();
-            ModuleDescriptor restartFromModuleDescriptor = 
-                (ModuleDescriptor) restartFromModuleDescriptors.get(0);
+            ModuleDescriptor restartFromModuleDescriptor = (ModuleDescriptor) restartFromModuleDescriptors
+                    .get(0);
             for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
                 ModuleDescriptor md = (ModuleDescriptor) iter.next();
                 if (md.equals(restartFromModuleDescriptor)) {
@@ -289,7 +292,7 @@ public class IvyBuildList extends IvyTask {
             for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
                 File buildFile = (File) iter.next();
                 addBuildFile(path, buildFile);
-            }            
+            }
         }
 
         getProject().addReference(getReference(), path);
@@ -298,33 +301,32 @@ public class IvyBuildList extends IvyTask {
 
     private void onMissingDescriptor(File buildFile, File ivyFile, List noDescriptor) {
         if (OnMissingDescriptor.SKIP.equals(onMissingDescriptor)) {
-            Message.debug("skipping " + buildFile + ": descriptor " + ivyFile
-                    + " doesn't exist");
+            Message.debug("skipping " + buildFile + ": descriptor " + ivyFile + " doesn't exist");
         } else if (OnMissingDescriptor.FAIL.equals(onMissingDescriptor)) {
             throw new BuildException(
-                "a module has no module descriptor and onMissingDescriptor=fail. "
-                + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
+                    "a module has no module descriptor and onMissingDescriptor=fail. "
+                            + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
         } else {
             if (OnMissingDescriptor.WARN.equals(onMissingDescriptor)) {
-                Message.warn(
-                    "a module has no module descriptor. "
-                    + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
+                Message.warn("a module has no module descriptor. " + "Build file: " + buildFile
+                        + ". Expected descriptor: " + ivyFile);
             }
-            Message.verbose("no descriptor for " + buildFile + ": descriptor=" + ivyFile
-                    + ": adding it at the " 
-                    + (OnMissingDescriptor.TAIL.equals(onMissingDescriptor) 
-                    ? "tail" : "head" + " of the path"));
-            Message.verbose(
-                "\t(change onMissingDescriptor if you want to take another action");
+            Message.verbose("no descriptor for "
+                    + buildFile
+                    + ": descriptor="
+                    + ivyFile
+                    + ": adding it at the "
+                    + (OnMissingDescriptor.TAIL.equals(onMissingDescriptor) ? "tail" : "head"
+                            + " of the path"));
+            Message.verbose("\t(change onMissingDescriptor if you want to take another action");
             noDescriptor.add(buildFile);
         }
     }
-    
-    private List convertModuleNamesToModuleDescriptors(
-            Collection mds, Set moduleNames, String kind) {
+
+    private List convertModuleNamesToModuleDescriptors(Collection mds, Set moduleNames, String kind) {
         List result = new ArrayList();
         Set foundModuleNames = new HashSet();
-        
+
         for (Iterator it = mds.iterator(); it.hasNext();) {
             ModuleDescriptor md = (ModuleDescriptor) it.next();
             String name = md.getModuleRevisionId().getModuleId().getName();
@@ -337,7 +339,7 @@ public class IvyBuildList extends IvyTask {
         if (foundModuleNames.size() < moduleNames.size()) {
             Set missingModules = new HashSet(moduleNames);
             missingModules.removeAll(foundModuleNames);
-            
+
             StringBuffer missingNames = new StringBuffer();
             String sep = "";
             for (Iterator it = missingModules.iterator(); it.hasNext();) {
@@ -345,9 +347,9 @@ public class IvyBuildList extends IvyTask {
                 missingNames.append(it.next());
                 sep = ", ";
             }
-            
-            throw new BuildException("unable to find " + kind + " module(s) " 
-                + missingNames.toString() + " in build fileset");
+
+            throw new BuildException("unable to find " + kind + " module(s) "
+                    + missingNames.toString() + " in build fileset");
         }
 
         return result;
@@ -410,19 +412,18 @@ public class IvyBuildList extends IvyTask {
      *            reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
      */
     private void processFilterNodeFromRoot(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
-        //toKeep.add(node);
+        // toKeep.add(node);
 
         DependencyDescriptor[] deps = node.getDependencies();
         for (int i = 0; i < deps.length; i++) {
             ModuleId id = deps[i].getDependencyId();
             ModuleDescriptor md = (ModuleDescriptor) moduleIdMap.get(id);
-            // we test if this module id has a module descriptor, and if it isn't already in the 
+            // we test if this module id has a module descriptor, and if it isn't already in the
             // toKeep Set, in which there's probably a circular dependency
-            if (md != null && !toKeep.contains(md)) { 
+            if (md != null && !toKeep.contains(md)) {
                 toKeep.add(md);
                 if (!getOnlydirectdep()) {
-                    processFilterNodeFromRoot(md, toKeep,
-                        moduleIdMap);
+                    processFilterNodeFromRoot(md, toKeep, moduleIdMap);
                 }
             }
         }
@@ -526,26 +527,25 @@ public class IvyBuildList extends IvyTask {
     public String getOnMissingDescriptor() {
         return onMissingDescriptor;
     }
-    
+
     public void setOnMissingDescriptor(String onMissingDescriptor) {
         this.onMissingDescriptor = onMissingDescriptor;
     }
-    
+
     /**
-     * @deprecated use {@link #getOnMissingDescriptor()} instead. 
+     * @deprecated use {@link #getOnMissingDescriptor()} instead.
      */
     public boolean isSkipbuildwithoutivy() {
         return onMissingDescriptor == OnMissingDescriptor.SKIP;
     }
 
     /**
-     * @deprecated use {@link #setOnMissingDescriptor(String)} instead. 
+     * @deprecated use {@link #setOnMissingDescriptor(String)} instead.
      */
     public void setSkipbuildwithoutivy(boolean skipBuildFilesWithoutIvy) {
         Message.deprecated("skipbuildwithoutivy is deprecated, use onMissingDescriptor instead.");
-        this.onMissingDescriptor = skipBuildFilesWithoutIvy
-            ? OnMissingDescriptor.SKIP
-                    : OnMissingDescriptor.FAIL;
+        this.onMissingDescriptor = skipBuildFilesWithoutIvy ? OnMissingDescriptor.SKIP
+                : OnMissingDescriptor.FAIL;
     }
 
     public boolean isReverse() {
@@ -564,5 +564,4 @@ public class IvyBuildList extends IvyTask {
         this.restartFrom = restartFrom;
     }
 
-    
 }

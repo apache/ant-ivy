@@ -42,9 +42,9 @@ import com.jcraft.jsch.Session;
 public class SshRepository extends AbstractSshBasedRepository {
 
     private static final int BUFFER_SIZE = 64 * 1024;
-    
+
     private static final String ARGUMENT_PLACEHOLDER = "%arg";
-    
+
     private static final int POLL_SLEEP_TIME = 500;
 
     private char fileSeparator = '/';
@@ -54,7 +54,7 @@ public class SshRepository extends AbstractSshBasedRepository {
     private String existCommand = "ls";
 
     private String createDirCommand = "mkdir";
-    
+
     private String publishPermissions = null;
 
     /**
@@ -69,7 +69,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      * Fetch the needed file information for a given file (size, last modification time) and report
      * it back in a SshResource
      * 
-     * @param source 
+     * @param source
      *            ssh uri for the file to get info for
      * @return SshResource filled with the needed informations
      * @see org.apache.ivy.plugins.repository.Repository#getResource(java.lang.String)
@@ -82,8 +82,8 @@ public class SshRepository extends AbstractSshBasedRepository {
             session = getSession(source);
             Scp myCopy = new Scp(session);
             Scp.FileInfo fileInfo = myCopy.getFileinfo(new URI(source).getPath());
-            result = new SshResource(this, source, true, fileInfo.getLength(), fileInfo
-                    .getLastModified());
+            result = new SshResource(this, source, true, fileInfo.getLength(),
+                    fileInfo.getLastModified());
         } catch (IOException e) {
             if (session != null) {
                 releaseSession(session, source);
@@ -430,10 +430,10 @@ public class SshRepository extends AbstractSshBasedRepository {
     public void setFileSeparator(char fileSeparator) {
         this.fileSeparator = fileSeparator;
     }
-    
+
     /**
-     * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions
-     * of the published files.
+     * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of
+     * the published files.
      */
     public void setPublishPermissions(String permissions) {
         this.publishPermissions = permissions;

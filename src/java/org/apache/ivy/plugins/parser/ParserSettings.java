@@ -33,9 +33,9 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 public interface ParserSettings {
 
     String substitute(String value);
-    
-    Map/*<String, String>*/ substitute(Map/*<String, String>*/ strings);
-    
+
+    Map/* <String, String> */substitute(Map/* <String, String> */strings);
+
     ResolutionCacheManager getResolutionCacheManager();
 
     ConflictManager getConflictManager(String name);
@@ -47,13 +47,13 @@ public interface ParserSettings {
     StatusManager getStatusManager();
 
     RelativeUrlResolver getRelativeUrlResolver();
-    
+
     DependencyResolver getResolver(ModuleRevisionId mRevId);
-    
+
     File resolveFile(String filename);
-    
+
     String getDefaultBranch(ModuleId moduleId);
-    
+
     /**
      * Returns the namespace context in which the current descriptor is parsed.
      */

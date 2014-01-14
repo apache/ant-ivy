@@ -608,11 +608,9 @@ public abstract class BasicResolver extends AbstractResolver {
                     + md.getModuleRevisionId().getBranch() + "'; ");
             ok = false;
         }
-        if (ivyRef.getRevision() != null
-                && !ivyRef.getRevision().startsWith("working@")
+        if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")
                 && !mrid.getRevision().equals(md.getModuleRevisionId().getRevision())) {
-            ModuleRevisionId expectedMrid = ModuleRevisionId
-                    .newInstance(mrid, mrid.getRevision());
+            ModuleRevisionId expectedMrid = ModuleRevisionId.newInstance(mrid, mrid.getRevision());
             if (!getSettings().getVersionMatcher().accept(expectedMrid, md)) {
                 Message.error("\t" + getName() + ": bad revision found in " + ivyRef.getResource()
                         + ": expected='" + ivyRef.getRevision() + " found='"

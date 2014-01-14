@@ -25,11 +25,11 @@ import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Message;
 
 public final class ResourceHelper {
-    
+
     private ResourceHelper() {
-        
+
     }
-    
+
     public static boolean equals(Resource res, File f) {
         if (res == null && f == null) {
             return true;

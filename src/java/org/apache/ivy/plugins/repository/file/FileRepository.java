@@ -57,7 +57,7 @@ public class FileRepository extends AbstractRepository {
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
         copy(source, getFile(destination), overwrite);
     }
-    
+
     public void move(File src, File dest) throws IOException {
         if (!src.renameTo(dest)) {
             throw new IOException("impossible to move '" + src + "' to '" + dest + "'");
@@ -130,7 +130,7 @@ public class FileRepository extends AbstractRepository {
     public File getBaseDir() {
         return baseDir;
     }
-    
+
     public final void setBaseDir(File baseDir) {
         Checks.checkAbsolute(baseDir, "basedir");
         this.baseDir = baseDir;

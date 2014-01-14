@@ -101,10 +101,10 @@ public class HttpClientHandler extends AbstractURLHandler {
             throw new IOException("The HTTP response code for " + url
                     + " did not indicate a success." + " See log for more detail.");
         }
-        
+
         Header encoding = get.getResponseHeader("Content-Encoding");
         return getDecodingInputStream(encoding == null ? null : encoding.getValue(),
-                                      get.getResponseBodyAsStream());
+            get.getResponseBodyAsStream());
     }
 
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
@@ -115,10 +115,10 @@ public class HttpClientHandler extends AbstractURLHandler {
                 throw new IOException("The HTTP response code for " + src
                         + " did not indicate a success." + " See log for more detail.");
             }
-            
+
             Header encoding = get.getResponseHeader("Content-Encoding");
             InputStream is = getDecodingInputStream(encoding == null ? null : encoding.getValue(),
-                                                    get.getResponseBodyAsStream());
+                get.getResponseBodyAsStream());
             FileUtil.copy(is, dest, l);
             dest.setLastModified(getLastModified(get));
         } finally {
@@ -154,8 +154,8 @@ public class HttpClientHandler extends AbstractURLHandler {
                 method = doGet(url, timeout);
             }
             if (checkStatusCode(url, method)) {
-                return new URLInfo(true, getResponseContentLength(method), 
-                        getLastModified(method), method.getRequestCharSet());
+                return new URLInfo(true, getResponseContentLength(method), getLastModified(method),
+                        method.getRequestCharSet());
             }
         } catch (HttpException e) {
             Message.error("HttpClientHandler: " + e.getMessage() + ":" + e.getReasonCode() + "="
@@ -182,12 +182,12 @@ public class HttpClientHandler extends AbstractURLHandler {
         if (status == HttpStatus.SC_OK) {
             return true;
         }
-        
+
         // IVY-1328: some servers return a 204 on a HEAD request
         if ("HEAD".equals(method.getName()) && (status == 204)) {
             return true;
         }
-        
+
         Message.debug("HTTP response status: " + status + " url=" + url);
         if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
             Message.warn("Your proxy requires authentication.");
@@ -269,8 +269,7 @@ public class HttpClientHandler extends AbstractURLHandler {
 
     private HttpClient getClient() {
         if (httpClient == null) {
-            final MultiThreadedHttpConnectionManager connManager = 
-                new MultiThreadedHttpConnectionManager();
+            final MultiThreadedHttpConnectionManager connManager = new MultiThreadedHttpConnectionManager();
             httpClient = new HttpClient(connManager);
 
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -299,8 +298,8 @@ public class HttpClientHandler extends AbstractURLHandler {
                 "Apache Ivy/" + Ivy.getIvyVersion());
 
             // authentication
-            httpClient.getParams().setParameter(CredentialsProvider.PROVIDER, 
-                new IvyCredentialsProvider()); 
+            httpClient.getParams().setParameter(CredentialsProvider.PROVIDER,
+                new IvyCredentialsProvider());
         }
 
         return httpClient;
@@ -367,27 +366,27 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         int getHttpClientMajorVersion();
     }
-    
+
     private static class IvyCredentialsProvider implements CredentialsProvider {
 
         public Credentials getCredentials(AuthScheme scheme, String host, int port, boolean proxy)
                 throws CredentialsNotAvailableException {
             String realm = scheme.getRealm();
-            
-            org.apache.ivy.util.Credentials c = (org.apache.ivy.util.Credentials) 
-                    CredentialsStore.INSTANCE.getCredentials(realm, host);
+
+            org.apache.ivy.util.Credentials c = (org.apache.ivy.util.Credentials) CredentialsStore.INSTANCE
+                    .getCredentials(realm, host);
             if (c != null) {
                 return createCredentials(c.getUserName(), c.getPasswd());
             }
-            
+
             return null;
         }
     }
-    
+
     private static Credentials createCredentials(String username, String password) {
         String user;
         String domain;
-        
+
         int backslashIndex = username.indexOf('\\');
         if (backslashIndex >= 0) {
             user = username.substring(backslashIndex + 1);
@@ -396,13 +395,13 @@ public class HttpClientHandler extends AbstractURLHandler {
             user = username;
             domain = System.getProperty("http.auth.ntlm.domain", "");
         }
-        
+
         return new NTCredentials(user, password, HostUtil.getLocalHostName(), domain);
     }
-    
+
     private static class FileRequestEntity implements RequestEntity {
         private File file;
-        
+
         public FileRequestEntity(File file) {
             this.file = file;
         }
@@ -426,7 +425,7 @@ public class HttpClientHandler extends AbstractURLHandler {
             } finally {
                 instream.close();
             }
-        }            
+        }
     }
 
 }

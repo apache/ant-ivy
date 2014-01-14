@@ -31,15 +31,22 @@ import org.apache.ivy.core.report.ResolveReport;
 public class IvyEventFilterTest extends TestCase {
 
     private ModuleDescriptor md = null;
+
     private ModuleDescriptor md2 = null;
+
     private ModuleDescriptor md3 = null;
+
     private ModuleDescriptor md4 = null;
-    
+
     public void setUp() throws Exception {
-        md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "bar", "1.0"), "integration", new Date());
-        md2 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo2", "bar", "1.0"), "integration", new Date());
-        md3 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo3", "baz", "1.0"), "integration", new Date());
-        md4 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "baz", "1.0"), "integration", new Date());
+        md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "bar", "1.0"),
+                "integration", new Date());
+        md2 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo2", "bar", "1.0"),
+                "integration", new Date());
+        md3 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo3", "baz", "1.0"),
+                "integration", new Date());
+        md4 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "baz", "1.0"),
+                "integration", new Date());
     }
 
     public void testSimple() {

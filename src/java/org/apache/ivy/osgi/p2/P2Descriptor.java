@@ -127,7 +127,7 @@ public class P2Descriptor extends EditableRepoDescriptor {
     }
 
     private void addArtifact(BundleInfo bundle, BundleArtifact artifact) {
-        // find an existing artifact that might be a duplicate 
+        // find an existing artifact that might be a duplicate
         BundleArtifact same = null;
         for (BundleArtifact a : bundle.getArtifacts()) {
             if (a.isSource() == artifact.isSource()) {

@@ -26,7 +26,8 @@ import junit.framework.TestCase;
 public class ExecutionEnvironmentProfileLoaderTest extends TestCase {
 
     public void testLoad() throws Exception {
-        Map<String, ExecutionEnvironmentProfile> profiles = ExecutionEnvironmentProfileProvider.loadDefaultProfileList();
+        Map<String, ExecutionEnvironmentProfile> profiles = ExecutionEnvironmentProfileProvider
+                .loadDefaultProfileList();
         assertEquals(21, profiles.size());
 
         assertEquals(0, profiles.get("OSGI_MINIMUM-1.0").getPkgNames().size());

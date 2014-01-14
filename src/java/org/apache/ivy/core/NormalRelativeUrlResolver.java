@@ -21,12 +21,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Normal implementation of RelativeUrlResolver. 
+ * Normal implementation of RelativeUrlResolver.
  */
 public class NormalRelativeUrlResolver extends RelativeUrlResolver {
 
     public URL getURL(URL context, String url) throws MalformedURLException {
-        return new URL(context , url);
+        return new URL(context, url);
     }
 
 }

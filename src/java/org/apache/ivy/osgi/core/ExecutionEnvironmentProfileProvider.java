@@ -120,7 +120,8 @@ public class ExecutionEnvironmentProfileProvider {
             for (int i = 0; i < aliases.length; i++) {
                 String alias = aliases[i].trim();
                 if (alias.length() != 0) {
-                    ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(alias);
+                    ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(
+                            alias);
                     profileAlias.pkgNames = profile.pkgNames;
                     profiles.put(alias, profileAlias);
                 }

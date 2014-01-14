@@ -46,8 +46,8 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
 
         for (int i = 0; i < modules.length; i++) {
             jarModulesMap.put(modules[i].getJar().getAbsolutePath(), modules[i]);
-            DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(modules[i]
-                    .getMrid(), new Date(modules[i].getJar().lastModified()));
+            DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(
+                modules[i].getMrid(), new Date(modules[i].getJar().lastModified()));
             mds.put(modules[i].getMrid(), md);
             jarjarCmd.append("\"").append(modules[i].getJar().getAbsolutePath()).append("\"");
             if (i + 1 < modules.length) {
@@ -73,8 +73,8 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
 
                 DefaultModuleDescriptor md = (DefaultModuleDescriptor) mds.get(module.getMrid());
 
-                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, dependency
-                        .getMrid(), false, false, true);
+                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
+                        dependency.getMrid(), false, false, true);
                 dd.addDependencyConfiguration(ModuleDescriptor.DEFAULT_CONFIGURATION,
                     ModuleDescriptor.DEFAULT_CONFIGURATION);
                 md.addDependency(dd);

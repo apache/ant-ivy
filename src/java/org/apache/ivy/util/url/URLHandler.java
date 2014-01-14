@@ -29,7 +29,7 @@ import org.apache.ivy.util.CopyProgressListener;
  * check reachability, ...).
  */
 public interface URLHandler {
-    
+
     /**
      * Using the slower REQUEST method for getting the basic URL infos. Use this when getting errors
      * behind a problematic/special proxy or firewall chain.
@@ -54,7 +54,8 @@ public interface URLHandler {
             this(available, contentLength, lastModified, null);
         }
 
-        protected URLInfo(boolean available, long contentLength, long lastModified, String bodyCharset) {
+        protected URLInfo(boolean available, long contentLength, long lastModified,
+                String bodyCharset) {
             this.available = available;
             this.contentLength = contentLength;
             this.lastModified = lastModified;
@@ -140,22 +141,25 @@ public interface URLHandler {
     public long getLastModified(URL url, int timeout);
 
     /**
-     * Returns the URLInfo of the given url or a {@link #UNAVAILABLE} instance,
-     * if the url is not reachable.
+     * Returns the URLInfo of the given url or a {@link #UNAVAILABLE} instance, if the url is not
+     * reachable.
      * 
-     * @param  url  The url from which information is retrieved.
-     * @return  The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when
-     *          the url is not available.
+     * @param url
+     *            The url from which information is retrieved.
+     * @return The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when the url is not
+     *         available.
      */
     public URLInfo getURLInfo(URL url);
 
     /**
      * never returns null, return UNAVAILABLE when url is not reachable
      * 
-     * @param  url  The url from which information is retrieved.
-     * @param  timeout  The timeout in milliseconds.
-     * @return  The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when
-     *          the url is not available.
+     * @param url
+     *            The url from which information is retrieved.
+     * @param timeout
+     *            The timeout in milliseconds.
+     * @return The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when the url is not
+     *         available.
      */
     public URLInfo getURLInfo(URL url, int timeout);
 
@@ -164,6 +168,6 @@ public interface URLHandler {
     public void download(URL src, File dest, CopyProgressListener l) throws IOException;
 
     public void upload(File src, URL dest, CopyProgressListener l) throws IOException;
-    
+
     public void setRequestMethod(int requestMethod);
 }

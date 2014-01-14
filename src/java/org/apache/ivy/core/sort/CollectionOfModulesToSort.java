@@ -41,7 +41,7 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
 
     private final VersionMatcher versionMatcher;
 
-    private final Map<ModuleId , Collection<ModuleInSort>> modulesByModuleId;
+    private final Map<ModuleId, Collection<ModuleInSort>> modulesByModuleId;
 
     private final NonMatchingVersionReporter nonMatchingVersionReporter;
 
@@ -53,8 +53,8 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
      *            collection
      * @param nonMatchingVersionReporter
      */
-    public CollectionOfModulesToSort(Collection<ModuleDescriptor> modulesToSort, VersionMatcher matcher,
-            NonMatchingVersionReporter nonMatchingVersionReporter) {
+    public CollectionOfModulesToSort(Collection<ModuleDescriptor> modulesToSort,
+            VersionMatcher matcher, NonMatchingVersionReporter nonMatchingVersionReporter) {
         this.versionMatcher = matcher;
         this.nonMatchingVersionReporter = nonMatchingVersionReporter;
         this.modulesByModuleId = new HashMap<ModuleId, Collection<ModuleInSort>>();
@@ -101,8 +101,8 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
             if (mdInSort.match(descriptor, versionMatcher)) {
                 return mdInSort;
             } else {
-                nonMatchingVersionReporter.reportNonMatchingVersion(descriptor, mdInSort
-                        .getSortedModuleDescriptor());
+                nonMatchingVersionReporter.reportNonMatchingVersion(descriptor,
+                    mdInSort.getSortedModuleDescriptor());
             }
         }
         return null;

@@ -31,13 +31,14 @@ import org.apache.ivy.util.extendable.ExtendableItem;
  * obtained with {@link #getDependencyRevisionId()}, and corresponds to the <code>rev</code>
  * attribute in Ivy files. This is the constraint as it should be honored by Ivy in default resolve
  * mode.
- * </p><p> 
- * Then there is the dynamic constraint, which can either be the same as the default
- * constraint, or the original dependency constraint when an Ivy file is delivered an published to a
- * repository. This dynamic constraint is returned by
- * {@link #getDynamicConstraintDependencyRevisionId()}, and corresponds to the
- * <code>revconstraint</code> attribute in the Ivy file. In some resolve mode, this constraint can
- * be used instead of the default dependency constraint when performing dependency resolution.
+ * </p>
+ * <p>
+ * Then there is the dynamic constraint, which can either be the same as the default constraint, or
+ * the original dependency constraint when an Ivy file is delivered an published to a repository.
+ * This dynamic constraint is returned by {@link #getDynamicConstraintDependencyRevisionId()}, and
+ * corresponds to the <code>revconstraint</code> attribute in the Ivy file. In some resolve mode,
+ * this constraint can be used instead of the default dependency constraint when performing
+ * dependency resolution.
  * </p>
  */
 public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
@@ -125,7 +126,7 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     public boolean canExclude();
 
     DependencyDescriptor asSystem();
-    
+
     /**
      * Clones current dependency descriptor with another revision.
      * 

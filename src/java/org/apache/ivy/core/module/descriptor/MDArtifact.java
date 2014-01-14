@@ -43,20 +43,19 @@ public class MDArtifact extends AbstractArtifact {
 
     private String ext;
 
-    private List/*<String>*/ confs = new ArrayList();
+    private List/* <String> */confs = new ArrayList();
 
     private Map extraAttributes = null;
 
     private URL url;
-    
+
     private boolean isMetadata = false;
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext) {
         this(md, name, type, ext, null, null);
     }
 
-    public MDArtifact(ModuleDescriptor md, 
-            String name, String type, String ext, boolean isMetadata) {
+    public MDArtifact(ModuleDescriptor md, String name, String type, String ext, boolean isMetadata) {
         this(md, name, type, ext, null, null);
         this.isMetadata = isMetadata;
     }
@@ -93,8 +92,8 @@ public class MDArtifact extends AbstractArtifact {
 
     public ArtifactRevisionId getId() {
         // do not cache the result because the resolvedModuleRevisionId can change!
-        return ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type,
-                ext, extraAttributes);
+        return ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type, ext,
+            extraAttributes);
     }
 
     public String getName() {

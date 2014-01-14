@@ -22,12 +22,12 @@ import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 public abstract class ArtifactLockStrategy extends FileBasedLockStrategy {
-    
+
     protected ArtifactLockStrategy(FileLocker locker, boolean debugLocking) {
         super(locker, debugLocking);
     }
 
-    public boolean lockArtifact(Artifact artifact, File artifactFileToDownload) 
+    public boolean lockArtifact(Artifact artifact, File artifactFileToDownload)
             throws InterruptedException {
         return acquireLock(new File(artifactFileToDownload.getAbsolutePath() + ".lck"));
     }

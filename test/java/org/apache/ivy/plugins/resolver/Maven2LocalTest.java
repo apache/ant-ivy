@@ -41,7 +41,7 @@ public class Maven2LocalTest extends TestCase {
     private ResolveData data;
 
     private File cache;
-    
+
     protected void setUp() throws Exception {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
@@ -57,33 +57,27 @@ public class Maven2LocalTest extends TestCase {
 
     public void testUseMetadataForListing() throws Exception {
         IBiblioResolver resolver = maven2Resolver();
-        
-        ResolvedModuleRevision m = resolver.getDependency(
-            new DefaultDependencyDescriptor(
-                ModuleRevisionId.newInstance(
-                    "org.apache", "test-metadata", "latest.integration"), 
+
+        ResolvedModuleRevision m = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org.apache", "test-metadata", "latest.integration"),
                 false), data);
-        
+
         assertNotNull(m);
         // should trust the metadata (latest=1.1) instead of listing revisions (latest=1.2)
-        assertEquals(ModuleRevisionId.newInstance(
-            "org.apache", "test-metadata", "1.1"), m.getId());
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-metadata", "1.1"), m.getId());
     }
 
     public void testNotUseMetadataForListing() throws Exception {
         IBiblioResolver resolver = maven2Resolver();
         resolver.setUseMavenMetadata(false);
-        
-        ResolvedModuleRevision m = resolver.getDependency(
-            new DefaultDependencyDescriptor(
-                ModuleRevisionId.newInstance(
-                    "org.apache", "test-metadata", "latest.integration"), 
+
+        ResolvedModuleRevision m = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org.apache", "test-metadata", "latest.integration"),
                 false), data);
-        
+
         assertNotNull(m);
-        // should trust listing revisions (latest=1.2) instead of the metadata (latest=1.1) 
-        assertEquals(ModuleRevisionId.newInstance(
-            "org.apache", "test-metadata", "1.2"), m.getId());
+        // should trust listing revisions (latest=1.2) instead of the metadata (latest=1.1)
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-metadata", "1.2"), m.getId());
     }
 
     private IBiblioResolver maven2Resolver() throws MalformedURLException {

@@ -29,38 +29,33 @@ import org.apache.ivy.core.sort.SortEngine;
 
 public class RepositoryManagementEngineTest extends TestCase {
     private RepositoryManagementEngine repository;
+
     private TestFixture fixture;
-    
+
     protected void setUp() throws Exception {
         fixture = new TestFixture();
         IvySettings settings = fixture.getSettings();
         repository = new RepositoryManagementEngine(settings, new SearchEngine(settings),
                 new ResolveEngine(settings, new EventManager(), new SortEngine(settings)));
     }
-    
+
     protected void tearDown() throws Exception {
         fixture.clean();
     }
-    
+
     public void testLoad() throws Exception {
-        fixture
-            .addMD("o1#A;1").addMD("o1#A;2").addMD("o1#A;3")
-            .addMD("o1#B;1").addMD("o1#B;2->o1#A;2")
-            .addMD("o2#C;1->{o1#B;1 o1#A;1}")
-            .init();
-        
+        fixture.addMD("o1#A;1").addMD("o1#A;2").addMD("o1#A;3").addMD("o1#B;1")
+                .addMD("o1#B;2->o1#A;2").addMD("o2#C;1->{o1#B;1 o1#A;1}").init();
+
         repository.load();
         assertEquals(3, repository.getModuleIdsNumber());
         assertEquals(6, repository.getRevisionsNumber());
     }
-    
+
     public void testOrphans() throws Exception {
-        fixture
-            .addMD("o1#A;1").addMD("o1#A;2").addMD("o1#A;3")
-            .addMD("o1#B;1").addMD("o1#B;2->o1#A;2")
-            .addMD("o2#C;1->{o1#B;1 o1#A;1}")
-            .init();
-        
+        fixture.addMD("o1#A;1").addMD("o1#A;2").addMD("o1#A;3").addMD("o1#B;1")
+                .addMD("o1#B;2->o1#A;2").addMD("o2#C;1->{o1#B;1 o1#A;1}").init();
+
         repository.load();
         repository.analyze();
         TestHelper.assertModuleRevisionIds("o1#A;3 o1#B;2 o2#C;1", repository.getOrphans());

@@ -30,7 +30,8 @@ import org.apache.ivy.util.filter.NoFilter;
 import junit.framework.TestCase;
 
 public class ModuleRulesTest extends TestCase {
-	private ModuleRules rules;
+    private ModuleRules rules;
+
     private Object[] rule;
 
     protected void setUp() throws Exception {
@@ -42,12 +43,12 @@ public class ModuleRulesTest extends TestCase {
     }
 
     // tests
-    
+
     public void testGetRule() throws Exception {
         // fixture
         rules.defineRule(mapMatcher().organization("apache").build(), rule[0]);
         rules.defineRule(mapMatcher().organization("other").build(), rule[1]);
-        
+
         // test
         assertRule(rule[0], "apache#module1;1.5");
         assertRule(rule[0], "apache#module2;3.0");
@@ -60,7 +61,7 @@ public class ModuleRulesTest extends TestCase {
         rules.defineRule(mapMatcher().organization("apache").build(), rule[0]);
         rules.defineRule(mapMatcher().module("module1").build(), rule[1]);
         rules.defineRule(mapMatcher().module("module2").build(), rule[2]);
-        
+
         // test
         assertRule(rule[0], "apache#module1;1.5", acceptAll());
         assertRule(rule[1], "apache#module1;1.5", acceptSecond());
@@ -70,9 +71,8 @@ public class ModuleRulesTest extends TestCase {
         assertRule(null, "unknown#module4;1.5", acceptAll());
     }
 
-    
     // test helpers
-    
+
     private Filter acceptNone() {
         return new Filter() {
             public boolean accept(Object o) {
@@ -92,7 +92,7 @@ public class ModuleRulesTest extends TestCase {
             public boolean accept(Object o) {
                 return ++cpt == 2;
             }
-        
+
             public String toString() {
                 return "AcceptSecond";
             }
@@ -105,23 +105,17 @@ public class ModuleRulesTest extends TestCase {
 
     private void assertRule(Object rule, String mrid) {
         Object ruleFound = rules.getRule(ModuleRevisionId.parse(mrid));
-        assertEquals(
-            "unexcepted rule for " + mrid,
-            rule, ruleFound);
+        assertEquals("unexcepted rule for " + mrid, rule, ruleFound);
     }
 
     private void assertRule(Object rule, String mrid, Filter filter) {
         Object ruleFound = rules.getRule(ModuleRevisionId.parse(mrid), filter);
-        assertEquals(
-            "unexcepted rule for " + mrid + " filtered by " + filter,
-            rule, ruleFound);
+        assertEquals("unexcepted rule for " + mrid + " filtered by " + filter, rule, ruleFound);
     }
 
     private void assertModuleIdRule(Object rule, String mid, Filter filter) {
         Object ruleFound = rules.getRule(ModuleId.parse(mid), filter);
-        assertEquals(
-            "unexcepted rule for " + mid + " filtered by " + filter,
-            rule, ruleFound);
+        assertEquals("unexcepted rule for " + mid + " filtered by " + filter, rule, ruleFound);
     }
 
     private MridMatcherBuilder mapMatcher() {
@@ -130,8 +124,9 @@ public class ModuleRulesTest extends TestCase {
 
     public class MridMatcherBuilder {
         private Map attributes = new HashMap();
+
         private PatternMatcher matcher = ExactPatternMatcher.INSTANCE;
-        
+
         public MridMatcherBuilder organization(String org) {
             attributes.put(IvyPatternHelper.ORGANISATION_KEY, org);
             return this;

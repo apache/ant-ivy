@@ -23,58 +23,77 @@ import org.apache.ivy.util.filter.FilterHelper;
 
 public class InstallOptions {
     private boolean transitive = true;
+
     private boolean validate = true;
+
     private boolean overwrite = false;
+
     private boolean installOriginalMetadata = false;
+
     private String[] confs = {"*"};
+
     private Filter artifactFilter = FilterHelper.NO_FILTER;
+
     private String matcherName = PatternMatcher.EXACT;
-    
+
     public boolean isTransitive() {
         return transitive;
     }
+
     public InstallOptions setTransitive(boolean transitive) {
         this.transitive = transitive;
         return this;
     }
+
     public boolean isValidate() {
         return validate;
     }
+
     public InstallOptions setValidate(boolean validate) {
         this.validate = validate;
         return this;
     }
+
     public boolean isOverwrite() {
         return overwrite;
     }
+
     public InstallOptions setOverwrite(boolean overwrite) {
         this.overwrite = overwrite;
         return this;
     }
+
     public Filter getArtifactFilter() {
         return artifactFilter;
     }
+
     public InstallOptions setArtifactFilter(Filter artifactFilter) {
         this.artifactFilter = artifactFilter == null ? FilterHelper.NO_FILTER : artifactFilter;
         return this;
     }
+
     public String getMatcherName() {
         return matcherName;
     }
+
     public InstallOptions setMatcherName(String matcherName) {
         this.matcherName = matcherName;
         return this;
     }
+
     public String[] getConfs() {
         return confs;
     }
+
     public InstallOptions setConfs(String[] conf) {
         this.confs = conf;
         return this;
     }
+
     public boolean isInstallOriginalMetadata() {
         return installOriginalMetadata;
     }
+
     public InstallOptions setInstallOriginalMetadata(boolean installOriginalMetadata) {
         this.installOriginalMetadata = installOriginalMetadata;
         return this;

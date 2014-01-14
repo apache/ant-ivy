@@ -18,8 +18,8 @@
 package org.apache.ivy.core.cache;
 
 /**
- * Utility class providing some cache related facilities. 
- *
+ * Utility class providing some cache related facilities.
+ * 
  */
 public final class CacheUtil {
 
@@ -36,12 +36,12 @@ public final class CacheUtil {
             throw new IllegalArgumentException("null cache pattern not allowed.");
         }
         if (cachePattern.startsWith("..")) {
-            throw new IllegalArgumentException("invalid cache pattern: '" + cachePattern 
-                + "': cache patterns must not lead outside cache directory");
+            throw new IllegalArgumentException("invalid cache pattern: '" + cachePattern
+                    + "': cache patterns must not lead outside cache directory");
         }
         if (cachePattern.startsWith("/")) {
-            throw new IllegalArgumentException("invalid cache pattern: '" + cachePattern 
-                + "': cache patterns must not be absolute");
+            throw new IllegalArgumentException("invalid cache pattern: '" + cachePattern
+                    + "': cache patterns must not be absolute");
         }
     }
 
