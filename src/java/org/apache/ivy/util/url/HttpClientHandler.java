@@ -373,8 +373,8 @@ public class HttpClientHandler extends AbstractURLHandler {
                 throws CredentialsNotAvailableException {
             String realm = scheme.getRealm();
 
-            org.apache.ivy.util.Credentials c = (org.apache.ivy.util.Credentials) CredentialsStore.INSTANCE
-                    .getCredentials(realm, host);
+            org.apache.ivy.util.Credentials c = CredentialsStore.INSTANCE.getCredentials(realm,
+                host);
             if (c != null) {
                 return createCredentials(c.getUserName(), c.getPasswd());
             }

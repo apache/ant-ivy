@@ -214,7 +214,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
                     return;
                 }
                 // time now to delegate for a new element
-                delegate = (DelegatingHandler) saxHandlerMapping.get(localName);
+                delegate = saxHandlerMapping.get(localName);
                 if (delegate != null) {
                     skipOnError(new SkipOnErrorCallback() {
                         public void call() throws SAXException {

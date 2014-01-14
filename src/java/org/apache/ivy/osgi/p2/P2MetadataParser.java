@@ -447,7 +447,7 @@ public class P2MetadataParser implements XMLInputParser {
             addChild(new ProvidedHandler(), new ChildElementHandler<ProvidedHandler>() {
                 public void childHanlded(ProvidedHandler child) {
                     if (child.namespace.equals("org.eclipse.equinox.p2.eclipse.type")) {
-                        eclipseType = ((ProvidedHandler) child).name;
+                        eclipseType = child.name;
                     } else {
                         String type = namespace2Type(child.namespace);
                         if (type == null) {
@@ -521,12 +521,11 @@ public class P2MetadataParser implements XMLInputParser {
                 public void childHanlded(RequiredHandler child) {
                     String name = child.name;
                     VersionRange range = child.range;
-                    String type = namespace2Type(((RequiredHandler) child).namespace);
+                    String type = namespace2Type(child.namespace);
                     if (type == null) {
                         if (logLevel >= Message.MSG_DEBUG) {
-                            Message.debug("Unsupported required capability "
-                                    + ((RequiredHandler) child).namespace + " " + name + " "
-                                    + range);
+                            Message.debug("Unsupported required capability " + child.namespace
+                                    + " " + name + " " + range);
                         }
                     } else {
                         String resolution = child.optional ? "optional" : null;

@@ -91,22 +91,22 @@ public class ManifestHeaderElement {
         String string = "";
         Iterator<String> itValues = values.iterator();
         while (itValues.hasNext()) {
-            string = string.concat((String) itValues.next());
+            string = string.concat(itValues.next());
             if (itValues.hasNext()) {
                 string = string.concat(";");
             }
         }
         for (Entry<String, String> directive : directives.entrySet()) {
             string = string.concat(";");
-            string = string.concat((String) directive.getKey());
+            string = string.concat(directive.getKey());
             string = string.concat(":=");
-            string = string.concat((String) directive.getValue());
+            string = string.concat(directive.getValue());
         }
         for (Entry<String, String> attribute : attributes.entrySet()) {
             string = string.concat(";");
-            string = string.concat((String) attribute.getKey());
+            string = string.concat(attribute.getKey());
             string = string.concat("=");
-            string = string.concat((String) attribute.getValue());
+            string = string.concat(attribute.getValue());
         }
         return string;
     }

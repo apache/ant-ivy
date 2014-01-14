@@ -83,7 +83,7 @@ public class SortEngine {
                 (int) (list.size() * adjustFactor + nulls.size()));
         // attempt to adjust the size to avoid too much list resizing
         for (int i = 0; i < list.size(); i++) {
-            ModuleDescriptor md = (ModuleDescriptor) list.get(i);
+            ModuleDescriptor md = list.get(i);
             List<IvyNode> n = dependenciesMap.get(md);
             ret.addAll(n);
         }

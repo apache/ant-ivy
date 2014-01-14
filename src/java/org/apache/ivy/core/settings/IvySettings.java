@@ -1492,7 +1492,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      */
     private void validateAll(Collection values) {
         for (Iterator iterator = values.iterator(); iterator.hasNext();) {
-            Object object = (Object) iterator.next();
+            Object object = iterator.next();
             if (object instanceof Validatable) {
                 ((Validatable) object).validate();
             }

@@ -117,8 +117,7 @@ class ModuleInSort {
                 loopElements.add(stackEl);
             }
             elemOfLoop.add(this.module.getModuleRevisionId());
-            ModuleRevisionId[] mrids = (ModuleRevisionId[]) elemOfLoop
-                    .toArray(new ModuleRevisionId[elemOfLoop.size()]);
+            ModuleRevisionId[] mrids = elemOfLoop.toArray(new ModuleRevisionId[elemOfLoop.size()]);
             depStrategy.handleCircularDependency(mrids);
             return true;
         } else {

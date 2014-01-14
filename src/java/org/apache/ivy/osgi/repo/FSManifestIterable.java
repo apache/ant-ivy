@@ -99,7 +99,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
     }
 
     protected InputStream getInputStream(File f) throws FileNotFoundException {
-        return new FileInputStream((File) f);
+        return new FileInputStream(f);
     }
 
     protected List<File> listBundleFiles(File dir) {

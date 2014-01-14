@@ -698,7 +698,7 @@ public class IvyNode implements Comparable {
     }
 
     private Collection findPath(ModuleId from, IvyNode node, List path) {
-        IvyNode parent = (IvyNode) node.getDirectCallerFor(from);
+        IvyNode parent = node.getDirectCallerFor(from);
         if (parent == null) {
             throw new IllegalArgumentException("no path from " + from + " to " + getId() + " found");
         }

@@ -340,7 +340,7 @@ public class ResolveReport {
         for (int i = 0; i < allConfs.length; i++) {
             gatherExtendingConfs(extendingConfs, allConfs[i], extended);
         }
-        return (String[]) extendingConfs.toArray(new String[extendingConfs.size()]);
+        return extendingConfs.toArray(new String[extendingConfs.size()]);
     }
 
     private boolean gatherExtendingConfs(Set<String> extendingConfs, String conf, String extended) {

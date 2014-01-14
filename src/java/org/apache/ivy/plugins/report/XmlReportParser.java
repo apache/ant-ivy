@@ -120,8 +120,7 @@ public class XmlReportParser {
                     if (skip) {
                         return;
                     }
-                    MetadataArtifactDownloadReport madr = (MetadataArtifactDownloadReport) metadataReports
-                            .get(mrid);
+                    MetadataArtifactDownloadReport madr = metadataReports.get(mrid);
                     if (madr != null) {
                         madr.setDownloadStatus(DownloadStatus.fromString(attributes
                                 .getValue("status")));
@@ -172,7 +171,7 @@ public class XmlReportParser {
                     if (skip) {
                         return;
                     }
-                    ArtifactDownloadReport aReport = (ArtifactDownloadReport) revisionArtifacts
+                    ArtifactDownloadReport aReport = revisionArtifacts
                             .get(revisionArtifacts.size() - 1);
 
                     if (ArtifactOrigin.isUnknown(attributes.getValue("location"))) {
@@ -299,22 +298,21 @@ public class XmlReportParser {
     }
 
     public Artifact[] getArtifacts() {
-        return (Artifact[]) parser.getArtifacts().toArray(
-            new Artifact[parser.getArtifacts().size()]);
+        return parser.getArtifacts().toArray(new Artifact[parser.getArtifacts().size()]);
     }
 
     public ArtifactDownloadReport[] getArtifactReports() {
-        return (ArtifactDownloadReport[]) parser.getArtifactReports().toArray(
+        return parser.getArtifactReports().toArray(
             new ArtifactDownloadReport[parser.getArtifactReports().size()]);
     }
 
     public ModuleRevisionId[] getDependencyRevisionIds() {
-        return (ModuleRevisionId[]) parser.getModuleRevisionIds().toArray(
+        return parser.getModuleRevisionIds().toArray(
             new ModuleRevisionId[parser.getModuleRevisionIds().size()]);
     }
 
     public ModuleRevisionId[] getRealDependencyRevisionIds() {
-        return (ModuleRevisionId[]) parser.getRealModuleRevisionIds().toArray(
+        return parser.getRealModuleRevisionIds().toArray(
             new ModuleRevisionId[parser.getRealModuleRevisionIds().size()]);
     }
 

@@ -220,7 +220,7 @@ public class ConfigurationResolveReport {
                 downloaded.add(node);
             }
         }
-        return (IvyNode[]) downloaded.toArray(new IvyNode[downloaded.size()]);
+        return downloaded.toArray(new IvyNode[downloaded.size()]);
     }
 
     public ArtifactDownloadReport[] getDownloadReports(ModuleRevisionId mrid) {
@@ -353,7 +353,7 @@ public class ConfigurationResolveReport {
         Collection<ArtifactDownloadReport> adrs = new ArrayList<ArtifactDownloadReport>(
                 Arrays.asList(allFailedReports));
         for (Iterator<ArtifactDownloadReport> iterator = adrs.iterator(); iterator.hasNext();) {
-            ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
+            ArtifactDownloadReport adr = iterator.next();
 
             if (adr.getArtifact().getExtraAttribute("ivy:merged") != null) {
                 iterator.remove();

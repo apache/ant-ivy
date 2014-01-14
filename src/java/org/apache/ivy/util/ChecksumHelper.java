@@ -154,9 +154,9 @@ public final class ChecksumHelper {
             ch = (byte) (ch >>> 4); // shift the bits down
             ch = (byte) (ch & 0x0F); // must do this is high order bit is on!
 
-            out.append(CHARS[(int) ch]); // convert the nibble to a String Character
+            out.append(CHARS[ch]); // convert the nibble to a String Character
             ch = (byte) (in[i] & 0x0F); // Strip off low nibble
-            out.append(CHARS[(int) ch]); // convert the nibble to a String Character
+            out.append(CHARS[ch]); // convert the nibble to a String Character
         }
         // CheckStyle:MagicNumber ON
 

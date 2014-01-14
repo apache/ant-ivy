@@ -198,7 +198,7 @@ public final class IvyPatternHelper {
                 sb = new StringBuffer();
             }
             String var = m.group(1);
-            String val = (String) variables.getVariable(var);
+            String val = variables.getVariable(var);
             if (val != null) {
                 int index = substituting.indexOf(var);
                 if (index != -1) {
@@ -385,7 +385,7 @@ public final class IvyPatternHelper {
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String var = m.group(1);
-            String val = (String) params.getVariable(var);
+            String val = params.getVariable(var);
             if (val != null) {
                 int index = substituting.indexOf(var);
                 if (index != -1) {

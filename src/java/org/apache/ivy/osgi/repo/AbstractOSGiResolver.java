@@ -389,7 +389,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                 Iterator<ModuleDescriptor> itModules = entry.getValue().iterator();
                 boolean moduleMatchRev = false;
                 while (!moduleMatchRev && itModules.hasNext()) {
-                    ModuleDescriptor md = (ModuleDescriptor) itModules.next();
+                    ModuleDescriptor md = itModules.next();
                     moduleMatchRev = rev.equals(md.getRevision());
                 }
                 if (moduleMatchRev) {
@@ -404,7 +404,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     public Map[] listTokenValues(String[] tokens, Map criteria) {
         Set<String> tokenSet = new HashSet<String>(Arrays.asList(tokens));
         Set<Map<String, String>> listTokenValues = listTokenValues(tokenSet, criteria);
-        return (Map[]) listTokenValues.toArray(new Map[listTokenValues.size()]);
+        return listTokenValues.toArray(new Map[listTokenValues.size()]);
     }
 
     private Set<Map<String, String>> listTokenValues(Set<String> tokens,

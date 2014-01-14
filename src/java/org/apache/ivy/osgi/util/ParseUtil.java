@@ -77,6 +77,6 @@ public class ParseUtil {
             list.add(sb.toString().trim());
         }
 
-        return (String[]) list.toArray(new String[list.size()]);
+        return list.toArray(new String[list.size()]);
     }
 }

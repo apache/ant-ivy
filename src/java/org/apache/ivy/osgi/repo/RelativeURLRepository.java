@@ -46,7 +46,7 @@ public class RelativeURLRepository extends URLRepository {
 
     public Resource getResource(String source) throws IOException {
         source = encode(source);
-        Resource res = (Resource) resourcesCache.get(source);
+        Resource res = resourcesCache.get(source);
         if (res == null) {
             URI uri;
             try {

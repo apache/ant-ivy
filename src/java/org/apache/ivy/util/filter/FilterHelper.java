@@ -72,7 +72,7 @@ public final class FilterHelper {
         }
         Collection ret = new ArrayList(col);
         for (Iterator iter = ret.iterator(); iter.hasNext();) {
-            Object element = (Object) iter.next();
+            Object element = iter.next();
             if (!filter.accept(element)) {
                 iter.remove();
             }

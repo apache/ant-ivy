@@ -43,7 +43,7 @@ public class EventManager implements TransferListener {
 
     public void removeIvyListener(IvyListener listener) {
         listeners.remove(IvyListener.class, listener);
-        IvyListener[] listeners = (IvyListener[]) this.listeners.getListeners(IvyListener.class);
+        IvyListener[] listeners = this.listeners.getListeners(IvyListener.class);
         for (int i = 0; i < listeners.length; i++) {
             if (listeners[i] instanceof FilteredIvyListener) {
                 if (listener.equals(((FilteredIvyListener) listeners[i]).getIvyListener())) {

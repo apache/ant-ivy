@@ -283,7 +283,7 @@ public class XmlSettingsParser extends DefaultHandler {
 
     private void versionMatchersStarted(String qName, Map attributes) {
         anyConfiguratorStarted(qName);
-        if ("true".equals((String) attributes.get("usedefaults"))) {
+        if ("true".equals(attributes.get("usedefaults"))) {
             ivy.configureDefaultVersionMatcher();
         }
     }
@@ -390,7 +390,7 @@ public class XmlSettingsParser extends DefaultHandler {
     }
 
     private void includeStarted(Map attributes) throws IOException, ParseException {
-        final IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer();
+        final IvyVariableContainer variables = ivy.getVariableContainer();
         ivy.setVariableContainer(new IvyVariableContainerWrapper(variables));
         try {
             String propFilePath = (String) attributes.get("file");

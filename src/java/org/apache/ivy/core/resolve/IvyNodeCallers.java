@@ -73,8 +73,7 @@ public class IvyNodeCallers {
             if (prevDepConfs != null) {
                 Set newDepConfs = new HashSet(Arrays.asList(prevDepConfs));
                 newDepConfs.addAll(Arrays.asList(dependencyConfs));
-                confs.put(callerConf,
-                    (String[]) newDepConfs.toArray(new String[newDepConfs.size()]));
+                confs.put(callerConf, newDepConfs.toArray(new String[newDepConfs.size()]));
             } else {
                 confs.put(callerConf, dependencyConfs);
             }
