@@ -535,6 +535,7 @@ public class IvyBuildList extends IvyTask {
     /**
      * @deprecated use {@link #getOnMissingDescriptor()} instead.
      */
+    @Deprecated
     public boolean isSkipbuildwithoutivy() {
         return onMissingDescriptor == OnMissingDescriptor.SKIP;
     }
@@ -542,6 +543,7 @@ public class IvyBuildList extends IvyTask {
     /**
      * @deprecated use {@link #setOnMissingDescriptor(String)} instead.
      */
+    @Deprecated
     public void setSkipbuildwithoutivy(boolean skipBuildFilesWithoutIvy) {
         Message.deprecated("skipbuildwithoutivy is deprecated, use onMissingDescriptor instead.");
         this.onMissingDescriptor = skipBuildFilesWithoutIvy ? OnMissingDescriptor.SKIP

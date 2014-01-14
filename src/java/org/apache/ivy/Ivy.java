@@ -137,6 +137,7 @@ public class Ivy {
     /**
      * @deprecated Use the {@link DateUtil} utility class instead.
      */
+    @Deprecated
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
             DateUtil.DATE_FORMAT_PATTERN);
 

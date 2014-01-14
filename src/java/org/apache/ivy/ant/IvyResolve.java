@@ -196,6 +196,7 @@ public class IvyResolve extends IvyTask {
     /**
      * @deprecated Use {@link #setFailureProperty(String)} instead
      */
+    @Deprecated
     public void setFailurePropery(String failureProperty) {
         log("The 'failurepropery' attribute is deprecated. "
                 + "Please use the 'failureproperty' attribute instead", Project.MSG_WARN);

@@ -74,6 +74,7 @@ public class RetrieveEngine {
      *             {@link #retrieve(org.apache.ivy.core.module.id.ModuleRevisionId, RetrieveOptions)}
      *             instead
      */
+    @Deprecated
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
         RetrieveOptions retieveOptions = new RetrieveOptions(options);

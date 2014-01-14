@@ -33,7 +33,7 @@ public class BuiltFileResource implements Resource {
 
     /**
      * Where the build file should put built artifacts (relative to the build directory). Value is:
-     * {@value}
+     * * {@value}
      */
     public static final String BUILT_ARTIFACT_PATTERN = "artifacts/[type]s/[artifact].[ext]";
 
