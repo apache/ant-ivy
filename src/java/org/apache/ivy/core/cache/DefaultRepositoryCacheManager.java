@@ -722,7 +722,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             if (ivyFile.exists()) {
                 // found in cache !
                 try {
-                    XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+                    ModuleDescriptorParser parser = getModuleDescriptorParser();
                     ModuleDescriptor depMD = getMdFromCache(parser, options, ivyFile);
                     String resolverName = getSavedResolverName(depMD);
                     String artResolverName = getSavedArtResolverName(depMD);
@@ -790,6 +790,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return null;
     }
 
+    protected ModuleDescriptorParser getModuleDescriptorParser() {
+        return XmlModuleDescriptorParser.getInstance();
+    }
+
     private class MyModuleDescriptorProvider implements ModuleDescriptorProvider {
 
         private final ModuleDescriptorParser mdParser;
@@ -807,7 +811,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
     }
 
-    private ModuleDescriptor getMdFromCache(XmlModuleDescriptorParser mdParser,
+    private ModuleDescriptor getMdFromCache(ModuleDescriptorParser mdParser,
             CacheMetadataOptions options, File ivyFile) throws ParseException, IOException {
         ModuleDescriptorMemoryCache cache = getMemoryCache();
         ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser, settings);

@@ -40,6 +40,7 @@ import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -154,8 +155,11 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         ParserSettings pSettings = new CacheParserSettings(settings, paths);
 
         URL ivyFileURL = ivyFile.toURI().toURL();
-        return XmlModuleDescriptorParser.getInstance()
-                .parseDescriptor(pSettings, ivyFileURL, false);
+        return getModuleDescriptorParser().parseDescriptor(pSettings, ivyFileURL, false);
+    }
+
+    protected ModuleDescriptorParser getModuleDescriptorParser() {
+        return XmlModuleDescriptorParser.getInstance();
     }
 
     public void saveResolvedModuleDescriptor(ModuleDescriptor md) throws ParseException,
