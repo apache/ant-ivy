@@ -243,6 +243,7 @@ public class IvyNode implements Comparable {
                     throw e;
                 } catch (Exception e) {
                     problem = e;
+                    Message.debug("Unexpected error: " + problem.getMessage(), problem);
                     return false;
                 }
             } else {
