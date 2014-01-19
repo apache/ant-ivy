@@ -49,65 +49,93 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * Provides the method to read some data out of the DOM tree of a pom 
- * file.
+ * Provides the method to read some data out of the DOM tree of a pom file.
  */
 public class PomReader {
-    
+
     private static final String PACKAGING = "packaging";
+
     private static final String DEPENDENCY = "dependency";
+
     private static final String DEPENDENCIES = "dependencies";
+
     private static final String DEPENDENCY_MGT = "dependencyManagement";
+
     private static final String PROJECT = "project";
+
     private static final String MODEL = "model";
+
     private static final String GROUP_ID = "groupId";
+
     private static final String ARTIFACT_ID = "artifactId";
+
     private static final String VERSION = "version";
+
     private static final String DESCRIPTION = "description";
+
     private static final String HOMEPAGE = "url";
+
     private static final String LICENSES = "licenses";
+
     private static final String LICENSE = "license";
+
     private static final String LICENSE_NAME = "name";
+
     private static final String LICENSE_URL = "url";
+
     private static final String PARENT = "parent";
+
     private static final String SCOPE = "scope";
+
     private static final String CLASSIFIER = "classifier";
+
     private static final String OPTIONAL = "optional";
+
     private static final String EXCLUSIONS = "exclusions";
+
     private static final String EXCLUSION = "exclusion";
+
     private static final String DISTRIBUTION_MGT = "distributionManagement";
+
     private static final String RELOCATION = "relocation";
+
     private static final String PROPERTIES = "properties";
+
     private static final String PLUGINS = "plugins";
+
     private static final String PLUGIN = "plugin";
+
     private static final String TYPE = "type";
 
     private HashMap properties = new HashMap();
-    
+
     private final Element projectElement;
+
     private final Element parentElement;
-    
+
     public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
-        InputStream stream = new AddDTDFilterInputStream(URLHandlerRegistry.getDefault().openStream(descriptorURL));
+        InputStream stream = new AddDTDFilterInputStream(URLHandlerRegistry.getDefault()
+                .openStream(descriptorURL));
         InputSource source = new InputSource(stream);
         source.setSystemId(XMLHelper.toSystemId(descriptorURL));
         try {
             Document pomDomDoc = XMLHelper.parseToDom(source, new EntityResolver() {
-                public InputSource resolveEntity(String publicId, String systemId) 
-                                throws SAXException, IOException {
+                public InputSource resolveEntity(String publicId, String systemId)
+                        throws SAXException, IOException {
                     if ((systemId != null) && systemId.endsWith("m2-entities.ent")) {
-                        return new InputSource(
-                                        PomReader.class.getResourceAsStream("m2-entities.ent"));
+                        return new InputSource(PomReader.class
+                                .getResourceAsStream("m2-entities.ent"));
                     }
                     return null;
                 }
             });
             projectElement = pomDomDoc.getDocumentElement();
-            if (!PROJECT.equals(projectElement.getNodeName()) && !MODEL.equals(projectElement.getNodeName())) {
-                throw new SAXParseException("project must be the root tag" , res.getName() , 
-                                            res.getName(), 0, 0);
+            if (!PROJECT.equals(projectElement.getNodeName())
+                    && !MODEL.equals(projectElement.getNodeName())) {
+                throw new SAXParseException("project must be the root tag", res.getName(),
+                        res.getName(), 0, 0);
             }
-            parentElement = getFirstChildElement(projectElement , PARENT);
+            parentElement = getFirstChildElement(projectElement, PARENT);
         } finally {
             try {
                 stream.close();
@@ -117,15 +145,13 @@ public class PomReader {
         }
     }
 
-
     public boolean hasParent() {
         return parentElement != null;
     }
-    
+
     /**
-     * Add a property if not yet set and value is not null.
-     * This garantee that property keep the first value that is put on it and that the properties
-     * are never null.
+     * Add a property if not yet set and value is not null. This garantee that property keep the
+     * first value that is put on it and that the properties are never null.
      */
     public void setProperty(String prop, String val) {
         if (!properties.containsKey(prop) && val != null) {
@@ -133,28 +159,25 @@ public class PomReader {
         }
     }
 
-    
     public String getGroupId() {
-        String groupId = getFirstChildText(projectElement , GROUP_ID);
+        String groupId = getFirstChildText(projectElement, GROUP_ID);
         if (groupId == null) {
             groupId = getFirstChildText(parentElement, GROUP_ID);
-        } 
+        }
         return replaceProps(groupId);
 
     }
 
     public String getParentGroupId() {
-        String groupId = getFirstChildText(parentElement , GROUP_ID);
+        String groupId = getFirstChildText(parentElement, GROUP_ID);
         if (groupId == null) {
             groupId = getFirstChildText(projectElement, GROUP_ID);
         }
         return replaceProps(groupId);
     }
 
-
-    
     public String getArtifactId() {
-        String val = getFirstChildText(projectElement , ARTIFACT_ID);
+        String val = getFirstChildText(projectElement, ARTIFACT_ID);
         if (val == null) {
             val = getFirstChildText(parentElement, ARTIFACT_ID);
         }
@@ -162,41 +185,39 @@ public class PomReader {
     }
 
     public String getParentArtifactId() {
-        String val = getFirstChildText(parentElement , ARTIFACT_ID);
+        String val = getFirstChildText(parentElement, ARTIFACT_ID);
         if (val == null) {
             val = getFirstChildText(projectElement, ARTIFACT_ID);
-        } 
+        }
         return replaceProps(val);
     }
 
-
     public String getVersion() {
-        String val = getFirstChildText(projectElement , VERSION);
+        String val = getFirstChildText(projectElement, VERSION);
         if (val == null) {
             val = getFirstChildText(parentElement, VERSION);
-        } 
+        }
         return replaceProps(val);
     }
 
     public String getParentVersion() {
-        String val = getFirstChildText(parentElement , VERSION);
+        String val = getFirstChildText(parentElement, VERSION);
         if (val == null) {
             val = getFirstChildText(projectElement, VERSION);
-        } 
+        }
         return replaceProps(val);
     }
 
-    
     public String getPackaging() {
-        String val = getFirstChildText(projectElement , PACKAGING);
+        String val = getFirstChildText(projectElement, PACKAGING);
         if (val == null) {
             val = "jar";
         }
         return val;
     }
-    
+
     public String getHomePage() {
-        String val = getFirstChildText(projectElement , HOMEPAGE);
+        String val = getFirstChildText(projectElement, HOMEPAGE);
         if (val == null) {
             val = "";
         }
@@ -204,7 +225,7 @@ public class PomReader {
     }
 
     public String getDescription() {
-        String val = getFirstChildText(projectElement , DESCRIPTION);
+        String val = getFirstChildText(projectElement, DESCRIPTION);
         if (val == null) {
             val = "";
         }
@@ -217,33 +238,32 @@ public class PomReader {
             return new License[0];
         }
         licenses.normalize();
-        List/*<License>*/ lics = new ArrayList();
+        List/* <License> */lics = new ArrayList();
         for (Iterator it = getAllChilds(licenses).iterator(); it.hasNext();) {
             Element license = (Element) it.next();
             if (LICENSE.equals(license.getNodeName())) {
                 String name = getFirstChildText(license, LICENSE_NAME);
                 String url = getFirstChildText(license, LICENSE_URL);
-                
+
                 if ((name == null) && (url == null)) {
                     // move to next license
                     continue;
                 }
-                
+
                 if (name == null) {
                     // The license name is required in Ivy but not in a POM!
                     name = "Unknown License";
                 }
-                
+
                 lics.add(new License(name, url));
             }
         }
         return (License[]) lics.toArray(new License[lics.size()]);
     }
 
-    
     public ModuleRevisionId getRelocation() {
         Element distrMgt = getFirstChildElement(projectElement, DISTRIBUTION_MGT);
-        Element relocation = getFirstChildElement(distrMgt , RELOCATION);
+        Element relocation = getFirstChildElement(distrMgt, RELOCATION);
         if (relocation == null) {
             return null;
         } else {
@@ -256,8 +276,8 @@ public class PomReader {
             return ModuleRevisionId.newInstance(relocGroupId, relocArtId, relocVersion);
         }
     }
-    
-    public List /* <PomDependencyData> */ getDependencies() {
+
+    public List /* <PomDependencyData> */getDependencies() {
         Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCIES);
         LinkedList dependencies = new LinkedList();
         if (dependenciesElement != null) {
@@ -271,9 +291,8 @@ public class PomReader {
         }
         return dependencies;
     }
-    
 
-    public List /* <PomDependencyMgt> */ getDependencyMgt() {
+    public List /* <PomDependencyMgt> */getDependencyMgt() {
         Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCY_MGT);
         dependenciesElement = getFirstChildElement(dependenciesElement, DEPENDENCIES);
         LinkedList dependencies = new LinkedList();
@@ -291,45 +310,51 @@ public class PomReader {
 
     public class PomDependencyMgtElement implements PomDependencyMgt {
         private final Element depElement;
-        
+
         public PomDependencyMgtElement(PomDependencyMgtElement copyFrom) {
             this(copyFrom.depElement);
         }
 
         PomDependencyMgtElement(Element depElement) {
-            this.depElement = depElement; 
+            this.depElement = depElement;
         }
-        
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getGroupId()
          */
         public String getGroupId() {
-            String val = getFirstChildText(depElement , GROUP_ID);
+            String val = getFirstChildText(depElement, GROUP_ID);
             return replaceProps(val);
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getArtifaceId()
          */
         public String getArtifactId() {
-            String val = getFirstChildText(depElement , ARTIFACT_ID);
+            String val = getFirstChildText(depElement, ARTIFACT_ID);
             return replaceProps(val);
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getVersion()
          */
         public String getVersion() {
-            String val = getFirstChildText(depElement , VERSION);
+            String val = getFirstChildText(depElement, VERSION);
             return replaceProps(val);
         }
-        
+
         public String getScope() {
-            String val = getFirstChildText(depElement , SCOPE);
+            String val = getFirstChildText(depElement, SCOPE);
             return replaceProps(val);
         }
-        
-        public List /*<ModuleId>*/ getExcludedModules() {
+
+        public List /* <ModuleId> */getExcludedModules() {
             Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
             LinkedList exclusions = new LinkedList();
             if (exclusionsElement != null) {
@@ -348,15 +373,15 @@ public class PomReader {
             return exclusions;
         }
     }
-    
-    public List /* <PomPluginElement> */ getPlugins() {
+
+    public List /* <PomPluginElement> */getPlugins() {
         LinkedList plugins = new LinkedList();
 
         Element buildElement = getFirstChildElement(projectElement, "build");
         if (buildElement == null) {
             return plugins;
         }
-        
+
         Element pluginsElement = getFirstChildElement(buildElement, PLUGINS);
         if (pluginsElement != null) {
             NodeList childs = pluginsElement.getChildNodes();
@@ -372,36 +397,35 @@ public class PomReader {
 
     public class PomPluginElement implements PomDependencyMgt {
         private Element pluginElement;
-        
+
         PomPluginElement(Element pluginElement) {
-            this.pluginElement = pluginElement; 
+            this.pluginElement = pluginElement;
         }
-        
+
         public String getGroupId() {
-            String val = getFirstChildText(pluginElement , GROUP_ID);
+            String val = getFirstChildText(pluginElement, GROUP_ID);
             return replaceProps(val);
         }
 
         public String getArtifactId() {
-            String val = getFirstChildText(pluginElement , ARTIFACT_ID);
+            String val = getFirstChildText(pluginElement, ARTIFACT_ID);
             return replaceProps(val);
         }
 
         public String getVersion() {
-            String val = getFirstChildText(pluginElement , VERSION);
+            String val = getFirstChildText(pluginElement, VERSION);
             return replaceProps(val);
         }
-        
+
         public String getScope() {
             return null; // not used
         }
-        
-        public List /*<ModuleId>*/ getExcludedModules() {
+
+        public List /* <ModuleId> */getExcludedModules() {
             return Collections.EMPTY_LIST; // probably not used?
         }
     }
-    
-    
+
     public class PomDependencyData extends PomDependencyMgtElement {
         private final Element depElement;
 
@@ -415,27 +439,27 @@ public class PomReader {
         }
 
         public String getScope() {
-            String val = getFirstChildText(depElement , SCOPE);
+            String val = getFirstChildText(depElement, SCOPE);
             return replaceProps(val);
         }
-        
+
         public String getClassifier() {
-            String val = getFirstChildText(depElement , CLASSIFIER);
+            String val = getFirstChildText(depElement, CLASSIFIER);
             return replaceProps(val);
         }
-        
+
         public String getType() {
             String val = getFirstChildText(depElement, TYPE);
             return replaceProps(val);
         }
 
         public boolean isOptional() {
-            Element e = getFirstChildElement(depElement, OPTIONAL); 
+            Element e = getFirstChildElement(depElement, OPTIONAL);
             return (e != null) && "true".equalsIgnoreCase(getTextContent(e));
         }
 
     }
-    
+
     /**
      * @return the content of the properties tag into the pom.
      */
@@ -462,11 +486,11 @@ public class PomReader {
 
     private static String getTextContent(Element element) {
         StringBuffer result = new StringBuffer();
-        
+
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
-            
+
             switch (child.getNodeType()) {
                 case Node.CDATA_SECTION_NODE:
                 case Node.TEXT_NODE:
@@ -476,10 +500,10 @@ public class PomReader {
                     break;
             }
         }
-        
+
         return result.toString();
     }
-    
+
     private static String getFirstChildText(Element parentElem, String name) {
         Element node = getFirstChildElement(parentElem, name);
         if (node != null) {
@@ -502,7 +526,7 @@ public class PomReader {
         }
         return null;
     }
-    
+
     private static List/* <Element> */getAllChilds(Element parent) {
         List r = new LinkedList();
         if (parent != null) {
@@ -519,14 +543,16 @@ public class PomReader {
 
     private static final class AddDTDFilterInputStream extends FilterInputStream {
         private static final int MARK = 10000;
+
         private static final String DOCTYPE = "<!DOCTYPE project SYSTEM \"m2-entities.ent\">\n";
 
         private int count;
+
         private byte[] prefix = DOCTYPE.getBytes();
-        
+
         private AddDTDFilterInputStream(InputStream in) throws IOException {
             super(new BufferedInputStream(in));
-            
+
             this.in.mark(MARK);
 
             // TODO: we should really find a better solution for this...
@@ -534,16 +560,17 @@ public class PomReader {
             int byte1 = this.in.read();
             int byte2 = this.in.read();
             int byte3 = this.in.read();
-            
+
             if (byte1 == 239 && byte2 == 187 && byte3 == 191) {
                 // skip the UTF-8 BOM
                 this.in.mark(MARK);
             } else {
                 this.in.reset();
             }
-            
+
             int bytesToSkip = 0;
-            LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.in, "UTF-8"), 100);
+            LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.in, "UTF-8"),
+                    100);
             String firstLine = reader.readLine();
             if (firstLine != null) {
                 String trimmed = firstLine.trim();
@@ -556,7 +583,7 @@ public class PomReader {
             } else {
                 prefix = new byte[0];
             }
-            
+
             this.in.reset();
             for (int i = 0; i < bytesToSkip; i++) {
                 this.in.read();
@@ -567,33 +594,33 @@ public class PomReader {
             if (count < prefix.length) {
                 return prefix[count++];
             }
-            
+
             int result = super.read();
             return result;
         }
-        
+
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
-            } else if ((off < 0) || (off > b.length) || (len < 0) 
-                    || ((off + len) > b.length) || ((off + len) < 0)) {
+            } else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length)
+                    || ((off + len) < 0)) {
                 throw new IndexOutOfBoundsException();
             } else if (len == 0) {
                 return 0;
             }
 
             int nbrBytesCopied = 0;
-            
+
             if (count < prefix.length) {
                 int nbrBytesFromPrefix = Math.min(prefix.length - count, len);
                 System.arraycopy(prefix, count, b, off, nbrBytesFromPrefix);
                 nbrBytesCopied = nbrBytesFromPrefix;
             }
-            
+
             if (nbrBytesCopied < len) {
                 nbrBytesCopied += in.read(b, off + nbrBytesCopied, len - nbrBytesCopied);
             }
-            
+
             count += nbrBytesCopied;
             return nbrBytesCopied;
         }

@@ -43,7 +43,8 @@ import org.apache.tools.ant.BuildException;
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
-    protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException, ParseException, IOException {
+    protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException,
+            ParseException, IOException {
         Collection<ArtifactDownloadReport> artifacts = getAllArtifactReports();
         List<ArtifactDownloadReport> ret = new ArrayList<ArtifactDownloadReport>();
         for (ArtifactDownloadReport artifactReport : artifacts) {
@@ -55,7 +56,8 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         return ret;
     }
 
-    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException, IOException {
+    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException,
+            IOException {
         String[] confs = splitConfs(getConf());
         Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
 
@@ -71,8 +73,8 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
                 }
                 Set<ModuleRevisionId> revisions = configurationReport.getModuleRevisionIds();
                 for (ModuleRevisionId revId : revisions) {
-                    ArtifactDownloadReport[] aReports 
-                        = configurationReport.getDownloadReports(revId);
+                    ArtifactDownloadReport[] aReports = configurationReport
+                            .getDownloadReports(revId);
                     all.addAll(Arrays.asList(aReports));
                 }
             }

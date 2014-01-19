@@ -35,5 +35,4 @@ public class DefaultExtendableItem extends UnmodifiableExtendableItem {
         super.setExtraAttribute(attName, attValue);
     }
 
-
 }

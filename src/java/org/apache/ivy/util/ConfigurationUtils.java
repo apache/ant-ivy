@@ -23,8 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 
 /**
  * Class containing several utility methods for working with configurations.
@@ -43,12 +43,12 @@ public final class ConfigurationUtils {
      * 
      * The supported wildcards are:
      * <ul>
-     *   <li><b><tt>*</tt> :</b> all configurations</li>
-     *   <li><b><tt>*(public)</tt> :</b> all public configurations</li>
-     *   <li><b><tt>*(private)</tt> :</b> all private configurations</li>
+     * <li><b><tt>*</tt> :</b> all configurations</li>
+     * <li><b><tt>*(public)</tt> :</b> all public configurations</li>
+     * <li><b><tt>*(private)</tt> :</b> all private configurations</li>
      * </ul>
-     * If the given array of configurations is <code>null</code>, all configurations 
-     * from the given module descriptor are returned, including if this array is empty.
+     * If the given array of configurations is <code>null</code>, all configurations from the given
+     * module descriptor are returned, including if this array is empty.
      * 
      * @param confs
      *            the configurations, can contain wildcards

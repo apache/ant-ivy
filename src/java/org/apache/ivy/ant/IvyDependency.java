@@ -49,11 +49,11 @@ public class IvyDependency {
     private String branch;
 
     private String conf;
-    
+
     private boolean changing;
-    
+
     private boolean force;
-    
+
     private boolean transitive = true;
 
     public IvyDependencyConf createConf() {
@@ -119,32 +119,33 @@ public class IvyDependency {
     public void setConf(String conf) {
         this.conf = conf;
     }
-    
+
     public boolean isChanging() {
         return changing;
     }
-    
+
     public void setChanging(boolean changing) {
         this.changing = changing;
     }
-    
+
     public boolean isForce() {
         return force;
     }
-    
+
     public void setForce(boolean force) {
         this.force = force;
     }
-    
+
     public boolean isTransitive() {
         return transitive;
     }
-    
+
     public void setTransitive(boolean transitive) {
         this.transitive = transitive;
     }
 
-    DependencyDescriptor asDependencyDescriptor(ModuleDescriptor md, String masterConf, IvySettings settings) {
+    DependencyDescriptor asDependencyDescriptor(ModuleDescriptor md, String masterConf,
+            IvySettings settings) {
         if (org == null) {
             throw new BuildException("'org' is required on ");
         }

@@ -28,7 +28,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
  * Represents a module revision provisioned on the local filesystem.
  */
 public class ResolvedModuleRevision {
-    
+
     private DependencyResolver resolver;
 
     private DependencyResolver artifactResolver;
@@ -36,7 +36,7 @@ public class ResolvedModuleRevision {
     private ModuleDescriptor descriptor;
 
     private MetadataArtifactDownloadReport report;
-    
+
     private boolean force = false;
 
     public ResolvedModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver,
@@ -65,7 +65,6 @@ public class ResolvedModuleRevision {
         return descriptor.getResolvedModuleRevisionId();
     }
 
-
     /**
      * Returns the date of publication of the resolved module.
      * 
@@ -74,7 +73,6 @@ public class ResolvedModuleRevision {
     public Date getPublicationDate() {
         return descriptor.getResolvedPublicationDate();
     }
-    
 
     /**
      * Returns the descriptor of the resolved module.
@@ -84,7 +82,6 @@ public class ResolvedModuleRevision {
     public ModuleDescriptor getDescriptor() {
         return descriptor;
     }
-
 
     /**
      * The resolver which resolved this ResolvedModuleRevision
@@ -104,7 +101,6 @@ public class ResolvedModuleRevision {
         return artifactResolver;
     }
 
-
     /**
      * Returns a report of the resolved module metadata artifact provisioning.
      * 
@@ -113,17 +109,17 @@ public class ResolvedModuleRevision {
     public MetadataArtifactDownloadReport getReport() {
         return report;
     }
-    
+
     /**
-     * Returns <code>true</code> if this resolved module revision should be forced as the one
-     * being returned.
+     * Returns <code>true</code> if this resolved module revision should be forced as the one being
+     * returned.
      * <p>
      * This is used as an indication for CompositeResolver, to know if they should continue to look
      * for a better ResolvedModuleRevision if possible, or stop with this instance.
      * </p>
      * 
-     * @return <code>true</code> if this resolved module revision should be forced as the one
-     *         being returned.
+     * @return <code>true</code> if this resolved module revision should be forced as the one being
+     *         returned.
      */
     public boolean isForce() {
         return force;

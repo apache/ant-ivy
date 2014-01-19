@@ -35,15 +35,15 @@ public class ArtifactOrigin {
     public static final ArtifactOrigin unkwnown(Artifact artifact) {
         return new ArtifactOrigin(artifact, false, UNKNOWN);
     }
-    
+
     public static final boolean isUnknown(ArtifactOrigin artifact) {
         return artifact == null || UNKNOWN.equals(artifact.getLocation());
     }
-    
+
     public static final boolean isUnknown(String location) {
         return location == null || UNKNOWN.equals(location);
     }
-    
+
     private static final int MAGIC_HASH_VALUE = 31;
 
     private boolean isLocal;
@@ -107,8 +107,8 @@ public class ArtifactOrigin {
     }
 
     /**
-     * The last time the resource was checked to be up to date. Maybe <code>null</code> if this information is
-     * not actually used by in some case.
+     * The last time the resource was checked to be up to date. Maybe <code>null</code> if this
+     * information is not actually used by in some case.
      * 
      * @return
      */

@@ -84,8 +84,7 @@ public class UpdateSiteLoaderTest extends TestCase {
 
         // check that the url of the artifact is correctly resolved
         String path = new File("test/test-p2/ivyde-repo/").toURI().toURL().toExternalForm();
-        ModuleDescriptor md = ((ModuleDescriptorWrapper) site.getModules().next())
-                .getModuleDescriptor();
+        ModuleDescriptor md = site.getModules().next().getModuleDescriptor();
         assertTrue(md.getAllArtifacts()[0].getUrl().toExternalForm().startsWith(path));
     }
 }

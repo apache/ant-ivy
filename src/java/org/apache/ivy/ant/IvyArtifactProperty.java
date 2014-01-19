@@ -33,6 +33,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
     private String name;
 
     private String value;
+
     private boolean overwrite = false;
 
     public String getName() {
@@ -51,12 +52,11 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
         this.value = value;
     }
 
-    
     public void setOverwrite(boolean overwrite) {
-        this.overwrite  = overwrite;
-        
+        this.overwrite = overwrite;
+
     }
-    
+
     public void doExecute() throws BuildException {
         prepareAndCheck();
 

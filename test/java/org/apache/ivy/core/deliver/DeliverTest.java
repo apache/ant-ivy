@@ -32,6 +32,7 @@ import org.apache.tools.ant.Project;
 
 public class DeliverTest extends TestCase {
     private File cache;
+
     private File deliverDir;
 
     private IvyDeliver ivyDeliver;
@@ -43,13 +44,14 @@ public class DeliverTest extends TestCase {
 
         deliverDir = new File("build/test/deliver");
         deliverDir.mkdirs();
-        
+
         Project project = new Project();
         project.init();
-        
+
         ivyDeliver = new IvyDeliver();
         ivyDeliver.setProject(project);
-        ivyDeliver.setDeliverpattern(deliverDir.getAbsolutePath() + "/[type]s/[artifact]-[revision](-[classifier]).[ext]");
+        ivyDeliver.setDeliverpattern(deliverDir.getAbsolutePath()
+                + "/[type]s/[artifact]-[revision](-[classifier]).[ext]");
     }
 
     protected void tearDown() throws Exception {

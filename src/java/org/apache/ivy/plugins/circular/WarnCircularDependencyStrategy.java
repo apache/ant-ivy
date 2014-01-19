@@ -33,8 +33,7 @@ public final class WarnCircularDependencyStrategy extends AbstractLogCircularDep
     }
 
     protected void logCircularDependency(ModuleRevisionId[] mrids) {
-        Message.warn("circular dependency found: " 
-            + CircularDependencyHelper.formatMessage(mrids));
+        Message.warn("circular dependency found: " + CircularDependencyHelper.formatMessage(mrids));
     }
 
 }

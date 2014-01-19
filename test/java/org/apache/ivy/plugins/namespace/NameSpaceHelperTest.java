@@ -29,19 +29,17 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class NameSpaceHelperTest extends TestCase {
     public void testTransformArtifactWithExtraAttributes() throws Exception {
-        Artifact artifact = new DefaultArtifact(
-            ArtifactRevisionId.newInstance(
-                ModuleRevisionId.parse("org.apache#test;1.0"), "test", "jar", "jar", 
-                Collections.singletonMap("m:qualifier", "sources")),
-            new Date(), null, false);
-        
+        Artifact artifact = new DefaultArtifact(ArtifactRevisionId.newInstance(
+            ModuleRevisionId.parse("org.apache#test;1.0"), "test", "jar", "jar",
+            Collections.singletonMap("m:qualifier", "sources")), new Date(), null, false);
+
         MRIDTransformationRule r = new MRIDTransformationRule();
         r.addSrc(new MRIDRule("org.apache", "test", null));
         r.addDest(new MRIDRule("apache", "test", null));
-        
+
         Artifact transformed = NameSpaceHelper.transform(artifact, r);
         assertEquals("apache#test;1.0", transformed.getModuleRevisionId().toString());
-        assertEquals(Collections.singletonMap("m:qualifier", "sources"), 
-                     transformed.getQualifiedExtraAttributes());
+        assertEquals(Collections.singletonMap("m:qualifier", "sources"),
+            transformed.getQualifiedExtraAttributes());
     }
 }

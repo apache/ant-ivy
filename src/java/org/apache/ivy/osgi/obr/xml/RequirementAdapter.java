@@ -23,9 +23,9 @@ import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleRequirement;
 import org.apache.ivy.osgi.filter.AndFilter;
 import org.apache.ivy.osgi.filter.CompareFilter;
+import org.apache.ivy.osgi.filter.CompareFilter.Operator;
 import org.apache.ivy.osgi.filter.NotFilter;
 import org.apache.ivy.osgi.filter.OSGiFilter;
-import org.apache.ivy.osgi.filter.CompareFilter.Operator;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 
@@ -50,8 +50,7 @@ public class RequirementAdapter {
         adapter.adapt(info, requirement.isOptional());
     }
 
-    private void extractFilter(OSGiFilter filter) throws UnsupportedFilterException,
-            ParseException {
+    private void extractFilter(OSGiFilter filter) throws UnsupportedFilterException, ParseException {
         if (filter instanceof AndFilter) {
             AndFilter andFilter = (AndFilter) filter;
             for (OSGiFilter subFilter : andFilter.getSubFilters()) {

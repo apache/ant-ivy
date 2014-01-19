@@ -28,19 +28,19 @@ import junit.framework.TestCase;
  *
  */
 public class ConfiguratorTest extends TestCase {
-    
+
     public static class FileTester {
         private File file;
-        
+
         public void setFile(File file) {
             this.file = file;
         }
-        
+
         public File getFile() {
             return file;
         }
     }
-    
+
     public static class City {
         private List _housings = new ArrayList();
 
@@ -77,7 +77,7 @@ public class ConfiguratorTest extends TestCase {
         private Class _clazz;
 
         private List _trees = new ArrayList();
-        
+
         private List _walkers = new ArrayList();
 
         public List getTrees() {
@@ -87,11 +87,11 @@ public class ConfiguratorTest extends TestCase {
         public void addConfiguredTree(Tree tree) {
             _trees.add(tree);
         }
-        
+
         public List getWalkers() {
             return _walkers;
         }
-        
+
         public void addConfiguredWalker(Map walkerAttributes) {
             _walkers.add(new Person((String) walkerAttributes.get("name")));
         }
@@ -314,10 +314,10 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         assertEquals(city, _conf.getCurrent());
         assertEquals(2, ((Housing) city.getHousings().get(0)).getRooms().size());
-        assertEquals(20, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0))
-                .getSurface());
-        assertEquals(25, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1))
-                .getSurface());
+        assertEquals(20,
+            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0)).getSurface());
+        assertEquals(25,
+            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1)).getSurface());
     }
 
     public void testMacro() throws Exception {
@@ -357,29 +357,29 @@ public class ConfiguratorTest extends TestCase {
 
         // first castle : 2 default rooms of 10 of surface
         assertEquals(2, ((Housing) city.getHousings().get(0)).getRooms().size());
-        assertEquals(10, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0))
-                .getSurface());
-        assertEquals(10, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1))
-                .getSurface());
+        assertEquals(10,
+            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0)).getSurface());
+        assertEquals(10,
+            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1)).getSurface());
 
         // second castle : 2 default rooms of default surface 40, + one addroom of surface 20
         assertEquals(3, ((Housing) city.getHousings().get(1)).getRooms().size());
-        assertEquals(40, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(0))
-                .getSurface());
-        assertEquals(40, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(1))
-                .getSurface());
-        assertEquals(20, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(2))
-                .getSurface());
+        assertEquals(40,
+            ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(0)).getSurface());
+        assertEquals(40,
+            ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(1)).getSurface());
+        assertEquals(20,
+            ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(2)).getSurface());
     }
-    
+
     public void testFileAttribute() {
         FileTester root = new FileTester();
         _conf.setRoot(root);
         _conf.setAttribute("file", "path/to/file.txt");
-        
+
         String filePath = root.getFile().getPath();
         filePath = filePath.replace('\\', '/');
-        
+
         assertEquals("path/to/file.txt", filePath);
     }
 }

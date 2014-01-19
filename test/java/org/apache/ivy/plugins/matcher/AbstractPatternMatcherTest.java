@@ -53,7 +53,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
             matcher.matches("The words aren't what they were.");
             assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
         }
-        
+
         // test some inexact patterns for this matcher
         expressions = getInexactExpressions();
         for (int i = 0; i < expressions.length; i++) {
@@ -62,10 +62,11 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
             matcher.matches("The words aren't what they were.");
             assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
         }
-        
+
     }
 
     protected abstract String[] getExactExpressions();
+
     protected abstract String[] getInexactExpressions();
 
     public void testNullInput() {

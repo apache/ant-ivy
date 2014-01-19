@@ -58,8 +58,8 @@ public class CacheResolver extends FileSystemResolver {
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
         // check revision
 
-        ResolvedModuleRevision rmr = getRepositoryCacheManager()
-            .findModuleInCache(dd, mrid, getCacheOptions(data), null);
+        ResolvedModuleRevision rmr = getRepositoryCacheManager().findModuleInCache(dd, mrid,
+            getCacheOptions(data), null);
         if (rmr != null) {
             Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
             return rmr;
@@ -73,8 +73,8 @@ public class CacheResolver extends FileSystemResolver {
                 Message.verbose("\t" + getName() + ": found ivy file in cache for " + mrid);
                 Message.verbose("\t\t=> " + ivyRef);
 
-                ModuleRevisionId resolvedMrid = ModuleRevisionId.newInstance(mrid, ivyRef
-                        .getRevision());
+                ModuleRevisionId resolvedMrid = ModuleRevisionId.newInstance(mrid,
+                    ivyRef.getRevision());
                 IvyNode node = data.getNode(resolvedMrid);
                 if (node != null && node.getModuleRevision() != null) {
                     // this revision has already be resolved : return it
@@ -83,10 +83,9 @@ public class CacheResolver extends FileSystemResolver {
                     return node.getModuleRevision();
                 }
                 rmr = getRepositoryCacheManager().findModuleInCache(
-                        dd.clone(ModuleRevisionId.newInstance(
-                            dd.getDependencyRevisionId(), ivyRef.getRevision())),
-                        dd.getDependencyRevisionId(),
-                        getCacheOptions(data), null);
+                    dd.clone(ModuleRevisionId.newInstance(dd.getDependencyRevisionId(),
+                        ivyRef.getRevision())), dd.getDependencyRevisionId(),
+                    getCacheOptions(data), null);
                 if (rmr != null) {
                     Message.verbose("\t" + getName() + ": revision in cache: " + resolvedMrid);
                     return rmr;
@@ -112,8 +111,8 @@ public class CacheResolver extends FileSystemResolver {
             ResolvedResource artifactRef = getArtifactRef(artifacts[i], null);
             if (artifactRef != null) {
                 Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
-                ArtifactOrigin origin = new ArtifactOrigin(
-                    artifacts[i], true, artifactRef.getResource().getName());
+                ArtifactOrigin origin = new ArtifactOrigin(artifacts[i], true, artifactRef
+                        .getResource().getName());
                 File archiveFile = ((FileResource) artifactRef.getResource()).getFile();
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
@@ -130,7 +129,7 @@ public class CacheResolver extends FileSystemResolver {
         ensureConfigured();
         return super.exists(artifact);
     }
-    
+
     public ArtifactOrigin locate(Artifact artifact) {
         ensureConfigured();
         return super.locate(artifact);
@@ -169,12 +168,12 @@ public class CacheResolver extends FileSystemResolver {
                 if (caches[i] instanceof DefaultRepositoryCacheManager) {
                     DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) caches[i];
                     addIvyPattern(c.getBasedir().getAbsolutePath() + "/" + c.getIvyPattern());
-                    addArtifactPattern(
-                        c.getBasedir().getAbsolutePath() + "/" + c.getArtifactPattern());
+                    addArtifactPattern(c.getBasedir().getAbsolutePath() + "/"
+                            + c.getArtifactPattern());
                 } else {
-                    Message.verbose(
-                        caches[i] + ": cache implementation is not a DefaultRepositoryCacheManager:"
-                        + " unable to configure cache resolver with it");
+                    Message.verbose(caches[i]
+                            + ": cache implementation is not a DefaultRepositoryCacheManager:"
+                            + " unable to configure cache resolver with it");
                 }
             }
         }

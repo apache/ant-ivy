@@ -53,8 +53,8 @@ public class MirroredURLResolverTest extends TestCase {
         settings.setDefaultCache(cache);
         settings.setVariable("test.mirroredurl.mirrorlist-solo.url",
             this.getClass().getResource("mirrorlist-solo.txt").toExternalForm());
-        settings.setVariable("test.mirroredurl.mirrorlist-failover.url",
-            this.getClass().getResource("mirrorlist-failover.txt").toExternalForm());
+        settings.setVariable("test.mirroredurl.mirrorlist-failover.url", this.getClass()
+                .getResource("mirrorlist-failover.txt").toExternalForm());
         settings.setVariable("test.mirroredurl.mirrorlist-fail.url",
             this.getClass().getResource("mirrorlist-fail.txt").toExternalForm());
         new XmlSettingsParser(settings).parse(MirroredURLResolverTest.class

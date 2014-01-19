@@ -27,7 +27,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ContextualSAXHandler extends DefaultHandler {
 
     private Stack contextStack = new Stack();
-    
+
     private StringBuffer buffer = new StringBuffer();
 
     public void characters(char[] ch, int start, int length) throws SAXException {
@@ -45,7 +45,6 @@ public class ContextualSAXHandler extends DefaultHandler {
         buffer.setLength(0);
     }
 
-
     protected String getContext() {
         StringBuffer buf = new StringBuffer();
         for (Iterator iter = contextStack.iterator(); iter.hasNext();) {
@@ -57,7 +56,7 @@ public class ContextualSAXHandler extends DefaultHandler {
         }
         return buf.toString();
     }
-    
+
     protected String getText() {
         return buffer.toString();
     }

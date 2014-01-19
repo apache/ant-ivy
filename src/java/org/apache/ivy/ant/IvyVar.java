@@ -106,7 +106,7 @@ public class IvyVar extends IvyTask {
                     try {
                         is.close();
                     } catch (Exception e) {
-                        //ignore
+                        // ignore
                     }
                 }
             }

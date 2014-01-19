@@ -79,15 +79,15 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals(
-            "http://www.jayasoft.fr/myivyrep/[organisation]/[module]/ivy-[revision].[ext]", l
-                    .get(0));
+            "http://www.jayasoft.fr/myivyrep/[organisation]/[module]/ivy-[revision].[ext]",
+            l.get(0));
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals("http://www.ibiblio.org/mymaven/[module]/jars/[artifact]-[revision].jar", l
-                .get(0));
+        assertEquals("http://www.ibiblio.org/mymaven/[module]/jars/[artifact]-[revision].jar",
+            l.get(0));
     }
-    
+
     public void testMandatoryRoot() throws Exception {
         // IVY-625: should fail if no ivyroot specified
         IvyRepResolver resolver = new IvyRepResolver();
@@ -100,8 +100,8 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
             fail("using ivyrep resolver without ivyroot should raise an exception");
         } catch (IllegalStateException ex) {
             assertTrue(
-                "exception thrown when using ivyrep with no ivyroot should talk about the root", 
-                ex.getMessage().indexOf("ivyroot") != -1);
+                "exception thrown when using ivyrep with no ivyroot should talk about the root", ex
+                        .getMessage().indexOf("ivyroot") != -1);
         }
     }
 
@@ -112,7 +112,7 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("testLocal");
         resolver.setIvyroot("file:" + rootpath);
         resolver.setIvypattern("[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.setArtroot("file:"+rootpath);
+        resolver.setArtroot("file:" + rootpath);
         resolver.setArtpattern("[organisation]/[module]/jars/[artifact]-[revision].[ext]");
         resolver.setSettings(_settings);
 
@@ -121,8 +121,8 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
                 false), _data);
         assertNotNull(rmr);
 
-        DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-            "mod1.1", "jar", "jar");
+        DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "mod1.1",
+                "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 

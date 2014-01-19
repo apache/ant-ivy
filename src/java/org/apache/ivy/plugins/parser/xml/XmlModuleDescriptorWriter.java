@@ -53,11 +53,11 @@ import org.apache.ivy.util.extendable.ExtendableItem;
  *
  */
 public final class XmlModuleDescriptorWriter {
-    
+
     private XmlModuleDescriptorWriter() {
-        //Utility class
+        // Utility class
     }
-    
+
     public static void write(ModuleDescriptor md, File output) throws IOException {
         write(md, null, output);
     }
@@ -79,14 +79,14 @@ public final class XmlModuleDescriptorWriter {
             for (Iterator iter = namespaces.entrySet().iterator(); iter.hasNext();) {
                 Entry ns = (Entry) iter.next();
                 xmlNamespace.append(" xmlns:").append(ns.getKey()).append("=\"")
-                            .append(ns.getValue()).append("\"");
+                        .append(ns.getValue()).append("\"");
             }
-            
+
             String version = "2.0";
             if (md.getInheritedDescriptors().length > 0) {
                 version = "2.2";
             }
-            
+
             out.println("<ivy-module version=\"" + version + "\"" + xmlNamespace + ">");
             printInfoTag(md, out);
             printConfigurations(md, out);
@@ -112,28 +112,28 @@ public final class XmlModuleDescriptorWriter {
             out.println("\t</dependencies>");
         }
     }
-    
-    protected static void printDependency(ModuleDescriptor md, DependencyDescriptor dep, 
+
+    protected static void printDependency(ModuleDescriptor md, DependencyDescriptor dep,
             PrintWriter out) {
         out.print("<dependency");
-        out.print(" org=\"" 
-            + XMLHelper.escape(dep.getDependencyRevisionId().getOrganisation()) + "\"");
-        out.print(" name=\"" 
-            + XMLHelper.escape(dep.getDependencyRevisionId().getName()) + "\"");
+        out.print(" org=\"" + XMLHelper.escape(dep.getDependencyRevisionId().getOrganisation())
+                + "\"");
+        out.print(" name=\"" + XMLHelper.escape(dep.getDependencyRevisionId().getName()) + "\"");
         if (dep.getDependencyRevisionId().getBranch() != null) {
-            out.print(" branch=\"" 
-                + XMLHelper.escape(dep.getDependencyRevisionId().getBranch()) + "\"");
+            out.print(" branch=\"" + XMLHelper.escape(dep.getDependencyRevisionId().getBranch())
+                    + "\"");
         }
-        out.print(" rev=\"" 
-            + XMLHelper.escape(dep.getDependencyRevisionId().getRevision()) + "\"");
-        if (!dep.getDynamicConstraintDependencyRevisionId()
-                .equals(dep.getDependencyRevisionId())) {
+        out.print(" rev=\"" + XMLHelper.escape(dep.getDependencyRevisionId().getRevision()) + "\"");
+        if (!dep.getDynamicConstraintDependencyRevisionId().equals(dep.getDependencyRevisionId())) {
             if (dep.getDynamicConstraintDependencyRevisionId().getBranch() != null) {
-                out.print(" branchConstraint=\"" + XMLHelper.escape(
-                     dep.getDynamicConstraintDependencyRevisionId().getBranch()) + "\"");
+                out.print(" branchConstraint=\""
+                        + XMLHelper.escape(dep.getDynamicConstraintDependencyRevisionId()
+                                .getBranch()) + "\"");
             }
-            out.print(" revConstraint=\"" + XMLHelper.escape(
-                dep.getDynamicConstraintDependencyRevisionId().getRevision()) + "\"");
+            out.print(" revConstraint=\""
+                    + XMLHelper
+                            .escape(dep.getDynamicConstraintDependencyRevisionId().getRevision())
+                    + "\"");
         }
         if (dep.isForce()) {
             out.print(" force=\"" + dep.isForce() + "\"");
@@ -160,24 +160,24 @@ public final class XmlModuleDescriptorWriter {
             }
         }
         out.print("\"");
-        
+
         printExtraAttributes(dep, out, " ");
-        
+
         DependencyArtifactDescriptor[] depArtifacts = dep.getAllDependencyArtifacts();
         if (depArtifacts.length > 0) {
             out.println(">");
         }
         printDependencyArtefacts(md, out, depArtifacts);
-        
+
         IncludeRule[] includes = dep.getAllIncludeRules();
         if (includes.length > 0 && depArtifacts.length == 0) {
-                out.println(">");
-            }
+            out.println(">");
+        }
         printDependencyIncludeRules(md, out, includes);
-        
+
         ExcludeRule[] excludes = dep.getAllExcludeRules();
         if (excludes.length > 0 && includes.length == 0 && depArtifacts.length == 0) {
-             out.println(">");
+            out.println(">");
         }
         printDependencyExcludeRules(md, out, excludes);
         if (includes.length + excludes.length + depArtifacts.length == 0) {
@@ -188,29 +188,27 @@ public final class XmlModuleDescriptorWriter {
     }
 
     private static void printAllMediators(ModuleDescriptor md, PrintWriter out) {
-        Map/*<MapMatcher, DependencyDescriptorMediator>*/ mediators 
-            = md.getAllDependencyDescriptorMediators().getAllRules();
-        
+        Map/* <MapMatcher, DependencyDescriptorMediator> */mediators = md
+                .getAllDependencyDescriptorMediators().getAllRules();
+
         for (Iterator iterator = mediators.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry mediatorRule = (Map.Entry) iterator.next();
             MapMatcher matcher = (MapMatcher) mediatorRule.getKey();
-            DependencyDescriptorMediator mediator = 
-                (DependencyDescriptorMediator) mediatorRule.getValue();
-            
+            DependencyDescriptorMediator mediator = (DependencyDescriptorMediator) mediatorRule
+                    .getValue();
+
             if (mediator instanceof OverrideDependencyDescriptorMediator) {
-                OverrideDependencyDescriptorMediator oddm = 
-                    (OverrideDependencyDescriptorMediator) mediator;
-                
+                OverrideDependencyDescriptorMediator oddm = (OverrideDependencyDescriptorMediator) mediator;
+
                 out.print("\t\t<override");
-                out.print(" org=\"" + XMLHelper.escape(
-                    (String) matcher.getAttributes().get(IvyPatternHelper.ORGANISATION_KEY)) 
-                    + "\"");
-                out.print(" module=\"" + XMLHelper.escape(
-                    (String) matcher.getAttributes().get(IvyPatternHelper.MODULE_KEY)) 
-                    + "\"");
-                out.print(" matcher=\"" + XMLHelper.escape(
-                    matcher.getPatternMatcher().getName()) 
-                    + "\"");
+                out.print(" org=\""
+                        + XMLHelper.escape((String) matcher.getAttributes().get(
+                            IvyPatternHelper.ORGANISATION_KEY)) + "\"");
+                out.print(" module=\""
+                        + XMLHelper.escape((String) matcher.getAttributes().get(
+                            IvyPatternHelper.MODULE_KEY)) + "\"");
+                out.print(" matcher=\"" + XMLHelper.escape(matcher.getPatternMatcher().getName())
+                        + "\"");
                 if (oddm.getBranch() != null) {
                     out.print(" branch=\"" + XMLHelper.escape(oddm.getBranch()) + "\"");
                 }
@@ -219,8 +217,8 @@ public final class XmlModuleDescriptorWriter {
                 }
                 out.println("/>");
             } else {
-                Message.verbose("ignoring unhandled DependencyDescriptorMediator: " 
-                    + mediator.getClass());
+                Message.verbose("ignoring unhandled DependencyDescriptorMediator: "
+                        + mediator.getClass());
             }
         }
     }
@@ -231,17 +229,15 @@ public final class XmlModuleDescriptorWriter {
             for (int j = 0; j < excludes.length; j++) {
                 out.print("\t\t<exclude");
                 out.print(" org=\""
-                        + XMLHelper.escape(excludes[j].getId().getModuleId().getOrganisation()) 
+                        + XMLHelper.escape(excludes[j].getId().getModuleId().getOrganisation())
                         + "\"");
-                out.print(" module=\"" 
-                    + XMLHelper.escape(excludes[j].getId().getModuleId().getName())
-                        + "\"");
+                out.print(" module=\""
+                        + XMLHelper.escape(excludes[j].getId().getModuleId().getName()) + "\"");
                 out.print(" artifact=\"" + XMLHelper.escape(excludes[j].getId().getName()) + "\"");
                 out.print(" type=\"" + XMLHelper.escape(excludes[j].getId().getType()) + "\"");
                 out.print(" ext=\"" + XMLHelper.escape(excludes[j].getId().getExt()) + "\"");
                 String[] ruleConfs = excludes[j].getConfigurations();
-                if (!Arrays.asList(ruleConfs).equals(
-                    Arrays.asList(md.getConfigurationsNames()))) {
+                if (!Arrays.asList(ruleConfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
                     out.print(" conf=\"");
                     for (int k = 0; k < ruleConfs.length; k++) {
                         out.print(XMLHelper.escape(ruleConfs[k]));
@@ -251,8 +247,8 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
-                out.print(" matcher=\"" 
-                    + XMLHelper.escape(excludes[j].getMatcher().getName()) + "\"");
+                out.print(" matcher=\"" + XMLHelper.escape(excludes[j].getMatcher().getName())
+                        + "\"");
                 out.println("/>");
             }
         }
@@ -264,17 +260,15 @@ public final class XmlModuleDescriptorWriter {
             for (int j = 0; j < excludes.length; j++) {
                 out.print("\t\t\t<exclude");
                 out.print(" org=\""
-                        + XMLHelper.escape(excludes[j].getId().getModuleId().getOrganisation()) 
+                        + XMLHelper.escape(excludes[j].getId().getModuleId().getOrganisation())
                         + "\"");
-                out.print(" module=\"" 
-                    + XMLHelper.escape(excludes[j].getId().getModuleId().getName())
-                        + "\"");
+                out.print(" module=\""
+                        + XMLHelper.escape(excludes[j].getId().getModuleId().getName()) + "\"");
                 out.print(" name=\"" + XMLHelper.escape(excludes[j].getId().getName()) + "\"");
                 out.print(" type=\"" + XMLHelper.escape(excludes[j].getId().getType()) + "\"");
                 out.print(" ext=\"" + XMLHelper.escape(excludes[j].getId().getExt()) + "\"");
                 String[] ruleConfs = excludes[j].getConfigurations();
-                if (!Arrays.asList(ruleConfs).equals(
-                    Arrays.asList(md.getConfigurationsNames()))) {
+                if (!Arrays.asList(ruleConfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
                     out.print(" conf=\"");
                     for (int k = 0; k < ruleConfs.length; k++) {
                         out.print(XMLHelper.escape(ruleConfs[k]));
@@ -284,8 +278,8 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
-                out.print(" matcher=\"" 
-                    + XMLHelper.escape(excludes[j].getMatcher().getName()) + "\"");
+                out.print(" matcher=\"" + XMLHelper.escape(excludes[j].getMatcher().getName())
+                        + "\"");
                 out.println("/>");
             }
         }
@@ -300,8 +294,7 @@ public final class XmlModuleDescriptorWriter {
                 out.print(" type=\"" + XMLHelper.escape(includes[j].getId().getType()) + "\"");
                 out.print(" ext=\"" + XMLHelper.escape(includes[j].getId().getExt()) + "\"");
                 String[] ruleConfs = includes[j].getConfigurations();
-                if (!Arrays.asList(ruleConfs).equals(
-                    Arrays.asList(md.getConfigurationsNames()))) {
+                if (!Arrays.asList(ruleConfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
                     out.print(" conf=\"");
                     for (int k = 0; k < ruleConfs.length; k++) {
                         out.print(XMLHelper.escape(ruleConfs[k]));
@@ -311,14 +304,14 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
-                out.print(" matcher=\"" 
-                    + XMLHelper.escape(includes[j].getMatcher().getName()) + "\"");
+                out.print(" matcher=\"" + XMLHelper.escape(includes[j].getMatcher().getName())
+                        + "\"");
                 out.println("/>");
             }
         }
     }
 
-    private static void printDependencyArtefacts(ModuleDescriptor md, PrintWriter out, 
+    private static void printDependencyArtefacts(ModuleDescriptor md, PrintWriter out,
             DependencyArtifactDescriptor[] depArtifacts) {
         if (depArtifacts.length > 0) {
             for (int j = 0; j < depArtifacts.length; j++) {
@@ -327,8 +320,7 @@ public final class XmlModuleDescriptorWriter {
                 out.print(" type=\"" + XMLHelper.escape(depArtifacts[j].getType()) + "\"");
                 out.print(" ext=\"" + XMLHelper.escape(depArtifacts[j].getExt()) + "\"");
                 String[] dadconfs = depArtifacts[j].getConfigurations();
-                if (!Arrays.asList(dadconfs).equals(
-                    Arrays.asList(md.getConfigurationsNames()))) {
+                if (!Arrays.asList(dadconfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
                     out.print(" conf=\"");
                     for (int k = 0; k < dadconfs.length; k++) {
                         out.print(XMLHelper.escape(dadconfs[k]));
@@ -345,35 +337,41 @@ public final class XmlModuleDescriptorWriter {
     }
 
     /**
-     * Writes the extra attributes of the given {@link ExtendableItem} to the
-     * given <tt>PrintWriter</tt>.
+     * Writes the extra attributes of the given {@link ExtendableItem} to the given
+     * <tt>PrintWriter</tt>.
      * 
-     * @param item the {@link ExtendableItem}, cannot be <tt>null</tt>
-     * @param out the writer to use
-     * @param prefix the string to write before writing the attributes (if any)
+     * @param item
+     *            the {@link ExtendableItem}, cannot be <tt>null</tt>
+     * @param out
+     *            the writer to use
+     * @param prefix
+     *            the string to write before writing the attributes (if any)
      */
     private static void printExtraAttributes(ExtendableItem item, PrintWriter out, String prefix) {
         printExtraAttributes(item.getQualifiedExtraAttributes(), out, prefix);
     }
 
     /**
-     * Writes the specified <tt>Map</tt> containing the extra attributes to the
-     * given <tt>PrintWriter</tt>.
+     * Writes the specified <tt>Map</tt> containing the extra attributes to the given
+     * <tt>PrintWriter</tt>.
      * 
-     * @param extra the extra attributes, can be <tt>null</tt>
-     * @param out the writer to use
-     * @param prefix the string to write before writing the attributes (if any)
+     * @param extra
+     *            the extra attributes, can be <tt>null</tt>
+     * @param out
+     *            the writer to use
+     * @param prefix
+     *            the string to write before writing the attributes (if any)
      */
     private static void printExtraAttributes(Map extra, PrintWriter out, String prefix) {
         if (extra == null) {
             return;
         }
-        
+
         String delim = prefix;
         for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
-            out.print(delim + entry.getKey() + "=\"" 
-                + XMLHelper.escape(entry.getValue().toString()) + "\"");
+            out.print(delim + entry.getKey() + "=\""
+                    + XMLHelper.escape(entry.getValue().toString()) + "\"");
             delim = " ";
         }
     }
@@ -405,15 +403,13 @@ public final class XmlModuleDescriptorWriter {
             out.println("\t</configurations>");
         }
     }
-    
+
     protected static void printConfiguration(Configuration conf, PrintWriter out) {
         out.print("<conf");
         out.print(" name=\"" + XMLHelper.escape(conf.getName()) + "\"");
-        out.print(" visibility=\"" 
-            + XMLHelper.escape(conf.getVisibility().toString()) + "\"");
+        out.print(" visibility=\"" + XMLHelper.escape(conf.getVisibility().toString()) + "\"");
         if (conf.getDescription() != null) {
-            out.print(" description=\"" 
-                + XMLHelper.escape(conf.getDescription()) + "\"");
+            out.print(" description=\"" + XMLHelper.escape(conf.getDescription()) + "\"");
         }
         String[] exts = conf.getExtends();
         if (exts.length > 0) {
@@ -437,9 +433,8 @@ public final class XmlModuleDescriptorWriter {
     }
 
     private static void printInfoTag(ModuleDescriptor md, PrintWriter out) {
-        out.println("\t<info organisation=\"" 
-            + XMLHelper.escape(md.getModuleRevisionId().getOrganisation())
-                + "\"");
+        out.println("\t<info organisation=\""
+                + XMLHelper.escape(md.getModuleRevisionId().getOrganisation()) + "\"");
         out.println("\t\tmodule=\"" + XMLHelper.escape(md.getModuleRevisionId().getName()) + "\"");
         String branch = md.getResolvedModuleRevisionId().getBranch();
         if (branch != null) {
@@ -450,16 +445,15 @@ public final class XmlModuleDescriptorWriter {
             out.println("\t\trevision=\"" + XMLHelper.escape(revision) + "\"");
         }
         out.println("\t\tstatus=\"" + XMLHelper.escape(md.getStatus()) + "\"");
-        out.println("\t\tpublication=\""
-                + DateUtil.format(md.getResolvedPublicationDate()) + "\"");
+        out.println("\t\tpublication=\"" + DateUtil.format(md.getResolvedPublicationDate()) + "\"");
         if (md.isDefault()) {
             out.println("\t\tdefault=\"true\"");
         }
         if (md instanceof DefaultModuleDescriptor) {
             DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
             if (dmd.getNamespace() != null && !dmd.getNamespace().getName().equals("system")) {
-                out.println("\t\tnamespace=\"" 
-                    + XMLHelper.escape(dmd.getNamespace().getName()) + "\"");
+                out.println("\t\tnamespace=\"" + XMLHelper.escape(dmd.getNamespace().getName())
+                        + "\"");
             }
         }
         if (!md.getExtraAttributes().isEmpty()) {
@@ -472,8 +466,8 @@ public final class XmlModuleDescriptorWriter {
             for (int i = 0; i < parents.length; i++) {
                 ExtendsDescriptor parent = parents[i];
                 ModuleRevisionId mrid = parent.getParentRevisionId();
-                out.print("\t\t<extends organisation=\"" + XMLHelper.escape(mrid.getOrganisation()) + "\""
-                        + " module=\"" + XMLHelper.escape(mrid.getName()) + "\""
+                out.print("\t\t<extends organisation=\"" + XMLHelper.escape(mrid.getOrganisation())
+                        + "\"" + " module=\"" + XMLHelper.escape(mrid.getName()) + "\""
                         + " revision=\"" + XMLHelper.escape(mrid.getRevision()) + "\"");
 
                 String location = parent.getLocation();
@@ -513,11 +507,11 @@ public final class XmlModuleDescriptorWriter {
             }
             out.println("\t</info>");
         } else {
-            out.println("\t/>");            
+            out.println("\t/>");
         }
 
     }
-    
+
     private static void printExtraInfoElement(PrintWriter out, ExtraInfoHolder extraInfo, int indent) {
         for (int i = 1; i <= indent; i++) {
             out.print("\t");
@@ -559,12 +553,10 @@ public final class XmlModuleDescriptorWriter {
     }
 
     private static boolean requireInnerInfoElement(ModuleDescriptor md) {
-        return md.getExtraInfo().size() > 0 
-                || md.getExtraInfos().size() > 0
-                || md.getHomePage() != null 
-                || (md.getDescription() != null && md.getDescription().trim().length() > 0) 
-                || md.getLicenses().length > 0
-                || md.getInheritedDescriptors().length > 0;
+        return md.getExtraInfo().size() > 0 || md.getExtraInfos().size() > 0
+                || md.getHomePage() != null
+                || (md.getDescription() != null && md.getDescription().trim().length() > 0)
+                || md.getLicenses().length > 0 || md.getInheritedDescriptors().length > 0;
     }
 
     private static String getConfs(ModuleDescriptor md, Artifact artifact) {

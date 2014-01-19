@@ -32,6 +32,7 @@ public interface DependencyArtifactDescriptor extends ExtendableItem {
      * @return the dependency descriptor in which this dependency artifact descriptor is declared.
      */
     public DependencyDescriptor getDependencyDescriptor();
+
     /**
      * Returns the name of the artifact asked
      * 

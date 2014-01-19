@@ -27,8 +27,8 @@ public interface ResourceMDParser {
      *            the resource at which the module descriptor is located
      * @param rev
      *            the revision at which the module descriptor should be
-     * @return the parsed module descriptor as a {@link MDResolvedResource}, or <code>null</code>
-     *         if parsing has failed or if the resource is not available.
+     * @return the parsed module descriptor as a {@link MDResolvedResource}, or <code>null</code> if
+     *         parsing has failed or if the resource is not available.
      */
     MDResolvedResource parse(Resource resource, String rev);
 }

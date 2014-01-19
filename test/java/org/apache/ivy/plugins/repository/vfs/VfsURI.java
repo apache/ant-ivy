@@ -43,7 +43,7 @@ public class VfsURI {
 
     public static final String SCHEME_SFTP = "sftp";
 
-    public static final  String SCHEME_WEBDAV = "webdav";
+    public static final String SCHEME_WEBDAV = "webdav";
 
     public static final String[] SUPPORTED_SCHEMES = new String[] {
     // add other schemes here if other can be tested on your machine
@@ -59,24 +59,23 @@ public class VfsURI {
     public static VfsURI vfsURIFactory(String scheme, String resource, Ivy ivy) {
         VfsURI vfsURI = null;
         if (scheme.equals(SCHEME_CIFS)) {
-            vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_HOST), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_SAMBA_REPO)
-                    + "/" + resource);
+            vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_SAMBA_REPO) + "/" + resource);
         } else if (scheme.equals(SCHEME_FILE)) {
             vfsURI = new VfsURI(SCHEME_FILE, null, null, null, VfsTestHelper.CWD + "/"
                     + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
         } else if (scheme.equals(SCHEME_FTP)) {
-            vfsURI = new VfsURI(SCHEME_FTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
-                    + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+            vfsURI = new VfsURI(SCHEME_FTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
+                            + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
         } else if (scheme.equals(SCHEME_SFTP)) {
-            vfsURI = new VfsURI(SCHEME_SFTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD), ivy
-                    .getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
-                    + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+            vfsURI = new VfsURI(SCHEME_SFTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
+                            + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
         }
         return vfsURI;
     }

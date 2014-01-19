@@ -185,9 +185,10 @@ public class RetrieveTest extends TestCase {
             "mod1.2", "jar", "jar", "default")).getCanonicalFile();
         file.getParentFile().mkdirs();
         file.createNewFile();
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions().setOverwriteMode("always"));
+        ivy.retrieve(md.getModuleRevisionId(), pattern,
+            getRetrieveOptions().setOverwriteMode("always"));
         assertEquals(
-            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(), 
+            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(),
             file.lastModified());
     }
 
@@ -217,7 +218,7 @@ public class RetrieveTest extends TestCase {
         if (SystemUtils.IS_OS_WINDOWS) {
             return;
         }
-        
+
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
@@ -247,7 +248,8 @@ public class RetrieveTest extends TestCase {
         assertTrue("The file " + filename + " doesn't exist", file.exists());
 
         String os = System.getProperty("os.name");
-        if (os.equals("Linux") || os.equals("Solaris") || os.equals("FreeBSD") || os.equals("Mac OS X")) {
+        if (os.equals("Linux") || os.equals("Solaris") || os.equals("FreeBSD")
+                || os.equals("Mac OS X")) {
             // these OS should support symnlink, so check that the file is actually a symlink.
             // this is done be checking that the canonical path is different from the absolute
             // path.

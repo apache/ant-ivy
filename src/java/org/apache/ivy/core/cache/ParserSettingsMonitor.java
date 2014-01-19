@@ -49,40 +49,40 @@ import org.apache.ivy.util.Message;
 class ParserSettingsMonitor {
 
     private ParserSettings delegatedSettings;
-    private final Map/*<String,String>*/ substitutes;
-    
-    
+
+    private final Map/* <String,String> */substitutes;
+
     public ParserSettingsMonitor(ParserSettings settings) {
         this.delegatedSettings = settings;
         this.substitutes = new HashMap();
     }
-    
+
     /**
-     * @return The parser settings that must be used in place of the orignal settings
-     * The returned object delegates all the call to the original settings.
+     * @return The parser settings that must be used in place of the orignal settings The returned
+     *         object delegates all the call to the original settings.
      */
     public ParserSettings getMonitoredSettings() {
         return monitoredSettings;
     }
-    
+
     /**
-     * Free the ressource used during the monitoring, keeping only the info
-     * required to evaluate hasChanged.
+     * Free the ressource used during the monitoring, keeping only the info required to evaluate
+     * hasChanged.
      */
     public void endMonitoring() {
         monitoredSettings = null;
         delegatedSettings = null;
     }
-    
+
     /**
-     * Check if the newSettings is compatible with the original settings that
-     * has been monitored.  Only the info that was actually used is compared.
+     * Check if the newSettings is compatible with the original settings that has been monitored.
+     * Only the info that was actually used is compared.
      */
     public boolean hasChanged(ParserSettings newSettings) {
         for (Iterator it = substitutes.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
             String key = (String) entry.getKey();
-            Object oldValue = entry.getValue();                
+            Object oldValue = entry.getValue();
             String newValue = newSettings.substitute(key);
             if (!oldValue.equals(newValue)) {
                 Message.debug("settings variable has changed for : " + entry.getKey());
@@ -91,8 +91,7 @@ class ParserSettingsMonitor {
         }
         return false;
     }
-    
-    
+
     private ParserSettings monitoredSettings = new ParserSettings() {
 
         public ConflictManager getConflictManager(String name) {
@@ -122,11 +121,11 @@ class ParserSettingsMonitor {
         public StatusManager getStatusManager() {
             return delegatedSettings.getStatusManager();
         }
-        
+
         public File resolveFile(String filename) {
             return delegatedSettings.resolveFile(filename);
         }
-        
+
         public String getDefaultBranch(ModuleId moduleId) {
             return delegatedSettings.getDefaultBranch(moduleId);
         }
@@ -134,7 +133,7 @@ class ParserSettingsMonitor {
         public Namespace getContextNamespace() {
             return delegatedSettings.getContextNamespace();
         }
-        
+
         public Map substitute(Map strings) {
             Map substituted = new LinkedHashMap();
             for (Iterator it = strings.entrySet().iterator(); it.hasNext();) {

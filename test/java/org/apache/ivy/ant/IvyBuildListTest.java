@@ -436,7 +436,8 @@ public class IvyBuildListTest extends TestCase {
     }
 
     public void testAbsolutePathToParent() {
-        project.setProperty("master-parent.dir", new File("test/buildlists/testAbsolutePathToParent/master-parent").getAbsolutePath());
+        project.setProperty("master-parent.dir", new File(
+                "test/buildlists/testAbsolutePathToParent/master-parent").getAbsolutePath());
 
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlists/testAbsolutePathToParent"));

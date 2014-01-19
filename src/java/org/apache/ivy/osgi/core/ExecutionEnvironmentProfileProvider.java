@@ -54,7 +54,7 @@ public class ExecutionEnvironmentProfileProvider {
     }
 
     public ExecutionEnvironmentProfile getProfile(String profile) {
-        return (ExecutionEnvironmentProfile) profileList.get(profile);
+        return profileList.get(profile);
     }
 
     public static Map<String, ExecutionEnvironmentProfile> loadDefaultProfileList()
@@ -93,8 +93,7 @@ public class ExecutionEnvironmentProfileProvider {
         // load the package for the extended profile
         String extendedProfileName = props.getProperty(name + ".extends");
         if (extendedProfileName != null) {
-            ExecutionEnvironmentProfile extendedProfile = (ExecutionEnvironmentProfile) profiles
-                    .get(extendedProfileName);
+            ExecutionEnvironmentProfile extendedProfile = profiles.get(extendedProfileName);
             if (extendedProfile == null) {
                 // not loaded yet, so load it now
                 extendedProfile = loadProfile(props, profiles, extendedProfileName);
@@ -120,7 +119,8 @@ public class ExecutionEnvironmentProfileProvider {
             for (int i = 0; i < aliases.length; i++) {
                 String alias = aliases[i].trim();
                 if (alias.length() != 0) {
-                    ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(alias);
+                    ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(
+                            alias);
                     profileAlias.pkgNames = profile.pkgNames;
                     profiles.put(alias, profileAlias);
                 }

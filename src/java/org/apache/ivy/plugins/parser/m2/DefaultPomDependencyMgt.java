@@ -21,20 +21,24 @@ import java.util.List;
 
 public class DefaultPomDependencyMgt implements PomDependencyMgt {
     private String groupId;
+
     private String artifactId;
+
     private String version;
+
     private String scope;
-    private List /*<ModuleId>*/ excludedModules;
-    
-    public DefaultPomDependencyMgt(
-            String groupId, String artifactId, String version, String scope, List /*<ModuleId>*/ excludedModules) {
+
+    private List /* <ModuleId> */excludedModules;
+
+    public DefaultPomDependencyMgt(String groupId, String artifactId, String version, String scope,
+            List /* <ModuleId> */excludedModules) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
         this.scope = scope;
         this.excludedModules = excludedModules;
     }
-    
+
     public String getScope() {
         return scope;
     }
@@ -42,16 +46,16 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
     public String getGroupId() {
         return groupId;
     }
-    
+
     public String getArtifactId() {
         return artifactId;
     }
-    
+
     public String getVersion() {
         return version;
     }
-    
-    public List /*<ModuleId>*/ getExcludedModules() {
+
+    public List /* <ModuleId> */getExcludedModules() {
         return excludedModules;
     }
 }

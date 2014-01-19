@@ -25,7 +25,7 @@ public interface RetrieveEngineSettings extends ParserSettings {
     boolean isCheckUpToDate();
 
     IvyVariableContainer getVariables();
-    
+
     String[] getIgnorableFilenames();
 
 }

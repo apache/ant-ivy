@@ -25,9 +25,9 @@ import java.util.Map;
  */
 public class ConfigurationGroup extends Configuration {
 
-    private final Map/*<String, Configuration>*/ members;
+    private final Map/* <String, Configuration> */members;
 
-    public ConfigurationGroup(String confName, Map /*<String, Configuration>*/ members) {
+    public ConfigurationGroup(String confName, Map /* <String, Configuration> */members) {
         super(confName);
         this.members = members;
     }
@@ -43,14 +43,13 @@ public class ConfigurationGroup extends Configuration {
      * @return the list of configurations' names this object is an intersection of.
      */
     public String[] getMembersConfigurationNames() {
-        return (String[]) members.keySet()
-                    .toArray(new String[members.size()]);
+        return (String[]) members.keySet().toArray(new String[members.size()]);
     }
 
     /**
-     * Returns the {@link Configuration} object for the given conf name, or
-     * <code>null</code> if the given conf name is not part of this group or if this conf
-     * name isn't defined in the module in which this group has been built.
+     * Returns the {@link Configuration} object for the given conf name, or <code>null</code> if the
+     * given conf name is not part of this group or if this conf name isn't defined in the module in
+     * which this group has been built.
      * 
      * @param confName
      *            the name of the configuration to return.
@@ -59,7 +58,7 @@ public class ConfigurationGroup extends Configuration {
     public Configuration getMemberConfiguration(String confName) {
         return (Configuration) members.get(confName);
     }
-    
+
     public Visibility getVisibility() {
         for (Iterator it = members.values().iterator(); it.hasNext();) {
             Configuration c = (Configuration) it.next();

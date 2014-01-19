@@ -25,7 +25,7 @@ public interface FileResolver {
             return new File(path);
         }
     };
-    
+
     /**
      * Return the canonical form of a path, or raise an {@link IllegalArgumentException} if the path
      * is not valid for this {@link FileResolver}.

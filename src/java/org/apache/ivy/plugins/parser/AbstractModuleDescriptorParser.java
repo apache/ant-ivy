@@ -45,14 +45,13 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class AbstractModuleDescriptorParser implements ModuleDescriptorParser {
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             boolean validate) throws ParseException, IOException {
-        return parseDescriptor(ivySettings, descriptorURL, 
-            new URLResource(descriptorURL), validate);
+        return parseDescriptor(ivySettings, descriptorURL, new URLResource(descriptorURL), validate);
     }
-    
+
     public String getType() {
         return "ivy";
     }
-    
+
     public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res) {
         return DefaultArtifact.newIvyArtifact(mrid, new Date(res.getLastModified()));
     }
@@ -150,9 +149,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                                     .getDependencyConfigurations(modConfs[j]);
                             if (depConfs.length > 0) {
                                 for (int k = 0; k < depConfs.length; k++) {
-                                    String mappedDependency = evaluateConditions 
-                                    ? evaluateCondition(depConfs[k].trim(), dd)
-                                            : depConfs[k].trim();
+                                    String mappedDependency = evaluateConditions ? evaluateCondition(
+                                        depConfs[k].trim(), dd) : depConfs[k].trim();
                                     if (mappedDependency != null) {
                                         dd.addDependencyConfiguration(modConfs[j].trim(),
                                             mappedDependency);
@@ -161,8 +159,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                             } else {
                                 // no default mapping found for this configuration, map
                                 // configuration to itself
-                                dd.addDependencyConfiguration(modConfs[j].trim(), modConfs[j]
-                                        .trim());
+                                dd.addDependencyConfiguration(modConfs[j].trim(),
+                                    modConfs[j].trim());
                             }
                         }
                     }
@@ -280,8 +278,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         protected DependencyDescriptor getDefaultConfMappingDescriptor() {
             if (defaultConfMappingDescriptor == null) {
-                defaultConfMappingDescriptor = new DefaultDependencyDescriptor(ModuleRevisionId
-                        .newInstance("", "", ""), false);
+                defaultConfMappingDescriptor = new DefaultDependencyDescriptor(
+                        ModuleRevisionId.newInstance("", "", ""), false);
                 parseDepsConfs(defaultConfMapping, defaultConfMappingDescriptor, false, false);
             }
             return defaultConfMappingDescriptor;
@@ -331,7 +329,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         } // getLocationString(SAXParseException):String
 
         protected String getDefaultConf() {
-            return defaultConf != null ? defaultConf 
+            return defaultConf != null ? defaultConf
                     : (defaultConfMapping != null ? defaultConfMapping : DEFAULT_CONF_MAPPING);
         }
 

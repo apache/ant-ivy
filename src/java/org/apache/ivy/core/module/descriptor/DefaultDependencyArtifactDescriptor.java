@@ -47,8 +47,8 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
      * @param type
      * @param url
      */
-    public DefaultDependencyArtifactDescriptor(DependencyDescriptor dd, 
-            String name, String type, String ext, URL url, Map extraAttributes) {
+    public DefaultDependencyArtifactDescriptor(DependencyDescriptor dd, String name, String type,
+            String ext, URL url, Map extraAttributes) {
         super(null, extraAttributes);
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(name, "name");
@@ -89,7 +89,7 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
     public void addConfiguration(String conf) {
         confs.add(conf);
     }
-    
+
     public DependencyDescriptor getDependencyDescriptor() {
         return dd;
     }

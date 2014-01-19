@@ -99,11 +99,11 @@ public class VisitNode {
      * the current path. null if not computed yet Boolean.FALSE otherwise
      */
     private Boolean isCircular;
-    
+
     /**
-     * IvyNode usage information to update when visiting the underlying IvyNode.
-     * This is usually the main IvyNodeUsage of the underlying node, except when we are visiting it
-     * coming from an evicted node replaced by the other one.
+     * IvyNode usage information to update when visiting the underlying IvyNode. This is usually the
+     * main IvyNodeUsage of the underlying node, except when we are visiting it coming from an
+     * evicted node replaced by the other one.
      */
     private IvyNodeUsage usage;
 
@@ -117,7 +117,7 @@ public class VisitNode {
         Checks.checkNotNull(data, "data");
         Checks.checkNotNull(node, "node");
         Checks.checkNotNull(rootModuleConf, "rootModuleConf");
-        
+
         this.data = data;
         this.node = node;
         this.parent = parent;
@@ -159,14 +159,14 @@ public class VisitNode {
      * 
      * @return
      */
-    public Collection/*<VisitNode>*/ getPath() {
+    public Collection/* <VisitNode> */getPath() {
         if (path == null) {
             path = computePath();
         }
         return path;
     }
 
-    private Collection/*<VisitNode>*/ computePath() {
+    private Collection/* <VisitNode> */computePath() {
         if (parent != null) {
             Collection p = new LinkedHashSet(parent.getPath());
             p.add(this);
@@ -223,15 +223,15 @@ public class VisitNode {
             // the root node is always considered transitive!
             return true;
         }
-        
+
         if (!data.isTransitive()) {
             return false;
         }
-        
+
         if (!isParentConfTransitive()) {
             return false;
         }
-        
+
         DependencyDescriptor dd = node.getDependencyDescriptor(getParentNode());
         if ((dd != null) && dd.isTransitive()) {
             return true;
@@ -289,18 +289,18 @@ public class VisitNode {
     }
 
     public boolean loadData(String conf, boolean shouldBePublic) {
-        boolean loaded = node.loadData(
-            rootModuleConf, getParentNode(), parentConf, conf, shouldBePublic, getUsage());
+        boolean loaded = node.loadData(rootModuleConf, getParentNode(), parentConf, conf,
+            shouldBePublic, getUsage());
         if (loaded) {
             useRealNode();
-            
+
             // if the loaded revision is different from original one
             // we now register this node on the new resolved id
             // this includes two cases:
             // - the id refers to a dynamic revision, which has been resolved by loadData
-            // - the loaded module descriptor has extra attributes in his info tag which are not 
-            //   used when declaring the dependency
-            if (data.getNode(node.getResolvedId()) == null 
+            // - the loaded module descriptor has extra attributes in his info tag which are not
+            // used when declaring the dependency
+            if (data.getNode(node.getResolvedId()) == null
                     || !data.getNode(node.getResolvedId()).getId().equals(node.getResolvedId())) {
                 data.register(node.getResolvedId(), this);
             }
@@ -309,9 +309,9 @@ public class VisitNode {
         return loaded;
     }
 
-    public Collection/*<VisitNode>*/ getDependencies(String conf) {
-        Collection/*<IvyNode>*/ deps = node.getDependencies(rootModuleConf, conf, requestedConf);
-        Collection/*<VisitNode>*/ ret = new ArrayList(deps.size());
+    public Collection/* <VisitNode> */getDependencies(String conf) {
+        Collection/* <IvyNode> */deps = node.getDependencies(rootModuleConf, conf, requestedConf);
+        Collection/* <VisitNode> */ret = new ArrayList(deps.size());
         for (Iterator iter = deps.iterator(); iter.hasNext();) {
             IvyNode depNode = (IvyNode) iter.next();
             ret.add(traverseChild(conf, depNode));
@@ -321,7 +321,7 @@ public class VisitNode {
 
     /**
      * Returns a VisitNode for the given node. The given node must be a representation of the same
-     * module (usually in another revision) as the one visited by this node. 
+     * module (usually in another revision) as the one visited by this node.
      * 
      * @param node
      *            the node to visit
@@ -360,11 +360,10 @@ public class VisitNode {
         return traverse(parent, parentConf, child, null);
     }
 
-    private VisitNode traverse(
-            VisitNode parent, String parentConf, IvyNode node, IvyNodeUsage usage) {
+    private VisitNode traverse(VisitNode parent, String parentConf, IvyNode node, IvyNodeUsage usage) {
         if (getPath().contains(node)) {
-            IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
-                toMrids(getPath(), node.getId()));
+            IvyContext.getContext().getCircularDependencyStrategy()
+                    .handleCircularDependency(toMrids(getPath(), node.getId()));
             // we do not use the new parent, but the first one, to always be able to go up to the
             // root
             // parent = getVisitNode(depNode).getParent();
@@ -406,7 +405,7 @@ public class VisitNode {
     public boolean hasProblem() {
         return node.hasProblem();
     }
-    
+
     public Configuration getConfiguration(String conf) {
         return node.getConfiguration(conf);
     }

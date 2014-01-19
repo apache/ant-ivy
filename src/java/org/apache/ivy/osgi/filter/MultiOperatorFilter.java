@@ -20,7 +20,6 @@ package org.apache.ivy.osgi.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public abstract class MultiOperatorFilter extends OSGiFilter {
 
     private List<OSGiFilter> subFilters = new ArrayList<OSGiFilter>();

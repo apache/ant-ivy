@@ -31,11 +31,11 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -59,13 +59,11 @@ import org.xml.sax.SAXException;
  * <p>
  * The configurations used in the generated module descriptor mimics the behavior defined by maven 2
  * scopes, as documented here:<br/>
- * http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
- * The PomModuleDescriptorParser use a PomDomReader to read the pom, and the 
- * PomModuleDescriptorBuilder to write the ivy module descriptor using the info read by the 
- * PomDomReader.  
+ * http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html The
+ * PomModuleDescriptorParser use a PomDomReader to read the pom, and the PomModuleDescriptorBuilder
+ * to write the ivy module descriptor using the info read by the PomDomReader.
  */
 public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
-
 
     private static final PomModuleDescriptorParser INSTANCE = new PomModuleDescriptorParser();
 
@@ -75,7 +73,6 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
     private PomModuleDescriptorParser() {
     }
-
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
             throws ParseException, IOException {
@@ -100,25 +97,25 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res) {
         return DefaultArtifact.newPomArtifact(mrid, new Date(res.getLastModified()));
     }
-    
+
     public String getType() {
         return "pom";
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, 
-            boolean validate) throws ParseException, IOException {        
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
+            boolean validate) throws ParseException, IOException {
         URLResource resource = new URLResource(descriptorURL);
         return parseDescriptor(ivySettings, descriptorURL, resource, validate);
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, 
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException {
-        
-        PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(
-                                                                    this, res, ivySettings);
-        
-        try {           
-            PomReader domReader = new PomReader(descriptorURL, res);            
+
+        PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(this, res,
+                ivySettings);
+
+        try {
+            PomReader domReader = new PomReader(descriptorURL, res);
             domReader.setProperty("parent.version", domReader.getParentVersion());
             domReader.setProperty("parent.groupId", domReader.getParentGroupId());
             domReader.setProperty("project.parent.version", domReader.getParentVersion());
@@ -130,44 +127,42 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
                 mdBuilder.addProperty((String) prop.getKey(), (String) prop.getValue());
             }
-            
+
             ModuleDescriptor parentDescr = null;
             if (domReader.hasParent()) {
-                //Is there any other parent properties?
-                
+                // Is there any other parent properties?
+
                 ModuleRevisionId parentModRevID = ModuleRevisionId.newInstance(
-                    domReader.getParentGroupId(), 
-                    domReader.getParentArtifactId(), 
+                    domReader.getParentGroupId(), domReader.getParentArtifactId(),
                     domReader.getParentVersion());
-                ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, 
-                    parentModRevID);
+                ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, parentModRevID);
                 if (parentModule != null) {
                     parentDescr = parentModule.getDescriptor();
                 } else {
                     throw new IOException("Impossible to load parent for " + res.getName() + "."
-                       + " Parent=" + parentModRevID);
+                            + " Parent=" + parentModRevID);
                 }
                 if (parentDescr != null) {
-                    Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(
-                        parentDescr.getExtraInfo());
+                    Map parentPomProps = PomModuleDescriptorBuilder
+                            .extractPomProperties(parentDescr.getExtraInfo());
                     for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
                         Map.Entry prop = (Map.Entry) iter.next();
                         domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
-                    }                    
+                    }
                 }
             }
-                            
+
             String groupId = domReader.getGroupId();
             String artifactId = domReader.getArtifactId();
             String version = domReader.getVersion();
-            mdBuilder.setModuleRevId(groupId , artifactId , version);
-            
+            mdBuilder.setModuleRevId(groupId, artifactId, version);
+
             mdBuilder.setHomePage(domReader.getHomePage());
             mdBuilder.setDescription(domReader.getDescription());
             mdBuilder.setLicenses(domReader.getLicenses());
 
             ModuleRevisionId relocation = domReader.getRelocation();
-            
+
             if (relocation != null) {
                 if (groupId != null && artifactId != null
                         && artifactId.equals(relocation.getName())
@@ -180,10 +175,10 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             + "  Artefact and other metadata will be ignored.");
                     ResolvedModuleRevision relocatedModule = parseOtherPom(ivySettings, relocation);
                     if (relocatedModule == null) {
-                        throw new ParseException("impossible to load module "
-                            + relocation + " to which " 
-                            + mdBuilder.getModuleDescriptor().getModuleRevisionId()
-                            + " has been relocated", 0);
+                        throw new ParseException("impossible to load module " + relocation
+                                + " to which "
+                                + mdBuilder.getModuleDescriptor().getModuleRevisionId()
+                                + " has been relocated", 0);
                     }
                     DependencyDescriptor[] dds = relocatedModule.getDescriptor().getDependencies();
                     for (int i = 0; i < dds.length; i++) {
@@ -194,18 +189,19 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             + " is relocated to " + relocation
                             + ". Please update your dependencies.");
                     Message.verbose("Relocated module will be considered as a dependency");
-                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mdBuilder
-                            .getModuleDescriptor(), relocation, true, false, true);
+                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                            mdBuilder.getModuleDescriptor(), relocation, true, false, true);
                     /* Map all public dependencies */
                     Configuration[] m2Confs = PomModuleDescriptorBuilder.MAVEN2_CONFIGURATIONS;
                     for (int i = 0; i < m2Confs.length; i++) {
                         if (Visibility.PUBLIC.equals(m2Confs[i].getVisibility())) {
-                            dd.addDependencyConfiguration(m2Confs[i].getName(), m2Confs[i].getName());
+                            dd.addDependencyConfiguration(m2Confs[i].getName(),
+                                m2Confs[i].getName());
                         }
                     }
                     mdBuilder.addDependency(dd);
                 }
-            } else {                            
+            } else {
                 domReader.setProperty("project.groupId", groupId);
                 domReader.setProperty("pom.groupId", groupId);
                 domReader.setProperty("groupId", groupId);
@@ -218,58 +214,57 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
                 if (parentDescr != null) {
                     mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
-                    
+
                     // add dependency management info from parent
                     List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(parentDescr);
                     for (Iterator it = depMgt.iterator(); it.hasNext();) {
                         PomDependencyMgt dep = (PomDependencyMgt) it.next();
                         if (dep instanceof PomDependencyMgtElement) {
-                            dep = domReader.new PomDependencyMgtElement((PomDependencyMgtElement) dep);
+                            dep = domReader.new PomDependencyMgtElement(
+                                    (PomDependencyMgtElement) dep);
                         }
                         mdBuilder.addDependencyMgt(dep);
                     }
-                    
+
                     // add plugins from parent
-                    List /*<PomDependencyMgt>*/ plugins = 
-                                    PomModuleDescriptorBuilder.getPlugins(parentDescr);
+                    List /* <PomDependencyMgt> */plugins = PomModuleDescriptorBuilder
+                            .getPlugins(parentDescr);
                     for (Iterator it = plugins.iterator(); it.hasNext();) {
                         mdBuilder.addPlugin((PomDependencyMgt) it.next());
                     }
                 }
-                
+
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
                     PomDependencyMgt dep = (PomDependencyMgt) it.next();
                     if ("import".equals(dep.getScope())) {
                         ModuleRevisionId importModRevID = ModuleRevisionId.newInstance(
-                            dep.getGroupId(), 
-                            dep.getArtifactId(), 
-                            dep.getVersion());
-                        ResolvedModuleRevision importModule = parseOtherPom(ivySettings, 
+                            dep.getGroupId(), dep.getArtifactId(), dep.getVersion());
+                        ResolvedModuleRevision importModule = parseOtherPom(ivySettings,
                             importModRevID);
                         if (importModule != null) {
                             ModuleDescriptor importDescr = importModule.getDescriptor();
-                            
+
                             // add dependency management info from imported module
-                            List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(importDescr);
+                            List depMgt = PomModuleDescriptorBuilder
+                                    .getDependencyManagements(importDescr);
                             for (Iterator it2 = depMgt.iterator(); it2.hasNext();) {
                                 PomDependencyMgt importedDepMgt = (PomDependencyMgt) it2.next();
                                 mdBuilder.addDependencyMgt(new DefaultPomDependencyMgt(
                                         importedDepMgt.getGroupId(),
                                         importedDepMgt.getArtifactId(),
-                                        importedDepMgt.getVersion(),
-                                        importedDepMgt.getScope(), 
+                                        importedDepMgt.getVersion(), importedDepMgt.getScope(),
                                         importedDepMgt.getExcludedModules()));
                             }
                         } else {
-                            throw new IOException("Impossible to import module for " + res.getName() + "."
-                               + " Import=" + importModRevID);
+                            throw new IOException("Impossible to import module for "
+                                    + res.getName() + "." + " Import=" + importModRevID);
                         }
-                        
+
                     } else {
                         mdBuilder.addDependencyMgt(dep);
                     }
                 }
-                
+
                 for (Iterator it = domReader.getDependencies().iterator(); it.hasNext();) {
                     PomReader.PomDependencyData dep = (PomReader.PomDependencyData) it.next();
                     mdBuilder.addDependency(res, dep);
@@ -279,7 +274,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     for (int i = 0; i < parentDescr.getDependencies().length; i++) {
                         DependencyDescriptor descriptor = parentDescr.getDependencies()[i];
                         if (descriptor instanceof PomDependencyDescriptor) {
-                            PomDependencyData parentDep = ((PomDependencyDescriptor) descriptor).getPomDependencyData();
+                            PomDependencyData parentDep = ((PomDependencyDescriptor) descriptor)
+                                    .getPomDependencyData();
                             PomDependencyData dep = domReader.new PomDependencyData(parentDep);
                             mdBuilder.addDependency(res, dep);
                         } else {
@@ -287,40 +283,39 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                         }
                     }
                 }
-                
+
                 for (Iterator it = domReader.getPlugins().iterator(); it.hasNext();) {
                     PomReader.PomPluginElement plugin = (PomReader.PomPluginElement) it.next();
                     mdBuilder.addPlugin(plugin);
                 }
-                
-                mdBuilder.addMainArtifact(artifactId , domReader.getPackaging());
-                
+
+                mdBuilder.addMainArtifact(artifactId, domReader.getPackaging());
+
                 addSourcesAndJavadocArtifactsIfPresent(mdBuilder, ivySettings);
-            }            
+            }
         } catch (SAXException e) {
             throw newParserException(e);
         }
-        
+
         return mdBuilder.getModuleDescriptor();
     }
 
-    private void addSourcesAndJavadocArtifactsIfPresent(
-            PomModuleDescriptorBuilder mdBuilder, ParserSettings ivySettings) {
+    private void addSourcesAndJavadocArtifactsIfPresent(PomModuleDescriptorBuilder mdBuilder,
+            ParserSettings ivySettings) {
         if (mdBuilder.getMainArtifact() == null) {
             // no main artifact in pom, we don't need to search for meta artifacts
             return;
         }
         ModuleDescriptor md = mdBuilder.getModuleDescriptor();
         ModuleRevisionId mrid = md.getModuleRevisionId();
-        DependencyResolver resolver = ivySettings.getResolver(
-            mrid);
-        
+        DependencyResolver resolver = ivySettings.getResolver(mrid);
+
         if (resolver == null) {
-            Message.debug("no resolver found for " + mrid 
-                             + ": no source or javadoc artifact lookup");
+            Message.debug("no resolver found for " + mrid
+                    + ": no source or javadoc artifact lookup");
         } else {
             ArtifactOrigin mainArtifact = resolver.locate(mdBuilder.getMainArtifact());
-            
+
             if (!ArtifactOrigin.isUnknown(mainArtifact)) {
                 String mainArtifactLocation = mainArtifact.getLocation();
 
@@ -342,7 +337,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     }
                 }
                 ArtifactOrigin javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
-                if (!ArtifactOrigin.isUnknown(javadocArtifact) 
+                if (!ArtifactOrigin.isUnknown(javadocArtifact)
                         && !javadocArtifact.getLocation().equals(mainArtifactLocation)) {
                     Message.debug("javadoc artifact found for " + mrid);
                     mdBuilder.addJavadocArtifact();
@@ -363,7 +358,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             options.setDownload(false);
             data = new ResolveData(engine, options);
         }
-        
+
         DependencyResolver resolver = ivySettings.getResolver(parentModRevID);
         if (resolver == null) {
             // TODO: Throw exception here?
@@ -377,7 +372,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
     private ParseException newParserException(Exception e) {
         Message.error(e.getMessage());
-        ParseException pe = new ParseException(e.getMessage() , 0);
+        ParseException pe = new ParseException(e.getMessage(), 0);
         pe.initCause(e);
         return pe;
     }

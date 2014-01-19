@@ -32,8 +32,8 @@ import org.apache.ivy.plugins.repository.Resource;
 public class BuiltFileResource implements Resource {
 
     /**
-     * Where the build file should put built artifacts (relative
-     * to the build directory). Value is: {@value}
+     * Where the build file should put built artifacts (relative to the build directory). Value is:
+     * * {@value}
      */
     public static final String BUILT_ARTIFACT_PATTERN = "artifacts/[type]s/[artifact].[ext]";
 

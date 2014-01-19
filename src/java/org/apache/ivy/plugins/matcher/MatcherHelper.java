@@ -26,7 +26,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
  */
 public final class MatcherHelper {
     // TODO this class might be better off as MatcherUtils in util package
-    
+
     private MatcherHelper() {
     }
 

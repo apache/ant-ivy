@@ -73,8 +73,7 @@ public class IvyNodeCallers {
             if (prevDepConfs != null) {
                 Set newDepConfs = new HashSet(Arrays.asList(prevDepConfs));
                 newDepConfs.addAll(Arrays.asList(dependencyConfs));
-                confs.put(callerConf, (String[]) newDepConfs
-                        .toArray(new String[newDepConfs.size()]));
+                confs.put(callerConf, newDepConfs.toArray(new String[newDepConfs.size()]));
             } else {
                 confs.put(callerConf, dependencyConfs);
             }
@@ -97,11 +96,11 @@ public class IvyNodeCallers {
         }
 
         public int hashCode() {
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             int hash = 31;
             hash = hash * 13 + confs.hashCode();
             hash = hash * 13 + mrid.hashCode();
-            //CheckStyle:MagicNumber| ON
+            // CheckStyle:MagicNumber| ON
             return hash;
         }
 
@@ -126,9 +125,9 @@ public class IvyNodeCallers {
         }
 
         public void setRealCaller(boolean b) {
-            this.real  = b;
+            this.real = b;
         }
-        
+
         public boolean isRealCaller() {
             return real;
         }
@@ -186,7 +185,7 @@ public class IvyNodeCallers {
         }
         allCallers.put(mrid.getModuleId(), callerNode);
     }
-    
+
     void removeCaller(String rootModuleConf, ModuleRevisionId callerMrid) {
         allCallers.remove(callerMrid.getModuleId());
         Map callers = (Map) callersByRootConf.get(rootModuleConf);
@@ -278,14 +277,15 @@ public class IvyNodeCallers {
                     return false;
                 }
                 ModuleDescriptor md = callers[i].getModuleDescriptor();
-                Boolean doesExclude = node.doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(),
-                    callers[i].getDependencyDescriptor(), artifact, callersStack);
+                Boolean doesExclude = node.doesExclude(md, rootModuleConf,
+                    callers[i].getCallerConfigurations(), callers[i].getDependencyDescriptor(),
+                    artifact, callersStack);
                 if (doesExclude != null) {
                     if (!doesExclude.booleanValue()) {
                         return false;
                     }
                     allUnconclusive = false;
-                } 
+                }
             }
             return allUnconclusive ? false : true;
         } finally {

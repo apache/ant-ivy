@@ -25,18 +25,19 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 public class DefaultExtendsDescriptor implements ExtendsDescriptor {
 
     private ModuleDescriptor parent;
+
     private String location;
+
     private List extendsTypes;
+
     private boolean local;
 
-    public DefaultExtendsDescriptor(ModuleDescriptor parent,
-            String location, String[] types) {
+    public DefaultExtendsDescriptor(ModuleDescriptor parent, String location, String[] types) {
         this(parent, location, types, false);
     }
-    
-    public DefaultExtendsDescriptor(ModuleDescriptor parent,
-                                    String location, String[] types, 
-                                    boolean local) {
+
+    public DefaultExtendsDescriptor(ModuleDescriptor parent, String location, String[] types,
+            boolean local) {
         this.parent = parent;
         this.location = location;
         this.local = local;
@@ -53,7 +54,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
     public ModuleRevisionId getResolvedParentRevisionId() {
         return parent.getResolvedModuleRevisionId();
     }
-    
+
     public ModuleDescriptor getParentMd() {
         return parent;
     }
@@ -85,7 +86,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
     public boolean areDependenciesInherited() {
         return isAllInherited() || extendsTypes.contains("dependencies");
     }
-    
+
     public boolean isLocal() {
         return local;
     }

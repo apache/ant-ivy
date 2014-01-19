@@ -44,6 +44,8 @@ The two are equivalent, it is only a matter of preference. However, do not mix b
 
 <span class="since">since 1.4</span> This tag supports <a href="../concept.html#extra">extra attributes</a>.
 
+<span class="since">since 2.4</span> This tag supports the 'packaging' attributes; complete documentation can be found in the <a href="../concept.html#packaging">concept page</a>.
+
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>
@@ -61,6 +63,8 @@ The two are equivalent, it is only a matter of preference. However, do not mix b
         <td>No, defaults to defaultconf attribute value on parent publications element.</td></tr>
     <tr><td>url</td><td>a url at which this artifact can be found if it isn't located at the standard location in the repository <span class="since">since 1.4</span></td>
         <td>No, defaults to no url</td></tr>
+    <tr><td>packaging</td><td>a comma separated list of <a href="../concept.html#packaging">packaging</a> types <span class="since">since 2.4</span></td>
+        <td>No, defaults to no packaging</td></tr>
 </tbody>
 </table>
 <h1>Child elements</h1>

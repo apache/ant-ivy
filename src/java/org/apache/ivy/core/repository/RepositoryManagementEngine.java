@@ -70,55 +70,62 @@ import org.apache.ivy.util.Message;
  */
 public class RepositoryManagementEngine {
     private static final double THOUSAND = 1000.0;
+
     private static final int KILO = 1024;
-    
-    ///////////////////////////////////////////
+
+    // /////////////////////////////////////////
     // state loaded on #load()
-    ///////////////////////////////////////////
+    // /////////////////////////////////////////
 
     /**
      * True if the repository has already been loaded, false otherwise.
      */
     private boolean loaded;
+
     /**
      * ModuleDescriptors stored by ModuleRevisionId
      */
-    private Map/*<ModuleRevisionId,ModuleDescriptor>*/ revisions = new HashMap();
+    private Map/* <ModuleRevisionId,ModuleDescriptor> */revisions = new HashMap();
+
     /**
      * ModuleRevisionId for which loading was not possible, with corresponding error message.
      */
-    private Map/*<ModuleRevisionId,String>*/ errors = new HashMap();
+    private Map/* <ModuleRevisionId,String> */errors = new HashMap();
+
     /**
      * List of ModuleRevisionId per ModuleId.
      */
-    private Map/*<ModuleId,Collection<ModuleRevisionId>>*/ modules = new HashMap();
-    
-    ///////////////////////////////////////////
+    private Map/* <ModuleId,Collection<ModuleRevisionId>> */modules = new HashMap();
+
+    // /////////////////////////////////////////
     // state loaded on #analyze()
-    ///////////////////////////////////////////
+    // /////////////////////////////////////////
 
     /**
      * True when the repository has been analyzed, false otherwise
      */
     private boolean analyzed;
+
     /**
      * Cache from requested module revision id to actual module revision id.
      */
-    private Map/*<ModuleRevisionId,ModuleRevisionId>*/ cache = new HashMap();
+    private Map/* <ModuleRevisionId,ModuleRevisionId> */cache = new HashMap();
+
     /**
      * list of dependers per ModuleRevisionId.
      */
-    private Map/*<ModuleRevisionId,List<ModuleRevisionId>>*/ dependers = new HashMap();
-    
-    ///////////////////////////////////////////
-    // dependencies
-    ///////////////////////////////////////////
-    private SearchEngine searchEngine;
-    private ResolveEngine resolveEngine;
-    private RepositoryManagementEngineSettings settings;
-    
+    private Map/* <ModuleRevisionId,List<ModuleRevisionId>> */dependers = new HashMap();
 
-    public RepositoryManagementEngine(RepositoryManagementEngineSettings settings, 
+    // /////////////////////////////////////////
+    // dependencies
+    // /////////////////////////////////////////
+    private SearchEngine searchEngine;
+
+    private ResolveEngine resolveEngine;
+
+    private RepositoryManagementEngineSettings settings;
+
+    public RepositoryManagementEngine(RepositoryManagementEngineSettings settings,
             SearchEngine searchEngine, ResolveEngine resolveEngine) {
         this.settings = settings;
         this.searchEngine = searchEngine;
@@ -150,21 +157,23 @@ public class RepositoryManagementEngine {
             }
         }
         long endTime = System.currentTimeMillis();
-        Message.info("\nrepository loaded: " + modules.size() + " modules; "
-                + revisions.size() + " revisions; "
-                + (settings.dumpMemoryUsage() 
-                        ? (MemoryUtil.getUsedMemory() - startingMemoryUse) / KILO + "kB; " 
-                        : "")
-                + (endTime - startTime) / THOUSAND + "s");
+        Message.info("\nrepository loaded: "
+                + modules.size()
+                + " modules; "
+                + revisions.size()
+                + " revisions; "
+                + (settings.dumpMemoryUsage() ? (MemoryUtil.getUsedMemory() - startingMemoryUse)
+                        / KILO + "kB; " : "") + (endTime - startTime) / THOUSAND + "s");
         loaded = true;
     }
 
     /**
      * Analyze data in the repository.
      * <p>
-     * This method may take a long time to proceed. It should never be called from event
-     * dispatch thread in a GUI.
+     * This method may take a long time to proceed. It should never be called from event dispatch
+     * thread in a GUI.
      * </p>
+     * 
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
      * @see #load()
@@ -178,8 +187,8 @@ public class RepositoryManagementEngine {
             for (int i = 0; i < dds.length; i++) {
                 ModuleRevisionId dep = getDependency(dds[i]);
                 if (dep == null) {
-                    Message.warn(
-                        "inconsistent repository: declared dependency not found: " + dds[i]);
+                    Message.warn("inconsistent repository: declared dependency not found: "
+                            + dds[i]);
                 } else {
                     getDependers(dep).add(md.getModuleRevisionId());
                 }
@@ -231,15 +240,11 @@ public class RepositoryManagementEngine {
         return orphans;
     }
 
-
     private ModuleRevisionId[] searchModules() {
-        ModuleRevisionId[] mrids = searchEngine.listModules(
-            ModuleRevisionId.newInstance(
-                PatternMatcher.ANY_EXPRESSION, 
-                PatternMatcher.ANY_EXPRESSION, 
-                PatternMatcher.ANY_EXPRESSION, 
-                PatternMatcher.ANY_EXPRESSION), 
-                RegexpPatternMatcher.INSTANCE);
+        ModuleRevisionId[] mrids = searchEngine.listModules(ModuleRevisionId.newInstance(
+            PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
+            PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION),
+            RegexpPatternMatcher.INSTANCE);
         return mrids;
     }
 
@@ -249,11 +254,10 @@ public class RepositoryManagementEngine {
         if (vmatcher.isDynamic(askedMrid)) {
             ModuleRevisionId mrid = (ModuleRevisionId) cache.get(askedMrid);
             if (mrid == null) {
-                Collection revs = getAllRevisions(askedMrid); 
+                Collection revs = getAllRevisions(askedMrid);
                 for (Iterator iterator = revs.iterator(); iterator.hasNext();) {
                     ModuleDescriptor md = (ModuleDescriptor) iterator.next();
-                    if (vmatcher.needModuleDescriptor(
-                            askedMrid, md.getResolvedModuleRevisionId())) {
+                    if (vmatcher.needModuleDescriptor(askedMrid, md.getResolvedModuleRevisionId())) {
                         if (vmatcher.accept(askedMrid, md)) {
                             mrid = md.getResolvedModuleRevisionId();
                             break;
@@ -287,9 +291,8 @@ public class RepositoryManagementEngine {
     }
 
     private void loadModuleRevision(ModuleRevisionId mrid) throws Exception {
-        ResolvedModuleRevision module = settings.getResolver(mrid)
-                    .getDependency(new DefaultDependencyDescriptor(mrid, false), 
-                newResolveData());
+        ResolvedModuleRevision module = settings.getResolver(mrid).getDependency(
+            new DefaultDependencyDescriptor(mrid, false), newResolveData());
         if (module == null) {
             Message.warn("module not found while listed: " + mrid);
         } else {
@@ -308,8 +311,8 @@ public class RepositoryManagementEngine {
                     ModuleDescriptor md2 = (ModuleDescriptor) o2;
                     // we use reverse order compared to latest revision, to have latest revision
                     // first
-                    return settings.getDefaultLatestStrategy()
-                        .sort(new ArtifactInfo[] {md1, md2}).get(0).equals(md1) ? 1 : -1;
+                    return settings.getDefaultLatestStrategy().sort(new ArtifactInfo[] {md1, md2})
+                            .get(0).equals(md1) ? 1 : -1;
                 }
             });
             modules.put(id.getModuleId(), revisions);
@@ -324,14 +327,13 @@ public class RepositoryManagementEngine {
     private void ensureAnalyzed() {
         if (!analyzed) {
             throw new IllegalStateException(
-                "repository must have been analyzed to perform this method");
+                    "repository must have been analyzed to perform this method");
         }
     }
 
     private void ensureLoaded() {
         if (!loaded) {
-            throw new IllegalStateException(
-                "repository must have be loaded to perform this method");
+            throw new IllegalStateException("repository must have be loaded to perform this method");
         }
     }
 }

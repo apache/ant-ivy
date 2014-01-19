@@ -29,15 +29,14 @@ import java.io.InputStream;
  * <li>size of the resource in bytes.</li>
  * <li>if the resource is available.</li>
  * </ul>
- * </p>
- * <h4>Implementation Notes</h4>
- * In implementing the interface you need to ensure the following behaviors:
+ * </p> <h4>Implementation Notes</h4> In implementing the interface you need to ensure the following
+ * behaviors:
  * <ul>
- * <li>All of the methods specified in the interface fail by returning an empty value 
- * (<code>false</code>, <code>0</code>, <code>""</code>). 
- * In other words, the specified interface methods should not throw RuntimeExceptions. </li>
+ * <li>All of the methods specified in the interface fail by returning an empty value (
+ * <code>false</code>, <code>0</code>, <code>""</code>). In other words, the specified interface
+ * methods should not throw RuntimeExceptions.</li>
  * <li>Failure conditions should be logged using the {@link org.apache.ivy.util.Message#verbose}
- * method. </li>
+ * method.</li>
  * <li>Failure of one of the interface's specified methods results in all other interface specified
  * methods returning an empty value (<code>false</code>, <code>0</code>, <code>""</code>).</li>
  * </ul>
@@ -55,9 +54,9 @@ public interface Resource {
     /**
      * Get the date the resource was last modified
      * 
-     * @return A <code>long</code> value representing the time the file was last modified,
-     *         measured in milliseconds since the epoch (00:00:00 GMT, January 1, 1970), or
-     *         <code>0L</code> if the file does not exist or if an I/O error occurs.
+     * @return A <code>long</code> value representing the time the file was last modified, measured
+     *         in milliseconds since the epoch (00:00:00 GMT, January 1, 1970), or <code>0L</code>
+     *         if the file does not exist or if an I/O error occurs.
      */
     public long getLastModified();
 
@@ -69,9 +68,8 @@ public interface Resource {
     public long getContentLength();
 
     /**
-     * Determine if the resource is available.
-     * </p>
-     * Note that this method only checks for availability, not for actual existence.
+     * Determine if the resource is available. </p> Note that this method only checks for
+     * availability, not for actual existence.
      * 
      * @return <code>boolean</code> value indicating if the resource is available.
      */

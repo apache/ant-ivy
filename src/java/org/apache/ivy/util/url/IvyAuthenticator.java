@@ -31,33 +31,33 @@ import org.apache.ivy.util.Message;
 public final class IvyAuthenticator extends Authenticator {
 
     private Authenticator original;
-    
+
     private static boolean securityWarningLogged = false;
-    
+
     /**
      * Private c'tor to prevent instantiation.
      */
     private IvyAuthenticator(Authenticator original) {
         this.original = original;
     }
-    
+
     /**
-     * Installs an <tt>IvyAuthenticator</tt> as default <tt>Authenticator</tt>.
-     * Call this method before opening HTTP(S) connections to enable Ivy
-     * authentication.
+     * Installs an <tt>IvyAuthenticator</tt> as default <tt>Authenticator</tt>. Call this method
+     * before opening HTTP(S) connections to enable Ivy authentication.
      */
     public static void install() {
-        // We will try to use the original authenticator as backup authenticator. 
-        // Since there is no getter available, so try to use some reflection to 
+        // We will try to use the original authenticator as backup authenticator.
+        // Since there is no getter available, so try to use some reflection to
         // obtain it. If that doesn't work, assume there is no original authenticator
         Authenticator original = null;
-        
+
         try {
             Field f = Authenticator.class.getDeclaredField("theAuthenticator");
             f.setAccessible(true);
             original = (Authenticator) f.get(null);
         } catch (Throwable t) {
-            Message.debug("Error occurred while getting the original authenticator: " + t.getMessage());            
+            Message.debug("Error occurred while getting the original authenticator: "
+                    + t.getMessage());
         }
 
         if (!(original instanceof IvyAuthenticator)) {
@@ -66,8 +66,8 @@ public final class IvyAuthenticator extends Authenticator {
             } catch (SecurityException e) {
                 if (!securityWarningLogged) {
                     securityWarningLogged = true;
-                    Message.warn("Not enough permissions to set the IvyAuthenticator. " +
-                            "HTTP(S) authentication will be disabled!");            
+                    Message.warn("Not enough permissions to set the IvyAuthenticator. "
+                            + "HTTP(S) authentication will be disabled!");
                 }
             }
         }
@@ -79,7 +79,7 @@ public final class IvyAuthenticator extends Authenticator {
 
     protected PasswordAuthentication getPasswordAuthentication() {
         PasswordAuthentication result = null;
-        
+
         if (isProxyAuthentication()) {
             String proxyUser = System.getProperty("http.proxyUser");
             if ((proxyUser != null) && (proxyUser.trim().length() > 0)) {
@@ -91,33 +91,32 @@ public final class IvyAuthenticator extends Authenticator {
             Credentials c = CredentialsStore.INSTANCE.getCredentials(getRequestingPrompt(),
                 getRequestingHost());
             Message.debug("authentication: k='"
-                    + Credentials.buildKey(getRequestingPrompt(), getRequestingHost()) + "' c='" + c
-                    + "'");
+                    + Credentials.buildKey(getRequestingPrompt(), getRequestingHost()) + "' c='"
+                    + c + "'");
             if (c != null) {
                 final String password = c.getPasswd() == null ? "" : c.getPasswd();
                 result = new PasswordAuthentication(c.getUserName(), password.toCharArray());
             }
         }
-        
+
         if ((result == null) && (original != null)) {
             Authenticator.setDefault(original);
             try {
-                result = Authenticator.requestPasswordAuthentication(getRequestingHost(), 
-                        getRequestingSite(), getRequestingPort(), getRequestingProtocol(), 
-                        getRequestingPrompt(), getRequestingScheme());
+                result = Authenticator.requestPasswordAuthentication(getRequestingHost(),
+                    getRequestingSite(), getRequestingPort(), getRequestingProtocol(),
+                    getRequestingPrompt(), getRequestingScheme());
             } finally {
                 Authenticator.setDefault(this);
             }
         }
-        
+
         return result;
     }
-    
+
     /**
-     * Checks if the current authentication request is for the proxy server.
-     * This functionality is not available in JDK1.4, so we check this in a
-     * very dirty way which is probably not very portable, but will work for
-     * the SUN 1.4 JDKs.
+     * Checks if the current authentication request is for the proxy server. This functionality is
+     * not available in JDK1.4, so we check this in a very dirty way which is probably not very
+     * portable, but will work for the SUN 1.4 JDKs.
      * 
      * @return
      */
@@ -130,12 +129,13 @@ public final class IvyAuthenticator extends Authenticator {
         } catch (NoSuchMethodException e) {
             // do nothing, this is a JDK1.5+ method
         } catch (Throwable t) {
-            Message.debug("Error occurred while checking if the authentication request is for the proxy server: " + t.getMessage());            
+            Message.debug("Error occurred while checking if the authentication request is for the proxy server: "
+                    + t.getMessage());
         }
-        
+
         // now we will do something very dirty and analyse the stack trace to see
         // if this method is called from within the 'getHttpProxyAuthentication' method
-        // or the 'getServerAuthentication' method which are both part of the 
+        // or the 'getServerAuthentication' method which are both part of the
         // sun.net.www.protocol.http.HttpURLConnection class.
         // This might not work on other 1.4 JVM's!
         // This code should be removed when Ivy requires JDK1.5+
@@ -148,7 +148,7 @@ public final class IvyAuthenticator extends Authenticator {
                 return false;
             }
         }
-        
+
         // fallback to the Ivy 2.2.0 behavior
         String proxyHost = System.getProperty("http.proxyHost");
         return getRequestingHost().equals(proxyHost);

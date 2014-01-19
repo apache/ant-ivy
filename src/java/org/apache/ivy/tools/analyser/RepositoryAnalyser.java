@@ -32,8 +32,10 @@ public class RepositoryAnalyser {
         ModuleDescriptor[] mds = depAnalyser.analyze(finder.findJarModules());
         Message.info("found " + mds.length + " modules");
         for (int i = 0; i < mds.length; i++) {
-            File ivyFile = new File(IvyPatternHelper.substitute(pattern, DefaultArtifact
-                    .newIvyArtifact(mds[i].getModuleRevisionId(), mds[i].getPublicationDate())));
+            File ivyFile = new File(IvyPatternHelper.substitute(
+                pattern,
+                DefaultArtifact.newIvyArtifact(mds[i].getModuleRevisionId(),
+                    mds[i].getPublicationDate())));
             try {
                 Message.info("generating " + ivyFile);
                 XmlModuleDescriptorWriter.write(mds[i], ivyFile);
@@ -45,8 +47,8 @@ public class RepositoryAnalyser {
 
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println(
-                "usage: ivyanalyser path/to/jarjar.jar absolute-ivy-repository-pattern");
+            System.out
+                    .println("usage: ivyanalyser path/to/jarjar.jar absolute-ivy-repository-pattern");
             return;
         }
         String jarjarLocation = args[0];

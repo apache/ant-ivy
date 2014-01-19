@@ -32,20 +32,22 @@ import org.apache.ivy.util.filter.FilterHelper;
  * @see ResolveEngine
  */
 public class ResolveOptions extends LogOptions {
-    
+
     /**
      * Default resolve mode, using default revision constraints in dependency descriptors.
      */
     public static final String RESOLVEMODE_DEFAULT = "default";
+
     /**
      * Dynamic resolve mode, using dynamic revision constraints in dependency descriptors.
      */
     public static final String RESOLVEMODE_DYNAMIC = "dynamic";
+
     /**
      * Array of all available resolve modes.
      */
-    public static final String[] RESOLVEMODES = 
-        new String[] {RESOLVEMODE_DEFAULT, RESOLVEMODE_DYNAMIC};
+    public static final String[] RESOLVEMODES = new String[] {RESOLVEMODE_DEFAULT,
+            RESOLVEMODE_DYNAMIC};
 
     /**
      * an array of configuration names to resolve - must not be null nor empty
@@ -99,10 +101,10 @@ public class ResolveOptions extends LogOptions {
      * A filter to use to avoid downloading all artifacts.
      */
     private Filter artifactFilter = FilterHelper.NO_FILTER;
-    
+
     /**
-     * The resolve mode to use. Should be one of {@link #RESOLVEMODES}, or <code>null</code> to
-     * use settings configured resolve mode.
+     * The resolve mode to use. Should be one of {@link #RESOLVEMODES}, or <code>null</code> to use
+     * settings configured resolve mode.
      */
     private String resolveMode;
 
@@ -112,10 +114,10 @@ public class ResolveOptions extends LogOptions {
     private String resolveId;
 
     private boolean refresh;
-    
+
     /**
-     *  True if the resolve should compare the new resolution against the previous report 
-     **/  
+     * True if the resolve should compare the new resolution against the previous report
+     **/
     private boolean checkIfChanged = false;
 
     public ResolveOptions() {
@@ -146,7 +148,7 @@ public class ResolveOptions extends LogOptions {
         this.artifactFilter = artifactFilter;
         return this;
     }
-    
+
     /**
      * Returns the resolve mode to use, or <code>null</code> to use settings configured resolve
      * mode.
@@ -156,17 +158,17 @@ public class ResolveOptions extends LogOptions {
     public String getResolveMode() {
         return resolveMode;
     }
-    
+
     public ResolveOptions setResolveMode(String resolveMode) {
         this.resolveMode = resolveMode;
         return this;
     }
 
     /**
-     * Indicates if the configurations use a special configuration 
-     * * , *(private) or *(public).
-     * When special configurations are used, you must have the module
-     * descriptor in order to get the list of configurations.
+     * Indicates if the configurations use a special configuration * , *(private) or *(public). When
+     * special configurations are used, you must have the module descriptor in order to get the list
+     * of configurations.
+     * 
      * @see #getConfs()
      * @see #getConfs(ModuleDescriptor)
      */
@@ -180,24 +182,26 @@ public class ResolveOptions extends LogOptions {
     }
 
     /**
-     * @pre can only be called if useSpecialConfs()==false.  When it is true, 
-     * you have to provide a module desciptor so that configurations can be resolved.
+     * @pre can only be called if useSpecialConfs()==false. When it is true, you have to provide a
+     *      module desciptor so that configurations can be resolved.
      * @see #getConfs(ModuleDescriptor)
      */
     public String[] getConfs() {
         if (useSpecialConfs()) {
-            throw new AssertionError("ResolveOptions.getConfs() " 
-                + "can not be used for options used special confs.");
+            throw new AssertionError("ResolveOptions.getConfs() "
+                    + "can not be used for options used special confs.");
         }
         return confs;
     }
 
-    /** 
-     * Get the aksed confs.  Special confs (like *) use the moduleDescriptor to find the values * 
-     * @param md Used to get the exact values for special confs. 
+    /**
+     * Get the aksed confs. Special confs (like *) use the moduleDescriptor to find the values *
+     * 
+     * @param md
+     *            Used to get the exact values for special confs.
      * */
     public String[] getConfs(ModuleDescriptor md) {
-        //TODO add isInline, in that case, replace * by *(public).
+        // TODO add isInline, in that case, replace * by *(public).
         return ConfigurationUtils.replaceWildcards(confs, md);
     }
 
@@ -282,7 +286,7 @@ public class ResolveOptions extends LogOptions {
         this.refresh = refresh;
         return this;
     }
-    
+
     public boolean isRefresh() {
         return refresh;
     }
@@ -291,11 +295,10 @@ public class ResolveOptions extends LogOptions {
         this.checkIfChanged = checkIfChanged;
         return this;
     }
-    
+
     public boolean getCheckIfChanged() {
         return checkIfChanged;
     }
-
 
     public static String getDefaultResolveId(ModuleDescriptor md) {
         ModuleId module = md.getModuleRevisionId().getModuleId();

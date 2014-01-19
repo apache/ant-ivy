@@ -20,22 +20,23 @@ package org.apache.ivy.plugins.resolver.util;
 import java.io.File;
 import java.util.Arrays;
 
-import org.apache.ivy.plugins.repository.file.FileRepository;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.plugins.repository.file.FileRepository;
 
 public class ResolverHelperTest extends TestCase {
 
     public void testListTokenValuesForIvy1238() {
         FileRepository rep = new FileRepository(new File(".").getAbsoluteFile());
-        String[] revisions = ResolverHelper.listTokenValues(rep, "test/repositories/IVY-1238/ivy-org/modA/v[revision]/ivy.xml", "revision");
+        String[] revisions = ResolverHelper.listTokenValues(rep,
+            "test/repositories/IVY-1238/ivy-org/modA/v[revision]/ivy.xml", "revision");
 
         assertNotNull(revisions);
         assertEquals(2, revisions.length);
-        
+
         Arrays.sort(revisions);
         assertEquals("1.0", revisions[0]);
         assertEquals("2.0", revisions[1]);
     }
-    
+
 }

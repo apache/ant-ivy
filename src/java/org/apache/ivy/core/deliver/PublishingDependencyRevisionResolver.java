@@ -35,7 +35,7 @@ public interface PublishingDependencyRevisionResolver {
      * @param status
      * @return the revision of the dependency
      */
-    String resolve(ModuleDescriptor published, String publishedStatus, ModuleRevisionId depMrid, 
+    String resolve(ModuleDescriptor published, String publishedStatus, ModuleRevisionId depMrid,
             String status);
 
 }

@@ -40,38 +40,35 @@ import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.FileUtil;
 
 public class DefaultResolutionCacheManager implements ResolutionCacheManager, IvySettingsAware {
-    
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = 
-        "resolved-[organisation]-[module]-[revision].xml";
 
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = 
-        "resolved-[organisation]-[module]-[revision].properties";
+    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
 
+    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = "resolved-[organisation]-[module]-[revision].properties";
 
     private String resolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
 
-    private String resolvedIvyPropertiesPattern = 
-        DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
-    
+    private String resolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
+
     private File basedir;
 
     private String name = "resolution-cache";
 
-    private IvySettings settings; 
+    private IvySettings settings;
 
     public DefaultResolutionCacheManager() {
     }
-    
+
     public DefaultResolutionCacheManager(File basedir) {
         setBasedir(basedir);
     }
-    
+
     public void setSettings(IvySettings settings) {
         this.settings = settings;
     }
@@ -79,7 +76,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
     public File getResolutionCacheRoot() {
         return basedir;
     }
-    
+
     public File getBasedir() {
         return basedir;
     }
@@ -112,10 +109,9 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         this.name = name;
     }
 
-
     public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(getResolvedIvyPattern(), mrid
-                .getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
+        String file = IvyPatternHelper.substitute(getResolvedIvyPattern(), mrid.getOrganisation(),
+            mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
         return new File(getResolutionCacheRoot(), file);
     }
 
@@ -138,7 +134,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             }
         });
     }
-    
+
     public ModuleDescriptor getResolvedModuleDescriptor(ModuleRevisionId mrid)
             throws ParseException, IOException {
         File ivyFile = getResolvedIvyFileInCache(mrid);
@@ -148,36 +144,44 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
 
         Properties paths = new Properties();
 
-        File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrid, mrid.getRevision() + "-parents"));
+        File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrid,
+            mrid.getRevision() + "-parents"));
         if (parentsFile.exists()) {
             FileInputStream in = new FileInputStream(parentsFile);
             paths.load(in);
             in.close();
         }
-        
+
         ParserSettings pSettings = new CacheParserSettings(settings, paths);
-        
+
         URL ivyFileURL = ivyFile.toURI().toURL();
-        return XmlModuleDescriptorParser.getInstance().parseDescriptor(pSettings, ivyFileURL, false);
+        return getModuleDescriptorParser().parseDescriptor(pSettings, ivyFileURL, false);
     }
-    
-    public void saveResolvedModuleDescriptor(ModuleDescriptor md) throws ParseException, IOException {
+
+    protected ModuleDescriptorParser getModuleDescriptorParser() {
+        return XmlModuleDescriptorParser.getInstance();
+    }
+
+    public void saveResolvedModuleDescriptor(ModuleDescriptor md) throws ParseException,
+            IOException {
         ModuleRevisionId mrevId = md.getResolvedModuleRevisionId();
         File ivyFileInCache = getResolvedIvyFileInCache(mrevId);
         md.toIvyFile(ivyFileInCache);
-        
+
         Properties paths = new Properties();
         saveLocalParents(mrevId, md, ivyFileInCache, paths);
-        
+
         if (!paths.isEmpty()) {
-            File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrevId, mrevId.getRevision() + "-parents"));
+            File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrevId,
+                mrevId.getRevision() + "-parents"));
             FileOutputStream out = new FileOutputStream(parentsFile);
             paths.store(out, null);
             out.close();
         }
     }
-    
-    private void saveLocalParents(ModuleRevisionId baseMrevId, ModuleDescriptor md, File mdFile, Properties paths) throws ParseException, IOException {
+
+    private void saveLocalParents(ModuleRevisionId baseMrevId, ModuleDescriptor md, File mdFile,
+            Properties paths) throws ParseException, IOException {
         ExtendsDescriptor[] parents = md.getInheritedDescriptors();
         for (int i = 0; i < parents.length; i++) {
             if (!parents[i].isLocal()) {
@@ -186,11 +190,13 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             }
 
             ModuleDescriptor parent = parents[i].getParentMd();
-            ModuleRevisionId pRevId = ModuleRevisionId.newInstance(baseMrevId, baseMrevId.getRevision() + "-parent." + paths.size());
+            ModuleRevisionId pRevId = ModuleRevisionId.newInstance(baseMrevId,
+                baseMrevId.getRevision() + "-parent." + paths.size());
             File parentFile = getResolvedIvyFileInCache(pRevId);
             parent.toIvyFile(parentFile);
-            
-            paths.setProperty(mdFile.getName() + "|" + parents[i].getLocation(), parentFile.getAbsolutePath());
+
+            paths.setProperty(mdFile.getName() + "|" + parents[i].getLocation(),
+                parentFile.getAbsolutePath());
             saveLocalParents(baseMrevId, parent, parentFile, paths);
         }
     }
@@ -202,12 +208,13 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
     public void clean() {
         FileUtil.forceDelete(getBasedir());
     }
-    
+
     private static class CacheParserSettings implements ParserSettings {
-        
+
         private ParserSettings delegate;
+
         private Map parentPaths;
-        
+
         public CacheParserSettings(ParserSettings delegate, Map parentPaths) {
             this.delegate = delegate;
             this.parentPaths = parentPaths;
@@ -261,12 +268,13 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             return delegate.getContextNamespace();
         }
     }
-    
+
     private static class MapURLResolver extends RelativeUrlResolver {
-        
+
         private Map paths;
+
         private RelativeUrlResolver delegate;
-        
+
         private MapURLResolver(Map paths, RelativeUrlResolver delegate) {
             this.paths = paths;
             this.delegate = delegate;
@@ -276,13 +284,13 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             String path = context.getPath();
             if (path.indexOf('/') >= 0) {
                 String file = path.substring(path.lastIndexOf('/') + 1);
-                
+
                 if (paths.containsKey(file + "|" + url)) {
                     File result = new File(paths.get(file + "|" + url).toString());
                     return result.toURI().toURL();
                 }
             }
-            
+
             return delegate.getURL(context, url);
         }
     }

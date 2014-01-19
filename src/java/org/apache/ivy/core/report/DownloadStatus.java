@@ -35,7 +35,7 @@ public final class DownloadStatus {
     public static final DownloadStatus SUCCESSFUL = new DownloadStatus("successful");
 
     public static final DownloadStatus FAILED = new DownloadStatus("failed");
-    
+
     /**
      * Returns the {@link DownloadStatus} corresponding to the given String representation.
      * 

@@ -45,7 +45,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         static final int SC_OK = 200;
 
         static final int SC_PROXY_AUTHENTICATION_REQUIRED = 407;
-        
+
         private HttpStatus() {
         }
     }
@@ -59,7 +59,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
             IvyAuthenticator.install();
         }
-        
+
         URLConnection con = null;
         try {
             url = normalizeToURL(url);
@@ -72,7 +72,8 @@ public class BasicURLHandler extends AbstractURLHandler {
                 }
                 if (checkStatusCode(url, httpCon)) {
                     String bodyCharset = getCharSetFromContentType(con.getContentType());
-                    return new URLInfo(true, httpCon.getContentLength(), con.getLastModified(), bodyCharset);
+                    return new URLInfo(true, httpCon.getContentLength(), con.getLastModified(),
+                            bodyCharset);
                 }
             } else {
                 int contentLength = con.getContentLength();
@@ -87,7 +88,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         } catch (UnknownHostException e) {
             Message.warn("Host " + e.getMessage() + " not found. url=" + url);
             Message.info("You probably access the destination server through "
-                + "a proxy server that is not well configured.");
+                    + "a proxy server that is not well configured.");
         } catch (IOException e) {
             Message.error("Server access error at url " + url, e);
         } finally {
@@ -131,12 +132,12 @@ public class BasicURLHandler extends AbstractURLHandler {
         if (status == HttpStatus.SC_OK) {
             return true;
         }
-        
+
         // IVY-1328: some servers return a 204 on a HEAD request
         if ("HEAD".equals(con.getRequestMethod()) && (status == 204)) {
             return true;
         }
-        
+
         Message.debug("HTTP response status: " + status + " url=" + url);
         if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
             Message.warn("Your proxy requires authentication.");
@@ -163,13 +164,12 @@ public class BasicURLHandler extends AbstractURLHandler {
             if (conn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) conn;
                 if (!checkStatusCode(url, httpCon)) {
-                    throw new IOException(
-                        "The HTTP response code for " + url + " did not indicate a success."
-                                + " See log for more detail.");
+                    throw new IOException("The HTTP response code for " + url
+                            + " did not indicate a success." + " See log for more detail.");
                 }
             }
             InputStream inStream = getDecodingInputStream(conn.getContentEncoding(),
-                                                          conn.getInputStream());
+                conn.getInputStream());
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -182,7 +182,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             disconnect(conn);
         }
     }
-    
+
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
         // Install the IvyAuthenticator
         if ("http".equals(src.getProtocol()) || "https".equals(src.getProtocol())) {
@@ -198,15 +198,14 @@ public class BasicURLHandler extends AbstractURLHandler {
             if (srcConn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) srcConn;
                 if (!checkStatusCode(src, httpCon)) {
-                    throw new IOException(
-                        "The HTTP response code for " + src + " did not indicate a success."
-                                + " See log for more detail.");
+                    throw new IOException("The HTTP response code for " + src
+                            + " did not indicate a success." + " See log for more detail.");
                 }
             }
 
             // do the download
             InputStream inStream = getDecodingInputStream(srcConn.getContentEncoding(),
-                                                          srcConn.getInputStream());
+                srcConn.getInputStream());
             FileUtil.copy(inStream, dest, l);
 
             // check content length only if content was not encoded
@@ -219,7 +218,7 @@ public class BasicURLHandler extends AbstractURLHandler {
                                     + ". Please retry.");
                 }
             }
-            
+
             // update modification date
             long lastModified = srcConn.getLastModified();
             if (lastModified > 0) {
@@ -276,7 +275,7 @@ public class BasicURLHandler extends AbstractURLHandler {
                 // so may results in idle TCP connections.[/quote]
                 readResponseBody((HttpURLConnection) con);
             }
-            
+
             ((HttpURLConnection) con).disconnect();
         } else if (con != null) {
             try {
@@ -287,17 +286,17 @@ public class BasicURLHandler extends AbstractURLHandler {
         }
     }
 
-    /** 
-     * Read and ignore the response body. 
+    /**
+     * Read and ignore the response body.
      */
     private void readResponseBody(HttpURLConnection conn) {
         byte[] buffer = new byte[BUFFER_SIZE];
-        
+
         InputStream inStream = null;
         try {
             inStream = conn.getInputStream();
             while (inStream.read(buffer) > 0) {
-                //Skip content
+                // Skip content
             }
         } catch (IOException e) {
             // ignore
@@ -310,18 +309,18 @@ public class BasicURLHandler extends AbstractURLHandler {
                 }
             }
         }
-        
+
         InputStream errStream = conn.getErrorStream();
         if (errStream != null) {
             try {
                 while (errStream.read(buffer) > 0) {
-                    //Skip content
+                    // Skip content
                 }
             } catch (IOException e) {
                 // ignore
             } finally {
                 try {
-                    errStream.close();                
+                    errStream.close();
                 } catch (IOException e) {
                     // ignore
                 }

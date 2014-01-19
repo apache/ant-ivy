@@ -34,6 +34,7 @@ public class DeliverOptions {
     private boolean validate = true;
 
     private boolean resolveDynamicRevisions = true;
+
     private boolean replaceForcedRevisions = false;
 
     private String resolveId;
@@ -41,13 +42,13 @@ public class DeliverOptions {
     private String[] confs;
 
     private String pubBranch;
-    
+
     /**
-     * True to indicate that the revConstraint attribute should be generated if
-     * applicable, false to never generate the revConstraint attribute.
+     * True to indicate that the revConstraint attribute should be generated if applicable, false to
+     * never generate the revConstraint attribute.
      */
     private boolean generateRevConstraint = true;
-    
+
     /** true to merge parent descriptor elements into delivered child descriptor */
     private boolean merge = true;
 
@@ -60,8 +61,8 @@ public class DeliverOptions {
      * @return a DeliverOptions instance ready to be used or customized
      */
     public static DeliverOptions newInstance(IvySettings settings) {
-        return new DeliverOptions(null, new Date(), 
-                new DefaultPublishingDRResolver(), settings.doValidate(), true, null);
+        return new DeliverOptions(null, new Date(), new DefaultPublishingDRResolver(),
+                settings.doValidate(), true, null);
     }
 
     /**
@@ -74,7 +75,7 @@ public class DeliverOptions {
     /**
      * Creates an instance of DeliverOptions with all options explicitly set.
      */
-    public DeliverOptions(String status, Date pubDate, 
+    public DeliverOptions(String status, Date pubDate,
             PublishingDependencyRevisionResolver pdrResolver, boolean validate,
             boolean resolveDynamicRevisions, String[] confs) {
         this.status = status;
@@ -123,11 +124,11 @@ public class DeliverOptions {
         this.resolveDynamicRevisions = resolveDynamicRevisions;
         return this;
     }
-    
+
     public boolean isReplaceForcedRevisions() {
         return replaceForcedRevisions;
     }
-    
+
     public DeliverOptions setReplaceForcedRevisions(boolean replaceForcedRevisions) {
         this.replaceForcedRevisions = replaceForcedRevisions;
         return this;
@@ -196,8 +197,8 @@ public class DeliverOptions {
     }
 
     /**
-     * Return the configurations which must be deliverd. Returns <tt>null</tt> if all
-     * configurations has to be deliverd. Attention: the returned array can contain wildcards!
+     * Return the configurations which must be deliverd. Returns <tt>null</tt> if all configurations
+     * has to be deliverd. Attention: the returned array can contain wildcards!
      * 
      * @return the configurations to deliver
      */
@@ -240,10 +241,11 @@ public class DeliverOptions {
         this.pubBranch = pubBranch;
         return this;
     }
-    
+
     public boolean isGenerateRevConstraint() {
         return generateRevConstraint;
     }
+
     public DeliverOptions setGenerateRevConstraint(boolean generateRevConstraint) {
         this.generateRevConstraint = generateRevConstraint;
         return this;
@@ -260,10 +262,8 @@ public class DeliverOptions {
 
     public String toString() {
         return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
-                + " resolveDynamicRevisions=" + resolveDynamicRevisions
-                + " merge=" + merge
-                + " resolveId=" + resolveId
-                + " pubBranch=" + pubBranch;
+                + " resolveDynamicRevisions=" + resolveDynamicRevisions + " merge=" + merge
+                + " resolveId=" + resolveId + " pubBranch=" + pubBranch;
 
     }
 

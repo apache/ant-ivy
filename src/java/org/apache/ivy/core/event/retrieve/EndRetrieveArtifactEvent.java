@@ -24,8 +24,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 public class EndRetrieveArtifactEvent extends RetrieveArtifactEvent {
     public static final String NAME = "post-retrieve-artifact";
 
-    public EndRetrieveArtifactEvent(
-            ArtifactDownloadReport report, File destFile) {
+    public EndRetrieveArtifactEvent(ArtifactDownloadReport report, File destFile) {
         super(NAME, report, destFile);
     }
 }

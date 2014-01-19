@@ -74,7 +74,7 @@ public class IvyPublish extends IvyTask {
     private boolean overwrite = false;
 
     private boolean update = false;
-    
+
     private boolean merge = true;
 
     private boolean replacedynamicrev = true;
@@ -100,6 +100,7 @@ public class IvyPublish extends IvyTask {
     /**
      * @deprecated use {@link #getSrcivypattern()} instead.
      */
+    @Deprecated
     public String getDeliverivypattern() {
         return srcivypattern;
     }
@@ -107,6 +108,7 @@ public class IvyPublish extends IvyTask {
     /**
      * @deprecated use {@link #setSrcivypattern(String)} instead.
      */
+    @Deprecated
     public void setDeliverivypattern(String destivypattern) {
         srcivypattern = destivypattern;
     }
@@ -146,7 +148,7 @@ public class IvyPublish extends IvyTask {
     public String getPubbranch() {
         return pubBranch;
     }
-    
+
     public void setPubbranch(String pubBranch) {
         this.pubBranch = pubBranch;
     }
@@ -240,27 +242,24 @@ public class IvyPublish extends IvyTask {
         }
         status = getProperty(status, settings, "ivy.status");
         if (organisation == null) {
-            throw new BuildException(
-                    "no organisation provided for ivy publish task: "
+            throw new BuildException("no organisation provided for ivy publish task: "
                     + "It can either be set explicitely via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (module == null) {
-            throw new BuildException(
-                    "no module name provided for ivy publish task: "
+            throw new BuildException("no module name provided for ivy publish task: "
                     + "It can either be set explicitely via the attribute 'module' "
                     + "or via 'ivy.module' property or a prior call to <resolve/>");
         }
         if (revision == null) {
-            throw new BuildException(
-                    "no module revision provided for ivy publish task: "
+            throw new BuildException("no module revision provided for ivy publish task: "
                     + "It can either be set explicitely via the attribute 'revision' "
                     + "or via 'ivy.revision' property or a prior call to <resolve/>");
         }
         if (artifactspattern.isEmpty()) {
             throw new BuildException(
                     "no artifacts pattern: either provide it through parameter or "
-                    + "through ivy.publish.src.artifacts.pattern property");
+                            + "through ivy.publish.src.artifacts.pattern property");
         }
         if (publishResolverName == null) {
             throw new BuildException(
@@ -278,14 +277,14 @@ public class IvyPublish extends IvyTask {
             }
         }
         if (status == null) {
-            throw new BuildException(
-                    "no status provided: either provide it as parameter "
+            throw new BuildException("no status provided: either provide it as parameter "
                     + "or through the ivy.status.default property");
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
         try {
-            File ivyFile = getProject().resolveFile(IvyPatternHelper.substitute(
-                    srcivypattern, organisation, module, pubRevision, "ivy", "ivy", "xml"));
+            File ivyFile = getProject().resolveFile(
+                IvyPatternHelper.substitute(srcivypattern, organisation, module, pubRevision,
+                    "ivy", "ivy", "xml"));
             if (publishivy && (!ivyFile.exists() || forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setSettingsRef(getSettingsRef());
@@ -309,22 +308,21 @@ public class IvyPublish extends IvyTask {
                 deliver.execute();
             }
 
-            ivy.publish(mrid, artifactspattern, publishResolverName,
+            ivy.publish(
+                mrid,
+                artifactspattern,
+                publishResolverName,
                 new PublishOptions()
-                    .setPubrevision(getPubrevision())
-                    .setPubbranch(getPubbranch())
-                    .setSrcIvyPattern(publishivy ? srcivypattern : null)
-                    .setStatus(getStatus())
-                    .setPubdate(pubdate)
-                    .setExtraArtifacts(
-                        (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
-                    .setValidate(doValidate(settings))
-                    .setOverwrite(overwrite)
-                    .setUpdate(update)
-                    .setMerge(merge)
-                    .setWarnOnMissing(warnonmissing)
-                    .setHaltOnMissing(haltonmissing)
-                    .setConfs(splitConfs(conf)));
+                        .setPubrevision(getPubrevision())
+                        .setPubbranch(getPubbranch())
+                        .setSrcIvyPattern(publishivy ? srcivypattern : null)
+                        .setStatus(getStatus())
+                        .setPubdate(pubdate)
+                        .setExtraArtifacts(
+                            (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
+                        .setValidate(doValidate(settings)).setOverwrite(overwrite)
+                        .setUpdate(update).setMerge(merge).setWarnOnMissing(warnonmissing)
+                        .setHaltOnMissing(haltonmissing).setConfs(splitConfs(conf)));
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;
@@ -393,7 +391,7 @@ public class IvyPublish extends IvyTask {
         private String name;
 
         private String type;
-        
+
         private Map extra = new HashMap();
 
         public String[] getConfigurations() {
@@ -455,7 +453,7 @@ public class IvyPublish extends IvyTask {
         public Map getExtraAttributes() {
             return extra;
         }
-        
+
         public Map getQualifiedExtraAttributes() {
             return extra;
         }
@@ -463,7 +461,7 @@ public class IvyPublish extends IvyTask {
         public boolean isMetadata() {
             return false;
         }
-        
+
         public void setDynamicAttribute(String name, String value) {
             extra.put(name, value);
         }

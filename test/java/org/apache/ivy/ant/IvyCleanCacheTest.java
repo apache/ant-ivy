@@ -26,11 +26,15 @@ import org.apache.tools.ant.Project;
 
 public class IvyCleanCacheTest extends TestCase {
     private IvyCleanCache cleanCache;
+
     private File cacheDir;
+
     private File repoCache2;
+
     private File repoCache;
+
     private File resolutionCache;
-    
+
     protected void setUp() throws Exception {
         Project p = new Project();
         cacheDir = new File("build/cache");
@@ -39,10 +43,10 @@ public class IvyCleanCacheTest extends TestCase {
         cleanCache.setProject(p);
         IvyConfigure settings = new IvyConfigure();
         settings.setProject(p);
-        settings.setUrl(
-            IvyCleanCacheTest.class.getResource("ivysettings-cleancache.xml").toExternalForm());
+        settings.setUrl(IvyCleanCacheTest.class.getResource("ivysettings-cleancache.xml")
+                .toExternalForm());
         settings.perform();
-        
+
         resolutionCache = new File(cacheDir, "resolution");
         repoCache = new File(cacheDir, "repository");
         repoCache2 = new File(cacheDir, "repository2");
@@ -50,14 +54,14 @@ public class IvyCleanCacheTest extends TestCase {
         repoCache.mkdirs();
         repoCache2.mkdirs();
     }
-    
+
     public void testCleanAll() throws Exception {
         cleanCache.perform();
         assertFalse(resolutionCache.exists());
         assertFalse(repoCache.exists());
         assertFalse(repoCache2.exists());
     }
-    
+
     public void testResolutionOnly() throws Exception {
         cleanCache.setCache(IvyCleanCache.NONE);
         cleanCache.perform();
@@ -65,7 +69,7 @@ public class IvyCleanCacheTest extends TestCase {
         assertTrue(repoCache.exists());
         assertTrue(repoCache2.exists());
     }
-    
+
     public void testRepositoryOnly() throws Exception {
         cleanCache.setResolution(false);
         cleanCache.perform();
@@ -73,7 +77,7 @@ public class IvyCleanCacheTest extends TestCase {
         assertFalse(repoCache.exists());
         assertFalse(repoCache2.exists());
     }
-    
+
     public void testOneRepositoryOnly() throws Exception {
         cleanCache.setResolution(false);
         cleanCache.setCache("mycache");
@@ -82,7 +86,7 @@ public class IvyCleanCacheTest extends TestCase {
         assertFalse(repoCache.exists());
         assertTrue(repoCache2.exists());
     }
-    
+
     public void testUnknownCache() throws Exception {
         cleanCache.setResolution(false);
         cleanCache.setCache("yourcache");

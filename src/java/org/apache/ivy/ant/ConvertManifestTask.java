@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.jar.Manifest;
 
-import org.apache.ivy.ant.IvyTask;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.core.BundleInfoAdapter;

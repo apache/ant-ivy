@@ -28,17 +28,15 @@ public class RetrieveArtifactEvent extends IvyEvent {
 
     private File destFile;
 
-    public RetrieveArtifactEvent(
-            String name,
-            ArtifactDownloadReport report, File destFile) {
+    public RetrieveArtifactEvent(String name, ArtifactDownloadReport report, File destFile) {
         super(name);
         addArtifactAttributes(report.getArtifact());
-        
+
         this.report = report;
         this.destFile = destFile;
         addAttribute("from", report.getLocalFile().getAbsolutePath());
         addAttribute("to", destFile.getAbsolutePath());
-        addAttribute("size", String.valueOf(destFile.length()));        
+        addAttribute("size", String.valueOf(destFile.length()));
     }
 
     protected void addArtifactAttributes(Artifact artifact) {
@@ -46,11 +44,11 @@ public class RetrieveArtifactEvent extends IvyEvent {
         addAttributes(artifact.getAttributes());
         addAttribute("metadata", String.valueOf(artifact.isMetadata()));
     }
-    
+
     public File getDestFile() {
         return destFile;
     }
-    
+
     public ArtifactDownloadReport getReport() {
         return report;
     }

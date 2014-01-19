@@ -56,8 +56,9 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
             return name;
         }
     }
-    
-    public static Collection/*<Configuration>*/ findConfigurationExtending(String conf, Configuration[] confs) {
+
+    public static Collection/* <Configuration> */findConfigurationExtending(String conf,
+            Configuration[] confs) {
         Collection extendingConfs = new ArrayList();
         for (int i = 0; i < confs.length; i++) {
             if (confs[i] != null && Arrays.asList(confs[i].getExtends()).contains(conf)) {
@@ -77,46 +78,53 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
     private Visibility visibility;
 
     private boolean transitive = true;
-    
+
     private String deprecated;
-    
+
     private ModuleRevisionId sourceModule;
 
     /**
      * Creates a new configuration.
      * 
-     * @param name the name of the configuration
+     * @param name
+     *            the name of the configuration
      */
     public Configuration(String name) {
         this(name, Visibility.PUBLIC, null, null, true, null);
     }
-    
+
     public Configuration(Configuration source, ModuleRevisionId sourceModule) {
-        this(source.getAttributes(), source.getQualifiedExtraAttributes(), source.getName(), 
-             source.getVisibility(), source.getDescription(), source.getExtends(),
-             source.isTransitive(), source.getDeprecated(), sourceModule);
+        this(source.getAttributes(), source.getQualifiedExtraAttributes(), source.getName(), source
+                .getVisibility(), source.getDescription(), source.getExtends(), source
+                .isTransitive(), source.getDeprecated(), sourceModule);
     }
 
     /**
      * Creates a new configuration.
      * 
-     * @param name the name of the configuration
-     * @param visibility the visibility of the configuration
-     * @param description a description
-     * @param ext the configurations to extend from
-     * @param transitive indicates if the configuration is transitive
-     * @param deprecated the deprecation message
+     * @param name
+     *            the name of the configuration
+     * @param visibility
+     *            the visibility of the configuration
+     * @param description
+     *            a description
+     * @param ext
+     *            the configurations to extend from
+     * @param transitive
+     *            indicates if the configuration is transitive
+     * @param deprecated
+     *            the deprecation message
      */
-    public Configuration(String name, Visibility visibility, String description, String[] ext, 
+    public Configuration(String name, Visibility visibility, String description, String[] ext,
             boolean transitive, String deprecated) {
         this(null, null, name, visibility, description, ext, transitive, deprecated, null);
     }
-    
+
     private Configuration(Map attributes, Map extraAttributes, String name, Visibility visibility,
-                String description, String[] ext, boolean transitive, String deprecated, 
-                ModuleRevisionId sourceModule) {
+            String description, String[] ext, boolean transitive, String deprecated,
+            ModuleRevisionId sourceModule) {
         super(attributes, extraAttributes);
-        
+
         if (name == null) {
             throw new NullPointerException("null configuration name not allowed");
         }
@@ -141,12 +149,13 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     /**
      * Returns the deprecation message, or <tt>null</tt> if not specified.
+     * 
      * @return Returns the deprecation message.
      */
     public String getDeprecated() {
         return deprecated;
     }
-    
+
     /**
      * @return Returns the description. It may be null.
      */
@@ -181,7 +190,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
     public final boolean isTransitive() {
         return transitive;
     }
-    
+
     public ModuleRevisionId getSourceModule() {
         return sourceModule;
     }

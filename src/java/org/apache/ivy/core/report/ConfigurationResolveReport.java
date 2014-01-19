@@ -77,15 +77,13 @@ public class ConfigurationResolveReport {
         this.options = options;
     }
 
-    
     /**
-     * Check if the set of dependencies has changed since the previous execution 
-     * of a resolution.<br/>
-     * This function use the report file found in the cache.  So the function must be called
-     * before the new report is serialized there.</br>
-     * This function also use the internal dependencies that must already be filled.
-     * This function might be 'heavy' because it may have to parse the previous 
-     * report.
+     * Check if the set of dependencies has changed since the previous execution of a resolution.<br/>
+     * This function use the report file found in the cache. So the function must be called before
+     * the new report is serialized there.</br> This function also use the internal dependencies
+     * that must already be filled. This function might be 'heavy' because it may have to parse the
+     * previous report.
+     * 
      * @return
      */
     public void checkIfChanged() {
@@ -96,8 +94,10 @@ public class ConfigurationResolveReport {
             try {
                 XmlReportParser parser = new XmlReportParser();
                 parser.parse(previousReportFile);
-                List<ModuleRevisionId> previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
-                HashSet<ModuleRevisionId> previousDepSet = new HashSet<ModuleRevisionId>(previousDeps);
+                List<ModuleRevisionId> previousDeps = Arrays.asList(parser
+                        .getDependencyRevisionIds());
+                HashSet<ModuleRevisionId> previousDepSet = new HashSet<ModuleRevisionId>(
+                        previousDeps);
                 hasChanged = Boolean.valueOf(!previousDepSet.equals(getModuleRevisionIds()));
             } catch (Exception e) {
                 Message.warn("Error while parsing configuration resolve report "
@@ -108,11 +108,11 @@ public class ConfigurationResolveReport {
             hasChanged = Boolean.TRUE;
         }
     }
-    
+
     /**
      * @pre checkIfChanged has been called.
      */
-    public boolean hasChanged() {        
+    public boolean hasChanged() {
         return hasChanged.booleanValue();
     }
 
@@ -135,7 +135,7 @@ public class ConfigurationResolveReport {
     public void addDependency(IvyNode node) {
         dependencies.put(node.getId(), node);
         dependencies.put(node.getResolvedId(), node);
-        dependencyReports.put(node, Collections.<ArtifactDownloadReport>emptyList());
+        dependencyReports.put(node, Collections.<ArtifactDownloadReport> emptyList());
     }
 
     public void updateDependency(ModuleRevisionId mrid, IvyNode node) {
@@ -205,7 +205,7 @@ public class ConfigurationResolveReport {
 
     public IvyNode[] getDownloadedNodes() {
         List<IvyNode> downloaded = new ArrayList<IvyNode>();
-        for (IvyNode node  : getDependencies()) {
+        for (IvyNode node : getDependencies()) {
             if (node.isDownloaded() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
@@ -220,7 +220,7 @@ public class ConfigurationResolveReport {
                 downloaded.add(node);
             }
         }
-        return (IvyNode[]) downloaded.toArray(new IvyNode[downloaded.size()]);
+        return downloaded.toArray(new IvyNode[downloaded.size()]);
     }
 
     public ArtifactDownloadReport[] getDownloadReports(ModuleRevisionId mrid) {
@@ -272,7 +272,7 @@ public class ConfigurationResolveReport {
 
     public int getArtifactsNumber() {
         int total = 0;
-        for (Collection<ArtifactDownloadReport> reports  : dependencyReports.values()) {
+        for (Collection<ArtifactDownloadReport> reports : dependencyReports.values()) {
             total += reports == null ? 0 : reports.size();
         }
         return total;
@@ -292,16 +292,16 @@ public class ConfigurationResolveReport {
      * specific download status, and also remove the download report for the evicted modules.
      * 
      * @param downloadStatus
-     *            the status of download to retreive. Set it to <code>null</code> for no
-     *            restriction on the download status
+     *            the status of download to retreive. Set it to <code>null</code> for no restriction
+     *            on the download status
      * @param withEvicted
      *            set it to <code>true</code> if the report for the evicted modules have to be
      *            retrieved.
      * @return the list of reports, never <code>null</code>
      * @see ArtifactDownloadReport
      */
-    public ArtifactDownloadReport[] getArtifactsReports(
-            DownloadStatus downloadStatus, boolean withEvicted) {
+    public ArtifactDownloadReport[] getArtifactsReports(DownloadStatus downloadStatus,
+            boolean withEvicted) {
         Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
         Collection<ModuleRevisionId> evictedMrids = null;
         if (!withEvicted) {
@@ -312,9 +312,9 @@ public class ConfigurationResolveReport {
                 if (downloadStatus != null && report.getDownloadStatus() != downloadStatus) {
                     continue;
                 }
-                if (withEvicted 
+                if (withEvicted
                         || !evictedMrids.contains(report.getArtifact().getModuleRevisionId())) {
-                    all.add(report);   
+                    all.add(report);
                 }
             }
         }
@@ -336,8 +336,7 @@ public class ConfigurationResolveReport {
      * @return the list of reports, never <code>null</code>
      */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
-        ArtifactDownloadReport[] allFailedReports 
-            = getArtifactsReports(DownloadStatus.FAILED, true);
+        ArtifactDownloadReport[] allFailedReports = getArtifactsReports(DownloadStatus.FAILED, true);
         return filterOutMergedArtifacts(allFailedReports);
     }
 
@@ -351,10 +350,11 @@ public class ConfigurationResolveReport {
 
     public static ArtifactDownloadReport[] filterOutMergedArtifacts(
             ArtifactDownloadReport[] allFailedReports) {
-        Collection<ArtifactDownloadReport> adrs = new ArrayList<ArtifactDownloadReport>(Arrays.asList(allFailedReports));
+        Collection<ArtifactDownloadReport> adrs = new ArrayList<ArtifactDownloadReport>(
+                Arrays.asList(allFailedReports));
         for (Iterator<ArtifactDownloadReport> iterator = adrs.iterator(); iterator.hasNext();) {
-            ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
-            
+            ArtifactDownloadReport adr = iterator.next();
+
             if (adr.getArtifact().getExtraAttribute("ivy:merged") != null) {
                 iterator.remove();
             }

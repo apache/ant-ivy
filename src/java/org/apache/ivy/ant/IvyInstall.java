@@ -40,7 +40,7 @@ public class IvyInstall extends IvyTask {
     private String revision;
 
     private String branch;
-    
+
     private String conf = "*";
 
     private boolean overwrite = false;
@@ -50,7 +50,7 @@ public class IvyInstall extends IvyTask {
     private String to;
 
     private boolean transitive;
-    
+
     private String type;
 
     private String matcher = PatternMatcher.EXACT;
@@ -63,32 +63,29 @@ public class IvyInstall extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (organisation == null) {
-            throw new BuildException(
-                    "no organisation provided for ivy publish task: "
+            throw new BuildException("no organisation provided for ivy publish task: "
                     + "It can either be set explicitely via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (module == null && PatternMatcher.EXACT.equals(matcher)) {
-            throw new BuildException(
-                    "no module name provided for ivy publish task: "
+            throw new BuildException("no module name provided for ivy publish task: "
                     + "It can either be set explicitely via the attribute 'module' "
                     + "or via 'ivy.module' property or a prior call to <resolve/>");
         } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
             module = PatternMatcher.ANY_EXPRESSION;
         }
         if (revision == null && PatternMatcher.EXACT.equals(matcher)) {
-            throw new BuildException(
-                    "no module revision provided for ivy publish task: "
+            throw new BuildException("no module revision provided for ivy publish task: "
                     + "It can either be set explicitely via the attribute 'revision' "
                     + "or via 'ivy.revision' property or a prior call to <resolve/>");
         } else if (revision == null && !PatternMatcher.EXACT.equals(matcher)) {
             revision = PatternMatcher.ANY_EXPRESSION;
         }
-      if (branch == null && PatternMatcher.EXACT.equals(matcher)) {
-          branch = settings.getDefaultBranch(ModuleId.newInstance(organisation, module));
-      } else if (branch == null && !PatternMatcher.EXACT.equals(matcher)) {
-          branch = PatternMatcher.ANY_EXPRESSION;
-      }
+        if (branch == null && PatternMatcher.EXACT.equals(matcher)) {
+            branch = settings.getDefaultBranch(ModuleId.newInstance(organisation, module));
+        } else if (branch == null && !PatternMatcher.EXACT.equals(matcher)) {
+            branch = PatternMatcher.ANY_EXPRESSION;
+        }
         if (from == null) {
             throw new BuildException(
                     "no from resolver name: please provide it through parameter 'from'");
@@ -97,20 +94,20 @@ public class IvyInstall extends IvyTask {
             throw new BuildException(
                     "no to resolver name: please provide it through parameter 'to'");
         }
-        ModuleRevisionId mrid = 
-            ModuleRevisionId.newInstance(organisation, module, branch, revision);
-        
+        ModuleRevisionId mrid = ModuleRevisionId
+                .newInstance(organisation, module, branch, revision);
+
         ResolveReport report;
         try {
-            report = ivy.install(mrid, from, to, 
-                new InstallOptions()
-                    .setTransitive(transitive)
-                    .setValidate(doValidate(settings))
-                    .setOverwrite(overwrite)
-                    .setConfs(conf.split(","))
-                    .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
-                    .setMatcherName(matcher)
-                    .setInstallOriginalMetadata(installOriginalMetadata));
+            report = ivy.install(
+                mrid,
+                from,
+                to,
+                new InstallOptions().setTransitive(transitive).setValidate(doValidate(settings))
+                        .setOverwrite(overwrite).setConfs(conf.split(","))
+                        .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
+                        .setMatcherName(matcher)
+                        .setInstallOriginalMetadata(installOriginalMetadata));
         } catch (Exception e) {
             throw new BuildException("impossible to install " + mrid + ": " + e, e);
         }
@@ -141,13 +138,13 @@ public class IvyInstall extends IvyTask {
         this.module = module;
     }
 
-  public String getBranch() {
-      return branch;
-  }
+    public String getBranch() {
+        return branch;
+    }
 
-  public void setBranch(String branch) {
-      this.branch = branch;
-  }
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
 
     public String getOrganisation() {
         return organisation;
@@ -212,11 +209,11 @@ public class IvyInstall extends IvyTask {
     public void setMatcher(String matcher) {
         this.matcher = matcher;
     }
-    
+
     public String getConf() {
         return conf;
     }
-    
+
     public void setConf(String conf) {
         this.conf = conf;
     }
@@ -224,7 +221,7 @@ public class IvyInstall extends IvyTask {
     public boolean isInstallOriginalMetadata() {
         return installOriginalMetadata;
     }
-    
+
     public void setInstallOriginalMetadata(boolean installOriginalMetadata) {
         this.installOriginalMetadata = installOriginalMetadata;
     }

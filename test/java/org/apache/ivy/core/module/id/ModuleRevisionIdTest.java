@@ -23,7 +23,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 public class ModuleRevisionIdTest extends TestCase {
-    
+
     public void testParse() throws Exception {
         testParse("#A;1.0");
         testParse("org#module;2.0");
@@ -32,7 +32,7 @@ public class ModuleRevisionIdTest extends TestCase {
         testParse("org#module#branch;working@test");
         testParse(" org#module#branch;[1.2,1.3] ");
         testParse(" org#module#branch;[1.2,1.3) ");
-        
+
         testParseFailure("bad");
         testParseFailure("org#mod");
         testParseFailure("#;1");
@@ -42,9 +42,9 @@ public class ModuleRevisionIdTest extends TestCase {
     private void testParseFailure(String mrid) {
         try {
             ModuleRevisionId.parse(mrid);
-            fail("ModuleRevisionId.parse is supposed to raise an exception with "+mrid);
+            fail("ModuleRevisionId.parse is supposed to raise an exception with " + mrid);
         } catch (IllegalArgumentException ex) {
-            assertTrue(ex.getMessage().indexOf(mrid) != - 1);
+            assertTrue(ex.getMessage().indexOf(mrid) != -1);
         }
     }
 
@@ -70,7 +70,7 @@ public class ModuleRevisionIdTest extends TestCase {
     private void testEncodeDecodeToString(ModuleRevisionId mrid) {
         assertEquals(mrid, ModuleRevisionId.decode(mrid.encodeToString()));
     }
-    
+
     private void testParse(String mrid) {
         assertEquals(mrid.trim(), ModuleRevisionId.parse(mrid).toString());
     }

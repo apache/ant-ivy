@@ -98,9 +98,8 @@ public class IvyNodeEviction {
 
         public String toString() {
             if (selected != null) {
-                return selected + " in " + parent 
-                    + (detail == null ? "" : " " + detail)
-                    + " (" + conflictManager + ") [" + rootModuleConf + "]";
+                return selected + " in " + parent + (detail == null ? "" : " " + detail) + " ("
+                        + conflictManager + ") [" + rootModuleConf + "]";
             } else {
                 return "transitively [" + rootModuleConf + "]";
             }
@@ -125,7 +124,7 @@ public class IvyNodeEviction {
         public boolean isTransitivelyEvicted() {
             return parent == null;
         }
-        
+
         public String getDetail() {
             return detail;
         }
@@ -164,11 +163,11 @@ public class IvyNodeEviction {
         }
 
         public int hashCode() {
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             int hash = 33;
             hash += getModuleId().hashCode() * 17;
             hash += getConf().hashCode() * 17;
-            //CheckStyle:MagicNumber| ON
+            // CheckStyle:MagicNumber| ON
             return hash;
         }
     }
@@ -231,11 +230,11 @@ public class IvyNodeEviction {
                 ModuleRevisionId resolvedId = node.getResolvedId();
                 resolvedRevs.add(node.getId());
                 resolvedRevs.add(resolvedId);
-                
-                // in case there are extra attributes on the resolved module we also add the 
+
+                // in case there are extra attributes on the resolved module we also add the
                 // the module without these extra attributes (cfr. IVY-1236)
                 if (!resolvedId.getExtraAttributes().isEmpty()) {
-                    resolvedRevs.add(ModuleRevisionId.newInstance(resolvedId.getOrganisation(), 
+                    resolvedRevs.add(ModuleRevisionId.newInstance(resolvedId.getOrganisation(),
                         resolvedId.getName(), resolvedId.getBranch(), resolvedId.getRevision()));
                 }
             }
@@ -294,7 +293,7 @@ public class IvyNodeEviction {
         ModuleId moduleId = node.getId().getModuleId();
         Collection resolvedRevisions = root.getResolvedRevisions(moduleId, rootModuleConf);
         return !resolvedRevisions.contains(node.getResolvedId())
-                       || evictedData.isTransitivelyEvicted();
+                || evictedData.isTransitivelyEvicted();
     }
 
     public boolean isCompletelyEvicted() {
@@ -364,8 +363,8 @@ public class IvyNodeEviction {
         }
         return allEvictingNodes;
     }
-    
-    public Collection/*<String>*/ getAllEvictingNodesDetails() {
+
+    public Collection/* <String> */getAllEvictingNodesDetails() {
         Collection ret = null;
         for (Iterator iter = evicted.values().iterator(); iter.hasNext();) {
             EvictionData ed = (EvictionData) iter.next();
@@ -375,11 +374,10 @@ public class IvyNodeEviction {
                     ret = new HashSet();
                 }
                 if (selected.size() == 1) {
-                    ret.add(selected.iterator().next() 
-                        + (ed.getDetail() == null ? "" : " " + ed.getDetail()));
+                    ret.add(selected.iterator().next()
+                            + (ed.getDetail() == null ? "" : " " + ed.getDetail()));
                 } else if (selected.size() > 1) {
-                    ret.add(selected 
-                        + (ed.getDetail() == null ? "" : " " + ed.getDetail()));
+                    ret.add(selected + (ed.getDetail() == null ? "" : " " + ed.getDetail()));
                 }
             }
         }
@@ -433,8 +431,7 @@ public class IvyNodeEviction {
         return ret;
     }
 
-    public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, 
-            Collection conflicts) {
+    public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
         ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
         pendingConflicts.put(moduleIdConf, new HashSet(conflicts));
     }

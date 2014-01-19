@@ -21,11 +21,11 @@ import java.io.File;
 import java.io.IOException;
 
 public interface SignatureGenerator {
-    
+
     String getName();
-    
+
     void sign(File src, File dest) throws IOException;
-    
+
     String getExtension();
 
 }

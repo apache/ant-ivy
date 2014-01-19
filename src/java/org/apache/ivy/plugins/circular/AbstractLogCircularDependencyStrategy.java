@@ -25,15 +25,15 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 
-public abstract class AbstractLogCircularDependencyStrategy 
-    extends AbstractCircularDependencyStrategy {
-    
+public abstract class AbstractLogCircularDependencyStrategy extends
+        AbstractCircularDependencyStrategy {
+
     protected AbstractLogCircularDependencyStrategy(String name) {
         super(name);
     }
 
-    private Collection/*<String>*/ circularDependencies = new HashSet();
-    
+    private Collection/* <String> */circularDependencies = new HashSet();
+
     public void handleCircularDependency(ModuleRevisionId[] mrids) {
         String circularDependencyId = getCircularDependencyId(mrids);
         if (!circularDependencies.contains(circularDependencyId)) {

@@ -31,10 +31,13 @@ import org.apache.ivy.util.StringUtils;
 
 public class CommandLineParser {
     private static final int MIN_DESC_WIDTH = 40;
+
     private static final int MAX_SPEC_WIDTH = 30;
-    private Map/*<String, Option>*/ options = new LinkedHashMap();
-    private Map/*<String, List<Option>>*/ categories = new LinkedHashMap();
-    
+
+    private Map/* <String, Option> */options = new LinkedHashMap();
+
+    private Map/* <String, List<Option>> */categories = new LinkedHashMap();
+
     public CommandLineParser() {
     }
 
@@ -42,19 +45,18 @@ public class CommandLineParser {
         categories.put(category, new ArrayList());
         return this;
     }
-    
+
     public CommandLineParser addOption(Option option) {
         options.put(option.getName(), option);
         if (!categories.isEmpty()) {
-            ((List) categories.values().toArray()[categories.values().size() - 1])
-                .add(option);
+            ((List) categories.values().toArray()[categories.values().size() - 1]).add(option);
         }
         return this;
     }
-    
+
     public CommandLine parse(String[] args) throws ParseException {
         CommandLine line = new CommandLine();
-        
+
         int index = args.length;
         ListIterator iterator = Arrays.asList(args).listIterator();
         while (iterator.hasNext()) {
@@ -69,14 +71,14 @@ public class CommandLineParser {
                 index = iterator.previousIndex();
                 break;
             }
-            
+
             Option option = (Option) options.get(arg.substring(1));
             if (option == null) {
                 throw new ParseException("Unrecognized option: " + arg);
             }
             line.addOptionValues(arg.substring(1), option.parse(iterator));
         }
-        
+
         // left over args
         String[] leftOverArgs = new String[args.length - index];
         System.arraycopy(args, index, leftOverArgs, 0, leftOverArgs.length);
@@ -94,8 +96,7 @@ public class CommandLineParser {
             if (option.isDeprecated() && !showDeprecated) {
                 continue;
             }
-            specWidth = Math.min(MAX_SPEC_WIDTH, 
-                Math.max(specWidth, option.getSpec().length()));
+            specWidth = Math.min(MAX_SPEC_WIDTH, Math.max(specWidth, option.getSpec().length()));
         }
 
         // print options help
@@ -103,7 +104,7 @@ public class CommandLineParser {
             Entry entry = (Entry) iterator.next();
             String category = (String) entry.getKey();
             pw.println("==== " + category);
-            List/*<Option>*/ options = (List) entry.getValue();
+            List/* <Option> */options = (List) entry.getValue();
             for (Iterator it = options.iterator(); it.hasNext();) {
                 Option option = (Option) it.next();
                 if (option.isDeprecated() && !showDeprecated) {
@@ -114,10 +115,10 @@ public class CommandLineParser {
                 pw.print(" " + spec);
                 int specLength = spec.length() + 1;
                 pw.print(StringUtils.repeat(" ", specWidth - specLength));
-                
+
                 // print description
-                StringBuffer desc = new StringBuffer(
-                    (option.isDeprecated() ? "DEPRECATED: " : "") + option.getDescription());
+                StringBuffer desc = new StringBuffer((option.isDeprecated() ? "DEPRECATED: " : "")
+                        + option.getDescription());
                 int count = Math.min(desc.length(), width - Math.max(specLength, specWidth));
                 // see if we have enough space to start on the same line as the spec
                 if (count > MIN_DESC_WIDTH || desc.length() + specLength < width) {
@@ -125,7 +126,7 @@ public class CommandLineParser {
                     desc.delete(0, count);
                 }
                 pw.println();
-                
+
                 // print remaining description
                 while (desc.length() > 0) {
                     pw.print(StringUtils.repeat(" ", specWidth));

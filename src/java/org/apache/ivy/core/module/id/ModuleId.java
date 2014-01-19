@@ -33,8 +33,8 @@ import org.apache.ivy.core.IvyPatternHelper;
  */
 public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";
-    
-    private static final Map/*<ModuleId, WeakReference<ModuleId>>*/ CACHE = new WeakHashMap();
+
+    private static final Map/* <ModuleId, WeakReference<ModuleId>> */CACHE = new WeakHashMap();
 
     /**
      * Returns a ModuleId for the given organization and module name.
@@ -48,6 +48,7 @@ public class ModuleId implements Comparable {
     public static ModuleId newInstance(String org, String name) {
         return intern(new ModuleId(org, name));
     }
+
     /**
      * Returns an intern instance of a ModuleId equals to the given ModuleId if any, or the given
      * ModuleId.
@@ -62,7 +63,7 @@ public class ModuleId implements Comparable {
      */
     public static ModuleId intern(ModuleId moduleId) {
         ModuleId r = null;
-        
+
         synchronized (CACHE) {
             WeakReference ref = (WeakReference) CACHE.get(moduleId);
             if (ref != null) {
@@ -82,13 +83,16 @@ public class ModuleId implements Comparable {
     private String name;
 
     private int hash;
-    
-    private Map/*<String, String>*/ attributes = new HashMap();
+
+    private Map/* <String, String> */attributes = new HashMap();
 
     /**
      * Constructor.
-     * @param  organisation  The organisation which creates the module.
-     * @param  name  The name of the module.
+     * 
+     * @param organisation
+     *            The organisation which creates the module.
+     * @param name
+     *            The name of the module.
      */
     public ModuleId(String organisation, String name) {
         if (name == null) {
@@ -102,7 +106,8 @@ public class ModuleId implements Comparable {
 
     /**
      * Returns the name of the module.
-     * @return  The name of the module.
+     * 
+     * @return The name of the module.
      */
     public String getName() {
         return name;
@@ -110,13 +115,14 @@ public class ModuleId implements Comparable {
 
     /**
      * Returns the name of the organisation.
-     * @return  The name of the organisation.
+     * 
+     * @return The name of the organisation.
      */
     public String getOrganisation() {
         return organisation;
     }
 
-    /** {@inheritDoc} */    
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (!(obj instanceof ModuleId)) {
             return false;
@@ -129,24 +135,24 @@ public class ModuleId implements Comparable {
         }
     }
 
-    /** {@inheritDoc} */    
+    /** {@inheritDoc} */
     public int hashCode() {
         if (hash == 0) {
-            //CheckStyle:MagicNumber| OFF
+            // CheckStyle:MagicNumber| OFF
             hash = 31;
             hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
             hash = hash * 13 + name.hashCode();
-            //CheckStyle:MagicNumber| ON
+            // CheckStyle:MagicNumber| ON
         }
         return hash;
     }
 
-    /** {@inheritDoc} */    
+    /** {@inheritDoc} */
     public String toString() {
         return organisation + "#" + name;
     }
 
-    /** {@inheritDoc} */    
+    /** {@inheritDoc} */
     public int compareTo(Object obj) {
         ModuleId that = (ModuleId) obj;
         int result = organisation.compareTo(that.organisation);
@@ -158,16 +164,16 @@ public class ModuleId implements Comparable {
 
     /**
      * Returns the encoded String representing this ModuleId.
-     * @return  The ModuleId encoded as String.
+     * 
+     * @return The ModuleId encoded as String.
      */
     public String encodeToString() {
         return getOrganisation() + ENCODE_SEPARATOR + getName();
     }
-    
+
     /**
-     * Returns a Map of all attributes of this module id.
-     * The Map keys are attribute names as Strings, and values are corresponding attribute values
-     * (as String too). 
+     * Returns a Map of all attributes of this module id. The Map keys are attribute names as
+     * Strings, and values are corresponding attribute values (as String too).
      * 
      * @return A Map instance containing all the attributes and their values.
      */
@@ -176,10 +182,12 @@ public class ModuleId implements Comparable {
     }
 
     /**
-     * Returns a ModuleId  
-     * @param  encoded  
-     * @return  The new ModuleId.
-     * @throws  IllegalArgumentException  If the given String could not be decoded.
+     * Returns a ModuleId
+     * 
+     * @param encoded
+     * @return The new ModuleId.
+     * @throws IllegalArgumentException
+     *             If the given String could not be decoded.
      */
     public static ModuleId decode(String encoded) {
         String[] parts = encoded.split(ENCODE_SEPARATOR);
@@ -191,12 +199,12 @@ public class ModuleId implements Comparable {
 
     /**
      * Pattern to use to matched mid text representation.
+     * 
      * @see #parse(String)
      */
-    public static final Pattern MID_PATTERN = 
-        Pattern.compile(
-            "(" + ModuleRevisionId.STRICT_CHARS_PATTERN + "*)" 
-            + "#(" + ModuleRevisionId.STRICT_CHARS_PATTERN + "+)"); 
+    public static final Pattern MID_PATTERN = Pattern.compile("("
+            + ModuleRevisionId.STRICT_CHARS_PATTERN + "*)" + "#("
+            + ModuleRevisionId.STRICT_CHARS_PATTERN + "+)");
 
     /**
      * Parses the module id text representation and returns it as a {@link ModuleId} instance.
@@ -211,12 +219,12 @@ public class ModuleId implements Comparable {
         Matcher m = MID_PATTERN.matcher(mid);
         if (!m.matches()) {
             throw new IllegalArgumentException(
-                    "module text representation do not match expected pattern."
-                            + " given mid='" + mid + "' expected form=" + MID_PATTERN.pattern());
+                    "module text representation do not match expected pattern." + " given mid='"
+                            + mid + "' expected form=" + MID_PATTERN.pattern());
         }
 
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         return newInstance(m.group(1), m.group(2));
-        //CheckStyle:MagicNumber| ON
+        // CheckStyle:MagicNumber| ON
     }
 }

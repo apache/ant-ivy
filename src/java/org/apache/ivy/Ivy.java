@@ -59,6 +59,7 @@ import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.core.sort.SortOptions;
+import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
@@ -93,13 +94,15 @@ import org.apache.ivy.util.MessageLoggerEngine;
  * <p>
  * If the methods offered by the {@link Ivy} class are not flexible enough and you want to use Ivy
  * engines directly, you need to call the methods within a single {@link IvyContext} associated to
- * the {@link Ivy} instance you use.<br/> To do so, it is recommended to use the
- * {@link #execute(org.apache.ivy.Ivy.IvyCallback)} method like this:
+ * the {@link Ivy} instance you use.<br/>
+ * To do so, it is recommended to use the {@link #execute(org.apache.ivy.Ivy.IvyCallback)} method
+ * like this:
+ * 
  * <pre>
  * Ivy ivy = Ivy.newInstance();
  * ivy.execute(new IvyCallback() {
  *     public Object doInIvyContext(Ivy ivy, IvyContext context) {
- *         // obviously we can use regular Ivy methods in the callback 
+ *         // obviously we can use regular Ivy methods in the callback
  *         ivy.configure(new URL(&quot;ivysettings.xml&quot;));
  *         // and we can safely use Ivy engines too
  *         ivy.getResolveEngine().resolve(new URL(&quot;ivy.xml&quot;));
@@ -128,25 +131,26 @@ public class Ivy {
          */
         public Object doInIvyContext(Ivy ivy, IvyContext context);
     }
-    
+
     private static final int KILO = 1024;
 
     /**
      * @deprecated Use the {@link DateUtil} utility class instead.
      */
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DateUtil.DATE_FORMAT_PATTERN);
-    
+    @Deprecated
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+            DateUtil.DATE_FORMAT_PATTERN);
+
     /**
-     * the current version of Ivy, as displayed on the console when 
-     * Ivy is initialized
+     * the current version of Ivy, as displayed on the console when Ivy is initialized
      */
     private static final String IVY_VERSION;
+
     /**
-     * the date at which this version of Ivy has been built.
-     * May be empty if unknown.
+     * the date at which this version of Ivy has been built. May be empty if unknown.
      */
     private static final String IVY_DATE;
-    
+
     static {
         // initialize IVY_VERSION and IVY_DATE
         Properties props = new Properties();
@@ -163,10 +167,9 @@ public class Ivy {
         IVY_VERSION = props.getProperty("version", "non official version");
         IVY_DATE = props.getProperty("date", "");
     }
-    
+
     /**
-     * Returns the current version of Ivy, as displayed on the console when 
-     * Ivy is initialized.
+     * Returns the current version of Ivy, as displayed on the console when Ivy is initialized.
      * 
      * @return the current version of Ivy
      */
@@ -184,9 +187,10 @@ public class Ivy {
     public static String getIvyDate() {
         return IVY_DATE;
     }
-    
+
     /**
      * Returns the URL at which Ivy web site can be found.
+     * 
      * @return the URL at which Ivy web site can be found
      */
     public static String getIvyHomeURL() {
@@ -244,7 +248,7 @@ public class Ivy {
     private InstallEngine installEngine;
 
     private RepositoryManagementEngine repositoryEngine;
-    
+
     /**
      * The logger engine to use to log messages when using this Ivy instance.
      */
@@ -263,10 +267,10 @@ public class Ivy {
 
     /**
      * This method is used to bind this Ivy instance to required dependencies, i.e. instance of
-     * settings, engines, and so on. 
+     * settings, engines, and so on.
      * <p>
-     * After this call Ivy is still not configured, which means that
-     * the settings object is still empty.
+     * After this call Ivy is still not configured, which means that the settings object is still
+     * empty.
      * </p>
      */
     public void bind() {
@@ -297,29 +301,28 @@ public class Ivy {
                 publishEngine = new PublishEngine(settings, eventManager);
             }
             if (installEngine == null) {
-                installEngine = new InstallEngine(
-                    settings, searchEngine, resolveEngine);
+                installEngine = new InstallEngine(settings, searchEngine, resolveEngine);
             }
             if (repositoryEngine == null) {
-                repositoryEngine = new RepositoryManagementEngine(
-                    settings, searchEngine, resolveEngine);
+                repositoryEngine = new RepositoryManagementEngine(settings, searchEngine,
+                        resolveEngine);
             }
-    
+
             eventManager.addTransferListener(new TransferListener() {
                 public void transferProgress(TransferEvent evt) {
                     ResolveData resolve;
                     switch (evt.getEventType()) {
                         case TransferEvent.TRANSFER_PROGRESS:
                             resolve = IvyContext.getContext().getResolveData();
-                            if (resolve == null || !LogOptions.LOG_QUIET.equals(
-                                    resolve.getOptions().getLog())) {
+                            if (resolve == null
+                                    || !LogOptions.LOG_QUIET.equals(resolve.getOptions().getLog())) {
                                 Message.progress();
                             }
                             break;
                         case TransferEvent.TRANSFER_COMPLETED:
                             resolve = IvyContext.getContext().getResolveData();
-                            if (resolve == null || !LogOptions.LOG_QUIET.equals(
-                                    resolve.getOptions().getLog())) {
+                            if (resolve == null
+                                    || !LogOptions.LOG_QUIET.equals(resolve.getOptions().getLog())) {
                                 Message.endProgress(" (" + (evt.getTotalLength() / KILO) + "kB)");
                             }
                             break;
@@ -328,13 +331,13 @@ public class Ivy {
                     }
                 }
             });
-    
+
             bound = true;
         } finally {
             popContext();
         }
     }
-    
+
     /**
      * Executes the given callback in the context of this Ivy instance.
      * <p>
@@ -365,7 +368,7 @@ public class Ivy {
             popContext();
         }
     }
-    
+
     /**
      * Pushes a new IvyContext bound to this Ivy instance if the current context is not already
      * bound to this Ivy instance. If the current context is already bound to this Ivy instance, it
@@ -389,7 +392,6 @@ public class Ivy {
         }
     }
 
-
     /**
      * Pops the current Ivy context.
      * <p>
@@ -404,7 +406,6 @@ public class Ivy {
     public void popContext() {
         IvyContext.popContext();
     }
-    
 
     // ///////////////////////////////////////////////////////////////////////
     // LOAD SETTINGS
@@ -500,8 +501,8 @@ public class Ivy {
         }
     }
 
-    public ResolveReport resolve(URL ivySource, ResolveOptions options) 
-            throws ParseException, IOException {
+    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
+            IOException {
         pushContext();
         try {
             return resolveEngine.resolve(ivySource, options);
@@ -510,8 +511,8 @@ public class Ivy {
         }
     }
 
-    public ResolveReport resolve(File ivySource, ResolveOptions options) 
-            throws ParseException, IOException {
+    public ResolveReport resolve(File ivySource, ResolveOptions options) throws ParseException,
+            IOException {
         return resolve(ivySource.toURI().toURL(), options);
     }
 
@@ -529,7 +530,7 @@ public class Ivy {
     // INSTALL
     // ///////////////////////////////////////////////////////////////////////
 
-    public ResolveReport install(ModuleRevisionId mrid, String from, String to, 
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to,
             InstallOptions options) throws IOException {
         pushContext();
         try {
@@ -571,8 +572,8 @@ public class Ivy {
             throws IOException, ParseException {
         pushContext();
         try {
-            deliverEngine.deliver(
-                mrid, revision, destIvyPattern, DeliverOptions.newInstance(settings));
+            deliverEngine.deliver(mrid, revision, destIvyPattern,
+                DeliverOptions.newInstance(settings));
         } finally {
             popContext();
         }
@@ -825,7 +826,6 @@ public class Ivy {
         return settings.getResolutionCacheManager();
     }
 
-
     private void assertBound() {
         if (!bound) {
             bind();
@@ -838,12 +838,12 @@ public class Ivy {
             Trigger trigger = (Trigger) iter.next();
             eventManager.addIvyListener(trigger, trigger.getEventFilter());
         }
-        
+
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             if (resolver instanceof BasicResolver) {
                 ((BasicResolver) resolver).setEventManager(eventManager);
-    }
+            }
         }
     }
 
@@ -952,11 +952,11 @@ public class Ivy {
     public void setSortEngine(SortEngine sortEngine) {
         this.sortEngine = sortEngine;
     }
-    
+
     public RepositoryManagementEngine getRepositoryEngine() {
         return repositoryEngine;
     }
-    
+
     public void setRepositoryEngine(RepositoryManagementEngine repositoryEngine) {
         this.repositoryEngine = repositoryEngine;
     }

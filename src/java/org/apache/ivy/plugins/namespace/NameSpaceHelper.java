@@ -54,10 +54,8 @@ public final class NameSpaceHelper {
         if (md.equals(rmr.getDescriptor())) {
             return rmr;
         }
-        return new ResolvedModuleRevision(
-            rmr.getResolver(), rmr.getArtifactResolver(), md, 
-            transform(rmr.getReport(), ns.getToSystemTransformer()),
-            rmr.isForce());
+        return new ResolvedModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md,
+                transform(rmr.getReport(), ns.getToSystemTransformer()), rmr.isForce());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {
@@ -69,17 +67,17 @@ public final class NameSpaceHelper {
             return artifact;
         }
         return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(),
-                artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact
-                        .getQualifiedExtraAttributes());
+                artifact.getType(), artifact.getExt(), artifact.getUrl(),
+                artifact.getQualifiedExtraAttributes());
     }
 
-    public static MetadataArtifactDownloadReport transform(
-            MetadataArtifactDownloadReport report, NamespaceTransformer t) {
+    public static MetadataArtifactDownloadReport transform(MetadataArtifactDownloadReport report,
+            NamespaceTransformer t) {
         if (t.isIdentity()) {
             return report;
         }
-        MetadataArtifactDownloadReport madr = 
-            new MetadataArtifactDownloadReport(transform(report.getArtifact(), t));
+        MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport(transform(
+            report.getArtifact(), t));
         madr.setSearched(report.isSearched());
         madr.setDownloadStatus(report.getDownloadStatus());
         madr.setDownloadDetails(report.getDownloadDetails());

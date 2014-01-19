@@ -36,7 +36,7 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type,
             String ext, Map extraAttributes) {
         return new ArtifactRevisionId(new ArtifactId(mrid.getModuleId(), name, type, ext), mrid,
-            extraAttributes);
+                extraAttributes);
     }
 
     private ArtifactId artifactId;
@@ -73,19 +73,18 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
 
     public int hashCode() {
         // WARN: uniqueness needs to be relatively strong here
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         int hash = 17;
         hash += getArtifactId().hashCode() * 37;
         hash += getModuleRevisionId().hashCode() * 37;
         hash += getQualifiedExtraAttributes().hashCode() * 37;
-        //CheckStyle:MagicNumber| ON
-        
+        // CheckStyle:MagicNumber| ON
+
         return hash;
     }
 
     public String toString() {
-        return getModuleRevisionId()
-                + "!" + getName() + "." + getExt() 
+        return getModuleRevisionId() + "!" + getName() + "." + getExt()
                 + (getType().equals(getExt()) ? "" : "(" + getType() + ")");
     }
 

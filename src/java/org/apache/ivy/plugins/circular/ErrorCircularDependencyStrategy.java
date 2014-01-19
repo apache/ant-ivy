@@ -21,8 +21,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public final class ErrorCircularDependencyStrategy extends AbstractCircularDependencyStrategy {
 
-    private static final CircularDependencyStrategy INSTANCE =
-        new ErrorCircularDependencyStrategy();
+    private static final CircularDependencyStrategy INSTANCE = new ErrorCircularDependencyStrategy();
 
     public static CircularDependencyStrategy getInstance() {
         return INSTANCE;

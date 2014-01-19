@@ -33,6 +33,7 @@ public final class CredentialsStore {
      * A Map of Credentials objects keyed by the 'key' of the Credentials.
      */
     private static final Map KEYRING = new HashMap();
+
     private static final Set SECURED_HOSTS = new HashSet();
 
     public static final CredentialsStore INSTANCE = new CredentialsStore();
@@ -55,7 +56,7 @@ public final class CredentialsStore {
         Message.debug("try to get credentials for: " + key);
         return (Credentials) KEYRING.get(key);
     }
-    
+
     public boolean hasCredentials(String host) {
         return SECURED_HOSTS.contains(host);
     }

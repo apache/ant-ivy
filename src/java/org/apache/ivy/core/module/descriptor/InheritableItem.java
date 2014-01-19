@@ -20,15 +20,15 @@ package org.apache.ivy.core.module.descriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
- * Interface for elements that can be inherited from a parent descriptor
- * by a child descriptor.
+ * Interface for elements that can be inherited from a parent descriptor by a child descriptor.
+ * 
  * @see Configuration
  * @see DependencyDescriptor
  */
 public interface InheritableItem {
     /**
-     * @return the module in which this item was actually defined, if different 
-     *   from the module in which the item appears.  May be null.
+     * @return the module in which this item was actually defined, if different from the module in
+     *         which the item appears. May be null.
      */
     public ModuleRevisionId getSourceModule();
 }

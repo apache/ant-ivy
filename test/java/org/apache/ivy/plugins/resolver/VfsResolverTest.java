@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-
 public class VfsResolverTest extends AbstractDependencyResolverTest {
     VfsResolver resolver = null;
 

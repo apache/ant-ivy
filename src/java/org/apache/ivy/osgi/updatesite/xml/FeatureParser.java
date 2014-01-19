@@ -107,10 +107,10 @@ public class FeatureParser {
                     }
                 }
             });
-            //            addChild(new UrlHandler(), new ChildElementHandler<UrlHandler>() {
-            //                public void childHanlded(UrlHandler child) {
-            //                }
-            //            });
+            // addChild(new UrlHandler(), new ChildElementHandler<UrlHandler>() {
+            // public void childHanlded(UrlHandler child) {
+            // }
+            // });
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
@@ -182,7 +182,7 @@ public class FeatureParser {
 
         private static final String DESCRIPTION = "description";
 
-        //        private static final String URL = "url";
+        // private static final String URL = "url";
 
         public DescriptionHandler() {
             super(DESCRIPTION);
@@ -190,7 +190,7 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            //            String url = atts.getValue(URL);
+            // String url = atts.getValue(URL);
         }
     }
 
@@ -198,7 +198,7 @@ public class FeatureParser {
 
         private static final String LICENSE = "license";
 
-        //        private static final String URL = "url";
+        // private static final String URL = "url";
 
         public LicenseHandler() {
             super(LICENSE);
@@ -206,7 +206,7 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            //            String url = atts.getValue(URL);
+            // String url = atts.getValue(URL);
         }
 
     }
@@ -215,7 +215,7 @@ public class FeatureParser {
 
         private static final String COPYRIGHT = "copyright";
 
-        //        private static final String URL = "url";
+        // private static final String URL = "url";
 
         public CopyrightHandler() {
             super(COPYRIGHT);
@@ -223,7 +223,7 @@ public class FeatureParser {
         }
 
         protected void handleAttributes(Attributes atts) throws SAXException {
-            //            String url = atts.getValue(URL);
+            // String url = atts.getValue(URL);
         }
     }
 
@@ -281,110 +281,110 @@ public class FeatureParser {
         }
     }
 
-    //    private static class IncludesHandler extends DelegetingHandler {
+    // private static class IncludesHandler extends DelegetingHandler {
     //
-    //        private static final String INCLUDES = "includes";
+    // private static final String INCLUDES = "includes";
     //
-    //        private static final String FILTER = "filter";
+    // private static final String FILTER = "filter";
     //
-    //        private static final String OPTIONAL = "optional";
+    // private static final String OPTIONAL = "optional";
     //
-    //        private static final String VERSION = "version";
+    // private static final String VERSION = "version";
     //
-    //        private static final String ID = "id";
+    // private static final String ID = "id";
     //
-    //        public IncludesHandler() {
-    //            super(INCLUDES);
-    //        }
+    // public IncludesHandler() {
+    // super(INCLUDES);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) throws SAXException {
-    //            String id = atts.getValue(ID);
-    //            String version = atts.getValue(VERSION);
-    //            String optional = atts.getValue(OPTIONAL);
-    //            String filter = atts.getValue(FILTER);
-    //        }
+    // protected void handleAttributes(Attributes atts) throws SAXException {
+    // String id = atts.getValue(ID);
+    // String version = atts.getValue(VERSION);
+    // String optional = atts.getValue(OPTIONAL);
+    // String filter = atts.getValue(FILTER);
+    // }
     //
-    //    }
+    // }
 
-    //    private static class InstallHandlerHandler extends DelegetingHandler {
+    // private static class InstallHandlerHandler extends DelegetingHandler {
     //
-    //        private static final String INSTALL_HANDLER = "install-handler";
+    // private static final String INSTALL_HANDLER = "install-handler";
     //
-    //        private static final String URL = "url";
+    // private static final String URL = "url";
     //
-    //        private static final String LIBRARY = "library";
+    // private static final String LIBRARY = "library";
     //
-    //        private static final String HANDLER = "handler";
+    // private static final String HANDLER = "handler";
     //
-    //        public InstallHandlerHandler() {
-    //            super(INSTALL_HANDLER);
-    //        }
+    // public InstallHandlerHandler() {
+    // super(INSTALL_HANDLER);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) throws SAXException {
-    //            String handler = atts.getValue(HANDLER);
-    //            String library = atts.getValue(LIBRARY);
-    //            String url = atts.getValue(URL);
-    //        }
+    // protected void handleAttributes(Attributes atts) throws SAXException {
+    // String handler = atts.getValue(HANDLER);
+    // String library = atts.getValue(LIBRARY);
+    // String url = atts.getValue(URL);
+    // }
     //
-    //    }
+    // }
 
-    //    private static class UrlHandler extends DelegetingHandler {
+    // private static class UrlHandler extends DelegetingHandler {
     //
-    //        private static final String URL = "url";
+    // private static final String URL = "url";
     //
-    //        public UrlHandler() {
-    //            super(URL);
-    //            addChild(new UpdateHandler(), new ChildElementHandler<UpdateHandler>() {
-    //                public void childHanlded(UpdateHandler child) {
-    //                }
-    //            });
-    //            addChild(new DiscoveryHandler(), new ChildElementHandler<DiscoveryHandler>() {
-    //                public void childHanlded(DiscoveryHandler child) {
-    //                }
-    //            });
-    //        }
+    // public UrlHandler() {
+    // super(URL);
+    // addChild(new UpdateHandler(), new ChildElementHandler<UpdateHandler>() {
+    // public void childHanlded(UpdateHandler child) {
+    // }
+    // });
+    // addChild(new DiscoveryHandler(), new ChildElementHandler<DiscoveryHandler>() {
+    // public void childHanlded(DiscoveryHandler child) {
+    // }
+    // });
+    // }
     //
-    //    }
+    // }
 
-    //    private static class UpdateHandler extends DelegetingHandler {
+    // private static class UpdateHandler extends DelegetingHandler {
     //
-    //        private static final String UPDATE = "update";
+    // private static final String UPDATE = "update";
     //
-    //        private static final String LABEL = "label";
+    // private static final String LABEL = "label";
     //
-    //        private static final String URL = "url";
+    // private static final String URL = "url";
     //
-    //        public UpdateHandler() {
-    //            super(UPDATE);
-    //        }
+    // public UpdateHandler() {
+    // super(UPDATE);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) throws SAXException {
-    //            String label = atts.getValue(LABEL);
-    //            String url = atts.getValue(URL);
-    //        }
+    // protected void handleAttributes(Attributes atts) throws SAXException {
+    // String label = atts.getValue(LABEL);
+    // String url = atts.getValue(URL);
+    // }
     //
-    //    }
+    // }
 
-    //    private static class DiscoveryHandler extends DelegetingHandler {
+    // private static class DiscoveryHandler extends DelegetingHandler {
     //
-    //        private static final String DISCOVERY = "discovery";
+    // private static final String DISCOVERY = "discovery";
     //
-    //        private static final String URL = "url";
+    // private static final String URL = "url";
     //
-    //        private static final String LABEL = "label";
+    // private static final String LABEL = "label";
     //
-    //        private static final String TYPE = "type";
+    // private static final String TYPE = "type";
     //
-    //        public DiscoveryHandler() {
-    //            super(DISCOVERY);
-    //        }
+    // public DiscoveryHandler() {
+    // super(DISCOVERY);
+    // }
     //
-    //        protected void handleAttributes(Attributes atts) throws SAXException {
-    //            String type = atts.getValue(TYPE);
-    //            String label = atts.getValue(LABEL);
-    //            String url = atts.getValue(URL);
-    //        }
+    // protected void handleAttributes(Attributes atts) throws SAXException {
+    // String type = atts.getValue(TYPE);
+    // String label = atts.getValue(LABEL);
+    // String url = atts.getValue(URL);
+    // }
     //
-    //    }
+    // }
 
 }

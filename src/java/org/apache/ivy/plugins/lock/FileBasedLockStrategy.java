@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -38,16 +37,15 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      * The locker to use to make file lock attempts.
      */
     private FileLocker locker;
-    
+
     private long timeout = DEFAULT_TIMEOUT;
 
     /**
-     * Lock counter list must be static: locks are implicitly shared to the
-     * entire process, so the list too much be.
+     * Lock counter list must be static: locks are implicitly shared to the entire process, so the
+     * list too much be.
      */
-    private static ConcurrentMap/*<File, Map<Thread, Integer>>*/ currentLockHolders
-        = new ConcurrentHashMap();
-    
+    private static ConcurrentMap/* <File, Map<Thread, Integer>> */currentLockHolders = new ConcurrentHashMap();
+
     protected FileBasedLockStrategy() {
         this(new CreateFileLocker(false), false);
     }
@@ -74,10 +72,8 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                 }
                 int lockCount = hasLock(file, currentThread);
                 if (isDebugLocking()) {
-                    debugLocking("current status for " + file
-                        + " is " + lockCount
-                        + " held locks: "
-                        + getCurrentLockHolderNames(file));
+                    debugLocking("current status for " + file + " is " + lockCount
+                            + " held locks: " + getCurrentLockHolderNames(file));
                 }
                 if (lockCount < 0) {
                     /* Another thread in this process holds the lock; we need to wait */
@@ -88,20 +84,20 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                 } else if (lockCount > 0) {
                     int holdLocks = incrementLock(file, currentThread);
                     if (isDebugLocking()) {
-                        debugLocking("reentrant lock acquired on " + file 
-                            + " in " + (System.currentTimeMillis() - start) + "ms"
-                            + " - hold locks = " + holdLocks);
+                        debugLocking("reentrant lock acquired on " + file + " in "
+                                + (System.currentTimeMillis() - start) + "ms" + " - hold locks = "
+                                + holdLocks);
                     }
                     return true;
                 } else {
                     /* No prior lock on this file is held at all */
                     if (locker.tryLock(file)) {
                         if (isDebugLocking()) {
-                            debugLocking("lock acquired on " + file 
-                                + " in " + (System.currentTimeMillis() - start) + "ms");
+                            debugLocking("lock acquired on " + file + " in "
+                                    + (System.currentTimeMillis() - start) + "ms");
                         }
                         incrementLock(file, currentThread);
-                        return true;                        
+                        return true;
                     }
                 }
             }
@@ -130,29 +126,29 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                 }
             } else {
                 if (isDebugLocking()) {
-                    debugLocking("reentrant lock released on " + file 
-                        + " - hold locks = " + holdLocks);
-                }                
+                    debugLocking("reentrant lock released on " + file + " - hold locks = "
+                            + holdLocks);
+                }
             }
         }
     }
 
-    
     private static void debugLocking(String msg) {
         Message.info(Thread.currentThread() + " " + System.currentTimeMillis() + " " + msg);
     }
 
-    /** Determine the state of the lockfile.
+    /**
+     * Determine the state of the lockfile.
      * 
      * Must be called from within a synchronized block.
      * 
-     * Three possibilities exist:
-     *  - The lock is held by the current thread (>0)
-     *  - The lock is held by one or more different threads (-1)
-     *  - The lock is not held at all (0).
+     * Three possibilities exist: - The lock is held by the current thread (>0) - The lock is held
+     * by one or more different threads (-1) - The lock is not held at all (0).
      * 
-     * @param file file to lock
-     * @param forThread thread for which lock status is being queried
+     * @param file
+     *            file to lock
+     * @param forThread
+     *            thread for which lock status is being queried
      */
     private int hasLock(File file, Thread forThread) {
         Map locksPerThread = (Map) currentLockHolders.get(file);
@@ -170,14 +166,17 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             return -1;
         }
     }
-    
-    /** Record that this thread holds the lock.
+
+    /**
+     * Record that this thread holds the lock.
      * 
-     * Asserts that the lock has been previously grabbed by this thread.
-     * Must be called from a synchronized block in which the lock was grabbed. 
+     * Asserts that the lock has been previously grabbed by this thread. Must be called from a
+     * synchronized block in which the lock was grabbed.
      * 
-     * @param file file which has been locked
-     * @param forThread thread for which locking occurred
+     * @param file
+     *            file which has been locked
+     * @param forThread
+     *            thread for which locking occurred
      * @return number of times this thread has grabbed the lock
      */
     private int incrementLock(File file, Thread forThread) {
@@ -187,20 +186,22 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             currentLockHolders.put(file, locksPerThread);
         }
         Integer c = (Integer) locksPerThread.get(forThread);
-        int holdLocks = c == null ? 1 : c.intValue() + 1; 
+        int holdLocks = c == null ? 1 : c.intValue() + 1;
         locksPerThread.put(forThread, new Integer(holdLocks));
         return holdLocks;
     }
-    
-    /** Decrease depth of this thread's lock.
+
+    /**
+     * Decrease depth of this thread's lock.
      * 
      * Must be called within a synchronized block.
      * 
-     * If this returns 0, the caller is responsible for releasing the lock
-     * within that same block. 
+     * If this returns 0, the caller is responsible for releasing the lock within that same block.
      * 
-     * @param file file for which lock depth is being decreased
-     * @param forThread thread for which lock depth is being decreased
+     * @param file
+     *            file for which lock depth is being decreased
+     * @param forThread
+     *            thread for which lock depth is being decreased
      * @return remaining depth of this lock
      */
     private int decrementLock(File file, Thread forThread) {
@@ -222,7 +223,8 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         return newHeldLocks;
     }
 
-    /** Return a string naming the threads which currently hold this lock.
+    /**
+     * Return a string naming the threads which currently hold this lock.
      */
     protected String getCurrentLockHolderNames(File file) {
         StringBuilder sb = new StringBuilder();
@@ -240,12 +242,13 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         }
         return sb.toString();
     }
-    
+
     public static interface FileLocker {
         boolean tryLock(File f);
+
         void unlock(File f);
     }
-    
+
     /**
      * "locks" a file by creating it if it doesn't exist, relying on the
      * {@link File#createNewFile()} atomicity.
@@ -271,8 +274,8 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                 }
             } catch (IOException e) {
                 // ignored
-                Message.verbose("file creation failed due to an exception: " 
-                    + e.getMessage() + " (" + file + ")");
+                Message.verbose("file creation failed due to an exception: " + e.getMessage()
+                        + " (" + file + ")");
             }
             return false;
         }
@@ -282,20 +285,23 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             DeleteOnExitHook.remove(file);
         }
     }
+
     /**
-     * Locks a file using the {@link FileLock} mechanism. 
+     * Locks a file using the {@link FileLock} mechanism.
      */
     public static class NIOFileLocker implements FileLocker {
-        
+
         private Map locks = new ConcurrentHashMap();
+
         private boolean debugLocking;
-        
+
         public NIOFileLocker(boolean debugLocking) {
             this.debugLocking = debugLocking;
         }
 
         private static class LockData {
             private RandomAccessFile raf;
+
             private FileLock l;
 
             LockData(RandomAccessFile raf, FileLock l) {
@@ -308,8 +314,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
                     // this must not be closed until unlock
-                    RandomAccessFile raf =
-                        new RandomAccessFile(file, "rw");
+                    RandomAccessFile raf = new RandomAccessFile(file, "rw");
                     FileLock l = raf.getChannel().tryLock();
                     if (l != null) {
                         synchronized (this) {
@@ -324,8 +329,8 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                 }
             } catch (IOException e) {
                 // ignored
-                Message.verbose("file lock failed due to an exception: " 
-                    + e.getMessage() + " (" + file + ")");
+                Message.verbose("file lock failed due to an exception: " + e.getMessage() + " ("
+                        + file + ")");
             }
             return false;
         }
@@ -342,11 +347,10 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                     data.l.release();
                     data.raf.close();
                 } catch (IOException e) {
-                    Message.error(
-                        "problem while releasing lock on " + file + ": " + e.getMessage());
+                    Message.error("problem while releasing lock on " + file + ": " + e.getMessage());
                 }
             }
         }
-        
+
     }
 }

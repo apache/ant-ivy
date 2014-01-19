@@ -79,8 +79,8 @@ public final class Message {
 
     public static void showInfo() {
         if (!showedInfo) {
-            info(":: Apache Ivy " + Ivy.getIvyVersion() + " - "
-                   + Ivy.getIvyDate() + " :: " + Ivy.getIvyHomeURL() + " ::");
+            info(":: Apache Ivy " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate() + " :: "
+                    + Ivy.getIvyHomeURL() + " ::");
             showedInfo = true;
         }
     }

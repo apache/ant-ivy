@@ -29,8 +29,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -63,8 +63,9 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, ivyPatterns, DefaultArtifact.newIvyArtifact(mrid,
-            data.getDate()), getRMDParser(dd, data), data.getDate());
+        return findResourceUsingPatterns(mrid, ivyPatterns,
+            DefaultArtifact.newIvyArtifact(mrid, data.getDate()), getRMDParser(dd, data),
+            data.getDate());
     }
 
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
@@ -75,7 +76,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         return findResourceUsingPatterns(mrid, artifactPatterns, artifact,
             getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }
-    
+
     public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, Date date) {
         if (isM2compatible()) {
@@ -83,7 +84,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             mrid = convertM2ResourceSearchIdToNormal(mrid);
         }
         return super.findResource(rress, rmdparser, mrid, date);
-    }    
+    }
 
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision,
             List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
@@ -93,8 +94,8 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         boolean stop = false;
         for (Iterator iter = patternList.iterator(); iter.hasNext() && !stop;) {
             String pattern = (String) iter.next();
-            ResolvedResource rres = findResourceUsingPattern(
-                moduleRevision, pattern, artifact, rmdparser, date);
+            ResolvedResource rres = findResourceUsingPattern(moduleRevision, pattern, artifact,
+                rmdparser, date);
             if ((rres != null) && !foundRevisions.contains(rres.getRevision())) {
                 // only add the first found ResolvedResource for each revision
                 foundRevisions.add(rres.getRevision());
@@ -157,7 +158,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     public Map[] listTokenValues(String[] tokens, Map criteria) {
         Set result = new LinkedHashSet();
-        
+
         // use ivy patterns
         List ivyPatterns = getIvyPatterns();
         Map tokenValues = new HashMap(criteria);
@@ -170,7 +171,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             String ivyPattern = (String) it.next();
             result.addAll(resolveTokenValues(tokens, ivyPattern, tokenValues, false));
         }
-        
+
         if (isAllownomd()) {
             List artifactPatterns = getArtifactPatterns();
             tokenValues = new HashMap(criteria);
@@ -184,18 +185,18 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
                 result.addAll(resolveTokenValues(tokens, artifactPattern, tokenValues, true));
             }
         }
-        
+
         return (Map[]) result.toArray(new Map[result.size()]);
     }
-    
+
     protected String getModuleDescriptorExtension() {
         return "xml";
     }
-    
+
     private Set resolveTokenValues(String[] tokens, String pattern, Map criteria, boolean noMd) {
         Set result = new LinkedHashSet();
         Set tokenSet = new HashSet(Arrays.asList(tokens));
-        
+
         Map tokenValues = new HashMap();
         for (Iterator it = criteria.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
@@ -205,13 +206,13 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
                 tokenValues.put(key, value);
             }
         }
-        
+
         if (tokenSet.isEmpty()) {
             // no more tokens to resolve
             result.add(tokenValues);
             return result;
         }
-        
+
         String partiallyResolvedPattern = IvyPatternHelper.substituteTokens(pattern, tokenValues);
         String token = IvyPatternHelper.getFirstToken(partiallyResolvedPattern);
         if ((token == null) && exist(partiallyResolvedPattern)) {
@@ -219,7 +220,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             result.add(tokenValues);
             return result;
         }
-        
+
         tokenSet.remove(token);
 
         Matcher matcher = null;
@@ -235,13 +236,13 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
         List vals = new ArrayList(Arrays.asList(values));
         filterNames(vals);
-        
+
         for (Iterator it = vals.iterator(); it.hasNext();) {
             String value = (String) it.next();
             if ((matcher != null) && !matcher.matches(value)) {
                 continue;
             }
-            
+
             tokenValues.put(token, value);
             String moreResolvedPattern = IvyPatternHelper.substituteTokens(
                 partiallyResolvedPattern, tokenValues);
@@ -254,19 +255,19 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
                 newCriteria.put("artifact", value);
             }
             result.addAll(resolveTokenValues(
-                (String[]) tokenSet.toArray(new String[tokenSet.size()]), 
-                moreResolvedPattern, newCriteria, noMd));
+                (String[]) tokenSet.toArray(new String[tokenSet.size()]), moreResolvedPattern,
+                newCriteria, noMd));
         }
 
         return result;
     }
-    
+
     protected abstract String[] listTokenValues(String pattern, String token);
-    
+
     protected abstract boolean exist(String path);
 
     protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
-        //to be overridden by subclasses wanting to have listing features
+        // to be overridden by subclasses wanting to have listing features
     }
 
     /**
@@ -331,7 +332,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
     public void setM2compatible(boolean compatible) {
         m2compatible = compatible;
     }
-    
+
     protected ModuleRevisionId convertM2ResourceSearchIdToNormal(ModuleRevisionId mrid) {
         if (mrid.getOrganisation() == null || mrid.getOrganisation().indexOf('/') == -1) {
             return mrid;
@@ -345,8 +346,8 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         if (mrid.getOrganisation() == null || mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
-        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), 
-            mrid.getName(), mrid.getBranch(), mrid.getRevision(), 
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'),
+            mrid.getName(), mrid.getBranch(), mrid.getRevision(),
             mrid.getQualifiedExtraAttributes());
     }
 
@@ -356,9 +357,9 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     protected void convertM2TokenValuesForResourceSearch(Map tokenValues) {
         if (tokenValues.get(IvyPatternHelper.ORGANISATION_KEY) instanceof String) {
-            tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, 
-                convertM2OrganizationForResourceSearch(
-                    (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY)));
+            tokenValues.put(IvyPatternHelper.ORGANISATION_KEY,
+                convertM2OrganizationForResourceSearch((String) tokenValues
+                        .get(IvyPatternHelper.ORGANISATION_KEY)));
         }
     }
 

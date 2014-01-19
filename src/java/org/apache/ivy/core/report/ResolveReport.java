@@ -340,11 +340,10 @@ public class ResolveReport {
         for (int i = 0; i < allConfs.length; i++) {
             gatherExtendingConfs(extendingConfs, allConfs[i], extended);
         }
-        return (String[]) extendingConfs.toArray(new String[extendingConfs.size()]);
+        return extendingConfs.toArray(new String[extendingConfs.size()]);
     }
 
-    private boolean gatherExtendingConfs(Set<String> extendingConfs, String conf,
-            String extended) {
+    private boolean gatherExtendingConfs(Set<String> extendingConfs, String conf, String extended) {
         if (extendingConfs.contains(conf)) {
             return true;
         }
@@ -369,8 +368,7 @@ public class ResolveReport {
         return false;
     }
 
-    public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings,
-            List<ModuleId> midToKeep) {
+    public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings, List<ModuleId> midToKeep) {
         DefaultModuleDescriptor fixedmd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
                 md.getStatus(), new Date());
 

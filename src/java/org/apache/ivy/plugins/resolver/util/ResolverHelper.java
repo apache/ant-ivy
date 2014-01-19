@@ -37,7 +37,7 @@ import org.apache.ivy.util.Message;
 public final class ResolverHelper {
     private ResolverHelper() {
     }
-    
+
     // lists all the values a token can take in a pattern, as listed by a given url lister
     public static String[] listTokenValues(Repository rep, String pattern, String token) {
         String fileSep = rep.getFileSeparator();
@@ -131,9 +131,10 @@ public final class ResolverHelper {
     public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern,
             Artifact artifact) {
         // substitute all but revision
-        String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, ModuleRevisionId
-                .newInstance(mrid, IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)),
-            artifact);
+        String partiallyResolvedPattern = IvyPatternHelper.substitute(
+            pattern,
+            ModuleRevisionId.newInstance(mrid,
+                IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact);
         Message.debug("\tlisting all in " + partiallyResolvedPattern);
 
         String[] revs = listTokenValues(rep, partiallyResolvedPattern,
@@ -161,15 +162,14 @@ public final class ResolverHelper {
                 Message.debug("\tfound resolved res: " + ret);
             }
             return (ResolvedResource[]) ret.toArray(new ResolvedResource[ret.size()]);
-        } else if (partiallyResolvedPattern.indexOf(
-                "[" + IvyPatternHelper.REVISION_KEY + "]") == -1) {
+        } else if (partiallyResolvedPattern.indexOf("[" + IvyPatternHelper.REVISION_KEY + "]") == -1) {
             // the partially resolved pattern is completely resolved, check the resource
             try {
                 Resource res = rep.getResource(partiallyResolvedPattern);
                 if (res.exists()) {
                     Message.debug("\tonly one resource found without real listing: "
-                                    + "using and defining it as working@"
-                                    + rep.getName() + " revision: " + res.getName());
+                            + "using and defining it as working@" + rep.getName() + " revision: "
+                            + res.getName());
                     return new ResolvedResource[] {new ResolvedResource(res, "working@"
                             + rep.getName())};
                 }
@@ -190,7 +190,7 @@ public final class ResolverHelper {
     // IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY), mrid.getExtraAttributes()),
     // artifact);
     // Message.debug("\tlisting all in "+partiallyResolvedPattern);
-    //        
+    //
     // String[] revs = listTokenValues(rep, partiallyResolvedPattern,
     // IvyPatternHelper.REVISION_KEY);
     // if (revs != null) {
@@ -262,9 +262,7 @@ public final class ResolverHelper {
                 try {
                     return listAll(lister, new URL(root));
                 } catch (MalformedURLException e) {
-                    Message
-                            .warn("malformed url from pattern root: " + root + ": "
-                                    + e.getMessage());
+                    Message.warn("malformed url from pattern root: " + root + ": " + e.getMessage());
                     return null;
                 }
             } else {

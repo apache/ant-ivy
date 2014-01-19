@@ -34,13 +34,12 @@ import org.apache.ivy.util.Message;
  * ModuleInSort can be used in only one ModuleDescriptorSorter at a time.<br>
  * The added fields are : <br>
  * <ul>
- * <li><code>isSorted</code> : is true iff this module has already been added to the sorted list.
- * </li>
+ * <li><code>isSorted</code> : is true iff this module has already been added to the sorted list.</li>
  * <li><code>loopElements</code> : When the module is the root of a loop (=the first element of a
  * loop met during the sort), <code>loopElements</code> contains all ModuleInSort of the loop
  * (excluding the root itself.</li>
- * <li><code>isLoopIntermediateElement</code> : When a loop is detected, all modules included in
- * the loop (except the root) have <code>isLoopIntermediateElement</code> set to true.</li>
+ * <li><code>isLoopIntermediateElement</code> : When a loop is detected, all modules included in the
+ * loop (except the root) have <code>isLoopIntermediateElement</code> set to true.</li>
  * <li><code>caller</code> : During the sort, we traverse recursively the graph. When doing that,
  * caller point to the parent element.
  */
@@ -75,9 +74,10 @@ class ModuleInSort {
         }
     }
 
-    /** This ModuleInSort has already been analyzed.  It is either already added
-     * to the sorted list, either it is included in a loop and will be added
-     * when the root of the loop will be added to the list. 
+    /**
+     * This ModuleInSort has already been analyzed. It is either already added to the sorted list,
+     * either it is included in a loop and will be added when the root of the loop will be added to
+     * the list.
      */
     public boolean isProcessed() {
         if (isSorted || isLoopIntermediateElement) {
@@ -89,7 +89,6 @@ class ModuleInSort {
         }
     }
 
-    
     public void setCaller(ModuleInSort caller) {
         this.caller = caller;
     }
@@ -118,8 +117,7 @@ class ModuleInSort {
                 loopElements.add(stackEl);
             }
             elemOfLoop.add(this.module.getModuleRevisionId());
-            ModuleRevisionId[] mrids = (ModuleRevisionId[]) elemOfLoop
-                    .toArray(new ModuleRevisionId[elemOfLoop.size()]);
+            ModuleRevisionId[] mrids = elemOfLoop.toArray(new ModuleRevisionId[elemOfLoop.size()]);
             depStrategy.handleCircularDependency(mrids);
             return true;
         } else {

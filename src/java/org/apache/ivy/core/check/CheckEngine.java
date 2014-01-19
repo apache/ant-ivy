@@ -87,14 +87,13 @@ public class CheckEngine {
                     if (!"*".equals(masterConfs[j].trim())
                             && md.getConfiguration(masterConfs[j]) == null) {
                         Message.info("dependency required in non existing conf for " + ivyFile
-                                + " \n\tin " + dds[i] + ": "
-                                + masterConfs[j]);
+                                + " \n\tin " + dds[i] + ": " + masterConfs[j]);
                         result = false;
                     }
                 }
                 // resolve
-                DependencyResolver resolver = 
-                    settings.getResolver(dds[i].getDependencyRevisionId());
+                DependencyResolver resolver = settings
+                        .getResolver(dds[i].getDependencyRevisionId());
                 ResolvedModuleRevision rmr = resolver.getDependency(dds[i], data);
                 if (rmr == null) {
                     Message.info("dependency not found in " + ivyFile + ":\n\t" + dds[i]);
@@ -106,16 +105,14 @@ public class CheckEngine {
                         if (!Arrays.asList(rmr.getDescriptor().getConfigurationsNames()).contains(
                             depConfs[j])) {
                             Message.info("dependency configuration is missing for " + ivyFile
-                                    + "\n\tin " + dds[i] + ": "
-                                    + depConfs[j]);
+                                    + "\n\tin " + dds[i] + ": " + depConfs[j]);
                             result = false;
                         }
                         Artifact[] arts = rmr.getDescriptor().getArtifacts(depConfs[j]);
                         for (int k = 0; k < arts.length; k++) {
                             if (!resolver.exists(arts[k])) {
                                 Message.info("dependency artifact is missing for " + ivyFile
-                                        + "\n\t in " + dds[i] + ": "
-                                        + arts[k]);
+                                        + "\n\t in " + dds[i] + ": " + arts[k]);
                                 result = false;
                             }
                         }

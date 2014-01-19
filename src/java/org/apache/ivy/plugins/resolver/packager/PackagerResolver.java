@@ -36,31 +36,39 @@ import org.apache.ivy.util.Message;
 
 /**
  * Resolver that performs a "build" operation to resolve artifacts.
- *
+ * 
  * <p>
- * The resolver is configured with a base URL, from which the "ivy.xml"
- * and "packager.xml" files are resolved. The latter file contains
- * instructions describing how to build the actual artifacts.
+ * The resolver is configured with a base URL, from which the "ivy.xml" and "packager.xml" files are
+ * resolved. The latter file contains instructions describing how to build the actual artifacts.
  */
 public class PackagerResolver extends URLResolver {
 
     private static final String PACKAGER_ARTIFACT_NAME = "packager";
+
     private static final String PACKAGER_ARTIFACT_TYPE = "packager";
+
     private static final String PACKAGER_ARTIFACT_EXT = "xml";
 
-    private final HashMap/*<ModuleRevisionId, PackagerCacheEntry>*/ packagerCache = new HashMap();
+    private final HashMap/* <ModuleRevisionId, PackagerCacheEntry> */packagerCache = new HashMap();
 
     private File buildRoot;
+
     private File resourceCache;
+
     private String resourceURL;
-    private Map/*<String,String>*/ properties = new LinkedHashMap();
-    
+
+    private Map/* <String,String> */properties = new LinkedHashMap();
+
     private boolean validate = true;
+
     private boolean preserve;
+
     private boolean restricted = true;
+
     private boolean verbose;
+
     private boolean quiet;
-    
+
     public PackagerResolver() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -68,7 +76,7 @@ public class PackagerResolver extends URLResolver {
             }
         });
     }
-    
+
     protected synchronized void clearCache() {
         if (this.preserve) {
             return;
@@ -89,9 +97,9 @@ public class PackagerResolver extends URLResolver {
     public void setBuildRoot(File buildRoot) {
         this.buildRoot = buildRoot;
     }
-    
+
     /**
-     * Returns root directory under which builds take place. 
+     * Returns root directory under which builds take place.
      */
     public File getBuildRoot() {
         return buildRoot;
@@ -103,7 +111,7 @@ public class PackagerResolver extends URLResolver {
     public void setResourceCache(File resourceCache) {
         this.resourceCache = resourceCache;
     }
-    
+
     /**
      * Get resource cache directory.
      */
@@ -165,20 +173,23 @@ public class PackagerResolver extends URLResolver {
     public void setAllownomd(boolean b) {
         Message.error("allownomd not supported by resolver " + this);
     }
+
     public void setDescriptor(String rule) {
         if (DESCRIPTOR_OPTIONAL.equals(rule)) {
-            Message.error("descriptor=\"" + DESCRIPTOR_OPTIONAL
-              + "\" not supported by resolver " + this);
+            Message.error("descriptor=\"" + DESCRIPTOR_OPTIONAL + "\" not supported by resolver "
+                    + this);
             return;
         }
         super.setDescriptor(rule);
     }
-    
+
     /**
      * Sets a property to be passed to the child Ant build responsible for packaging the dependency.
      * 
-     * @param propertyKey the property to pass
-     * @param propertyValue the value of the property to pass
+     * @param propertyKey
+     *            the property to pass
+     * @param propertyValue
+     *            the value of the property to pass
      */
     public void setProperty(String propertyKey, String propertyValue) {
         properties.put(propertyKey, propertyValue);
@@ -200,8 +211,8 @@ public class PackagerResolver extends URLResolver {
 
         // For our special packager.xml file, defer to superclass
         if (PACKAGER_ARTIFACT_NAME.equals(artifact.getName())
-          && PACKAGER_ARTIFACT_TYPE.equals(artifact.getType())
-          && PACKAGER_ARTIFACT_EXT.equals(artifact.getExt())) {
+                && PACKAGER_ARTIFACT_TYPE.equals(artifact.getType())
+                && PACKAGER_ARTIFACT_EXT.equals(artifact.getExt())) {
             return super.findArtifactRef(artifact, date);
         }
 
@@ -219,13 +230,13 @@ public class PackagerResolver extends URLResolver {
         // Build the artifacts (if not done already)
         if (entry == null) {
             ResolvedResource packager = findArtifactRef(new DefaultArtifact(mr, null,
-              PACKAGER_ARTIFACT_NAME, PACKAGER_ARTIFACT_TYPE, PACKAGER_ARTIFACT_EXT), date);
+                    PACKAGER_ARTIFACT_NAME, PACKAGER_ARTIFACT_TYPE, PACKAGER_ARTIFACT_EXT), date);
             if (packager == null) {
                 return null;
             }
             entry = new PackagerCacheEntry(mr, this.buildRoot, this.resourceCache,
-              this.resourceURL, this.validate, this.preserve, this.restricted,
-              this.verbose, this.quiet);
+                    this.resourceURL, this.validate, this.preserve, this.restricted, this.verbose,
+                    this.quiet);
             try {
                 entry.build(packager.getResource(), properties);
             } catch (IOException e) {
@@ -242,4 +253,3 @@ public class PackagerResolver extends URLResolver {
         return "packager";
     }
 }
-

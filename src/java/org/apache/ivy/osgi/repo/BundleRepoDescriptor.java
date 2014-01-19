@@ -59,7 +59,8 @@ public class BundleRepoDescriptor extends EditableRepoDescriptor {
             try {
                 BundleInfo bundleInfo = ManifestParser.parseManifest(manifestAndLocation
                         .getManifest());
-                bundleInfo.addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
+                bundleInfo
+                        .addArtifact(new BundleArtifact(false, manifestAndLocation.getUri(), null));
                 addBundle(bundleInfo);
             } catch (ParseException e) {
                 Message.error("Rejected " + manifestAndLocation.getUri() + ": " + e.getMessage());

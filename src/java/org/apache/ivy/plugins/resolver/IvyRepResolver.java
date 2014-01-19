@@ -100,10 +100,9 @@ public class IvyRepResolver extends URLResolver {
                 if (root != null) {
                     ivyroot = root;
                 } else {
-                    throw new IllegalStateException(
-                        "ivyroot is mandatory on IvyRepResolver. " 
-                        + "Make sure to set it in your settings, before setting ivypattern "
-                        + "if you wish to set ivypattern too.");
+                    throw new IllegalStateException("ivyroot is mandatory on IvyRepResolver. "
+                            + "Make sure to set it in your settings, before setting ivypattern "
+                            + "if you wish to set ivypattern too.");
                 }
             }
             if (ivypattern == null) {
@@ -171,9 +170,10 @@ public class IvyRepResolver extends URLResolver {
 
     public void setM2compatible(boolean m2compatible) {
         if (m2compatible) {
-            throw new IllegalArgumentException("ivyrep does not support maven2 compatibility. " 
-                + "Please use ibiblio resolver instead, or even url or filesystem resolvers for" 
-                + " more specific needs.");
+            throw new IllegalArgumentException(
+                    "ivyrep does not support maven2 compatibility. "
+                            + "Please use ibiblio resolver instead, or even url or filesystem resolvers for"
+                            + " more specific needs.");
         }
     }
 
@@ -237,7 +237,7 @@ public class IvyRepResolver extends URLResolver {
             });
             return (OrganisationEntry[]) ret.toArray(new OrganisationEntry[ret.size()]);
         } catch (MalformedURLException e) {
-            //???
+            // ???
         } catch (Exception e) {
             Message.warn("unable to parse content.xml file on ivyrep", e);
         }
@@ -291,7 +291,7 @@ public class IvyRepResolver extends URLResolver {
         ensureArtifactConfigured(getSettings());
         return super.exists(artifact);
     }
-    
+
     public ArtifactOrigin locate(Artifact artifact) {
         ensureArtifactConfigured(getSettings());
         return super.locate(artifact);

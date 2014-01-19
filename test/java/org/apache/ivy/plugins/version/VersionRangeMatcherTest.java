@@ -158,7 +158,9 @@ public class VersionRangeMatcherTest extends TestCase {
     }
 
     private void assertAccept(String askedVersion, String depVersion, boolean b) {
-        assertEquals(b, vm.accept(ModuleRevisionId.newInstance("org", "name", askedVersion),
-            ModuleRevisionId.newInstance("org", "name", depVersion)));
+        assertEquals(
+            b,
+            vm.accept(ModuleRevisionId.newInstance("org", "name", askedVersion),
+                ModuleRevisionId.newInstance("org", "name", depVersion)));
     }
 }

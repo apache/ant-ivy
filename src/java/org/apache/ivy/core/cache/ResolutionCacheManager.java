@@ -25,21 +25,22 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public interface ResolutionCacheManager {
-    
+
     File getResolutionCacheRoot();
-    
+
     File getResolvedIvyFileInCache(ModuleRevisionId mrid);
-    
+
     File getResolvedIvyPropertiesInCache(ModuleRevisionId mrid);
 
     File getConfigurationResolveReportInCache(String resolveId, String conf);
 
     File[] getConfigurationResolveReportsInCache(final String resolveId);
-    
-    ModuleDescriptor getResolvedModuleDescriptor(ModuleRevisionId mrid) throws ParseException, IOException;
-    
+
+    ModuleDescriptor getResolvedModuleDescriptor(ModuleRevisionId mrid) throws ParseException,
+            IOException;
+
     void saveResolvedModuleDescriptor(ModuleDescriptor md) throws ParseException, IOException;
-    
+
     /**
      * Cleans the whole cache.
      */

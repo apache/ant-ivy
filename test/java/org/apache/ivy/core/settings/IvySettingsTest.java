@@ -33,11 +33,11 @@ public class IvySettingsTest extends TestCase {
 
         IvySettings settings = ivy.getSettings();
         DependencyResolver defaultResolver = settings.getDefaultResolver();
-        
+
         assertNotNull(defaultResolver);
         assertEquals("default", defaultResolver.getName());
         assertSame("default resolver cached", defaultResolver, settings.getDefaultResolver());
-        
+
         settings.setDefaultResolver("public");
         DependencyResolver newDefault = settings.getDefaultResolver();
         assertNotNull(newDefault);

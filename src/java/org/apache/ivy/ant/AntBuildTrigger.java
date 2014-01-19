@@ -75,8 +75,8 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                 Message.verbose("target build file already built, skipping: " + f);
             } else {
                 Ant ant = new Ant();
-                Project project = (Project) IvyContext.peekInContextStack(
-                    IvyTask.ANT_PROJECT_CONTEXT_KEY);
+                Project project = (Project) IvyContext
+                        .peekInContextStack(IvyTask.ANT_PROJECT_CONTEXT_KEY);
                 if (project == null) {
                     project = new Project();
                     project.init();
@@ -128,8 +128,11 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
     }
 
     private File getBuildFile(IvyEvent event) {
-        return IvyContext.getContext().getSettings().resolveFile(
-            IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
+        return IvyContext
+                .getContext()
+                .getSettings()
+                .resolveFile(
+                    IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
     }
 
     public String getBuildFilePattern() {

@@ -90,11 +90,10 @@ public class LatestConflictManager extends AbstractConflictManager {
                 return Collections.singleton(node);
             }
         }
-        
+
         /*
-         * If the list of conflicts contains dynamic revisions, delay the conflict
-         * calculation until they are resolved.
-         * TODO: we probably could already evict some of the dynamic revisions!
+         * If the list of conflicts contains dynamic revisions, delay the conflict calculation until
+         * they are resolved. TODO: we probably could already evict some of the dynamic revisions!
          */
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
@@ -103,10 +102,10 @@ public class LatestConflictManager extends AbstractConflictManager {
                 return null;
             }
         }
-        
+
         try {
-            IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) 
-                getStrategy().findLatest(toArtifactInfo(conflicts), null);
+            IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) getStrategy().findLatest(
+                toArtifactInfo(conflicts), null);
             if (latest != null) {
                 return Collections.singleton(latest.getNode());
             } else {

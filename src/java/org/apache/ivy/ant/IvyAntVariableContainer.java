@@ -64,26 +64,25 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
      * All variables defined in Ivy will be set in the Ant project under two names:
      * <ul>
      * <li>the name of the variable</li>
-     * <li>the name of the variable suffxied with a dot + the given id, 
-     * if the given id is not null</li>
+     * <li>the name of the variable suffxied with a dot + the given id, if the given id is not null</li>
      * </ul>
      * 
-     * @param
-     *      id  The identifier of the settings in which the variables have been set, which
-     *          should be used as property names suffix
+     * @param id
+     *            The identifier of the settings in which the variables have been set, which should
+     *            be used as property names suffix
      */
     public void updateProject(String id) {
         Map r = new HashMap(super.getVariables());
         r.putAll(overwrittenProperties);
         for (Iterator it = r.entrySet().iterator(); it.hasNext();) {
             Entry entry = (Entry) it.next();
-            
+
             setPropertyIfNotSet((String) entry.getKey(), (String) entry.getValue());
             if (id != null) {
                 setPropertyIfNotSet((String) entry.getKey() + "." + id, (String) entry.getValue());
             }
         }
-        
+
         if (getEnvironmentPrefix() != null) {
             Property propTask = new Property();
             propTask.setProject(project);
@@ -98,7 +97,7 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
             project.setProperty(property, value);
         }
     }
-    
+
     public Object clone() {
         IvyAntVariableContainer result = (IvyAntVariableContainer) super.clone();
         result.overwrittenProperties = (HashMap) ((HashMap) this.overwrittenProperties).clone();

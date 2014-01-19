@@ -32,14 +32,14 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 /**
- * This class is using the scp client to transfer data and information for the repository. 
+ * This class is using the scp client to transfer data and information for the repository.
  * <p>
- * It is based on the SCPClient from the ganymed ssh library from Christian Plattner,
- * released under a BSD style license. 
+ * It is based on the SCPClient from the ganymed ssh library from Christian Plattner, released under
+ * a BSD style license.
  * <p>
- * To minimize the dependency to the ssh library and because we needed some additional 
- * functionality, we decided to copy'n'paste the single class rather than to inherit or 
- * delegate it somehow. 
+ * To minimize the dependency to the ssh library and because we needed some additional
+ * functionality, we decided to copy'n'paste the single class rather than to inherit or delegate it
+ * somehow.
  * <p>
  * Nevertheless credit should go to the original author.
  */
@@ -63,11 +63,11 @@ public class Scp {
     private static final int BUFFER_SIZE = 64 * 1024;
 
     /*
-     * Maximum length authorized for scp lines. 
-     * This is a random limit - if your path names are longer, then adjust it.
+     * Maximum length authorized for scp lines. This is a random limit - if your path names are
+     * longer, then adjust it.
      */
     private static final int MAX_SCP_LINE_LENGTH = 8192;
-    
+
     private Session session;
 
     public class FileInfo {
@@ -188,8 +188,7 @@ public class Scp {
                     "Malformed C line sent by remote SCP binary, line too short.");
         }
 
-        if ((line.charAt(CLINE_SPACE_INDEX1) != ' ') 
-                || (line.charAt(CLINE_SPACE_INDEX2) == ' ')) {
+        if ((line.charAt(CLINE_SPACE_INDEX1) != ' ') || (line.charAt(CLINE_SPACE_INDEX2) == ' ')) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
@@ -206,8 +205,8 @@ public class Scp {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
-        if ((CLINE_SPACE_INDEX2 + 1 + lengthSubstring.length() + nameSubstring.length()) 
-                != line.length()) {
+        if ((CLINE_SPACE_INDEX2 + 1 + lengthSubstring.length() + nameSubstring.length()) != line
+                .length()) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
@@ -280,10 +279,9 @@ public class Scp {
             throws IOException, RemoteScpException {
         byte[] buffer = new byte[BUFFER_SIZE];
 
-        OutputStream os = new BufferedOutputStream(
-            channel.getOutputStream(), SEND_FILE_BUFFER_LENGTH);
-        InputStream is = new BufferedInputStream(
-            channel.getInputStream(), SEND_BYTES_BUFFER_LENGTH);
+        OutputStream os = new BufferedOutputStream(channel.getOutputStream(),
+                SEND_FILE_BUFFER_LENGTH);
+        InputStream is = new BufferedInputStream(channel.getInputStream(), SEND_BYTES_BUFFER_LENGTH);
 
         try {
             if (channel.isConnected()) {
@@ -490,18 +488,18 @@ public class Scp {
             if (mode.length() != MODE_LENGTH) {
                 throw new IllegalArgumentException("Invalid mode.");
             }
-    
+
             for (int i = 0; i < mode.length(); i++) {
                 if (!Character.isDigit(mode.charAt(i))) {
                     throw new IllegalArgumentException("Invalid mode.");
                 }
             }
         }
-        
+
         String cmd = "scp -t ";
         if (mode != null) {
             cmd = cmd + "-p ";
-        }        
+        }
         if (remoteTargetDir != null && remoteTargetDir.length() > 0) {
             cmd = cmd + "-d " + remoteTargetDir;
         }

@@ -44,8 +44,8 @@ public class ModuleDescriptorSorter {
 
     private final CircularDependencyStrategy circularDepStrategy;
 
-    public ModuleDescriptorSorter(Collection<ModuleDescriptor> modulesDescriptorsToSort, VersionMatcher matcher,
-            NonMatchingVersionReporter nonMatchingVersionReporter,
+    public ModuleDescriptorSorter(Collection<ModuleDescriptor> modulesDescriptorsToSort,
+            VersionMatcher matcher, NonMatchingVersionReporter nonMatchingVersionReporter,
             CircularDependencyStrategy circularDepStrategy) {
         this.circularDepStrategy = circularDepStrategy;
         moduleDescriptors = new CollectionOfModulesToSort(modulesDescriptorsToSort, matcher,
@@ -69,10 +69,10 @@ public class ModuleDescriptorSorter {
     /**
      * If current module has already been added to list, returns, Otherwise invokes
      * sortModuleDescriptorsHelp for all dependencies contained within set of moduleDescriptors.
-     * Then finally adds self to list of sorted.<br/> When a loop is detected by a recursive call,
-     * the moduleDescriptors are not added immediately added to the sorted list. They are added as
-     * loop dependencies of the root, and will be added to the sorted list only when the root itself
-     * will be added.
+     * Then finally adds self to list of sorted.<br/>
+     * When a loop is detected by a recursive call, the moduleDescriptors are not added immediately
+     * added to the sorted list. They are added as loop dependencies of the root, and will be added
+     * to the sorted list only when the root itself will be added.
      * 
      * @param current
      *            Current module to add to sorted list.

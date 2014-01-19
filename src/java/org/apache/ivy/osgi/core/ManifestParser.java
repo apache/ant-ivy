@@ -160,7 +160,7 @@ public class ManifestParser {
         ManifestHeaderValue exportElements = new ManifestHeaderValue(
                 mainAttributes.getValue(EXPORT_PACKAGE));
         for (ManifestHeaderElement exportElement : exportElements.getElements()) {
-            String vExport = (String) exportElement.getAttributes().get(ATTR_VERSION);
+            String vExport = exportElement.getAttributes().get(ATTR_VERSION);
             Version v = null;
             try {
                 v = versionOf(vExport);
@@ -171,7 +171,7 @@ public class ManifestParser {
 
             for (String name : exportElement.getValues()) {
                 ExportPackage export = new ExportPackage(name, v);
-                String uses = (String) exportElement.getDirectives().get(ATTR_USE);
+                String uses = exportElement.getDirectives().get(ATTR_USE);
                 if (uses != null) {
                     String[] split = uses.trim().split(",");
                     for (int i = 0; i < split.length; i++) {
@@ -190,11 +190,11 @@ public class ManifestParser {
             bundleInfo.setSource(true);
             ManifestHeaderValue eclipseSourceBundleValue = new ManifestHeaderValue(
                     eclipseSourceBundle);
-            ManifestHeaderElement element = (ManifestHeaderElement) eclipseSourceBundleValue
-                    .getElements().iterator().next();
-            String symbolicNameTarget = (String) element.getValues().iterator().next();
+            ManifestHeaderElement element = eclipseSourceBundleValue.getElements().iterator()
+                    .next();
+            String symbolicNameTarget = element.getValues().iterator().next();
             bundleInfo.setSymbolicNameTarget(symbolicNameTarget);
-            String v = (String) element.getAttributes().get(ATTR_VERSION);
+            String v = element.getAttributes().get(ATTR_VERSION);
             if (v != null) {
                 bundleInfo.setVersionTarget(new Version(v));
             }
@@ -233,7 +233,7 @@ public class ManifestParser {
             String headerName, String type) throws ParseException {
         ManifestHeaderValue elements = new ManifestHeaderValue(mainAttributes.getValue(headerName));
         for (ManifestHeaderElement element : elements.getElements()) {
-            String attVersion = (String) element.getAttributes().get(ATTR_VERSION);
+            String attVersion = element.getAttributes().get(ATTR_VERSION);
             Version version = null;
             try {
                 version = versionOf(attVersion);

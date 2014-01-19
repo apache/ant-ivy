@@ -34,8 +34,7 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 
 public final class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorParser {
-    private static final ModuleDescriptorParserRegistry INSTANCE 
-        = new ModuleDescriptorParserRegistry();
+    private static final ModuleDescriptorParserRegistry INSTANCE = new ModuleDescriptorParserRegistry();
 
     public static ModuleDescriptorParserRegistry getInstance() {
         return INSTANCE;
@@ -64,8 +63,8 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
     }
 
     public ModuleDescriptorParser[] getParsers() {
-        return (ModuleDescriptorParser[]) parsers.toArray(new ModuleDescriptorParser[parsers
-                .size()]);
+        return (ModuleDescriptorParser[]) parsers
+                .toArray(new ModuleDescriptorParser[parsers.size()]);
     }
 
     public ModuleDescriptorParser getParser(Resource res) {
@@ -78,7 +77,7 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
         return null;
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, 
+    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException {
         ModuleDescriptorParser parser = getParser(res);
         if (parser == null) {

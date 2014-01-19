@@ -21,13 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandLine {
-    private Map/*<String, String[]>*/ optionValues = new HashMap();
+    private Map/* <String, String[]> */optionValues = new HashMap();
+
     private String[] leftOverArgs;
-    
+
     void addOptionValues(String option, String[] values) {
         optionValues.put(option, values);
     }
-    
+
     void setLeftOverArgs(String[] args) {
         leftOverArgs = args;
     }

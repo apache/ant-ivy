@@ -32,16 +32,15 @@ public abstract class AbstractArtifact implements Artifact {
         }
         Artifact art = (Artifact) obj;
         return getModuleRevisionId().equals(art.getModuleRevisionId())
-                && getPublicationDate() == null ? (art.getPublicationDate() == null) : getPublicationDate().equals(
-            art.getPublicationDate())
-                && getName().equals(art.getName())
-                && getExt().equals(art.getExt())
-                && getType().equals(art.getType())
-                && getQualifiedExtraAttributes().equals(art.getQualifiedExtraAttributes());
+                && getPublicationDate() == null ? (art.getPublicationDate() == null)
+                : getPublicationDate().equals(art.getPublicationDate())
+                        && getName().equals(art.getName()) && getExt().equals(art.getExt())
+                        && getType().equals(art.getType())
+                        && getQualifiedExtraAttributes().equals(art.getQualifiedExtraAttributes());
     }
 
     public int hashCode() {
-        //CheckStyle:MagicNumber| OFF
+        // CheckStyle:MagicNumber| OFF
         int hash = 33;
         hash = hash * 17 + getModuleRevisionId().hashCode();
         if (getPublicationDate() != null) {
@@ -51,7 +50,7 @@ public abstract class AbstractArtifact implements Artifact {
         hash = hash * 17 + getExt().hashCode();
         hash = hash * 17 + getType().hashCode();
         hash = hash * 17 + getQualifiedExtraAttributes().hashCode();
-        //CheckStyle:MagicNumber| ON
+        // CheckStyle:MagicNumber| ON
         return hash;
     }
 
@@ -74,10 +73,9 @@ public abstract class AbstractArtifact implements Artifact {
     public Map getExtraAttributes() {
         return getId().getExtraAttributes();
     }
-    
+
     public Map getQualifiedExtraAttributes() {
         return getId().getQualifiedExtraAttributes();
     }
-
 
 }

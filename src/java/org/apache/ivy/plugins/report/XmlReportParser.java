@@ -91,17 +91,16 @@ public class XmlReportParser {
                         skip = true;
                     } else {
                         revisionsMap.put(new Integer(position), revisionArtifacts);
-                        mrid = ModuleRevisionId.newInstance(organisation, module, branch,
-                            revision, ExtendableItemHelper.getExtraAttributes(attributes,
-                                "extra-"));
+                        mrid = ModuleRevisionId.newInstance(organisation, module, branch, revision,
+                            ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
                         mrids.add(mrid);
                         if (isDefault) {
                             defaultMrids.add(mrid);
                         } else {
-                            Artifact metadataArtifact = 
-                                DefaultArtifact.newIvyArtifact(mrid, pubdate);
-                            MetadataArtifactDownloadReport madr = 
-                                new MetadataArtifactDownloadReport(metadataArtifact);
+                            Artifact metadataArtifact = DefaultArtifact.newIvyArtifact(mrid,
+                                pubdate);
+                            MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport(
+                                    metadataArtifact);
                             metadataReports.put(mrid, madr);
                             realMrids.add(mrid);
                         }
@@ -121,11 +120,10 @@ public class XmlReportParser {
                     if (skip) {
                         return;
                     }
-                    MetadataArtifactDownloadReport madr = 
-                        (MetadataArtifactDownloadReport) metadataReports.get(mrid);
+                    MetadataArtifactDownloadReport madr = metadataReports.get(mrid);
                     if (madr != null) {
-                        madr.setDownloadStatus(
-                            DownloadStatus.fromString(attributes.getValue("status")));
+                        madr.setDownloadStatus(DownloadStatus.fromString(attributes
+                                .getValue("status")));
                         madr.setDownloadDetails(attributes.getValue("details"));
                         madr.setSize(Long.parseLong(attributes.getValue("size")));
                         madr.setDownloadTimeMillis(Long.parseLong(attributes.getValue("time")));
@@ -134,16 +132,14 @@ public class XmlReportParser {
                             madr.setLocalFile(new File(attributes.getValue("location")));
                         }
                         if (attributes.getValue("original-local-location") != null) {
-                            madr.setOriginalLocalFile(
-                                new File(attributes.getValue("original-local-location")));
+                            madr.setOriginalLocalFile(new File(attributes
+                                    .getValue("original-local-location")));
                         }
                         if (attributes.getValue("origin-location") != null) {
                             if (ArtifactOrigin.isUnknown(attributes.getValue("origin-location"))) {
                                 madr.setArtifactOrigin(ArtifactOrigin.unkwnown(madr.getArtifact()));
                             } else {
-                                madr.setArtifactOrigin(
-                                    new ArtifactOrigin(
-                                        madr.getArtifact(),
+                                madr.setArtifactOrigin(new ArtifactOrigin(madr.getArtifact(),
                                         parseBoolean(attributes.getValue("origin-is-local")),
                                         attributes.getValue("origin-location")));
                             }
@@ -157,9 +153,8 @@ public class XmlReportParser {
                     String artifactName = attributes.getValue("name");
                     String type = attributes.getValue("type");
                     String ext = attributes.getValue("ext");
-                    Artifact artifact = new DefaultArtifact(mrid, pubdate, artifactName,
-                            type, ext, ExtendableItemHelper.getExtraAttributes(attributes,
-                                "extra-"));
+                    Artifact artifact = new DefaultArtifact(mrid, pubdate, artifactName, type, ext,
+                            ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
                     ArtifactDownloadReport aReport = new ArtifactDownloadReport(artifact);
                     aReport.setDownloadStatus(DownloadStatus.fromString(status));
                     aReport.setDownloadDetails(attributes.getValue("details"));
@@ -169,25 +164,22 @@ public class XmlReportParser {
                         aReport.setLocalFile(new File(attributes.getValue("location")));
                     }
                     if (attributes.getValue("unpackedFile") != null) {
-                        aReport.setUnpackedLocalFile(new File(attributes
-                                .getValue("unpackedFile")));
+                        aReport.setUnpackedLocalFile(new File(attributes.getValue("unpackedFile")));
                     }
                     revisionArtifacts.add(aReport);
                 } else if ("origin-location".equals(qName)) {
                     if (skip) {
                         return;
                     }
-                    ArtifactDownloadReport aReport = (ArtifactDownloadReport) 
-                        revisionArtifacts.get(revisionArtifacts.size() - 1);
-                    
+                    ArtifactDownloadReport aReport = revisionArtifacts
+                            .get(revisionArtifacts.size() - 1);
+
                     if (ArtifactOrigin.isUnknown(attributes.getValue("location"))) {
                         aReport.setArtifactOrigin(ArtifactOrigin.unkwnown(aReport.getArtifact()));
                     } else {
-                        aReport.setArtifactOrigin(
-                            new ArtifactOrigin(
-                                aReport.getArtifact(),
-                                parseBoolean(attributes.getValue("is-local")),
-                                attributes.getValue("location")));
+                        aReport.setArtifactOrigin(new ArtifactOrigin(aReport.getArtifact(),
+                                parseBoolean(attributes.getValue("is-local")), attributes
+                                        .getValue("location")));
                     }
                 } else if ("info".equals(qName)) {
                     String organisation = attributes.getValue("organisation");
@@ -208,8 +200,7 @@ public class XmlReportParser {
                 }
             }
 
-            public void endElement(String uri, String localName, String qname)
-                    throws SAXException {
+            public void endElement(String uri, String localName, String qname) throws SAXException {
                 if ("dependencies".equals(qname)) {
                     // add the artifacts in the correct order
                     for (List<ArtifactDownloadReport> artifactReports : revisionsMap.values()) {
@@ -219,14 +210,15 @@ public class XmlReportParser {
                                 artifacts.add(artifactReport.getArtifact());
                             }
                         }
-                        
+
                     }
                 }
             }
 
             private int getMaxPos() {
-                return revisionsMap.isEmpty() ? -1 : ((Integer) revisionsMap.keySet()
-                        .toArray()[revisionsMap.size() - 1]).intValue();
+                return revisionsMap.isEmpty() ? -1
+                        : ((Integer) revisionsMap.keySet().toArray()[revisionsMap.size() - 1])
+                                .intValue();
             }
         }
 
@@ -247,7 +239,7 @@ public class XmlReportParser {
         private File report;
 
         private boolean hasError = false;
-        
+
         SaxXmlReportParser(File report) {
             this.report = report;
         }
@@ -256,7 +248,7 @@ public class XmlReportParser {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(report, new XmlReportParserHandler());
         }
-        
+
         private static boolean parseBoolean(String str) {
             return (str != null) && str.equalsIgnoreCase("true");
         }
@@ -306,22 +298,21 @@ public class XmlReportParser {
     }
 
     public Artifact[] getArtifacts() {
-        return (Artifact[]) parser.getArtifacts().toArray(
-            new Artifact[parser.getArtifacts().size()]);
+        return parser.getArtifacts().toArray(new Artifact[parser.getArtifacts().size()]);
     }
 
     public ArtifactDownloadReport[] getArtifactReports() {
-        return (ArtifactDownloadReport[]) parser.getArtifactReports().toArray(
+        return parser.getArtifactReports().toArray(
             new ArtifactDownloadReport[parser.getArtifactReports().size()]);
     }
 
     public ModuleRevisionId[] getDependencyRevisionIds() {
-        return (ModuleRevisionId[]) parser.getModuleRevisionIds().toArray(
+        return parser.getModuleRevisionIds().toArray(
             new ModuleRevisionId[parser.getModuleRevisionIds().size()]);
     }
 
     public ModuleRevisionId[] getRealDependencyRevisionIds() {
-        return (ModuleRevisionId[]) parser.getRealModuleRevisionIds().toArray(
+        return parser.getRealModuleRevisionIds().toArray(
             new ModuleRevisionId[parser.getRealModuleRevisionIds().size()]);
     }
 

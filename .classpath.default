@@ -33,5 +33,12 @@
 	<classpathentry kind="lib" path="lib/oro.jar"/>
 	<classpathentry kind="lib" path="lib/bcpg-jdk14.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk14.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.connector-factory.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.core.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.jsch.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.pageant.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.sshagent.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.usocket-jna.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.agentproxy.usocket-nc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

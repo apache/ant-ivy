@@ -18,10 +18,10 @@
 package org.apache.ivy.plugins.lock;
 
 public class CreateFileLockStrategy extends ArtifactLockStrategy {
-    
+
     public CreateFileLockStrategy(boolean debugLocking) {
         super(new CreateFileLocker(debugLocking), debugLocking);
         setName("artifact-lock");
-    }    
+    }
 
 }

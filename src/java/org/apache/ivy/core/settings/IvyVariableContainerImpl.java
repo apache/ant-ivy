@@ -26,21 +26,22 @@ import org.apache.ivy.util.Message;
 public class IvyVariableContainerImpl implements IvyVariableContainer {
 
     private Map variables;
+
     private String envPrefix;
 
     public IvyVariableContainerImpl() {
         this.variables = new HashMap();
     }
-    
+
     public IvyVariableContainerImpl(Map variables) {
         this.variables = variables;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
      * @see org.apache.ivy.core.settings.IvyVariableContainer#setVariable(java.lang.String,
-     *      java.lang.String, boolean)
+     * java.lang.String, boolean)
      */
     public void setVariable(String varName, String value, boolean overwrite) {
         if (overwrite || !variables.containsKey(varName)) {
@@ -50,7 +51,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
             Message.debug("'" + varName + "' already set: discarding '" + value + "'");
         }
     }
-    
+
     public void setEnvironmentPrefix(String prefix) {
         if ((prefix != null) && !prefix.endsWith(".")) {
             this.envPrefix = prefix + ".";
@@ -66,7 +67,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
     protected Map getVariables() {
         return variables;
     }
-    
+
     protected String getEnvironmentPrefix() {
         return envPrefix;
     }
@@ -83,7 +84,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         } else {
             val = (String) variables.get(name);
         }
-        
+
         return val;
     }
 

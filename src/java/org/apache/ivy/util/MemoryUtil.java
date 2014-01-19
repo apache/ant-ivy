@@ -22,8 +22,9 @@ package org.apache.ivy.util;
  */
 public final class MemoryUtil {
     private static final int SAMPLING_SIZE = 100;
+
     private static final int SLEEP_TIME = 100;
-    
+
     private MemoryUtil() {
     }
 
@@ -82,7 +83,7 @@ public final class MemoryUtil {
             Message.debug(e);
         }
     }
-    
+
     public static void main(String[] args) throws ClassNotFoundException {
         System.out.println(sizeOf(Class.forName(args[0])));
     }

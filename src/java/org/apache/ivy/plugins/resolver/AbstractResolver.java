@@ -71,8 +71,8 @@ import org.apache.ivy.util.Message;
 /**
  * This abstract resolver only provides handling for resolver name
  */
-public abstract class AbstractResolver 
-        implements DependencyResolver, HasLatestStrategy, Validatable {
+public abstract class AbstractResolver implements DependencyResolver, HasLatestStrategy,
+        Validatable {
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
@@ -83,7 +83,7 @@ public abstract class AbstractResolver
     private String name;
 
     private ResolverSettings settings;
-    
+
     private EventManager eventManager = null; // may remain null
 
     /**
@@ -99,9 +99,9 @@ public abstract class AbstractResolver
     private Namespace namespace;
 
     private String namespaceName;
-    
+
     private String cacheManagerName;
-    
+
     private RepositoryCacheManager repositoryCacheManager;
 
     // used to store default values for nested cache
@@ -114,7 +114,7 @@ public abstract class AbstractResolver
     public ResolverSettings getSettings() {
         return settings;
     }
-    
+
     public ParserSettings getParserSettings() {
         return new ResolverParserSettings();
     }
@@ -177,7 +177,7 @@ public abstract class AbstractResolver
     public Map[] listTokenValues(String[] tokens, Map criteria) {
         return new Map[0];
     }
-    
+
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }
@@ -202,7 +202,7 @@ public abstract class AbstractResolver
     public String getTypeName() {
         return getClass().getName();
     }
-    
+
     /**
      * Default implementation downloads the artifact without taking advantage of its location
      */
@@ -226,9 +226,8 @@ public abstract class AbstractResolver
              * according to IVY-831, it seems that this actually happen sometime, while the contract
              * of DependencyResolver says that it should never return null
              */
-            throw new IllegalStateException(
-                "null download report returned by " + getName() + " (" + getClass().getName() + ")" 
-                + " when trying to download " + artifact);
+            throw new IllegalStateException("null download report returned by " + getName() + " ("
+                    + getClass().getName() + ")" + " when trying to download " + artifact);
         }
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() == DownloadStatus.FAILED ? null : adr.getArtifactOrigin();
@@ -246,17 +245,16 @@ public abstract class AbstractResolver
             if (latestStrategyName != null && !"default".equals(latestStrategyName)) {
                 latestStrategy = getSettings().getLatestStrategy(latestStrategyName);
                 if (latestStrategy == null) {
-                    throw new IllegalStateException(
-                        "unknown latest strategy '" + latestStrategyName + "'");
+                    throw new IllegalStateException("unknown latest strategy '"
+                            + latestStrategyName + "'");
                 }
             } else {
                 latestStrategy = getSettings().getDefaultLatestStrategy();
                 Message.debug(getName() + ": no latest strategy defined: using default");
             }
         } else {
-            throw new IllegalStateException(
-                "no ivy instance found: "
-                + "impossible to get a latest strategy without ivy instance");
+            throw new IllegalStateException("no ivy instance found: "
+                    + "impossible to get a latest strategy without ivy instance");
         }
     }
 
@@ -287,8 +285,7 @@ public abstract class AbstractResolver
             if (namespaceName != null) {
                 namespace = getSettings().getNamespace(namespaceName);
                 if (namespace == null) {
-                    throw new IllegalStateException(
-                        "unknown namespace '" + namespaceName + "'");
+                    throw new IllegalStateException("unknown namespace '" + namespaceName + "'");
                 }
             } else {
                 namespace = getSettings().getSystemNamespace();
@@ -342,23 +339,21 @@ public abstract class AbstractResolver
         return data.getNode(toSystem(resolvedMrid));
     }
 
-    protected ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, ResolveData data) {
+    protected ResolvedModuleRevision findModuleInCache(DependencyDescriptor dd, ResolveData data) {
         return findModuleInCache(dd, data, false);
     }
 
-    protected ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, ResolveData data, boolean anyResolver) {
-        ResolvedModuleRevision rmr = getRepositoryCacheManager().findModuleInCache(
-                    dd, dd.getDependencyRevisionId(), 
-                    getCacheOptions(data), anyResolver ? null : getName());
+    protected ResolvedModuleRevision findModuleInCache(DependencyDescriptor dd, ResolveData data,
+            boolean anyResolver) {
+        ResolvedModuleRevision rmr = getRepositoryCacheManager().findModuleInCache(dd,
+            dd.getDependencyRevisionId(), getCacheOptions(data), anyResolver ? null : getName());
         if (rmr == null) {
             return null;
         }
-        if (data.getReport() != null 
+        if (data.getReport() != null
                 && data.isBlacklisted(data.getReport().getConfiguration(), rmr.getId())) {
-            Message.verbose("\t" + getName() + ": found revision in cache: " 
-                        + rmr.getId() + " for " + dd + ", but it is blacklisted");
+            Message.verbose("\t" + getName() + ": found revision in cache: " + rmr.getId()
+                    + " for " + dd + ", but it is blacklisted");
             return null;
         }
         return rmr;
@@ -367,7 +362,7 @@ public abstract class AbstractResolver
     public void setChangingMatcher(String changingMatcherName) {
         this.changingMatcherName = changingMatcherName;
     }
-    
+
     protected String getChangingMatcherName() {
         return changingMatcherName;
     }
@@ -375,7 +370,7 @@ public abstract class AbstractResolver
     public void setChangingPattern(String changingPattern) {
         this.changingPattern = changingPattern;
     }
-    
+
     protected String getChangingPattern() {
         return changingPattern;
     }
@@ -383,7 +378,7 @@ public abstract class AbstractResolver
     public void setCheckmodified(boolean check) {
         checkmodified = Boolean.valueOf(check);
     }
-    
+
     public RepositoryCacheManager getRepositoryCacheManager() {
         if (repositoryCacheManager == null) {
             initRepositoryCacheManagerFromSettings();
@@ -396,36 +391,35 @@ public abstract class AbstractResolver
             repositoryCacheManager = settings.getDefaultRepositoryCacheManager();
             if (repositoryCacheManager == null) {
                 throw new IllegalStateException(
-                    "no default cache manager defined with current settings");
+                        "no default cache manager defined with current settings");
             }
         } else {
             repositoryCacheManager = settings.getRepositoryCacheManager(cacheManagerName);
             if (repositoryCacheManager == null) {
-                throw new IllegalStateException(
-                    "unknown cache manager '" + cacheManagerName 
-                    + "'. Available caches are " 
-                    + Arrays.asList(settings.getRepositoryCacheManagers()));
+                throw new IllegalStateException("unknown cache manager '" + cacheManagerName
+                        + "'. Available caches are "
+                        + Arrays.asList(settings.getRepositoryCacheManagers()));
             }
         }
     }
-    
+
     public void setRepositoryCacheManager(RepositoryCacheManager repositoryCacheManager) {
         this.cacheManagerName = repositoryCacheManager.getName();
         this.repositoryCacheManager = repositoryCacheManager;
     }
-    
+
     public void setCache(String cacheName) {
         cacheManagerName = cacheName;
     }
-    
+
     public void setEventManager(EventManager eventManager) {
         this.eventManager = eventManager;
     }
-    
+
     public EventManager getEventManager() {
         return eventManager;
     }
-    
+
     public void validate() {
         initRepositoryCacheManagerFromSettings();
         initNamespaceFromSettings();
@@ -434,14 +428,14 @@ public abstract class AbstractResolver
 
     protected CacheMetadataOptions getCacheOptions(ResolveData data) {
         return (CacheMetadataOptions) new CacheMetadataOptions()
-            .setChangingMatcherName(getChangingMatcherName())
-            .setChangingPattern(getChangingPattern())
-            .setCheckTTL(!data.getOptions().isUseCacheOnly())
-            .setCheckmodified(data.getOptions().isUseCacheOnly() ? Boolean.FALSE : checkmodified)
-            .setValidate(doValidate(data))
-            .setNamespace(getNamespace())
-            .setForce(data.getOptions().isRefresh())
-            .setListener(getDownloadListener(getDownloadOptions(data.getOptions())));
+                .setChangingMatcherName(getChangingMatcherName())
+                .setChangingPattern(getChangingPattern())
+                .setCheckTTL(!data.getOptions().isUseCacheOnly())
+                .setCheckmodified(
+                    data.getOptions().isUseCacheOnly() ? Boolean.FALSE : checkmodified)
+                .setValidate(doValidate(data)).setNamespace(getNamespace())
+                .setForce(data.getOptions().isRefresh())
+                .setListener(getDownloadListener(getDownloadOptions(data.getOptions())));
     }
 
     protected CacheDownloadOptions getCacheDownloadOptions(DownloadOptions options) {
@@ -453,7 +447,7 @@ public abstract class AbstractResolver
     protected DownloadOptions getDownloadOptions(ResolveOptions options) {
         return (DownloadOptions) new DownloadOptions().setLog(options.getLog());
     }
-    
+
     public void abortPublishTransaction() throws IOException {
         /* Default implementation is a no-op */
     }
@@ -462,8 +456,8 @@ public abstract class AbstractResolver
         /* Default implementation is a no-op */
     }
 
-    public void beginPublishTransaction(
-            ModuleRevisionId module, boolean overwrite) throws IOException {
+    public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
+            throws IOException {
         /* Default implementation is a no-op */
     }
 
@@ -471,12 +465,12 @@ public abstract class AbstractResolver
         return new DownloadListener() {
             public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
                 if (eventManager != null) {
-                    eventManager.fireIvyEvent(
-                        new NeedArtifactEvent(AbstractResolver.this, artifact));
+                    eventManager
+                            .fireIvyEvent(new NeedArtifactEvent(AbstractResolver.this, artifact));
                 }
             }
-            public void startArtifactDownload(
-                    RepositoryCacheManager cache, ResolvedResource rres, 
+
+            public void startArtifactDownload(RepositoryCacheManager cache, ResolvedResource rres,
                     Artifact artifact, ArtifactOrigin origin) {
                 if (artifact.isMetadata() || LogOptions.LOG_QUIET.equals(options.getLog())) {
                     Message.verbose("downloading " + rres.getResource() + " ...");
@@ -484,23 +478,20 @@ public abstract class AbstractResolver
                     Message.info("downloading " + rres.getResource() + " ...");
                 }
                 if (eventManager != null) {
-                    eventManager.fireIvyEvent(
-                        new StartArtifactDownloadEvent(
-                            AbstractResolver.this, artifact, origin));
-                }            
+                    eventManager.fireIvyEvent(new StartArtifactDownloadEvent(AbstractResolver.this,
+                            artifact, origin));
+                }
             }
-            public void endArtifactDownload(
-                    RepositoryCacheManager cache, Artifact artifact, 
+
+            public void endArtifactDownload(RepositoryCacheManager cache, Artifact artifact,
                     ArtifactDownloadReport adr, File archiveFile) {
                 if (eventManager != null) {
-                    eventManager.fireIvyEvent(
-                        new EndArtifactDownloadEvent(
-                            AbstractResolver.this, artifact, adr, archiveFile));
+                    eventManager.fireIvyEvent(new EndArtifactDownloadEvent(AbstractResolver.this,
+                            artifact, adr, archiveFile));
                 }
             }
         };
     }
-
 
     /**
      * Returns true if rmr1 is after rmr2, using the latest strategy to determine which is the
@@ -511,19 +502,16 @@ public abstract class AbstractResolver
      * @return
      */
     protected boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
-        ArtifactInfo[] ais = new ArtifactInfo[] {
-                new ResolvedModuleRevisionArtifactInfo(rmr1),
+        ArtifactInfo[] ais = new ArtifactInfo[] {new ResolvedModuleRevisionArtifactInfo(rmr1),
                 new ResolvedModuleRevisionArtifactInfo(rmr2)};
         return getLatestStrategy().findLatest(ais, date) == ais[0];
     }
 
-    protected ResolvedModuleRevision checkLatest(
-            DependencyDescriptor dd,
-            ResolvedModuleRevision newModuleFound,
-            ResolveData data) {
+    protected ResolvedModuleRevision checkLatest(DependencyDescriptor dd,
+            ResolvedModuleRevision newModuleFound, ResolveData data) {
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(data, "data");
-        
+
         // check if latest is asked and compare to return the most recent
         ResolvedModuleRevision previousModuleFound = data.getCurrentResolvedModuleRevision();
         String newModuleDesc = describe(newModuleFound);
@@ -536,7 +524,7 @@ public abstract class AbstractResolver
             Message.debug("\tmodule revision kept as younger: " + newModuleDesc);
             saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
-        } else if (!newModuleFound.getDescriptor().isDefault() 
+        } else if (!newModuleFound.getDescriptor().isDefault()
                 && previousModuleFound.getDescriptor().isDefault()) {
             Message.debug("\tmodule revision kept as better (not default): " + newModuleDesc);
             saveModuleRevisionIfNeeded(dd, newModuleFound);
@@ -549,10 +537,10 @@ public abstract class AbstractResolver
 
     protected void saveModuleRevisionIfNeeded(DependencyDescriptor dd,
             ResolvedModuleRevision newModuleFound) {
-        if (newModuleFound != null 
+        if (newModuleFound != null
                 && getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())) {
-            getRepositoryCacheManager().saveResolvedRevision(
-                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
+            getRepositoryCacheManager().saveResolvedRevision(dd.getDependencyRevisionId(),
+                newModuleFound.getId().getRevision());
         }
     }
 
@@ -560,9 +548,8 @@ public abstract class AbstractResolver
         if (rmr == null) {
             return "[none]";
         }
-        return rmr.getId()
-            + (rmr.getDescriptor().isDefault() ? "[default]" : "") + " from "
-            + rmr.getResolver().getName();
+        return rmr.getId() + (rmr.getDescriptor().isDefault() ? "[default]" : "") + " from "
+                + rmr.getResolver().getName();
     }
 
     private class ResolverParserSettings implements ParserSettings {
@@ -614,6 +601,6 @@ public abstract class AbstractResolver
         public String substitute(String value) {
             return AbstractResolver.this.getSettings().substitute(value);
         }
-        
+
     }
 }

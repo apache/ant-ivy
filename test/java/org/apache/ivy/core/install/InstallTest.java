@@ -35,52 +35,52 @@ public class InstallTest extends TestCase {
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), ivy.getSettings()
-                .getDefaultResolver().getName(), "install", 
-                new InstallOptions());
+                .getDefaultResolver().getName(), "install", new InstallOptions());
 
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
-    
+
     public void testValidate() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
-        ivy.install(ModuleRevisionId.newInstance("orgfailure", "modfailure", "1.0"), ivy.getSettings()
-                .getDefaultResolver().getName(), "install", new InstallOptions());
+        ivy.install(ModuleRevisionId.newInstance("orgfailure", "modfailure", "1.0"), ivy
+                .getSettings().getDefaultResolver().getName(), "install", new InstallOptions());
 
         assertFalse(new File("build/test/install/orgfailure/modfailure/ivy-1.0.xml").exists());
-        assertFalse(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar").exists());
+        assertFalse(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar")
+                .exists());
     }
 
     public void testMaven() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
-        ResolveReport rr = ivy.install(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), ivy.getSettings()
-                .getDefaultResolver().getName(), "install", new InstallOptions());
+        ResolveReport rr = ivy.install(ModuleRevisionId.newInstance("org.apache", "test", "1.0"),
+            ivy.getSettings().getDefaultResolver().getName(), "install", new InstallOptions());
 
         assertTrue(new File("build/test/install/org.apache/test/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.jar").exists());
-        
+
         // the original descriptor is not installed
         assertFalse(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
 
         ivy.install(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), ivy.getSettings()
-            .getDefaultResolver().getName(), "install", new InstallOptions()
-                .setInstallOriginalMetadata(true)
-                .setOverwrite(true));
-        
+                .getDefaultResolver().getName(), "install", new InstallOptions()
+                .setInstallOriginalMetadata(true).setOverwrite(true));
+
         // the original descriptor is installed now, too
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
-    
+
     public void testNoValidate() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
-        ivy.install(ModuleRevisionId.newInstance("orgfailure", "modfailure", "1.0"), ivy.getSettings()
-                .getDefaultResolver().getName(), "install", new InstallOptions().setValidate(false));
+        ivy.install(ModuleRevisionId.newInstance("orgfailure", "modfailure", "1.0"), ivy
+                .getSettings().getDefaultResolver().getName(), "install",
+            new InstallOptions().setValidate(false));
 
         assertTrue(new File("build/test/install/orgfailure/modfailure/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar").exists());
@@ -90,7 +90,7 @@ public class InstallTest extends TestCase {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
 
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), "test", "install", 
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), "test", "install",
             new InstallOptions());
 
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
@@ -115,8 +115,8 @@ public class InstallTest extends TestCase {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
 
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1"), 
-            "test", "install", new InstallOptions());
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1"), "test", "install",
+            new InstallOptions());
 
         assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
 
@@ -131,8 +131,8 @@ public class InstallTest extends TestCase {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-dummydefaultresolver.xml"));
 
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1"), 
-            "test", "install", new InstallOptions());
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1"), "test", "install",
+            new InstallOptions());
 
         assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
 
@@ -148,8 +148,8 @@ public class InstallTest extends TestCase {
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), ivy.getSettings()
-                .getDefaultResolver().getName(), "install", 
-                new InstallOptions().setTransitive(false));
+                .getDefaultResolver().getName(), "install",
+            new InstallOptions().setTransitive(false));
 
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
@@ -162,7 +162,7 @@ public class InstallTest extends TestCase {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
-        ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), "1", "install", 
+        ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), "1", "install",
             new InstallOptions().setMatcherName(PatternMatcher.REGEXP).setOverwrite(true));
 
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());

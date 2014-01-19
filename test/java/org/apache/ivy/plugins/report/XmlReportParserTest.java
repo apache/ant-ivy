@@ -22,7 +22,6 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -57,8 +56,8 @@ public class XmlReportParserTest extends TestCase {
     }
 
     public void testGetResolvedModule() throws Exception {
-        ResolveReport report = _ivy.resolve(new File(
-                "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),
+        ResolveReport report = _ivy.resolve(
+            new File("test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),
             getResolveOptions(new String[] {"default"}).setValidate(false).setResolveId(
                 "testGetResolvedModule"));
         assertNotNull(report);

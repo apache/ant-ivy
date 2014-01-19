@@ -65,9 +65,9 @@ public class XmlSettingsParser extends DefaultHandler {
      */
     private static final class IvyVariableContainerWrapper implements IvyVariableContainer {
         private static final Collection SETTINGS_VARIABLES = Arrays.asList(new String[] {
-                "ivy.settings.dir", "ivy.settings.url", "ivy.settings.file",
-                "ivy.conf.dir", "ivy.conf.url", "ivy.conf.file"});
-        
+                "ivy.settings.dir", "ivy.settings.url", "ivy.settings.file", "ivy.conf.dir",
+                "ivy.conf.url", "ivy.conf.file"});
+
         private final IvyVariableContainer variables;
 
         private Map localVariables = new HashMap();
@@ -106,8 +106,8 @@ public class XmlSettingsParser extends DefaultHandler {
 
     private List configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces",
             "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers",
-            "statuses", "circular-dependency-strategies", "triggers", "lock-strategies",
-            "caches", "signers"});
+            "statuses", "circular-dependency-strategies", "triggers", "lock-strategies", "caches",
+            "signers"});
 
     private IvySettings ivy;
 
@@ -231,8 +231,8 @@ public class XmlSettingsParser extends DefaultHandler {
             sax.initCause(ex);
             throw sax;
         } catch (IOException ex) {
-            SAXException sax = new SAXException("io problem while parsing config file: " 
-                        + ex.getMessage(), ex);
+            SAXException sax = new SAXException("io problem while parsing config file: "
+                    + ex.getMessage(), ex);
             sax.initCause(ex);
             throw sax;
         }
@@ -254,14 +254,14 @@ public class XmlSettingsParser extends DefaultHandler {
         String resolveMode = (String) attributes.remove("resolveMode");
         String matcher = (String) attributes.remove("matcher");
         matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
-        ivy.addModuleConfiguration(attributes, ivy
-                .getMatcher(matcher), resolver, branch, cm, resolveMode);
+        ivy.addModuleConfiguration(attributes, ivy.getMatcher(matcher), resolver, branch, cm,
+            resolveMode);
     }
 
     private void macrodefStarted(String qName, Map attributes) {
         currentConfiguratorTag = qName;
-        Configurator.MacroDef macrodef = configurator.startMacroDef((String) attributes
-                .get("name"));
+        Configurator.MacroDef macrodef = configurator
+                .startMacroDef((String) attributes.get("name"));
         macrodef.addAttribute("name", null);
     }
 
@@ -283,7 +283,7 @@ public class XmlSettingsParser extends DefaultHandler {
 
     private void versionMatchersStarted(String qName, Map attributes) {
         anyConfiguratorStarted(qName);
-        if ("true".equals((String) attributes.get("usedefaults"))) {
+        if ("true".equals(attributes.get("usedefaults"))) {
             ivy.configureDefaultVersionMatcher();
         }
     }
@@ -292,7 +292,7 @@ public class XmlSettingsParser extends DefaultHandler {
         anyConfiguratorStarted(qName);
         defaultLock = (String) attributes.get("lockStrategy");
         defaultCacheManager = (String) attributes.get("default");
-        
+
         String cache = (String) attributes.get("defaultCacheDir");
         if (cache != null) {
             ivy.setDefaultCache(Checks.checkAbsolute(cache, "defaultCacheDir"));
@@ -300,7 +300,8 @@ public class XmlSettingsParser extends DefaultHandler {
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
             Message.deprecated("'checkUpToDate' is deprecated, "
-                + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings + ")");
+                    + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings
+                    + ")");
             ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
         }
         String resolutionDir = (String) attributes.get("resolutionCacheDir");
@@ -321,19 +322,18 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         String repositoryDir = (String) attributes.get("repositoryCacheDir");
         if (repositoryDir != null) {
-            ivy.setDefaultRepositoryCacheBasedir(repositoryDir); 
+            ivy.setDefaultRepositoryCacheBasedir(repositoryDir);
         }
     }
 
     private void settingsStarted(String qName, Map attributes) {
         if ("conf".equals(qName) && !deprecatedMessagePrinted) {
-            Message.deprecated(
-                "'conf' is deprecated, use 'settings' instead (" + settings + ")");
+            Message.deprecated("'conf' is deprecated, use 'settings' instead (" + settings + ")");
         }
         String cache = (String) attributes.get("defaultCache");
         if (cache != null) {
             Message.deprecated("'defaultCache' is deprecated, "
-                + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
+                    + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
             ivy.setDefaultCache(Checks.checkAbsolute(cache, "defaultCache"));
         }
         String defaultBranch = (String) attributes.get("defaultBranch");
@@ -351,26 +351,24 @@ public class XmlSettingsParser extends DefaultHandler {
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
             Message.deprecated("'checkUpToDate' is deprecated, "
-                + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings + ")");
+                    + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings
+                    + ")");
             ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
         }
         String useRemoteConfig = (String) attributes.get("useRemoteConfig");
         if (useRemoteConfig != null) {
-            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig)
-                    .booleanValue());
+            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig).booleanValue());
         }
         String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
         if (cacheIvyPattern != null) {
-            Message.deprecated(
-                "'cacheIvyPattern' is deprecated, use 'caches[@ivyPattern]' instead"
-                + " (" + settings + ")");
+            Message.deprecated("'cacheIvyPattern' is deprecated, use 'caches[@ivyPattern]' instead"
+                    + " (" + settings + ")");
             ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
         }
         String cacheArtPattern = (String) attributes.get("cacheArtifactPattern");
         if (cacheArtPattern != null) {
-            Message.deprecated(
-                "'cacheArtifactPattern' is deprecated, "
-                + "use 'caches[@artifactPattern]' instead (" + settings + ")");
+            Message.deprecated("'cacheArtifactPattern' is deprecated, "
+                    + "use 'caches[@artifactPattern]' instead (" + settings + ")");
             ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
         }
 
@@ -379,20 +377,20 @@ public class XmlSettingsParser extends DefaultHandler {
         defaultCM = (String) attributes.get("defaultConflictManager");
         defaultLatest = (String) attributes.get("defaultLatestStrategy");
         defaultCircular = (String) attributes.get("circularDependencyStrategy");
-        
+
         String requestMethod = (String) attributes.get("httpRequestMethod");
         if ("head".equalsIgnoreCase(requestMethod)) {
             URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_HEAD);
         } else if ("get".equalsIgnoreCase(requestMethod)) {
             URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_GET);
         } else if ((requestMethod != null) && (requestMethod.trim().length() > 0)) {
-            throw new IllegalArgumentException("Invalid httpRequestMethod specified, must be " 
-                + "one of {'HEAD', 'GET'}");
+            throw new IllegalArgumentException("Invalid httpRequestMethod specified, must be "
+                    + "one of {'HEAD', 'GET'}");
         }
     }
 
     private void includeStarted(Map attributes) throws IOException, ParseException {
-        final IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer();
+        final IvyVariableContainer variables = ivy.getVariableContainer();
         ivy.setVariableContainer(new IvyVariableContainerWrapper(variables));
         try {
             String propFilePath = (String) attributes.get("file");
@@ -401,14 +399,14 @@ public class XmlSettingsParser extends DefaultHandler {
                 propFilePath = (String) attributes.get("url");
                 if (propFilePath == null) {
                     throw new IllegalArgumentException(
-                        "bad include tag: specify file or url to include");
+                            "bad include tag: specify file or url to include");
                 } else {
                     try {
-                        //First asume that it is an absolute URL
+                        // First asume that it is an absolute URL
                         settingsURL = new URL(propFilePath);
                     } catch (MalformedURLException e) {
-                        //If that fail, it may be because it is a relative one.
-                        settingsURL = new URL(this.settings , propFilePath);
+                        // If that fail, it may be because it is a relative one.
+                        settingsURL = new URL(this.settings, propFilePath);
                     }
                     Message.verbose("including url: " + settingsURL.toString());
                     ivy.setSettingsVariables(settingsURL);
@@ -424,13 +422,11 @@ public class XmlSettingsParser extends DefaultHandler {
                             return;
                         }
 
-                        ivy.setSettingsVariables(
-                            Checks.checkAbsolute(settingsFile, 
+                        ivy.setSettingsVariables(Checks.checkAbsolute(settingsFile,
                             "settings include path"));
                     } catch (URISyntaxException e) {
                         // try to make the best of it...
-                        ivy.setSettingsVariables(
-                            Checks.checkAbsolute(settingsURL.getPath(), 
+                        ivy.setSettingsVariables(Checks.checkAbsolute(settingsURL.getPath(),
                             "settings include path"));
                     }
                 } else {
@@ -443,9 +439,10 @@ public class XmlSettingsParser extends DefaultHandler {
         }
     }
 
-    /** Provide an URL referencing the given filepath.  If filePath is an absolute path, then
-     * the resulting URL point to a local file, otherwise, the filepath is evaluated relatively
-     * to the URL of the current settings file (can be local file or remote URL).
+    /**
+     * Provide an URL referencing the given filepath. If filePath is an absolute path, then the
+     * resulting URL point to a local file, otherwise, the filepath is evaluated relatively to the
+     * URL of the current settings file (can be local file or remote URL).
      */
     private URL urlFromFileAttribute(String filePath) throws IOException {
         try {
@@ -453,7 +450,7 @@ public class XmlSettingsParser extends DefaultHandler {
         } catch (MalformedURLException e) {
             // ignore, we'll try to create a correct URL below
         }
-        
+
         File incFile = new File(filePath);
         if (incFile.isAbsolute()) {
             if (!incFile.exists()) {
@@ -468,10 +465,10 @@ public class XmlSettingsParser extends DefaultHandler {
                 }
                 return new File(settingsFile.getParentFile(), filePath).toURI().toURL();
             } catch (URISyntaxException e) {
-                return new URL(this.settings , filePath);
+                return new URL(this.settings, filePath);
             }
         } else {
-            return new URL(this.settings , filePath);
+            return new URL(this.settings, filePath);
         }
     }
 
@@ -480,8 +477,8 @@ public class XmlSettingsParser extends DefaultHandler {
         String environmentPrefix = (String) attributes.get("environment");
         if (propFilePath != null) {
             String overrideStr = (String) attributes.get("override");
-            boolean override = overrideStr == null ? true 
-                                                   : Boolean.valueOf(overrideStr).booleanValue();
+            boolean override = overrideStr == null ? true : Boolean.valueOf(overrideStr)
+                    .booleanValue();
             Message.verbose("loading properties: " + propFilePath);
             try {
                 URL fileUrl = urlFromFileAttribute(propFilePath);
@@ -492,9 +489,8 @@ public class XmlSettingsParser extends DefaultHandler {
         } else if (environmentPrefix != null) {
             ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
         } else {
-            throw new IllegalArgumentException(
-                "Didn't find a 'file' or 'environment' attribute " 
-                + "on the 'properties' element");
+            throw new IllegalArgumentException("Didn't find a 'file' or 'environment' attribute "
+                    + "on the 'properties' element");
         }
     }
 
@@ -539,8 +535,7 @@ public class XmlSettingsParser extends DefaultHandler {
     }
 
     private void inConfiguratorStarted(String qName, Map attributes) {
-        if ("macrodef".equals(currentConfiguratorTag)
-                && configurator.getTypeDef(qName) != null) {
+        if ("macrodef".equals(currentConfiguratorTag) && configurator.getTypeDef(qName) != null) {
             String name = (String) attributes.get("name");
             if (name == null) {
                 attributes.put("name", "@{name}");
@@ -552,9 +547,8 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         if (attributes.get("ref") != null) {
             if (attributes.size() != 1) {
-                throw new IllegalArgumentException(
-                        "ref attribute should be the only one ! found " + attributes.size()
-                                + " in " + qName);
+                throw new IllegalArgumentException("ref attribute should be the only one ! found "
+                        + attributes.size() + " in " + qName);
             }
             String name = (String) attributes.get("ref");
             Object child = null;
@@ -568,14 +562,13 @@ public class XmlSettingsParser extends DefaultHandler {
                 child = ivy.getLatestStrategy(name);
                 if (child == null) {
                     throw new IllegalArgumentException("unknown latest strategy " + name
-                           + ": latest strategy should be defined before being referenced");
+                            + ": latest strategy should be defined before being referenced");
                 }
             } else if ("conflict-managers".equals(currentConfiguratorTag)) {
                 child = ivy.getConflictManager(name);
                 if (child == null) {
-                    throw new IllegalArgumentException(
-                         "unknown conflict manager " + name
-                         + ": conflict manager should be defined before being referenced");
+                    throw new IllegalArgumentException("unknown conflict manager " + name
+                            + ": conflict manager should be defined before being referenced");
                 }
             }
             if (child == null) {
@@ -586,8 +579,7 @@ public class XmlSettingsParser extends DefaultHandler {
             configurator.startCreateChild(qName);
             for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
                 String attName = (String) iter.next();
-                configurator.setAttribute(attName, (String) attributes
-                        .get(attName));
+                configurator.setAttribute(attName, (String) attributes.get(attName));
             }
         }
     }
@@ -627,8 +619,8 @@ public class XmlSettingsParser extends DefaultHandler {
             ivy.setDefaultLatestStrategy(latestStrategy);
         }
         if (defaultCacheManager != null) {
-            RepositoryCacheManager cache = ivy.getRepositoryCacheManager(
-                                                ivy.substitute(defaultCacheManager));
+            RepositoryCacheManager cache = ivy.getRepositoryCacheManager(ivy
+                    .substitute(defaultCacheManager));
             if (cache == null) {
                 throw new IllegalArgumentException("unknown cache manager "
                         + ivy.substitute(defaultCacheManager));

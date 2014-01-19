@@ -38,7 +38,7 @@ public class ResolveData {
     private ResolveEngine engine;
 
     private Map visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
-    
+
     private ConfigurationResolveReport report;
 
     private ResolveOptions options;
@@ -48,8 +48,8 @@ public class ResolveData {
     private ResolvedModuleRevision currentResolvedModuleRevision;
 
     public ResolveData(ResolveData data, boolean validate) {
-        this(data.engine, new ResolveOptions(data.options).setValidate(validate), 
-            data.report, data.visitData);
+        this(data.engine, new ResolveOptions(data.options).setValidate(validate), data.report,
+                data.visitData);
         setCurrentVisitNode(data.currentVisitNode);
         setCurrentResolvedModuleRevision(data.currentResolvedModuleRevision);
     }
@@ -101,7 +101,7 @@ public class ResolveData {
             for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
                 Map.Entry entry = (Entry) it.next();
                 ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
-                
+
                 if (isSubMap(mrid.getAttributes(), current.getAttributes())) {
                     result = (VisitData) entry.getValue();
                     break;
@@ -111,54 +111,54 @@ public class ResolveData {
 
         return result;
     }
-    
+
     /**
      * Checks whether one map is a sub-map of the other.
      */
     private static boolean isSubMap(Map map1, Map map2) {
         int map1Size = map1.size();
         int map2Size = map2.size();
-        
+
         if (map1Size == map2Size) {
             return map1.equals(map2);
         }
-        
+
         Map smallest = map1Size < map2Size ? map1 : map2;
         Map largest = map1Size < map2Size ? map2 : map1;
-        
-        for (Iterator it = smallest.entrySet().iterator(); it.hasNext(); ) {
+
+        for (Iterator it = smallest.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
-            
+
             if (!largest.containsKey(entry.getKey())) {
                 return false;
             }
-            
+
             Object map1Value = smallest.get(entry.getKey());
             Object map2Value = largest.get(entry.getKey());
             if (!isEqual(map1Value, map2Value)) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     private static boolean isEqual(Object obj1, Object obj2) {
         if (obj1 == obj2) {
             return true;
         }
-        
+
         if (obj1 == null) {
             return obj2 == null;
         }
-        
+
         if (obj2 == null) {
             return obj1 == null;
         }
-        
+
         return obj1.equals(obj2);
     }
-    
+
     /**
      * Returns the VisitNode currently visited, or <code>null</code> if there is no node currently
      * visited in this context.
@@ -168,10 +168,10 @@ public class ResolveData {
     public VisitNode getCurrentVisitNode() {
         return currentVisitNode;
     }
-    
+
     /**
-     * Sets the currently visited node. 
-     * WARNING: This should only be called by Ivy core ResolveEngine!
+     * Sets the currently visited node. WARNING: This should only be called by Ivy core
+     * ResolveEngine!
      * 
      * @param currentVisitNode
      */
@@ -221,7 +221,7 @@ public class ResolveData {
         this.visitData.put(mrid, keptVisitData);
         // update visit data with discarde visit nodes
         keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
-        
+
         report.updateDependency(mrid, node);
     }
 
@@ -262,7 +262,7 @@ public class ResolveData {
             Entry entry = (Entry) iter.next();
             VisitData vdata = (VisitData) entry.getValue();
             if (vdata.getNode() == node && !node.getResolvedId().equals(entry.getKey())) {
-                // this visit data was associated with the blacklisted node, 
+                // this visit data was associated with the blacklisted node,
                 // we discard this association
                 iter.remove();
             }
@@ -271,31 +271,30 @@ public class ResolveData {
 
     public boolean isBlacklisted(String rootModuleConf, ModuleRevisionId mrid) {
         IvyNode node = getNode(mrid);
-        
-//        if (node == null) {
-//            // search again, now ignore the extra attributes
-//            // TODO: maybe we should search the node that has at least the 
-//            // same attributes as mrid
-//            for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
-//                Map.Entry entry = (Entry) it.next();
-//                ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
-//                if (current.getModuleId().equals(mrid.getModuleId())
-//                        && current.getRevision().equals(mrid.getRevision())) {
-//                    VisitData data = (VisitData) entry.getValue();
-//                    node = data.getNode();
-//                    break;
-//                }
-//            }
-//        }
-//        
+
+        // if (node == null) {
+        // // search again, now ignore the extra attributes
+        // // TODO: maybe we should search the node that has at least the
+        // // same attributes as mrid
+        // for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
+        // Map.Entry entry = (Entry) it.next();
+        // ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
+        // if (current.getModuleId().equals(mrid.getModuleId())
+        // && current.getRevision().equals(mrid.getRevision())) {
+        // VisitData data = (VisitData) entry.getValue();
+        // node = data.getNode();
+        // break;
+        // }
+        // }
+        // }
+        //
         return node != null && node.isBlacklisted(rootModuleConf);
     }
-
 
     public DependencyDescriptor mediate(DependencyDescriptor dd) {
         DependencyDescriptor originalDD = dd;
         dd = getEngine().mediate(dd, getOptions());
-        
+
         VisitNode current = getCurrentVisitNode();
         if (current != null) {
             // mediating dd through dependers stack
@@ -313,10 +312,9 @@ public class ResolveData {
                 }
             }
         }
-        
+
         if (originalDD != dd) {
-            Message.verbose("dependency descriptor has been mediated: " 
-                + originalDD + " => " + dd);
+            Message.verbose("dependency descriptor has been mediated: " + originalDD + " => " + dd);
         }
 
         return dd;
@@ -338,7 +336,7 @@ public class ResolveData {
     public void setCurrentResolvedModuleRevision(ResolvedModuleRevision mr) {
         this.currentResolvedModuleRevision = mr;
     }
-    
+
     /**
      * Returns the last {@link ResolvedModuleRevision} which has been currently resolved.
      * <p>

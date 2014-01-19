@@ -55,6 +55,7 @@ public class IvyCachePath extends IvyCacheTask {
      * @deprecated use setPathid instead
      * @param id
      */
+    @Deprecated
     public void setId(String id) {
         this.id = id;
     }

@@ -23,9 +23,9 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 public class SimpleSortEngineSettings implements SortEngineSettings {
 
     private CircularDependencyStrategy circularStrategy;
-    
+
     private VersionMatcher versionMatcher;
-    
+
     public CircularDependencyStrategy getCircularDependencyStrategy() {
         return circularStrategy;
     }
@@ -34,7 +34,6 @@ public class SimpleSortEngineSettings implements SortEngineSettings {
         return versionMatcher;
     }
 
-    
     public void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
         circularStrategy = strategy;
     }

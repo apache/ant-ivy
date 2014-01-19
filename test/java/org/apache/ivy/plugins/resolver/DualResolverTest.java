@@ -21,9 +21,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
-
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -91,8 +88,8 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
     public void testBad() throws Exception {
         DualResolver dual = new DualResolver();
         dual.setIvyResolver(new IBiblioResolver());
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         try {
             dual.getDependency(dd, _data);
             fail("bad dual resolver configuration should raise exception");
@@ -105,12 +102,12 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         DualResolver dual = new DualResolver();
         MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", true,
             new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact", false,
-            new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact",
+            false, new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
 
         assertNotNull(rmr);
@@ -127,8 +124,8 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
             new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
 
         assertNotNull(rmr);
@@ -141,12 +138,12 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         DualResolver dual = new DualResolver();
         MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", false,
             new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact", false,
-            new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact",
+            false, new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
 
         assertNull(rmr);

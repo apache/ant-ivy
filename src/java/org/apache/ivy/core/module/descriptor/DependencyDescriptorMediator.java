@@ -18,14 +18,14 @@
 package org.apache.ivy.core.module.descriptor;
 
 /**
- * A  DependencyDescriptorMediator is responsible for dependency descriptor mediation.
+ * A DependencyDescriptorMediator is responsible for dependency descriptor mediation.
  * <p>
- * Dependency descriptor mediation consists in adjusting dependency descriptors according to
- * a context, environment, the stack of dependers, ...
- * </p> 
+ * Dependency descriptor mediation consists in adjusting dependency descriptors according to a
+ * context, environment, the stack of dependers, ...
+ * </p>
  */
 public interface DependencyDescriptorMediator {
-    
+
     /**
      * Mediates the given {@link DependencyDescriptor} according to this {@link ModuleDescriptor}.
      * <p>

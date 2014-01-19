@@ -46,6 +46,7 @@ import org.apache.ivy.util.Message;
  */
 public class DualResolver extends AbstractResolver {
     public static final String DESCRIPTOR_OPTIONAL = "optional";
+
     public static final String DESCRIPTOR_REQUIRED = "required";
 
     private DependencyResolver ivyResolver;
@@ -72,7 +73,7 @@ public class DualResolver extends AbstractResolver {
                     "exactly two resolvers must be added: ivy(1) and artifact(2) one");
         }
         ResolvedModuleRevision resolved = data.getCurrentResolvedModuleRevision();
-        
+
         data = new ResolveData(data, doValidate(data));
         final ResolvedModuleRevision mr = ivyResolver.getDependency(dd, data);
         if (mr == null) {
@@ -89,8 +90,8 @@ public class DualResolver extends AbstractResolver {
                 // nothing has actually been resolved here, we don't need to touch the returned rmr
                 return mr;
             }
-            return new ResolvedModuleRevision(
-                mr.getResolver(), this, mr.getDescriptor(), mr.getReport(), mr.isForce());
+            return new ResolvedModuleRevision(mr.getResolver(), this, mr.getDescriptor(),
+                    mr.getReport(), mr.isForce());
         }
     }
 
@@ -141,13 +142,11 @@ public class DualResolver extends AbstractResolver {
         artifactResolver.abortPublishTransaction();
     }
 
-
-    public void beginPublishTransaction(
-            ModuleRevisionId module, boolean overwrite) throws IOException {
+    public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
+            throws IOException {
         ivyResolver.beginPublishTransaction(module, overwrite);
         artifactResolver.beginPublishTransaction(module, overwrite);
     }
-
 
     public void commitPublishTransaction() throws IOException {
         ivyResolver.commitPublishTransaction();
@@ -170,7 +169,7 @@ public class DualResolver extends AbstractResolver {
             return artifactResolver.exists(artifact);
         }
     }
-    
+
     public ArtifactOrigin locate(Artifact artifact) {
         if (artifact.isMetadata()) {
             return ivyResolver.locate(artifact);
@@ -178,7 +177,7 @@ public class DualResolver extends AbstractResolver {
             return artifactResolver.locate(artifact);
         }
     }
-    
+
     public ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options) {
         if (artifact.getArtifact().isMetadata()) {
             return ivyResolver.download(artifact, options);
@@ -192,28 +191,27 @@ public class DualResolver extends AbstractResolver {
     }
 
     public void setAllownomd(boolean allownomd) {
-        Message.deprecated(
-            "allownomd is deprecated, please use descriptor=\"" 
-            + (allownomd ? DESCRIPTOR_OPTIONAL : DESCRIPTOR_REQUIRED) + "\" instead");
+        Message.deprecated("allownomd is deprecated, please use descriptor=\""
+                + (allownomd ? DESCRIPTOR_OPTIONAL : DESCRIPTOR_REQUIRED) + "\" instead");
         this.allownomd = allownomd;
     }
 
     /**
-     * Sets the module descriptor presence rule.
-     * Should be one of {@link #DESCRIPTOR_REQUIRED} or {@link #DESCRIPTOR_OPTIONAL}.
-     *  
-     * @param descriptorRule the descriptor rule to use with this resolver.
+     * Sets the module descriptor presence rule. Should be one of {@link #DESCRIPTOR_REQUIRED} or
+     * {@link #DESCRIPTOR_OPTIONAL}.
+     * 
+     * @param descriptorRule
+     *            the descriptor rule to use with this resolver.
      */
     public void setDescriptor(String descriptorRule) {
         if (DESCRIPTOR_REQUIRED.equals(descriptorRule)) {
-          allownomd = false;  
+            allownomd = false;
         } else if (DESCRIPTOR_OPTIONAL.equals(descriptorRule)) {
-          allownomd = true;  
+            allownomd = true;
         } else {
-            throw new IllegalArgumentException(
-                "unknown descriptor rule '" + descriptorRule 
-                + "'. Allowed rules are: " 
-                + Arrays.asList(new String[] {DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL}));
+            throw new IllegalArgumentException("unknown descriptor rule '" + descriptorRule
+                    + "'. Allowed rules are: "
+                    + Arrays.asList(new String[] {DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL}));
         }
     }
 

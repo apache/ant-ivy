@@ -48,9 +48,9 @@ public class AntMessageLogger extends AbstractMessageLogger {
     public static void register(ProjectComponent task, final Ivy ivy) {
         MessageLogger current = ivy.getLoggerEngine().peekLogger();
         if (current instanceof AntMessageLogger && task instanceof Task
-                && ((AntMessageLogger) current).task instanceof Task)  {
+                && ((AntMessageLogger) current).task instanceof Task) {
             Task currentTask = (Task) ((AntMessageLogger) current).task;
-            
+
             if ((currentTask.getTaskName() != null)
                     && currentTask.getTaskName().equals(((Task) task).getTaskName())) {
                 // The current AntMessageLogger already logs with the same
@@ -58,7 +58,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
                 return;
             }
         }
-        
+
         AntMessageLogger logger = new AntMessageLogger(task);
         ivy.getLoggerEngine().pushLogger(logger);
         task.getProject().addBuildListener(new BuildListener() {
@@ -96,7 +96,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
             public void messageLogged(BuildEvent event) {
             }
         });
-        
+
     }
 
     private ProjectComponent task;
@@ -143,7 +143,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
         buf.setLength(0);
         lastProgressFlush = 0;
     }
-    
+
     public String toString() {
         return "AntMessageLogger:" + task;
     }

@@ -23,7 +23,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 
 public class MetadataArtifactDownloadReport extends ArtifactDownloadReport {
     private boolean isSearched;
-    
+
     private File originalLocalFile;
 
     public MetadataArtifactDownloadReport(Artifact artifact) {

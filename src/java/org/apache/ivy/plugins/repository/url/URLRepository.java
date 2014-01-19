@@ -49,7 +49,7 @@ public class URLRepository extends AbstractRepository {
         }
         return res;
     }
-    
+
     public void get(String source, File destination) throws IOException {
         fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
         try {
@@ -120,7 +120,7 @@ public class URLRepository extends AbstractRepository {
                 ioe.initCause(e);
                 throw ioe;
             }
-            
+
             File file = new File(path);
             if (file.exists() && file.isDirectory()) {
                 String[] files = file.list();

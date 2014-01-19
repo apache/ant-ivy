@@ -59,7 +59,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     private Repository repository;
 
     private Boolean alwaysCheckExactRevision = null;
-    
+
     private String signerName = null;
 
     public RepositoryResolver() {
@@ -79,7 +79,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             ((AbstractRepository) repository).setName(name);
         }
     }
-    
+
     public void setSigner(String signerName) {
         this.signerName = signerName;
     }
@@ -104,11 +104,10 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                             File temp = File.createTempFile("ivy", artifact.getExt());
                             temp.deleteOnExit();
                             repository.get(res.getName(), temp);
-                            ModuleDescriptorParser parser = 
-                                ModuleDescriptorParserRegistry.getInstance().getParser(res);
-                            ModuleDescriptor md = 
-                                parser.parseDescriptor(
-                                    getParserSettings(), temp.toURI().toURL(), res, false);
+                            ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
+                                    .getInstance().getParser(res);
+                            ModuleDescriptor md = parser.parseDescriptor(getParserSettings(), temp
+                                    .toURI().toURL(), res, false);
                             revision = md.getRevision();
                             if ((revision == null) || (revision.length() == 0)) {
                                 revision = "working@" + name;
@@ -121,8 +120,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                     }
                     return new ResolvedResource(res, revision);
                 } else if (versionMatcher.isDynamic(mrid)) {
-                    return findDynamicResourceUsingPattern(
-                        rmdparser, mrid, pattern, artifact, date);
+                    return findDynamicResourceUsingPattern(rmdparser, mrid, pattern, artifact, date);
                 } else {
                     Message.debug("\t" + name + ": resource not reachable for " + mrid + ": res="
                             + res);
@@ -140,12 +138,13 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         }
     }
 
-    private ResolvedResource findDynamicResourceUsingPattern(
-            ResourceMDParser rmdparser, ModuleRevisionId mrid, String pattern, Artifact artifact,
-            Date date) {
+    private ResolvedResource findDynamicResourceUsingPattern(ResourceMDParser rmdparser,
+            ModuleRevisionId mrid, String pattern, Artifact artifact, Date date) {
         String name = getName();
-        logAttempt(IvyPatternHelper.substitute(pattern, ModuleRevisionId.newInstance(mrid,
-            IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact));
+        logAttempt(IvyPatternHelper.substitute(
+            pattern,
+            ModuleRevisionId.newInstance(mrid,
+                IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact));
         ResolvedResource[] rress = listResources(repository, mrid, pattern, artifact);
         if (rress == null) {
             Message.debug("\t" + name + ": unable to list resources for " + mrid + ": pattern="
@@ -160,7 +159,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             return found;
         }
     }
-    
+
     protected Resource getResource(String source) throws IOException {
         return repository.getResource(source);
     }
@@ -180,8 +179,8 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
      * @return an array of ResolvedResource, all pointing to a different revision of the given
      *         Artifact.
      */
-    protected ResolvedResource[] listResources(
-            Repository repository, ModuleRevisionId mrid, String pattern, Artifact artifact) {
+    protected ResolvedResource[] listResources(Repository repository, ModuleRevisionId mrid,
+            String pattern, Artifact artifact) {
         return ResolverHelper.findAll(repository, mrid, pattern, artifact);
     }
 
@@ -214,7 +213,8 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         String dest = getDestination(destPattern, artifact, mrid);
 
         put(artifact, src, dest, overwrite);
-        Message.info("\tpublished " + artifact.getName() + " to " + hidePassword(repository.standardize(dest)));
+        Message.info("\tpublished " + artifact.getName() + " to "
+                + hidePassword(repository.standardize(dest)));
     }
 
     protected String getDestination(String pattern, Artifact artifact, ModuleRevisionId mrid) {
@@ -247,27 +247,30 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         try {
             FileUtil.copy(new ByteArrayInputStream(ChecksumHelper.computeAsString(src, algorithm)
                     .getBytes()), csFile, null);
-            repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm,
-                artifact.getExt() + "." + algorithm), csFile, dest + "." + algorithm, overwrite);
+            repository.put(
+                DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm, artifact.getExt()
+                        + "." + algorithm), csFile, dest + "." + algorithm, overwrite);
         } finally {
             csFile.delete();
         }
     }
 
-    protected void putSignature(Artifact artifact, File src, String dest, boolean overwrite) throws IOException {
+    protected void putSignature(Artifact artifact, File src, String dest, boolean overwrite)
+            throws IOException {
         SignatureGenerator gen = getSettings().getSignatureGenerator(signerName);
         if (gen == null) {
-            throw new IllegalArgumentException("Couldn't sign the artifacts! " +
-                    "Unknown signer name: '" + signerName + "'");
+            throw new IllegalArgumentException("Couldn't sign the artifacts! "
+                    + "Unknown signer name: '" + signerName + "'");
         }
 
         File tempFile = File.createTempFile("ivytemp", gen.getExtension());
 
         try {
             gen.sign(src, tempFile);
-            repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, 
-                    gen.getExtension(), artifact.getExt() + "." + gen.getExtension()), 
-                    tempFile, dest + "." + gen.getExtension(), overwrite);
+            repository.put(
+                DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, gen.getExtension(),
+                    artifact.getExt() + "." + gen.getExtension()), tempFile,
+                dest + "." + gen.getExtension(), overwrite);
         } finally {
             tempFile.delete();
         }
@@ -303,7 +306,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     protected String[] listTokenValues(String pattern, String token) {
         return ResolverHelper.listTokenValues(repository, pattern, token);
     }
-    
+
     protected boolean exist(String path) {
         try {
             Resource resource = repository.getResource(path);
@@ -313,7 +316,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             return false;
         }
     }
-    
+
     public String getTypeName() {
         return "repository";
     }

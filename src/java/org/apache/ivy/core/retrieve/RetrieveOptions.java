@@ -28,8 +28,11 @@ import org.apache.ivy.util.filter.FilterHelper;
  */
 public class RetrieveOptions extends LogOptions {
     public static final String OVERWRITEMODE_NEVER = "never";
+
     public static final String OVERWRITEMODE_ALWAYS = "always";
+
     public static final String OVERWRITEMODE_NEWER = "newer";
+
     public static final String OVERWRITEMODE_DIFFERENT = "different";
 
     /**
@@ -60,7 +63,7 @@ public class RetrieveOptions extends LogOptions {
      * will be present in the destination directory, which means that some files may be deleted.
      */
     private boolean sync = false;
-    
+
     private String overwriteMode = OVERWRITEMODE_NEWER;
 
     /**
@@ -84,7 +87,7 @@ public class RetrieveOptions extends LogOptions {
      * The id used to store the resolve information.
      */
     private String resolveId;
-    
+
     private FileNameMapper mapper;
 
     public RetrieveOptions() {
@@ -131,11 +134,11 @@ public class RetrieveOptions extends LogOptions {
         this.confs = confs;
         return this;
     }
-    
+
     public String getOverwriteMode() {
         return overwriteMode == null ? OVERWRITEMODE_NEWER : overwriteMode;
     }
-    
+
     public RetrieveOptions setOverwriteMode(String overwriteMode) {
         this.overwriteMode = overwriteMode;
         return this;

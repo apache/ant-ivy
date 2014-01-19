@@ -67,7 +67,7 @@ public class IvyRepositoryReportTest extends TestCase {
         File reportFile = new File(cache, "testsimple.xml");
         assertTrue(reportFile.exists());
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
-        
+
         // check presence of the modules
         assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.1\"") != -1);
         assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.2\"") != -1);
@@ -76,9 +76,10 @@ public class IvyRepositoryReportTest extends TestCase {
         assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.5\"") != -1);
         assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.6\"") != -1);
     }
-    
+
     public void testBranchBeforeModule() throws Exception {
-        report.getProject().setProperty("ivy.settings.file", "test/repositories/IVY-716/ivysettings.xml");
+        report.getProject().setProperty("ivy.settings.file",
+            "test/repositories/IVY-716/ivysettings.xml");
         report.setOutputname("testbranch");
         report.setTodir(cache);
         report.execute();
@@ -86,17 +87,18 @@ public class IvyRepositoryReportTest extends TestCase {
         File reportFile = new File(cache, "testbranch.xml");
         assertTrue(reportFile.exists());
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
-        
+
         // check presence of the modules
         assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.1\"") != -1);
-        
+
         // check presence of the branches
         assertTrue(g.indexOf("<revision name=\"1.0\" branch=\"branch1\"") != -1);
         assertTrue(g.indexOf("<revision name=\"1.0\" branch=\"branch2\"") != -1);
     }
-    
+
     public void testPatternWithoutOrganisation() throws Exception {
-        report.getProject().setProperty("ivy.settings.file", "test/repositories/IVY-729/ivysettings.xml");
+        report.getProject().setProperty("ivy.settings.file",
+            "test/repositories/IVY-729/ivysettings.xml");
         report.setOutputname("test-no-org");
         report.setTodir(cache);
         report.execute();
@@ -104,7 +106,7 @@ public class IvyRepositoryReportTest extends TestCase {
         File reportFile = new File(cache, "test-no-org.xml");
         assertTrue(reportFile.exists());
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
-        
+
         // check presence of the modules
         assertTrue(g.indexOf("<module organisation=\"null\" name=\"a\"") != -1);
         assertTrue(g.indexOf("<module organisation=\"null\" name=\"b\"") != -1);

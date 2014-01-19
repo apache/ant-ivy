@@ -38,14 +38,13 @@ public class SearchTest extends TestCase {
     public void testListInMavenRepo() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURI().toURL());
-        
+
         Map otherTokenValues = new HashMap();
         otherTokenValues.put(IvyPatternHelper.ORGANISATION_KEY, "org.apache");
         otherTokenValues.put(IvyPatternHelper.MODULE_KEY, "test-metadata");
         String[] revs = ivy.listTokenValues(IvyPatternHelper.REVISION_KEY, otherTokenValues);
-        
-        assertEquals(
-            new HashSet(Arrays.asList(new String[] {"1.0","1.1"})), 
+
+        assertEquals(new HashSet(Arrays.asList(new String[] {"1.0", "1.1"})),
             new HashSet(Arrays.asList(revs)));
     }
 
@@ -53,15 +52,14 @@ public class SearchTest extends TestCase {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURI().toURL());
         ((IBiblioResolver) ivy.getSettings().getResolver("m2")).setUseMavenMetadata(false);
-        
+
         Map otherTokenValues = new HashMap();
         otherTokenValues.put(IvyPatternHelper.ORGANISATION_KEY, "org.apache");
         otherTokenValues.put(IvyPatternHelper.MODULE_KEY, "test-metadata");
         String[] revs = ivy.listTokenValues(IvyPatternHelper.REVISION_KEY, otherTokenValues);
-        
-        assertEquals(
-            new HashSet(Arrays.asList(new String[] {"1.0","1.1","1.2"})), 
-            new HashSet(Arrays.asList(revs)));
+
+        assertEquals(new HashSet(Arrays.asList(new String[] {"1.0", "1.1", "1.2"})), new HashSet(
+                Arrays.asList(revs)));
     }
 
     public void testListModulesWithExtraAttributes() throws ParseException, IOException {
@@ -70,11 +68,13 @@ public class SearchTest extends TestCase {
         IvySettings settings = ivy.getSettings();
 
         Map extendedAttributes = new HashMap();
-        extendedAttributes.put("e:att1","extraatt");
-        extendedAttributes.put("e:att2","extraatt2");
-        ModuleRevisionId criteria = ModuleRevisionId.newInstance("test", "a", "*", extendedAttributes);
+        extendedAttributes.put("e:att1", "extraatt");
+        extendedAttributes.put("e:att2", "extraatt2");
+        ModuleRevisionId criteria = ModuleRevisionId.newInstance("test", "a", "*",
+            extendedAttributes);
 
-        ModuleRevisionId[] mrids = ivy.listModules(criteria, settings.getMatcher(PatternMatcher.REGEXP));
+        ModuleRevisionId[] mrids = ivy.listModules(criteria,
+            settings.getMatcher(PatternMatcher.REGEXP));
 
         assertEquals(2, mrids.length);
         ModuleRevisionId mrid = mrids[0];
@@ -87,7 +87,9 @@ public class SearchTest extends TestCase {
 
         Map qualifiedExtraAttributes = mrid.getQualifiedExtraAttributes();
         assertEquals(2, qualifiedExtraAttributes.size());
-        assertTrue(qualifiedExtraAttributes.toString(), qualifiedExtraAttributes.keySet().contains("e:att1"));
-        assertTrue(qualifiedExtraAttributes.toString(), qualifiedExtraAttributes.keySet().contains("e:att2"));
+        assertTrue(qualifiedExtraAttributes.toString(),
+            qualifiedExtraAttributes.keySet().contains("e:att1"));
+        assertTrue(qualifiedExtraAttributes.toString(),
+            qualifiedExtraAttributes.keySet().contains("e:att2"));
     }
 }

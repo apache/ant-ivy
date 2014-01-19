@@ -41,7 +41,7 @@ import org.apache.ivy.core.event.IvyEvent;
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ * 
  * </pre>
  * 
  * Orginal class written by Michal Maczka.
@@ -76,7 +76,7 @@ public class TransferEvent extends IvyEvent {
      * Used to check event type validity: should always be 0 <= type <= LAST_EVENT_TYPE
      */
     private static final int LAST_EVENT_TYPE = TRANSFER_ERROR;
-    
+
     /**
      * Indicates GET transfer (from the repository)
      */
@@ -114,7 +114,7 @@ public class TransferEvent extends IvyEvent {
     private long totalLength;
 
     private boolean isTotalLengthSet = false;
-    
+
     /**
      * This attribute is used to store the time at which the event enters a type.
      * <p>
@@ -198,7 +198,8 @@ public class TransferEvent extends IvyEvent {
      * @param requestType
      *            The requestType to set. The Request type value should be either
      *            <code>TransferEvent.REQUEST_GET<code> or <code>TransferEvent.REQUEST_PUT<code>.
-     * @throws IllegalArgumentException when
+     * @throws IllegalArgumentException
+     *             when
      */
     protected void setRequestType(final int requestType) {
         switch (requestType) {
@@ -233,10 +234,10 @@ public class TransferEvent extends IvyEvent {
             this.eventType = eventType;
             timeTracking[eventType] = System.currentTimeMillis();
             if (eventType > TRANSFER_INITIATED) {
-                addAttribute("total-duration", 
+                addAttribute("total-duration",
                     String.valueOf(getElapsedTime(TRANSFER_INITIATED, eventType)));
                 if (eventType > TRANSFER_STARTED) {
-                    addAttribute("duration", 
+                    addAttribute("duration",
                         String.valueOf(getElapsedTime(TRANSFER_STARTED, eventType)));
                 }
             }
@@ -294,7 +295,7 @@ public class TransferEvent extends IvyEvent {
     public void setTotalLengthSet(boolean isTotalLengthSet) {
         this.isTotalLengthSet = isTotalLengthSet;
     }
-    
+
     public Repository getRepository() {
         return repository;
     }
@@ -304,9 +305,11 @@ public class TransferEvent extends IvyEvent {
      * another event time.
      * <p>
      * This is especially useful to get the elapsed transfer time:
+     * 
      * <pre>
      * getElapsedTime(TransferEvent.TRANSFER_STARTED, TransferEvent.TRANSFER_COMPLETED);
      * </pre>
+     * 
      * </p>
      * <p>
      * Special cases:

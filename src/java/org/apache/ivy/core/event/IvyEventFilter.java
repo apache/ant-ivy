@@ -32,7 +32,8 @@ import org.apache.ivy.util.filter.OrFilter;
  * to construct this object. The filter expression is a string describing how the event should be
  * filtered according to its attributes values. The matching between the filter values and the event
  * attribute values is done using the {@link PatternMatcher} used to construct this object. Here are
- * some examples: <table>
+ * some examples:
+ * <table>
  * <tr>
  * <td>expression</td>
  * <td>effect</td>
@@ -57,10 +58,11 @@ import org.apache.ivy.util.filter.OrFilter;
  * <td>NOT type=src</td>
  * <td>accepts event with a type attribute NOT matching src</td>
  * </tr>
- * </table> Combination of these can be used, but no parentheses are supported right now, so only
- * the default priority can be used. The priority order is this one: AND OR NOT = This means that
- * artifact=foo AND ext=zip OR type=src will match event with artifact matching foo AND (ext
- * matching zip OR type matching src)
+ * </table>
+ * Combination of these can be used, but no parentheses are supported right now, so only the default
+ * priority can be used. The priority order is this one: AND OR NOT = This means that artifact=foo
+ * AND ext=zip OR type=src will match event with artifact matching foo AND (ext matching zip OR type
+ * matching src)
  * 
  * @since 1.4
  */
@@ -90,8 +92,8 @@ public class IvyEventFilter implements Filter {
                 }
             };
         }
-        attFilter = filterExpression == null || filterExpression.trim().length() == 0 
-                ? NoFilter.INSTANCE : parseExpression(filterExpression);
+        attFilter = filterExpression == null || filterExpression.trim().length() == 0 ? NoFilter.INSTANCE
+                : parseExpression(filterExpression);
     }
 
     private Filter parseExpression(String filterExpression) {

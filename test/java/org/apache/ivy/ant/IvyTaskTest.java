@@ -45,16 +45,17 @@ public class IvyTaskTest extends TestCase {
         IvySettings settings = ivy.getSettings();
         assertNotNull(settings);
 
-        assertEquals(new File("test/repositories/build/cache").getAbsoluteFile(), settings.getDefaultCache());
+        assertEquals(new File("test/repositories/build/cache").getAbsoluteFile(),
+            settings.getDefaultCache());
         // The next test doesn't always works on windows (mix C: and c: drive)
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath().toUpperCase(),
-            new File((String) settings.getVariables().getVariable("ivy.settings.file")).getAbsolutePath()
+            new File(settings.getVariables().getVariable("ivy.settings.file")).getAbsolutePath()
                     .toUpperCase());
         assertEquals(new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm()
-                .toUpperCase(), ((String) settings.getVariables().getVariable("ivy.settings.url"))
+                .toUpperCase(), settings.getVariables().getVariable("ivy.settings.url")
                 .toUpperCase());
-        assertEquals(new File("test/repositories").getAbsolutePath().toUpperCase(),
-            ((String) settings.getVariables().getVariable("ivy.settings.dir")).toUpperCase());
+        assertEquals(new File("test/repositories").getAbsolutePath().toUpperCase(), settings
+                .getVariables().getVariable("ivy.settings.dir").toUpperCase());
         assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
     }
 
@@ -82,10 +83,11 @@ public class IvyTaskTest extends TestCase {
         assertEquals(new File("build/cache").getAbsoluteFile(), settings.getDefaultCache());
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath(), settings
                 .getVariables().getVariable("ivy.settings.file"));
-        assertEquals(new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm(),
+        assertEquals(
+            new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm(),
             settings.getVariables().getVariable("ivy.settings.url"));
-        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().getVariable(
-            "ivy.settings.dir"));
+        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables()
+                .getVariable("ivy.settings.dir"));
         assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
     }
 
@@ -99,6 +101,6 @@ public class IvyTaskTest extends TestCase {
         task.setProject(p);
         task.execute();
 
-        assertNotNull(p.getProperty("ivy.version"));                
+        assertNotNull(p.getProperty("ivy.version"));
     }
 }

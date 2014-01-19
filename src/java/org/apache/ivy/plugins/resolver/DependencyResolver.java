@@ -62,13 +62,15 @@ public interface DependencyResolver {
      */
     ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException;
-    
+
     /**
-     * Finds the module descriptor for the specified <tt>DependencyDescriptor</tt>.
-     * If this resolver can't find the module descriptor, <tt>null</tt> is returned.
+     * Finds the module descriptor for the specified <tt>DependencyDescriptor</tt>. If this resolver
+     * can't find the module descriptor, <tt>null</tt> is returned.
      * 
-     * @param dd the dependency descriptor
-     * @param data the resolve data
+     * @param dd
+     *            the dependency descriptor
+     * @param data
+     *            the resolve data
      * @return the module descriptor, or <tt>null</tt>
      */
     ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data);
@@ -92,7 +94,7 @@ public interface DependencyResolver {
      * @return a DownloadReport with details about each Artifact download.
      */
     DownloadReport download(Artifact[] artifacts, DownloadOptions options);
-    
+
     /**
      * Download an artifact according to the given DownloadOptions.
      * <p>
@@ -108,16 +110,15 @@ public interface DependencyResolver {
      * @return a report detailing how the download has gone, is never <code>null</code>.
      */
     ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options);
-    
 
     /**
-     * Returns <code>true</code> if the given artifact can be located by this resolver and
-     * actually exist.
+     * Returns <code>true</code> if the given artifact can be located by this resolver and actually
+     * exist.
      * 
      * @param artifact
      *            the artifact which should be tested.
-     * @return <code>true</code> if the given artifact can be located by this resolver and
-     *         actually exist.
+     * @return <code>true</code> if the given artifact can be located by this resolver and actually
+     *         exist.
      */
     boolean exists(Artifact artifact);
 
@@ -133,9 +134,11 @@ public interface DependencyResolver {
     ArtifactOrigin locate(Artifact artifact);
 
     void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
-    
+
     void beginPublishTransaction(ModuleRevisionId module, boolean overwrite) throws IOException;
+
     void abortPublishTransaction() throws IOException;
+
     void commitPublishTransaction() throws IOException;
 
     /**
@@ -161,9 +164,9 @@ public interface DependencyResolver {
      * "organisation"->"foo" "module"->"bar" The results will be the list of revisions of the module
      * bar from the org foo.
      * <p>
-     * Note that listing does not take into account namespaces, and return raw 
-     * information without any namespace transformation. The caller is responsible for calling 
-     * namespace transformation with the Namespace returned by {@link #getNamespace()}.
+     * Note that listing does not take into account namespaces, and return raw information without
+     * any namespace transformation. The caller is responsible for calling namespace transformation
+     * with the Namespace returned by {@link #getNamespace()}.
      * </p>
      */
     String[] listTokenValues(String token, Map otherTokenValues);
@@ -184,15 +187,16 @@ public interface DependencyResolver {
     ModuleEntry[] listModules(OrganisationEntry org);
 
     RevisionEntry[] listRevisions(ModuleEntry module);
-    
+
     /**
      * Returns the namespace associated with this resolver.
+     * 
      * @return the namespace associated with this resolver.
      */
     Namespace getNamespace();
-    
+
     void dumpSettings();
-    
+
     void setSettings(ResolverSettings settings);
 
     /**

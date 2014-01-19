@@ -32,11 +32,11 @@ public interface ResolverSettings extends ParserSettings {
     LatestStrategy getLatestStrategy(String latestStrategyName);
 
     LatestStrategy getDefaultLatestStrategy();
-    
+
     RepositoryCacheManager getRepositoryCacheManager(String name);
-    
+
     RepositoryCacheManager getDefaultRepositoryCacheManager();
-    
+
     RepositoryCacheManager[] getRepositoryCacheManagers();
 
     Namespace getNamespace(String namespaceName);
@@ -48,11 +48,11 @@ public interface ResolverSettings extends ParserSettings {
     void configureRepositories(boolean b);
 
     VersionMatcher getVersionMatcher();
-    
+
     String getResolveMode(ModuleId moduleId);
 
     void filterIgnore(Collection names);
-    
+
     SignatureGenerator getSignatureGenerator(String name);
 
 }

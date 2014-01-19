@@ -94,7 +94,7 @@ public class ChainResolver extends AbstractResolver {
                 mr = forcedRevision(mr);
             }
         }
-        
+
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
@@ -132,8 +132,8 @@ public class ChainResolver extends AbstractResolver {
                     err.append("\t").append(StringUtils.getErrorMessage(ex)).append("\n");
                 }
                 err.setLength(err.length() - 1);
-                throw new RuntimeException("several problems occurred while resolving " + dd + ":\n"
-                        + err);
+                throw new RuntimeException("several problems occurred while resolving " + dd
+                        + ":\n" + err);
             }
         }
         if (resolved == mr) {
@@ -145,20 +145,19 @@ public class ChainResolver extends AbstractResolver {
 
     private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
         if (isDual() && mr != null) {
-            return new ResolvedModuleRevision(
-                mr.getResolver(), this, mr.getDescriptor(), mr.getReport(), mr.isForce());
+            return new ResolvedModuleRevision(mr.getResolver(), this, mr.getDescriptor(),
+                    mr.getReport(), mr.isForce());
         } else {
             return mr;
         }
     }
-    
+
     private ResolvedModuleRevision forcedRevision(ResolvedModuleRevision rmr) {
         if (rmr == null) {
             return null;
         }
-        return new ResolvedModuleRevision(
-            rmr.getResolver(), rmr.getArtifactResolver(), 
-            rmr.getDescriptor(), rmr.getReport(), true);
+        return new ResolvedModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(),
+                rmr.getDescriptor(), rmr.getReport(), true);
     }
 
     private LatestStrategy setLatestIfRequired(DependencyResolver resolver,
@@ -181,10 +180,10 @@ public class ChainResolver extends AbstractResolver {
                 return result;
             }
         }
-        
+
         return null;
     }
-    
+
     public Map[] listTokenValues(String[] tokens, Map criteria) {
         Set result = new HashSet();
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
@@ -192,7 +191,7 @@ public class ChainResolver extends AbstractResolver {
             Map[] temp = resolver.listTokenValues(tokens, new HashMap(criteria));
             result.addAll(Arrays.asList(temp));
         }
-        
+
         return (Map[]) result.toArray(new Map[result.size()]);
     }
 
@@ -215,8 +214,9 @@ public class ChainResolver extends AbstractResolver {
         DownloadReport report = new DownloadReport();
         for (Iterator iter = chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            DownloadReport r = resolver.download((Artifact[]) artifactsToDownload
-                    .toArray(new Artifact[artifactsToDownload.size()]), options);
+            DownloadReport r = resolver.download(
+                (Artifact[]) artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]),
+                options);
             ArtifactDownloadReport[] adr = r.getArtifactsReports();
             for (int i = 0; i < adr.length; i++) {
                 if (adr[i].getDownloadStatus() != DownloadStatus.FAILED) {
@@ -247,8 +247,8 @@ public class ChainResolver extends AbstractResolver {
         getFirstResolver().abortPublishTransaction();
     }
 
-    public void beginPublishTransaction(
-            ModuleRevisionId module, boolean overwrite) throws IOException {
+    public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
+            throws IOException {
         getFirstResolver().beginPublishTransaction(module, overwrite);
     }
 
@@ -290,7 +290,7 @@ public class ChainResolver extends AbstractResolver {
         }
         return false;
     }
-    
+
     public ArtifactOrigin locate(Artifact artifact) {
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
@@ -301,7 +301,7 @@ public class ChainResolver extends AbstractResolver {
         }
         return ArtifactOrigin.unkwnown(artifact);
     }
-    
+
     public ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options) {
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
@@ -314,7 +314,7 @@ public class ChainResolver extends AbstractResolver {
         adr.setDownloadStatus(DownloadStatus.FAILED);
         return adr;
     }
-    
+
     private static void setLatest(DependencyResolver resolver, LatestStrategy latest) {
         if (resolver instanceof HasLatestStrategy) {
             HasLatestStrategy r = (HasLatestStrategy) resolver;
@@ -345,6 +345,5 @@ public class ChainResolver extends AbstractResolver {
     public boolean isDual() {
         return dual;
     }
-
 
 }

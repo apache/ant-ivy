@@ -58,7 +58,7 @@ public class InstallEngine {
         this.resolveEngine = resolveEngine;
     }
 
-    public ResolveReport install(ModuleRevisionId mrid, String from, String to, 
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to,
             InstallOptions options) throws IOException {
         DependencyResolver fromResolver = settings.getResolver(from);
         DependencyResolver toResolver = settings.getResolver(to);
@@ -98,41 +98,40 @@ public class InstallEngine {
 
                 for (int j = 0; j < depConfs.length; j++) {
                     final String depConf = depConfs[j].trim();
-                
+
                     if (MatcherHelper.isExact(matcher, mrid)) {
-                        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false,
-                                false, options.isTransitive());
+                        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid,
+                                false, false, options.isTransitive());
                         dd.addDependencyConfiguration("default", depConf);
                         md.addDependency(dd);
                     } else {
-                        ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid, matcher);
-        
+                        ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid,
+                            matcher);
+
                         for (int i = 0; i < mrids.length; i++) {
                             Message.info("\tfound " + mrids[i] + " to install: adding to the list");
-                            DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrids[i],
-                                    false, false, options.isTransitive());
+                            DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
+                                    mrids[i], false, false, options.isTransitive());
                             dd.addDependencyConfiguration("default", depConf);
                             md.addDependency(dd);
                         }
                     }
                 }
             }
-            
+
             // resolve using appropriate resolver
             ResolveReport report = new ResolveReport(md, resolveId);
 
             Message.info(":: resolving dependencies ::");
-            ResolveOptions resolveOptions = new ResolveOptions()
-                                .setResolveId(resolveId)
-                                .setConfs(new String[] {"default"})
-                                .setValidate(options.isValidate());
+            ResolveOptions resolveOptions = new ResolveOptions().setResolveId(resolveId)
+                    .setConfs(new String[] {"default"}).setValidate(options.isValidate());
             IvyNode[] dependencies = resolveEngine.getDependencies(md, resolveOptions, report);
             report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
 
             Message.info(":: downloading artifacts to cache ::");
-            resolveEngine.downloadArtifacts(
-                report, options.getArtifactFilter(), new DownloadOptions());
-            
+            resolveEngine.downloadArtifacts(report, options.getArtifactFilter(),
+                new DownloadOptions());
+
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");
             for (int i = 0; i < dependencies.length; i++) {
@@ -143,43 +142,48 @@ public class InstallEngine {
                     boolean successfullyPublished = false;
                     try {
                         toResolver.beginPublishTransaction(depMrid, options.isOverwrite());
-                        
+
                         // publish artifacts
-                        ArtifactDownloadReport[] artifacts = 
-                                report.getArtifactsReports(depMrid);
+                        ArtifactDownloadReport[] artifacts = report.getArtifactsReports(depMrid);
                         for (int j = 0; j < artifacts.length; j++) {
                             if (artifacts[j].getLocalFile() != null) {
-                                toResolver.publish(artifacts[j].getArtifact(), 
+                                toResolver.publish(artifacts[j].getArtifact(),
                                     artifacts[j].getLocalFile(), options.isOverwrite());
                             }
                         }
-                        
+
                         // publish metadata
                         MetadataArtifactDownloadReport artifactDownloadReport = dependencies[i]
                                 .getModuleRevision().getReport();
                         File localIvyFile = artifactDownloadReport.getLocalFile();
-                        toResolver.publish(
-                            depmd.getMetadataArtifact(), localIvyFile, options.isOverwrite());
-                        
+                        toResolver.publish(depmd.getMetadataArtifact(), localIvyFile,
+                            options.isOverwrite());
+
                         if (options.isInstallOriginalMetadata()) {
                             if (artifactDownloadReport.getArtifactOrigin() != null
                                     && artifactDownloadReport.getArtifactOrigin().isExists()
-                                    && !ArtifactOrigin.isUnknown(artifactDownloadReport.getArtifactOrigin())
+                                    && !ArtifactOrigin.isUnknown(artifactDownloadReport
+                                            .getArtifactOrigin())
                                     && artifactDownloadReport.getArtifactOrigin().getArtifact() != null
                                     && artifactDownloadReport.getArtifactOrigin().getArtifact()
-                                        .getType().endsWith(".original")
-                                    && !artifactDownloadReport.getArtifactOrigin().getArtifact()
-                                        .getType().equals(depmd.getMetadataArtifact().getType()+".original")) {
-                                // publish original metadata artifact, too, as it has a different type
-                                toResolver.publish(artifactDownloadReport.getArtifactOrigin().getArtifact(),
-                                    artifactDownloadReport.getOriginalLocalFile(), 
-                                    options.isOverwrite());
+                                            .getType().endsWith(".original")
+                                    && !artifactDownloadReport
+                                            .getArtifactOrigin()
+                                            .getArtifact()
+                                            .getType()
+                                            .equals(
+                                                depmd.getMetadataArtifact().getType() + ".original")) {
+                                // publish original metadata artifact, too, as it has a different
+                                // type
+                                toResolver.publish(artifactDownloadReport.getArtifactOrigin()
+                                        .getArtifact(), artifactDownloadReport
+                                        .getOriginalLocalFile(), options.isOverwrite());
                             }
                         }
-                        
+
                         // end module publish
                         toResolver.commitPublishTransaction();
-                        successfullyPublished  = true;
+                        successfullyPublished = true;
                     } finally {
                         if (!successfullyPublished) {
                             toResolver.abortPublishTransaction();
@@ -191,8 +195,8 @@ public class InstallEngine {
             Message.info(":: install resolution report ::");
 
             // output report
-            resolveEngine.outputReport(
-                report, settings.getResolutionCacheManager(), resolveOptions);
+            resolveEngine
+                    .outputReport(report, settings.getResolutionCacheManager(), resolveOptions);
 
             return report;
         } finally {

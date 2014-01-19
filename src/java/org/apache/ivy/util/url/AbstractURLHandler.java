@@ -32,7 +32,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 public abstract class AbstractURLHandler implements URLHandler {
-    
+
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("%25([0-9a-fA-F][0-9a-fA-F])");
 
     // the request method to use. TODO: don't use a static here
@@ -62,8 +62,8 @@ public abstract class AbstractURLHandler implements URLHandler {
         return getURLInfo(url, timeout).getLastModified();
     }
 
-    protected void validatePutStatusCode(
-            URL dest, int statusCode, String statusMessage) throws IOException {
+    protected void validatePutStatusCode(URL dest, int statusCode, String statusMessage)
+            throws IOException {
         switch (statusCode) {
             case HttpURLConnection.HTTP_OK:
                 /* intentional fallthrough */
@@ -76,59 +76,59 @@ public abstract class AbstractURLHandler implements URLHandler {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
                 /* intentional fallthrough */
             case HttpURLConnection.HTTP_FORBIDDEN:
-                throw new IOException("Access to URL " + dest + " was refused by the server" 
-                    + (statusMessage == null ? "" : ": " + statusMessage));
+                throw new IOException("Access to URL " + dest + " was refused by the server"
+                        + (statusMessage == null ? "" : ": " + statusMessage));
             default:
-                throw new IOException("PUT operation to URL " + dest + " failed with status code " 
-                    + statusCode + (statusMessage == null ? "" : ": " + statusMessage));
+                throw new IOException("PUT operation to URL " + dest + " failed with status code "
+                        + statusCode + (statusMessage == null ? "" : ": " + statusMessage));
         }
     }
-    
+
     public void setRequestMethod(int requestMethod) {
         AbstractURLHandler.requestMethod = requestMethod;
     }
-    
+
     public int getRequestMethod() {
         return requestMethod;
     }
-    
+
     protected String normalizeToString(URL url) throws IOException {
         if (!"http".equals(url.getProtocol()) && !"https".equals(url.getProtocol())) {
             return url.toExternalForm();
         }
-        
+
         try {
-            URI uri = new URI(url.getProtocol(), url.getAuthority(),
-                    url.getPath(), url.getQuery(), url.getRef());
-            
+            URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(),
+                    url.getRef());
+
             // it is possible that the original url was already (partial) escaped,
             // so we must unescape all '%' followed by 2 hexadecimals...
             String uriString = uri.normalize().toASCIIString();
-            
+
             // manually escape the '+' character
             uriString = uriString.replaceAll("\\+", "%2B");
-            
+
             return ESCAPE_PATTERN.matcher(uriString).replaceAll("%$1");
         } catch (URISyntaxException e) {
-            IOException ioe = new MalformedURLException("Couldn't convert '" 
-                + url.toString() + "' to a valid URI"); 
-            ioe.initCause(e); 
+            IOException ioe = new MalformedURLException("Couldn't convert '" + url.toString()
+                    + "' to a valid URI");
+            ioe.initCause(e);
             throw ioe;
         }
     }
-    
+
     protected URL normalizeToURL(URL url) throws IOException {
         if (!"http".equals(url.getProtocol()) && !"https".equals(url.getProtocol())) {
             return url;
         }
-        
+
         return new URL(normalizeToString(url));
     }
-    
-    protected InputStream getDecodingInputStream(String encoding, InputStream in) 
+
+    protected InputStream getDecodingInputStream(String encoding, InputStream in)
             throws IOException {
         InputStream result = null;
-        
+
         if ("gzip".equals(encoding) || "x-gzip".equals(encoding)) {
             result = new GZIPInputStream(in);
         } else if ("deflate".equals(encoding)) {
@@ -141,12 +141,12 @@ public abstract class AbstractURLHandler implements URLHandler {
             byte[] bytes = new byte[100];
             int nbBytes = bStream.read(bytes);
             bStream.reset();
-            
+
             Inflater inflater = new Inflater();
             inflater.setInput(bytes, 0, nbBytes);
             try {
                 inflater.inflate(new byte[1000]);
-                
+
                 // no error decompressing the first 100 bytes, so we
                 // assume the "zlib"-variant was used.
                 result = new InflaterInputStream(bStream);
@@ -160,7 +160,7 @@ public abstract class AbstractURLHandler implements URLHandler {
         } else {
             result = in;
         }
-        
+
         return result;
     }
 

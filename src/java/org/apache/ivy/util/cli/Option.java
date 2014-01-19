@@ -23,14 +23,19 @@ import java.util.ListIterator;
 
 public class Option {
     private String name;
+
     private String[] args;
+
     private String description;
+
     private boolean required;
+
     private boolean countArgs;
+
     private boolean deprecated;
-    
-    Option(String name, String[] args, String description, 
-            boolean required, boolean countArgs, boolean deprecated) {
+
+    Option(String name, String[] args, String description, boolean required, boolean countArgs,
+            boolean deprecated) {
         this.name = name;
         this.args = args;
         this.description = description;
@@ -45,18 +50,23 @@ public class Option {
     public String getName() {
         return name;
     }
+
     public String[] getArgs() {
         return args;
     }
+
     public String getDescription() {
         return description;
     }
+
     public boolean isRequired() {
         return required;
     }
+
     public boolean isCountArgs() {
         return countArgs;
     }
+
     public boolean isDeprecated() {
         return deprecated;
     }
@@ -92,8 +102,8 @@ public class Option {
         if (i == 0) {
             throw new ParseException("no argument for: " + name);
         } else {
-            throw new ParseException("missing argument for: " + name 
-                + ". Expected: " + getArgsSpec());
+            throw new ParseException("missing argument for: " + name + ". Expected: "
+                    + getArgsSpec());
         }
     }
 

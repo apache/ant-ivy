@@ -25,25 +25,26 @@ import org.apache.ivy.util.MockMessageLogger;
 
 public class IgnoreCircularDependencyStrategyTest extends TestCase {
     private CircularDependencyStrategy strategy;
+
     private MockMessageLogger mockMessageImpl;
 
     protected void setUp() throws Exception {
         strategy = IgnoreCircularDependencyStrategy.getInstance();
-        
+
         mockMessageImpl = new MockMessageLogger();
         Message.setDefaultLogger(mockMessageImpl);
     }
-    
+
     public void testLog() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.0, #B;1.0"));
-        
+
         mockMessageImpl.assertLogVerboseContains("circular dependency found: #A;1.0->#B;1.0");
     }
-    
+
     public void testRemoveDuplicates() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
-        
+
         // should only log the circular dependency once
         assertEquals(1, mockMessageImpl.getLogs().size());
     }

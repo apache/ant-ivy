@@ -24,7 +24,6 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.CacheCleaner;
@@ -77,12 +76,11 @@ public class XmlReportWriterTest extends TestCase {
             xml.indexOf(expectedLocation) != -1);
         assertTrue("XML doesn't contain artifact is-local attribute",
             xml.indexOf(expectedIsLocal) != -1);
-        assertTrue("XML doesn't contain the organisation",
-            xml.indexOf(expectedOrg) != -1);
-        
-        //check that the XML is valid
-        XMLHelper.parse(new ByteArrayInputStream(buffer.toByteArray()), null,
-            new DefaultHandler(), null);
+        assertTrue("XML doesn't contain the organisation", xml.indexOf(expectedOrg) != -1);
+
+        // check that the XML is valid
+        XMLHelper.parse(new ByteArrayInputStream(buffer.toByteArray()), null, new DefaultHandler(),
+            null);
     }
 
     public void testEscapeXml() throws Exception {
@@ -91,17 +89,16 @@ public class XmlReportWriterTest extends TestCase {
                 "test/java/org/apache/ivy/plugins/report/ivy-635.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
-        
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         XmlReportWriter writer = new XmlReportWriter();
         writer.output(report.getConfigurationReport("default"), buffer);
         buffer.flush();
         String xml = buffer.toString();
-        
+
         String expectedArtName = "art1&amp;_.txt";
 
-        assertTrue("XML doesn't contain escaped artifact name",
-            xml.indexOf(expectedArtName) != -1);
+        assertTrue("XML doesn't contain escaped artifact name", xml.indexOf(expectedArtName) != -1);
     }
 
     public void testWriteModuleInfo() throws Exception {

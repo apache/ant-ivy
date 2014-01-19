@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.osgi.filter;
 
-
 public abstract class UniOperatorFilter extends OSGiFilter {
 
     private final OSGiFilter subFilter;

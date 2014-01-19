@@ -21,11 +21,11 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.tools.ant.BuildFileTest;
 
 public class IvyAntSettingsBuildFileTest extends BuildFileTest {
-    
+
     protected void setUp() throws Exception {
         configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFile.xml");
     }
-    
+
     public void testOverrideNotSpecified() {
         executeTarget("testOverrideNotSpecified");
         ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
@@ -33,7 +33,7 @@ public class IvyAntSettingsBuildFileTest extends BuildFileTest {
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
-    
+
     public void testOverrideSetToFalse() {
         executeTarget("testOverrideSetToFalse");
         ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
@@ -41,13 +41,13 @@ public class IvyAntSettingsBuildFileTest extends BuildFileTest {
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
-    
+
     public void testUnnecessaryDefaultIvyInstance() {
         executeTarget("testUnnecessaryDefaultIvyInstance");
-        assertNull("Default ivy.instance settings shouldn't have been loaded", 
-                getProject().getReference("ivy.instance"));
+        assertNull("Default ivy.instance settings shouldn't have been loaded", getProject()
+                .getReference("ivy.instance"));
     }
-    
+
     public void testSettingsWithIdIvyInstance() {
         // IVY-925
         executeTarget("testSettingsWithPropertyAsId");
@@ -56,7 +56,7 @@ public class IvyAntSettingsBuildFileTest extends BuildFileTest {
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
-    
+
     public void testStackOverflow() {
         // IVY-924
         configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFileStackOverflow.xml");

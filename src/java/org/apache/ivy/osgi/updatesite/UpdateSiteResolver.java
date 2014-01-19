@@ -97,22 +97,22 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
                     Message.info("\tdownloading " + rres.getResource().getName());
                 }
             }
-            
+
             public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
                 if (log <= Message.MSG_VERBOSE) {
                     Message.verbose("\ttrying to download " + artifact);
                 }
             }
-            
+
             public void endArtifactDownload(RepositoryCacheManager cache, Artifact artifact,
                     ArtifactDownloadReport adr, File archiveFile) {
                 if (log <= Message.MSG_VERBOSE) {
                     if (adr.isDownloaded()) {
                         Message.verbose("\tdownloaded to " + archiveFile.getAbsolutePath());
                     } else {
-                        Message.verbose("\tnothing to download");                        
+                        Message.verbose("\tnothing to download");
                     }
-                }                
+                }
             }
         });
         UpdateSiteLoader loader = new UpdateSiteLoader(getRepositoryCacheManager(),

@@ -47,8 +47,7 @@ public abstract class AbstractConflictManager implements ConflictManager, IvySet
     public String toString() {
         return name;
     }
-    
-    public void handleAllBlacklistedRevisions(
-            DependencyDescriptor dd, Collection foundBlacklisted) {
+
+    public void handleAllBlacklistedRevisions(DependencyDescriptor dd, Collection foundBlacklisted) {
     }
 }

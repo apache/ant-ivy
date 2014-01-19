@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -39,9 +38,9 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 /**
  * Descriptor of a module. This is the Java representation of an ivy.xml
  */
-public interface ModuleDescriptor 
-        extends ExtendableItem, ArtifactInfo, DependencyDescriptorMediator {
-    
+public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
+        DependencyDescriptorMediator {
+
     public static final String DEFAULT_CONFIGURATION = "default";
 
     public static final String CALLER_ALL_CONFIGURATION = "all";
@@ -74,9 +73,8 @@ public interface ModuleDescriptor
     void setResolvedModuleRevisionId(ModuleRevisionId revId);
 
     /**
-     * Get the list of parent descriptors imported via an &lt;extends&gt; element.
-     * Only directly imported descriptors are included; the parent's parents are
-     * not included.
+     * Get the list of parent descriptors imported via an &lt;extends&gt; element. Only directly
+     * imported descriptors are included; the parent's parents are not included.
      */
     ExtendsDescriptor[] getInheritedDescriptors();
 
@@ -92,7 +90,7 @@ public interface ModuleDescriptor
     /**
      * May be <code>null</code> if unknown in the descriptor itself.
      * 
-     * @return  The publication date or <code>null</code> when not knwon.
+     * @return The publication date or <code>null</code> when not knwon.
      */
     Date getPublicationDate();
 
@@ -164,7 +162,7 @@ public interface ModuleDescriptor
     License[] getLicenses();
 
     String getHomePage();
-    
+
     String getDescription();
 
     long getLastModified();
@@ -232,46 +230,45 @@ public interface ModuleDescriptor
      * @return an array of {@link ExcludeRule} this module descriptor holds
      */
     public ExcludeRule[] getAllExcludeRules();
-    
+
     /**
      * Returns all the dependency descriptor mediators used by this {@link ModuleDescriptor}, as an
      * instance of {@link ModuleRules}.
      * <p>
-     * All rules in the {@link ModuleRules} object returned are 
-     * {@link DependencyDescriptorMediator}.
+     * All rules in the {@link ModuleRules} object returned are {@link DependencyDescriptorMediator}
+     * .
      * </p>
      * 
      * @return all the dependency descriptor mediators used by this {@link ModuleDescriptor}.
      */
-    public ModuleRules/*<DependencyDescriptorMediator>*/ getAllDependencyDescriptorMediators();
+    public ModuleRules/* <DependencyDescriptorMediator> */getAllDependencyDescriptorMediators();
 
     /**
      * Returns the list of xml namespaces used by extra attributes, as Map from prefix to namespace
      * URIs.
      * <p>
-     * The returned list is never <code>null</code>, it is empty when no extra attribute is used
-     * or if extra attributes are used without xml namespaces
+     * The returned list is never <code>null</code>, it is empty when no extra attribute is used or
+     * if extra attributes are used without xml namespaces
      * </p>
      * 
      * @return the list of xml namespaces used by extra attributes, as Map from prefix to namespace
      *         URIs.
      */
-    Map/*<String,String>*/ getExtraAttributesNamespaces();
-    
-    
+    Map/* <String,String> */getExtraAttributesNamespaces();
+
     /**
-     * Returns the custom info provided in the info tag.
-     * All the tags except the description are given.
-     * The key is the name of the tag, the value is its content.
+     * Returns the custom info provided in the info tag. All the tags except the description are
+     * given. The key is the name of the tag, the value is its content.
+     * 
      * @return
      */
     @Deprecated
-    Map/*<String,String>*/ getExtraInfo();
-    
+    Map/* <String,String> */getExtraInfo();
 
     /**
-     * Returns a list of extras infos (tag name, attributes and content).
-     * All the tags except the description are given.
+     * Returns a list of extras infos (tag name, attributes and content). All the tags except the
+     * description are given.
+     * 
      * @return
      */
     List<ExtraInfoHolder> getExtraInfos();

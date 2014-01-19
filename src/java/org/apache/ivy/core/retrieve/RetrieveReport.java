@@ -28,9 +28,11 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 
 public class RetrieveReport {
 
-    private Collection/*<File>*/ upToDateFiles = new HashSet();
-    private Collection/*<File>*/ copiedFiles = new HashSet();
-    private Map/*<File, ArtifactDownloadReport>*/ downloadReport = new HashMap();
+    private Collection/* <File> */upToDateFiles = new HashSet();
+
+    private Collection/* <File> */copiedFiles = new HashSet();
+
+    private Map/* <File, ArtifactDownloadReport> */downloadReport = new HashMap();
 
     private File retrieveRoot;
 
@@ -64,22 +66,24 @@ public class RetrieveReport {
     }
 
     /**
-     * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve process.
+     * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve
+     * process.
      */
     public Collection getCopiedFiles() {
         return new ArrayList(copiedFiles);
     }
 
     /**
-     * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve process.
+     * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve
+     * process.
      */
     public Collection getUpToDateFiles() {
         return new ArrayList(upToDateFiles);
     }
 
     /**
-     * Returns a collection of <tt>File</tt> objects who were retrieved during the retrieve process. This is
-     * the union of the files being copied and the files that were up-to-date.
+     * Returns a collection of <tt>File</tt> objects who were retrieved during the retrieve process.
+     * This is the union of the files being copied and the files that were up-to-date.
      */
     public Collection getRetrievedFiles() {
         Collection result = new ArrayList(upToDateFiles.size() + copiedFiles.size());

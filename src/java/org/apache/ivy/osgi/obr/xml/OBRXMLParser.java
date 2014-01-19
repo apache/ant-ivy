@@ -174,8 +174,7 @@ public class OBRXMLParser {
                         RequirementAdapter.adapt(bundleInfo, child.requirement);
                     } catch (UnsupportedFilterException e) {
                         throw new SAXParseException("Unsupported requirement filter: "
-                                + ((RequireHandler) child).filter + " (" + e.getMessage() + ")",
-                                getLocator());
+                                + child.filter + " (" + e.getMessage() + ")", getLocator());
                     } catch (ParseException e) {
                         throw new SAXParseException(
                                 "Error in the requirement filter on the bundle: " + e.getMessage(),

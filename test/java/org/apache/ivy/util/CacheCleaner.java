@@ -21,10 +21,9 @@ import java.io.File;
 
 public class CacheCleaner {
 
-    /** 
-     * Delete the directory and all it contains.
-     * Previously, we used the ant delete task, but it occasionaly failed (access denied)
-     * on my machine for unknown reason.   
+    /**
+     * Delete the directory and all it contains. Previously, we used the ant delete task, but it
+     * occasionaly failed (access denied) on my machine for unknown reason.
      **/
     public static void deleteDir(File toDelete) {
         FileUtil.forceDelete(toDelete);

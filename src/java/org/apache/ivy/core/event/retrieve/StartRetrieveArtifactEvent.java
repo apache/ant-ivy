@@ -24,8 +24,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 public class StartRetrieveArtifactEvent extends RetrieveArtifactEvent {
     public static final String NAME = "pre-retrieve-artifact";
 
-    public StartRetrieveArtifactEvent(
-            ArtifactDownloadReport report, File destFile) {
+    public StartRetrieveArtifactEvent(ArtifactDownloadReport report, File destFile) {
         super(NAME, report, destFile);
     }
 }

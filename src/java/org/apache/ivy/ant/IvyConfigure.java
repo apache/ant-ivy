@@ -29,51 +29,52 @@ import org.apache.tools.ant.Task;
 
 /**
  * Configure Ivy with an ivysettings.xml file
- */ 
+ */
 public class IvyConfigure extends Task {
 
     /**
-     * Use to override a previous definition of settings with the same id 
+     * Use to override a previous definition of settings with the same id
      */
     public static final String OVERRIDE_TRUE = "true";
+
     /**
      * Use to avoid overriding a previous definition of settings with the same id
      */
     public static final String OVERRIDE_FALSE = "false";
+
     /**
      * Use to raise an error if attempting to override a previous definition of settings with the
      * same id
      */
     public static final String OVERRIDE_NOT_ALLOWED = "notallowed";
 
-    private static final Collection OVERRIDE_VALUES = Arrays.asList(new String[] {
-            OVERRIDE_TRUE, OVERRIDE_FALSE, OVERRIDE_NOT_ALLOWED
-    });
+    private static final Collection OVERRIDE_VALUES = Arrays.asList(new String[] {OVERRIDE_TRUE,
+            OVERRIDE_FALSE, OVERRIDE_NOT_ALLOWED});
 
     private String override = OVERRIDE_NOT_ALLOWED;
-    
+
     private IvyAntSettings settings = new IvyAntSettings();
 
     public void setSettingsId(String settingsId) {
         settings.setId(settingsId);
     }
-    
+
     public String getSettingsId() {
         return settings.getId();
     }
-    
+
     public void setOverride(String override) {
         if (!OVERRIDE_VALUES.contains(override)) {
             throw new IllegalArgumentException("invalid override value '" + override + "'. "
-                + "Valid values are " + OVERRIDE_VALUES);
+                    + "Valid values are " + OVERRIDE_VALUES);
         }
         this.override = override;
     }
-    
+
     public String getOverride() {
         return override;
     }
-    
+
     public File getFile() {
         return settings.getFile();
     }
@@ -89,7 +90,7 @@ public class IvyConfigure extends Task {
     public void setUrl(String url) throws MalformedURLException {
         settings.setUrl(url);
     }
-    
+
     public void setUrl(URL url) {
         if (url == null) {
             throw new NullPointerException("Cannot set a null URL");
@@ -135,18 +136,18 @@ public class IvyConfigure extends Task {
 
         if ((otherRef != null) && OVERRIDE_NOT_ALLOWED.equals(override)) {
             throw new BuildException(
-                "Overriding a previous definition of ivy:settings with the id '" 
-                + settingsId + "' is not allowed when using override='"
-                + OVERRIDE_NOT_ALLOWED + "'.");
+                    "Overriding a previous definition of ivy:settings with the id '" + settingsId
+                            + "' is not allowed when using override='" + OVERRIDE_NOT_ALLOWED
+                            + "'.");
         }
-        
+
         if ((otherRef != null) && OVERRIDE_FALSE.equals(override)) {
             verbose("A settings definition is already available for " + settingsId + ": skipping");
             return;
         }
-        
+
         settings.setProject(getProject());
-        getProject().addReference(settingsId, settings);        
+        getProject().addReference(settingsId, settings);
         settings.createIvyEngine(this);
     }
 

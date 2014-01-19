@@ -199,7 +199,7 @@ public class IvyDeliver extends IvyTask {
     private File deliveryList;
 
     private boolean replacedynamicrev = true;
-    
+
     private boolean replaceForcedRev = false;
 
     private String resolveId;
@@ -207,9 +207,9 @@ public class IvyDeliver extends IvyTask {
     private String conf;
 
     private String pubBranch;
-    
+
     private boolean generateRevConstraint = true;
-    
+
     private boolean merge = true;
 
     public void setCache(File cache) {
@@ -259,7 +259,7 @@ public class IvyDeliver extends IvyTask {
     public String getPubbranch() {
         return pubBranch;
     }
-    
+
     public void setPubbranch(String pubBranch) {
         this.pubBranch = pubBranch;
     }
@@ -295,11 +295,11 @@ public class IvyDeliver extends IvyTask {
     public void setReplacedynamicrev(boolean replacedynamicrev) {
         this.replacedynamicrev = replacedynamicrev;
     }
-    
+
     public boolean isReplaceForcedRev() {
         return replaceForcedRev;
     }
-    
+
     public void setReplaceForcedRev(boolean replaceForcedRev) {
         this.replaceForcedRev = replaceForcedRev;
     }
@@ -358,15 +358,13 @@ public class IvyDeliver extends IvyTask {
         }
         if (resolveId == null) {
             if (organisation == null) {
-                throw new BuildException(
-                        "no organisation provided for ivy deliver task: " 
-                        + "It can either be set explicitely via the attribute 'organisation' " 
+                throw new BuildException("no organisation provided for ivy deliver task: "
+                        + "It can either be set explicitely via the attribute 'organisation' "
                         + "or via 'ivy.organisation' property or a prior call to <resolve/>");
             }
             if (module == null) {
-                throw new BuildException(
-                        "no module name provided for ivy deliver task: " 
-                        + "It can either be set explicitely via the attribute 'module' " 
+                throw new BuildException("no module name provided for ivy deliver task: "
+                        + "It can either be set explicitely via the attribute 'module' "
                         + "or via 'ivy.module' property or a prior call to <resolve/>");
             }
         }
@@ -384,12 +382,12 @@ public class IvyDeliver extends IvyTask {
         if (deliverpattern == null) {
             throw new BuildException(
                     "deliver ivy pattern is missing: either provide it as parameters "
-                    + "or through ivy.deliver.ivy.pattern properties");
+                            + "or through ivy.deliver.ivy.pattern properties");
         }
         if (status == null) {
             throw new BuildException(
                     "no status provided: either provide it as parameter or through "
-                    + "the ivy.status.default property");
+                            + "the ivy.status.default property");
         }
 
         ModuleRevisionId mrid = null;
@@ -411,13 +409,11 @@ public class IvyDeliver extends IvyTask {
                 drResolver = new DefaultPublishingDRResolver();
             }
 
-            DeliverOptions options = new DeliverOptions(status, pubdate, 
-                drResolver, doValidate(settings), replacedynamicrev, splitConfs(conf))
-                .setResolveId(resolveId)
-                .setReplaceForcedRevisions(isReplaceForcedRev())
-                .setGenerateRevConstraint(generateRevConstraint)
-                .setMerge(merge)
-                .setPubBranch(pubBranch);
+            DeliverOptions options = new DeliverOptions(status, pubdate, drResolver,
+                    doValidate(settings), replacedynamicrev, splitConfs(conf))
+                    .setResolveId(resolveId).setReplaceForcedRevisions(isReplaceForcedRev())
+                    .setGenerateRevConstraint(generateRevConstraint).setMerge(merge)
+                    .setPubBranch(pubBranch);
             if (mrid == null) {
                 ivy.deliver(pubRevision, deliverpattern, options);
             } else {

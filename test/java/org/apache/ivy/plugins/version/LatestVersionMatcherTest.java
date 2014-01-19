@@ -26,11 +26,11 @@ import org.apache.ivy.core.module.status.StatusManager;
 
 public class LatestVersionMatcherTest extends TestCase {
     private LatestVersionMatcher vm = new LatestVersionMatcher();
-    
+
     protected void setUp() {
         IvyContext.pushNewContext();
     }
-    
+
     protected void tearDown() {
         IvyContext.popContext();
     }
@@ -40,7 +40,7 @@ public class LatestVersionMatcherTest extends TestCase {
         assertNeed("latest.milestone", true);
         assertNeed("latest.integration", false);
     }
-    
+
     public void testNeedModuleDescriptorCustomStatus() throws Exception {
         StatusManager.getCurrent().addStatus(new Status("release", false));
         StatusManager.getCurrent().addStatus(new Status("snapshot", true));
@@ -51,6 +51,7 @@ public class LatestVersionMatcherTest extends TestCase {
 
     // assertion helper methods
     private void assertNeed(String askedVersion, boolean b) {
-        assertEquals(b, vm.needModuleDescriptor(ModuleRevisionId.newInstance("org", "name", askedVersion), null));
+        assertEquals(b, vm.needModuleDescriptor(
+            ModuleRevisionId.newInstance("org", "name", askedVersion), null));
     }
 }

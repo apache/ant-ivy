@@ -46,7 +46,7 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable<Strin
     }
 
     protected URI buildBundleURI(String location) throws IOException {
-        Resource resource = repo.getResource((String) location);
+        Resource resource = repo.getResource(location);
         // We have a resource to transform into an URI, let's use some heuristics
         try {
             return new URI(resource.getName());
@@ -56,15 +56,15 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable<Strin
     }
 
     protected InputStream getInputStream(String f) throws IOException {
-        return repo.getResource((String) f).openStream();
+        return repo.getResource(f).openStream();
     }
 
     protected List<String> listBundleFiles(String dir) throws IOException {
-        return asList(ResolverHelper.listAll(repo, (String) dir));
+        return asList(ResolverHelper.listAll(repo, dir));
     }
 
     protected List<String> listDirs(String dir) throws IOException {
-        return asList(ResolverHelper.listAll(repo, (String) dir));
+        return asList(ResolverHelper.listAll(repo, dir));
     }
 
     private List<String> asList(String[] array) {

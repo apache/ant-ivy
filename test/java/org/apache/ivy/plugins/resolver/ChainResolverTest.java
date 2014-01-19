@@ -114,8 +114,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
@@ -130,24 +130,23 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setSettings(settings);
         settings.setDefaultLatestStrategy(new LatestTimeStrategy());
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, new GregorianCalendar(2005, 1, 20)
-                        .getTime()),
+                MockResolver.buildMockResolver(settings, "1", true, new GregorianCalendar(2005, 1,
+                        20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
-                MockResolver.buildMockResolver(settings, "3", true, new GregorianCalendar(2005, 1, 25)
-                        .getTime()), // younger -> should the one kept
+                MockResolver.buildMockResolver(settings, "3", true, new GregorianCalendar(2005, 1,
+                        25).getTime()), // younger -> should the one kept
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, new GregorianCalendar(2005, 1, 22)
-                        .getTime()),
-                MockResolver.buildMockResolver(settings, "6", true, new GregorianCalendar(2005, 1, 18)
-                        .getTime()), 
-                MockResolver.buildMockResolver(settings, "7", false, null)};
+                MockResolver.buildMockResolver(settings, "5", true, new GregorianCalendar(2005, 1,
+                        22).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true, new GregorianCalendar(2005, 1,
+                        18).getTime()), MockResolver.buildMockResolver(settings, "7", false, null)};
         for (int i = 0; i < resolvers.length; i++) {
             chain.add(resolvers[i]);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "latest.integration"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "latest.integration"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("3", rmr.getResolver().getName());
@@ -163,26 +162,26 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, ModuleRevisionId.newInstance("org",
-                    "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()),
+                MockResolver.buildMockResolver(settings, "1", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
-                MockResolver.buildMockResolver(settings, "3", true, ModuleRevisionId.newInstance("org",
-                    "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
+                MockResolver.buildMockResolver(settings, "3", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
+                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
                 // should the
                 // one kept
-                MockResolver.buildMockResolver(settings, "6", true, ModuleRevisionId.newInstance("org",
-                    "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
         for (int i = 0; i < resolvers.length; i++) {
             chain.add(resolvers[i]);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "latest.integration"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "latest.integration"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
@@ -199,15 +198,15 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver(settings, "1", false, null),
-                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
+                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
                 // ->
                 // but
                 // default
                 MockResolver.buildMockResolver(settings, "3", false, null),
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
+                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
                 // should the
                 // one kept
                 MockResolver.buildMockResolver(settings, "6", false, null),
@@ -217,8 +216,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "4"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "4"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
@@ -237,30 +236,30 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, ModuleRevisionId.newInstance("org",
-                    "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()),
-                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
+                MockResolver.buildMockResolver(settings, "1", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()),
+                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
                 // ->
                 // but
                 // default
-                MockResolver.buildMockResolver(settings, "3", true, ModuleRevisionId.newInstance("org",
-                    "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
+                MockResolver.buildMockResolver(settings, "3", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
+                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
                 // should the
                 // one kept
-                MockResolver.buildMockResolver(settings, "6", true, ModuleRevisionId.newInstance("org",
-                    "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
         for (int i = 0; i < resolvers.length; i++) {
             chain.add(resolvers[i]);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "latest.integration"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "latest.integration"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
@@ -277,11 +276,12 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver(settings, "1", false, null),
-                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // default
+                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // default
                 MockResolver.buildMockResolver(settings, "3", false, null),
-                MockResolver.buildMockResolver(settings, "4", true, ModuleRevisionId.newInstance("org",
-                    "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // not default
+                MockResolver.buildMockResolver(settings, "4", true, ModuleRevisionId.newInstance(
+                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // not
+                                                                                       // default
                 // -> should the
                 // one kept
                 MockResolver.buildMockResolver(settings, "5", false, null)};
@@ -290,8 +290,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "4"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "4"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("4", rmr.getResolver().getName());
@@ -301,8 +301,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 resolvers[i].askedDeps);
         }
         for (int i = 4; i < resolvers.length; i++) {
-            assertTrue("invalid asked dependencies for " + resolvers[i], resolvers[i].askedDeps
-                    .isEmpty());
+            assertTrue("invalid asked dependencies for " + resolvers[i],
+                resolvers[i].askedDeps.isEmpty());
         }
     }
 
@@ -317,8 +317,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("1");
         resolver.setSettings(settings);
 
-        resolver.addArtifactPattern(
-            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         // second resolver has an ivy pattern and will thus find the real module, which should be
@@ -327,33 +327,32 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("2");
         resolver.setSettings(settings);
 
-        resolver
-                .addIvyPattern(settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver
-                .addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org1", "mod1.1", "1.0"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
     }
-    
 
     public void testUseCache() throws Exception {
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-            .newInstance("org1", "mod1.1", "1.0"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
         // resolve dependency twice
         chainToPutDefaultModuleInCache().getDependency(dd, data);
 
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);
-        MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, null)};
+        MockResolver[] resolvers = new MockResolver[] {MockResolver.buildMockResolver(settings,
+            "1", true, null)};
         for (int i = 0; i < resolvers.length; i++) {
             chain.add(resolvers[i]);
         }
@@ -362,31 +361,30 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertEquals(Collections.EMPTY_LIST, resolvers[0].askedDeps);
     }
 
-
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);
         chain.setReturnFirst(true);
-        
+
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, new GregorianCalendar(2005, 1, 20)
-                        .getTime()),
+                MockResolver.buildMockResolver(settings, "1", true, new GregorianCalendar(2005, 1,
+                        20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
-                MockResolver.buildMockResolver(settings, "3", true, new GregorianCalendar(2005, 1, 25)
-                        .getTime()), // younger -> should the one kept
+                MockResolver.buildMockResolver(settings, "3", true, new GregorianCalendar(2005, 1,
+                        25).getTime()), // younger -> should the one kept
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, new GregorianCalendar(2005, 1, 22)
-                        .getTime()),
-                MockResolver.buildMockResolver(settings, "6", true, new GregorianCalendar(2005, 1, 18)
-                        .getTime()), MockResolver.buildMockResolver(settings, "7", false, null)};
+                MockResolver.buildMockResolver(settings, "5", true, new GregorianCalendar(2005, 1,
+                        22).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true, new GregorianCalendar(2005, 1,
+                        18).getTime()), MockResolver.buildMockResolver(settings, "7", false, null)};
         for (int i = 0; i < resolvers.length; i++) {
             chain.add(resolvers[i]);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "latest.integration"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "latest.integration"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("1", rmr.getResolver().getName());
@@ -397,8 +395,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
 
     public void testReturnFirstWithDefaultAndCacheAndRealResolver() throws Exception {
         // test case for IVY-389
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-            .newInstance("org1", "mod1.1", "1.0"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
 
         // 1 ---- we first do a first resolve which puts a default file in cache
         chainToPutDefaultModuleInCache().getDependency(dd, data);
@@ -410,15 +408,17 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
 
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
-        // the module returned should be the default one found in cache since check modified is false
+        // the module returned should be the default one found in cache since check modified is
+        // false
         assertEquals(true, rmr.getDescriptor().isDefault());
     }
 
-    public void testReturnFirstWithCheckModifiedAndDefaultAndCacheAndRealResolver() throws Exception {
+    public void testReturnFirstWithCheckModifiedAndDefaultAndCacheAndRealResolver()
+            throws Exception {
         // test case for IVY-207
-        
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-            .newInstance("org1", "mod1.1", "1.0"), false);
+
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
 
         // 1 ---- we first do a first resolve which puts a default file in cache
         chainToPutDefaultModuleInCache().getDependency(dd, data);
@@ -452,10 +452,10 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("2");
         resolver.setSettings(settings);
 
-        resolver.addIvyPattern(
-            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern(
-            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
@@ -472,8 +472,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("old");
         resolver.setSettings(settings);
 
-        resolver.addArtifactPattern(
-            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
@@ -494,8 +494,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
-                .newInstance("org", "mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
@@ -508,12 +508,13 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setSettings(settings);
         chain.setDual(true);
 
-        // first resolver has only an artifact pattern which don't lead to anything: it won't find the module
+        // first resolver has only an artifact pattern which don't lead to anything: it won't find
+        // the module
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("1");
         resolver.setSettings(settings);
-        resolver.addArtifactPattern(
-            settings.getBaseDir() + "/test/repositories/nowhere/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/nowhere/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         chain.add(resolver);
 
@@ -521,10 +522,10 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("2");
         resolver.setSettings(settings);
 
-        resolver.addIvyPattern(
-            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern(
-            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
@@ -532,15 +533,12 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         MockMessageLogger mockLogger = new MockMessageLogger();
         IvyContext.getContext().getIvy().getLoggerEngine().setDefaultLogger(mockLogger);
         DownloadReport report = chain.download(
-            new Artifact[] {new DefaultArtifact(
-                ModuleRevisionId.parse("org1#mod1.1;1.0"),
-                new Date(), "mod1.1", "jar", "jar")}, 
-            new DownloadOptions());
+            new Artifact[] {new DefaultArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"),
+                    new Date(), "mod1.1", "jar", "jar")}, new DownloadOptions());
         assertNotNull(report);
         assertEquals(1, report.getArtifactsReports().length);
         assertEquals(DownloadStatus.SUCCESSFUL, report.getArtifactsReports()[0].getDownloadStatus());
         mockLogger.assertLogDoesntContain("[FAILED     ] org1#mod1.1;1.0!mod1.1.jar");
     }
 
-    
 }

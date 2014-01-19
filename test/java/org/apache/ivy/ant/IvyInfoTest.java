@@ -58,8 +58,10 @@ public class IvyInfoTest extends TestCase {
         assertEquals("myvalue", info.getProject().getProperty("ivy.extra.myextraatt"));
 
         // test the configuration descriptions
-        assertEquals("The default dependencies", info.getProject().getProperty("ivy.configuration.default.desc"));
-        assertEquals("Dependencies used for testing", info.getProject().getProperty("ivy.configuration.test.desc"));
+        assertEquals("The default dependencies",
+            info.getProject().getProperty("ivy.configuration.default.desc"));
+        assertEquals("Dependencies used for testing",
+            info.getProject().getProperty("ivy.configuration.test.desc"));
         assertNull(info.getProject().getProperty("ivy.configuration.private.desc"));
     }
 

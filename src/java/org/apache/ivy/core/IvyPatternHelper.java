@@ -38,11 +38,11 @@ import org.apache.ivy.util.Message;
 /**
  */
 public final class IvyPatternHelper {
-    
+
     private IvyPatternHelper() {
-        //Helper class
+        // Helper class
     }
-    
+
     public static final String CONF_KEY = "conf";
 
     public static final String TYPE_KEY = "type";
@@ -90,7 +90,8 @@ public final class IvyPatternHelper {
     }
 
     public static String substitute(String pattern, Artifact artifact, String conf) {
-        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf, (ArtifactOrigin) null);
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf,
+            (ArtifactOrigin) null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact) {
@@ -99,29 +100,29 @@ public final class IvyPatternHelper {
 
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact,
             String conf, ArtifactOrigin origin) {
-        return substitute(pattern, mrid.getOrganisation(), mrid.getName(), mrid.getBranch(), mrid
-                .getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf,
+        return substitute(pattern, mrid.getOrganisation(), mrid.getName(), mrid.getBranch(),
+            mrid.getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf,
             origin, mrid.getQualifiedExtraAttributes(), artifact.getQualifiedExtraAttributes());
     }
 
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext) {
-        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, (String) null, 
-                (ArtifactOrigin) null, (Map) null, (Map) null);
+        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext,
+            (String) null, (ArtifactOrigin) null, (Map) null, (Map) null);
     }
 
     // CheckStyle:ParameterNumber OFF
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext, String conf) {
-        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf, 
-                (ArtifactOrigin) null, (Map) null, (Map) null);
+        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf,
+            (ArtifactOrigin) null, (Map) null, (Map) null);
     }
 
     public static String substitute(String pattern, String org, String module, String revision,
-            String artifact, String type, String ext, String conf, Map extraModuleAttributes, 
+            String artifact, String type, String ext, String conf, Map extraModuleAttributes,
             Map extraArtifactAttributes) {
-        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf, 
-                (ArtifactOrigin) null, extraModuleAttributes, extraArtifactAttributes);
+        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf,
+            (ArtifactOrigin) null, extraModuleAttributes, extraArtifactAttributes);
     }
 
     public static String substitute(String pattern, String org, String module, String branch,
@@ -129,7 +130,7 @@ public final class IvyPatternHelper {
             ArtifactOrigin origin, Map extraModuleAttributes, Map extraArtifactAttributes) {
         Map tokens = new HashMap();
         if (extraModuleAttributes != null) {
-            for (Iterator entries = extraModuleAttributes.entrySet().iterator(); entries.hasNext(); ) {
+            for (Iterator entries = extraModuleAttributes.entrySet().iterator(); entries.hasNext();) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String token = (String) entry.getKey();
                 if (token.indexOf(':') > 0) {
@@ -139,7 +140,8 @@ public final class IvyPatternHelper {
             }
         }
         if (extraArtifactAttributes != null) {
-            for (Iterator entries = extraArtifactAttributes.entrySet().iterator(); entries.hasNext(); ) {
+            for (Iterator entries = extraArtifactAttributes.entrySet().iterator(); entries
+                    .hasNext();) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String token = (String) entry.getKey();
                 if (token.indexOf(':') > 0) {
@@ -159,14 +161,16 @@ public final class IvyPatternHelper {
         tokens.put(EXT_KEY, ext == null ? "jar" : ext);
         tokens.put(CONF_KEY, conf == null ? "default" : conf);
         if (origin == null) {
-            tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(org,
-                module, branch, revision, artifact, type, ext, extraModuleAttributes, extraArtifactAttributes));
-        } else { 
+            tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(org, module,
+                    branch, revision, artifact, type, ext, extraModuleAttributes,
+                    extraArtifactAttributes));
+        } else {
             tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(origin));
         }
-                
+
         return substituteTokens(pattern, tokens);
     }
+
     // CheckStyle:ParameterNumber ON
 
     public static String substituteVariables(String pattern, Map variables) {
@@ -177,8 +181,8 @@ public final class IvyPatternHelper {
         return substituteVariables(pattern, variables, new Stack());
     }
 
-    private static String substituteVariables(
-            String pattern, IvyVariableContainer variables, Stack substituting) {
+    private static String substituteVariables(String pattern, IvyVariableContainer variables,
+            Stack substituting) {
         // if you supply null, null is what you get
         if (pattern == null) {
             return null;
@@ -194,7 +198,7 @@ public final class IvyPatternHelper {
                 sb = new StringBuffer();
             }
             String var = m.group(1);
-            String val = (String) variables.getVariable(var);
+            String val = variables.getVariable(var);
             if (val != null) {
                 int index = substituting.indexOf(var);
                 if (index != -1) {
@@ -209,8 +213,7 @@ public final class IvyPatternHelper {
             } else {
                 val = m.group();
             }
-            m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\")
-                .replaceAll("\\$", "\\\\\\$"));
+            m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\$", "\\\\\\$"));
         }
         if (useVariables) {
             m.appendTail(sb);
@@ -225,11 +228,12 @@ public final class IvyPatternHelper {
         if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_KEY2)) {
             tokensCopy.put(ORGANISATION_KEY2, tokensCopy.get(ORGANISATION_KEY));
         }
-        if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_PATH_KEY)) {
+        if (tokensCopy.containsKey(ORGANISATION_KEY)
+                && !tokensCopy.containsKey(ORGANISATION_PATH_KEY)) {
             String org = (String) tokensCopy.get(ORGANISATION_KEY);
             tokensCopy.put(ORGANISATION_PATH_KEY, org == null ? "" : org.replace('.', '/'));
         }
-        
+
         StringBuffer buffer = new StringBuffer();
 
         char[] chars = pattern.toCharArray();
@@ -368,8 +372,8 @@ public final class IvyPatternHelper {
         return substituteParams(pattern, new IvyVariableContainerImpl(params), new Stack());
     }
 
-    private static String substituteParams(
-            String pattern, IvyVariableContainer params, Stack substituting) {
+    private static String substituteParams(String pattern, IvyVariableContainer params,
+            Stack substituting) {
         // TODO : refactor this with substituteVariables
         // if you supply null, null is what you get
         if (pattern == null) {
@@ -381,7 +385,7 @@ public final class IvyPatternHelper {
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String var = m.group(1);
-            String val = (String) params.getVariable(var);
+            String val = params.getVariable(var);
             if (val != null) {
                 int index = substituting.indexOf(var);
                 if (index != -1) {
@@ -395,9 +399,7 @@ public final class IvyPatternHelper {
             } else {
                 val = m.group();
             }
-            m
-                    .appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\@",
-                        "\\\\\\@"));
+            m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\@", "\\\\\\@"));
         }
         m.appendTail(sb);
 
@@ -420,21 +422,21 @@ public final class IvyPatternHelper {
         private String revision;
 
         private Map extraModuleAttributes;
-        
+
         // artifact properties
         private String artifactName;
 
         private String artifactType;
 
         private String artifactExt;
-        
+
         private Map extraArtifactAttributes;
 
         // cached origin;
         private ArtifactOrigin origin;
-        
+
         public OriginalArtifactNameValue(String org, String moduleName, String branch,
-                String revision, String artifactName, String artifactType, String artifactExt, 
+                String revision, String artifactName, String artifactType, String artifactExt,
                 Map extraModuleAttributes, Map extraArtifactAttributes) {
             this.org = org;
             this.moduleName = moduleName;
@@ -462,10 +464,10 @@ public final class IvyPatternHelper {
                 Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType,
                         artifactExt, extraArtifactAttributes);
 
-                // TODO cache: see how we could know which actual cache manager to use, since this 
+                // TODO cache: see how we could know which actual cache manager to use, since this
                 // will fail when using a resolver in a chain with a specific cache manager
                 RepositoryCacheManager cacheManager = IvyContext.getContext().getSettings()
-                        .getResolver(revId).getRepositoryCacheManager(); 
+                        .getResolver(revId).getRepositoryCacheManager();
 
                 origin = cacheManager.getSavedArtifactOrigin(artifact);
 
@@ -506,7 +508,7 @@ public final class IvyPatternHelper {
             return pattern.substring(0, index);
         }
     }
-    
+
     public static String getFirstToken(String pattern) {
         if (pattern == null) {
             return null;
