@@ -9,6 +9,13 @@
               "title":"Tutorials",
               "children": [
                   {
+                    "id":"release-notes",
+                    "title":"Release Notes",
+                    "children": [
+
+                      ]
+                  },
+                  {
                     "id":"tutorial/start",
                     "title":"Quick Start",
                     "children": [
