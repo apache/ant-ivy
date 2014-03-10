@@ -64,7 +64,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             url = normalizeToURL(url);
             con = url.openConnection();
-            con.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            con.setRequestProperty("User-Agent", getUserAgent());
             if (con instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) con;
                 if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
@@ -159,7 +159,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             url = normalizeToURL(url);
             conn = url.openConnection();
-            conn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            conn.setRequestProperty("User-Agent", getUserAgent());
             conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             if (conn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) conn;
@@ -193,7 +193,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             src = normalizeToURL(src);
             srcConn = src.openConnection();
-            srcConn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            srcConn.setRequestProperty("User-Agent", getUserAgent());
             srcConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             if (srcConn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) srcConn;
@@ -244,7 +244,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             conn = (HttpURLConnection) dest.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("PUT");
-            conn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            conn.setRequestProperty("User-Agent", getUserAgent());
             conn.setRequestProperty("Content-type", "application/octet-stream");
             conn.setRequestProperty("Content-length", Long.toString(source.length()));
             conn.setInstanceFollowRedirects(true);

@@ -295,7 +295,7 @@ public class HttpClientHandler extends AbstractURLHandler {
 
             // user-agent
             httpClient.getParams().setParameter(HttpMethodParams.USER_AGENT,
-                "Apache Ivy/" + Ivy.getIvyVersion());
+                getUserAgent());
 
             // authentication
             httpClient.getParams().setParameter(CredentialsProvider.PROVIDER,

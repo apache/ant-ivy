@@ -30,6 +30,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import org.apache.ivy.Ivy;
 
 public abstract class AbstractURLHandler implements URLHandler {
 
@@ -60,6 +61,14 @@ public abstract class AbstractURLHandler implements URLHandler {
 
     public long getLastModified(URL url, int timeout) {
         return getURLInfo(url, timeout).getLastModified();
+    }
+
+    protected String getUserAgent() {
+        String userAgent = System.getProperty("http.agent");
+        if (userAgent == null) {
+            userAgent = "Apache Ivy/" + Ivy.getIvyVersion();
+        }
+        return userAgent;
     }
 
     protected void validatePutStatusCode(URL dest, int statusCode, String statusMessage)
