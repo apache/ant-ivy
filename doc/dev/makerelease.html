@@ -36,9 +36,12 @@ RELEASE_NOTES
 CHANGES
 README
 <h3>2. Create a release branch</h3>
-This will allow to work separately from other developers, in case you need any last modification.
+This will allow to work separately from other developers, in case you need any last modification. For a release we have 2 branches. For instance, suppose we create a 2.0.0-beta1 release. We have a branch for the code for all 2.0.x releases, this is the '2.0.x' branch. From this branch we will create the release branch which is for a specific release. It is possible that the 2.0.x branch has already been created when releasing a previous version, in that case the creation of this branch can be skipped.
 <code>
 svn copy https://svn.apache.org/repos/asf/ant/ivy/core/trunk \
+           https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.x \
+      -m "Creating a 2.0.x branch."
+svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.x \
            https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
       -m "Creating a release branch for 2.0.0-beta1."
 </code>
