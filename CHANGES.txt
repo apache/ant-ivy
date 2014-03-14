@@ -138,7 +138,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Sven Zethelius
 	Aleksey Zhukov
 	
-   trunk
+   2.4.0-rc1
 =====================================
 - DOCUMENTATION: Broken link in <dependency> documentation (IVY-1405)
 - DOCUMENTATION: Explicitly document that threaded use is not supported.
