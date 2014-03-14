@@ -105,13 +105,6 @@ end
 </code>
 Be prepared to enter your passphrase several times if you use this script, gpg will ask for your passphrase for each file to sign.
 
-When you're done upload the content of the distrib directory to a publicly accessible web site, your apache personal site being a good location for this. Make sure you include some kind of disclaimer somewhere to inform people the release is not approved yet.
-
-You can for example add a HEADER.html like this:
-<code>
-<h2>WARNING: files available here are NOT an Apache approved release yet.</h2>
-</code>
-
 <h3>11. Prepare the Eclipse update site</h3>
 
 To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See <a href="http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html">that page</a> to know how to process.
@@ -133,10 +126,9 @@ And commit that modification.
 
 <h3>Publish the release candidate</h3>
 
-<ul>Two choices here:
-  <li>commit them into the dev dist area: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION </li>
-  <li>or simply put it in your <tt>public_html</tt> folder on people.apache.org so it will be avalaible at http://people.apache.org/~$LOGIN/$RELEASENAME </li>
-</ul>
+All artifacts in <tt>build/distrib</tt> except the <tt>maven2</tt> folder needs to be published on the 'dist' svn of the ASF, in the <b>dev</b> part.
+
+The artifacts should be pushed in that svn folder: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
 
 <h3>13. Call for a vote to approve the release</h3>
 Cast a vote to approve the release on the dev@ant.apache.org mailing list.
@@ -147,7 +139,9 @@ Subject: [VOTE] Ivy ${version} Release
 
 I have built a release candidate for Ivy ${version}
 
-You can download it from this URL: ${url}
+The svn tag of this release is: https://svn.apache.org/repos/asf/ant/ivy/core/tags/${version}@${svn-rev-of-the-tag}
+
+The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION@${svn-rev-of-the-check-in}
 
 Do you vote for the release of these binaries?
 
@@ -160,14 +154,10 @@ ${me}, Ivy ${version} release manager
 </code>
 <h3>14. Publish the release</h3>
 
-If the release is approved, it's now time to make it public. The apache dist is manage by svnpubsub, so releases should be committed into https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
-
-If the release candidate has been staged into the dev area, then just do:
+If the release is approved, it's now time to make it public. The artifacts in the <i>dev</i> part needs to be moved into the <i>release</i> one:
 <code>
 $ svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.apache.org/repos/dist/release/ant/ivy/$VERSION
 </code>
-
-If the candidate has been published on people.apache.org, just directly commit the artifacts into the subversion repository https://dist.apache.org/repos/dist/release/ant/ 
 
 In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the <a href="http://archive.apache.org/dist/ant/ivy/">archive</a>. To do so, just use the <tt>svn rm</tt> command against the artifacts or folders to remove.
 
