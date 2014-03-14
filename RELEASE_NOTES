@@ -4,13 +4,10 @@
 
 CONTENTS
 1. What is Apache Ivy?
-2. Status of this release
-3. Major Changes in this Release
-4. Migrating from Jayasoft Ivy to Apache Ivy
-5. How to Get Involved
-6. How to Report Issues
-7. Committers and Contributors for this release
-8. List of Changes in this Release   
+2. How to Get Involved
+3. How to Report Issues
+4. Committers and Contributors for this release
+5. List of Changes in this Release   
    
    
 1. What is Apache Ivy?
@@ -20,49 +17,28 @@ project dependencies.
 It is characterized by the following:
 
    1. flexibility and configurability 
-   		Apache Ivy is essentially process agnostic and is not tied to any 
-   		methodology or structure. 
-   		Instead it provides the necessary flexibility and configurability 
-   		to be adapted to a broad range of dependency management and build 
-   		processes.
+        Apache Ivy is essentially process agnostic and is not tied to any 
+        methodology or structure. 
+        Instead it provides the necessary flexibility and configurability 
+        to be adapted to a broad range of dependency management and build 
+        processes.
    2. tight integration with Apache Ant
-   		while available as a standalone tool, Apache Ivy works particularly well 
-   		with Apache Ant providing a number of powerful Ant tasks ranging 
-   		from dependency resolution to dependency reporting and publication.
+        while available as a standalone tool, Apache Ivy works particularly well 
+        with Apache Ant providing a number of powerful Ant tasks ranging 
+        from dependency resolution to dependency reporting and publication.
 
-2. Status of this release 
-
-This is the development branch of Ivy. Any release branch should have a more
-accurate description here.
-
-As of this writing, the current production quality version is 2.3.0, published
-by the ASF on January 21st, 2013.
-
-3. Major Changes in this Release
-
-This section describes what has changed between version 2.3.0 and this version of 
-Apache Ivy which may cause incompatibilities. For a full list of detailed changes,
-please refer to CHANGES.txt file.
-
-This new version of Apache Ivy is fully compatible with 2.3 versions.
-
-4. Migrating from Jayasoft Ivy to Apache Ivy
-
-Please see release notes from 2.3.0 or prior for migration instructions from
-Jayasoft Ivy (1.x).
-
-5. How to Get Involved
+2. How to Get Involved
 
 The Apache Ivy project really needs and appreciates any contributions, 
 including documentation help, source code and feedback.  If you are interested
 in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
 
-6. How to Report Issues
+3. How to Report Issues
 
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
 issues you find at http://issues.apache.org/jira/browse/IVY
 
-7. Committers and Contributors for this Release
+4. Committers and Contributors for this Release
 
 Here is the list of people who have contributed source code and documentation
 to this release. Many thanks to all of them, and also to the whole Ivy community
@@ -88,7 +64,7 @@ long, but Ivy couldn't be what it is without you!
 
 For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
 
-8. List of Changes in this Release
+5. List of Changes in this Release
 
 For a full release history of Ivy see the file CHANGES.txt
 

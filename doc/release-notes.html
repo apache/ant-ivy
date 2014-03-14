@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <script type="text/javascript">var xookiConfig = {level: 0};</script>   
+    <script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+    <textarea id="xooki-source">
+<h2>Announcement</h2>
+
+<pre>
+March 23, 2014 - The Ivy project is pleased to announce its 2.4.0-RC1 release.
+
+Ivy is a tool for managing (recording, tracking, resolving and
+reporting) project dependencies, characterized by flexibility,
+configurability, and tight integration with Apache Ant.
+
+Key features of this 2.4.0-RC1 release are
+* some new Ant tasks
+* improved OSGI support
+* numerous bug fixes as documented in Jira and in the release notes
+
+As a release candidate version, we strongly encourage the use of this version for 
+testing and validation. From now on, features are frozen until final 2.4.0 version, 
+only bug fixes will be applied before 2.4.0. If no outstanding bugs are reported 
+with this release candidate, it will promoted to 2.4.0 about three weeks after this
+release candidate. 
+
+Issues should be reported to:
+https://issues.apache.org/jira/browse/IVY
+
+Download the 2.4.0-RC1 release at:
+http://ant.apache.org/ivy/download.cgi
+
+More information can be found on the Ivy website:
+http://ant.apache.org/ivy/
+
+Regards,
+Maarten Coene
+</pre>
+
+<h2>Release Notes</h2>
+
+CONTENTS
+1. What is Apache Ivy?
+2. How to Get Involved
+3. How to Report Issues
+4. Committers and Contributors for this release
+5. List of Changes in this Release   
+   
+   
+<h3>1. What is Apache Ivy?</h3>
+
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+project dependencies. 
+It is characterized by the following:
+
+   1. flexibility and configurability 
+        Apache Ivy is essentially process agnostic and is not tied to any 
+        methodology or structure. 
+        Instead it provides the necessary flexibility and configurability 
+        to be adapted to a broad range of dependency management and build 
+        processes.
+   2. tight integration with Apache Ant
+        while available as a standalone tool, Apache Ivy works particularly well 
+        with Apache Ant providing a number of powerful Ant tasks ranging 
+        from dependency resolution to dependency reporting and publication.
+
+<h3>2. How to Get Involved</h3>
+
+The Apache Ivy project really needs and appreciates any contributions, 
+including documentation help, source code and feedback.  If you are interested
+in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
+
+<h3>3. How to Report Issues</h3>
+
+The Apache Ivy project uses JIRA for issue tracking.  Please report any 
+issues you find at http://issues.apache.org/jira/browse/IVY
+
+<h3>4. Committers and Contributors for this Release</h3>
+
+Here is the list of people who have contributed source code and documentation
+to this release. Many thanks to all of them, and also to the whole Ivy community
+contributing ideas and feedback, and promoting the use of Ivy. The list would be too
+long, but Ivy couldn't be what it is without you!
+
+ Committers
+    Jean-Louis Boudart
+    Maarten Coene
+    Charles Duffy
+    Nicolas Lalevee
+    Antoine Levy Lambert
+
+ Contributors
+    Gregory Amerson
+    Mykhailo Delegan
+    Tony Likhite
+    Carsten Pfeiffer
+    Yanus Poluektovich
+    Frederic Riviere
+    Gene Smith
+    Erwin Tratar
+
+For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
+
+<h3>5. List of Changes in this Release</h3>
+
+For a full release history of Ivy see the file CHANGES.txt
+
+For details about the following changes, check our JIRA install at 
+http://issues.apache.org/jira/browse/ivy
+
+List of changes since Ivy 2.3.0:
+
+- DOCUMENTATION: Broken link in <dependency> documentation (IVY-1405)
+- DOCUMENTATION: Explicitly document that threaded use is not supported.
+
+- NEW: the buildobr task can now work a set of resolved artifacts: useful for managing an OSGi target platform
+- NEW: fixdeps task: serializes transitively resolved dependencies into an ivy.xml file
+- NEW: IvyDependencyTree task : display a dependency tree on the console
+- NEW: Support Conditional Setting of a Property (IVY-1367)
+- NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
+- NEW: symlinkmass feature based on symlink feature of ivy:retrieve (IVY-1252) (Thanks to Gene Smith)
+- NEW: Agent authentication for SSH and SFTP transports (IVY-1421)
+- NEW: New OSGi resolver 'osgi-agg': a chain resolver dedicated to better handle OSGi dependencies
+- NEW: Add support for "packed" artifacts: .pack.gz bundles in an OSGi P2 repository for instance
+
+- IMPROVEMENT: New LockStrategy available based on NIO FileLocks (IVY-1424)
+- IMPROVEMENT: Optional <include> ivysettings directives (IVY-1392) (thanks to Yanus Poluektovich)
+- IMPROVEMENT: add support for source bundles from p2 repositories
+- IMPROVEMENT: add support for source URI from OBR repositories
+- IMPROVEMENT: Also copy original metadata artifact (e.g. POM) on ivy:install (IVY-1431) (Thanks to Erwin Tratar)
+- IMPROVEMENT: useOrigin will do avoid copy with url resolvers configured with a 'file:/' URL
+- IMPROVEMENT: add support for source artifacts in buildobr task
+- IMPROVEMENT: add possibility to configure the User-Agent http header by setting a property http.agent (Thanks to Tony Likhite)
+
+- FIX: In IvyDE, Ivy fails to parse ivy-settings.xml file if it contains <pgp> element (thanks to Gregory Amerson) (IVY-1441)
+- FIX: ParseException when "Bundle-Description" is present in OSGi MANIFEST.MF (IVY-1438)
+- FIX: NIO FileLocker released locks too early (IVY-1424) (thanks to Charles Duffy)
+- FIX: Ssh Resolver doesn't work with Java 7 (IVY-1408) (thanks to Mykhailo Delegan)
+- FIX: Parsing publication date in Ant tasks not thread-safe (IVY-1412)
+- FIX: NullPointerException when using httpclient and server doesn't return content-type header (IVY-1400) (thanks to Frederic Riviere)
+- FIX: Properly handle evicted nodes in ResolveReport
+- FIX: Artifact repository locking did not correctly handle threaded use (IVY-1454) (thanks to Carsten Pfeiffer)
+- FIX: Better support for "Bundle-RequiredExecutionEnvironment" from an OSGi MANIFEST.MF
+- FIX: When inheriting a module descriptor, also merge the exclude rules
+- FIX: Correct application of mediators (ie. override) during conflict resolution (IVY-1455)
+- FIX: Fix revision number mapping across namespaces (IVY-1423)
+- FIX: fix a NPE when loading a composite P2 repository with no children
+- FIX: fix missing configuration when fixdeps is used with a partial resolve
+- FIX: XmlModuleDescriptorWritter doesn't support fully extra infos elements (IVY-1457)
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
