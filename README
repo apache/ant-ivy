@@ -4,7 +4,7 @@
 Supported Platforms
 --------------------
 
-Apache Ivy requires Java level 1.4; it has been tested with Sun Java SDK v1.4.2
+Apache Ivy requires Java level 1.5; it has been tested with Sun Java SDK 1.5.0.
 
 Even if not mandatory, Apache Ivy is most of the times used with Apache Ant, 
 for which version 1.6.0 or greater is required.
