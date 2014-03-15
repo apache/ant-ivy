@@ -28,14 +28,15 @@
 <h2>Announcement</h2>
 
 <pre>
-January 20, 2014 - The Ivy project is pleased to announce its 2.4.0-RC1 release.
+March 23, 2014 - The Ivy project is pleased to announce its 2.4.0-RC1 release.
 
 Ivy is a tool for managing (recording, tracking, resolving and
 reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
 Key features of this 2.4.0-RC1 release are
-* improved Maven support
+* some new Ant tasks
+* improved OSGI support
 * numerous bug fixes as documented in Jira and in the release notes
 
 As a release candidate version, we strongly encourage the use of this version for 
@@ -54,7 +55,7 @@ More information can be found on the Ivy website:
 http://ant.apache.org/ivy/
 
 Regards,
-Charles Duffy
+Maarten Coene
 </pre>
 
 <h2>Release Notes</h2>
@@ -84,29 +85,18 @@ It is characterized by the following:
         with Apache Ant providing a number of powerful Ant tasks ranging 
         from dependency resolution to dependency reporting and publication.
 
-<h3>2. Status of this release</h3> 
-
-This is the second release candidate of Ivy targetting 2.4.0. 
-
-As a release candidate version, we strongly encourage the use of this version for 
-testing and validation. From now on, features are frozen until final 2.4.0 version, 
-only bug fixes may be applied before 2.4.0. If no outstanding bugs are reported 
-with this release candidate, it will promoted to 2.4.0 about three weeks after this
-release candidate. 
-
-
-<h3>3. How to Get Involved</h3>
+<h3>2. How to Get Involved</h3>
 
 The Apache Ivy project really needs and appreciates any contributions, 
 including documentation help, source code and feedback.  If you are interested
 in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
 
-<h3>4. How to Report Issues</h3>
+<h3>3. How to Report Issues</h3>
 
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
 issues you find at http://issues.apache.org/jira/browse/IVY
 
-<h3>5. Committers and Contributors for this Release</h3>
+<h3>4. Committers and Contributors for this Release</h3>
 
 Here is the list of people who have contributed source code and documentation
 to this release. Many thanks to all of them, and also to the whole Ivy community
@@ -114,23 +104,25 @@ contributing ideas and feedback, and promoting the use of Ivy. The list would be
 long, but Ivy couldn't be what it is without you!
 
  Committers
-	Jean-Louis Boudart
-	Maarten Coene
-	Charles Duffy
-	Nicolas Lalevee
+    Jean-Louis Boudart
+    Maarten Coene
+    Charles Duffy
+    Nicolas Lalevee
+    Antoine Levy Lambert
 
  Contributors
-	Gregory Amerson
-	Mykhailo Delegan
-	Carsten Pfeiffer
-	Yanus Poluektovich
-	Frederic Riviere
-	Gene Smith
-	Erwin Tratar
+    Gregory Amerson
+    Mykhailo Delegan
+    Tony Likhite
+    Carsten Pfeiffer
+    Yanus Poluektovich
+    Frederic Riviere
+    Gene Smith
+    Erwin Tratar
 
 For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
 
-<h3>6. List of Changes in this Release</h3>
+<h3>5. List of Changes in this Release</h3>
 
 For a full release history of Ivy see the file CHANGES.txt
 
@@ -159,6 +151,7 @@ List of changes since Ivy 2.3.0:
 - IMPROVEMENT: Also copy original metadata artifact (e.g. POM) on ivy:install (IVY-1431) (Thanks to Erwin Tratar)
 - IMPROVEMENT: useOrigin will do avoid copy with url resolvers configured with a 'file:/' URL
 - IMPROVEMENT: add support for source artifacts in buildobr task
+- IMPROVEMENT: add possibility to configure the User-Agent http header by setting a property http.agent (Thanks to Tony Likhite)
 
 - FIX: In IvyDE, Ivy fails to parse ivy-settings.xml file if it contains <pgp> element (thanks to Gregory Amerson) (IVY-1441)
 - FIX: ParseException when "Bundle-Description" is present in OSGi MANIFEST.MF (IVY-1438)

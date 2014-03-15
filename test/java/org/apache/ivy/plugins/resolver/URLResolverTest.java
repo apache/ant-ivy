@@ -75,10 +75,9 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
     public void testFile() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);
-        String rootpath = new File("test/repositories/1").getAbsolutePath();
-        resolver.addIvyPattern("file:" + rootpath
-                + "/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern("file:" + rootpath
+        String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
+        resolver.addIvyPattern(rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(rootpath
                 + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
@@ -327,10 +326,9 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
     public void testDownloadWithUseOriginIsTrue() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);
-        String rootpath = new File("test/repositories/1").getAbsolutePath();
-        resolver.addIvyPattern("file:" + rootpath
-                + "/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern("file:" + rootpath
+        String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
+        resolver.addIvyPattern(rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(rootpath
                 + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         ((DefaultRepositoryCacheManager) resolver.getRepositoryCacheManager()).setUseOrigin(true);
