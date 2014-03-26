@@ -1,0 +1,37 @@
+[ivy@apache:/ivy/dependence/dependee]$ ant publish
+Buildfile: /ivy/dependence/dependee/build.xml
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = /ivy/dependence/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#dependee;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found commons-lang#commons-lang;2.0 in libraries
+[ivy:retrieve] :: resolution report :: resolve 179ms :: artifacts dl 4ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#dependee
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	0 artifacts copied, 1 already retrieved (0kB/3ms)
+
+compile:
+
+jar:
+[propertyfile] Updating property file: /ivy/dependence/dependee/build/classes/version.properties
+      [jar] Building jar: /ivy/dependence/dependee/build/dependee.jar
+
+publish:
+   [delete] Deleting: /ivy/dependence/dependee/build/ivy.xml
+[ivy:publish] :: delivering :: org.apache#dependee;working@apache :: 2 :: release :: Sat Mar 15 22:10:33 CET 2014
+[ivy:publish] 	delivering ivy file to /ivy/dependence/dependee/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache#dependee
+[ivy:publish] 	published dependee to /ivy/dependence/settings/repository/dependee-2.jar
+[ivy:publish] 	published ivy to /ivy/dependence/settings/repository/dependee-2.xml
+     [echo] project dependee released with version 2
+
+BUILD SUCCESSFUL
+Total time: 1 second

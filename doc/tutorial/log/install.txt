@@ -1,0 +1,37 @@
+[ivy@apache:/ivy/build-a-ivy-repository]$ ant maven2
+Buildfile: /ivy/build-a-ivy-repository/build.xml
+
+load-ivy:
+
+init-ivy:
+
+maven2:
+[ivy:install] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:install] :: loading settings :: file = /ivy/build-a-ivy-repository/settings/ivysettings-basic.xml
+[ivy:install] :: installing commons-lang#commons-lang;1.0 ::
+[ivy:install] :: resolving dependencies ::
+[ivy:install] 	found commons-lang#commons-lang;1.0 in libraries
+[ivy:install] :: downloading artifacts to cache ::
+[ivy:install] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/1.0/commons-lang-1.0-javadoc.jar ...
+[ivy:install] ................... (170kB)
+[ivy:install] .. (0kB)
+[ivy:install] 	[SUCCESSFUL ] commons-lang#commons-lang;1.0!commons-lang.jar(javadoc) (737ms)
+[ivy:install] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/1.0/commons-lang-1.0.jar ...
+[ivy:install] ............... (62kB)
+[ivy:install] .. (0kB)
+[ivy:install] 	[SUCCESSFUL ] commons-lang#commons-lang;1.0!commons-lang.jar (488ms)
+[ivy:install] :: installing in my-repository ::
+[ivy:install] 	published commons-lang to /ivy/build-a-ivy-repository/myrepository/no-namespace/commons-lang/commons-lang/javadocs/commons-lang-1.0.jar
+[ivy:install] 	published commons-lang to /ivy/build-a-ivy-repository/myrepository/no-namespace/commons-lang/commons-lang/jars/commons-lang-1.0.jar
+[ivy:install] 	published ivy to /ivy/build-a-ivy-repository/myrepository/no-namespace/commons-lang/commons-lang/ivys/ivy-1.0.xml
+[ivy:install] :: install resolution report ::
+[ivy:install] :: resolution report :: resolve 0ms :: artifacts dl 1233ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   1   |   1   |   0   ||   2   |   2   |
+	---------------------------------------------------------------------
+
+BUILD SUCCESSFUL
+Total time: 4 seconds

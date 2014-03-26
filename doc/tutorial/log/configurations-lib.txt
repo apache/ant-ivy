@@ -1,0 +1,68 @@
+[ivy@apache:/ivy/configurations/multi-projects/filter-framework]$ ant 
+Buildfile: /ivy/configurations/multi-projects/filter-framework/build.xml
+
+clean:
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: url = jar:file:///home/ivy/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#filter-framework;working@apache
+[ivy:retrieve] 	confs: [api, homemade-impl, cc-impl, test]
+[ivy:retrieve] 	found commons-collections#commons-collections;3.1 in public
+[ivy:retrieve] 	found junit#junit;3.8 in public
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar ...
+[ivy:retrieve] .......................................... (546kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-collections#commons-collections;3.1!commons-collections.jar (1549ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/junit/junit/3.8/junit-3.8.jar ...
+[ivy:retrieve] ............... (118kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] junit#junit;3.8!junit.jar (609ms)
+[ivy:retrieve] :: resolution report :: resolve 2529ms :: artifacts dl 2171ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|        api       |   0   |   0   |   0   |   0   ||   0   |   0   |
+	|   homemade-impl  |   0   |   0   |   0   |   0   ||   0   |   0   |
+	|      cc-impl     |   1   |   1   |   1   |   0   ||   1   |   1   |
+	|       test       |   2   |   2   |   2   |   0   ||   2   |   2   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#filter-framework
+[ivy:retrieve] 	confs: [api, homemade-impl, cc-impl, test]
+[ivy:retrieve] 	3 artifacts copied, 0 already retrieved (1211kB/64ms)
+
+build:
+    [mkdir] Created dir: /ivy/configurations/multi-projects/filter-framework/build
+    [mkdir] Created dir: /ivy/configurations/multi-projects/filter-framework/distrib
+    [javac] Compiling 4 source files to /ivy/configurations/multi-projects/filter-framework/build
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+      [jar] Building jar: /ivy/configurations/multi-projects/filter-framework/distrib/filter-api.jar
+      [jar] Building jar: /ivy/configurations/multi-projects/filter-framework/distrib/filter-hmimpl.jar
+      [jar] Building jar: /ivy/configurations/multi-projects/filter-framework/distrib/filter-ccimpl.jar
+
+test:
+    [mkdir] Created dir: /ivy/configurations/multi-projects/filter-framework/build/test-report
+    [mkdir] Created dir: /ivy/configurations/multi-projects/filter-framework/build/test-classes
+    [javac] /ivy/configurations/multi-projects/filter-framework/build.xml:82: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 3 source files to /ivy/configurations/multi-projects/filter-framework/build/test-classes
+    [junit] Running filter.ccimpl.CCFilterTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0,027 sec
+    [junit] Running filter.hmimpl.HMFilterTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0,018 sec
+
+publish:
+[ivy:publish] :: delivering :: org.apache#filter-framework;working@apache :: 1.3 :: release :: Sat Mar 15 22:10:45 CET 2014
+[ivy:publish] 	delivering ivy file to /ivy/configurations/multi-projects/filter-framework/distrib/ivy.xml
+[ivy:publish] :: publishing :: org.apache#filter-framework
+[ivy:publish] 	published filter-api to /home/ivy/.ivy2/local/org.apache/filter-framework/1.3.part/jars/filter-api.jar
+[ivy:publish] 	published filter-hmimpl to /home/ivy/.ivy2/local/org.apache/filter-framework/1.3.part/jars/filter-hmimpl.jar
+[ivy:publish] 	published filter-ccimpl to /home/ivy/.ivy2/local/org.apache/filter-framework/1.3.part/jars/filter-ccimpl.jar
+[ivy:publish] 	published ivy to /home/ivy/.ivy2/local/org.apache/filter-framework/1.3.part/ivys/ivy.xml
+[ivy:publish] 	publish commited: moved /home/ivy/.ivy2/local/org.apache/filter-framework/1.3.part 
+[ivy:publish] 		to /home/ivy/.ivy2/local/org.apache/filter-framework/1.3
+     [echo] project filter-framework released with version 1.3
+
+BUILD SUCCESSFUL
+Total time: 8 seconds

@@ -1,0 +1,45 @@
+[ivy@apache:/ivy/dual/project]$ ant 
+Buildfile: /ivy/dual/project/build.xml
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = /ivy/dual/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#hello-ivy;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found commons-httpclient#commons-httpclient;2.0.2 in ivys
+[ivy:retrieve] 	found commons-logging#commons-logging;1.0.4 in ibiblio
+[ivy:retrieve] 	found commons-lang#commons-lang;2.0 in ibiblio
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-httpclient/commons-httpclient/2.0.2/commons-httpclient-2.0.2.jar ...
+[ivy:retrieve] .............................. (220kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-httpclient#commons-httpclient;2.0.2!commons-httpclient.jar (1019ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/2.0/commons-lang-2.0.jar ...
+[ivy:retrieve] ...................... (165kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.0!commons-lang.jar (727ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar ...
+[ivy:retrieve] ...... (37kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.4!commons-logging.jar (433ms)
+[ivy:retrieve] :: resolution report :: resolve 502ms :: artifacts dl 2192ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   3   |   3   |   1   |   0   ||   3   |   3   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#hello-ivy
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	3 artifacts copied, 0 already retrieved (423kB/40ms)
+
+run:
+    [mkdir] Created dir: /ivy/dual/project/build
+    [javac] Compiling 1 source file to /ivy/dual/project/build
+     [java] standard message : hello ivy !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
+     [java] head status code with httpclient: 403
+     [java] now check if httpclient dependency on commons-logging has been realized
+     [java] found logging class in classpath: interface org.apache.commons.logging.Log
+
+BUILD SUCCESSFUL
+Total time: 7 seconds

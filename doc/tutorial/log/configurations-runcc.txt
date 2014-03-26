@@ -1,0 +1,46 @@
+[ivy@apache:/ivy/configurations/multi-projects/myapp]$ ant 
+Buildfile: /ivy/configurations/multi-projects/myapp/build.xml
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: url = jar:file:///home/ivy/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#myapp;working@apache
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	found org.apache#filter-framework;1.3 in local
+[ivy:retrieve] 	[1.3] org.apache#filter-framework;latest.integration
+[ivy:retrieve] 	found commons-collections#commons-collections;3.1 in public
+[ivy:retrieve] downloading /home/ivy/.ivy2/local/org.apache/filter-framework/1.3/jars/filter-ccimpl.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] org.apache#filter-framework;1.3!filter-ccimpl.jar (11ms)
+[ivy:retrieve] downloading /home/ivy/.ivy2/local/org.apache/filter-framework/1.3/jars/filter-hmimpl.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] org.apache#filter-framework;1.3!filter-hmimpl.jar (73ms)
+[ivy:retrieve] downloading /home/ivy/.ivy2/local/org.apache/filter-framework/1.3/jars/filter-api.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] org.apache#filter-framework;1.3!filter-api.jar (13ms)
+[ivy:retrieve] :: resolution report :: resolve 338ms :: artifacts dl 102ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|       build      |   1   |   1   |   1   |   0   ||   1   |   1   |
+	|   noexternaljar  |   1   |   1   |   1   |   0   ||   2   |   2   |
+	|  withexternaljar |   2   |   1   |   1   |   0   ||   3   |   2   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#myapp
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	6 artifacts copied, 0 already retrieved (552kB/171ms)
+
+build:
+    [mkdir] Created dir: /ivy/configurations/multi-projects/myapp/build
+    [javac] Compiling 1 source file to /ivy/configurations/multi-projects/myapp/build
+
+run-cc:
+     [java] Filtering with:class filter.ccimpl.CCFilter
+     [java] Result :[two, tree]
+
+BUILD SUCCESSFUL
+Total time: 3 seconds

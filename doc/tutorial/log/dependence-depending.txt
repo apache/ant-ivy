@@ -1,0 +1,40 @@
+[ivy@apache:/ivy/dependence/depender]$ ant 
+Buildfile: /ivy/dependence/depender/build.xml
+
+clean:
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = /ivy/dependence/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#depender;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found org.apache#dependee;1 in projects
+[ivy:retrieve] 	[1] org.apache#dependee;latest.integration
+[ivy:retrieve] 	found commons-lang#commons-lang;2.0 in libraries
+[ivy:retrieve] downloading /ivy/dependence/settings/repository/dependee-1.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] org.apache#dependee;1!dependee.jar (9ms)
+[ivy:retrieve] :: resolution report :: resolve 123ms :: artifacts dl 14ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   2   |   1   |   1   |   0   ||   2   |   1   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#depender
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	2 artifacts copied, 0 already retrieved (167kB/29ms)
+
+compile:
+    [mkdir] Created dir: /ivy/dependence/depender/build/classes
+    [javac] Compiling 1 source file to /ivy/dependence/depender/build/classes
+
+run:
+     [java] you are using version 1 of class standalone.Main
+     [java] standard message : i am depending.Main and standalone.Main will do the job for me
+     [java]     [standalone.Main] capitalizing string "i am depending.Main and standalone.Main will do the job for me" using org.apache.commons.lang.WordUtils
+     [java] capitalized message : I Am Depending.main And Standalone.main Will Do The Job For Me
+
+BUILD SUCCESSFUL
+Total time: 2 seconds

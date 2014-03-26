@@ -1,0 +1,60 @@
+[ivy@apache:/ivy/hello-ivy]$ ant 
+Buildfile: /ivy/hello-ivy/build.xml
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.4.0-rc1 - 20140315220245 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: url = jar:file:///home/ivy/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#hello-ivy;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found commons-lang#commons-lang;2.0 in public
+[ivy:retrieve] 	found commons-cli#commons-cli;1.0 in public
+[ivy:retrieve] 	found commons-logging#commons-logging;1.0 in public
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/2.0/commons-lang-2.0.jar ...
+[ivy:retrieve] ................. (165kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.0!commons-lang.jar (739ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/2.0/commons-lang-2.0-javadoc.jar ...
+[ivy:retrieve] .......................................... (467kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.0!commons-lang.jar(javadoc) (1391ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/2.0/commons-lang-2.0-sources.jar ...
+[ivy:retrieve] ................... (245kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.0!commons-lang.jar(source) (889ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-cli/commons-cli/1.0/commons-cli-1.0-javadoc.jar ...
+[ivy:retrieve] .............. (92kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-cli#commons-cli;1.0!commons-cli.jar(javadoc) (574ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-cli/commons-cli/1.0/commons-cli-1.0-sources.jar ...
+[ivy:retrieve] .............. (48kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-cli#commons-cli;1.0!commons-cli.jar(source) (456ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-cli/commons-cli/1.0/commons-cli-1.0.jar ...
+[ivy:retrieve] ........ (29kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-cli#commons-cli;1.0!commons-cli.jar (413ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0/commons-logging-1.0.jar ...
+[ivy:retrieve] ...... (21kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0!commons-logging.jar (415ms)
+[ivy:retrieve] :: resolution report :: resolve 3686ms :: artifacts dl 4921ms
+[ivy:retrieve] 	:: evicted modules:
+[ivy:retrieve] 	commons-lang#commons-lang;1.0 by [commons-lang#commons-lang;2.0] in [default]
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   4   |   3   |   3   |   1   ||   7   |   7   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#hello-ivy
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	7 artifacts copied, 0 already retrieved (1069kB/68ms)
+
+run:
+    [mkdir] Created dir: /ivy/hello-ivy/build
+    [javac] Compiling 1 source file to /ivy/hello-ivy/build
+     [java] standard message : hello ivy !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
+
+BUILD SUCCESSFUL
+Total time: 10 seconds
