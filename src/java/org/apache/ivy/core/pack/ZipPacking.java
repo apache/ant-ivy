@@ -18,6 +18,7 @@
 package org.apache.ivy.core.pack;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,16 +67,7 @@ public class ZipPacking extends ArchivePacking {
                 if (entry.isDirectory()) {
                     f.mkdirs();
                 } else {
-                    FileOutputStream out = new FileOutputStream(f);
-                    try {
-                        FileUtil.copy(zip, out, null, false);
-                    } finally {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
+                    writeFile(zip, f);
                 }
 
                 f.setLastModified(entry.getTime());
@@ -87,6 +79,19 @@ public class ZipPacking extends ArchivePacking {
                 } catch (IOException e) {
                     // ignore
                 }
+            }
+        }
+    }
+
+    protected void writeFile(InputStream zip, File f) throws FileNotFoundException, IOException {
+        FileOutputStream out = new FileOutputStream(f);
+        try {
+            FileUtil.copy(zip, out, null, false);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                // ignore
             }
         }
     }

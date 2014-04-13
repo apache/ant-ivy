@@ -204,6 +204,7 @@ public class ManifestParser {
         if (bundleClasspath != null) {
             ManifestHeaderValue bundleClasspathValue = new ManifestHeaderValue(bundleClasspath);
             bundleInfo.setClasspath(bundleClasspathValue.getValues());
+            bundleInfo.setHasInnerClasspath(true);
         }
 
         return bundleInfo;

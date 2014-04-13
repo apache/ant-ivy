@@ -289,6 +289,7 @@ A <i>packaged</i> artifact needs to be declared as such in the module descriptor
 <ul>
     <li><tt>zip</tt>, <tt>jar</tt> or <tt>war</tt>: the artifact will be uncompressed as a folder</li>
     <li><tt>pack200</tt>: the artifact will be unpacked to a file via the <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html">pack200</a> algorithm</li>
+    <li><tt>bundle</tt>: the OSGi artifact will be uncompressed as a folder, and every embedded jar file entry which is packed via the the <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html">pack200</a> algorithm will be unpacked</li>
 </ul>
 
 So, if in an <tt>ivy.xml</tt>, there would be declared a such artifact:

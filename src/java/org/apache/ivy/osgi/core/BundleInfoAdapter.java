@@ -115,8 +115,8 @@ public class BundleInfoAdapter {
                 String type = "jar";
                 String ext = "jar";
                 String packaging = null;
-                if (bundle.hasInnerClasspath()) {
-                    packaging = "zip";
+                if (bundle.hasInnerClasspath() && !bundleArtifact.isSource()) {
+                    packaging = "bundle";
                 }
                 if ("packed".equals(bundleArtifact.getFormat())) {
                     ext = "jar.pack.gz";

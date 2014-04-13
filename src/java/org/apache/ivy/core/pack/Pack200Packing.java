@@ -17,15 +17,10 @@
  */
 package org.apache.ivy.core.pack;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
-import java.util.jar.Pack200.Unpacker;
-import java.util.zip.GZIPInputStream;
+
+import org.apache.ivy.util.FileUtil;
 
 public class Pack200Packing extends StreamPacking {
 
@@ -54,25 +49,7 @@ public class Pack200Packing extends StreamPacking {
 
     @Override
     public InputStream unpack(InputStream packed) throws IOException {
-        BufferedInputStream buffered = new BufferedInputStream(packed);
-        buffered.mark(4);
-        byte[] magic = new byte[4];
-        buffered.read(magic, 0, 4);
-        buffered.reset();
-
-        InputStream in = buffered;
-
-        if (magic[0] == (byte) 0x1F && magic[1] == (byte) 0x8B && magic[2] == (byte) 0x08) {
-            // this is a gziped pack200
-            in = new GZIPInputStream(in);
-        }
-
-        Unpacker unpacker = Pack200.newUnpacker();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        JarOutputStream jar = new JarOutputStream(baos);
-        unpacker.unpack(in, jar);
-        jar.close();
-        return new ByteArrayInputStream(baos.toByteArray());
+        return FileUtil.unwrapPack200(packed);
     }
 
 }

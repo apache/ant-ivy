@@ -234,6 +234,9 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, Date date) {
         ResolvedResource found = super.findResource(rress, rmdparser, mrid, date);
+        if (found == null) {
+            return null;
+        }
 
         String osgiType = mrid.getOrganisation();
         // for non bundle requirement : log the selected bundle
