@@ -140,6 +140,10 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Add support for packed jar within an OSGi bundle
+
+   2.4.0-rc1
+=====================================
 - DOCUMENTATION: Broken link in <dependency> documentation (IVY-1405)
 - DOCUMENTATION: Explicitly document that threaded use is not supported.
 
