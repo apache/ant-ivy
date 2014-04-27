@@ -138,10 +138,12 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jaroslaw Wypychowski
 	Sven Zethelius
 	Aleksey Zhukov
+	Zhong Wang
 	
    trunk
 =====================================
 - IMPROVEMENT: Add support for packed jar within an OSGi bundle
+- IMPROVEMENT: ModuleRules.getRule is O(n) leading to resolution slowness (IVY-1465) (Thanks to Zhong Wang aka Kewpie)
 
 - FIX: impossible to get artifacts when data has not been loaded. (IVY-1399) (Thanks to David Turner)
 
