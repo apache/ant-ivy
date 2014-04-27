@@ -126,6 +126,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Tinetti
 	Erwin Tratar
 	Jason Trump
+	David Turner
 	Tjeerd Verhagen
 	Richard Vowles
 	Sven Walter
@@ -141,6 +142,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    trunk
 =====================================
 - IMPROVEMENT: Add support for packed jar within an OSGi bundle
+
+- FIX: impossible to get artifacts when data has not been loaded. (IVY-1399) (Thanks to David Turner)
 
    2.4.0-rc1
 =====================================
