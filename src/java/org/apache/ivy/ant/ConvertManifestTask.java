@@ -84,7 +84,7 @@ public class ConvertManifestTask extends IvyTask {
             throw new BuildException("Incorrect manifest file '" + manifest + "'", e);
         }
         ModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-            OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
+            OSGiManifestParser.getInstance(), null, bundleInfo, m, profileProvider);
 
         try {
             XmlModuleDescriptorWriter.write(md, ivyFile);

@@ -69,7 +69,7 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
         } catch (URISyntaxException e) {
             throw new RuntimeException("Unsupported repository, resources names are not uris", e);
         }
-        return BundleInfoAdapter.toModuleDescriptor(this, null, bundleInfo, profileProvider);
+        return BundleInfoAdapter.toModuleDescriptor(this, null, bundleInfo, m, profileProvider);
     }
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
