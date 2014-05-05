@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.FileUtil;
 
 public class PomModuleDescriptorWriterTest extends TestCase {
@@ -118,6 +119,20 @@ public class PomModuleDescriptorWriterTest extends TestCase {
                 .replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-dependencies-optional.xml").replaceAll("\r\n",
             "\n").replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+
+    public void testTransitive() throws Exception {
+        ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+            new IvySettings(), getClass().getResource("test-transitive.xml"), false);
+        PomModuleDescriptorWriter.write(md, _dest, getWriterOptions());
+        assertTrue(_dest.exists());
+
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
+        System.out.println(wrote);
+        String expected = readEntirely("test-transitive.pom").replaceAll("\r\n", "\n").replace(
+            '\r', '\n');
         assertEquals(expected, wrote);
     }
 
