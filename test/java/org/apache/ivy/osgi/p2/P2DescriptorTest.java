@@ -195,7 +195,12 @@ public class P2DescriptorTest extends TestCase {
 
             assertEquals(artifact, ar.getArtifact());
             assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-            assertNotNull(ar.getUnpackedLocalFile());
+            // only the binary get unpacked
+            if (ar.getArtifact().getType().equals("source")) {
+                assertNull(ar.getUnpackedLocalFile());
+            } else {
+                assertNotNull(ar.getUnpackedLocalFile());
+            }
         }
     }
 

@@ -561,6 +561,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 Namespace parentNamespace = ((DefaultModuleDescriptor) parent).getNamespace();
                 descriptor.setNamespace(parentNamespace);
             }
+
+            descriptor.getExtraInfo().putAll(parent.getExtraInfo());
         }
 
         private static String mergeRevisionValue(String inherited, String override) {

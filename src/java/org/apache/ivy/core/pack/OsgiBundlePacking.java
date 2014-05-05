@@ -17,27 +17,32 @@
  */
 package org.apache.ivy.core.pack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
-public class PackingRegistry {
+import org.apache.ivy.util.FileUtil;
 
-    private Map<String, ArchivePacking> packings = new HashMap<String, ArchivePacking>();
+/**
+ * Packaging which handle OSGi bundles with inner packed jar
+ */
+public class OsgiBundlePacking extends ZipPacking {
 
-    public PackingRegistry() {
-        // register defaults
-        register(new ZipPacking());
-        register(new Pack200Packing());
-        register(new OsgiBundlePacking());
+    private static final String[] NAMES = {"bundle"};
+
+    @Override
+    public String[] getNames() {
+        return NAMES;
     }
 
-    public void register(ArchivePacking packing) {
-        for (String name : packing.getNames()) {
-            packings.put(name, packing);
+    @Override
+    protected void writeFile(InputStream zip, File f) throws FileNotFoundException, IOException {
+        // XXX maybe we should only unpack file listed by the 'Bundle-ClassPath' MANIFEST header ?
+        if (f.getName().endsWith(".jar.pack.gz")) {
+            zip = FileUtil.unwrapPack200(zip);
+            f = new File(f.getParentFile(), f.getName().substring(0, f.getName().length() - 8));
         }
-    }
-
-    public ArchivePacking get(String type) {
-        return packings.get(type);
+        super.writeFile(zip, f);
     }
 }

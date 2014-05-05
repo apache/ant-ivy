@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.util.Checks;
@@ -53,6 +52,8 @@ import org.apache.ivy.util.filter.NoFilter;
 public class ModuleRules {
     private Map/* <MapMatcher,Object> */rules = new LinkedHashMap();
 
+    private MatcherLookup matcher_lookup = new MatcherLookup();
+
     /**
      * Constructs an empty ModuleRules.
      */
@@ -61,6 +62,9 @@ public class ModuleRules {
 
     private ModuleRules(Map/* <MapMatcher,Object> */rules) {
         this.rules = new LinkedHashMap(rules);
+        for (Iterator iter = rules.keySet().iterator(); iter.hasNext();) {
+            matcher_lookup.add((MapMatcher) iter.next());
+        }
     }
 
     /**
@@ -76,6 +80,7 @@ public class ModuleRules {
         Checks.checkNotNull(rule, "rule");
 
         rules.put(condition, rule);
+        matcher_lookup.add(condition);
     }
 
     /**
@@ -123,7 +128,7 @@ public class ModuleRules {
      * Returns the rule object matching the given {@link ModuleId} and accepted by the given
      * {@link Filter}, or <code>null</code> if no rule applies.
      * 
-     * @param mrid
+     * @param mid
      *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
      *            .
      * @param filter
@@ -164,14 +169,12 @@ public class ModuleRules {
     }
 
     private Object getRule(Map moduleAttributes, Filter filter) {
-        for (Iterator iter = rules.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry ruleEntry = (Entry) iter.next();
-            MapMatcher midm = (MapMatcher) ruleEntry.getKey();
-            if (midm.matches(moduleAttributes)) {
-                Object rule = ruleEntry.getValue();
-                if (filter.accept(rule)) {
-                    return rule;
-                }
+        List matchers = matcher_lookup.get(moduleAttributes);
+        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
+            MapMatcher midm = (MapMatcher) iter.next();
+            Object rule = rules.get(midm);
+            if (filter.accept(rule)) {
+                return rule;
             }
         }
         return null;
@@ -198,15 +201,13 @@ public class ModuleRules {
     }
 
     private Object[] getRules(Map moduleAttributes, Filter filter) {
+        List matchers = matcher_lookup.get(moduleAttributes);
         List matchingRules = new ArrayList();
-        for (Iterator iter = rules.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry ruleEntry = (Entry) iter.next();
-            MapMatcher midm = (MapMatcher) ruleEntry.getKey();
-            if (midm.matches(moduleAttributes)) {
-                Object rule = ruleEntry.getValue();
-                if (filter.accept(rule)) {
-                    matchingRules.add(rule);
-                }
+        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
+            MapMatcher midm = (MapMatcher) iter.next();
+            Object rule = rules.get(midm);
+            if (filter.accept(rule)) {
+                matchingRules.add(rule);
             }
         }
         return matchingRules.toArray();

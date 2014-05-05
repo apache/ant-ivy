@@ -187,6 +187,37 @@ public class LatestConflictManagerTest extends TestCase {
         }
     }
 
+    /*
+     * Test case for issue IVY-1399:
+     * Dependency tree:
+     * Mycompany#target;1
+     *     MyCompany#A;1
+     *         conflicting-dependency#dep;1
+     *         OtherCompany#prefers-later;1
+     *             conflicting-dependency#dep;2
+     *     MyCompany#B;1
+     *         MyCompany#A;1
+     *             ...
+     *         OtherCompany#prefers-later;1
+     *             ...
+     *         MyCompany#C;1
+     *             conflicting-dependency#dep;1
+     */
+    public void testEvictedModules() throws Exception {
+        ivy.configure(LatestConflictManagerTest.class
+                .getResource("ivysettings-evicted.xml"));
+
+        ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
+        try {
+            ResolveReport report = ivy.resolve(
+                new File("test/repositories/IVY-1399/MyCompany/target/ivy-1.xml"),
+                getResolveOptions());
+            report.getConfigurationReport("all");
+        } catch (IllegalStateException e) {
+            fail("Resolving target should not throw an exception");
+        }
+    }
+
     private ResolveOptions getResolveOptions() {
         return new ResolveOptions().setValidate(false);
     }

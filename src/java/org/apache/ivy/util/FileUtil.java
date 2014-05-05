@@ -17,7 +17,10 @@
  */
 package org.apache.ivy.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -36,7 +39,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Pack200;
+import java.util.jar.Pack200.Unpacker;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
 
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
@@ -637,4 +645,87 @@ public final class FileUtil {
         return l;
     }
 
+    public static InputStream unwrapPack200(InputStream packed) throws IOException {
+        BufferedInputStream buffered = new BufferedInputStream(packed);
+        buffered.mark(4);
+        byte[] magic = new byte[4];
+        buffered.read(magic, 0, 4);
+        buffered.reset();
+
+        InputStream in = buffered;
+
+        if (magic[0] == (byte) 0x1F && magic[1] == (byte) 0x8B && magic[2] == (byte) 0x08) {
+            // this is a gziped pack200
+            in = new GZIPInputStream(in);
+        }
+
+        Unpacker unpacker = Pack200.newUnpacker();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        JarOutputStream jar = new JarOutputStream(baos);
+        unpacker.unpack(new UncloseInputStream(in), jar);
+        jar.close();
+        return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    /**
+     * Wrap an input stream and do not close the stream on call to close(). Used to avoid closing a
+     * {@link ZipInputStream} used with {@link Unpacker#unpack(File, JarOutputStream)}
+     */
+    private static final class UncloseInputStream extends InputStream {
+
+        private InputStream wrapped;
+
+        public UncloseInputStream(InputStream wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        public void close() throws IOException {
+            // do not close
+        }
+
+        public int read() throws IOException {
+            return wrapped.read();
+        }
+
+        public int hashCode() {
+            return wrapped.hashCode();
+        }
+
+        public int read(byte[] b) throws IOException {
+            return wrapped.read(b);
+        }
+
+        public boolean equals(Object obj) {
+            return wrapped.equals(obj);
+        }
+
+        public int read(byte[] b, int off, int len) throws IOException {
+            return wrapped.read(b, off, len);
+        }
+
+        public long skip(long n) throws IOException {
+            return wrapped.skip(n);
+        }
+
+        public String toString() {
+            return wrapped.toString();
+        }
+
+        public int available() throws IOException {
+            return wrapped.available();
+        }
+
+        public void mark(int readlimit) {
+            wrapped.mark(readlimit);
+        }
+
+        public void reset() throws IOException {
+            wrapped.reset();
+        }
+
+        public boolean markSupported() {
+            return wrapped.markSupported();
+        }
+
+    }
 }

@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -294,9 +295,9 @@ public class OBRResolverTest extends TestCase {
 
     private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids,
             ModuleRevisionId[] expected2Mrids) throws Exception {
-        JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
-                + jarName));
-        BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
+        Manifest manifest = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
+                + jarName)).getManifest();
+        BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
         bundleInfo.addArtifact(new BundleArtifact(false, new File("test/test-repo/bundlerepo/"
                 + jarName).toURI(), null));
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
@@ -326,13 +327,13 @@ public class OBRResolverTest extends TestCase {
     }
 
     private void genericTestFailingResolve(String jarName, String conf) throws Exception {
-        JarInputStream in = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
-                + jarName));
-        BundleInfo bundleInfo = ManifestParser.parseManifest(in.getManifest());
+        Manifest manifest = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
+                + jarName)).getManifest();
+        BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
         bundleInfo.addArtifact(new BundleArtifact(false, new File("test/test-repo/bundlerepo/"
                 + jarName).toURI(), null));
         DefaultModuleDescriptor md = BundleInfoAdapter.toModuleDescriptor(
-            OSGiManifestParser.getInstance(), null, bundleInfo, profileProvider);
+            OSGiManifestParser.getInstance(), null, bundleInfo, manifest, profileProvider);
         ResolveReport resolveReport = ivy.resolve(md,
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertTrue(resolveReport.hasError());

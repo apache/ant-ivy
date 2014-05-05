@@ -103,6 +103,16 @@ public class LatestConflictManager extends AbstractConflictManager {
             }
         }
 
+        ArrayList unevicted = new ArrayList();
+        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode) iter.next();
+            if (!node.isCompletelyEvicted())
+                unevicted.add(node);
+        }
+        if (unevicted.size() > 0) {
+            conflicts = unevicted;
+        }
+
         try {
             IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) getStrategy().findLatest(
                 toArtifactInfo(conflicts), null);
