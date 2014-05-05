@@ -837,10 +837,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         extraAttributesNamespaces.put(prefix, namespace);
     }
 
+    @Deprecated
     public void addExtraInfo(String infoKey, String value) {
         extraInfo.put(infoKey, value);
     }
 
+    @Deprecated
     public Map getExtraInfo() {
         return extraInfo;
     }
@@ -851,5 +853,23 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public void addExtraInfo(ExtraInfoHolder extraInfo) {
         extraInfos.add(extraInfo);
+    }
+
+    public String getExtraInfoContentByTagName(String tagName) {
+        ExtraInfoHolder extraInfoByTagName = getExtraInfoByTagName(tagName);
+        if (extraInfoByTagName != null) {
+            return extraInfoByTagName.getContent();
+        }
+        return null;
+    }
+
+    public ExtraInfoHolder getExtraInfoByTagName(String tagName) {
+        for (ExtraInfoHolder extraInfoHolder : extraInfos) {
+            if (extraInfoHolder.getName().equals(tagName)) {
+                return extraInfoHolder;
+            }
+        }
+        return null;
+
     }
 }

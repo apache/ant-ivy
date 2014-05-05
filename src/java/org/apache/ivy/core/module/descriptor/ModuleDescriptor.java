@@ -272,4 +272,18 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * @return
      */
     List<ExtraInfoHolder> getExtraInfos();
+
+    /**
+     * Returns content from first extrainfo matching with given tag name
+     * 
+     * @return
+     */
+    String getExtraInfoContentByTagName(String tagName);
+
+    /**
+     * Returns first extrainfo matching with given tag name
+     * 
+     * @return
+     */
+    ExtraInfoHolder getExtraInfoByTagName(String tagName);
 }

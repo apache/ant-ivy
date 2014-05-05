@@ -563,6 +563,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
 
             descriptor.getExtraInfo().putAll(parent.getExtraInfo());
+            descriptor.getExtraInfos().addAll(parent.getExtraInfos());
         }
 
         private static String mergeRevisionValue(String inherited, String override) {

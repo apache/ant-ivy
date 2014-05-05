@@ -34,6 +34,8 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParserTest;
 import org.apache.ivy.util.FileUtil;
 
 public class XmlModuleDescriptorWriterTest extends TestCase {
@@ -135,6 +137,21 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
                 .replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-extrainfo-nested.xml").replaceAll("\r\n", "\n")
                 .replace('\r', '\n');
+        assertEquals(expected, wrote);
+    }
+
+    public void testExtraInfosFromMaven() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(),
+            PomModuleDescriptorParserTest.class
+                    .getResource("test-versionPropertyDependencyMgt.pom"), false);
+        XmlModuleDescriptorWriter.write(md, LICENSE, dest);
+
+        assertTrue(dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
+                .replaceAll("\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-extrainfo-from-maven.xml").replaceAll("\r\n",
+            "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
 

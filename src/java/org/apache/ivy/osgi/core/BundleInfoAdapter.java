@@ -39,6 +39,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -98,8 +99,9 @@ public class BundleInfoAdapter {
 
         Set<String> exportedPkgNames = new HashSet<String>(bundle.getExports().size());
         for (ExportPackage exportPackage : bundle.getExports()) {
-            md.getExtraInfo().put(EXTRA_INFO_EXPORT_PREFIX + exportPackage.getName(),
-                exportPackage.getVersion().toString());
+            md.getExtraInfos().add(
+                new ExtraInfoHolder(EXTRA_INFO_EXPORT_PREFIX + exportPackage.getName(),
+                        exportPackage.getVersion().toString()));
             exportedPkgNames.add(exportPackage.getName());
             String[] confDependencies = new String[exportPackage.getUses().size() + 1];
             int i = 0;

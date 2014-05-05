@@ -622,6 +622,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
         assertEquals("There is no special artifact when there is no classifier", 0,
             dds[0].getAllDependencyArtifacts().length);
+        assertEquals(4, md.getExtraInfos().size());
     }
 
     public void testDependencyManagmentWithScope() throws ParseException, IOException {

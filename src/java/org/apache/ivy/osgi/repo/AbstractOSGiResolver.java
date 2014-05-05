@@ -197,8 +197,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             ModuleDescriptor md) {
         String org = dd.getDependencyRevisionId().getOrganisation();
         String name = dd.getDependencyRevisionId().getName();
-        String rev = (String) md.getExtraInfo().get(
-            BundleInfoAdapter.EXTRA_INFO_EXPORT_PREFIX + name);
+        String rev = md.getExtraInfoContentByTagName(BundleInfoAdapter.EXTRA_INFO_EXPORT_PREFIX
+                + name);
         ModuleRevisionId capabilityRev = ModuleRevisionId.newInstance(org, name, rev,
             Collections.singletonMap(CAPABILITY_EXTRA_ATTR, md.getModuleRevisionId().toString()));
 
