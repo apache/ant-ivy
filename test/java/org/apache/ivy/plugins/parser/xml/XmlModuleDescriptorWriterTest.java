@@ -150,6 +150,9 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         assertTrue(dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
                 .replaceAll("\r\n", "\n").replace('\r', '\n');
+        wrote = wrote.replaceFirst("publication=\"([0-9])*\"", "publication=\"20140429153143\"");
+        System.out.println(wrote);
+
         String expected = readEntirely("test-write-extrainfo-from-maven.xml").replaceAll("\r\n",
             "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
