@@ -20,7 +20,7 @@
 -->
 <module name="Checker">
 
-  <!-- required licence file -->
+  <!-- required license file -->
   <module name="Header">
     <property name="headerFile" value="${checkstyle.src.dir}/RequiredHeader.txt"/>
     <property name="ignoreLines" value="2"/>
