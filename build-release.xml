@@ -239,7 +239,10 @@
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}/src/etc" prefix="${snapshot.full.name}/src/etc"/>
 			<zipfileset dir="${test.dir}" prefix="${snapshot.full.name}/test/java"/>
-			<zipfileset dir="${basedir}/test/repositories" prefix="${snapshot.full.name}/test/repositories"/>
+            <zipfileset dir="${basedir}/test/test-obr" prefix="${snapshot.full.name}/test/test-obr" />
+            <zipfileset dir="${basedir}/test/test-p2" prefix="${snapshot.full.name}/test/test-p2" />
+            <zipfileset dir="${basedir}/test/test-repo" prefix="${snapshot.full.name}/test/test-repo" excludes="**/bundlerepo/*.jar,**/ivyrepo/org*" />
+            <zipfileset dir="${basedir}/test/repositories" prefix="${snapshot.full.name}/test/repositories"/>
 			<zipfileset dir="${basedir}/test/buildlist" prefix="${snapshot.full.name}/test/buildlist"/>
 			<zipfileset dir="${basedir}/test/triggers" prefix="${snapshot.full.name}/test/triggers" excludes="**/cache/**"/>
 			<zipfileset dir="${basedir}/test/xsl" prefix="${snapshot.full.name}/test/xsl"/>
