@@ -562,7 +562,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 descriptor.setNamespace(parentNamespace);
             }
 
-            descriptor.getExtraInfo().putAll(parent.getExtraInfo());
             descriptor.getExtraInfos().addAll(parent.getExtraInfos());
         }
 
@@ -1251,7 +1250,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else if (state == State.EXTRA_INFO) {
                 String content = buffer == null ? "" : buffer.toString();
                 buffer = null;
-                getMd().addExtraInfo(qName, content);
                 ExtraInfoHolder extraInfo = extraInfoStack.pop();
                 extraInfo.setContent(content);
                 if (extraInfoStack.isEmpty()) {

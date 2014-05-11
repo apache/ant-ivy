@@ -254,22 +254,23 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * @return the list of xml namespaces used by extra attributes, as Map from prefix to namespace
      *         URIs.
      */
-    Map/* <String,String> */getExtraAttributesNamespaces();
+    Map<String, String> getExtraAttributesNamespaces();
 
     /**
      * Returns the custom info provided in the info tag. All the tags except the description are
-     * given. The key is the name of the tag, the value is its content.
+     * given. The key is the name of the tag, the value is its content. <br />
      * 
-     * @deprecated please use getExtraInfos() method instead
-     * @return
+     * @deprecated this method is not returning the full content of the extra info: to get the full
+     *             structure of the extra infos, use getExtraInfos()
      */
     @Deprecated
-    Map/* <String,String> */getExtraInfo();
+    Map<String, String> getExtraInfo();
 
     /**
      * Returns a list of extras infos (tag name, attributes and content). All the tags except the
      * description are given.
      * 
+     * @since 2.4.0
      * @return
      */
     List<ExtraInfoHolder> getExtraInfos();
@@ -277,6 +278,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     /**
      * Returns content from first extrainfo matching with given tag name
      * 
+     * @since 2.4.0
      * @return
      */
     String getExtraInfoContentByTagName(String tagName);
@@ -284,6 +286,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     /**
      * Returns first extrainfo matching with given tag name
      * 
+     * @since 2.4.0
      * @return
      */
     ExtraInfoHolder getExtraInfoByTagName(String tagName);

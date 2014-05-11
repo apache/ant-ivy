@@ -168,7 +168,8 @@ public class BundleInfoAdapter {
 
         if (manifest != null) {
             for (Entry<Object, Object> entries : manifest.getMainAttributes().entrySet()) {
-                md.addExtraInfo(entries.getKey().toString(), entries.getValue().toString());
+                md.addExtraInfo(new ExtraInfoHolder(entries.getKey().toString(), entries.getValue()
+                        .toString()));
             }
         }
 

@@ -194,7 +194,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd.description = md.getDescription();
         nmd.lastModified = md.getLastModified();
         nmd.extraAttributesNamespaces = md.getExtraAttributesNamespaces();
-        nmd.extraInfo = md.getExtraInfo();
         nmd.extraInfos = md.getExtraInfos();
         nmd.namespace = ns;
 
@@ -255,8 +254,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private List inheritedDescriptors = new ArrayList(); // List(ExtendsDescriptor)
 
     private Map/* <String,String> */extraAttributesNamespaces = new LinkedHashMap();
-
-    private Map/* <String,String> */extraInfo = new HashMap();
 
     private List<ExtraInfoHolder> extraInfos = new ArrayList<ExtraInfoHolder>();
 
@@ -839,12 +836,23 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     @Deprecated
     public void addExtraInfo(String infoKey, String value) {
-        extraInfo.put(infoKey, value);
+        extraInfos.add(new ExtraInfoHolder(infoKey, value));
     }
 
     @Deprecated
-    public Map getExtraInfo() {
-        return extraInfo;
+    public Map<String, String> getExtraInfo() {
+        Map<String, String> map = new HashMap<String, String>();
+        for (ExtraInfoHolder extraInfo : extraInfos) {
+            populateExtraInfoMap(map, extraInfo);
+        }
+        return map;
+    }
+
+    private void populateExtraInfoMap(Map<String, String> map, ExtraInfoHolder extraInfo) {
+        map.put(extraInfo.getName(), extraInfo.getContent());
+        for (ExtraInfoHolder nested : extraInfo.getNestedExtraInfoHolder()) {
+            populateExtraInfoMap(map, nested);
+        }
     }
 
     public List<ExtraInfoHolder> getExtraInfos() {

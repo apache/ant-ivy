@@ -371,6 +371,7 @@ public class ResolveReport {
     public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings, List<ModuleId> midToKeep) {
         DefaultModuleDescriptor fixedmd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
                 md.getStatus(), new Date());
+        fixedmd.getExtraInfos().addAll(md.getExtraInfos());
 
         // copy configurations
         List<String> resolvedConfs = Arrays.asList(getConfigurations());
