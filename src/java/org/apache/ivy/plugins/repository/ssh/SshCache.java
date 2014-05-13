@@ -39,7 +39,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-import com.jcraft.jsch.agentproxy.AgentProxyException;
 import com.jcraft.jsch.agentproxy.Connector;
 import com.jcraft.jsch.agentproxy.ConnectorFactory;
 import com.jcraft.jsch.agentproxy.RemoteIdentityRepository;
@@ -302,7 +301,7 @@ public final class SshCache {
             Connector con = ConnectorFactory.getDefault().createConnector();
             jsch.setIdentityRepository(new RemoteIdentityRepository(con));
             return true;
-        } catch (AgentProxyException e) {
+        } catch (Exception e) {
             Message.verbose(":: SSH :: Failure connecting to agent :: " + e.toString());
             return false;
         }
