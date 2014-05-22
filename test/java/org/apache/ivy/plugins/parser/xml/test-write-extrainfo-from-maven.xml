@@ -25,8 +25,8 @@
 		publication="20140429153143"
 	>
 		<description homepage="http://ivy.jayasoft.org/" />
-		<m:properties__commons.logging.version>1.0.4</m:properties__commons.logging.version>
 		<m:properties__commons.collections.version>1.0.5</m:properties__commons.collections.version>
+		<m:properties__commons.logging.version>1.0.4</m:properties__commons.logging.version>
 		<m:dependency.management__commons-logging__commons-logging__version>1.0.4</m:dependency.management__commons-logging__commons-logging__version>
 		<m:dependency.management__commons-collections__commons-collections__version>1.0.5</m:dependency.management__commons-collections__commons-collections__version>
 		<m:dependency.management__commons-collections__commons-collections__exclusion_0>javax.mail__mail</m:dependency.management__commons-collections__commons-collections__exclusion_0>
