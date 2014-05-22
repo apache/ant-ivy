@@ -149,6 +149,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: impossible to get artifacts when data has not been loaded. (IVY-1399) (Thanks to David Turner)
 - FIX: regression introduced by IVY-1457, dependency management wasn't properly handled introducing lots of resolution failures
 - FIX: The SSH resolvers fails if the un-required jsch jar is missing (IVY-1471)
+- FIX: failed to resolve dynamic revisions in some cases for URL repositories (IVY-1472)
 
    2.4.0-rc1
 =====================================

@@ -61,10 +61,10 @@ public final class ResolverHelper {
 
             try {
                 Message.debug("\tusing " + rep + " to list all in " + root);
-                List all = rep.list(root);
+                String[] all = listAll(rep, root);
                 if (all != null) {
-                    Message.debug("\t\tfound " + all.size() + " urls");
-                    List ret = new ArrayList(all.size());
+                    Message.debug("\t\tfound " + all.length + " urls");
+                    List<String> ret = new ArrayList<String>(all.length);
                     int endNameIndex = pattern.indexOf(fileSep, slashIndex + 1);
                     String namePattern;
                     if (endNameIndex != -1) {
@@ -75,9 +75,8 @@ public final class ResolverHelper {
                     namePattern = namePattern.replaceAll("\\.", "\\\\.");
                     namePattern = IvyPatternHelper.substituteToken(namePattern, token, "(.+)");
                     Pattern p = Pattern.compile(namePattern);
-                    for (Iterator iter = all.iterator(); iter.hasNext();) {
-                        String path = (String) iter.next();
-                        Matcher m = p.matcher(path.substring(root.length() + 1));
+                    for (String path : all) {
+                        Matcher m = p.matcher(path);
                         if (m.matches()) {
                             String value = m.group(1);
                             ret.add(value);
@@ -88,9 +87,6 @@ public final class ResolverHelper {
                 } else {
                     return null;
                 }
-            } catch (IOException e) {
-                Message.verbose("problem while listing resources in " + root + " with " + rep, e);
-                return null;
             } catch (Exception e) {
                 Message.warn("problem while listing resources in " + root + " with " + rep, e);
                 return null;
