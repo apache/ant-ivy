@@ -11,3 +11,5 @@ test/test-repo/ivyrepo/org.apache.ivy.osgi
 .DS_Store
 doc/samples/target-platform/bundles
 doc/samples/target-platform/cache
+.idea
+*.iml

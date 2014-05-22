@@ -144,8 +144,12 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - IMPROVEMENT: Add support for packed jar within an OSGi bundle
 - IMPROVEMENT: ModuleRules.getRule is O(n) leading to resolution slowness (IVY-1465) (Thanks to Zhong Wang aka Kewpie)
+- IMPROVEMENT: ivy:makepom will generate an exclusion when transitive=false on a dependency (IVY-1470)
 
 - FIX: impossible to get artifacts when data has not been loaded. (IVY-1399) (Thanks to David Turner)
+- FIX: regression introduced by IVY-1457, dependency management wasn't properly handled introducing lots of resolution failures
+- FIX: The SSH resolvers fails if the un-required jsch jar is missing (IVY-1471)
+- FIX: failed to resolve dynamic revisions in some cases for URL repositories (IVY-1472)
 
    2.4.0-rc1
 =====================================

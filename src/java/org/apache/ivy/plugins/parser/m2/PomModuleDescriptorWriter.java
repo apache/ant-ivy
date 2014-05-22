@@ -228,7 +228,7 @@ public final class PomModuleDescriptorWriter {
                     version = md.getModuleRevisionId().getRevision();
                 }
                 printDependency(out, indent, groupId, dep.getArtifact(), version, dep.getType(),
-                    dep.getClassifier(), dep.getScope(), dep.isOptional(), null);
+                    dep.getClassifier(), dep.getScope(), dep.isOptional(), true, null);
             }
 
             // now print the dependencies listed in the ModuleDescriptor
@@ -251,13 +251,15 @@ public final class PomModuleDescriptorWriter {
                         String scope = mapping.getScope(dds[i].getModuleConfigurations());
                         boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
                         printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
-                            mrid.getRevision(), type, classifier, scope, optional, excludes);
+                            mrid.getRevision(), type, classifier, scope, optional,
+                            dds[i].isTransitive(), excludes);
                     }
                 } else {
                     String scope = mapping.getScope(dds[i].getModuleConfigurations());
                     boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
                     printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
-                        mrid.getRevision(), null, null, scope, optional, excludes);
+                        mrid.getRevision(), null, null, scope, optional, dds[i].isTransitive(),
+                        excludes);
                 }
             }
 
@@ -270,7 +272,7 @@ public final class PomModuleDescriptorWriter {
 
     private static void printDependency(PrintWriter out, int indent, String groupId,
             String artifactId, String version, String type, String classifier, String scope,
-            boolean isOptional, ExcludeRule[] excludes) {
+            boolean isOptional, boolean isTransitive, ExcludeRule[] excludes) {
         indent(out, indent * 2);
         out.println("<dependency>");
         indent(out, indent * 3);
@@ -295,7 +297,20 @@ public final class PomModuleDescriptorWriter {
             indent(out, indent * 3);
             out.println("<optional>true</optional>");
         }
-        if (excludes != null) {
+        if (!isTransitive) {
+            indent(out, indent * 3);
+            out.println("<exclusions>");
+            indent(out, indent * 4);
+            out.println("<exclusion>");
+            indent(out, indent * 5);
+            out.println("<groupId>*</groupId>");
+            indent(out, indent * 5);
+            out.println("<artifactId>*</artifactId>");
+            indent(out, indent * 4);
+            out.println("</exclusion>");
+            indent(out, indent * 3);
+            out.println("</exclusions>");
+        } else if (excludes != null) {
             printExclusions(excludes, out, indent);
         }
         indent(out, indent * 2);
