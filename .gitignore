@@ -1,4 +1,6 @@
 .classpath
+.idea
+*.iml
 .ivy2
 bin
 build
