@@ -42,10 +42,10 @@
       </Version>
     </release>
     <repository>
-      <SVNRepository>
-        <location rdf:resource="https://svn.apache.org/repos/asf/ant/ivy/core/trunk/"/>
-        <browse rdf:resource="http://svn.apache.org/viewvc/ant/ivy/core/trunk/"/>
-      </SVNRepository>
+      <GitRepository>
+        <location rdf:resource="https://git-wip-us.apache.org/repos/asf/ant-ivy.git"/>
+        <browse rdf:resource="https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git"/>
+      </GitRepository>
     </repository>
   </Project>
 </rdf:RDF>
