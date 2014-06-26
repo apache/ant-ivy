@@ -618,7 +618,7 @@ public class PomModuleDescriptorBuilder {
         for (ExtraInfoHolder extraInfoHolder : ivyModuleDescriptor.getExtraInfos()) {
             if (extraInfoHolder.getName().equals(key)) {
                 extraInfoHolder.setContent(value);
-                found = false;
+                found = true;
             }
         }
         if (!found) {
