@@ -722,7 +722,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             if (ivyFile.exists()) {
                 // found in cache !
                 try {
-                    ModuleDescriptorParser parser = getModuleDescriptorParser();
+                    ModuleDescriptorParser parser = getModuleDescriptorParser(ivyFile);
                     ModuleDescriptor depMD = getMdFromCache(parser, options, ivyFile);
                     String resolverName = getSavedResolverName(depMD);
                     String artResolverName = getSavedArtResolverName(depMD);
@@ -790,7 +790,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return null;
     }
 
-    protected ModuleDescriptorParser getModuleDescriptorParser() {
+    /**
+     * Choose write module descriptor parser for a given moduleDescriptor
+     * 
+     * @param moduleDescriptorFile
+     *            a given module descriptor
+     * @return
+     */
+    protected ModuleDescriptorParser getModuleDescriptorParser(File moduleDescriptorFile) {
         return XmlModuleDescriptorParser.getInstance();
     }
 
