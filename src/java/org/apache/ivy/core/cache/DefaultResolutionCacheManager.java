@@ -155,10 +155,17 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         ParserSettings pSettings = new CacheParserSettings(settings, paths);
 
         URL ivyFileURL = ivyFile.toURI().toURL();
-        return getModuleDescriptorParser().parseDescriptor(pSettings, ivyFileURL, false);
+        return getModuleDescriptorParser(ivyFile).parseDescriptor(pSettings, ivyFileURL, false);
     }
 
-    protected ModuleDescriptorParser getModuleDescriptorParser() {
+    /**
+     * Choose write module descriptor parser for a given moduleDescriptor
+     * 
+     * @param moduleDescriptorFile
+     *            a given module descriptor
+     * @return
+     */
+    protected ModuleDescriptorParser getModuleDescriptorParser(File moduleDescriptorFile) {
         return XmlModuleDescriptorParser.getInstance();
     }
 
