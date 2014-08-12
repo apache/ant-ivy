@@ -24,7 +24,7 @@
     <xsl:param name="restricted"/>
     <xsl:param name="quiet"/>
 
-    <xsl:variable name="maven2repo" select="'http://repo1.maven.org/maven2/'"/>
+    <xsl:variable name="maven2repo" select="'https://repo1.maven.org/maven2/'"/>
 
     <xsl:template match="/packager-module">
         <xsl:comment> GENERATED FILE - DO NOT EDIT </xsl:comment>

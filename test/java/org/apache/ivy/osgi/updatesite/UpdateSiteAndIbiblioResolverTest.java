@@ -65,7 +65,7 @@ public class UpdateSiteAndIbiblioResolverTest extends TestCase {
 
         resolver2 = new IBiblioResolver();
         resolver2.setName("maven2");
-        settings.setVariable("ivy.ibiblio.default.artifact.root", "http://repo1.maven.org/maven2/");
+        settings.setVariable("ivy.ibiblio.default.artifact.root", "https://repo1.maven.org/maven2/");
         settings.setVariable("ivy.ibiblio.default.artifact.pattern",
             "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
         resolver2.setSettings(settings);

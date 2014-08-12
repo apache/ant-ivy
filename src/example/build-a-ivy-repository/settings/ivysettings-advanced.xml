@@ -25,7 +25,7 @@
 	   You can override this property to use one of the mirrors listed on
 	   http://docs.codehaus.org/display/MAVENUSER/Mirrors+Repositories
 	-->
-	<property name="ibiblio-maven2-root" value="http://repo1.maven.org/maven2/" override="false" />
+	<property name="ibiblio-maven2-root" value="https://repo1.maven.org/maven2/" override="false" />
 
 	<namespaces>
     	<namespace name="maven2">
