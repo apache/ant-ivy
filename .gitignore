@@ -14,3 +14,7 @@ doc/samples/target-platform/cache
 .idea
 *.iml
 *~
+/test/repositories/checkmodified/ivy-1.0.xml
+/test/repositories/checkmodified/mod1.1-1.0.jar
+/test/repositories/norevision/ivy-mod1.1.xml
+/test/repositories/norevision/mod1.1.jar
