@@ -14,3 +14,7 @@ test/test-repo/ivyrepo/org.apache.ivy.osgi
 doc/samples/target-platform/bundles
 doc/samples/target-platform/cache
 *~
+/test/repositories/checkmodified/ivy-1.0.xml
+/test/repositories/checkmodified/mod1.1-1.0.jar
+/test/repositories/norevision/ivy-mod1.1.xml
+/test/repositories/norevision/mod1.1.jar
