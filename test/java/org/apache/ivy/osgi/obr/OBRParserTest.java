@@ -59,7 +59,7 @@ public class OBRParserTest extends TestCase {
                 String url0 = md.getAllArtifacts()[0].getUrl().toExternalForm();
                 String type1 = md.getAllArtifacts()[1].getType();
                 String url1 = md.getAllArtifacts()[1].getUrl().toExternalForm();
-                String jarUrl = "http://repo1.maven.org/maven2/org/apache/felix/"
+                String jarUrl = "https://repo1.maven.org/maven2/org/apache/felix/"
                         + "org.apache.felix.bundlerepository/1.0.3/org.apache.felix.bundlerepository-1.0.3.jar";
                 String srcUrl = "http://oscar-osgi.sf.net/obr2/org.apache.felix.bundlerepository/"
                         + "org.apache.felix.bundlerepository-1.0.3-src.jar";

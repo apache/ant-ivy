@@ -55,7 +55,7 @@ public class HttpclientURLHandlerTest extends TestCase {
         URLHandler handler = new HttpClientHandler();
         URLInfo info = handler
                 .getURLInfo(new URL(
-                        "http://repo1.maven.org/maven2/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"));
+                        "https://repo1.maven.org/maven2/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"));
 
         assertEquals(URLHandler.UNAVAILABLE, info);
     }

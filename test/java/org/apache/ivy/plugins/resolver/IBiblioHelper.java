@@ -34,9 +34,9 @@ public class IBiblioHelper {
 
     public static String getIBiblioMirror() throws Exception {
         if (!_checked) {
-            String[] mirrors = new String[] {"http://repo1.maven.org/maven/REPOSITORY-V1.txt",
+            String[] mirrors = new String[] {"https://repo1.maven.org/maven/REPOSITORY-V1.txt",
                     "http://www.ibiblio.org/maven"};
-            String[] mirrorsRoot = new String[] {"http://repo1.maven.org/maven",
+            String[] mirrorsRoot = new String[] {"https://repo1.maven.org/maven",
                     "http://www.ibiblio.org/maven"};
 
             long best = -1;
