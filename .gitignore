@@ -13,3 +13,4 @@ doc/samples/target-platform/bundles
 doc/samples/target-platform/cache
 .idea
 *.iml
+*~
