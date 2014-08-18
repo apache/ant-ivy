@@ -608,7 +608,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     private void addExtraInfo(String key, String value) {
-        if (ivyModuleDescriptor.getExtraInfoContentByTagName(key) == null) {
+        if (ivyModuleDescriptor.getExtraInfoByTagName(key) == null) {
             ivyModuleDescriptor.getExtraInfos().add(new ExtraInfoHolder(key, value));
         }
     }
