@@ -604,11 +604,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addAllVariables(variables, true);
     }
 
-    public synchronized void addAllVariables(Map variables, boolean overwrite) {
-        for (Iterator iter = variables.keySet().iterator(); iter.hasNext();) {
-            String key = (String) iter.next();
-            String val = (String) variables.get(key);
-            setVariable(key, val, overwrite);
+    public synchronized void addAllVariables(Map<?, ?> variables, boolean overwrite) {
+        for (Map.Entry<?, ?> entry : variables.entrySet()) {
+            String key = entry.getKey().toString();
+            Object val = entry.getValue();
+            if (val == null || val instanceof String) {
+                setVariable(key, (String) val, overwrite);
+            }
         }
     }
 
