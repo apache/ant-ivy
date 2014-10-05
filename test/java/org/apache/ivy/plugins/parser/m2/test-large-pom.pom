@@ -24,8 +24,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 <!--
@@ -39,10 +38,10 @@
 
     <groupId>org.apache.myfaces</groupId>
     <artifactId>myfaces</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache MyFaces</name>
     <version>6</version>
+    <packaging>pom</packaging>
 
+    <name>Apache MyFaces</name>
     <description>
        The MyFaces project is home of the first free open source JavaServer Faces
        implementation as well as some useful JSF component libraries and other
