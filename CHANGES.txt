@@ -54,7 +54,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Gibson
 	Mitch Gitman
 	Scott Goldstein
-	Pierre H�gnestrand
+	Pierre Hägnestrand
 	Scott Hebert
 	Tobias Himstedt
 	Aaron Hachez
@@ -143,6 +143,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Generate POMs with /xsd/maven-4.0.0.xsd reference instead of old /maven-v4_0_0.xsd (IVY-1491) (thanks to Hervé Boutemy)
 - IMPROVEMENT: Add support for packed jar within an OSGi bundle
 - IMPROVEMENT: ModuleRules.getRule is O(n) leading to resolution slowness (IVY-1465) (Thanks to Zhong Wang aka Kewpie)
 - IMPROVEMENT: ivy:makepom will generate an exclusion when transitive=false on a dependency (IVY-1470)
@@ -828,7 +829,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: IOException during publish causes NullPointerException (IVY-371)
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre H�gnestrand)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
 
 
    version 1.4.1 - 2006-11-09
