@@ -47,7 +47,7 @@ If you use ant <b>1.5.1</b> or superior, you have to define the tasks you use in
   <taskdef name="ivy-deliver" classname="org.apache.ivy.ant.IvyDeliver"/> 
   <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/>
 </code>
-<em>Note: the tasks listed above are non exhaustive. For a complete list of tasks with the corresponding classes, see the [[svn:src/java/org/apache/ivy/ant/antlib.xml antlib.xml]] file in svn or the version you use.</em>
+<em>Note: the tasks listed above are non exhaustive. For a complete list of tasks with the corresponding classes, see the [[gitfile:src/java/org/apache/ivy/ant/antlib.xml antlib.xml]] file in git or the version you use.</em>
 
 Then you can use the tasks, but check their name, following samples assume you use the ivy namespace (ivy:xxx tasks), whereas with ant 1.5 you cannot use namespace, and should therefore use ivy-xxx tasks if you have followed the taskdefs above.
 
@@ -100,7 +100,7 @@ ivy.buildlist.ivyfilepath = ivy.xml
 
 ivy.checksums=sha1,md5
 </code>
-<em>For the latest version of these properties, you can check the [[svn:src/java/org/apache/ivy/core/settings/ivy.properties svn version]].</em>
+<em>For the latest version of these properties, you can check the [[gitfile:src/java/org/apache/ivy/core/settings/ivy.properties git version]].</em>
 
 <span class="since">since 2.0</span> After calling the first Ivy task, the property ivy.version will be available and contains the version of the used Ivy library. 
 
