@@ -22,6 +22,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andreas Axelsson
 	Stephane Bailliez
 	Karl Baum
+	Andrew Bernhagen
 	Mikkel Bjerg
 	Per Arnold Blaasmo
 	Jeffrey Blattman
@@ -154,6 +155,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: failed to resolve dynamic revisions in some cases for URL repositories (IVY-1472)
 - FIX: ClassCastException in Eclipse 4.4.1 (IVY-1487) (Thanks to Carsten Pfeiffer)
 - FIX: NullPointerException when accessing charset to invalid URL (IVY-1452) (Thanks to Frédéric Riviere)
+- FIX: Can't resolve wildcard dependencies when remote artifact server does not set content-type header (IVY-1493) (Thanks to Andrew Bernhagen)
 
    2.4.0-rc1
 =====================================

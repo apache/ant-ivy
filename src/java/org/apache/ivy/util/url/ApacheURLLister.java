@@ -117,7 +117,12 @@ public class ApacheURLLister {
         String charset = urlInfo.getBodyCharset();
 
         InputStream contentStream = urlHandler.openStream(url);
-        BufferedReader r = new BufferedReader(new InputStreamReader(contentStream, charset));
+        BufferedReader r = null;
+        if (charset == null) {
+            r = new BufferedReader(new InputStreamReader(contentStream));
+        } else {
+            r = new BufferedReader(new InputStreamReader(contentStream, charset));
+        }
 
         String htmlText = FileUtil.readEntirely(r);
 
