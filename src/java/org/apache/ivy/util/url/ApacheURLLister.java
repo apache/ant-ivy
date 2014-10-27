@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.url.URLHandler.URLInfo;
 
 /**
  * Utility class which helps to list urls under a given url. This has been tested with Apache 1.3.33
@@ -108,7 +109,13 @@ public class ApacheURLLister {
         }
 
         URLHandler urlHandler = URLHandlerRegistry.getDefault();
-        String charset = urlHandler.getURLInfo(url).getBodyCharset();
+        URLInfo urlInfo = urlHandler.getURLInfo(url);
+        if (urlInfo == URLHandler.UNAVAILABLE) {
+            return urlList; // not found => return empty list
+        }
+        // here, urlInfo is valid
+        String charset = urlInfo.getBodyCharset();
+
         InputStream contentStream = urlHandler.openStream(url);
         BufferedReader r = new BufferedReader(new InputStreamReader(contentStream, charset));
 

@@ -153,6 +153,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: The SSH resolvers fails if the un-required jsch jar is missing (IVY-1471)
 - FIX: failed to resolve dynamic revisions in some cases for URL repositories (IVY-1472)
 - FIX: ClassCastException in Eclipse 4.4.1 (IVY-1487) (Thanks to Carsten Pfeiffer)
+- FIX: NullPointerException when accessing charset to invalid URL (IVY-1452) (Thanks to Frédéric Riviere)
 
    2.4.0-rc1
 =====================================
