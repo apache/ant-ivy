@@ -1,4 +1,6 @@
 .classpath
+.idea
+*.iml
 .ivy2
 bin
 build
@@ -11,8 +13,6 @@ test/test-repo/ivyrepo/org.apache.ivy.osgi
 .DS_Store
 doc/samples/target-platform/bundles
 doc/samples/target-platform/cache
-.idea
-*.iml
 *~
 /test/repositories/checkmodified/ivy-1.0.xml
 /test/repositories/checkmodified/mod1.1-1.0.jar

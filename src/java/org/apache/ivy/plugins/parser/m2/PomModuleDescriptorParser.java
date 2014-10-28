@@ -144,7 +144,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 if (parentDescr != null) {
                     Map parentPomProps = PomModuleDescriptorBuilder
-                            .extractPomProperties(parentDescr.getExtraInfo());
+                            .extractPomProperties(parentDescr.getExtraInfos());
                     for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
                         Map.Entry prop = (Map.Entry) iter.next();
                         domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
@@ -213,7 +213,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 domReader.setProperty("version", version);
 
                 if (parentDescr != null) {
-                    mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
+                    mdBuilder.addExtraInfos(parentDescr.getExtraInfos());
 
                     // add dependency management info from parent
                     List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(parentDescr);
