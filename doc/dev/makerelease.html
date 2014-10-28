@@ -110,13 +110,6 @@ As soon as you are happy with the artifacts to be released, it is time to tag th
 git tag 2.0.0-beta1
 </code>
 
-And don't forget to set the svn:external on doc/xooki to a fixed revision. Edit the svn:external property on the folder doc/xooki in the tag and set it to the revision of the commit of the tag. It should look like:
-<pre>
-xooki -r790212 https://svn.apache.org/repos/asf/ant/ivy/site/xooki/
-</pre>
-
-And commit that modification.
-
 <h3>Publish the release candidate</h3>
 
 All artifacts in <tt>build/distrib</tt> except the <tt>maven2</tt> folder needs to be published on the 'dist' svn of the ASF, in the <b>dev</b> part.
