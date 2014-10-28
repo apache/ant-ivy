@@ -74,10 +74,12 @@ long, but Ivy couldn't be what it is without you!
 	Maarten Coene
 	Charles Duffy
 	Nicolas Lalevee
+	Antoine Levy Lambert
 
  Contributors
 	Gregory Amerson
 	Mykhailo Delegan
+	Tony Likhite
 	Carsten Pfeiffer
 	Yanus Poluektovich
 	Frederic Riviere
@@ -115,6 +117,7 @@ List of changes since Ivy 2.3.0:
 - IMPROVEMENT: Also copy original metadata artifact (e.g. POM) on ivy:install (IVY-1431) (Thanks to Erwin Tratar)
 - IMPROVEMENT: useOrigin will do avoid copy with url resolvers configured with a 'file:/' URL
 - IMPROVEMENT: add support for source artifacts in buildobr task
+- IMPROVEMENT: add possibility to configure the User-Agent http header by setting a property http.agent (Thanks to Tony Likhite)
 
 - FIX: In IvyDE, Ivy fails to parse ivy-settings.xml file if it contains <pgp> element (thanks to Gregory Amerson) (IVY-1441)
 - FIX: ParseException when "Bundle-Description" is present in OSGi MANIFEST.MF (IVY-1438)
