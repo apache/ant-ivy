@@ -30,7 +30,7 @@
 Requirements for making a release are similar to the requirements for building from source, except that JDK 1.6+ and Apache Ant 1.9+ are required.
 <h2>Procedure</h2>
 <h3>1. Check the files which needs to be updated for the release.</h3>
-On the trunk, check that files which require update for the release are up to date.
+On the master, check that files which require update for the release are up to date.
 This includes particularly:
 RELEASE_NOTES
 CHANGES
@@ -38,16 +38,12 @@ README
 <h3>2. Create a release branch</h3>
 This will allow to work separately from other developers, in case you need any last modification. For a release we have 2 branches. For instance, suppose we create a 2.0.0-beta1 release. We have a branch for the code for all 2.0.x releases, this is the '2.0.x' branch. From this branch we will create the release branch which is for a specific release. It is possible that the 2.0.x branch has already been created when releasing a previous version, in that case the creation of this branch can be skipped.
 <code>
-svn copy https://svn.apache.org/repos/asf/ant/ivy/core/trunk \
-           https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.x \
-      -m "Creating a 2.0.x branch."
-svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.x \
-           https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
-      -m "Creating a release branch for 2.0.0-beta1."
+git branch 2.0.x master
+git branch 2.0.0-beta1 2.0.x
 </code>
 <h3>3. Check out the branch</h3>
 <code>
-svn co https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 ivy-2.0.0-beta1
+git checkout 2.0.0-beta1
 </code>
 <h3>4. Add Ivy xsd file.</h3>
 You need to store the current ivy xml schema in the documentation, so that it will later be accessible on public web site. To do so, run the following command in the directory in which you checked out the release branch:
@@ -67,14 +63,13 @@ http://ant.apache.org/ivy/history/2.0.0-alpha-1.html
 
 <h3>6. Commit your changes</h3>
 <code>
-svn status
-svn add doc/ivy.xsd
-svn add doc/release-notes.html
-svn ci -m "update templates, add release notes and ivy.xsd in documentation."
+git add doc/ivy.xsd
+git add doc/release-notes.html
+git commit -m "update templates, add release notes and ivy.xsd in documentation."
 </code>
 <h3>7. Check that you have no pending modifications</h3>
 <code>
-svn status
+git status
 </code>
 If your working copy is clean, you can launch the release script. If it isn't, make sure to clean it properly. Sometimes you may need to call ant clean-all if you have started to work with ant builds. If you are confused about your working copy state, delete it and check it out again.
 <h3>8. Launch the release script</h3>
@@ -109,12 +104,10 @@ Be prepared to enter your passphrase several times if you use this script, gpg w
 
 To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See <a href="http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html">that page</a> to know how to process.
 
-<h3>12. Tag the svn repository</h3>
+<h3>12. Create the tag</h3>
 As soon as you are happy with the artifacts to be released, it is time to tag the svn repo
 <code>
-svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
-           https://svn.apache.org/repos/asf/ant/ivy/core/tags/2.0.0-beta1 \
-      -m "Tag release 2.0.0-beta1."
+git tag 2.0.0-beta1
 </code>
 
 And don't forget to set the svn:external on doc/xooki to a fixed revision. Edit the svn:external property on the folder doc/xooki in the tag and set it to the revision of the commit of the tag. It should look like:
