@@ -34,6 +34,7 @@ On the master, check that files which require update for the release are up to d
 This includes particularly:
 CHANGES
 README
+doc/release-notes.html
 <h3>2. Check out a clean copy of the branch</h3>
 Run the following git command to checkout the branch, revert any change and remove untracked and ignored files:
 <code>
@@ -47,32 +48,21 @@ You need to store the current ivy xml schema in the documentation, so that it wi
 ant -f build-release.xml release-xsd
 </code>
 
-<h3>4. Add release note page in the documentation.</h3>
-Open the file doc/index.html with your favorite browser, and click on the plus button in the upper right. Choose "Release Notes" as title, and "release-notes" as page id. 
-
-Then edit the page (hit the first button at the upper right), and copy the content of the RELEASE_NOTES file. You can also add the announcement for the release if it's already ready.
-
-Move the page up in the TOC using the arrow button in the toolbar at the upper right, so that it's the first child page under the "Documentation" page.
-
-If you take the time to make the content of the release notes more "xooki compliant" (by removing unnecessary end of lines and adding h2 h3 and h4 tags), the page could then look like something like that:
-http://ant.apache.org/ivy/history/2.0.0-alpha-1.html
-
-And commit your changes:
+And commit your changes in the branch:
 <code>
 git add doc/ivy.xsd
-git add doc/release-notes.html
-git commit -m "update templates, add release notes and ivy.xsd in documentation."
+git commit -m "release the ivy.xsd"
 </code>
-<h3>5. Launch the release script</h3>
+<h3>4. Launch the release script</h3>
 <code>
 ant -f build-release.xml release
 </code>
 The status should be release only for final releases, and milestone for any other intermediate release.
 If the release script is successful, release artifacts will be waiting for you in the build/distrib directory.
-<h3>6. Verify the release</h3>
+<h3>5. Verify the release</h3>
 Check that all zips can be opened correctly, and that running 'ant' after unzipping the source distribution works properly.
 You can also do a smoke test with the generated ivy.jar, to see if it is able to resolve properly a basic module (for instance you can run some tutorials provided in the src/example directory in all distributions).
-<h3>7. Sign and upload the artifacts</h3>
+<h3>6. Sign and upload the artifacts</h3>
 It's now time to sign the release artifacts and upload them to a location accessible by other Apache commiters.
 
 Here is a simple way to sign the files using gnupg:
@@ -90,11 +80,11 @@ end
 </code>
 Be prepared to enter your passphrase several times if you use this script, gpg will ask for your passphrase for each file to sign.
 
-<h3>8. Prepare the Eclipse update site</h3>
+<h3>7. Prepare the Eclipse update site</h3>
 
 To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See <a href="http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html">that page</a> to know how to process.
 
-<h3>9. Create the tag</h3>
+<h3>8. Create the tag</h3>
 As soon as you are happy with the artifacts to be released, it is time to tag the release
 <code>
 git tag 2.0.0-beta1
@@ -106,7 +96,7 @@ All artifacts in <tt>build/distrib</tt> except the <tt>maven2</tt> folder needs 
 
 The artifacts should be pushed in that svn folder: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
 
-<h3>10. Call for a vote to approve the release</h3>
+<h3>9. Call for a vote to approve the release</h3>
 Cast a vote to approve the release on the dev@ant.apache.org mailing list.
 
 Here is an example:
@@ -128,7 +118,7 @@ Regards,
 
 ${me}, Ivy ${version} release manager
 </code>
-<h3>11. Publish the release</h3>
+<h3>10. Publish the release</h3>
 
 If the release is approved, it's now time to make it public. The artifacts in the <i>dev</i> part needs to be moved into the <i>release</i> one:
 <code>
@@ -137,7 +127,7 @@ $ svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.ap
 
 In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the <a href="http://archive.apache.org/dist/ant/ivy/">archive</a>. To do so, just use the <tt>svn rm</tt> command against the artifacts or folders to remove.
 
-<h3>12. Update the web site</h3>
+<h3>11. Update the web site</h3>
 
 It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
 
@@ -174,18 +164,18 @@ And once your happy with it, commit the changes in the source directory, and in 
 Tip: lot's of files might need to be 'added' to svn. An handy command to <tt>add</tt> any file which is not yet under version control is the following one:
 <code>svn add --force sources</code>
 
-<h3>13. Deploy the Eclipse updatesite</h3>
+<h3>12. Deploy the Eclipse updatesite</h3>
 
 If the Eclipse update site has already been prepared to include that new Ivy release, it is now needed to be deployed. Then follow the deployment instruction on <a href="http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html">that page</a>.
 
-<h3>14. Announce</h3>
+<h3>13. Announce</h3>
 Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org and announce@apache.org mailing lists.
 You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
-<h3>15. Update this doc</h3>
+<h3>14. Update this doc</h3>
 If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
-<h3>16. Merge your modifications back to the trunk if necessary.</h3>
+<h3>15. Merge your modifications back to the trunk if necessary.</h3>
 Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
-<h3>17. Prepare next release</h3>
+<h3>16. Prepare next release</h3>
 Update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
 
 Release the version in <a href="https://issues.apache.org/jira/browse/IVY">jira</a>, and create a new unreleased version for the next planned version.</textarea>
