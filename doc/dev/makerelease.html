@@ -32,8 +32,6 @@ Requirements for making a release are similar to the requirements for building f
 <h3>1. Check the files which needs to be updated for the release.</h3>
 On the master, check that files which require update for the release are up to date.
 This includes particularly:
-CHANGES
-README
 doc/release-notes.html
 <h3>2. Check out a clean copy of the branch</h3>
 Run the following git command to checkout the branch, revert any change and remove untracked and ignored files:
@@ -173,10 +171,12 @@ Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org a
 You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
 <h3>14. Update this doc</h3>
 If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
-<h3>15. Merge your modifications back to the trunk if necessary.</h3>
+<h3>15. Merge your modifications back to the master if necessary.</h3>
 Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
 <h3>16. Prepare next release</h3>
-Update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
+In the master branch, update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
+
+If the version just release is a final one (not an alpha, beta or rc), the list of changes should be emptied in doc/release-notes.html, and update there the next expected version. The announcement in the file should also be changed accordingly to the next expected version.
 
 Release the version in <a href="https://issues.apache.org/jira/browse/IVY">jira</a>, and create a new unreleased version for the next planned version.</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

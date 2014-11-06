@@ -1,4 +1,4 @@
-                        Apache Ivy (TM) v2.5.0
+                             Apache Ivy (TM)
 -----------------------------------------------------------------------
 
 
@@ -21,26 +21,22 @@ It is characterized by the following:
        from dependency resolution to dependency reporting and publication.
 
 
+Latest Changes:
+----------------
+
+See the list of the changes since the last release in the file doc/release-notes.html
+
+
 Supported Platforms
 --------------------
 
-Apache Ivy requires Java level 1.5; it has been tested with Sun Java SDK 1.5.0.
-
-Even if not mandatory, Apache Ivy is most of the times used with Apache Ant, 
-for which version 1.6.0 or greater is required.
+Please see the the detailed documentation about Ivy compatibility there: doc/compatibility.html
 
 
 Installation
 -------------
 
 Please read doc/install.html for installation instructions.
-      
-
-Getting Started
-----------------
-
-For an introduction to Apache Ivy and how to use it, please read the documentation 
-located in the doc subdirectory.  A good place to start is the index.html
 
 
 Licensing
