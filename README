@@ -1,5 +1,25 @@
-			Apache Ivy (TM) [version]
-		   ---------------------------
+                        Apache Ivy (TM) v2.5.0
+-----------------------------------------------------------------------
+
+
+What is Apache Ivy?
+--------------------
+
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+project dependencies. 
+It is characterized by the following:
+
+   1. flexibility and configurability 
+       Apache Ivy is essentially process agnostic and is not tied to any 
+       methodology or structure. 
+       Instead it provides the necessary flexibility and configurability 
+       to be adapted to a broad range of dependency management and build 
+       processes.
+   2. tight integration with Apache Ant
+       while available as a standalone tool, Apache Ivy works particularly well 
+       with Apache Ant providing a number of powerful Ant tasks ranging 
+       from dependency resolution to dependency reporting and publication.
+
 
 Supported Platforms
 --------------------
@@ -8,6 +28,7 @@ Apache Ivy requires Java level 1.5; it has been tested with Sun Java SDK 1.5.0.
 
 Even if not mandatory, Apache Ivy is most of the times used with Apache Ant, 
 for which version 1.6.0 or greater is required.
+
 
 Installation
 -------------
@@ -59,5 +80,20 @@ The sftp and https resolvers requires the Java Cryptography extensions
 <http://java.sun.com/javase/technologies/security/>.
 The PGP signature generator requires the BouncyCastle Java cryptography APIs
 <http://www.bouncycastle.org/java.html>.
+
+
+How to Get Involved
+--------------------
+
+The Apache Ivy project really needs and appreciates any contributions, 
+including documentation help, source code and feedback.  If you are interested
+in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
+
+
+How to Report Issues
+--------------------
+
+The Apache Ivy project uses JIRA for issue tracking.  Please report any 
+issues you find at http://issues.apache.org/jira/browse/IVY
 
 
