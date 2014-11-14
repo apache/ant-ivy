@@ -88,6 +88,11 @@ As soon as you are happy with the artifacts to be released, it is time to tag th
 git tag 2.0.0-beta1
 </code>
 
+And push the changes to the ASF repo
+<code>
+git push --tags 
+</code>
+
 <h3>Publish the release candidate</h3>
 
 All artifacts in <tt>build/distrib</tt> except the <tt>maven2</tt> folder needs to be published on the 'dist' svn of the ASF, in the <b>dev</b> part.
@@ -103,7 +108,7 @@ Subject: [VOTE] Ivy ${version} Release
 
 I have built a release candidate for Ivy ${version}
 
-The svn tag of this release is: https://svn.apache.org/repos/asf/ant/ivy/core/tags/${version}@${svn-rev-of-the-tag}
+The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=commit;h=SHA1-OF-THE-TAG
 
 The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION@${svn-rev-of-the-check-in}
 
