@@ -143,5 +143,16 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
         getSshBasedRepository().setPort(port);
     }
 
+    /**
+     * sets the path to an OpenSSH-style config file to be used for reading configuration values for
+     * an ssh repository, such as a username
+     *
+     * @param path
+     *            of the config file
+     */
+    public void setSshConfig(String sshConfig) {
+        getSshBasedRepository().setSshConfig(sshConfig);
+    }
+
     public abstract String getTypeName();
 }
