@@ -338,10 +338,17 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         this.allowedAgentUse = allowedAgentUse;
     }
 
+    /**
+     * @return sshConfig Path to a local ssh config file
+     */
     public String getSshConfig() {
         return sshConfig;
     }
 
+    /**
+     * @param sshConfig
+     *            Path to a local ssh config file
+     */
     public void setSshConfig(String sshConfig) {
         this.sshConfig = sshConfig;
     }
