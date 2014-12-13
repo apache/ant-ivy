@@ -1,0 +1,163 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+body  {
+  background-color: #5a7418;
+}
+
+#body  {
+  color: #000;
+  background-color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6, .toc-title {
+  color: #7a9438;
+}
+h1 {
+  color: #fff;
+  background-color: #7a9438;
+}
+.title {
+  color: #7a9438;
+  background-color: #fff;
+  background: none;
+}
+a:link {
+  color: #7a9438;
+}
+a:visited {
+  color: #7a9438;
+}
+a:hover, a:active {
+  color: #7a9438;
+}
+blockquote {
+  color: #696969;
+}
+pre {
+  background-color: #eee;
+  border: 1px solid #ddd;
+}
+.form-item label {
+  color: #7a9438;
+}
+.item-list .title {
+  color: #7a9438;
+}
+
+/*
+** Page layout blocks / IDs
+*/
+#header  {
+  background-color: #ffffff;
+  /* border: 3px solid #9ebf47; */
+}
+
+#top-menu {
+  background-color:#7a9438;
+  border-top: 3px solid #9ebf47;
+  border-bottom: 3px solid #9ebf47;
+}
+
+#search .form-text, #search .form-submit {
+  border: 1px solid #7a9438;
+}
+#search .form-submit {
+  background-color: #9ebf47;
+}
+
+.block h2 {
+  color: #000;
+  background-color: #eee; 
+}
+
+.block .content {
+  background-color: #fff;
+  border: 1px solid #eee;
+}
+/*
+.block h2 {
+  color: #000;
+}
+*/
+
+#navcontainer {
+	background-color:#7a9438;
+}
+
+#nav {
+	background-color:#7a9438;
+}
+
+#nav ul {
+	background-color:#7a9438;
+	border-top: 1px solid #7a9438;
+	border-right: 1px solid #7a9438;
+	border-bottom: 1px solid #7a9438;
+	border-left: 0.75em solid #7a9438;
+}
+
+#nav li a {
+	color: #fff;
+}
+
+#nav .title {
+  color: #fff;
+  /*
+  background: #61752c;
+  */
+  background: #7a9438;
+	border-top: 0;
+	border-right: 0;
+	border-bottom: 1px solid #7a9438;
+	border-left: 0;
+}
+
+#nav li li a {
+	background: #fff;
+	color: #7a9438;
+  border-top: 0;
+	border-right: 0;
+	border-bottom: 1px solid #7a9438;
+	border-left: 0;
+}
+
+#nav a:hover,
+#nav a:active {
+	background: #9ebf47;
+}
+
+#content {
+  border-top: 3px solid #9ebf47;
+}
+
+#forum tr.dark {
+  background: #daeddc;
+}
+
+.postit {
+  background-color: #FFDBA1;
+  border: 1px solid #FFB643;
+  color: #4E3000;
+}
+
+.tip {
+  background-color: #F6FF7F;
+  border: 1px solid #FFB643;
+  color: #4E3000;
+}
