@@ -409,6 +409,13 @@
                                 "children": [
 
                                   ]
+                              },
+                              {
+                                "id":"resolver/bintray",
+                                "title":"Bintray Resolver",
+                                "children": [
+
+                                  ]
                               }
                             ]
                         },
