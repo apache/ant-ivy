@@ -28,11 +28,11 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 
 public class RetrieveReport {
 
-    private Collection/* <File> */upToDateFiles = new HashSet();
+    private Collection<File> upToDateFiles = new HashSet<File>();
 
-    private Collection/* <File> */copiedFiles = new HashSet();
+    private Collection<File> copiedFiles = new HashSet<File>();
 
-    private Map/* <File, ArtifactDownloadReport> */downloadReport = new HashMap();
+    private Map<File, ArtifactDownloadReport> downloadReport = new HashMap<File, ArtifactDownloadReport>();
 
     private File retrieveRoot;
 
@@ -69,24 +69,24 @@ public class RetrieveReport {
      * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve
      * process.
      */
-    public Collection getCopiedFiles() {
-        return new ArrayList(copiedFiles);
+    public Collection<File> getCopiedFiles() {
+        return new ArrayList<File>(copiedFiles);
     }
 
     /**
      * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve
      * process.
      */
-    public Collection getUpToDateFiles() {
-        return new ArrayList(upToDateFiles);
+    public Collection<File> getUpToDateFiles() {
+        return new ArrayList<File>(upToDateFiles);
     }
 
     /**
      * Returns a collection of <tt>File</tt> objects who were retrieved during the retrieve process.
      * This is the union of the files being copied and the files that were up-to-date.
      */
-    public Collection getRetrievedFiles() {
-        Collection result = new ArrayList(upToDateFiles.size() + copiedFiles.size());
+    public Collection<File> getRetrievedFiles() {
+        Collection<File> result = new ArrayList<File>(upToDateFiles.size() + copiedFiles.size());
         result.addAll(upToDateFiles);
         result.addAll(copiedFiles);
         return result;
@@ -95,7 +95,7 @@ public class RetrieveReport {
     /**
      * Get the mapping between the copied files and their corresponding download report
      */
-    public Map getDownloadReport() {
+    public Map<File, ArtifactDownloadReport> getDownloadReport() {
         return downloadReport;
     }
 }

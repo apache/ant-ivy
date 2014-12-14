@@ -20,7 +20,6 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -38,9 +37,9 @@ import org.apache.tools.ant.util.FileNameMapper;
  */
 public class IvyRetrieve extends IvyPostResolveTask {
 
-    private static final Collection OVERWRITEMODE_VALUES = Arrays.asList(new String[] {
-            RetrieveOptions.OVERWRITEMODE_ALWAYS, RetrieveOptions.OVERWRITEMODE_NEVER,
-            RetrieveOptions.OVERWRITEMODE_NEWER, RetrieveOptions.OVERWRITEMODE_DIFFERENT});
+    private static final Collection<String> OVERWRITEMODE_VALUES = Arrays.asList(
+        RetrieveOptions.OVERWRITEMODE_ALWAYS, RetrieveOptions.OVERWRITEMODE_NEVER,
+        RetrieveOptions.OVERWRITEMODE_NEWER, RetrieveOptions.OVERWRITEMODE_DIFFERENT);
 
     private String pattern;
 
@@ -84,6 +83,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         this.setId = setId;
     }
 
+    @Override
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
@@ -114,8 +114,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 Path path = new Path(getProject());
                 getProject().addReference(getPathId(), path);
 
-                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext();) {
-                    path.createPathElement().setLocation((File) iter.next());
+                for (File file : report.getRetrievedFiles()) {
+                    path.createPathElement().setLocation(file);
                 }
             }
 
@@ -126,9 +126,9 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
                 fileset.setDir(report.getRetrieveRoot());
 
-                for (Iterator iter = report.getRetrievedFiles().iterator(); iter.hasNext();) {
+                for (File file : report.getRetrievedFiles()) {
                     PatternSet.NameEntry ne = fileset.createInclude();
-                    ne.setName(getPath(report.getRetrieveRoot(), (File) iter.next()));
+                    ne.setName(getPath(report.getRetrieveRoot(), file));
                 }
             }
         } catch (Exception ex) {
@@ -136,7 +136,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         }
     }
 
-    protected Collection/* <String> */getAllowedLogOptions() {
+    protected Collection<String> getAllowedLogOptions() {
         return Arrays.asList(new String[] {LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
                 LogOptions.LOG_QUIET});
     }
