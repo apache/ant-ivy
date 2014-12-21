@@ -423,6 +423,9 @@ public class P2MetadataParser implements XMLInputParser {
     }
 
     private static String namespace2Type(String namespace) {
+        if (namespace == null) {
+            return null;
+        }
         if (namespace.equals("java.package")) {
             return BundleInfo.PACKAGE_TYPE;
         }
