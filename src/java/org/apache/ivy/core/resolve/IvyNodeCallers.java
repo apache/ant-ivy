@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -39,7 +38,8 @@ public class IvyNodeCallers {
 
         private ModuleRevisionId mrid;
 
-        private Map confs = new HashMap(); // Map (String callerConf -> String[] dependencyConfs)
+        // callerConf -> dependencyConfs
+        private Map<String, String[]> confs = new HashMap<String, String[]>();
 
         private DependencyDescriptor dd;
 
@@ -69,9 +69,9 @@ public class IvyNodeCallers {
         }
 
         private void updateConfs(String callerConf, String[] dependencyConfs) {
-            String[] prevDepConfs = (String[]) confs.get(callerConf);
+            String[] prevDepConfs = confs.get(callerConf);
             if (prevDepConfs != null) {
-                Set newDepConfs = new HashSet(Arrays.asList(prevDepConfs));
+                Set<String> newDepConfs = new HashSet<String>(Arrays.asList(prevDepConfs));
                 newDepConfs.addAll(Arrays.asList(dependencyConfs));
                 confs.put(callerConf, newDepConfs.toArray(new String[newDepConfs.size()]));
             } else {
@@ -80,13 +80,14 @@ public class IvyNodeCallers {
         }
 
         public String[] getCallerConfigurations() {
-            return (String[]) confs.keySet().toArray(new String[confs.keySet().size()]);
+            return confs.keySet().toArray(new String[confs.keySet().size()]);
         }
 
         public ModuleRevisionId getModuleRevisionId() {
             return mrid;
         }
 
+        @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof Caller)) {
                 return false;
@@ -95,6 +96,7 @@ public class IvyNodeCallers {
             return other.confs.equals(confs) && mrid.equals(other.mrid);
         }
 
+        @Override
         public int hashCode() {
             // CheckStyle:MagicNumber| OFF
             int hash = 31;
@@ -104,6 +106,7 @@ public class IvyNodeCallers {
             return hash;
         }
 
+        @Override
         public String toString() {
             return mrid.toString();
         }
@@ -133,15 +136,13 @@ public class IvyNodeCallers {
         }
     }
 
-    // Map (String rootModuleConf -> Map (ModuleRevisionId -> Caller)): key in second map is used to
-    // easily get a caller by its mrid
-    private Map callersByRootConf = new HashMap();
+    // key in second map is used to easily get a caller by its mrid
+    private Map<String, Map<ModuleRevisionId, Caller>> callersByRootConf = new HashMap<String, Map<ModuleRevisionId, Caller>>();
 
     // this map contains all the module ids calling this one (including transitively) as keys.
     // the mapped nodes (values) correspond to a direct caller from which the transitive caller
     // comes
-
-    private Map allCallers = new HashMap(); // Map (ModuleId -> IvyNode)
+    private Map<ModuleId, IvyNode> allCallers = new HashMap<ModuleId, IvyNode>();
 
     private IvyNode node;
 
@@ -166,12 +167,12 @@ public class IvyNodeCallers {
             throw new IllegalArgumentException("a module is not authorized to depend on itself: "
                     + node.getId());
         }
-        Map callers = (Map) callersByRootConf.get(rootModuleConf);
+        Map<ModuleRevisionId, Caller> callers = callersByRootConf.get(rootModuleConf);
         if (callers == null) {
-            callers = new HashMap();
+            callers = new HashMap<ModuleRevisionId, Caller>();
             callersByRootConf.put(rootModuleConf, callers);
         }
-        Caller caller = (Caller) callers.get(mrid);
+        Caller caller = callers.get(mrid);
         if (caller == null) {
             caller = new Caller(md, mrid, dd, callerNode.canExclude(rootModuleConf));
             callers.put(mrid, caller);
@@ -179,8 +180,7 @@ public class IvyNodeCallers {
         caller.addConfiguration(requestedConf, dependencyConfs);
 
         IvyNode parent = callerNode.getRealNode();
-        for (Iterator iter = parent.getAllCallersModuleIds().iterator(); iter.hasNext();) {
-            ModuleId mid = (ModuleId) iter.next();
+        for (ModuleId mid : parent.getAllCallersModuleIds()) {
             allCallers.put(mid, parent);
         }
         allCallers.put(mrid.getModuleId(), callerNode);
@@ -188,57 +188,53 @@ public class IvyNodeCallers {
 
     void removeCaller(String rootModuleConf, ModuleRevisionId callerMrid) {
         allCallers.remove(callerMrid.getModuleId());
-        Map callers = (Map) callersByRootConf.get(rootModuleConf);
+        Map<ModuleRevisionId, Caller> callers = callersByRootConf.get(rootModuleConf);
         if (callers != null) {
             callers.remove(callerMrid);
         }
     }
 
     public Caller[] getCallers(String rootModuleConf) {
-        Map callers = (Map) callersByRootConf.get(rootModuleConf);
+        Map<ModuleRevisionId, Caller> callers = callersByRootConf.get(rootModuleConf);
         if (callers == null) {
             return new Caller[0];
         }
-        return (Caller[]) callers.values().toArray(new Caller[callers.values().size()]);
+        return callers.values().toArray(new Caller[callers.values().size()]);
     }
 
     public Caller[] getAllCallers() {
-        Set all = new HashSet();
-        for (Iterator iter = callersByRootConf.values().iterator(); iter.hasNext();) {
-            Map callers = (Map) iter.next();
+        Set<Caller> all = new HashSet<Caller>();
+        for (Map<ModuleRevisionId, Caller> callers : callersByRootConf.values()) {
             all.addAll(callers.values());
         }
-        return (Caller[]) all.toArray(new Caller[all.size()]);
+        return all.toArray(new Caller[all.size()]);
     }
 
     public Caller[] getAllRealCallers() {
-        Set all = new HashSet();
-        for (Iterator iter = callersByRootConf.values().iterator(); iter.hasNext();) {
-            Map callers = (Map) iter.next();
-            for (Iterator iterator = callers.values().iterator(); iterator.hasNext();) {
-                Caller c = (Caller) iterator.next();
+        Set<Caller> all = new HashSet<Caller>();
+        for (Map<ModuleRevisionId, Caller> callers : callersByRootConf.values()) {
+            for (Caller c : callers.values()) {
                 if (c.isRealCaller()) {
                     all.add(c);
                 }
             }
         }
-        return (Caller[]) all.toArray(new Caller[all.size()]);
+        return all.toArray(new Caller[all.size()]);
     }
 
-    public Collection getAllCallersModuleIds() {
+    public Collection<ModuleId> getAllCallersModuleIds() {
         return allCallers.keySet();
     }
 
     void updateFrom(IvyNodeCallers callers, String rootModuleConf, boolean real) {
-        Map nodecallers = (Map) callers.callersByRootConf.get(rootModuleConf);
+        Map<ModuleRevisionId, Caller> nodecallers = callers.callersByRootConf.get(rootModuleConf);
         if (nodecallers != null) {
-            Map thiscallers = (Map) callersByRootConf.get(rootModuleConf);
+            Map<ModuleRevisionId, Caller> thiscallers = callersByRootConf.get(rootModuleConf);
             if (thiscallers == null) {
-                thiscallers = new HashMap();
+                thiscallers = new HashMap<ModuleRevisionId, Caller>();
                 callersByRootConf.put(rootModuleConf, thiscallers);
             }
-            for (Iterator iter = nodecallers.values().iterator(); iter.hasNext();) {
-                Caller caller = (Caller) iter.next();
+            for (Caller caller : nodecallers.values()) {
                 if (!thiscallers.containsKey(caller.getModuleRevisionId())) {
                     if (!real) {
                         caller.setRealCaller(false);
@@ -250,7 +246,7 @@ public class IvyNodeCallers {
     }
 
     public IvyNode getDirectCallerFor(ModuleId from) {
-        return (IvyNode) allCallers.get(from);
+        return allCallers.get(from);
     }
 
     /**
@@ -261,10 +257,11 @@ public class IvyNodeCallers {
      * @return
      */
     boolean doesCallersExclude(String rootModuleConf, Artifact artifact) {
-        return doesCallersExclude(rootModuleConf, artifact, new Stack());
+        return doesCallersExclude(rootModuleConf, artifact, new Stack<ModuleRevisionId>());
     }
 
-    boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
+    boolean doesCallersExclude(String rootModuleConf, Artifact artifact,
+            Stack<ModuleRevisionId> callersStack) {
         callersStack.push(node.getId());
         try {
             Caller[] callers = getCallers(rootModuleConf);

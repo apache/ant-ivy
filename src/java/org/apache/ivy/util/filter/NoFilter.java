@@ -18,7 +18,12 @@
 package org.apache.ivy.util.filter;
 
 public final class NoFilter implements Filter {
+
     public static final Filter INSTANCE = new NoFilter();
+
+    public static <T> Filter<T> instance() {
+        return INSTANCE;
+    }
 
     private NoFilter() {
     }
@@ -27,6 +32,7 @@ public final class NoFilter implements Filter {
         return true;
     }
 
+    @Override
     public String toString() {
         return "NoFilter";
     }

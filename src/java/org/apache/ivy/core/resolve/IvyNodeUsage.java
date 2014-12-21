@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,6 +63,7 @@ public class IvyNodeUsage {
             return node;
         }
 
+        @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof NodeConf)) {
                 return false;
@@ -72,6 +72,7 @@ public class IvyNodeUsage {
                     && getConf().equals(((NodeConf) obj).getConf());
         }
 
+        @Override
         public int hashCode() {
             // CheckStyle:MagicNumber| OFF
             int hash = 33;
@@ -81,6 +82,7 @@ public class IvyNodeUsage {
             return hash;
         }
 
+        @Override
         public String toString() {
             return "NodeConf(" + conf + ")";
         }
@@ -96,10 +98,12 @@ public class IvyNodeUsage {
             this.dependerConf = dependerConf;
         }
 
+        @Override
         public String toString() {
             return dd + " [" + dependerConf + "]";
         }
 
+        @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof Depender)) {
                 return false;
@@ -108,6 +112,7 @@ public class IvyNodeUsage {
             return other.dd == dd && other.dependerConf.equals(dependerConf);
         }
 
+        @Override
         public int hashCode() {
             int hash = 33;
             hash += dd.hashCode() * 13;
@@ -118,29 +123,28 @@ public class IvyNodeUsage {
 
     private IvyNode node;
 
-    // Map (String rootConfName -> Set(String confName))
     // used to know which configurations of the dependency are required
     // for each root module configuration
-    private Map rootModuleConfs = new HashMap();
+    // rootConfName -> confNames
+    private Map<String, Set<String>> rootModuleConfs = new HashMap<String, Set<String>>();
 
-    // Map (NodeConf in -> Set(String conf))
-    private Map requiredConfs = new HashMap();
+    private Map<NodeConf, Set<String>> requiredConfs = new HashMap<NodeConf, Set<String>>();
 
-    private Map /* <String, Set<Depender>> */dependers = new HashMap();
+    private Map<String, Set<Depender>> dependers = new HashMap<String, Set<Depender>>();
 
-    // Map (String rootModuleConf -> IvyNodeBlacklist)
-    private Map blacklisted = new HashMap();
+    // rootModuleConf -> black list
+    private Map<String, IvyNodeBlacklist> blacklisted = new HashMap<String, IvyNodeBlacklist>();
 
     public IvyNodeUsage(IvyNode node) {
         this.node = node;
     }
 
-    protected Collection getRequiredConfigurations(IvyNode in, String inConf) {
-        return (Collection) requiredConfs.get(new NodeConf(in, inConf));
+    protected Collection<String> getRequiredConfigurations(IvyNode in, String inConf) {
+        return requiredConfs.get(new NodeConf(in, inConf));
     }
 
-    protected void setRequiredConfs(IvyNode parent, String parentConf, Collection confs) {
-        requiredConfs.put(new NodeConf(parent, parentConf), new HashSet(confs));
+    protected void setRequiredConfs(IvyNode parent, String parentConf, Collection<String> confs) {
+        requiredConfs.put(new NodeConf(parent, parentConf), new HashSet<String>(confs));
     }
 
     /**
@@ -149,26 +153,25 @@ public class IvyNodeUsage {
      * @param rootModuleConf
      * @return
      */
-    protected Set getConfigurations(String rootModuleConf) {
-        return (Set) rootModuleConfs.get(rootModuleConf);
+    protected Set<String> getConfigurations(String rootModuleConf) {
+        return rootModuleConfs.get(rootModuleConf);
     }
 
-    protected Set addAndGetConfigurations(String rootModuleConf) {
-        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
+    protected Set<String> addAndGetConfigurations(String rootModuleConf) {
+        Set<String> depConfs = rootModuleConfs.get(rootModuleConf);
         if (depConfs == null) {
-            depConfs = new HashSet();
+            depConfs = new HashSet<String>();
             rootModuleConfs.put(rootModuleConf, depConfs);
         }
         return depConfs;
     }
 
-    protected Set /* <String> */getRootModuleConfigurations() {
+    protected Set<String> getRootModuleConfigurations() {
         return rootModuleConfs.keySet();
     }
 
-    public void updateDataFrom(Collection/* <IvyNodeUsage> */usages, String rootModuleConf) {
-        for (Iterator iterator = usages.iterator(); iterator.hasNext();) {
-            IvyNodeUsage usage = (IvyNodeUsage) iterator.next();
+    public void updateDataFrom(Collection<IvyNodeUsage> usages, String rootModuleConf) {
+        for (IvyNodeUsage usage : usages) {
             updateDataFrom(usage, rootModuleConf);
         }
     }
@@ -184,39 +187,28 @@ public class IvyNodeUsage {
         updateMapOfSetForKey(usage.dependers, dependers, rootModuleConf);
     }
 
-    private void updateMapOfSet(Map from, Map to) {
-        for (Iterator iter = from.keySet().iterator(); iter.hasNext();) {
-            Object key = iter.next();
+    private <K, V> void updateMapOfSet(Map<K, Set<V>> from, Map<K, Set<V>> to) {
+        for (K key : from.keySet()) {
             updateMapOfSetForKey(from, to, key);
         }
     }
 
-    private void updateMapOfSetForKey(Map from, Map to, Object key) {
-        Set set = (Set) from.get(key);
+    private <K, V> void updateMapOfSetForKey(Map<K, Set<V>> from, Map<K, Set<V>> to, K key) {
+        Set<V> set = from.get(key);
         if (set != null) {
-            Set toupdate = (Set) to.get(key);
+            Set<V> toupdate = to.get(key);
             if (toupdate != null) {
                 toupdate.addAll(set);
             } else {
-                to.put(key, new HashSet(set));
+                to.put(key, new HashSet<V>(set));
             }
         }
     }
 
-    // protected void addDependencyArtifacts(String rootModuleConf,
-    // DependencyArtifactDescriptor[] dependencyArtifacts) {
-    // addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
-    // this.dependencyArtifacts);
-    // }
-    //
-    // protected void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
-    // addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
-    // }
-    //
-    private void addObjectsForConf(String rootModuleConf, Object objectToAdd, Map map) {
-        Set set = (Set) map.get(rootModuleConf);
+    private <K, V> void addObjectsForConf(K rootModuleConf, V objectToAdd, Map<K, Set<V>> map) {
+        Set<V> set = map.get(rootModuleConf);
         if (set == null) {
-            set = new HashSet();
+            set = new HashSet<V>();
             map.put(rootModuleConf, set);
         }
         set.add(objectToAdd);
@@ -226,14 +218,13 @@ public class IvyNodeUsage {
         addObjectsForConf(rootModuleConf, new Depender(dd, parentConf), dependers);
     }
 
-    protected Set getDependencyArtifactsSet(String rootModuleConf) {
-        Collection dependersInConf = (Collection) dependers.get(rootModuleConf);
+    protected Set<DependencyArtifactDescriptor> getDependencyArtifactsSet(String rootModuleConf) {
+        Collection<Depender> dependersInConf = dependers.get(rootModuleConf);
         if (dependersInConf == null) {
             return null;
         }
-        Set dependencyArtifacts = new HashSet();
-        for (Iterator iterator = dependersInConf.iterator(); iterator.hasNext();) {
-            Depender depender = (Depender) iterator.next();
+        Set<DependencyArtifactDescriptor> dependencyArtifacts = new HashSet<DependencyArtifactDescriptor>();
+        for (Depender depender : dependersInConf) {
             DependencyArtifactDescriptor[] dads = depender.dd
                     .getDependencyArtifacts(depender.dependerConf);
             dependencyArtifacts.addAll(Arrays.asList(dads));
@@ -241,14 +232,13 @@ public class IvyNodeUsage {
         return dependencyArtifacts;
     }
 
-    protected Set getDependencyIncludesSet(String rootModuleConf) {
-        Collection dependersInConf = (Collection) dependers.get(rootModuleConf);
+    protected Set<IncludeRule> getDependencyIncludesSet(String rootModuleConf) {
+        Collection<Depender> dependersInConf = dependers.get(rootModuleConf);
         if (dependersInConf == null) {
             return null;
         }
-        Set dependencyIncludes = new HashSet();
-        for (Iterator iterator = dependersInConf.iterator(); iterator.hasNext();) {
-            Depender depender = (Depender) iterator.next();
+        Set<IncludeRule> dependencyIncludes = new HashSet<IncludeRule>();
+        for (Depender depender : dependersInConf) {
             IncludeRule[] rules = depender.dd.getIncludeRules(depender.dependerConf);
             if (rules == null || rules.length == 0) {
                 // no include rule in at least one depender -> we must include everything,
@@ -293,7 +283,7 @@ public class IvyNodeUsage {
      * @return the blacklist data if any
      */
     protected IvyNodeBlacklist getBlacklistData(String rootModuleConf) {
-        return (IvyNodeBlacklist) blacklisted.get(rootModuleConf);
+        return blacklisted.get(rootModuleConf);
     }
 
     protected IvyNode getNode() {
@@ -310,12 +300,11 @@ public class IvyNodeUsage {
      *         the given root module conf, <code>false</code> otherwise.
      */
     public boolean hasTransitiveDepender(String rootModuleConf) {
-        Set/* <Depender> */dependersSet = (Set) dependers.get(rootModuleConf);
+        Set<Depender> dependersSet = dependers.get(rootModuleConf);
         if (dependersSet == null) {
             return false;
         }
-        for (Iterator iterator = dependersSet.iterator(); iterator.hasNext();) {
-            Depender depender = (Depender) iterator.next();
+        for (Depender depender : dependersSet) {
             if (depender.dd.isTransitive()) {
                 return true;
             }

@@ -22,13 +22,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.ivy.core.module.descriptor.Artifact;
+
 public final class FilterHelper {
     private FilterHelper() {
     }
 
-    public static final Filter NO_FILTER = NoFilter.INSTANCE;
+    public static final Filter<Artifact> NO_FILTER = NoFilter.instance();
 
-    public static Filter getArtifactTypeFilter(String types) {
+    public static Filter<Artifact> getArtifactTypeFilter(String types) {
         if (types == null || types.trim().equals("*")) {
             return NO_FILTER;
         }
@@ -36,11 +38,11 @@ public final class FilterHelper {
         return getArtifactTypeFilter(t);
     }
 
-    public static Filter getArtifactTypeFilter(String[] types) {
+    public static Filter<Artifact> getArtifactTypeFilter(String[] types) {
         if (types == null || types.length == 0) {
             return NO_FILTER;
         }
-        List acceptedTypes = new ArrayList(types.length);
+        List<String> acceptedTypes = new ArrayList<String>(types.length);
         for (int i = 0; i < types.length; i++) {
             String current = types[i].trim();
             if ("*".equals(current)) {
@@ -66,13 +68,13 @@ public final class FilterHelper {
      *         href="http://jakarta.apache.org/commons/collections/">Commons-Collections</a>
      *         facility for this. If we accepted to add dependencies on third party jars.
      */
-    public static Collection filter(Collection col, Filter filter) {
+    public static <T> Collection<T> filter(Collection<T> col, Filter<T> filter) {
         if (filter == null) {
             return col;
         }
-        Collection ret = new ArrayList(col);
-        for (Iterator iter = ret.iterator(); iter.hasNext();) {
-            Object element = iter.next();
+        Collection<T> ret = new ArrayList<T>(col);
+        for (Iterator<T> iter = ret.iterator(); iter.hasNext();) {
+            T element = iter.next();
             if (!filter.accept(element)) {
                 iter.remove();
             }

@@ -17,6 +17,6 @@
  */
 package org.apache.ivy.util.filter;
 
-public interface Filter {
-    boolean accept(Object o);
+public interface Filter<T> {
+    boolean accept(T o);
 }

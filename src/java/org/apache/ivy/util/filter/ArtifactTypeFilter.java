@@ -22,18 +22,14 @@ import java.util.Collection;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 
-public class ArtifactTypeFilter implements Filter {
-    private Collection acceptedTypes;
+public class ArtifactTypeFilter implements Filter<Artifact> {
+    private Collection<String> acceptedTypes;
 
-    public ArtifactTypeFilter(Collection acceptedTypes) {
-        this.acceptedTypes = new ArrayList(acceptedTypes);
+    public ArtifactTypeFilter(Collection<String> acceptedTypes) {
+        this.acceptedTypes = new ArrayList<String>(acceptedTypes);
     }
 
-    public boolean accept(Object o) {
-        if (!(o instanceof Artifact)) {
-            return false;
-        }
-        Artifact art = (Artifact) o;
+    public boolean accept(Artifact art) {
         return acceptedTypes.contains(art.getType());
     }
 }
