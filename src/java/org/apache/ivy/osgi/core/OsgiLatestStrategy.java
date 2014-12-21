@@ -21,10 +21,14 @@ import java.text.ParseException;
 import java.util.Comparator;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.ComparatorLatestStrategy;
+import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 public class OsgiLatestStrategy extends ComparatorLatestStrategy {
@@ -80,7 +84,54 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
                 return c >= 0 ? -1 : 1;
             }
 
-            return mridComparator.compare(mrid1, mrid2);
+            int res = mridComparator.compare(mrid1, mrid2);
+
+            if (res == 0) {
+                // if same requirements, maybe we can make a difference on the implementation ?
+                ModuleRevisionId implMrid1 = getImplMrid(o1);
+                ModuleRevisionId implMrid2 = getImplMrid(o2);
+                if (implMrid1 != null && implMrid2 != null) {
+                    if (implMrid1.getModuleId().equals(implMrid2.getModuleId())) {
+                        // same implementation, compare the versions
+                        res = mridComparator.compare(implMrid1, implMrid2);
+                    } else {
+                        // not same bundle
+                        // to keep a total order, compare module names even if it means nothing
+                        res = implMrid1.getModuleId().compareTo(implMrid2.getModuleId());
+                    }
+                }
+
+            }
+
+            return res;
+        }
+
+        /*
+         * In the resolve process, a resolved requirement is represented in a special way. Here we
+         * deconstruct the resolved resource to know which implementation is actually resolved. See
+         * AbstractOSGiResolver.buildResolvedCapabilityMd()
+         */
+        private ModuleRevisionId getImplMrid(ArtifactInfo o) {
+            if (!(o instanceof MDResolvedResource)) {
+                return null;
+            }
+            MDResolvedResource mdrr = (MDResolvedResource) o;
+            ResolvedModuleRevision rmr = mdrr.getResolvedModuleRevision();
+            if (rmr == null) {
+                return null;
+            }
+            ModuleDescriptor md = rmr.getDescriptor();
+            if (md == null) {
+                return null;
+            }
+            if (!md.getModuleRevisionId().getOrganisation().equals(BundleInfo.PACKAGE_TYPE)) {
+                return null;
+            }
+            DependencyDescriptor[] dds = md.getDependencies();
+            if (dds == null || dds.length != 1) {
+                return null;
+            }
+            return dds[0].getDependencyRevisionId();
         }
     }
 
