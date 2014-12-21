@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
+import org.apache.ivy.core.module.descriptor.WorkspaceModuleDescriptor;
 
 /**
  * Class collecting usage data for an IvyNode.
@@ -219,6 +220,10 @@ public class IvyNodeUsage {
     }
 
     protected Set<DependencyArtifactDescriptor> getDependencyArtifactsSet(String rootModuleConf) {
+        if (node.getDescriptor() instanceof WorkspaceModuleDescriptor) {
+            // for a module in the "workspace" artifacts will be actually declared by the resolver
+            return null;
+        }
         Collection<Depender> dependersInConf = dependers.get(rootModuleConf);
         if (dependersInConf == null) {
             return null;

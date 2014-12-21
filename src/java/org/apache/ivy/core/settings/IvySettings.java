@@ -76,6 +76,7 @@ import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.plugins.latest.WorkspaceLatestStrategy;
 import org.apache.ivy.plugins.lock.CreateFileLockStrategy;
 import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.lock.NIOFileLockStrategy;
@@ -92,10 +93,12 @@ import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.report.LogReportOutputter;
 import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
+import org.apache.ivy.plugins.resolver.AbstractWorkspaceResolver;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.ResolverSettings;
+import org.apache.ivy.plugins.resolver.WorkspaceChainResolver;
 import org.apache.ivy.plugins.signer.SignatureGenerator;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
@@ -206,6 +209,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private String defaultResolveMode = ResolveOptions.RESOLVEMODE_DEFAULT;
 
     private PackingRegistry packingRegistry = new PackingRegistry();
+
+    private AbstractWorkspaceResolver workspaceResolver;
 
     public IvySettings() {
         this(new IvyVariableContainerImpl());
@@ -879,9 +884,20 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         dictatorResolver = resolver;
     }
 
+    private DependencyResolver getDictatorResolver() {
+        if (dictatorResolver == null) {
+            return null;
+        }
+        if (workspaceResolver != null && !(dictatorResolver instanceof WorkspaceChainResolver)) {
+            dictatorResolver = new WorkspaceChainResolver(this, dictatorResolver, workspaceResolver);
+        }
+        return dictatorResolver;
+    }
+
     public synchronized DependencyResolver getResolver(ModuleRevisionId mrid) {
-        if (dictatorResolver != null) {
-            return dictatorResolver;
+        DependencyResolver r = getDictatorResolver();
+        if (r != null) {
+            return r;
         }
         String resolverName = getResolverName(mrid);
         return getResolver(resolverName);
@@ -892,22 +908,31 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized DependencyResolver getResolver(String resolverName) {
-        if (dictatorResolver != null) {
-            return dictatorResolver;
+        DependencyResolver r = getDictatorResolver();
+        if (r != null) {
+            return r;
         }
         DependencyResolver resolver = resolversMap.get(resolverName);
         if (resolver == null) {
             Message.error("unknown resolver " + resolverName);
         }
+        if (workspaceResolver != null && !(resolver instanceof WorkspaceChainResolver)) {
+            resolver = new WorkspaceChainResolver(this, resolver, workspaceResolver);
+            resolversMap.put(resolverName, resolver);
+        }
         return resolver;
     }
 
     public synchronized DependencyResolver getDefaultResolver() {
-        if (dictatorResolver != null) {
-            return dictatorResolver;
+        DependencyResolver r = getDictatorResolver();
+        if (r != null) {
+            return r;
         }
         if (defaultResolver == null) {
             defaultResolver = resolversMap.get(defaultResolverName);
+        }
+        if (workspaceResolver != null && !(defaultResolver instanceof WorkspaceChainResolver)) {
+            defaultResolver = new WorkspaceChainResolver(this, defaultResolver, workspaceResolver);
         }
         return defaultResolver;
     }
@@ -997,7 +1022,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if ("default".equals(name)) {
             return getDefaultLatestStrategy();
         }
-        return latestStrategies.get(name);
+        LatestStrategy strategy = latestStrategies.get(name);
+        if (workspaceResolver != null && !(strategy instanceof WorkspaceLatestStrategy)) {
+            strategy = new WorkspaceLatestStrategy(strategy);
+            latestStrategies.put(name, strategy);
+        }
+        return strategy;
     }
 
     public synchronized void addLatestStrategy(String name, LatestStrategy latest) {
@@ -1223,6 +1253,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public synchronized LatestStrategy getDefaultLatestStrategy() {
         if (defaultLatestStrategy == null) {
             defaultLatestStrategy = new LatestRevisionStrategy();
+        }
+        if (workspaceResolver != null
+                && !(defaultLatestStrategy instanceof WorkspaceLatestStrategy)) {
+            defaultLatestStrategy = new WorkspaceLatestStrategy(defaultLatestStrategy);
         }
         return defaultLatestStrategy;
     }
@@ -1499,5 +1533,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public PackingRegistry getPackingRegistry() {
         return packingRegistry;
+    }
+
+    public void addConfigured(AbstractWorkspaceResolver workspaceResolver) {
+        this.workspaceResolver = workspaceResolver;
+        if (workspaceResolver != null) {
+            workspaceResolver.setSettings(this);
+            DefaultRepositoryCacheManager cacheManager = new DefaultRepositoryCacheManager();
+            String cacheName = "workspace-resolver-cache-" + workspaceResolver.getName();
+            cacheManager.setBasedir(new File(getDefaultCache(), cacheName));
+            cacheManager.setCheckmodified(true);
+            cacheManager.setUseOrigin(true);
+            cacheManager.setName(cacheName);
+            addRepositoryCacheManager(cacheManager);
+            workspaceResolver.setCache(cacheName);
+        }
+
     }
 }
