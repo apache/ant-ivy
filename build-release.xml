@@ -232,8 +232,8 @@
 	</target>
 	
 	<target name="snapshot-src" depends="snapshot-metadata,all-doc">
-		<mkdir dir="${distrib.dir}"/>
-		<zip destfile="${distrib.dir}/${snapshot.full.name}-src.zip">
+		<mkdir dir="${distrib.dir}/dist/${build.version}"/>
+		<zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip">
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${src.dir}" prefix="${snapshot.full.name}/src/java"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
@@ -260,14 +260,15 @@
 
 			<zipfileset dir="${basedir}" includes="build.xml" fullpath="${snapshot.full.name}/build.xml"/>
 		</zip>
-		<tar destfile="${distrib.dir}/${snapshot.full.name}-src.tar.gz" 
+		<tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.tar.gz" 
 			compression="gzip" longfile="gnu">
-			<zipfileset src="${distrib.dir}/${snapshot.full.name}-src.zip"/>
+			<zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip"/>
 		</tar>
 	</target>
 	
 	<target name="snapshot-bin-without-dependencies" depends="snapshot-metadata, jar, all-doc">
-		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin.zip">
+		<mkdir dir="${distrib.dir}/dist/${build.version}"/>
+		<zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.zip">
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
@@ -281,16 +282,17 @@
 
 			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
 		</zip>
-		<tar destfile="${distrib.dir}/${snapshot.full.name}-bin.tar.gz" 
+		<tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.tar.gz" 
 			compression="gzip" longfile="gnu">
-			<zipfileset src="${distrib.dir}/${snapshot.full.name}-bin.zip"/>
+			<zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.zip"/>
 		</tar>
 	</target>
 
 	<target name="snapshot-bin-with-dependencies" depends="snapshot-metadata, jar, all-doc">
+		<mkdir dir="${distrib.dir}/dist/${build.version}"/>
 		<delete dir="${build.dir}/lib" />
 		<ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]" />
-		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin-with-deps.zip">
+		<zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin-with-deps.zip">
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
@@ -305,9 +307,9 @@
 
 			<zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar,bcpg-*.jar,bcprov*.jar" />
 		</zip>
-		<tar destfile="${distrib.dir}/${snapshot.full.name}-bin-with-deps.tar.gz" 
+		<tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin-with-deps.tar.gz" 
 			compression="gzip" longfile="gnu">
-			<zipfileset src="${distrib.dir}/${snapshot.full.name}-bin-with-deps.zip"/>
+			<zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin-with-deps.zip"/>
 		</tar>
 	</target>
 
@@ -355,7 +357,7 @@
 
 	<target name="snapshot-checksums">
 		<checksum algorithm="md5">
-			<fileset dir="${distrib.dir}">
+			<fileset dir="${distrib.dir}/dist/${build.version}">
 				<include name="*.pom"/>
 				<include name="*.jar"/>
 				<include name="*.zip"/>
@@ -363,7 +365,7 @@
 			</fileset>
 		</checksum>
 		<checksum algorithm="sha">
-			<fileset dir="${distrib.dir}">
+			<fileset dir="${distrib.dir}/dist/${build.version}">
 				<include name="*.pom"/>
 				<include name="*.jar"/>
 				<include name="*.zip"/>
