@@ -82,10 +82,10 @@ Be prepared to enter your passphrase several times if you use this script, gpg w
 
 To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See <a href="http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html">that page</a> to know how to process.
 
-<h3>8. Create the tag</h3>
+<h3>8. Create a signed tag</h3>
 As soon as you are happy with the artifacts to be released, it is time to tag the release
 <code>
-git tag 2.0.0-beta1
+git tag -s 2.0.0-beta1 -m 'Release Ivy 2.0.0-beta1'
 </code>
 
 And push the changes to the ASF repo
@@ -93,13 +93,28 @@ And push the changes to the ASF repo
 git push --tags 
 </code>
 
-<h3>Publish the release candidate</h3>
+<h3>9. Publish the release candidate</h3>
 
 All artifacts in <tt>build/distrib</tt> except the <tt>maven2</tt> folder needs to be published on the 'dist' svn of the ASF, in the <b>dev</b> part.
 
 The artifacts should be pushed in that svn folder: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION
 
-<h3>9. Call for a vote to approve the release</h3>
+<h3>10. Publish the Maven artifact to Nexus</h3>
+
+Having your GPG key ID, its password, your apache ID and the associated password, just launch ant and enter the information as required:
+<code>
+ant -f build-release.xml upload-nexus
+</code>
+
+Once uploaded, log in https://repository.apache.org/ with your prefered web browser (use your Apache ID).
+
+You should find there an <i>open</i> repository with the name of the form <tt>orgapacheant-XXXX</tt>. It should contain the Maven artifacts: the pom, the jar, the sources, the javadocs and the md5 and asc files.
+
+Now <i>close</i> the staging repository, with the description "Ivy 2.0.0-beta1". Closing means you finished the upload and some automatic checks will run. You can see them in the <i>Activity</i> tab of the repository.
+
+Once the checks passed, you can find in the <i>Summary</i> the URL of the staging repository. It will something like: https://repository.apache.org/content/repositories/orgapacheant-XXXX/
+
+<h3>11. Call for a vote to approve the release</h3>
 Cast a vote to approve the release on the dev@ant.apache.org mailing list.
 
 Here is an example:
@@ -108,9 +123,13 @@ Subject: [VOTE] Ivy ${version} Release
 
 I have built a release candidate for Ivy ${version}
 
-The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=commit;h=SHA1-OF-THE-TAG
+The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tag;h=refs/tags/2.0.0-beta1
 
-The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION@${svn-rev-of-the-check-in}
+The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION at revision ${svn-rev-of-the-check-in}
+
+The staging maven repository is availble there: https://repository.apache.org/content/repositories/orgapacheant-XXXX
+
+The Eclipse updatesite has been build there: https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivy-2.0.0.beta1_20141213170938/
 
 Do you vote for the release of these binaries?
 
@@ -121,7 +140,7 @@ Regards,
 
 ${me}, Ivy ${version} release manager
 </code>
-<h3>10. Publish the release</h3>
+<h3>12. Publish the release</h3>
 
 If the release is approved, it's now time to make it public. The artifacts in the <i>dev</i> part needs to be moved into the <i>release</i> one:
 <code>
@@ -130,7 +149,13 @@ $ svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.ap
 
 In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the <a href="http://archive.apache.org/dist/ant/ivy/">archive</a>. To do so, just use the <tt>svn rm</tt> command against the artifacts or folders to remove.
 
-<h3>11. Update the web site</h3>
+<h3>13. Promote the Maven staging repository</h3>
+
+Go log in https://repository.apache.org/ with your prefered web browser (use your Apache ID).
+
+Select the appropriate <tt>orgapacheant-XXXX</tt> repository and select the <i>Release</i> action.
+
+<h3>14. Update the web site</h3>
 
 It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
 
@@ -167,18 +192,21 @@ And once your happy with it, commit the changes in the source directory, and in 
 Tip: lot's of files might need to be 'added' to svn. An handy command to <tt>add</tt> any file which is not yet under version control is the following one:
 <code>svn add --force sources</code>
 
-<h3>12. Deploy the Eclipse updatesite</h3>
+<h3>15. Deploy the Eclipse updatesite</h3>
 
 If the Eclipse update site has already been prepared to include that new Ivy release, it is now needed to be deployed. Then follow the deployment instruction on <a href="http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html">that page</a>.
 
-<h3>13. Announce</h3>
+<h3>16. Announce</h3>
 Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org and announce@apache.org mailing lists.
 You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
-<h3>14. Update this doc</h3>
+
+<h3>17. Update this doc</h3>
 If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
-<h3>15. Merge your modifications back to the master if necessary.</h3>
+
+<h3>18. Merge your modifications back to the master if necessary.</h3>
 Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
-<h3>16. Prepare next release</h3>
+
+<h3>19. Prepare next release</h3>
 In the master branch, update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
 
 If the version just release is a final one (not an alpha, beta or rc), the list of changes should be emptied in doc/release-notes.html, and update there the next expected version. The announcement in the file should also be changed accordingly to the next expected version.
