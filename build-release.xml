@@ -236,7 +236,7 @@
 	    <exec executable="git" failonerror="true">
 	        <arg line="clone ${basedir} ${build.dir}/snapshot-src" />
 	    </exec>
-	    <exec dir="${basedir}" executable="git" failonerror="true">
+	    <exec dir="${build.dir}/snapshot-src" executable="git" failonerror="true">
 	        <arg line="clean -d -x -f" />
 	    </exec>
 		<mkdir dir="${distrib.dir}/dist/${build.version}"/>
