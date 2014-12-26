@@ -231,34 +231,17 @@
 		    status="${status}"/>
 	</target>
 	
-	<target name="snapshot-src" depends="snapshot-metadata,all-doc">
+	<target name="snapshot-src" depends="init-snapshot">
+	    <delete dir="${build.dir}/snapshot-src" failonerror="false" />
+	    <exec executable="git" failonerror="true">
+	        <arg line="clone ${basedir} ${build.dir}/snapshot-src" />
+	    </exec>
+	    <exec dir="${basedir}" executable="git" failonerror="true">
+	        <arg line="clean -d -x -f" />
+	    </exec>
 		<mkdir dir="${distrib.dir}/dist/${build.version}"/>
 		<zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip">
-			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
-			<zipfileset dir="${src.dir}" prefix="${snapshot.full.name}/src/java"/>
-			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
-			<zipfileset dir="${basedir}/src/etc" prefix="${snapshot.full.name}/src/etc"/>
-			<zipfileset dir="${test.dir}" prefix="${snapshot.full.name}/test/java"/>
-            <zipfileset dir="${basedir}/test/test-obr" prefix="${snapshot.full.name}/test/test-obr" />
-            <zipfileset dir="${basedir}/test/test-p2" prefix="${snapshot.full.name}/test/test-p2" />
-            <zipfileset dir="${basedir}/test/test-repo" prefix="${snapshot.full.name}/test/test-repo" excludes="**/bundlerepo/*.jar,**/ivyrepo/org*" />
-            <zipfileset dir="${basedir}/test/repositories" prefix="${snapshot.full.name}/test/repositories"/>
-			<zipfileset dir="${basedir}/test/buildlist" prefix="${snapshot.full.name}/test/buildlist"/>
-			<zipfileset dir="${basedir}/test/triggers" prefix="${snapshot.full.name}/test/triggers" excludes="**/cache/**"/>
-			<zipfileset dir="${basedir}/test/xsl" prefix="${snapshot.full.name}/test/xsl"/>
-			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
-			<zipfileset dir="${basedir}" includes="META-INF/MANIFEST.MF" fullpath="${snapshot.full.name}/META-INF/MANIFEST.MF"/>
-			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
-			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
-			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
-			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
-			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="${snapshot.full.name}/RELEASE_NOTES"/>
-			<zipfileset dir="${basedir}" includes="build.properties" fullpath="${snapshot.full.name}/build.properties"/>
-			<zipfileset dir="${basedir}" includes="ant.patterns" fullpath="${snapshot.full.name}/ant.patterns"/>
-			<zipfileset dir="${basedir}" includes="optional.patterns" fullpath="${snapshot.full.name}/optional.patterns"/>
-			<zipfileset dir="${artifacts.build.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
-
-			<zipfileset dir="${basedir}" includes="build.xml" fullpath="${snapshot.full.name}/build.xml"/>
+			<zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" />
 		</zip>
 		<tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.tar.gz" 
 			compression="gzip" longfile="gnu">
