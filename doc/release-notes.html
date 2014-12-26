@@ -29,19 +29,18 @@
 <h2>Announcement</h2>
 
 <pre>
-December 21, 2014 - The Apache Ivy project is pleased to announce its 2.4.0 release.
+December 21, 2015 - The Apache Ivy project is pleased to announce its 2.5.0 release.
  
 Apache Ivy is a tool for managing (recording, tracking, resolving and
 reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
-Key features of this 2.4.0 release are
-* some new Ant tasks
-* improved OSGI support
-* a Bintray resolver
-* numerous bug fixes as documented in Jira and in the release notes
- 
-You can download this 2.4.0 release at:
+Key features of this 2.5.0 release are
+* TODO
+* TODO
+* TODO
+
+You can download this 2.5.0 release at:
 http://ant.apache.org/ivy/download.cgi
  
 Issues should be reported to:
@@ -56,57 +55,14 @@ http://ant.apache.org/ivy/
 For details about the following changes, check our JIRA install at 
 http://issues.apache.org/jira/browse/ivy
  
-List of changes since Ivy 2.3.0:
+List of changes since Ivy 2.4.0:
 
-- NEW: the buildobr task can now work a set of resolved artifacts: useful for managing an OSGi target platform
-- NEW: fixdeps task: serializes transitively resolved dependencies into an ivy.xml file
-- NEW: IvyDependencyTree task : display a dependency tree on the console
-- NEW: Support Conditional Setting of a Property (IVY-1367)
-- NEW: Exposing some parent metadata (organisation, module, revision, branch) as properties (IVY-1288)
-- NEW: symlinkmass feature based on symlink feature of ivy:retrieve (IVY-1252) (Thanks to Gene Smith)
-- NEW: Agent authentication for SSH and SFTP transports (IVY-1421)
-- NEW: New OSGi resolver 'osgi-agg': a chain resolver dedicated to better handle OSGi dependencies
-- NEW: Add support for "packed" artifacts: .pack.gz bundles in an OSGi P2 repository for instance
-- NEW: Ivy Bintray resolver (IVY-1474) (Thanks to Evgeny Goldin)
-
-- IMPROVEMENT: Generate POMs with /xsd/maven-4.0.0.xsd reference instead of old /maven-v4_0_0.xsd (IVY-1491) (thanks to Hervé Boutemy)
-- IMPROVEMENT: Add support for packed jar within an OSGi bundle
-- IMPROVEMENT: ModuleRules.getRule is O(n) leading to resolution slowness (IVY-1465) (Thanks to Zhong Wang aka Kewpie)
-- IMPROVEMENT: ivy:makepom will generate an exclusion when transitive=false on a dependency (IVY-1470)
-- IMPROVEMENT: New LockStrategy available based on NIO FileLocks (IVY-1424)
-- IMPROVEMENT: Optional <include> ivysettings directives (IVY-1392) (thanks to Yanus Poluektovich)
-- IMPROVEMENT: add support for source bundles from p2 repositories
-- IMPROVEMENT: add support for source URI from OBR repositories
-- IMPROVEMENT: Also copy original metadata artifact (e.g. POM) on ivy:install (IVY-1431) (Thanks to Erwin Tratar)
-- IMPROVEMENT: useOrigin will do avoid copy with url resolvers configured with a 'file:/' URL
-- IMPROVEMENT: add support for source artifacts in buildobr task
-- IMPROVEMENT: add possibility to configure the User-Agent http header by setting a property http.agent (Thanks to Tony Likhite)
- 
-- FIX: impossible to get artifacts when data has not been loaded. (IVY-1399) (Thanks to David Turner)
-- FIX: regression introduced by IVY-1457, dependency management wasn't properly handled introducing lots of resolution failures
-- FIX: The SSH resolvers fails if the un-required jsch jar is missing (IVY-1471)
-- FIX: failed to resolve dynamic revisions in some cases for URL repositories (IVY-1472)
-- FIX: ClassCastException in Eclipse 4.4.1 (IVY-1487) (Thanks to Carsten Pfeiffer)
-- FIX: NullPointerException when accessing charset to invalid URL (IVY-1452) (Thanks to Frédéric Riviere)
-- FIX: Can't resolve wildcard dependencies when remote artifact server does not set content-type header (IVY-1493) (Thanks to Andrew Bernhagen)
-- FIX: In IvyDE, Ivy fails to parse ivy-settings.xml file if it contains <pgp> element (thanks to Gregory Amerson) (IVY-1441)
-- FIX: ParseException when "Bundle-Description" is present in OSGi MANIFEST.MF (IVY-1438)
-- FIX: NIO FileLocker released locks too early (IVY-1424) (thanks to Charles Duffy)
-- FIX: Ssh Resolver doesn't work with Java 7 (IVY-1408) (thanks to Mykhailo Delegan)
-- FIX: Parsing publication date in Ant tasks not thread-safe (IVY-1412)
-- FIX: NullPointerException when using httpclient and server doesn't return content-type header (IVY-1400) (thanks to Frederic Riviere)
-- FIX: Properly handle evicted nodes in ResolveReport
-- FIX: Artifact repository locking did not correctly handle threaded use (IVY-1454) (thanks to Carsten Pfeiffer)
-- FIX: Better support for "Bundle-RequiredExecutionEnvironment" from an OSGi MANIFEST.MF
-- FIX: When inheriting a module descriptor, also merge the exclude rules
-- FIX: Correct application of mediators (ie. override) during conflict resolution (IVY-1455)
-- FIX: Fix revision number mapping across namespaces (IVY-1423)
-- FIX: fix a NPE when loading a composite P2 repository with no children
-- FIX: fix missing configuration when fixdeps is used with a partial resolve
-- FIX: XmlModuleDescriptorWritter doesn't support fully extra infos elements (IVY-1457)
- 
-- DOCUMENTATION: Broken link in <dependency> documentation (IVY-1405)
-- DOCUMENTATION: Explicitly document that threaded use is not supported.
+<!-- Samples :
+- NEW: bla bla bla (IVY-1234) (Thanks to Jane Doe)
+- IMPROVEMENT: bla bla bla (IVY-1234) (Thanks to Jane Doe)
+- FIX: bla bla bla (IVY-1234) (Thanks to Jane Doe)
+- DOCUMENTATION: bla bla bla (IVY-1234) (Thanks to Jane Doe)
+-->
 
 <h2>Committers and Contributors</h2>
 
