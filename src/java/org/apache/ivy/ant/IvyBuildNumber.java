@@ -19,6 +19,7 @@ package org.apache.ivy.ant;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -169,25 +170,32 @@ public class IvyBuildNumber extends IvyTask {
                 if (expression.equals(organisation) || expression.equals(module)
                         || expression.equals(branch)) {
                     return exact.getMatcher(expression);
+                } else {
+                    return regexp.getMatcher(expression);
                 }
-                return regexp.getMatcher(expression);
             }
 
             public String getName() {
                 return "buildnumber-matcher";
             }
         };
+
+        String revisionPattern = ".*";
+        if (revision.endsWith("+")) {
+            revisionPattern = Pattern.quote(revision.substring(0, revision.length() - 1)) + ".*";
+        }
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, branch,
+            revisionPattern);
         ModuleRevisionId[] revisions;
         if (resolver == null) {
-            revisions = searcher.listModules(
-                ModuleRevisionId.newInstance(organisation, module, branch, ".*"), patternMatcher);
+            revisions = searcher.listModules(mrid, patternMatcher);
         } else {
             DependencyResolver depResolver = settings.getResolver(resolver);
             if (depResolver == null) {
                 throw new BuildException("Unknown resolver: " + resolver);
             }
-            revisions = searcher.listModules(depResolver,
-                ModuleRevisionId.newInstance(organisation, module, branch, ".*"), patternMatcher);
+            revisions = searcher.listModules(depResolver, mrid, patternMatcher);
         }
 
         ArtifactInfo[] infos = new ArtifactInfo[revisions.length];
