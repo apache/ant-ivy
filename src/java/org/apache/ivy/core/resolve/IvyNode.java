@@ -916,7 +916,7 @@ public class IvyNode implements Comparable<IvyNode> {
         Collection<Artifact> ret = new ArrayList<Artifact>();
         for (Entry<ArtifactId, Artifact> entry : allArtifacts.entrySet()) {
             if (MatcherHelper.matches(rule.getMatcher(), rule.getId(), entry.getKey())) {
-                ret.add(allArtifacts.get(entry.getValue()));
+                ret.add(entry.getValue());
             }
         }
         return ret;
