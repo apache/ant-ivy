@@ -1,0 +1,87 @@
+doctype transitional
+/!
+/!   Licensed to the Apache Software Foundation (ASF) under one
+/!   or more contributor license agreements.  See the NOTICE file
+/!   distributed with this work for additional information
+/!   regarding copyright ownership.  The ASF licenses this file
+/!   to you under the Apache License, Version 2.0 (the
+/!   "License"); you may not use this file except in compliance
+/!   with the License.  You may obtain a copy of the License at
+/!
+/!     http://www.apache.org/licenses/LICENSE-2.0
+/!
+/!   Unless required by applicable law or agreed to in writing,
+/!   software distributed under the License is distributed on an
+/!   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+/!   KIND, either express or implied.  See the License for the
+/!   specific language governing permissions and limitations
+/!   under the License.
+- page = IvyDocHelpers.page(attr("basedir"), attr("docfile"))
+html lang=(attr :lang, 'en' unless attr? :nolang)
+  head
+    meta http-equiv="Content-Type" content="text/html; charset=utf-8"
+    meta name='generator' content="Asciidoctor #{attr 'asciidoctor-version'}"
+    title=((doctitle :sanitize => true) || (attr 'untitled-label'))
+    link rel="stylesheet" type="text/css" href="#{page.relativeRoot}style/style.css"
+    script src="#{page.relativeRoot}js/jquery.pack.js" type="text/javascript"
+    script src="#{page.relativeRoot}js/jquery.treeview.js" type="text/javascript"
+    javascript:
+      $(document).ready(function(){$("#treemenu").Treeview({speed: "fast",store: true});});
+  body
+    div id="body"
+      table id="header" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%"
+        tr
+          td id="home" width="30%"
+            a href="http://ant.apache.org/" title="Apache Ant"
+              img src="#{page.relativeRoot}images/ant-group-logo.gif" alt="Apache Ant" border="0"/
+          td class="product" width="70%" align="right" valign="middle"
+            img src="#{page.relativeRoot}images/logo.png" alt="ivy" border="0"/
+      table id="top-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%"
+        tr
+          td
+            div id="navcontainer"
+              a<> href="http://www.apache.org/" Apache&#153;
+              | &gt;
+              a<> href="http://ant.apache.org/" Apache Ant&#153;
+              | &gt;
+              a<> href="http://ant.apache.org/ivy/" Apache Ivy&#153;
+              | &gt;
+              = page.breadCrumb
+      table id="content" border="0" cellpadding="0" cellspacing="0" width="100%"
+        tr
+          td id="sidebar-left"
+            div class="block block-book" id="block-book-0"
+            h2 Apache Ivy&#153;
+            div class="content"
+              = page.menu()
+              center
+                iframe src="http://www.apache.org/ads/buttonbar.html" style="border-width:0;" frameborder="0" scrolling="no" width="135" height="265"
+          td valign="top"
+            div id="main"
+              h1 class="title" = page.title
+              #content=content
+      table id="footer-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%"
+        tr
+          td align="center" valign="middle"
+            div class="primary-links"
+              | ::
+              a href="index.html" Home
+              | ::
+              a href="reference.html" Reference
+              | ::
+              a href="tutorial.html" Tutorials
+              | ::
+              a href="dev.html" Developer's doc
+              | ::
+      div id="footer-message" class="footer"
+        hr/
+        i
+          | Copyright &#169; 2014 The Apache Software Foundation, Licensed under the
+          a href="http://www.apache.org/licenses/LICENSE-2.0.txt" Apache License, Version 2.0
+          | .
+        br/
+        i
+          | Apache Ivy, Apache Ant, Ivy, Ant, Apache, the Apache Ivy logo, the Apache Ant logo and the Apache feather logo are trademarks of The Apache Software Foundation.
+        br/
+        i
+          | All other marks mentioned may be trademarks or registered trademarks of their respective owners.
