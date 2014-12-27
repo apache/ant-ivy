@@ -30,6 +30,7 @@
 	<classpathentry kind="lib" path="lib/commons-vfs.jar"/>
 	<classpathentry kind="lib" path="lib/jsch.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/xmlunit.jar"/>
 	<classpathentry kind="lib" path="lib/oro.jar"/>
 	<classpathentry kind="lib" path="lib/bcpg-jdk14.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk14.jar"/>

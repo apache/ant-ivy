@@ -25,8 +25,6 @@ import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -37,8 +35,9 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParserTest;
 import org.apache.ivy.util.FileUtil;
+import org.custommonkey.xmlunit.XMLTestCase;
 
-public class XmlModuleDescriptorWriterTest extends TestCase {
+public class XmlModuleDescriptorWriterTest extends XMLTestCase {
     private static String LICENSE;
     static {
         try {
@@ -155,7 +154,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
 
         String expected = readEntirely("test-write-extrainfo-from-maven.xml").replaceAll("\r\n",
             "\n").replace('\r', '\n');
-        assertEquals(expected, wrote);
+        assertXMLEqual(expected, wrote);
     }
 
     public void testExtends() throws Exception {
