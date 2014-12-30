@@ -66,6 +66,7 @@ public class P2CompositeParser implements XMLInputParser {
         public RepositoryHandler() {
             super(REPOSITORY);
             addChild(new ChildrenHandler(), new ChildElementHandler<ChildrenHandler>() {
+                @Override
                 public void childHanlded(ChildrenHandler child) {
                     childLocations = child.childLocations;
                 }
@@ -89,12 +90,14 @@ public class P2CompositeParser implements XMLInputParser {
         public ChildrenHandler() {
             super(CHILDREN);
             addChild(new ChildHandler(), new ChildElementHandler<ChildHandler>() {
+                @Override
                 public void childHanlded(ChildHandler child) {
                     childLocations.add(child.location);
                 }
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
             childLocations = new ArrayList<String>(size);
@@ -114,6 +117,7 @@ public class P2CompositeParser implements XMLInputParser {
             super(CHILD);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             location = atts.getValue(LOCATION);
         }

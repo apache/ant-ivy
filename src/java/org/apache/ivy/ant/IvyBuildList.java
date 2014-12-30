@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -66,7 +65,7 @@ public class IvyBuildList extends IvyTask {
 
     public static final String DESCRIPTOR_REQUIRED = "required";
 
-    private List buildFileSets = new ArrayList(); // List (FileSet)
+    private List<FileSet> buildFileSets = new ArrayList<FileSet>();
 
     private String reference;
 
@@ -152,6 +151,7 @@ public class IvyBuildList extends IvyTask {
         this.onlydirectdep = onlydirectdep;
     }
 
+    @Override
     public void doExecute() throws BuildException {
         if (reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
@@ -168,12 +168,12 @@ public class IvyBuildList extends IvyTask {
 
         Path path = new Path(getProject());
 
-        Map buildFiles = new HashMap(); // Map (ModuleDescriptor -> File buildFile)
-        List independent = new ArrayList();
-        List noDescriptor = new ArrayList();
-        Collection mds = new ArrayList();
+        Map<ModuleDescriptor, File> buildFiles = new HashMap<ModuleDescriptor, File>();
+        List<File> independent = new ArrayList<File>();
+        List<File> noDescriptor = new ArrayList<File>();
+        Collection<ModuleDescriptor> mds = new ArrayList<ModuleDescriptor>();
 
-        Set rootModuleNames = new LinkedHashSet();
+        Set<String> rootModuleNames = new LinkedHashSet<String>();
         if (!"*".equals(root)) {
             StringTokenizer st = new StringTokenizer(root, delimiter);
             while (st.hasMoreTokens()) {
@@ -181,7 +181,7 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        Set leafModuleNames = new LinkedHashSet();
+        Set<String> leafModuleNames = new LinkedHashSet<String>();
         if (!"*".equals(leaf)) {
             StringTokenizer st = new StringTokenizer(leaf, delimiter);
             while (st.hasMoreTokens()) {
@@ -189,15 +189,14 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        Set restartFromModuleNames = new LinkedHashSet();
+        Set<String> restartFromModuleNames = new LinkedHashSet<String>();
         if (!"*".equals(restartFrom)) {
             StringTokenizer st = new StringTokenizer(restartFrom, delimiter);
             // Only accept one (first) module
             restartFromModuleNames.add(st.nextToken());
         }
 
-        for (ListIterator iter = buildFileSets.listIterator(); iter.hasNext();) {
-            FileSet fs = (FileSet) iter.next();
+        for (FileSet fs : buildFileSets) {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             String[] builds = ds.getIncludedFiles();
             for (int i = 0; i < builds.length; i++) {
@@ -228,12 +227,12 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        List leafModuleDescriptors = convertModuleNamesToModuleDescriptors(mds, leafModuleNames,
-            "leaf");
-        List rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mds, rootModuleNames,
-            "root");
-        List restartFromModuleDescriptors = convertModuleNamesToModuleDescriptors(mds,
-            restartFromModuleNames, "restartFrom");
+        List<ModuleDescriptor> leafModuleDescriptors = convertModuleNamesToModuleDescriptors(mds,
+            leafModuleNames, "leaf");
+        List<ModuleDescriptor> rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mds,
+            rootModuleNames, "root");
+        List<ModuleDescriptor> restartFromModuleDescriptors = convertModuleNamesToModuleDescriptors(
+            mds, restartFromModuleNames, "restartFrom");
 
         if (!rootModuleDescriptors.isEmpty()) {
             Message.info("Filtering modules based on roots " + rootModuleNames);
@@ -244,16 +243,14 @@ public class IvyBuildList extends IvyTask {
             mds = filterModulesFromLeaf(mds, leafModuleDescriptors);
         }
 
-        List sortedModules = ivy.sortModuleDescriptors(mds, SortOptions.DEFAULT);
+        List<ModuleDescriptor> sortedModules = ivy.sortModuleDescriptors(mds, SortOptions.DEFAULT);
 
         if (!OnMissingDescriptor.TAIL.equals(onMissingDescriptor)) {
-            for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
-                File buildFile = (File) iter.next();
+            for (File buildFile : noDescriptor) {
                 addBuildFile(path, buildFile);
             }
         }
-        for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
-            File buildFile = (File) iter.next();
+        for (File buildFile : independent) {
             addBuildFile(path, buildFile);
         }
         if (isReverse()) {
@@ -264,11 +261,9 @@ public class IvyBuildList extends IvyTask {
         // so they are not removed from build path.
         if (!restartFromModuleDescriptors.isEmpty()) {
             boolean foundRestartFrom = false;
-            List keptModules = new ArrayList();
-            ModuleDescriptor restartFromModuleDescriptor = (ModuleDescriptor) restartFromModuleDescriptors
-                    .get(0);
-            for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
-                ModuleDescriptor md = (ModuleDescriptor) iter.next();
+            List<ModuleDescriptor> keptModules = new ArrayList<ModuleDescriptor>();
+            ModuleDescriptor restartFromModuleDescriptor = restartFromModuleDescriptors.get(0);
+            for (ModuleDescriptor md : sortedModules) {
                 if (md.equals(restartFromModuleDescriptor)) {
                     foundRestartFrom = true;
                 }
@@ -279,18 +274,17 @@ public class IvyBuildList extends IvyTask {
             sortedModules = keptModules;
         }
         StringBuffer order = new StringBuffer();
-        for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
-            ModuleDescriptor md = (ModuleDescriptor) iter.next();
+        for (ListIterator<ModuleDescriptor> iter = sortedModules.listIterator(); iter.hasNext();) {
+            ModuleDescriptor md = iter.next();
             order.append(md.getModuleRevisionId().getModuleId());
             if (iter.hasNext()) {
                 order.append(", ");
             }
-            File buildFile = (File) buildFiles.get(md);
+            File buildFile = buildFiles.get(md);
             addBuildFile(path, buildFile);
         }
         if (OnMissingDescriptor.TAIL.equals(onMissingDescriptor)) {
-            for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
-                File buildFile = (File) iter.next();
+            for (File buildFile : noDescriptor) {
                 addBuildFile(path, buildFile);
             }
         }
@@ -299,7 +293,7 @@ public class IvyBuildList extends IvyTask {
         getProject().setProperty("ivy.sorted.modules", order.toString());
     }
 
-    private void onMissingDescriptor(File buildFile, File ivyFile, List noDescriptor) {
+    private void onMissingDescriptor(File buildFile, File ivyFile, List<File> noDescriptor) {
         if (OnMissingDescriptor.SKIP.equals(onMissingDescriptor)) {
             Message.debug("skipping " + buildFile + ": descriptor " + ivyFile + " doesn't exist");
         } else if (OnMissingDescriptor.FAIL.equals(onMissingDescriptor)) {
@@ -323,12 +317,12 @@ public class IvyBuildList extends IvyTask {
         }
     }
 
-    private List convertModuleNamesToModuleDescriptors(Collection mds, Set moduleNames, String kind) {
-        List result = new ArrayList();
-        Set foundModuleNames = new HashSet();
+    private List<ModuleDescriptor> convertModuleNamesToModuleDescriptors(
+            Collection<ModuleDescriptor> mds, Set<String> moduleNames, String kind) {
+        List<ModuleDescriptor> result = new ArrayList<ModuleDescriptor>();
+        Set<String> foundModuleNames = new HashSet<String>();
 
-        for (Iterator it = mds.iterator(); it.hasNext();) {
-            ModuleDescriptor md = (ModuleDescriptor) it.next();
+        for (ModuleDescriptor md : mds) {
             String name = md.getModuleRevisionId().getModuleId().getName();
             if (moduleNames.contains(name)) {
                 foundModuleNames.add(name);
@@ -337,14 +331,14 @@ public class IvyBuildList extends IvyTask {
         }
 
         if (foundModuleNames.size() < moduleNames.size()) {
-            Set missingModules = new HashSet(moduleNames);
+            Set<String> missingModules = new HashSet<String>(moduleNames);
             missingModules.removeAll(foundModuleNames);
 
             StringBuffer missingNames = new StringBuffer();
             String sep = "";
-            for (Iterator it = missingModules.iterator(); it.hasNext();) {
+            for (String name : missingModules) {
                 missingNames.append(sep);
-                missingNames.append(it.next());
+                missingNames.append(name);
                 sep = ", ";
             }
 
@@ -365,20 +359,17 @@ public class IvyBuildList extends IvyTask {
      *            root module
      * @return filtered list of modules
      */
-    private Collection filterModulesFromRoot(Collection mds, List rootmds) {
-        // Make a map of ModuleId objects -> ModuleDescriptors
-        Map moduleIdMap = new HashMap();
-        for (Iterator iter = mds.iterator(); iter.hasNext();) {
-            ModuleDescriptor md = ((ModuleDescriptor) iter.next());
+    private Collection<ModuleDescriptor> filterModulesFromRoot(Collection<ModuleDescriptor> mds,
+            List<ModuleDescriptor> rootmds) {
+        Map<ModuleId, ModuleDescriptor> moduleIdMap = new HashMap<ModuleId, ModuleDescriptor>();
+        for (ModuleDescriptor md : mds) {
             moduleIdMap.put(md.getModuleRevisionId().getModuleId(), md);
         }
 
         // recursively process the nodes
-        Set toKeep = new LinkedHashSet();
+        Set<ModuleDescriptor> toKeep = new LinkedHashSet<ModuleDescriptor>();
 
-        Iterator it = rootmds.iterator();
-        while (it.hasNext()) {
-            ModuleDescriptor rootmd = (ModuleDescriptor) it.next();
+        for (ModuleDescriptor rootmd : rootmds) {
             processFilterNodeFromRoot(rootmd, toKeep, moduleIdMap);
             // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
             if (excludeRoot) {
@@ -391,8 +382,7 @@ public class IvyBuildList extends IvyTask {
         }
 
         // just for logging
-        for (Iterator iter = toKeep.iterator(); iter.hasNext();) {
-            ModuleDescriptor md = ((ModuleDescriptor) iter.next());
+        for (ModuleDescriptor md : toKeep) {
             Message.verbose("Kept module " + md.getModuleRevisionId().getModuleId().getName());
         }
 
@@ -411,13 +401,14 @@ public class IvyBuildList extends IvyTask {
      * @param moduleIdMap
      *            reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
      */
-    private void processFilterNodeFromRoot(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
+    private void processFilterNodeFromRoot(ModuleDescriptor node, Set<ModuleDescriptor> toKeep,
+            Map<ModuleId, ModuleDescriptor> moduleIdMap) {
         // toKeep.add(node);
 
         DependencyDescriptor[] deps = node.getDependencies();
         for (int i = 0; i < deps.length; i++) {
             ModuleId id = deps[i].getDependencyId();
-            ModuleDescriptor md = (ModuleDescriptor) moduleIdMap.get(id);
+            ModuleDescriptor md = moduleIdMap.get(id);
             // we test if this module id has a module descriptor, and if it isn't already in the
             // toKeep Set, in which there's probably a circular dependency
             if (md != null && !toKeep.contains(md)) {
@@ -439,19 +430,16 @@ public class IvyBuildList extends IvyTask {
      *            leaf module
      * @return filtered list of modules
      */
-    private Collection filterModulesFromLeaf(Collection mds, List leafmds) {
-        // Make a map of ModuleId objects -> ModuleDescriptors
-        Map moduleIdMap = new HashMap();
-        for (Iterator iter = mds.iterator(); iter.hasNext();) {
-            ModuleDescriptor md = ((ModuleDescriptor) iter.next());
+    private Collection<ModuleDescriptor> filterModulesFromLeaf(Collection<ModuleDescriptor> mds,
+            List<ModuleDescriptor> leafmds) {
+        Map<ModuleId, ModuleDescriptor> moduleIdMap = new HashMap<ModuleId, ModuleDescriptor>();
+        for (ModuleDescriptor md : mds) {
             moduleIdMap.put(md.getModuleRevisionId().getModuleId(), md);
         }
 
         // recursively process the nodes
-        Set toKeep = new LinkedHashSet();
-        Iterator it = leafmds.iterator();
-        while (it.hasNext()) {
-            ModuleDescriptor leafmd = (ModuleDescriptor) it.next();
+        Set<ModuleDescriptor> toKeep = new LinkedHashSet<ModuleDescriptor>();
+        for (ModuleDescriptor leafmd : leafmds) {
             // With the excludeleaf attribute set to true, take the rootmd out of the toKeep set.
             if (excludeLeaf) {
                 Message.verbose("Excluded module "
@@ -463,8 +451,7 @@ public class IvyBuildList extends IvyTask {
         }
 
         // just for logging
-        for (Iterator iter = toKeep.iterator(); iter.hasNext();) {
-            ModuleDescriptor md = ((ModuleDescriptor) iter.next());
+        for (ModuleDescriptor md : toKeep) {
             Message.verbose("Kept module " + md.getModuleRevisionId().getModuleId().getName());
         }
 
@@ -482,9 +469,9 @@ public class IvyBuildList extends IvyTask {
      * @param moduleIdMap
      *            reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
      */
-    private void processFilterNodeFromLeaf(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
-        for (Iterator iter = moduleIdMap.values().iterator(); iter.hasNext();) {
-            ModuleDescriptor md = (ModuleDescriptor) iter.next();
+    private void processFilterNodeFromLeaf(ModuleDescriptor node, Set<ModuleDescriptor> toKeep,
+            Map<ModuleId, ModuleDescriptor> moduleIdMap) {
+        for (ModuleDescriptor md : moduleIdMap.values()) {
             DependencyDescriptor[] deps = md.getDependencies();
             for (int i = 0; i < deps.length; i++) {
                 ModuleId id = deps[i].getDependencyId();

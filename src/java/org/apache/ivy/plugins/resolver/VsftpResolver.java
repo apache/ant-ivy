@@ -28,6 +28,7 @@ public class VsftpResolver extends RepositoryResolver {
         setRepository(new VsftpRepository());
     }
 
+    @Override
     public String getTypeName() {
         return "vsftp";
     }

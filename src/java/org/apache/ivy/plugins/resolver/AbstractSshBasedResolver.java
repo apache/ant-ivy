@@ -143,5 +143,6 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
         getSshBasedRepository().setPort(port);
     }
 
+    @Override
     public abstract String getTypeName();
 }

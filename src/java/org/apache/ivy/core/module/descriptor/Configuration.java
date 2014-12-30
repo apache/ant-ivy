@@ -52,14 +52,15 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
             this.name = name;
         }
 
+        @Override
         public String toString() {
             return name;
         }
     }
 
-    public static Collection/* <Configuration> */findConfigurationExtending(String conf,
+    public static Collection<Configuration> findConfigurationExtending(String conf,
             Configuration[] confs) {
-        Collection extendingConfs = new ArrayList();
+        Collection<Configuration> extendingConfs = new ArrayList<Configuration>();
         for (int i = 0; i < confs.length; i++) {
             if (confs[i] != null && Arrays.asList(confs[i].getExtends()).contains(conf)) {
                 extendingConfs.add(confs[i]);
@@ -120,9 +121,9 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
         this(null, null, name, visibility, description, ext, transitive, deprecated, null);
     }
 
-    private Configuration(Map attributes, Map extraAttributes, String name, Visibility visibility,
-            String description, String[] ext, boolean transitive, String deprecated,
-            ModuleRevisionId sourceModule) {
+    private Configuration(Map<String, String> attributes, Map<String, String> extraAttributes,
+            String name, Visibility visibility, String description, String[] ext,
+            boolean transitive, String deprecated, ModuleRevisionId sourceModule) {
         super(attributes, extraAttributes);
 
         if (name == null) {
@@ -195,10 +196,12 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
         return sourceModule;
     }
 
+    @Override
     public String toString() {
         return name;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Configuration)) {
             return false;
@@ -206,6 +209,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
         return ((Configuration) obj).getName().equals(getName());
     }
 
+    @Override
     public int hashCode() {
         return getName().hashCode();
     }
@@ -218,7 +222,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
         Configuration[] configs = md.getConfigurations();
 
-        Set newExtends = new LinkedHashSet();
+        Set<String> newExtends = new LinkedHashSet<String>();
         for (int j = 0; j < extendsFrom.length; j++) {
             if ("*".equals(extendsFrom[j])) {
                 addOther(configs, null, newExtends);
@@ -231,10 +235,10 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
             }
         }
 
-        this.extendsFrom = (String[]) newExtends.toArray(new String[newExtends.size()]);
+        this.extendsFrom = newExtends.toArray(new String[newExtends.size()]);
     }
 
-    private void addOther(Configuration[] allConfigs, Visibility visibility, Set configs) {
+    private void addOther(Configuration[] allConfigs, Visibility visibility, Set<String> configs) {
         for (int i = 0; i < allConfigs.length; i++) {
             String currentName = allConfigs[i].getName();
             if (!name.equals(currentName)

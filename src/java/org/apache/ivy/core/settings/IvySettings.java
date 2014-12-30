@@ -31,10 +31,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
@@ -115,9 +115,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         ResolveEngineSettings, RetrieveEngineSettings, RepositoryManagementEngineSettings {
     private static final long INTERUPT_TIMEOUT = 2000;
 
-    private Map typeDefs = new HashMap();
+    private Map<String, Class<?>> typeDefs = new HashMap<String, Class<?>>();
 
-    private Map resolversMap = new HashMap();
+    private Map<String, DependencyResolver> resolversMap = new HashMap<String, DependencyResolver>();
 
     private DependencyResolver defaultResolver;
 
@@ -131,40 +131,29 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private boolean checkUpToDate = true;
 
-    private ModuleRules moduleSettings = new ModuleRules();
+    private ModuleRules<ModuleSettings> moduleSettings = new ModuleRules<ModuleSettings>();
 
-    // Map (String conflictManagerName -> ConflictManager)
-    private Map conflictsManager = new HashMap();
+    private Map<String, ConflictManager> conflictsManager = new HashMap<String, ConflictManager>();
 
-    // Map (String latestStrategyName -> LatestStrategy)
-    private Map latestStrategies = new HashMap();
+    private Map<String, LatestStrategy> latestStrategies = new HashMap<String, LatestStrategy>();
 
-    // Map (String name -> LockStrategy)
-    private Map lockStrategies = new HashMap();
+    private Map<String, LockStrategy> lockStrategies = new HashMap<String, LockStrategy>();
 
-    // Map (String namespaceName -> Namespace)
-    private Map namespaces = new HashMap();
+    private Map<String, Namespace> namespaces = new HashMap<String, Namespace>();
 
-    // Map (String matcherName -> Matcher)
-    private Map matchers = new HashMap();
+    private Map<String, PatternMatcher> matchers = new HashMap<String, PatternMatcher>();
 
-    // Map (String outputterName -> ReportOutputter)
-    private Map reportOutputters = new HashMap();
+    private Map<String, ReportOutputter> reportOutputters = new HashMap<String, ReportOutputter>();
 
-    // Map (String matcherName -> VersionMatcher)
-    private Map versionMatchers = new HashMap();
+    private Map<String, VersionMatcher> versionMatchers = new HashMap<String, VersionMatcher>();
 
-    // Map (String name -> CircularDependencyStrategy)
-    private Map circularDependencyStrategies = new HashMap();
+    private Map<String, CircularDependencyStrategy> circularDependencyStrategies = new HashMap<String, CircularDependencyStrategy>();
 
-    // Map (String name -> RepositoryCacheManager)
-    private Map repositoryCacheManagers = new HashMap();
+    private Map<String, RepositoryCacheManager> repositoryCacheManagers = new HashMap<String, RepositoryCacheManager>();
 
-    // Map (String name -> SignatureGenerator)
-    private Map signatureGenerators = new HashMap();
+    private Map<String, SignatureGenerator> signatureGenerators = new HashMap<String, SignatureGenerator>();
 
-    // List (Trigger)
-    private List triggers = new ArrayList();
+    private List<Trigger> triggers = new ArrayList<Trigger>();
 
     private IvyVariableContainer variableContainer = new IvyVariableContainerImpl();
 
@@ -182,7 +171,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private ResolutionCacheManager resolutionCacheManager = null;
 
-    private List listingIgnore = new ArrayList();
+    private List<String> listingIgnore = new ArrayList<String>();
 
     private boolean repositoriesConfigured;
 
@@ -192,7 +181,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private File baseDir = new File(".").getAbsoluteFile();
 
-    private List classpathURLs = new ArrayList();
+    private List<URL> classpathURLs = new ArrayList<URL>();
 
     private ClassLoader classloader;
 
@@ -278,8 +267,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
         try {
             // GlobPatternMatcher is optional. Only add it when available.
-            Class globClazz = IvySettings.class.getClassLoader().loadClass(
-                "org.apache.ivy.plugins.matcher.GlobPatternMatcher");
+            @SuppressWarnings("unchecked")
+            Class<? extends PatternMatcher> globClazz = (Class<? extends PatternMatcher>) IvySettings.class
+                    .getClassLoader()
+                    .loadClass("org.apache.ivy.plugins.matcher.GlobPatternMatcher");
             Field instanceField = globClazz.getField("INSTANCE");
             addMatcher((PatternMatcher) instanceField.get(null));
         } catch (Exception e) {
@@ -305,7 +296,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private synchronized void addSystemProperties() {
         try {
-            addAllVariables((Map) System.getProperties().clone());
+            addAllVariables((Map<?, ?>) System.getProperties().clone());
         } catch (AccessControlException ex) {
             Message.verbose("access denied to getting all system properties: they won't be available as Ivy variables."
                     + "\nset " + ex.getPermission() + " permission if you want to access them");
@@ -371,9 +362,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized void typeDefs(Properties p, boolean silentFail) {
-        for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
-            String name = (String) iter.next();
-            typeDef(name, p.getProperty(name), silentFail);
+        for (Entry<Object, Object> entry : p.entrySet()) {
+            String name = entry.getKey().toString();
+            typeDef(name, entry.getValue().toString(), silentFail);
         }
     }
 
@@ -532,13 +523,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
         if (!classpathURLs.isEmpty()) {
             Message.verbose("\t-- " + classpathURLs.size() + " custom classpath urls:");
-            for (Iterator iter = classpathURLs.iterator(); iter.hasNext();) {
-                Message.debug("\t\t" + iter.next());
+            for (URL url : classpathURLs) {
+                Message.debug("\t\t" + url);
             }
         }
         Message.verbose("\t-- " + resolversMap.size() + " resolvers:");
-        for (Iterator iter = resolversMap.values().iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : resolversMap.values()) {
             resolver.dumpSettings();
         }
         Message.debug("\tmodule settings:");
@@ -600,7 +590,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         variableContainer.setVariable(varName, value, overwrite);
     }
 
-    public synchronized void addAllVariables(Map variables) {
+    public synchronized void addAllVariables(Map<?, ?> variables) {
         addAllVariables(variables, true);
     }
 
@@ -635,11 +625,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @return a new map of strings in which all current ivy variables in values have been
      *         substituted by their value
      */
-    public synchronized Map/* <String, String> */substitute(Map/* <String, String> */strings) {
-        Map substituted = new LinkedHashMap();
-        for (Iterator it = strings.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            substituted.put(entry.getKey(), substitute((String) entry.getValue()));
+    public synchronized Map<String, String> substitute(Map<String, String> strings) {
+        Map<String, String> substituted = new LinkedHashMap<String, String>();
+        for (Entry<String, String> entry : strings.entrySet()) {
+            substituted.put(entry.getKey(), substitute(entry.getValue()));
         }
         return substituted;
     }
@@ -654,19 +643,19 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return variableContainer;
     }
 
-    public synchronized Class typeDef(String name, String className) {
+    public synchronized Class<?> typeDef(String name, String className) {
         return typeDef(name, className, false);
     }
 
-    public synchronized Class typeDef(String name, String className, boolean silentFail) {
-        Class clazz = classForName(className, silentFail);
+    public synchronized Class<?> typeDef(String name, String className, boolean silentFail) {
+        Class<?> clazz = classForName(className, silentFail);
         if (clazz != null) {
             typeDefs.put(name, clazz);
         }
         return clazz;
     }
 
-    private Class classForName(String className, boolean silentFail) {
+    private Class<?> classForName(String className, boolean silentFail) {
         try {
             return getClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
@@ -687,7 +676,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                 classloader = Ivy.class.getClassLoader();
             } else {
                 classloader = new URLClassLoader(
-                        (URL[]) classpathURLs.toArray(new URL[classpathURLs.size()]),
+                        classpathURLs.toArray(new URL[classpathURLs.size()]),
                         Ivy.class.getClassLoader());
             }
         }
@@ -699,12 +688,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         classloader = null;
     }
 
-    public synchronized Map getTypeDefs() {
+    public synchronized Map<String, Class<?>> getTypeDefs() {
         return typeDefs;
     }
 
-    public synchronized Class getTypeDef(String name) {
-        return (Class) typeDefs.get(name);
+    public synchronized Class<?> getTypeDef(String name) {
+        return typeDefs.get(name);
     }
 
     // methods which match ivy conf method signature specs
@@ -726,7 +715,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized SignatureGenerator getSignatureGenerator(String name) {
-        return (SignatureGenerator) signatureGenerators.get(name);
+        return signatureGenerators.get(name);
     }
 
     public synchronized void addResolver(DependencyResolver resolver) {
@@ -736,9 +725,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         init(resolver);
         resolversMap.put(resolver.getName(), resolver);
         if (resolver instanceof ChainResolver) {
-            List subresolvers = ((ChainResolver) resolver).getResolvers();
-            for (Iterator iter = subresolvers.iterator(); iter.hasNext();) {
-                DependencyResolver dr = (DependencyResolver) iter.next();
+            List<DependencyResolver> subresolvers = ((ChainResolver) resolver).getResolvers();
+            for (DependencyResolver dr : subresolvers) {
                 addResolver(dr);
             }
         } else if (resolver instanceof DualResolver) {
@@ -783,8 +771,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * regular expressions as explained in Pattern class may be used in attributes
      */
-    public synchronized void addModuleConfiguration(Map attributes, PatternMatcher matcher,
-            String resolverName, String branch, String conflictManager, String resolveMode) {
+    public synchronized void addModuleConfiguration(Map<String, String> attributes,
+            PatternMatcher matcher, String resolverName, String branch, String conflictManager,
+            String resolveMode) {
         checkResolverName(resolverName);
         moduleSettings.defineRule(new MapMatcher(attributes, matcher), new ModuleSettings(
                 resolverName, branch, conflictManager, resolveMode));
@@ -906,7 +895,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if (dictatorResolver != null) {
             return dictatorResolver;
         }
-        DependencyResolver resolver = (DependencyResolver) resolversMap.get(resolverName);
+        DependencyResolver resolver = resolversMap.get(resolverName);
         if (resolver == null) {
             Message.error("unknown resolver " + resolverName);
         }
@@ -918,24 +907,24 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             return dictatorResolver;
         }
         if (defaultResolver == null) {
-            defaultResolver = (DependencyResolver) resolversMap.get(defaultResolverName);
+            defaultResolver = resolversMap.get(defaultResolverName);
         }
         return defaultResolver;
     }
 
     public synchronized String getResolverName(ModuleRevisionId mrid) {
-        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(mrid, new Filter() {
-            public boolean accept(Object o) {
-                return ((ModuleSettings) o).getResolverName() != null;
+        ModuleSettings ms = moduleSettings.getRule(mrid, new Filter<ModuleSettings>() {
+            public boolean accept(ModuleSettings o) {
+                return o.getResolverName() != null;
             }
         });
         return ms == null ? defaultResolverName : ms.getResolverName();
     }
 
     public synchronized String getDefaultBranch(ModuleId moduleId) {
-        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
-            public boolean accept(Object o) {
-                return ((ModuleSettings) o).getBranch() != null;
+        ModuleSettings ms = moduleSettings.getRule(moduleId, new Filter<ModuleSettings>() {
+            public boolean accept(ModuleSettings o) {
+                return o.getBranch() != null;
             }
         });
         return ms == null ? getDefaultBranch() : ms.getBranch();
@@ -950,9 +939,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized ConflictManager getConflictManager(ModuleId moduleId) {
-        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
-            public boolean accept(Object o) {
-                return ((ModuleSettings) o).getConflictManager() != null;
+        ModuleSettings ms = moduleSettings.getRule(moduleId, new Filter<ModuleSettings>() {
+            public boolean accept(ModuleSettings o) {
+                return o.getConflictManager() != null;
             }
         });
         if (ms == null) {
@@ -968,9 +957,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized String getResolveMode(ModuleId moduleId) {
-        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
-            public boolean accept(Object o) {
-                return ((ModuleSettings) o).getResolveMode() != null;
+        ModuleSettings ms = moduleSettings.getRule(moduleId, new Filter<ModuleSettings>() {
+            public boolean accept(ModuleSettings o) {
+                return o.getResolveMode() != null;
             }
         });
         return ms == null ? getDefaultResolveMode() : ms.getResolveMode();
@@ -992,7 +981,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if ("default".equals(name)) {
             return getDefaultConflictManager();
         }
-        return (ConflictManager) conflictsManager.get(name);
+        return conflictsManager.get(name);
     }
 
     public synchronized void addConflictManager(String name, ConflictManager cm) {
@@ -1008,7 +997,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if ("default".equals(name)) {
             return getDefaultLatestStrategy();
         }
-        return (LatestStrategy) latestStrategies.get(name);
+        return latestStrategies.get(name);
     }
 
     public synchronized void addLatestStrategy(String name, LatestStrategy latest) {
@@ -1024,7 +1013,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if ("default".equals(name)) {
             return getDefaultLockStrategy();
         }
-        return (LockStrategy) lockStrategies.get(name);
+        return lockStrategies.get(name);
     }
 
     public synchronized void addLockStrategy(String name, LockStrategy lockStrategy) {
@@ -1040,7 +1029,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if ("system".equals(name)) {
             return getSystemNamespace();
         }
-        return (Namespace) namespaces.get(name);
+        return namespaces.get(name);
     }
 
     public final Namespace getSystemNamespace() {
@@ -1057,7 +1046,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized PatternMatcher getMatcher(String name) {
-        return (PatternMatcher) matchers.get(name);
+        return matchers.get(name);
     }
 
     public synchronized void addMatcher(PatternMatcher m) {
@@ -1070,7 +1059,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized RepositoryCacheManager getRepositoryCacheManager(String name) {
-        return (RepositoryCacheManager) repositoryCacheManagers.get(name);
+        return repositoryCacheManagers.get(name);
     }
 
     public synchronized void addRepositoryCacheManager(RepositoryCacheManager c) {
@@ -1079,7 +1068,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized RepositoryCacheManager[] getRepositoryCacheManagers() {
-        return (RepositoryCacheManager[]) repositoryCacheManagers.values().toArray(
+        return repositoryCacheManagers.values().toArray(
             new RepositoryCacheManager[repositoryCacheManagers.size()]);
     }
 
@@ -1088,7 +1077,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized ReportOutputter getReportOutputter(String name) {
-        return (ReportOutputter) reportOutputters.get(name);
+        return reportOutputters.get(name);
     }
 
     public synchronized void addReportOutputter(ReportOutputter outputter) {
@@ -1097,8 +1086,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized ReportOutputter[] getReportOutputters() {
-        return (ReportOutputter[]) reportOutputters.values().toArray(
-            new ReportOutputter[reportOutputters.size()]);
+        return reportOutputters.values().toArray(new ReportOutputter[reportOutputters.size()]);
     }
 
     public synchronized void addConfigured(VersionMatcher vmatcher) {
@@ -1106,7 +1094,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized VersionMatcher getVersionMatcher(String name) {
-        return (VersionMatcher) versionMatchers.get(name);
+        return versionMatchers.get(name);
     }
 
     public synchronized void addVersionMatcher(VersionMatcher vmatcher) {
@@ -1124,8 +1112,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized VersionMatcher[] getVersionMatchers() {
-        return (VersionMatcher[]) versionMatchers.values().toArray(
-            new VersionMatcher[versionMatchers.size()]);
+        return versionMatchers.values().toArray(new VersionMatcher[versionMatchers.size()]);
     }
 
     public synchronized VersionMatcher getVersionMatcher() {
@@ -1152,7 +1139,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if ("default".equals(name)) {
             name = "warn";
         }
-        return (CircularDependencyStrategy) circularDependencyStrategies.get(name);
+        return circularDependencyStrategies.get(name);
     }
 
     public synchronized void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
@@ -1188,7 +1175,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Returns the file names of the files that should be ignored when creating a file listing.
      */
     public synchronized String[] getIgnorableFilenames() {
-        return (String[]) listingIgnore.toArray(new String[listingIgnore.size()]);
+        return listingIgnore.toArray(new String[listingIgnore.size()]);
     }
 
     /**
@@ -1197,7 +1184,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * 
      * @param names
      */
-    public synchronized void filterIgnore(Collection names) {
+    public synchronized void filterIgnore(Collection<String> names) {
         names.removeAll(listingIgnore);
     }
 
@@ -1286,7 +1273,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         triggers.add(trigger);
     }
 
-    public synchronized List getTriggers() {
+    public synchronized List<Trigger> getTriggers() {
         return triggers;
     }
 
@@ -1375,6 +1362,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             this.resolveMode = resolveMode;
         }
 
+        @Override
         public String toString() {
             return (resolverName != null ? "resolver: " + resolverName : "")
                     + (branch != null ? "branch: " + branch : "")
@@ -1403,15 +1391,15 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return INTERUPT_TIMEOUT;
     }
 
-    public synchronized Collection getResolvers() {
+    public synchronized Collection<DependencyResolver> getResolvers() {
         return resolversMap.values();
     }
 
-    public synchronized Collection getResolverNames() {
+    public synchronized Collection<String> getResolverNames() {
         return resolversMap.keySet();
     }
 
-    public synchronized Collection getMatcherNames() {
+    public synchronized Collection<String> getMatcherNames() {
         return matchers.keySet();
     }
 
@@ -1492,9 +1480,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @throws IllegalStateException
      *             if any of the objects is not valid.
      */
-    private void validateAll(Collection values) {
-        for (Iterator iterator = values.iterator(); iterator.hasNext();) {
-            Object object = iterator.next();
+    private void validateAll(Collection<?> values) {
+        for (Object object : values) {
             if (object instanceof Validatable) {
                 ((Validatable) object).validate();
             }

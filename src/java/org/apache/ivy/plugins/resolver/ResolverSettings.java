@@ -51,7 +51,7 @@ public interface ResolverSettings extends ParserSettings {
 
     String getResolveMode(ModuleId moduleId);
 
-    void filterIgnore(Collection names);
+    void filterIgnore(Collection<String> names);
 
     SignatureGenerator getSignatureGenerator(String name);
 

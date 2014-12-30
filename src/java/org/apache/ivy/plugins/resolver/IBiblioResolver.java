@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +86,7 @@ public class IBiblioResolver extends URLResolver {
         setChangingPattern(".*-SNAPSHOT");
     }
 
+    @Override
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         if (isM2compatible() && isUsepoms()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
@@ -109,6 +109,7 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
+    @Override
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ensureConfigured(getSettings());
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
@@ -172,6 +173,7 @@ public class IBiblioResolver extends URLResolver {
                     final StringBuffer timestamp = new StringBuffer();
                     final StringBuffer buildNumer = new StringBuffer();
                     XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
+                        @Override
                         public void endElement(String uri, String localName, String qName)
                                 throws SAXException {
                             if ("metadata/versioning/snapshot/timestamp".equals(getContext())) {
@@ -213,6 +215,7 @@ public class IBiblioResolver extends URLResolver {
         return null;
     }
 
+    @Override
     public void setM2compatible(boolean m2compatible) {
         super.setM2compatible(m2compatible);
         if (m2compatible) {
@@ -250,6 +253,7 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
+    @Override
     protected String getModuleDescriptorExtension() {
         return "pom";
     }
@@ -301,7 +305,7 @@ public class IBiblioResolver extends URLResolver {
         if (isM2compatible() && isUsepoms()) {
             setIvyPatterns(Collections.singletonList(getWholePattern()));
         } else {
-            setIvyPatterns(Collections.EMPTY_LIST);
+            setIvyPatterns(Collections.<String> emptyList());
         }
         setArtifactPatterns(Collections.singletonList(getWholePattern()));
     }
@@ -311,7 +315,8 @@ public class IBiblioResolver extends URLResolver {
     }
 
     // we do not allow to list organisations on ibiblio, nor modules in ibiblio 1
-    public String[] listTokenValues(String token, Map otherTokenValues) {
+    @Override
+    public String[] listTokenValues(String token, Map<String, String> otherTokenValues) {
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
             return new String[0];
         }
@@ -322,6 +327,7 @@ public class IBiblioResolver extends URLResolver {
         return super.listTokenValues(token, otherTokenValues);
     }
 
+    @Override
     protected String[] listTokenValues(String pattern, String token) {
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
             return new String[0];
@@ -350,9 +356,9 @@ public class IBiblioResolver extends URLResolver {
                 String metadataLocation = pattern.substring(0,
                     pattern.lastIndexOf(partiallyResolvedM2PerModulePattern))
                         + "maven-metadata.xml";
-                List revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
+                List<?> revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
                 if (revs != null) {
-                    return (String[]) revs.toArray(new String[revs.size()]);
+                    return revs.toArray(new String[revs.size()]);
                 }
             } else {
                 /*
@@ -368,10 +374,12 @@ public class IBiblioResolver extends URLResolver {
         return super.listTokenValues(pattern, token);
     }
 
+    @Override
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }
 
+    @Override
     public ModuleEntry[] listModules(OrganisationEntry org) {
         if (isM2compatible()) {
             ensureConfigured(getSettings());
@@ -380,21 +388,22 @@ public class IBiblioResolver extends URLResolver {
         return new ModuleEntry[0];
     }
 
+    @Override
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
         ensureConfigured(getSettings());
         return super.listRevisions(mod);
     }
 
+    @Override
     protected ResolvedResource[] listResources(Repository repository, ModuleRevisionId mrid,
             String pattern, Artifact artifact) {
         if (shouldUseMavenMetadata(pattern)) {
-            List revs = listRevisionsWithMavenMetadata(repository, mrid.getModuleId()
+            List<String> revs = listRevisionsWithMavenMetadata(repository, mrid.getModuleId()
                     .getAttributes());
             if (revs != null) {
                 Message.debug("\tfound revs: " + revs);
-                List rres = new ArrayList();
-                for (Iterator iter = revs.iterator(); iter.hasNext();) {
-                    String rev = (String) iter.next();
+                List<ResolvedResource> rres = new ArrayList<ResolvedResource>();
+                for (String rev : revs) {
                     ModuleRevisionId historicalMrid = ModuleRevisionId.newInstance(mrid, rev);
 
                     String patternForRev = pattern;
@@ -421,7 +430,7 @@ public class IBiblioResolver extends URLResolver {
                                     + rres, e);
                     }
                 }
-                return (ResolvedResource[]) rres.toArray(new ResolvedResource[rres.size()]);
+                return rres.toArray(new ResolvedResource[rres.size()]);
             } else {
                 // maven metadata not available or something went wrong,
                 // use default listing capability
@@ -432,22 +441,25 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
-    private List listRevisionsWithMavenMetadata(Repository repository, Map tokenValues) {
+    private List<String> listRevisionsWithMavenMetadata(Repository repository,
+            Map<String, String> tokenValues) {
         String metadataLocation = IvyPatternHelper.substituteTokens(root
                 + "[organisation]/[module]/maven-metadata.xml", tokenValues);
         return listRevisionsWithMavenMetadata(repository, metadataLocation);
     }
 
-    private List listRevisionsWithMavenMetadata(Repository repository, String metadataLocation) {
-        List revs = null;
+    private List<String> listRevisionsWithMavenMetadata(Repository repository,
+            String metadataLocation) {
+        List<String> revs = null;
         InputStream metadataStream = null;
         try {
             Resource metadata = repository.getResource(metadataLocation);
             if (metadata.exists()) {
                 Message.verbose("\tlisting revisions from maven-metadata: " + metadata);
-                final List metadataRevs = new ArrayList();
+                final List<String> metadataRevs = new ArrayList<String>();
                 metadataStream = metadata.openStream();
                 XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
+                    @Override
                     public void endElement(String uri, String localName, String qName)
                             throws SAXException {
                         if ("metadata/versioning/versions/version".equals(getContext())) {
@@ -478,10 +490,12 @@ public class IBiblioResolver extends URLResolver {
         return revs;
     }
 
-    protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
+    @Override
+    protected void findTokenValues(Collection<String> names, List<String> patterns,
+            Map<String, String> tokenValues, String token) {
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             if (shouldUseMavenMetadata(getWholePattern())) {
-                List revs = listRevisionsWithMavenMetadata(getRepository(), tokenValues);
+                List<String> revs = listRevisionsWithMavenMetadata(getRepository(), tokenValues);
                 if (revs != null) {
                     names.addAll(filterNames(revs));
                     return;
@@ -495,33 +509,39 @@ public class IBiblioResolver extends URLResolver {
         return isUseMavenMetadata() && isM2compatible() && pattern.endsWith(M2_PATTERN);
     }
 
+    @Override
     public String getTypeName() {
         return "ibiblio";
     }
 
     // override some methods to ensure configuration
+    @Override
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         ensureConfigured(data.getSettings());
         return super.getDependency(dd, data);
     }
 
+    @Override
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         ensureConfigured(getSettings());
         return super.download(artifacts, options);
     }
 
+    @Override
     public boolean exists(Artifact artifact) {
         ensureConfigured(getSettings());
         return super.exists(artifact);
     }
 
+    @Override
     public ArtifactOrigin locate(Artifact artifact) {
         ensureConfigured(getSettings());
         return super.locate(artifact);
     }
 
-    public List getArtifactPatterns() {
+    @Override
+    public List<String> getArtifactPatterns() {
         ensureConfigured(getSettings());
         return super.getArtifactPatterns();
     }
@@ -543,6 +563,7 @@ public class IBiblioResolver extends URLResolver {
         this.useMavenMetadata = useMavenMetadata;
     }
 
+    @Override
     public void dumpSettings() {
         ensureConfigured(getSettings());
         super.dumpSettings();

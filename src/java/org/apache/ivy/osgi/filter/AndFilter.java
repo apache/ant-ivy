@@ -29,6 +29,7 @@ public class AndFilter extends MultiOperatorFilter {
         super(filters);
     }
 
+    @Override
     protected char operator() {
         return '&';
     }

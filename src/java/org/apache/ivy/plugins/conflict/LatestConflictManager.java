@@ -20,7 +20,6 @@ package org.apache.ivy.plugins.conflict;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -78,12 +77,11 @@ public class LatestConflictManager extends AbstractConflictManager {
         this.strategy = strategy;
     }
 
-    public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
+    public Collection<IvyNode> resolveConflicts(IvyNode parent, Collection<IvyNode> conflicts) {
         if (conflicts.size() < 2) {
             return conflicts;
         }
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        for (IvyNode node : conflicts) {
             DependencyDescriptor dd = node.getDependencyDescriptor(parent);
             if (dd != null && dd.isForce()
                     && parent.getResolvedId().equals(dd.getParentRevisionId())) {
@@ -95,17 +93,15 @@ public class LatestConflictManager extends AbstractConflictManager {
          * If the list of conflicts contains dynamic revisions, delay the conflict calculation until
          * they are resolved. TODO: we probably could already evict some of the dynamic revisions!
          */
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        for (IvyNode node : conflicts) {
             ModuleRevisionId modRev = node.getResolvedId();
             if (getSettings().getVersionMatcher().isDynamic(modRev)) {
                 return null;
             }
         }
 
-        ArrayList unevicted = new ArrayList();
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        ArrayList<IvyNode> unevicted = new ArrayList<IvyNode>();
+        for (IvyNode node : conflicts) {
             if (!node.isCompletelyEvicted())
                 unevicted.add(node);
         }
@@ -128,13 +124,12 @@ public class LatestConflictManager extends AbstractConflictManager {
         }
     }
 
-    protected ArtifactInfo[] toArtifactInfo(Collection conflicts) {
-        List artifacts = new ArrayList(conflicts.size());
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+    protected ArtifactInfo[] toArtifactInfo(Collection<IvyNode> conflicts) {
+        List<ArtifactInfo> artifacts = new ArrayList<ArtifactInfo>(conflicts.size());
+        for (IvyNode node : conflicts) {
             artifacts.add(new IvyNodeArtifactInfo(node));
         }
-        return (ArtifactInfo[]) artifacts.toArray(new ArtifactInfo[artifacts.size()]);
+        return artifacts.toArray(new ArtifactInfo[artifacts.size()]);
     }
 
     public LatestStrategy getStrategy() {
@@ -165,6 +160,7 @@ public class LatestConflictManager extends AbstractConflictManager {
         this.strategy = strategy;
     }
 
+    @Override
     public String toString() {
         return strategy != null ? String.valueOf(strategy) : strategyName;
     }

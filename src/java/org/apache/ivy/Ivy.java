@@ -24,7 +24,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -45,6 +44,7 @@ import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.repository.RepositoryManagementEngine;
+import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -631,7 +631,7 @@ public class Ivy {
     /**
      * Sorts the collection of IvyNode from the less dependent to the more dependent
      */
-    public List sortNodes(Collection nodes, SortOptions options) {
+    public List<IvyNode> sortNodes(Collection<IvyNode> nodes, SortOptions options) {
         pushContext();
         try {
             return getSortEngine().sortNodes(nodes, options);
@@ -654,7 +654,8 @@ public class Ivy {
      *             if a circular dependency exists and circular dependency strategy decide to throw
      *             an exception
      */
-    public List sortModuleDescriptors(Collection moduleDescriptors, SortOptions options) {
+    public List<ModuleDescriptor> sortModuleDescriptors(
+            Collection<ModuleDescriptor> moduleDescriptors, SortOptions options) {
         pushContext();
         try {
             return getSortEngine().sortModuleDescriptors(moduleDescriptors, options);
@@ -750,7 +751,7 @@ public class Ivy {
         }
     }
 
-    public String[] listTokenValues(String token, Map otherTokenValues) {
+    public String[] listTokenValues(String token, Map<String, Object> otherTokenValues) {
         pushContext();
         try {
             return searchEngine.listTokenValues(token, otherTokenValues);
@@ -833,14 +834,12 @@ public class Ivy {
     }
 
     private void postConfigure() {
-        Collection triggers = settings.getTriggers();
-        for (Iterator iter = triggers.iterator(); iter.hasNext();) {
-            Trigger trigger = (Trigger) iter.next();
+        List<Trigger> triggers = settings.getTriggers();
+        for (Trigger trigger : triggers) {
             eventManager.addIvyListener(trigger, trigger.getEventFilter());
         }
 
-        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : settings.getResolvers()) {
             if (resolver instanceof BasicResolver) {
                 ((BasicResolver) resolver).setEventManager(eventManager);
             }

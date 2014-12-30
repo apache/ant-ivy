@@ -20,8 +20,8 @@ package org.apache.ivy.util.extendable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.xml.sax.Attributes;
@@ -30,8 +30,8 @@ public final class ExtendableItemHelper {
     private ExtendableItemHelper() {
     }
 
-    public static Map getExtraAttributes(Attributes attributes, String prefix) {
-        Map ret = new HashMap();
+    public static Map<String, String> getExtraAttributes(Attributes attributes, String prefix) {
+        Map<String, String> ret = new HashMap<String, String>();
         for (int i = 0; i < attributes.getLength(); i++) {
             if (attributes.getQName(i).startsWith(prefix)) {
                 ret.put(attributes.getQName(i).substring(prefix.length()), attributes.getValue(i));
@@ -49,10 +49,10 @@ public final class ExtendableItemHelper {
      *            the XML attributes names which are not extra but Ivy core ones
      * @return
      */
-    public static Map getExtraAttributes(ParserSettings settings, Attributes attributes,
-            String[] ignoredAttNames) {
-        Map ret = new HashMap();
-        Collection ignored = Arrays.asList(ignoredAttNames);
+    public static Map<String, String> getExtraAttributes(ParserSettings settings,
+            Attributes attributes, String[] ignoredAttNames) {
+        Map<String, String> ret = new HashMap<String, String>();
+        Collection<String> ignored = Arrays.asList(ignoredAttNames);
         for (int i = 0; i < attributes.getLength(); i++) {
             if (!ignored.contains(attributes.getQName(i))) {
                 ret.put(attributes.getQName(i), settings.substitute(attributes.getValue(i)));
@@ -63,11 +63,9 @@ public final class ExtendableItemHelper {
 
     public static void fillExtraAttributes(ParserSettings settings, DefaultExtendableItem item,
             Attributes attributes, String[] ignoredAttNames) {
-        Map att = getExtraAttributes(settings, attributes, ignoredAttNames);
-        for (Iterator iter = att.keySet().iterator(); iter.hasNext();) {
-            String attName = (String) iter.next();
-            String attValue = (String) att.get(attName);
-            item.setExtraAttribute(attName, attValue);
+        Map<String, String> att = getExtraAttributes(settings, attributes, ignoredAttNames);
+        for (Entry<String, String> entry : att.entrySet()) {
+            item.setExtraAttribute(entry.getKey(), entry.getValue());
         }
     }
 

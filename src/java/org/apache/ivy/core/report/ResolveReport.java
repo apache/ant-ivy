@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -50,17 +50,16 @@ import org.apache.ivy.util.filter.Filter;
 public class ResolveReport {
     private ModuleDescriptor md;
 
-    /** String conf -> ConfigurationResolveReport report */
-    private Map confReports = new LinkedHashMap();
+    private Map<String, ConfigurationResolveReport> confReports = new LinkedHashMap<String, ConfigurationResolveReport>();
 
-    private List problemMessages = new ArrayList();
+    private List<String> problemMessages = new ArrayList<String>();
 
     /**
      * the list of all dependencies resolved, ordered from the more dependent to the less dependent
      */
-    private List/* <IvyNode> */dependencies = new ArrayList();
+    private List<IvyNode> dependencies = new ArrayList<IvyNode>();
 
-    private List/* <Artifact> */artifacts = new ArrayList();
+    private List<Artifact> artifacts = new ArrayList<Artifact>();
 
     private long resolveTime;
 
@@ -84,20 +83,20 @@ public class ResolveReport {
     }
 
     public ConfigurationResolveReport getConfigurationReport(String conf) {
-        return (ConfigurationResolveReport) confReports.get(conf);
+        return confReports.get(conf);
     }
 
     public String[] getConfigurations() {
-        return (String[]) confReports.keySet().toArray(new String[confReports.size()]);
+        return confReports.keySet().toArray(new String[confReports.size()]);
     }
 
     public boolean hasError() {
-        boolean hasError = false;
-        for (Iterator it = confReports.values().iterator(); it.hasNext() && !hasError;) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) it.next();
-            hasError |= report.hasError();
+        for (ConfigurationResolveReport report : confReports.values()) {
+            if (report.hasError()) {
+                return true;
+            }
         }
-        return hasError;
+        return false;
     }
 
     public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr,
@@ -112,21 +111,19 @@ public class ResolveReport {
     }
 
     public IvyNode[] getEvictedNodes() {
-        Collection all = new LinkedHashSet();
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+        Collection<IvyNode> all = new LinkedHashSet<IvyNode>();
+        for (ConfigurationResolveReport report : confReports.values()) {
             all.addAll(Arrays.asList(report.getEvictedNodes()));
         }
-        return (IvyNode[]) all.toArray(new IvyNode[all.size()]);
+        return all.toArray(new IvyNode[all.size()]);
     }
 
     public IvyNode[] getUnresolvedDependencies() {
-        Collection all = new LinkedHashSet();
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+        Collection<IvyNode> all = new LinkedHashSet<IvyNode>();
+        for (ConfigurationResolveReport report : confReports.values()) {
             all.addAll(Arrays.asList(report.getUnresolvedDependencies()));
         }
-        return (IvyNode[]) all.toArray(new IvyNode[all.size()]);
+        return all.toArray(new IvyNode[all.size()]);
     }
 
     /**
@@ -164,36 +161,32 @@ public class ResolveReport {
      */
     public ArtifactDownloadReport[] getArtifactsReports(DownloadStatus downloadStatus,
             boolean withEvicted) {
-        Collection all = new LinkedHashSet();
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
+        for (ConfigurationResolveReport report : confReports.values()) {
             ArtifactDownloadReport[] reports = report.getArtifactsReports(downloadStatus,
                 withEvicted);
             all.addAll(Arrays.asList(reports));
         }
-        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+        return all.toArray(new ArtifactDownloadReport[all.size()]);
     }
 
     public ArtifactDownloadReport[] getArtifactsReports(ModuleRevisionId mrid) {
-        Collection all = new LinkedHashSet();
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
+        for (ConfigurationResolveReport report : confReports.values()) {
             all.addAll(Arrays.asList(report.getDownloadReports(mrid)));
         }
-        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+        return all.toArray(new ArtifactDownloadReport[all.size()]);
     }
 
     public void checkIfChanged() {
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+        for (ConfigurationResolveReport report : confReports.values()) {
             report.checkIfChanged();
         }
     }
 
     /** Can only be called if checkIfChanged has been called */
     public boolean hasChanged() {
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+        for (ConfigurationResolveReport report : confReports.values()) {
             if (report.hasChanged()) {
                 return true;
             }
@@ -201,18 +194,17 @@ public class ResolveReport {
         return false;
     }
 
-    public void setProblemMessages(List problems) {
+    public void setProblemMessages(List<String> problems) {
         problemMessages = problems;
     }
 
-    public List getProblemMessages() {
+    public List<String> getProblemMessages() {
         return problemMessages;
     }
 
-    public List getAllProblemMessages() {
-        List ret = new ArrayList(problemMessages);
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport r = (ConfigurationResolveReport) iter.next();
+    public List<String> getAllProblemMessages() {
+        List<String> ret = new ArrayList<String>(problemMessages);
+        for (ConfigurationResolveReport r : confReports.values()) {
             IvyNode[] unresolved = r.getUnresolvedDependencies();
             for (int i = 0; i < unresolved.length; i++) {
                 String errMsg = unresolved[i].getProblemMessage();
@@ -230,12 +222,11 @@ public class ResolveReport {
         return ret;
     }
 
-    public void setDependencies(List dependencies, Filter artifactFilter) {
+    public void setDependencies(List<IvyNode> dependencies, Filter<Artifact> artifactFilter) {
         this.dependencies = dependencies;
         // collect list of artifacts
-        artifacts = new ArrayList();
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            IvyNode dependency = (IvyNode) iter.next();
+        artifacts = new ArrayList<Artifact>();
+        for (IvyNode dependency : dependencies) {
             if (!dependency.isCompletelyEvicted() && !dependency.hasProblem()) {
                 artifacts.addAll(Arrays.asList(dependency.getSelectedArtifacts(artifactFilter)));
             }
@@ -257,7 +248,7 @@ public class ResolveReport {
      * 
      * @return The list of all dependencies.
      */
-    public List/* <IvyNode> */getDependencies() {
+    public List<IvyNode> getDependencies() {
         return dependencies;
     }
 
@@ -267,7 +258,7 @@ public class ResolveReport {
      * 
      * @return The list of all artifacts.
      */
-    public List/* <Artifact> */getArtifacts() {
+    public List<Artifact> getArtifacts() {
         return artifacts;
     }
 
@@ -276,11 +267,10 @@ public class ResolveReport {
      * 
      * @return a list of ModuleId
      */
-    public List getModuleIds() {
-        List ret = new ArrayList();
-        List sortedDependencies = new ArrayList(dependencies);
-        for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
-            IvyNode dependency = (IvyNode) iter.next();
+    public List<ModuleId> getModuleIds() {
+        List<ModuleId> ret = new ArrayList<ModuleId>();
+        List<IvyNode> sortedDependencies = new ArrayList<IvyNode>(dependencies);
+        for (IvyNode dependency : sortedDependencies) {
             ModuleId mid = dependency.getResolvedId().getModuleId();
             if (!ret.contains(mid)) {
                 ret.add(mid);
@@ -408,7 +398,7 @@ public class ResolveReport {
 
         // add resolved dependencies
         for (int i = 0; i < dependencies.size(); i++) {
-            IvyNode node = (IvyNode) dependencies.get(i);
+            IvyNode node = dependencies.get(i);
             if (midToKeep != null && midToKeep.contains(node.getModuleId())) {
                 continue;
             }

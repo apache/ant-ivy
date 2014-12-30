@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -210,13 +209,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private Date resolvedPublicationDate;
 
-    private List dependencies = new ArrayList(); // List (DependencyDescriptor)
+    private List<DependencyDescriptor> dependencies = new ArrayList<DependencyDescriptor>();
 
-    private Map configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
+    private Map<String, Configuration> configurations = new LinkedHashMap<String, Configuration>();
 
-    private Map artifactsByConf = new HashMap(); // Map (String conf -> Collection(Artifact))
+    private Map<String, Collection<Artifact>> artifactsByConf = new HashMap<String, Collection<Artifact>>();
 
-    private Collection artifacts = new LinkedHashSet(); // Collection(Artifact)
+    private Collection<Artifact> artifacts = new LinkedHashSet<Artifact>();
 
     // all artifacts could also be found in the artifactsByConf map, but here we can
     // preserve the order
@@ -227,7 +226,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private ModuleRules dependencyDescriptorMediators = new ModuleRules();
 
-    private List licenses = new ArrayList(); // List(License)
+    private List<License> licenses = new ArrayList<License>();
 
     private String homePage;
 
@@ -247,13 +246,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private Resource resource;
 
-    private List excludeRules = new ArrayList(); // List(ExcludeRule)
+    private List<ExcludeRule> excludeRules = new ArrayList<ExcludeRule>();
 
     private Artifact metadataArtifact;
 
-    private List inheritedDescriptors = new ArrayList(); // List(ExtendsDescriptor)
+    private List<ExtendsDescriptor> inheritedDescriptors = new ArrayList<ExtendsDescriptor>();
 
-    private Map/* <String,String> */extraAttributesNamespaces = new LinkedHashMap();
+    private Map<String, String> extraAttributesNamespaces = new LinkedHashMap<String, String>();
 
     private List<ExtraInfoHolder> extraInfos = new ArrayList<ExtraInfoHolder>();
 
@@ -381,9 +380,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
                 addArtifact(members[i], artifact);
             }
         } else {
-            Collection artifacts = (Collection) artifactsByConf.get(conf);
+            Collection<Artifact> artifacts = artifactsByConf.get(conf);
             if (artifacts == null) {
-                artifacts = new ArrayList();
+                artifacts = new ArrayList<Artifact>();
                 artifactsByConf.put(conf, artifacts);
             }
             artifacts.add(artifact);
@@ -404,28 +403,25 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public ExtendsDescriptor[] getInheritedDescriptors() {
-        return (ExtendsDescriptor[]) inheritedDescriptors
-                .toArray(new ExtendsDescriptor[inheritedDescriptors.size()]);
+        return inheritedDescriptors.toArray(new ExtendsDescriptor[inheritedDescriptors.size()]);
     }
 
     public Configuration[] getConfigurations() {
-        return (Configuration[]) configurations.values().toArray(
-            new Configuration[configurations.size()]);
+        return configurations.values().toArray(new Configuration[configurations.size()]);
     }
 
     public String[] getConfigurationsNames() {
-        return (String[]) configurations.keySet().toArray(new String[configurations.size()]);
+        return configurations.keySet().toArray(new String[configurations.size()]);
     }
 
     public String[] getPublicConfigurationsNames() {
-        List ret = new ArrayList();
-        for (Iterator iter = configurations.values().iterator(); iter.hasNext();) {
-            Configuration conf = (Configuration) iter.next();
+        List<String> ret = new ArrayList<String>();
+        for (Configuration conf : configurations.values()) {
             if (conf.getVisibility() == Configuration.Visibility.PUBLIC) {
                 ret.add(conf.getName());
             }
         }
-        return (String[]) ret.toArray(new String[ret.size()]);
+        return ret.toArray(new String[ret.size()]);
     }
 
     /**
@@ -433,7 +429,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * if not found.
      */
     public Configuration getConfiguration(String confName) {
-        Configuration configuration = (Configuration) configurations.get(confName);
+        Configuration configuration = configurations.get(confName);
         if (configuration == null && confName != null) {
             // let's first check if the configuration is a conf group
             Matcher m = Pattern.compile("\\*\\[([^=]+)\\=([^\\]]+)\\]").matcher(confName);
@@ -442,9 +438,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
                 String attValue = m.group(2);
 
                 // this is a conf group, let's search for its members
-                Map /* <String,Configuration> */members = new LinkedHashMap();
-                for (Iterator it = configurations.values().iterator(); it.hasNext();) {
-                    Configuration conf = (Configuration) it.next();
+                Map<String, Configuration> members = new LinkedHashMap<String, Configuration>();
+                for (Configuration conf : configurations.values()) {
                     if (attValue.equals(conf.getAttribute(attName))) {
                         members.put(conf.getName(), conf);
                     }
@@ -457,9 +452,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             if (confs.length <= 1) {
                 return null;
             }
-            Map /* <String,Configuration> */intersectedConfs = new LinkedHashMap();
+            Map<String, Configuration> intersectedConfs = new LinkedHashMap<String, Configuration>();
             for (int i = 0; i < confs.length; i++) {
-                Configuration c = (Configuration) configurations.get(confs[i]);
+                Configuration c = configurations.get(confs[i]);
                 if (c == null) {
                     Message.verbose("missing configuration '" + confs[i] + "' from intersection "
                             + confName + " in " + this);
@@ -477,13 +472,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (c == null) {
             return new Artifact[0];
         }
-        Collection artifacts = (Collection) artifactsByConf.get(conf);
+        Collection<Artifact> artifacts = artifactsByConf.get(conf);
         if (c instanceof ConfigurationIntersection) {
             ConfigurationIntersection intersection = (ConfigurationIntersection) c;
             String[] intersected = intersection.getIntersectedConfigurationNames();
-            Set/* <Artifact> */intersectedArtifacts = new LinkedHashSet();
+            Set<Artifact> intersectedArtifacts = new LinkedHashSet<Artifact>();
             for (int j = 0; j < intersected.length; j++) {
-                Collection arts = getArtifactsIncludingExtending(intersected[j]);
+                Collection<Artifact> arts = getArtifactsIncludingExtending(intersected[j]);
                 if (intersectedArtifacts.isEmpty()) {
                     intersectedArtifacts.addAll(arts);
                 } else {
@@ -493,39 +488,37 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             if (artifacts != null) {
                 intersectedArtifacts.addAll(artifacts);
             }
-            return (Artifact[]) intersectedArtifacts.toArray(new Artifact[intersectedArtifacts
-                    .size()]);
+            return intersectedArtifacts.toArray(new Artifact[intersectedArtifacts.size()]);
         } else if (c instanceof ConfigurationGroup) {
             ConfigurationGroup group = (ConfigurationGroup) c;
             String[] members = group.getMembersConfigurationNames();
-            Set/* <Artifact> */groupArtifacts = new LinkedHashSet();
+            Set<Artifact> groupArtifacts = new LinkedHashSet<Artifact>();
             for (int i = 0; i < members.length; i++) {
                 groupArtifacts.addAll(getArtifactsIncludingExtending(members[i]));
             }
             if (artifacts != null) {
                 groupArtifacts.addAll(artifacts);
             }
-            return (Artifact[]) groupArtifacts.toArray(new Artifact[groupArtifacts.size()]);
+            return groupArtifacts.toArray(new Artifact[groupArtifacts.size()]);
         } else {
             if (artifacts == null) {
                 return new Artifact[0];
             } else {
-                return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
+                return artifacts.toArray(new Artifact[artifacts.size()]);
             }
         }
     }
 
-    private Collection/* <Artifact> */getArtifactsIncludingExtending(String conf) {
-        Collection extendingConfs = Configuration.findConfigurationExtending(conf,
+    private Collection<Artifact> getArtifactsIncludingExtending(String conf) {
+        Collection<Configuration> extendingConfs = Configuration.findConfigurationExtending(conf,
             getConfigurations());
-        Set/* <Artifact> */artifacts = new LinkedHashSet();
-        Collection arts = (Collection) artifactsByConf.get(conf);
+        Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
+        Collection<Artifact> arts = artifactsByConf.get(conf);
         if (arts != null) {
             artifacts.addAll(arts);
         }
-        for (Iterator it = extendingConfs.iterator(); it.hasNext();) {
-            Configuration extendingConf = (Configuration) it.next();
-            arts = (Collection) artifactsByConf.get(extendingConf.getName());
+        for (Configuration extendingConf : extendingConfs) {
+            arts = artifactsByConf.get(extendingConf.getName());
             if (arts != null) {
                 artifacts.addAll(arts);
             }
@@ -534,17 +527,15 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public Artifact[] getAllArtifacts() {
-        return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
+        return artifacts.toArray(new Artifact[artifacts.size()]);
     }
 
     public DependencyDescriptor[] getDependencies() {
-        return (DependencyDescriptor[]) dependencies.toArray(new DependencyDescriptor[dependencies
-                .size()]);
+        return dependencies.toArray(new DependencyDescriptor[dependencies.size()]);
     }
 
     public boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md) {
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            DependencyDescriptor dd = (DependencyDescriptor) iter.next();
+        for (DependencyDescriptor dd : dependencies) {
             if (dd.getDependencyId().equals(md.getModuleRevisionId().getModuleId())) {
                 if (md.getResolvedModuleRevisionId().getRevision() == null) {
                     return true;
@@ -564,6 +555,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         }
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -571,6 +563,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -592,6 +585,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return true;
     }
 
+    @Override
     public String toString() {
         return "module: " + revId + " status=" + status + " publication=" + publicationDate
                 + " configurations=" + configurations + " artifacts=" + artifactsByConf
@@ -633,7 +627,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return dd;
     }
 
-    public ModuleRules/* <DependencyDescriptorMediator> */getAllDependencyDescriptorMediators() {
+    public ModuleRules getAllDependencyDescriptorMediators() {
         return (ModuleRules) dependencyDescriptorMediators.clone();
     }
 
@@ -642,7 +636,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public License[] getLicenses() {
-        return (License[]) licenses.toArray(new License[licenses.size()]);
+        return licenses.toArray(new License[licenses.size()]);
     }
 
     public String getHomePage() {
@@ -674,8 +668,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public boolean isNamespaceUseful() {
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            DependencyDescriptor dd = (DependencyDescriptor) iter.next();
+        for (DependencyDescriptor dd : dependencies) {
             if (dd.getAllExcludeRules().length > 0) {
                 return true;
             }
@@ -692,9 +685,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * configurations existence and cycles are checked
      */
     public void check() {
-        Stack confs = new Stack();
-        for (Iterator iter = configurations.values().iterator(); iter.hasNext();) {
-            Configuration conf = (Configuration) iter.next();
+        Stack<String> confs = new Stack<String>();
+        for (Configuration conf : configurations.values()) {
             String[] ext = conf.getExtends();
             for (int i = 0; i < ext.length; i++) {
                 confs.push(conf.getName());
@@ -704,7 +696,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         }
     }
 
-    private void checkConf(Stack confs, String confName) {
+    private void checkConf(Stack<String> confs, String confName) {
         int index = confs.indexOf(confName);
         if (index != -1) {
             StringBuffer cycle = new StringBuffer();
@@ -756,7 +748,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return resolvedRevId.getAttribute(attName);
     }
 
-    public Map getAttributes() {
+    public Map<String, String> getAttributes() {
         return resolvedRevId.getAttributes();
     }
 
@@ -764,11 +756,11 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return resolvedRevId.getExtraAttribute(attName);
     }
 
-    public Map getExtraAttributes() {
+    public Map<String, String> getExtraAttributes() {
         return resolvedRevId.getExtraAttributes();
     }
 
-    public Map getQualifiedExtraAttributes() {
+    public Map<String, String> getQualifiedExtraAttributes() {
         return resolvedRevId.getQualifiedExtraAttributes();
     }
 
@@ -807,26 +799,25 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public ExcludeRule[] getAllExcludeRules() {
-        return (ExcludeRule[]) excludeRules.toArray(new ExcludeRule[excludeRules.size()]);
+        return excludeRules.toArray(new ExcludeRule[excludeRules.size()]);
     }
 
     public ExcludeRule[] getExcludeRules(String[] moduleConfigurations) {
-        Set rules = new LinkedHashSet();
-        for (Iterator iter = excludeRules.iterator(); iter.hasNext();) {
-            ExcludeRule rule = (ExcludeRule) iter.next();
+        Set<ExcludeRule> rules = new LinkedHashSet<ExcludeRule>();
+        for (ExcludeRule rule : excludeRules) {
             String[] ruleConfs = rule.getConfigurations();
             if (containsAny(ruleConfs, moduleConfigurations)) {
                 rules.add(rule);
             }
         }
-        return (ExcludeRule[]) rules.toArray(new ExcludeRule[rules.size()]);
+        return rules.toArray(new ExcludeRule[rules.size()]);
     }
 
     private boolean containsAny(String[] arr1, String[] arr2) {
-        return new ArrayList(Arrays.asList(arr1)).removeAll(Arrays.asList(arr2));
+        return new ArrayList<String>(Arrays.asList(arr1)).removeAll(Arrays.asList(arr2));
     }
 
-    public Map getExtraAttributesNamespaces() {
+    public Map<String, String> getExtraAttributesNamespaces() {
         return extraAttributesNamespaces;
     }
 

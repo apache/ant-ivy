@@ -19,10 +19,10 @@ package org.apache.ivy.core.module.id;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.util.Checks;
@@ -49,8 +49,9 @@ import org.apache.ivy.util.filter.NoFilter;
  * which resolver to use, which TTL in cache, ...)
  * </p>
  */
-public class ModuleRules {
-    private Map/* <MapMatcher,Object> */rules = new LinkedHashMap();
+public class ModuleRules<T> {
+
+    private Map<MapMatcher, T> rules = new LinkedHashMap<MapMatcher, T>();
 
     private MatcherLookup matcher_lookup = new MatcherLookup();
 
@@ -60,10 +61,10 @@ public class ModuleRules {
     public ModuleRules() {
     }
 
-    private ModuleRules(Map/* <MapMatcher,Object> */rules) {
-        this.rules = new LinkedHashMap(rules);
-        for (Iterator iter = rules.keySet().iterator(); iter.hasNext();) {
-            matcher_lookup.add((MapMatcher) iter.next());
+    private ModuleRules(Map<MapMatcher, T> rules) {
+        this.rules = new LinkedHashMap<MapMatcher, T>(rules);
+        for (MapMatcher matcher : rules.keySet()) {
+            matcher_lookup.add(matcher);
         }
     }
 
@@ -75,7 +76,7 @@ public class ModuleRules {
      * @param rule
      *            the rule to apply. Must not be <code>null</code>.
      */
-    public void defineRule(MapMatcher condition, Object rule) {
+    public void defineRule(MapMatcher condition, T rule) {
         Checks.checkNotNull(condition, "condition");
         Checks.checkNotNull(rule, "rule");
 
@@ -93,8 +94,8 @@ public class ModuleRules {
      *         applies.
      * @see #getRule(ModuleId, Filter)
      */
-    public Object getRule(ModuleId mid) {
-        return getRule(mid, NoFilter.INSTANCE);
+    public T getRule(ModuleId mid) {
+        return getRule(mid, NoFilter.<T> instance());
     }
 
     /**
@@ -105,8 +106,8 @@ public class ModuleRules {
      *            the {@link ModuleId} to search the rule for. Must not be <code>null</code>.
      * @return an array of rule objects matching the given {@link ModuleId}.
      */
-    public Object[] getRules(ModuleId mid) {
-        return getRules(mid.getAttributes(), NoFilter.INSTANCE);
+    public T[] getRules(ModuleId mid) {
+        return getRules(mid.getAttributes(), NoFilter.<T> instance());
     }
 
     /**
@@ -120,8 +121,8 @@ public class ModuleRules {
      *         no rule applies.
      * @see #getRule(ModuleRevisionId, Filter)
      */
-    public Object getRule(ModuleRevisionId mrid) {
-        return getRule(mrid, NoFilter.INSTANCE);
+    public T getRule(ModuleRevisionId mrid) {
+        return getRule(mrid, NoFilter.<T> instance());
     }
 
     /**
@@ -140,7 +141,7 @@ public class ModuleRules {
      *         applies.
      * @see #getRule(ModuleRevisionId, Filter)
      */
-    public Object getRule(ModuleId mid, Filter filter) {
+    public T getRule(ModuleId mid, Filter<T> filter) {
         Checks.checkNotNull(mid, "mid");
         return getRule(mid.getAttributes(), filter);
     }
@@ -161,18 +162,17 @@ public class ModuleRules {
      *         no rule applies.
      * @see #getRule(ModuleRevisionId)
      */
-    public Object getRule(ModuleRevisionId mrid, Filter filter) {
+    public T getRule(ModuleRevisionId mrid, Filter<T> filter) {
         Checks.checkNotNull(mrid, "mrid");
         Checks.checkNotNull(filter, "filter");
-        Map moduleAttributes = mrid.getAttributes();
+        Map<String, String> moduleAttributes = mrid.getAttributes();
         return getRule(moduleAttributes, filter);
     }
 
-    private Object getRule(Map moduleAttributes, Filter filter) {
-        List matchers = matcher_lookup.get(moduleAttributes);
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            Object rule = rules.get(midm);
+    private T getRule(Map<String, String> moduleAttributes, Filter<T> filter) {
+        List<MapMatcher> matchers = matcher_lookup.get(moduleAttributes);
+        for (MapMatcher midm : matchers) {
+            T rule = rules.get(midm);
             if (filter.accept(rule)) {
                 return rule;
             }
@@ -193,24 +193,23 @@ public class ModuleRules {
      *            {@link ModuleRevisionId}. Must not be <code>null</code>.
      * @return an array of rule objects matching the given {@link ModuleRevisionId}.
      */
-    public Object[] getRules(ModuleRevisionId mrid, Filter filter) {
+    public T[] getRules(ModuleRevisionId mrid, Filter<T> filter) {
         Checks.checkNotNull(mrid, "mrid");
         Checks.checkNotNull(filter, "filter");
-        Map moduleAttributes = mrid.getAttributes();
+        Map<String, String> moduleAttributes = mrid.getAttributes();
         return getRules(moduleAttributes, filter);
     }
 
-    private Object[] getRules(Map moduleAttributes, Filter filter) {
-        List matchers = matcher_lookup.get(moduleAttributes);
-        List matchingRules = new ArrayList();
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            Object rule = rules.get(midm);
+    private T[] getRules(Map<String, String> moduleAttributes, Filter<T> filter) {
+        List<MapMatcher> matchers = matcher_lookup.get(moduleAttributes);
+        List<T> matchingRules = new ArrayList<T>();
+        for (MapMatcher midm : matchers) {
+            T rule = rules.get(midm);
             if (filter.accept(rule)) {
                 matchingRules.add(rule);
             }
         }
-        return matchingRules.toArray();
+        return matchingRules.toArray((T[]) new Object[0]);
     }
 
     /**
@@ -223,9 +222,9 @@ public class ModuleRules {
         if (rules.isEmpty()) {
             Message.debug(prefix + "NONE");
         } else {
-            for (Iterator iter = rules.keySet().iterator(); iter.hasNext();) {
-                MapMatcher midm = (MapMatcher) iter.next();
-                Object rule = rules.get(midm);
+            for (Entry<MapMatcher, T> entry : rules.entrySet()) {
+                MapMatcher midm = entry.getKey();
+                T rule = entry.getValue();
                 Message.debug(prefix + midm + " -> " + rule);
             }
         }
@@ -240,11 +239,12 @@ public class ModuleRules {
      * 
      * @return an unmodifiable view of all the rules defined on this ModuleRules.
      */
-    public Map/* <MapMatcher,Object> */getAllRules() {
+    public Map<MapMatcher, T> getAllRules() {
         return Collections.unmodifiableMap(rules);
     }
 
+    @Override
     public Object clone() {
-        return new ModuleRules(rules);
+        return new ModuleRules<T>(rules);
     }
 }

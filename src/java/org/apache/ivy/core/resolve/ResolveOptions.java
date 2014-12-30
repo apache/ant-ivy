@@ -20,6 +20,7 @@ package org.apache.ivy.core.resolve;
 import java.util.Date;
 
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.util.ConfigurationUtils;
@@ -100,7 +101,7 @@ public class ResolveOptions extends LogOptions {
     /**
      * A filter to use to avoid downloading all artifacts.
      */
-    private Filter artifactFilter = FilterHelper.NO_FILTER;
+    private Filter<Artifact> artifactFilter = FilterHelper.NO_FILTER;
 
     /**
      * The resolve mode to use. Should be one of {@link #RESOLVEMODES}, or <code>null</code> to use
@@ -140,11 +141,11 @@ public class ResolveOptions extends LogOptions {
         checkIfChanged = options.checkIfChanged;
     }
 
-    public Filter getArtifactFilter() {
+    public Filter<Artifact> getArtifactFilter() {
         return artifactFilter;
     }
 
-    public ResolveOptions setArtifactFilter(Filter artifactFilter) {
+    public ResolveOptions setArtifactFilter(Filter<Artifact> artifactFilter) {
         this.artifactFilter = artifactFilter;
         return this;
     }

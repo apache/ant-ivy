@@ -121,6 +121,7 @@ public abstract class AbstractRepository implements Repository {
         this.name = name;
     }
 
+    @Override
     public String toString() {
         return getName();
     }

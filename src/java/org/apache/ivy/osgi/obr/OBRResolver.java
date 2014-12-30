@@ -25,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.ParseException;
 
 import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.event.EventManager;
@@ -62,6 +61,7 @@ public class OBRResolver extends AbstractOSGiResolver {
         this.forceMetadataUpdate = forceMetadataUpdate;
     }
 
+    @Override
     protected void init() {
         if (repoXmlFile != null && repoXmlURL != null) {
             throw new RuntimeException("The OBR repository resolver " + getName()
@@ -125,10 +125,6 @@ public class OBRResolver extends AbstractOSGiResolver {
         }
         try {
             setRepoDescriptor(OBRXMLParser.parse(baseUri, in));
-        } catch (ParseException e) {
-            throw new RuntimeException("The OBR repository resolver " + getName()
-                    + " couldn't be configured: the file " + sourceLocation
-                    + " is incorrectly formed (" + e.getMessage() + ")", e);
         } catch (IOException e) {
             throw new RuntimeException("The OBR repository resolver " + getName()
                     + " couldn't be configured: the file " + sourceLocation

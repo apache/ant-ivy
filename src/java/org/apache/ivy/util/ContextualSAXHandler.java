@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.util;
 
-import java.util.Iterator;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -26,20 +25,23 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ContextualSAXHandler extends DefaultHandler {
 
-    private Stack contextStack = new Stack();
+    private Stack<String> contextStack = new Stack<String>();
 
     private StringBuffer buffer = new StringBuffer();
 
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         buffer.append(ch, start, length);
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
         contextStack.push(qName);
         buffer.setLength(0);
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         contextStack.pop();
         buffer.setLength(0);
@@ -47,8 +49,7 @@ public class ContextualSAXHandler extends DefaultHandler {
 
     protected String getContext() {
         StringBuffer buf = new StringBuffer();
-        for (Iterator iter = contextStack.iterator(); iter.hasNext();) {
-            String ctx = (String) iter.next();
+        for (String ctx : contextStack) {
             buf.append(ctx).append("/");
         }
         if (buf.length() > 0) {

@@ -19,8 +19,8 @@ package org.apache.ivy.core.module.id;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +36,7 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
  * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ModuleRevisionId extends UnmodifiableExtendableItem {
+
     private static final String ENCODE_SEPARATOR = ModuleId.ENCODE_SEPARATOR;
 
     private static final String ENCODE_PREFIX = "+";
@@ -46,7 +47,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     private static final String REV_STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}\\(\\):@]";
 
-    private static final Map/* <ModuleRevisionId, ModuleRevisionId> */CACHE = new WeakHashMap();
+    private static final Map<ModuleRevisionId, WeakReference<ModuleRevisionId>> CACHE = new WeakHashMap<ModuleRevisionId, WeakReference<ModuleRevisionId>>();
 
     /**
      * Pattern to use to matched mrid text representation.
@@ -97,7 +98,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String revision,
-            Map extraAttributes) {
+            Map<String, String> extraAttributes) {
         return intern(new ModuleRevisionId(ModuleId.newInstance(organisation, name), revision,
                 extraAttributes));
     }
@@ -109,13 +110,14 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String branch,
-            String revision, Map extraAttributes) {
+            String revision, Map<String, String> extraAttributes) {
         return intern(new ModuleRevisionId(ModuleId.newInstance(organisation, name), branch,
                 revision, extraAttributes));
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String branch,
-            String revision, Map extraAttributes, boolean replaceNullBranchWithDefault) {
+            String revision, Map<String, String> extraAttributes,
+            boolean replaceNullBranchWithDefault) {
         return intern(new ModuleRevisionId(ModuleId.newInstance(organisation, name), branch,
                 revision, extraAttributes, replaceNullBranchWithDefault));
     }
@@ -149,13 +151,13 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         ModuleRevisionId r = null;
 
         synchronized (CACHE) {
-            WeakReference ref = (WeakReference) CACHE.get(moduleRevisionId);
+            WeakReference<ModuleRevisionId> ref = CACHE.get(moduleRevisionId);
             if (ref != null) {
-                r = (ModuleRevisionId) ref.get();
+                r = ref.get();
             }
             if (r == null) {
                 r = moduleRevisionId;
-                CACHE.put(r, new WeakReference(r));
+                CACHE.put(r, new WeakReference<ModuleRevisionId>(r));
             }
         }
 
@@ -180,16 +182,17 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         this(moduleId, branch, revision, null);
     }
 
-    private ModuleRevisionId(ModuleId moduleId, String revision, Map extraAttributes) {
+    private ModuleRevisionId(ModuleId moduleId, String revision, Map<String, String> extraAttributes) {
         this(moduleId, null, revision, extraAttributes);
     }
 
-    private ModuleRevisionId(ModuleId moduleId, String branch, String revision, Map extraAttributes) {
+    private ModuleRevisionId(ModuleId moduleId, String branch, String revision,
+            Map<String, String> extraAttributes) {
         this(moduleId, branch, revision, extraAttributes, true);
     }
 
     private ModuleRevisionId(ModuleId moduleId, String branch, String revision,
-            Map extraAttributes, boolean replaceNullBranchWithDefault) {
+            Map<String, String> extraAttributes, boolean replaceNullBranchWithDefault) {
         super(null, extraAttributes);
         this.moduleId = moduleId;
         IvyContext context = IvyContext.getContext();
@@ -221,6 +224,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         return revision;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ModuleRevisionId)) {
             return false;
@@ -240,6 +244,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         }
     }
 
+    @Override
     public int hashCode() {
         if (hash == 0) {
             // CheckStyle:MagicNumber| OFF
@@ -253,6 +258,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         return hash;
     }
 
+    @Override
     public String toString() {
         return moduleId + (branch == null || branch.length() == 0 ? "" : "#" + branch) + ";"
                 + (revision == null ? "NONE" : revision);
@@ -260,13 +266,13 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     public String encodeToString() {
         StringBuffer buf = new StringBuffer();
-        Map attributes = new HashMap(getAttributes());
+        Map<String, String> attributes = new HashMap<String, String>(getAttributes());
         attributes.keySet().removeAll(getExtraAttributes().keySet());
         attributes.putAll(getQualifiedExtraAttributes());
 
-        for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
-            String attName = (String) iter.next();
-            String value = (String) attributes.get(attName);
+        for (Entry<String, String> att : attributes.entrySet()) {
+            String attName = att.getKey();
+            String value = att.getValue();
             value = value == null ? NULL_ENCODE : value;
             buf.append(ENCODE_PREFIX).append(attName).append(ENCODE_SEPARATOR)
                     .append(ENCODE_PREFIX).append(value).append(ENCODE_SEPARATOR);
@@ -280,7 +286,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
                     + "'");
         }
-        Map attributes = new HashMap();
+        Map<String, String> attributes = new HashMap<String, String>();
         for (int i = 0; i < parts.length; i += 2) {
             String attName = parts[i];
             if (!attName.startsWith(ENCODE_PREFIX)) {
@@ -301,10 +307,10 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             }
             attributes.put(attName, attValue);
         }
-        String org = (String) attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
-        String mod = (String) attributes.remove(IvyPatternHelper.MODULE_KEY);
-        String rev = (String) attributes.remove(IvyPatternHelper.REVISION_KEY);
-        String branch = (String) attributes.remove(IvyPatternHelper.BRANCH_KEY);
+        String org = attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
+        String mod = attributes.remove(IvyPatternHelper.MODULE_KEY);
+        String rev = attributes.remove(IvyPatternHelper.REVISION_KEY);
+        String branch = attributes.remove(IvyPatternHelper.BRANCH_KEY);
         if (org == null) {
             throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
                     + "': no organisation");

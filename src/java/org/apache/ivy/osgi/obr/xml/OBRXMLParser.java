@@ -41,8 +41,8 @@ import org.xml.sax.SAXParseException;
 
 public class OBRXMLParser {
 
-    public static BundleRepoDescriptor parse(URI baseUri, InputStream in) throws ParseException,
-            IOException, SAXException {
+    public static BundleRepoDescriptor parse(URI baseUri, InputStream in) throws IOException,
+            SAXException {
         RepositoryHandler handler = new RepositoryHandler(baseUri);
         try {
             XMLHelper.parse(in, null, handler, null);
@@ -68,12 +68,14 @@ public class OBRXMLParser {
             super(REPOSITORY);
             this.baseUri = baseUri;
             addChild(new ResourceHandler(), new ChildElementHandler<ResourceHandler>() {
+                @Override
                 public void childHanlded(ResourceHandler child) {
                     repo.addBundle(child.bundleInfo);
                 }
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             repo = new BundleRepoDescriptor(baseUri,
                     ExecutionEnvironmentProfileProvider.getInstance());
@@ -109,6 +111,7 @@ public class OBRXMLParser {
                                   // resource
 
             addChild(new ResourceSourceHandler(), new ChildElementHandler<ResourceSourceHandler>() {
+                @Override
                 public void childHanlded(ResourceSourceHandler child) {
                     String uri = child.getBufferedChars().trim();
                     if (!uri.endsWith(".jar")) {
@@ -129,23 +132,27 @@ public class OBRXMLParser {
             });
             addChild(new ResourceDescriptionHandler(),
                 new ChildElementHandler<ResourceDescriptionHandler>() {
+                    @Override
                     public void childHanlded(ResourceDescriptionHandler child) {
                         bundleInfo.setDescription(child.getBufferedChars().trim());
                     }
                 });
             addChild(new ResourceDocumentationHandler(),
                 new ChildElementHandler<ResourceDocumentationHandler>() {
+                    @Override
                     public void childHanlded(ResourceDocumentationHandler child) {
                         bundleInfo.setDocumentation(child.getBufferedChars().trim());
                     }
                 });
             addChild(new ResourceLicenseHandler(),
                 new ChildElementHandler<ResourceLicenseHandler>() {
+                    @Override
                     public void childHanlded(ResourceLicenseHandler child) {
                         bundleInfo.setLicense(child.getBufferedChars().trim());
                     }
                 });
             addChild(new ResourceSizeHandler(), new ChildElementHandler<ResourceSizeHandler>() {
+                @Override
                 public void childHanlded(ResourceSizeHandler child) {
                     String size = child.getBufferedChars().trim();
                     try {
@@ -158,6 +165,7 @@ public class OBRXMLParser {
                 }
             });
             addChild(new CapabilityHandler(), new ChildElementHandler<CapabilityHandler>() {
+                @Override
                 public void childHanlded(CapabilityHandler child) throws SAXParseException {
 
                     try {
@@ -169,6 +177,7 @@ public class OBRXMLParser {
                 }
             });
             addChild(new RequireHandler(), new ChildElementHandler<RequireHandler>() {
+                @Override
                 public void childHanlded(RequireHandler child) throws SAXParseException {
                     try {
                         RequirementAdapter.adapt(bundleInfo, child.requirement);
@@ -183,12 +192,14 @@ public class OBRXMLParser {
                 }
             });
             addChild(new ExtendHandler(), new ChildElementHandler<ExtendHandler>() {
+                @Override
                 public void childHanlded(ExtendHandler child) throws SAXParseException {
                     // TODO handle fragment host
                 }
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String symbolicname = atts.getValue(SYMBOLIC_NAME);
             if (symbolicname == null) {
@@ -224,6 +235,7 @@ public class OBRXMLParser {
             bundleInfo.setId(atts.getValue(ID));
         }
 
+        @Override
         protected String getCurrentElementIdentifier() {
             return bundleInfo.getSymbolicName() + "/" + bundleInfo.getVersion();
         }
@@ -295,6 +307,7 @@ public class OBRXMLParser {
             super(CAPABILITY);
             addChild(new CapabilityPropertyHandler(),
                 new ChildElementHandler<CapabilityPropertyHandler>() {
+                    @Override
                     public void childHanlded(CapabilityPropertyHandler child) {
                         String name = child.name;
                         String value = child.value;
@@ -305,6 +318,7 @@ public class OBRXMLParser {
                 });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String name = getRequiredAttribute(atts, NAME);
             capability = new Capability(name);
@@ -332,6 +346,7 @@ public class OBRXMLParser {
             super(CAPABILITY_PROPERTY);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             name = getRequiredAttribute(atts, NAME);
             value = getRequiredAttribute(atts, VALUE);
@@ -357,6 +372,7 @@ public class OBRXMLParser {
             super(name);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String name = getRequiredAttribute(atts, NAME);
 

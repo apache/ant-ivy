@@ -98,11 +98,11 @@ public interface Repository {
      * 
      * @param parent
      *            The parent directory from which to generate the listing.
-     * @return A listing of the parent directory's file content, as a List of String.
+     * @return A listing of the parent directory's file content
      * @throws IOException
      *             On listing failure.
      */
-    List list(String parent) throws IOException;
+    List<String> list(String parent) throws IOException;
 
     /**
      * Add a listener to the repository.

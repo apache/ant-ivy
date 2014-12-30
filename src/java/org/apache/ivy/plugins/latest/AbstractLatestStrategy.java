@@ -32,17 +32,18 @@ public abstract class AbstractLatestStrategy implements LatestStrategy {
         this.name = name;
     }
 
+    @Override
     public String toString() {
         return name;
     }
 
     public ArtifactInfo findLatest(ArtifactInfo[] infos, Date date) {
-        List l = sort(infos);
+        List<ArtifactInfo> l = sort(infos);
 
         // the latest revision comes last, use a ListIterator to iterate the
         // sorted list in the reverse direction.
-        for (ListIterator iter = l.listIterator(l.size()); iter.hasPrevious();) {
-            ArtifactInfo info = (ArtifactInfo) iter.previous();
+        for (ListIterator<ArtifactInfo> iter = l.listIterator(l.size()); iter.hasPrevious();) {
+            ArtifactInfo info = iter.previous();
             if (date == null || info.getLastModified() < date.getTime()) {
                 return info;
             }

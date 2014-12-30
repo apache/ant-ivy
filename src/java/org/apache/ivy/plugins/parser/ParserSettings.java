@@ -34,7 +34,7 @@ public interface ParserSettings {
 
     String substitute(String value);
 
-    Map/* <String, String> */substitute(Map/* <String, String> */strings);
+    Map<String, String> substitute(Map<String, String> strings);
 
     ResolutionCacheManager getResolutionCacheManager();
 

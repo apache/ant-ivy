@@ -69,7 +69,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         private Resource res;
 
-        private List errors = new ArrayList();
+        private List<String> errors = new ArrayList<String>();
 
         private DefaultModuleDescriptor md;
 
@@ -258,7 +258,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         private void addExtendingConfigurations(String conf, DefaultDependencyDescriptor dd,
                 boolean useDefaultMappingToGuessRightOperande) {
-            Set configsToAdd = new HashSet();
+            Set<String> configsToAdd = new HashSet<String>();
             Configuration[] configs = md.getConfigurations();
             for (int i = 0; i < configs.length; i++) {
                 String[] ext = configs[i].getExtends();
@@ -272,7 +272,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                 }
             }
 
-            String[] confs = (String[]) configsToAdd.toArray(new String[configsToAdd.size()]);
+            String[] confs = configsToAdd.toArray(new String[configsToAdd.size()]);
             parseDepsConfs(confs, dd, useDefaultMappingToGuessRightOperande);
         }
 
@@ -293,14 +293,17 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             }
         }
 
+        @Override
         public void warning(SAXParseException ex) {
             Message.warn("xml parsing: " + getLocationString(ex) + ": " + ex.getMessage());
         }
 
+        @Override
         public void error(SAXParseException ex) {
             addError("xml parsing: " + getLocationString(ex) + ": " + ex.getMessage());
         }
 
+        @Override
         public void fatalError(SAXParseException ex) throws SAXException {
             addError("[Fatal Error] " + getLocationString(ex) + ": " + ex.getMessage());
         }

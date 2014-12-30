@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -110,7 +109,7 @@ public class PomModuleDescriptorBuilder {
             new Configuration("optional", Visibility.PUBLIC, "contains all optional dependencies",
                     new String[0], true, null)};
 
-    static final Map MAVEN2_CONF_MAPPING = new HashMap();
+    static final Map<String, ConfMapper> MAVEN2_CONF_MAPPING = new HashMap<String, ConfMapper>();
 
     private static final String DEPENDENCY_MANAGEMENT = "m:dependency.management";
 
@@ -118,9 +117,9 @@ public class PomModuleDescriptorBuilder {
 
     private static final String EXTRA_INFO_DELIMITER = "__";
 
-    private static final Collection/* <String> */JAR_PACKAGINGS = Arrays.asList(new String[] {
-            "ejb", "bundle", "maven-plugin", "eclipse-plugin", "jbi-component",
-            "jbi-shared-library", "orbit", "hk2-jar"});
+    private static final Collection<String> JAR_PACKAGINGS = Arrays.asList(new String[] {"ejb",
+            "bundle", "maven-plugin", "eclipse-plugin", "jbi-component", "jbi-shared-library",
+            "orbit", "hk2-jar"});
 
     static interface ConfMapper {
         public void addMappingConfs(DefaultDependencyDescriptor dd, boolean isOptional);
@@ -295,9 +294,9 @@ public class PomModuleDescriptorBuilder {
         DefaultDependencyDescriptor dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor,
                 moduleRevId);
         scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
-        ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(scope);
+        ConfMapper mapping = MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
-        Map extraAtt = new HashMap();
+        Map<String, String> extraAtt = new HashMap<String, String>();
         if ((dep.getClassifier() != null)
                 || ((dep.getType() != null) && !"jar".equals(dep.getType()))) {
             String type = "jar";
@@ -332,13 +331,12 @@ public class PomModuleDescriptorBuilder {
         // inherited from parent POMs if either of the following is true:
         // the <exclusions> element is missing or the <exclusions> element
         // is present, but empty.
-        List /* <ModuleId> */excluded = dep.getExcludedModules();
+        List<ModuleId> excluded = dep.getExcludedModules();
         if (excluded.isEmpty()) {
             excluded = getDependencyMgtExclusions(ivyModuleDescriptor, dep.getGroupId(),
                 dep.getArtifactId());
         }
-        for (Iterator itExcl = excluded.iterator(); itExcl.hasNext();) {
-            ModuleId excludedModule = (ModuleId) itExcl.next();
+        for (ModuleId excludedModule : excluded) {
             String[] confs = dd.getModuleConfigurations();
             for (int k = 0; k < confs.length; k++) {
                 dd.addExcludeRule(confs[k], new DefaultExcludeRule(new ArtifactId(excludedModule,
@@ -375,11 +373,10 @@ public class PomModuleDescriptorBuilder {
             overwriteExtraInfoIfExists(scopeKey, dep.getScope());
         }
         if (!dep.getExcludedModules().isEmpty()) {
-            final String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(
-                dep.getGroupId(), dep.getArtifactId());
+            String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(dep.getGroupId(),
+                dep.getArtifactId());
             int index = 0;
-            for (final Iterator iter = dep.getExcludedModules().iterator(); iter.hasNext();) {
-                final ModuleId excludedModule = (ModuleId) iter.next();
+            for (ModuleId excludedModule : dep.getExcludedModules()) {
                 overwriteExtraInfoIfExists(
                     exclusionPrefix + index,
                     excludedModule.getOrganisation() + EXTRA_INFO_DELIMITER
@@ -413,11 +410,11 @@ public class PomModuleDescriptorBuilder {
         extraInfoByTagName.setContent(pluginExtraInfo);
     }
 
-    public static List /* <PomDependencyMgt> */getPlugins(ModuleDescriptor md) {
-        List result = new ArrayList();
+    public static List<PomDependencyMgt> getPlugins(ModuleDescriptor md) {
+        List<PomDependencyMgt> result = new ArrayList<PomDependencyMgt>();
         String plugins = md.getExtraInfoContentByTagName("m:maven.plugins");
         if (plugins == null) {
-            return new ArrayList();
+            return new ArrayList<PomDependencyMgt>();
         }
         String[] pluginsArray = plugins.split("\\|");
         for (int i = 0; i < pluginsArray.length; i++) {
@@ -457,16 +454,15 @@ public class PomModuleDescriptorBuilder {
             return null;
         }
 
-        public List /* <ModuleId> */getExcludedModules() {
-            return Collections.EMPTY_LIST; // probably not used?
+        public List<ModuleId> getExcludedModules() {
+            return Collections.emptyList(); // probably not used?
         }
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
         ModuleId moduleId = ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId());
         if (ivyModuleDescriptor.getDependencyManagementMap().containsKey(moduleId)) {
-            return ((PomDependencyMgt) ivyModuleDescriptor.getDependencyManagementMap().get(
-                moduleId)).getVersion();
+            return ivyModuleDescriptor.getDependencyManagementMap().get(moduleId).getVersion();
         }
         String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId());
         return ivyModuleDescriptor.getExtraInfoContentByTagName(key);
@@ -476,8 +472,7 @@ public class PomModuleDescriptorBuilder {
         String result;
         ModuleId moduleId = ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId());
         if (ivyModuleDescriptor.getDependencyManagementMap().containsKey(moduleId)) {
-            result = ((PomDependencyMgt) ivyModuleDescriptor.getDependencyManagementMap().get(
-                moduleId)).getScope();
+            result = ivyModuleDescriptor.getDependencyManagementMap().get(moduleId).getScope();
         } else {
             String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());
             result = ivyModuleDescriptor.getExtraInfoContentByTagName(key);
@@ -508,17 +503,17 @@ public class PomModuleDescriptorBuilder {
                 + artifaceId + EXTRA_INFO_DELIMITER + "exclusion_";
     }
 
-    private static List /* <ModuleId> */getDependencyMgtExclusions(ModuleDescriptor descriptor,
+    private static List<ModuleId> getDependencyMgtExclusions(ModuleDescriptor descriptor,
             String groupId, String artifactId) {
         if (descriptor instanceof PomModuleDescriptor) {
-            PomDependencyMgt dependencyMgt = (PomDependencyMgt) ((PomModuleDescriptor) descriptor)
+            PomDependencyMgt dependencyMgt = ((PomModuleDescriptor) descriptor)
                     .getDependencyManagementMap().get(ModuleId.newInstance(groupId, artifactId));
             if (dependencyMgt != null) {
                 return dependencyMgt.getExcludedModules();
             }
         }
         String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(groupId, artifactId);
-        List /* <ModuleId> */exclusionIds = new LinkedList /* <ModuleId> */();
+        List<ModuleId> exclusionIds = new LinkedList<ModuleId>();
         for (ExtraInfoHolder extraInfoHolder : descriptor.getExtraInfos()) {
             String key = extraInfoHolder.getName();
             if (key.startsWith(exclusionPrefix)) {
@@ -535,14 +530,12 @@ public class PomModuleDescriptorBuilder {
         return exclusionIds;
     }
 
-    public static Map/* <ModuleId, String version> */
-    getDependencyManagementMap(ModuleDescriptor md) {
-        Map ret = new LinkedHashMap();
+    public static Map<ModuleId, String> getDependencyManagementMap(ModuleDescriptor md) {
+        Map<ModuleId, String> ret = new LinkedHashMap<ModuleId, String>();
         if (md instanceof PomModuleDescriptor) {
-            for (final Iterator iterator = ((PomModuleDescriptor) md).getDependencyManagementMap()
-                    .entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry e = (Entry) iterator.next();
-                PomDependencyMgt dependencyMgt = (PomDependencyMgt) e.getValue();
+            for (Entry<ModuleId, PomDependencyMgt> e : ((PomModuleDescriptor) md)
+                    .getDependencyManagementMap().entrySet()) {
+                PomDependencyMgt dependencyMgt = e.getValue();
                 ret.put(e.getKey(), dependencyMgt.getVersion());
             }
         } else {
@@ -563,8 +556,8 @@ public class PomModuleDescriptorBuilder {
         return ret;
     }
 
-    public static List getDependencyManagements(ModuleDescriptor md) {
-        List result = new ArrayList();
+    public static List<PomDependencyMgt> getDependencyManagements(ModuleDescriptor md) {
+        List<PomDependencyMgt> result = new ArrayList<PomDependencyMgt>();
 
         if (md instanceof PomModuleDescriptor) {
             result.addAll(((PomModuleDescriptor) md).getDependencyManagementMap().values());
@@ -586,7 +579,7 @@ public class PomModuleDescriptorBuilder {
                         String version = md.getExtraInfoContentByTagName(versionKey);
                         String scope = md.getExtraInfoContentByTagName(scopeKey);
 
-                        List /* <ModuleId> */exclusions = getDependencyMgtExclusions(md, parts[1],
+                        List<ModuleId> exclusions = getDependencyMgtExclusions(md, parts[1],
                             parts[2]);
                         result.add(new DefaultPomDependencyMgt(parts[1], parts[2], version, scope,
                                 exclusions));
@@ -598,12 +591,9 @@ public class PomModuleDescriptorBuilder {
     }
 
     @Deprecated
-    public void addExtraInfos(Map extraAttributes) {
-        for (Iterator it = extraAttributes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Entry) it.next();
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-            addExtraInfo(key, value);
+    public void addExtraInfos(Map<String, String> extraAttributes) {
+        for (Entry<String, String> entry : extraAttributes.entrySet()) {
+            addExtraInfo(entry.getKey(), entry.getValue());
         }
     }
 
@@ -633,21 +623,20 @@ public class PomModuleDescriptorBuilder {
     }
 
     @Deprecated
-    public static Map extractPomProperties(Map extraInfo) {
-        Map r = new HashMap();
-        for (Iterator it = extraInfo.entrySet().iterator(); it.hasNext();) {
-            Map.Entry extraInfoEntry = (Map.Entry) it.next();
-            if (((String) extraInfoEntry.getKey()).startsWith(PROPERTIES)) {
-                String prop = ((String) extraInfoEntry.getKey()).substring(PROPERTIES.length()
-                        + EXTRA_INFO_DELIMITER.length());
+    public static Map<String, String> extractPomProperties(Map<String, String> extraInfo) {
+        Map<String, String> r = new HashMap<String, String>();
+        for (Entry<String, String> extraInfoEntry : extraInfo.entrySet()) {
+            if (extraInfoEntry.getKey().startsWith(PROPERTIES)) {
+                String prop = extraInfoEntry.getKey().substring(
+                    PROPERTIES.length() + EXTRA_INFO_DELIMITER.length());
                 r.put(prop, extraInfoEntry.getValue());
             }
         }
         return r;
     }
 
-    public static Map extractPomProperties(List<ExtraInfoHolder> extraInfos) {
-        Map r = new HashMap();
+    public static Map<String, String> extractPomProperties(List<ExtraInfoHolder> extraInfos) {
+        Map<String, String> r = new HashMap<String, String>();
         for (ExtraInfoHolder extraInfoHolder : extraInfos) {
             if ((extraInfoHolder.getName()).startsWith(PROPERTIES)) {
                 String prop = (extraInfoHolder.getName()).substring(PROPERTIES.length()
@@ -717,7 +706,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static class PomModuleDescriptor extends DefaultModuleDescriptor {
-        private final Map/* <ModuleId, PomDependencyMgt> */dependencyManagementMap = new HashMap();
+        private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new HashMap<ModuleId, PomDependencyMgt>();
 
         public PomModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
             super(parser, res);
@@ -729,7 +718,7 @@ public class PomModuleDescriptorBuilder {
                 dependencyMgt);
         }
 
-        public Map getDependencyManagementMap() {
+        public Map<ModuleId, PomDependencyMgt> getDependencyManagementMap() {
             return dependencyManagementMap;
         }
     }

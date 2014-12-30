@@ -31,10 +31,10 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
      * Compares two ModuleRevisionId by their revision. Revisions are compared using an algorithm
      * inspired by PHP version_compare one.
      */
-    final class MridComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            String rev1 = ((ModuleRevisionId) o1).getRevision();
-            String rev2 = ((ModuleRevisionId) o2).getRevision();
+    final class MridComparator implements Comparator<ModuleRevisionId> {
+        public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
+            String rev1 = o1.getRevision();
+            String rev2 = o2.getRevision();
 
             rev1 = rev1.replaceAll("([a-zA-Z])(\\d)", "$1.$2");
             rev1 = rev1.replaceAll("(\\d)([a-zA-Z])", "$1.$2");
@@ -61,9 +61,9 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
                     return Long.valueOf(parts1[i]).compareTo(Long.valueOf(parts2[i]));
                 }
                 // both are strings, we compare them taking into account special meaning
-                Map specialMeanings = getSpecialMeanings();
-                Integer sm1 = (Integer) specialMeanings.get(parts1[i].toLowerCase(Locale.US));
-                Integer sm2 = (Integer) specialMeanings.get(parts2[i].toLowerCase(Locale.US));
+                Map<String, Integer> specialMeanings = getSpecialMeanings();
+                Integer sm1 = specialMeanings.get(parts1[i].toLowerCase(Locale.US));
+                Integer sm2 = specialMeanings.get(parts2[i].toLowerCase(Locale.US));
                 if (sm1 != null) {
                     sm2 = sm2 == null ? new Integer(0) : sm2;
                     return sm1.compareTo(sm2);
@@ -92,10 +92,10 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
      * inspired by PHP version_compare one, unless a dynamic revision is given, in which case the
      * version matcher is used to perform the comparison.
      */
-    final class ArtifactInfoComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            String rev1 = ((ArtifactInfo) o1).getRevision();
-            String rev2 = ((ArtifactInfo) o2).getRevision();
+    final class ArtifactInfoComparator implements Comparator<ArtifactInfo> {
+        public int compare(ArtifactInfo o1, ArtifactInfo o2) {
+            String rev1 = o1.getRevision();
+            String rev2 = o2.getRevision();
 
             /*
              * The revisions can still be not resolved, so we use the current version matcher to
@@ -152,19 +152,19 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
         }
     }
 
-    private static final Map DEFAULT_SPECIAL_MEANINGS;
+    private static final Map<String, Integer> DEFAULT_SPECIAL_MEANINGS;
     static {
-        DEFAULT_SPECIAL_MEANINGS = new HashMap();
+        DEFAULT_SPECIAL_MEANINGS = new HashMap<String, Integer>();
         DEFAULT_SPECIAL_MEANINGS.put("dev", new Integer(-1));
         DEFAULT_SPECIAL_MEANINGS.put("rc", new Integer(1));
         DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
     }
 
-    private final Comparator mridComparator = new MridComparator();
+    private final Comparator<ModuleRevisionId> mridComparator = new MridComparator();
 
-    private final Comparator artifactInfoComparator = new ArtifactInfoComparator();
+    private final Comparator<ArtifactInfo> artifactInfoComparator = new ArtifactInfoComparator();
 
-    private Map specialMeanings = null;
+    private Map<String, Integer> specialMeanings = null;
 
     private boolean usedefaultspecialmeanings = true;
 
@@ -178,9 +178,9 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
         getSpecialMeanings().put(meaning.getName().toLowerCase(Locale.US), meaning.getValue());
     }
 
-    public synchronized Map getSpecialMeanings() {
+    public synchronized Map<String, Integer> getSpecialMeanings() {
         if (specialMeanings == null) {
-            specialMeanings = new HashMap();
+            specialMeanings = new HashMap<String, Integer>();
             if (isUsedefaultspecialmeanings()) {
                 specialMeanings.putAll(DEFAULT_SPECIAL_MEANINGS);
             }

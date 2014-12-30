@@ -19,49 +19,49 @@ package org.apache.ivy.util.extendable;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class UnmodifiableExtendableItem implements ExtendableItem {
-    private final Map attributes = new HashMap();
+    private final Map<String, String> attributes = new HashMap<String, String>();
 
-    private final Map unmodifiableAttributesView = Collections.unmodifiableMap(attributes);
+    private final Map<String, String> unmodifiableAttributesView = Collections
+            .unmodifiableMap(attributes);
 
-    private final Map extraAttributes = new HashMap();
+    private final Map<String, String> extraAttributes = new HashMap<String, String>();
 
-    private final Map unmodifiableExtraAttributesView = Collections
+    private final Map<String, String> unmodifiableExtraAttributesView = Collections
             .unmodifiableMap(extraAttributes);
 
     /*
      * this is the only place where extra attributes are stored in qualified form. In all other maps
      * they are stored unqualified.
      */
-    private final Map qualifiedExtraAttributes = new HashMap();
+    private final Map<String, String> qualifiedExtraAttributes = new HashMap<String, String>();
 
-    private final Map unmodifiableQualifiedExtraAttributesView = Collections
+    private final Map<String, String> unmodifiableQualifiedExtraAttributesView = Collections
             .unmodifiableMap(qualifiedExtraAttributes);
 
-    public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
+    public UnmodifiableExtendableItem(Map<String, String> stdAttributes,
+            Map<String, String> extraAttributes) {
         if (stdAttributes != null) {
             this.attributes.putAll(stdAttributes);
         }
         if (extraAttributes != null) {
-            for (Iterator iter = extraAttributes.entrySet().iterator(); iter.hasNext();) {
-                Entry extraAtt = (Entry) iter.next();
-                setExtraAttribute((String) extraAtt.getKey(), (String) extraAtt.getValue());
+            for (Entry<String, String> extraAtt : extraAttributes.entrySet()) {
+                setExtraAttribute(extraAtt.getKey(), extraAtt.getValue());
             }
         }
     }
 
     public String getAttribute(String attName) {
-        return (String) attributes.get(attName);
+        return attributes.get(attName);
     }
 
     public String getExtraAttribute(String attName) {
-        String v = (String) qualifiedExtraAttributes.get(attName);
+        String v = qualifiedExtraAttributes.get(attName);
         if (v == null) {
-            v = (String) extraAttributes.get(attName);
+            v = extraAttributes.get(attName);
         }
         return v;
     }
@@ -82,15 +82,15 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
         attributes.put(attName, attValue);
     }
 
-    public Map getAttributes() {
+    public Map<String, String> getAttributes() {
         return unmodifiableAttributesView;
     }
 
-    public Map getExtraAttributes() {
+    public Map<String, String> getExtraAttributes() {
         return unmodifiableExtraAttributesView;
     }
 
-    public Map getQualifiedExtraAttributes() {
+    public Map<String, String> getQualifiedExtraAttributes() {
         return unmodifiableQualifiedExtraAttributesView;
     }
 

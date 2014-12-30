@@ -31,6 +31,7 @@ public class SFTPResolver extends AbstractSshBasedResolver {
         setRepository(new SFTPRepository());
     }
 
+    @Override
     public String getTypeName() {
         return "sftp";
     }

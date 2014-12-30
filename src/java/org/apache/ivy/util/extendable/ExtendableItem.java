@@ -48,7 +48,7 @@ public interface ExtendableItem {
      * 
      * @return A Map instance containing all the attributes and their values.
      */
-    Map getAttributes();
+    Map<String, String> getAttributes();
 
     /**
      * Returns a Map of all extra attributes of this extendable item. The Map keys are
@@ -58,7 +58,7 @@ public interface ExtendableItem {
      * @return A Map instance containing all the extra attributes and their values.
      * @see #getQualifiedExtraAttributes()
      */
-    Map getExtraAttributes();
+    Map<String, String> getExtraAttributes();
 
     /**
      * Returns a Map of all extra attributes of this extendable item.
@@ -74,5 +74,5 @@ public interface ExtendableItem {
      * @return A Map instance containing all the extra attributes and their values.
      * @see #getExtraAttributes()
      */
-    Map getQualifiedExtraAttributes();
+    Map<String, String> getQualifiedExtraAttributes();
 }

@@ -170,11 +170,11 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         Message.verbose("no failure report implemented by " + getName());
     }
 
-    public String[] listTokenValues(String token, Map otherTokenValues) {
+    public String[] listTokenValues(String token, Map<String, String> otherTokenValues) {
         return new String[0];
     }
 
-    public Map[] listTokenValues(String[] tokens, Map criteria) {
+    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         return new Map[0];
     }
 
@@ -190,6 +190,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         return new RevisionEntry[0];
     }
 
+    @Override
     public String toString() {
         return getName();
     }

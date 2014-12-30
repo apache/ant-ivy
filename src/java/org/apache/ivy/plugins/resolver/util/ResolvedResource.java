@@ -38,6 +38,7 @@ public class ResolvedResource implements ArtifactInfo {
         return res;
     }
 
+    @Override
     public String toString() {
         return res + " (" + rev + ")";
     }

@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +106,7 @@ public class PomReader {
 
     private static final String TYPE = "type";
 
-    private HashMap properties = new HashMap();
+    private HashMap<String, String> properties = new HashMap<String, String>();
 
     private final Element projectElement;
 
@@ -238,9 +237,8 @@ public class PomReader {
             return new License[0];
         }
         licenses.normalize();
-        List/* <License> */lics = new ArrayList();
-        for (Iterator it = getAllChilds(licenses).iterator(); it.hasNext();) {
-            Element license = (Element) it.next();
+        List<License> lics = new ArrayList<License>();
+        for (Element license : getAllChilds(licenses)) {
             if (LICENSE.equals(license.getNodeName())) {
                 String name = getFirstChildText(license, LICENSE_NAME);
                 String url = getFirstChildText(license, LICENSE_URL);
@@ -258,7 +256,7 @@ public class PomReader {
                 lics.add(new License(name, url));
             }
         }
-        return (License[]) lics.toArray(new License[lics.size()]);
+        return lics.toArray(new License[lics.size()]);
     }
 
     public ModuleRevisionId getRelocation() {
@@ -277,9 +275,9 @@ public class PomReader {
         }
     }
 
-    public List /* <PomDependencyData> */getDependencies() {
+    public List<PomDependencyData> getDependencies() {
         Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCIES);
-        LinkedList dependencies = new LinkedList();
+        LinkedList<PomDependencyData> dependencies = new LinkedList<PomDependencyData>();
         if (dependenciesElement != null) {
             NodeList childs = dependenciesElement.getChildNodes();
             for (int i = 0; i < childs.getLength(); i++) {
@@ -292,10 +290,10 @@ public class PomReader {
         return dependencies;
     }
 
-    public List /* <PomDependencyMgt> */getDependencyMgt() {
+    public List<PomDependencyMgt> getDependencyMgt() {
         Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCY_MGT);
         dependenciesElement = getFirstChildElement(dependenciesElement, DEPENDENCIES);
-        LinkedList dependencies = new LinkedList();
+        LinkedList<PomDependencyMgt> dependencies = new LinkedList<PomDependencyMgt>();
         if (dependenciesElement != null) {
             NodeList childs = dependenciesElement.getChildNodes();
             for (int i = 0; i < childs.getLength(); i++) {
@@ -354,9 +352,9 @@ public class PomReader {
             return replaceProps(val);
         }
 
-        public List /* <ModuleId> */getExcludedModules() {
+        public List<ModuleId> getExcludedModules() {
             Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
-            LinkedList exclusions = new LinkedList();
+            LinkedList<ModuleId> exclusions = new LinkedList<ModuleId>();
             if (exclusionsElement != null) {
                 NodeList childs = exclusionsElement.getChildNodes();
                 for (int i = 0; i < childs.getLength(); i++) {
@@ -374,8 +372,8 @@ public class PomReader {
         }
     }
 
-    public List /* <PomPluginElement> */getPlugins() {
-        LinkedList plugins = new LinkedList();
+    public List<PomPluginElement> getPlugins() {
+        LinkedList<PomPluginElement> plugins = new LinkedList<PomPluginElement>();
 
         Element buildElement = getFirstChildElement(projectElement, "build");
         if (buildElement == null) {
@@ -421,8 +419,8 @@ public class PomReader {
             return null; // not used
         }
 
-        public List /* <ModuleId> */getExcludedModules() {
-            return Collections.EMPTY_LIST; // probably not used?
+        public List<ModuleId> getExcludedModules() {
+            return Collections.emptyList(); // probably not used?
         }
     }
 
@@ -438,6 +436,7 @@ public class PomReader {
             this.depElement = depElement;
         }
 
+        @Override
         public String getScope() {
             String val = getFirstChildText(depElement, SCOPE);
             return replaceProps(val);
@@ -463,14 +462,13 @@ public class PomReader {
     /**
      * @return the content of the properties tag into the pom.
      */
-    public Map/* <String,String> */getPomProperties() {
-        Map pomProperties = new HashMap();
+    public Map<String, String> getPomProperties() {
+        Map<String, String> pomProperties = new HashMap<String, String>();
         Element propsEl = getFirstChildElement(projectElement, PROPERTIES);
         if (propsEl != null) {
             propsEl.normalize();
         }
-        for (Iterator it = getAllChilds(propsEl).iterator(); it.hasNext();) {
-            Element prop = (Element) it.next();
+        for (Element prop : getAllChilds(propsEl)) {
             pomProperties.put(prop.getNodeName(), getTextContent(prop));
         }
         return pomProperties;
@@ -527,14 +525,14 @@ public class PomReader {
         return null;
     }
 
-    private static List/* <Element> */getAllChilds(Element parent) {
-        List r = new LinkedList();
+    private static List<Element> getAllChilds(Element parent) {
+        List<Element> r = new LinkedList<Element>();
         if (parent != null) {
             NodeList childs = parent.getChildNodes();
             for (int i = 0; i < childs.getLength(); i++) {
                 Node node = childs.item(i);
                 if (node instanceof Element) {
-                    r.add(node);
+                    r.add((Element) node);
                 }
             }
         }
@@ -590,6 +588,7 @@ public class PomReader {
             }
         }
 
+        @Override
         public int read() throws IOException {
             if (count < prefix.length) {
                 return prefix[count++];
@@ -599,6 +598,7 @@ public class PomReader {
             return result;
         }
 
+        @Override
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();

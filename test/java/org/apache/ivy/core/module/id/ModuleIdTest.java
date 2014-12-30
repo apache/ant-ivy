@@ -100,19 +100,6 @@ public class ModuleIdTest extends TestCase {
         }
     }
 
-    public void testCompareToOtherObject() {
-        String org = "apache";
-        String name = "some-new-module";
-        ModuleId moduleId = new ModuleId(org, name);
-
-        try {
-            moduleId.compareTo(new String());
-            fail("A ClassCastException was expected.");
-        } catch (ClassCastException cce) {
-            // success
-        }
-    }
-
     public void testCompareToEqual() {
         String org = "apache";
         String name = "some-new-module";

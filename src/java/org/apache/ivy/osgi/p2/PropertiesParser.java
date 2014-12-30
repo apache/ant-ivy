@@ -39,6 +39,7 @@ public class PropertiesParser {
             super(PROPERTIES);
             final List<String> propList = Arrays.asList(props);
             addChild(new PropertyHandler(), new ChildElementHandler<PropertyHandler>() {
+                @Override
                 public void childHanlded(PropertyHandler child) {
                     if (propList.isEmpty() || propList.contains(child.name)) {
                         properties.put(child.name, child.value);
@@ -47,6 +48,7 @@ public class PropertiesParser {
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
             properties = new HashMap<String, String>(size);
@@ -70,6 +72,7 @@ public class PropertiesParser {
             super(PROPERTY);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             name = atts.getValue(NAME);
             value = atts.getValue(VALUE);

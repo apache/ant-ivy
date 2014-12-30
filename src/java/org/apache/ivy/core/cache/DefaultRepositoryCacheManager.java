@@ -26,8 +26,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
@@ -114,7 +114,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private Boolean useOrigin;
 
-    private ModuleRules/* <Long> */ttlRules = new ModuleRules();
+    private ModuleRules<Long> ttlRules = new ModuleRules<Long>();
 
     private Long defaultTTL = null;
 
@@ -239,16 +239,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         this.changingPattern = changingPattern;
     }
 
-    public void addTTL(Map attributes, PatternMatcher matcher, long duration) {
+    public void addTTL(Map<String, String> attributes, PatternMatcher matcher, long duration) {
         ttlRules.defineRule(new MapMatcher(attributes, matcher), new Long(duration));
     }
 
-    public void addConfiguredTtl(Map/* <String,String> */attributes) {
-        String duration = (String) attributes.remove("duration");
+    public void addConfiguredTtl(Map<String, String> attributes) {
+        String duration = attributes.remove("duration");
         if (duration == null) {
             throw new IllegalArgumentException("'duration' attribute is mandatory for ttl");
         }
-        String matcher = (String) attributes.remove("matcher");
+        String matcher = attributes.remove("matcher");
         addTTL(attributes,
             matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(matcher),
             parseDuration(duration));
@@ -531,10 +531,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     // try to find other cached artifact info with same location. This must be the
                     // origin. We must parse the key as we do not know for sure what the original
                     // artifact is named.
-                    Iterator it = cdf.entrySet().iterator();
                     String ownLocationKey = getLocationKey(artifact);
-                    while (it.hasNext()) {
-                        Map.Entry entry = (Map.Entry) it.next();
+                    for (Entry<Object, Object> entry : cdf.entrySet()) {
                         if (entry.getValue().equals(location)
                                 && !ownLocationKey.equals(entry.getKey())) {
                             // found a match, key is
@@ -891,10 +889,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public long getTTL(ModuleRevisionId mrid) {
-        Long ttl = (Long) ttlRules.getRule(mrid);
+        Long ttl = ttlRules.getRule(mrid);
         return ttl == null ? getDefaultTTL() : ttl.longValue();
     }
 
+    @Override
     public String toString() {
         return name;
     }

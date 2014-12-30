@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 
 public class EclipseUpdateSiteParser {
 
-    public static UpdateSite parse(InputStream in) throws ParseException, IOException, SAXException {
+    public static UpdateSite parse(InputStream in) throws IOException, SAXException {
         SiteHandler handler = new SiteHandler();
         try {
             XMLHelper.parse(in, null, handler, null);
@@ -68,6 +68,7 @@ public class EclipseUpdateSiteParser {
             // }
             // });
             addChild(new FeatureHandler(), new ChildElementHandler<FeatureHandler>() {
+                @Override
                 public void childHanlded(FeatureHandler child) {
                     updatesite.addFeature(child.feature);
                 }
@@ -84,6 +85,7 @@ public class EclipseUpdateSiteParser {
             // });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             updatesite = new UpdateSite();
 
@@ -170,12 +172,14 @@ public class EclipseUpdateSiteParser {
         public FeatureHandler() {
             super(FEATURE);
             addChild(new CategoryHandler(), new ChildElementHandler<CategoryHandler>() {
+                @Override
                 public void childHanlded(CategoryHandler child) {
                     feature.addCategory(child.name);
                 }
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
             String version = atts.getValue(VERSION);
@@ -213,6 +217,7 @@ public class EclipseUpdateSiteParser {
             super(CATEGORY);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             name = atts.getValue(NAME);
         }

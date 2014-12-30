@@ -37,6 +37,7 @@ public abstract class MultiOperatorFilter extends OSGiFilter {
 
     abstract protected char operator();
 
+    @Override
     public void append(StringBuffer builder) {
         builder.append('(');
         builder.append(operator());
@@ -54,6 +55,7 @@ public abstract class MultiOperatorFilter extends OSGiFilter {
         return subFilters;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -63,6 +65,7 @@ public abstract class MultiOperatorFilter extends OSGiFilter {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

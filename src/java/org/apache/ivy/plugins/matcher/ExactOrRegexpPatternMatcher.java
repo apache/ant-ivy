@@ -36,6 +36,7 @@ public/* @Immutable */final class ExactOrRegexpPatternMatcher extends AbstractPa
         super(EXACT_OR_REGEXP);
     }
 
+    @Override
     protected Matcher newMatcher(String expression) {
         return new ExactOrRegexpMatcher(expression);
     }

@@ -21,7 +21,6 @@ package org.apache.ivy.plugins.resolver;
  * BintrayResolver is a resolver which can be used to resolve dependencies found in the Bintray
  * artifacts repository.
  */
-@SuppressWarnings("ClassTooDeepInInheritanceTree")
 public class BintrayResolver extends IBiblioResolver {
 
     private static final String JCENTER = "https://jcenter.bintray.com/";
@@ -55,7 +54,6 @@ public class BintrayResolver extends IBiblioResolver {
         updateRoot();
     }
 
-    @SuppressWarnings("MethodWithMultipleReturnPoints")
     private void updateRoot() {
         if (isEmpty(subject) || isEmpty(repo)) {
             return;

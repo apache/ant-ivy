@@ -26,7 +26,7 @@ public class NoConflictManager extends AbstractConflictManager {
         setName("all");
     }
 
-    public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
+    public Collection<IvyNode> resolveConflicts(IvyNode parent, Collection<IvyNode> conflicts) {
         return conflicts;
     }
 }

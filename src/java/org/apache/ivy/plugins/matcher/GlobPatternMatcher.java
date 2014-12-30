@@ -51,6 +51,7 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
         super(GLOB);
     }
 
+    @Override
     protected Matcher newMatcher(String expression) {
         return new GlobMatcher(expression);
     }

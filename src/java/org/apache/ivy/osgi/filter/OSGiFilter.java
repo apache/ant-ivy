@@ -21,6 +21,7 @@ import java.util.Map;
 
 public abstract class OSGiFilter {
 
+    @Override
     public String toString() {
         StringBuffer builder = new StringBuffer();
         append(builder);

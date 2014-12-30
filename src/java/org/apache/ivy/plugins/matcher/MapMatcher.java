@@ -19,35 +19,31 @@ package org.apache.ivy.plugins.matcher;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class MapMatcher {
-    private Map/* <String, Matcher> */matchers = new HashMap();
+    private Map<String, Matcher> matchers = new HashMap<String, Matcher>();
 
     private PatternMatcher pm;
 
-    private Map attributes;
+    private Map<String, String> attributes;
 
-    public MapMatcher(Map attributes, PatternMatcher pm) {
+    public MapMatcher(Map<String, String> attributes, PatternMatcher pm) {
         this.attributes = attributes;
         this.pm = pm;
-        for (Iterator iter = attributes.entrySet().iterator(); iter.hasNext();) {
-            Entry entry = (Entry) iter.next();
-            String value = (String) entry.getValue();
+        for (Entry<String, String> entry : attributes.entrySet()) {
+            String value = entry.getValue();
             if (value != null) {
                 matchers.put(entry.getKey(), pm.getMatcher(value));
             }
         }
     }
 
-    public boolean matches(Map/* <String,String> */m) {
-        for (Iterator iter = matchers.entrySet().iterator(); iter.hasNext();) {
-            Entry entry = (Entry) iter.next();
-
-            Matcher matcher = (Matcher) entry.getValue();
-            String value = (String) m.get(entry.getKey());
+    public boolean matches(Map<String, String> m) {
+        for (Entry<String, Matcher> entry : matchers.entrySet()) {
+            Matcher matcher = entry.getValue();
+            String value = m.get(entry.getKey());
             if ((value == null) || !matcher.matches(value)) {
                 return false;
             }
@@ -56,11 +52,12 @@ public class MapMatcher {
         return true;
     }
 
+    @Override
     public String toString() {
         return attributes + " (" + pm.getName() + ")";
     }
 
-    public Map getAttributes() {
+    public Map<String, String> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 

@@ -20,7 +20,6 @@ package org.apache.ivy.plugins.conflict;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,10 +65,9 @@ public class RegexpConflictManager extends AbstractConflictManager {
         mIgnoreNonMatching = ignoreNonMatching;
     }
 
-    public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
+    public Collection<IvyNode> resolveConflicts(IvyNode parent, Collection<IvyNode> conflicts) {
         IvyNode lastNode = null;
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
+        for (IvyNode node : conflicts) {
 
             if (lastNode != null && !matchEquals(node, lastNode)) {
                 String msg = lastNode + ":" + getMatch(lastNode) + " (needed by "

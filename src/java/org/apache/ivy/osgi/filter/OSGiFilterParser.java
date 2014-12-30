@@ -92,6 +92,15 @@ public class OSGiFilterParser {
             if (c != '(') {
                 throw new ParseException("Expecting '(' as the start of the filter", pos);
             }
+            OSGiFilter filter = parseFilterComp();
+            readNext();
+            if (c != ')') {
+                throw new ParseException("Expecting ')' as the end of the filter", pos);
+            }
+            return filter;
+        }
+
+        private OSGiFilter parseFilterComp() throws ParseException {
             OSGiFilter filter;
             switch (readNext()) {
                 case '&':
@@ -105,17 +114,13 @@ public class OSGiFilterParser {
                     break;
                 default:
                     unread();
-                    filter = parseCompare();
+                    filter = parseOperation();
                     break;
-            }
-            readNext();
-            if (c != ')') {
-                throw new ParseException("Expecting ')' as the end of the filter", pos);
             }
             return filter;
         }
 
-        private OSGiFilter parseCompare() throws ParseException {
+        private OSGiFilter parseOperation() throws ParseException {
             String leftValue = parseCompareValue();
             Operator operator = parseCompareOperator();
             String rightValue = parseCompareValue();
@@ -137,12 +142,16 @@ public class OSGiFilterParser {
         }
 
         private boolean isOperator(char ch) {
-            return ch == '=' || ch == '<' || ch == '>';
+            return ch == '=' || ch == '<' || ch == '>' || ch == '~';
         }
 
         private Operator parseCompareOperator() throws ParseException {
             switch (readNext()) {
                 case '=':
+                    if (readNext() == '*') {
+                        return Operator.PRESENT;
+                    }
+                    unread();
                     return Operator.EQUALS;
                 case '>':
                     if (readNext() == '=') {
@@ -156,25 +165,30 @@ public class OSGiFilterParser {
                     }
                     unread();
                     return Operator.LOWER_THAN;
+                case '~':
+                    if (readNext() == '=') {
+                        return Operator.LOWER_OR_EQUAL;
+                    }
+                    unread();
                 default:
                     break;
             }
-            throw new ParseException("Expecting an operator: =, <, <=, > or >=", pos);
+            throw new ParseException("Expecting an operator: =, <, <=, >, >=, ~= or =*", pos);
         }
 
         private OSGiFilter parseAnd() throws ParseException {
             AndFilter filter = new AndFilter();
-            parseMultiOperator(filter);
+            parseFilterList(filter);
             return filter;
         }
 
         private OSGiFilter parseOr() throws ParseException {
             OrFilter filter = new OrFilter();
-            parseMultiOperator(filter);
+            parseFilterList(filter);
             return filter;
         }
 
-        private void parseMultiOperator(MultiOperatorFilter filter) throws ParseException {
+        private void parseFilterList(MultiOperatorFilter filter) throws ParseException {
             do {
                 skipWhiteSpace();
                 readNext();

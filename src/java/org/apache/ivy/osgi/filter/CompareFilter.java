@@ -24,7 +24,7 @@ public class CompareFilter extends OSGiFilter {
     public static enum Operator {
 
         EQUALS("="), LOWER_THAN("<"), LOWER_OR_EQUAL("<="), GREATER_THAN(">"), GREATER_OR_EQUAL(
-                ">=");
+                ">="), APPROX("~="), PRESENT("=*");
 
         private String op;
 
@@ -32,6 +32,7 @@ public class CompareFilter extends OSGiFilter {
             this.op = op;
         }
 
+        @Override
         public String toString() {
             return op;
         }
@@ -43,10 +44,13 @@ public class CompareFilter extends OSGiFilter {
 
     private final String leftValue;
 
+    private boolean substring;
+
     public CompareFilter(String leftValue, Operator operator, String rightValue) {
         this.leftValue = leftValue;
         this.rightValue = rightValue;
         this.operator = operator;
+        this.substring = operator == Operator.EQUALS && rightValue.contains("*");
     }
 
     public String getLeftValue() {
@@ -61,6 +65,7 @@ public class CompareFilter extends OSGiFilter {
         return rightValue;
     }
 
+    @Override
     public void append(StringBuffer builder) {
         builder.append("(");
         builder.append(leftValue);
@@ -73,6 +78,17 @@ public class CompareFilter extends OSGiFilter {
     public boolean eval(Map<String, String> properties) {
         String actualValue = properties.get(leftValue);
         if (actualValue == null) {
+            return false;
+        }
+        if (operator == Operator.PRESENT) {
+            return true;
+        }
+        if (operator == Operator.APPROX) {
+            // TODO
+            return false;
+        }
+        if (substring) {
+            // TODO
             return false;
         }
         int diff = rightValue.compareTo(actualValue);
@@ -92,6 +108,7 @@ public class CompareFilter extends OSGiFilter {
         }
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -101,6 +118,7 @@ public class CompareFilter extends OSGiFilter {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

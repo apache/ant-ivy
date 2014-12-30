@@ -31,6 +31,7 @@ public/* @Immutable */final class ExactPatternMatcher extends AbstractPatternMat
         super(EXACT);
     }
 
+    @Override
     protected Matcher newMatcher(String expression) {
         return new ExactMatcher(expression);
     }

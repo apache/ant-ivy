@@ -88,6 +88,7 @@ public class ResolveTest extends TestCase {
     public ResolveTest() {
     }
 
+    @Override
     protected void setUp() throws Exception {
         cache = new File("build/cache");
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
@@ -107,6 +108,7 @@ public class ResolveTest extends TestCase {
         cache.mkdirs();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         CacheCleaner.deleteDir(cache);
         FileUtil.forceDelete(deliverDir);
@@ -152,7 +154,7 @@ public class ResolveTest extends TestCase {
             getResolveOptions(new String[] {"default"}).setValidate(false));
         assertNotNull(report);
 
-        Map extra = new HashMap();
+        Map<String, String> extra = new HashMap<String, String>();
         extra.put("extra", "foo");
         ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
                 .getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.3", "1.1", extra));
@@ -521,9 +523,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // now we clean the repository to simulate repo not available (network pb for instance)
         FileUtil.forceDelete(new File("build/testCache2"));
@@ -534,9 +535,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
     }
 
     public void testDynamicFromCacheWithMD() throws Exception {
@@ -560,9 +560,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // now we clean the repository to simulate repo not available (network pb for instance)
         FileUtil.forceDelete(new File("build/testCache2"));
@@ -573,9 +572,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
     }
 
     public void testDynamicFromCacheWithMDAfterOneTTLExpiration() throws Exception {
@@ -600,9 +598,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // now we wait for ttl expiration
         Thread.sleep(700);
@@ -613,9 +610,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // now we clean the repository to simulate repo not available (network pb for instance)
         FileUtil.forceDelete(new File("build/testCache2"));
@@ -626,9 +622,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
     }
 
     public void testDynamicFromCacheWithTTL0() throws Exception {
@@ -649,9 +644,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // now we update the repository
         FileUtil.copy(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), new File(
@@ -663,9 +657,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.6")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.6"))), report.getConfigurationReport("default").getModuleRevisionIds());
     }
 
     public void testDynamicFromCacheWithTTL() throws Exception {
@@ -697,9 +690,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // wait for org1 TTL to expire
         Thread.sleep(700);
@@ -710,9 +702,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.6")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.6"))), report.getConfigurationReport("default").getModuleRevisionIds());
     }
 
     public void testRefreshDynamicFromCache() throws Exception {
@@ -741,9 +732,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.5")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.5"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         // resolve again with refresh: it should find the new version
         report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
@@ -751,9 +741,8 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org1",
-                "mod1.2", "1.6")})), report.getConfigurationReport("default")
-                    .getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org1",
+                "mod1.2", "1.6"))), report.getConfigurationReport("default").getModuleRevisionIds());
 
         FileUtil.forceDelete(new File("build/testCache2"));
     }
@@ -1730,8 +1719,8 @@ public class ResolveTest extends TestCase {
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-225.xml"),
             getResolveOptions(new String[] {"default"}));
 
-        List revisions = new ArrayList(report.getConfigurationReport("default")
-                .getModuleRevisionIds());
+        List<ModuleRevisionId> revisions = new ArrayList<ModuleRevisionId>(report
+                .getConfigurationReport("default").getModuleRevisionIds());
         assertTrue("number of revisions is not correct", revisions.size() >= 3);
 
         int mod12Index = revisions.indexOf(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"));
@@ -1866,23 +1855,23 @@ public class ResolveTest extends TestCase {
 
         // here we should get all three recursive dependencies
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {
-                    ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
-                    ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
-                    ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")})), r
-                    .getConfigurationReport("A").getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(
+                ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
+                ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))),
+            r.getConfigurationReport("A").getModuleRevisionIds());
 
         // here we should get only mod2.1 and mod1.1 cause compile is not transitive in mod2.1
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {
-                    ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
-                    ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")})), r
-                    .getConfigurationReport("B").getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(
+                ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"))),
+            r.getConfigurationReport("B").getModuleRevisionIds());
 
         // here we should get only mod2.1 cause compile is not transitive
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {ModuleRevisionId.newInstance("org2",
-                "mod2.1", "0.3.2")})), r.getConfigurationReport("compile").getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(ModuleRevisionId.newInstance("org2",
+                "mod2.1", "0.3.2"))), r.getConfigurationReport("compile").getModuleRevisionIds());
     }
 
     public void testDisableTransitivityPerConfiguration5() throws Exception {
@@ -1900,25 +1889,25 @@ public class ResolveTest extends TestCase {
 
         // here we should get all three recursive dependencies
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {
-                    ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
-                    ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
-                    ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")})), r
-                    .getConfigurationReport("A").getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(
+                ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
+                ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))),
+            r.getConfigurationReport("A").getModuleRevisionIds());
 
         // here we should get only mod2.1 and mod1.1 cause compile is not transitive in mod2.1
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {
-                    ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
-                    ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")})), r
-                    .getConfigurationReport("B").getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(
+                ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"))),
+            r.getConfigurationReport("B").getModuleRevisionIds());
 
         // here we should get only mod2.1 cause compile is not transitive
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {
-                    ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
-                    ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")})), r
-                    .getConfigurationReport("compile").getModuleRevisionIds());
+            new HashSet<ModuleRevisionId>(Arrays.asList(
+                ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"))),
+            r.getConfigurationReport("compile").getModuleRevisionIds());
     }
 
     public void testResolveDiamond() throws Exception {
@@ -1977,6 +1966,7 @@ public class ResolveTest extends TestCase {
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
         saxParser.parse(r, new DefaultHandler() {
+            @Override
             public void startElement(String uri, String localName, String qName,
                     org.xml.sax.Attributes attributes) throws SAXException {
                 if ("revision".equals(qName) && "2.0".equals(attributes.getValue("name"))) {
@@ -2024,6 +2014,7 @@ public class ResolveTest extends TestCase {
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
         saxParser.parse(r, new DefaultHandler() {
+            @Override
             public void startElement(String uri, String localName, String qName,
                     org.xml.sax.Attributes attributes) throws SAXException {
                 if ("revision".equals(qName) && "2.0".equals(attributes.getValue("name"))) {
@@ -2170,7 +2161,7 @@ public class ResolveTest extends TestCase {
         IvyNode[] evicted = compileReport.getEvictedNodes();
         assertNotNull(evicted);
 
-        Collection evictedModules = new ArrayList();
+        Collection<ModuleRevisionId> evictedModules = new ArrayList<ModuleRevisionId>();
         for (int i = 0; i < evicted.length; i++) {
             evictedModules.add(evicted[i].getId());
         }
@@ -2556,12 +2547,12 @@ public class ResolveTest extends TestCase {
         ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.5.xml"),
             getResolveOptions(new String[] {"*"}));
 
-        List lockFiles = new ArrayList();
+        List<File> lockFiles = new ArrayList<File>();
         findLockFiles(cache, lockFiles);
         assertTrue("There were lockfiles left in the cache: " + lockFiles, lockFiles.isEmpty());
     }
 
-    private void findLockFiles(File dir, List result) {
+    private void findLockFiles(File dir, List<File> result) {
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
             if (files[i].isDirectory()) {
@@ -2804,6 +2795,7 @@ public class ResolveTest extends TestCase {
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
         saxParser.parse(r, new DefaultHandler() {
+            @Override
             public void startElement(String uri, String localName, String qName,
                     org.xml.sax.Attributes attributes) throws SAXException {
                 if ("artifact".equals(qName) && "art51B".equals(attributes.getValue("name"))) {
@@ -2893,6 +2885,7 @@ public class ResolveTest extends TestCase {
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
         saxParser.parse(r, new DefaultHandler() {
+            @Override
             public void startElement(String uri, String localName, String qName,
                     org.xml.sax.Attributes attributes) throws SAXException {
                 if ("artifact".equals(qName) && "mod1.2".equals(attributes.getValue("name"))) {
@@ -2973,7 +2966,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveModeDynamic2() throws Exception {
         // same as ResolveModeDynamic1, but resolve mode is set in settings
-        Map attributes = new HashMap();
+        Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("organisation", "org1");
         attributes.put("module", "mod1.2");
         ivy.getSettings().addModuleConfiguration(attributes, ExactPatternMatcher.INSTANCE, null,
@@ -3023,7 +3016,7 @@ public class ResolveTest extends TestCase {
     public void testResolveModeDefaultOverrideSettings() throws Exception {
         // same as ResolveModeDynamic2, but resolve mode is set in settings, and overriden when
         // calling resolve
-        Map attributes = new HashMap();
+        Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("organisation", "org1");
         attributes.put("module", "mod1.2");
         ivy.getSettings().addModuleConfiguration(attributes, ExactPatternMatcher.INSTANCE, null,
@@ -3368,7 +3361,7 @@ public class ResolveTest extends TestCase {
         ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1233/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         ConfigurationResolveReport crr = rr.getConfigurationReport("default");
-        Set modRevIds = crr.getModuleRevisionIds();
+        Set<ModuleRevisionId> modRevIds = crr.getModuleRevisionIds();
         assertEquals(3, modRevIds.size());
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "a", "1.0")));
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "b", "2.0")));
@@ -3383,12 +3376,12 @@ public class ResolveTest extends TestCase {
         ResolveReport rr = ivy.resolve(new File("test/repositories/IVY-1333/ivy.xml"),
             getResolveOptions(new String[] {"*"}));
         ConfigurationResolveReport crr = rr.getConfigurationReport("default");
-        Set modRevIds = crr.getModuleRevisionIds();
+        Set<ModuleRevisionId> modRevIds = crr.getModuleRevisionIds();
         assertEquals(3, modRevIds.size());
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "dep1", "1.0")));
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "dep2", "1.0")));
 
-        Map extra = new HashMap();
+        Map<String, String> extra = new HashMap<String, String>();
         extra.put("o:a", "58701");
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("org", "badArtifact",
             "1.0.0.m4", extra)));
@@ -3421,7 +3414,7 @@ public class ResolveTest extends TestCase {
         ResolveReport rr = ivy.resolve(ResolveTest.class.getResource("ivy-999.xml"),
             getResolveOptions(new String[] {"*"}));
         ConfigurationResolveReport crr = rr.getConfigurationReport("default");
-        Set modRevIds = crr.getModuleRevisionIds();
+        Set<ModuleRevisionId> modRevIds = crr.getModuleRevisionIds();
 
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("junit", "junit", "4.4")));
         assertFalse(modRevIds.contains(ModuleRevisionId.newInstance("junit", "junit", "3.8")));
@@ -3435,7 +3428,7 @@ public class ResolveTest extends TestCase {
             new ResolveOptions().setConfs(new String[] {"runtime"}));
         assertFalse(report.hasError());
 
-        List artifacts = report.getArtifacts();
+        List<Artifact> artifacts = report.getArtifacts();
         assertEquals(3, artifacts.size());
         assertEquals("test#a;1!a.jar", artifacts.get(0).toString());
         assertEquals("test#c;1!c.jar", artifacts.get(1).toString());
@@ -4280,7 +4273,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getIvyFileInCache(
             ModuleRevisionId.newInstance("org.apache", "test-classified", "1.0")).exists());
 
-        Map cmap = new HashMap();
+        Map<String, String> cmap = new HashMap<String, String>();
         cmap.put("classifier", "asl");
         assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
         , "1.0", "test-classified", "jar", "jar", cmap).exists());
@@ -4307,7 +4300,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getIvyFileInCache(
             ModuleRevisionId.newInstance("org.apache", "test-classified", "2.0")).exists());
 
-        Map cmap = new HashMap();
+        Map<String, String> cmap = new HashMap<String, String>();
         cmap.put("classifier", "asl");
         assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
         , "2.0", "test-classified", "jar", "jar", cmap).exists());
@@ -4426,11 +4419,11 @@ public class ResolveTest extends TestCase {
         assertTrue(getResolvedIvyFileInCache(mrid).exists());
 
         // test the report to make sure the right dependencies are listed
-        List dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
         assertEquals(2, dependencies.size());
 
         IvyNode ivyNode;
-        ivyNode = (IvyNode) dependencies.get(0);
+        ivyNode = dependencies.get(0);
         assertNotNull(ivyNode);
 
         // Bad assertions based on IVY-1301 bug, corrected below:
@@ -4450,7 +4443,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "1.0", "test2", "jar",
             "jar").exists());
 
-        ivyNode = (IvyNode) dependencies.get(1);
+        ivyNode = dependencies.get(1);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.dm", "test3", "1.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4476,10 +4469,10 @@ public class ResolveTest extends TestCase {
         // assertTrue(getResolvedIvyFileInCache(mrid).exists());
 
         // test the report to make sure the right dependencies are listed
-        List dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
         assertEquals(3, dependencies.size()); // the test module + it's 2 dependencies
 
-        IvyNode ivyNode = (IvyNode) dependencies.get(0);
+        IvyNode ivyNode = dependencies.get(0);
         assertNotNull(ivyNode);
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.systemDm", "test", "1.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4489,7 +4482,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache.systemDm", "test", "1.0", "test", "jar",
             "jar").exists());
 
-        ivyNode = (IvyNode) dependencies.get(1);
+        ivyNode = dependencies.get(1);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.systemDm", "test2", "2.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4499,7 +4492,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache.systemDm", "test2", "2.0", "test2",
             "jar", "jar").exists());
 
-        ivyNode = (IvyNode) dependencies.get(2);
+        ivyNode = dependencies.get(2);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.systemDm", "test3", "1.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4537,11 +4530,11 @@ public class ResolveTest extends TestCase {
         assertTrue(getResolvedIvyFileInCache(mrid).exists());
 
         // test the report to make sure the right dependencies are listed
-        List dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
         assertEquals(2, dependencies.size());
 
         IvyNode ivyNode;
-        ivyNode = (IvyNode) dependencies.get(0);
+        ivyNode = dependencies.get(0);
         assertNotNull(ivyNode);
 
         // Bad assertions based on IVY-1301 bug, corrected below:
@@ -4561,7 +4554,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "1.0", "test2", "jar",
             "jar").exists());
 
-        ivyNode = (IvyNode) dependencies.get(1);
+        ivyNode = dependencies.get(1);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.dm", "test3", "1.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4594,11 +4587,11 @@ public class ResolveTest extends TestCase {
         assertNotNull(report);
 
         // test the report to make sure the right dependencies are listed
-        List dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
         assertEquals(3, dependencies.size());
 
         IvyNode ivyNode;
-        ivyNode = (IvyNode) dependencies.get(0);
+        ivyNode = dependencies.get(0);
         assertNotNull(ivyNode);
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "3.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4607,7 +4600,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "3.0", "test2", "jar",
             "jar").exists());
 
-        ivyNode = (IvyNode) dependencies.get(2);
+        ivyNode = dependencies.get(2);
         assertNotNull(ivyNode);
         mrid = ModuleRevisionId.newInstance("org.apache.dm", "test4", "1.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4629,12 +4622,12 @@ public class ResolveTest extends TestCase {
         assertNotNull(report);
 
         // test the report to make sure the right dependencies are listed
-        List dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
         assertFalse(report.hasError());
         assertEquals(2, dependencies.size());
 
         IvyNode ivyNode;
-        ivyNode = (IvyNode) dependencies.get(0);
+        ivyNode = dependencies.get(0);
         assertNotNull(ivyNode);
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.dm", "test5", "2.0");
         assertEquals(mrid, ivyNode.getId());
@@ -4919,9 +4912,10 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "apache/mymodule/task1/1854/mymodule-windows.jar").exists());
         assertTrue(new File(cache, "apache/mymodule/task1/1854/mymodule-linux.jar").exists());
 
-        Set moduleRevisions = report.getConfigurationReport("default").getModuleRevisionIds();
+        Set<ModuleRevisionId> moduleRevisions = report.getConfigurationReport("default")
+                .getModuleRevisionIds();
         assertEquals(1, moduleRevisions.size());
-        ModuleRevisionId resolveModRevId = (ModuleRevisionId) moduleRevisions.iterator().next();
+        ModuleRevisionId resolveModRevId = moduleRevisions.iterator().next();
         assertEquals("apache", resolveModRevId.getOrganisation());
         assertEquals("mymodule", resolveModRevId.getName());
         assertEquals("1854", resolveModRevId.getRevision());
@@ -5119,10 +5113,10 @@ public class ResolveTest extends TestCase {
         options.setDownload(false);
         ResolveReport report = ivy.getResolveEngine().resolve(module, options, false);
 
-        List dependencies = report.getDependencies();
+        List<IvyNode> dependencies = report.getDependencies();
         assertNotNull(dependencies);
         assertEquals(1, dependencies.size());
-        IvyNode dependency = (IvyNode) dependencies.get(0);
+        IvyNode dependency = dependencies.get(0);
         assertEquals("1.1", dependency.getResolvedId().getRevision());
     }
 
@@ -5234,7 +5228,8 @@ public class ResolveTest extends TestCase {
     }
 
     private File getArchiveFileInCache(Ivy ivy, String organisation, String module, String branch,
-            String revision, String artifactName, String type, String ext, Map extraAttrs) {
+            String revision, String artifactName, String type, String ext,
+            Map<String, String> extraAttrs) {
         ModuleRevisionId mrid = ModuleRevisionId
                 .newInstance(organisation, module, branch, revision);
         DefaultArtifact artifact = new DefaultArtifact(mrid, new Date(), artifactName, type, ext,
@@ -5447,9 +5442,9 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertEquals(
-            new HashSet(Arrays.asList(new ModuleRevisionId[] {
-                    ModuleRevisionId.newInstance("myorg", "modA", "1"),
-                    ModuleRevisionId.newInstance("myorg", "modB", "1")})), report
+            new HashSet<ModuleRevisionId>(Arrays.asList(
+                ModuleRevisionId.newInstance("myorg", "modA", "1"),
+                ModuleRevisionId.newInstance("myorg", "modB", "1"))), report
                     .getConfigurationReport("default").getModuleRevisionIds());
 
         DeliverOptions dopts = new DeliverOptions();
@@ -5493,10 +5488,10 @@ public class ResolveTest extends TestCase {
         // and the report both
         // agree that trunk/5 is selected. Deliver begs to differ.
 
-        Set reportMrids = report.getConfigurationReport("default").getModuleRevisionIds();
+        Set<ModuleRevisionId> reportMrids = report.getConfigurationReport("default")
+                .getModuleRevisionIds();
         assertEquals(
-            new HashSet(
-                    Arrays.asList(new ModuleRevisionId[] {modAExpectedRevId, modBExpectedRevId})),
+            new HashSet<ModuleRevisionId>(Arrays.asList(modAExpectedRevId, modBExpectedRevId)),
             reportMrids);
 
         DeliverOptions dopts = new DeliverOptions();
@@ -5567,7 +5562,7 @@ public class ResolveTest extends TestCase {
         // ensure that we hit only the cache and never try to hit in the repository
         FileSystemResolver resolver = (FileSystemResolver) ivy.getSettings().getResolver("1");
         resolver.setRepository(new AbstractRepository() {
-            public List list(String parent) throws IOException {
+            public List<String> list(String parent) throws IOException {
                 throw new UnsupportedOperationException();
             }
 

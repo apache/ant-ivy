@@ -19,7 +19,6 @@ package org.apache.ivy.core.module.id;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,13 +55,13 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
  */
 public class MatcherLookup {
 
-    //private static final String FORMAT = "{org:%s, module:%s}";
+    // private static final String FORMAT = "{org:%s, module:%s}";
 
     private static final String DEFAULT = "{org:" + "default" + ", module:" + "default" + "}";
 
-    private Map/* <String, List<MapMatcher>> */lookup = new HashMap();
+    private Map<String, List<MapMatcher>> lookup = new HashMap<String, List<MapMatcher>>();
 
-    private List/* <MapMatcher> */non_exact_matchers = new ArrayList();
+    private List<MapMatcher> non_exact_matchers = new ArrayList<MapMatcher>();
 
     /**
      * Add matcher.
@@ -79,10 +78,10 @@ public class MatcherLookup {
             non_exact_matchers.add(matcher);
             return;
         }
-        Object key = key(matcher.getAttributes());
-        List exact_matchers = (List) lookup.get(key);
+        String key = key(matcher.getAttributes());
+        List<MapMatcher> exact_matchers = lookup.get(key);
         if (exact_matchers == null) {
-            exact_matchers = new ArrayList();
+            exact_matchers = new ArrayList<MapMatcher>();
             lookup.put(key, exact_matchers);
         }
         exact_matchers.add(matcher);
@@ -96,23 +95,21 @@ public class MatcherLookup {
      * 
      * @return list A list of candidate matchers that matches specified attributes
      */
-    public List get(Map attrs) {
-        List matchers = new ArrayList();
+    public List<MapMatcher> get(Map<String, String> attrs) {
+        List<MapMatcher> matchers = new ArrayList<MapMatcher>();
         // Step 1: find matchers from non_exact_matchers list
         if (!non_exact_matchers.isEmpty()) {
-            for (Iterator iter = non_exact_matchers.iterator(); iter.hasNext();) {
-                MapMatcher matcher = (MapMatcher) iter.next();
+            for (MapMatcher matcher : non_exact_matchers) {
                 if (matcher.matches(attrs)) {
                     matchers.add(matcher);
                 }
             }
         }
         // Step 2: find matchers from exact_matchers list of key
-        Object key = key(attrs);
-        List exact_matchers = (List) lookup.get(key);
+        String key = key(attrs);
+        List<MapMatcher> exact_matchers = lookup.get(key);
         if (exact_matchers != null) {
-            for (Iterator iter = exact_matchers.iterator(); iter.hasNext();) {
-                MapMatcher matcher = (MapMatcher) iter.next();
+            for (MapMatcher matcher : exact_matchers) {
                 if (matcher.matches(attrs)) {
                     matchers.add(matcher);
                 }
@@ -120,10 +117,9 @@ public class MatcherLookup {
         }
         // Step 3: (iff key != DEFAULT) find matchers from exact_matchers of DEFAULT
         if (key != DEFAULT) {
-            List default_exact_matchers = (List) lookup.get(DEFAULT);
+            List<MapMatcher> default_exact_matchers = lookup.get(DEFAULT);
             if (default_exact_matchers != null) {
-                for (Iterator iter = default_exact_matchers.iterator(); iter.hasNext();) {
-                    MapMatcher matcher = (MapMatcher) iter.next();
+                for (MapMatcher matcher : default_exact_matchers) {
                     if (matcher.matches(attrs)) {
                         matchers.add(matcher);
                     }
@@ -140,9 +136,9 @@ public class MatcherLookup {
      *            A map of attributes
      * @return key object
      */
-    private Object key(Map attrs) {
-        Object org = attrs.get(IvyPatternHelper.ORGANISATION_KEY);
-        Object module = attrs.get(IvyPatternHelper.MODULE_KEY);
+    private String key(Map<String, String> attrs) {
+        String org = attrs.get(IvyPatternHelper.ORGANISATION_KEY);
+        String module = attrs.get(IvyPatternHelper.MODULE_KEY);
         if (org == null || PatternMatcher.ANY_EXPRESSION.equals(org) || module == null
                 || PatternMatcher.ANY_EXPRESSION.equals(module)) {
             return DEFAULT;

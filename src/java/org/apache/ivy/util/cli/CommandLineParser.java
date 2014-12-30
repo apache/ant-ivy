@@ -20,7 +20,6 @@ package org.apache.ivy.util.cli;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -34,22 +33,23 @@ public class CommandLineParser {
 
     private static final int MAX_SPEC_WIDTH = 30;
 
-    private Map/* <String, Option> */options = new LinkedHashMap();
+    private Map<String, Option> options = new LinkedHashMap<String, Option>();
 
-    private Map/* <String, List<Option>> */categories = new LinkedHashMap();
+    private Map<String, List<Option>> categories = new LinkedHashMap<String, List<Option>>();
 
     public CommandLineParser() {
     }
 
     public CommandLineParser addCategory(String category) {
-        categories.put(category, new ArrayList());
+        categories.put(category, new ArrayList<Option>());
         return this;
     }
 
     public CommandLineParser addOption(Option option) {
         options.put(option.getName(), option);
         if (!categories.isEmpty()) {
-            ((List) categories.values().toArray()[categories.values().size() - 1]).add(option);
+            ((List<Option>) categories.values().toArray()[categories.values().size() - 1])
+                    .add(option);
         }
         return this;
     }
@@ -58,9 +58,9 @@ public class CommandLineParser {
         CommandLine line = new CommandLine();
 
         int index = args.length;
-        ListIterator iterator = Arrays.asList(args).listIterator();
+        ListIterator<String> iterator = Arrays.asList(args).listIterator();
         while (iterator.hasNext()) {
-            String arg = (String) iterator.next();
+            String arg = iterator.next();
             if ("--".equals(arg)) {
                 // skip this argument and stop looping
                 index = iterator.nextIndex();
@@ -72,7 +72,7 @@ public class CommandLineParser {
                 break;
             }
 
-            Option option = (Option) options.get(arg.substring(1));
+            Option option = options.get(arg.substring(1));
             if (option == null) {
                 throw new ParseException("Unrecognized option: " + arg);
             }
@@ -91,8 +91,7 @@ public class CommandLineParser {
         pw.println("usage: " + command);
         // compute the largest option spec
         int specWidth = 0;
-        for (Iterator iterator = options.values().iterator(); iterator.hasNext();) {
-            Option option = (Option) iterator.next();
+        for (Option option : options.values()) {
             if (option.isDeprecated() && !showDeprecated) {
                 continue;
             }
@@ -100,13 +99,11 @@ public class CommandLineParser {
         }
 
         // print options help
-        for (Iterator iterator = categories.entrySet().iterator(); iterator.hasNext();) {
-            Entry entry = (Entry) iterator.next();
-            String category = (String) entry.getKey();
+        for (Entry<String, List<Option>> entry : categories.entrySet()) {
+            String category = entry.getKey();
             pw.println("==== " + category);
-            List/* <Option> */options = (List) entry.getValue();
-            for (Iterator it = options.iterator(); it.hasNext();) {
-                Option option = (Option) it.next();
+            List<Option> options = entry.getValue();
+            for (Option option : options) {
                 if (option.isDeprecated() && !showDeprecated) {
                     continue;
                 }

@@ -137,22 +137,26 @@ public class DualResolver extends AbstractResolver {
         }
     }
 
+    @Override
     public void abortPublishTransaction() throws IOException {
         ivyResolver.abortPublishTransaction();
         artifactResolver.abortPublishTransaction();
     }
 
+    @Override
     public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
             throws IOException {
         ivyResolver.beginPublishTransaction(module, overwrite);
         artifactResolver.beginPublishTransaction(module, overwrite);
     }
 
+    @Override
     public void commitPublishTransaction() throws IOException {
         ivyResolver.commitPublishTransaction();
         artifactResolver.commitPublishTransaction();
     }
 
+    @Override
     public void dumpSettings() {
         if (ivyResolver == null || artifactResolver == null) {
             throw new IllegalStateException(
@@ -162,6 +166,7 @@ public class DualResolver extends AbstractResolver {
                 + artifactResolver.getName() + "]");
     }
 
+    @Override
     public boolean exists(Artifact artifact) {
         if (artifact.isMetadata()) {
             return ivyResolver.exists(artifact);
@@ -170,6 +175,7 @@ public class DualResolver extends AbstractResolver {
         }
     }
 
+    @Override
     public ArtifactOrigin locate(Artifact artifact) {
         if (artifact.isMetadata()) {
             return ivyResolver.locate(artifact);
@@ -178,6 +184,7 @@ public class DualResolver extends AbstractResolver {
         }
     }
 
+    @Override
     public ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options) {
         if (artifact.getArtifact().isMetadata()) {
             return ivyResolver.download(artifact, options);
