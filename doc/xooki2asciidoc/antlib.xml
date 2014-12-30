@@ -24,6 +24,11 @@
         <attribute name="checkUpToDate"/>
         <attribute name="printerFriendly"/>
         <![CDATA[
+	try {
+	    load("nashorn:mozilla_compat.js");
+	} catch (e) {
+	    // ignore the exception - perhaps we are running on Rhino!
+	}
         importClass(java.io.File);
 
         var xookidir = attributes.get("xookidir");
