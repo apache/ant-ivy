@@ -62,7 +62,7 @@
 		<dependency org="org.apache.ant" name="ant-testutil" rev="1.7.0" conf="test->default" transitive="false" />
         <dependency org="ant" name="ant-launcher" rev="1.6.2" conf="test->default" transitive="false"/>
         <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="test->default" transitive="false"/>
-        <dependency org="xmlunit" name="xmlunit" rev="1.5" conf="test->default" transitive="false"/>
+        <dependency org="xmlunit" name="xmlunit" rev="1.6" conf="test->default" transitive="false"/>
 		
 		<!-- This dependency is necessary for having validation in junit tests when running with JDK1.4 -->
 		<dependency org="xerces" name="xercesImpl" rev="2.6.2" conf="test->default" />
