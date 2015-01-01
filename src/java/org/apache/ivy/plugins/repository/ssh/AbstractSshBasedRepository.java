@@ -29,7 +29,10 @@ import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.CredentialsUtil;
 import org.apache.ivy.util.Message;
 
+import com.jcraft.jsch.ConfigRepository.Config;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.OpenSSHConfig;
+import com.jcraft.jsch.ConfigRepository;
 
 public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
@@ -48,6 +51,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     private int port = -1;
 
     private boolean allowedAgentUse = false;
+
+    private String sshConfig = null;
 
     public AbstractSshBasedRepository() {
         super();
@@ -74,6 +79,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         int port = getPort();
         String user = getUser();
         String userPassword = getUserPassword();
+        String sshConfig = getSshConfig();
+        File keyFile = getKeyFile();
         if (uri != null && uri.getScheme() != null) {
             if (uri.getHost() != null) {
                 host = uri.getHost();
@@ -91,10 +98,26 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
                 }
             }
         }
+
+        if (sshConfig != null) {
+            ConfigRepository configRepository = OpenSSHConfig.parseFile(sshConfig);
+            Config config = configRepository.getConfig(host);
+            host = config.getHostname();
+            if (user == null) {
+                user = config.getUser();
+            }
+            String keyFilePath = config.getValue("IdentityFile");
+            if (keyFilePath != null && keyFile == null) {
+                keyFile = new File(keyFilePath);
+            }
+        }
+
+
         if (host == null) {
             throw new IllegalArgumentException(
                     "missing host information. host should be provided either "
-                            + "directly on the repository or in the connection URI");
+                            + "directly on the repository or in the connection URI "
+                            + ", or in the openssh config file specified by sshConfig");
         }
         if (user == null) {
             Credentials c = requestCredentials(host);
@@ -105,7 +128,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
                 Message.error("username is not set");
             }
         }
-        return SshCache.getInstance().getSession(host, port, user, userPassword, getKeyFile(),
+        return SshCache.getInstance().getSession(host, port, user, userPassword, keyFile,
             getKeyFilePassword(), getPassFile(), isAllowedAgentUse());
     }
 
@@ -313,6 +336,21 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
      */
     public void setAllowedAgentUse(boolean allowedAgentUse) {
         this.allowedAgentUse = allowedAgentUse;
+    }
+
+    /**
+     * @return sshConfig Path to a local ssh config file
+     */
+    public String getSshConfig() {
+        return sshConfig;
+    }
+
+    /**
+     * @param sshConfig
+     *            Path to a local ssh config file
+     */
+    public void setSshConfig(String sshConfig) {
+        this.sshConfig = sshConfig;
     }
 
     protected abstract String getRepositoryScheme();
