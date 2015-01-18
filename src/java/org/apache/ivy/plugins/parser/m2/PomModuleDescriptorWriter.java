@@ -179,6 +179,8 @@ public final class PomModuleDescriptorWriter {
         }
         if (options.getDescription() != null) {
             variables.setVariable("ivy.pom.description", options.getDescription(), true);
+        } else if (md.getDescription() != null && md.getDescription().length() > 0) {
+            variables.setVariable("ivy.pom.description", md.getDescription(), true);
         }
         if (md.getHomePage() != null) {
             variables.setVariable("ivy.pom.url", md.getHomePage(), true);
