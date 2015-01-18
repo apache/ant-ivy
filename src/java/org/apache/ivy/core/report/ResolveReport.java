@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -361,6 +362,15 @@ public class ResolveReport {
     public ModuleDescriptor toFixedModuleDescriptor(IvySettings settings, List<ModuleId> midToKeep) {
         DefaultModuleDescriptor fixedmd = new DefaultModuleDescriptor(md.getModuleRevisionId(),
                 md.getStatus(), new Date());
+
+        // copy namespaces
+        for (Entry<String, String> ns : md.getExtraAttributesNamespaces().entrySet()) {
+            fixedmd.addExtraAttributeNamespace(ns.getKey(), ns.getValue());
+        }
+
+        // copy info
+        fixedmd.setDescription(md.getDescription());
+        fixedmd.setHomePage(md.getHomePage());
         fixedmd.getExtraInfos().addAll(md.getExtraInfos());
 
         // copy configurations
@@ -369,8 +379,15 @@ public class ResolveReport {
             fixedmd.addConfiguration(new Configuration(conf));
         }
 
+        // copy artifacts
+        for (String conf : resolvedConfs) {
+            for (Artifact a : md.getArtifacts(conf)) {
+                fixedmd.addArtifact(conf, a);
+            }
+        }
+
+        // add dependency we want to keep from the original module descriptor
         if (midToKeep != null && !midToKeep.isEmpty()) {
-            // add dependency we want to keep from the original module descriptor
             DependencyDescriptor[] deps = md.getDependencies();
             for (int i = 0; i < deps.length; i++) {
                 if (midToKeep.contains(deps[i].getDependencyId())) {
