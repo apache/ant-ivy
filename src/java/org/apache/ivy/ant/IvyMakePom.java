@@ -22,15 +22,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
 import org.apache.ivy.plugins.parser.m2.PomWriterOptions;
+import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ExtraDependency;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
@@ -152,9 +151,9 @@ public class IvyMakePom extends IvyTask {
 
     private String description;
 
-    private Collection mappings = new ArrayList();
+    private List<Mapping> mappings = new ArrayList<Mapping>();
 
-    private Collection dependencies = new ArrayList();
+    private List<Dependency> dependencies = new ArrayList<Dependency>();
 
     public File getPomFile() {
         return pomFile;
@@ -240,6 +239,7 @@ public class IvyMakePom extends IvyTask {
         return dependency;
     }
 
+    @Override
     public void doExecute() throws BuildException {
         try {
             if (ivyFile == null) {
@@ -281,10 +281,9 @@ public class IvyMakePom extends IvyTask {
         return options;
     }
 
-    private Map getMappingsMap() {
-        Map mappingsMap = new HashMap();
-        for (Iterator iter = mappings.iterator(); iter.hasNext();) {
-            Mapping mapping = (Mapping) iter.next();
+    private Map<String, String> getMappingsMap() {
+        Map<String, String> mappingsMap = new LinkedHashMap<String, String>();
+        for (Mapping mapping : mappings) {
             String[] mappingConfs = splitConfs(mapping.getConf());
             for (int i = 0; i < mappingConfs.length; i++) {
                 if (!mappingsMap.containsKey(mappingConfs[i])) {
@@ -295,13 +294,12 @@ public class IvyMakePom extends IvyTask {
         return mappingsMap;
     }
 
-    private List getDependencies() {
-        List result = new ArrayList();
-        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-            Dependency dependency = (Dependency) iter.next();
-            result.add(new PomWriterOptions.ExtraDependency(dependency.getGroup(), dependency
-                    .getArtifact(), dependency.getVersion(), dependency.getScope(), dependency
-                    .getType(), dependency.getClassifier(), dependency.getOptional()));
+    private List<ExtraDependency> getDependencies() {
+        List<ExtraDependency> result = new ArrayList<ExtraDependency>();
+        for (Dependency dependency : dependencies) {
+            result.add(new ExtraDependency(dependency.getGroup(), dependency.getArtifact(),
+                    dependency.getVersion(), dependency.getScope(), dependency.getType(),
+                    dependency.getClassifier(), dependency.getOptional()));
         }
         return result;
     }
