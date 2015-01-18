@@ -61,7 +61,7 @@ public class IvyPublish extends IvyTask {
 
     private String publishResolverName = null;
 
-    private List artifactspattern = new ArrayList();
+    private List<String> artifactspattern = new ArrayList<String>();
 
     private File deliveryList;
 
@@ -81,7 +81,7 @@ public class IvyPublish extends IvyTask {
 
     private boolean forcedeliver;
 
-    private Collection artifacts = new ArrayList();
+    private Collection<Artifact> artifacts = new ArrayList<Artifact>();
 
     private String pubBranch;
 
@@ -190,7 +190,7 @@ public class IvyPublish extends IvyTask {
     }
 
     public String getArtifactspattern() {
-        return (String) (artifactspattern.isEmpty() ? null : artifactspattern.get(0));
+        return artifactspattern.isEmpty() ? null : artifactspattern.get(0);
     }
 
     public void setArtifactspattern(String artifactsPattern) {
@@ -222,6 +222,7 @@ public class IvyPublish extends IvyTask {
         this.merge = merge;
     }
 
+    @Override
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -312,14 +313,10 @@ public class IvyPublish extends IvyTask {
                 mrid,
                 artifactspattern,
                 publishResolverName,
-                new PublishOptions()
-                        .setPubrevision(getPubrevision())
-                        .setPubbranch(getPubbranch())
-                        .setSrcIvyPattern(publishivy ? srcivypattern : null)
-                        .setStatus(getStatus())
+                new PublishOptions().setPubrevision(getPubrevision()).setPubbranch(getPubbranch())
+                        .setSrcIvyPattern(publishivy ? srcivypattern : null).setStatus(getStatus())
                         .setPubdate(pubdate)
-                        .setExtraArtifacts(
-                            (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
+                        .setExtraArtifacts(artifacts.toArray(new Artifact[artifacts.size()]))
                         .setValidate(doValidate(settings)).setOverwrite(overwrite)
                         .setUpdate(update).setMerge(merge).setWarnOnMissing(warnonmissing)
                         .setHaltOnMissing(haltonmissing).setConfs(splitConfs(conf)));
@@ -392,7 +389,7 @@ public class IvyPublish extends IvyTask {
 
         private String type;
 
-        private Map extra = new HashMap();
+        private Map<String, String> extra = new HashMap<String, String>();
 
         public String[] getConfigurations() {
             return null;
@@ -439,22 +436,22 @@ public class IvyPublish extends IvyTask {
         }
 
         public String getAttribute(String attName) {
-            return (String) extra.get(attName);
+            return extra.get(attName);
         }
 
-        public Map getAttributes() {
+        public Map<String, String> getAttributes() {
             return extra;
         }
 
         public String getExtraAttribute(String attName) {
-            return (String) extra.get(attName);
+            return extra.get(attName);
         }
 
-        public Map getExtraAttributes() {
+        public Map<String, String> getExtraAttributes() {
             return extra;
         }
 
-        public Map getQualifiedExtraAttributes() {
+        public Map<String, String> getQualifiedExtraAttributes() {
             return extra;
         }
 

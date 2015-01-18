@@ -37,6 +37,7 @@ import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.install.InstallEngine;
 import org.apache.ivy.core.install.InstallOptions;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -614,8 +615,9 @@ public class Ivy {
     // PUBLISH
     // ///////////////////////////////////////////////////////////////////////
 
-    public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern,
-            String resolverName, PublishOptions options) throws IOException {
+    public Collection<Artifact> publish(ModuleRevisionId mrid,
+            Collection<String> srcArtifactPattern, String resolverName, PublishOptions options)
+            throws IOException {
         pushContext();
         try {
             return publishEngine.publish(mrid, srcArtifactPattern, resolverName, options);
