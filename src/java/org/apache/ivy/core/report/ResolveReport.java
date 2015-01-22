@@ -35,7 +35,6 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -386,55 +385,31 @@ public class ResolveReport {
             }
         }
 
-        // add dependency we want to keep from the original module descriptor
-        if (midToKeep != null && !midToKeep.isEmpty()) {
-            DependencyDescriptor[] deps = md.getDependencies();
-            for (int i = 0; i < deps.length; i++) {
-                if (midToKeep.contains(deps[i].getDependencyId())) {
-                    DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
-                            deps[i].getDependencyRevisionId(), true, false, false);
-                    List<String> confs = Arrays.asList(deps[i].getModuleConfigurations());
-                    if (confs.size() == 1 && confs.get(0).equals("*")) {
-                        confs = resolvedConfs;
-                    }
-                    for (String conf : confs) {
-                        String[] extendedConfs = getExtendingConfs(conf);
-                        String[] depConfs = deps[i].getDependencyConfigurations(conf);
-                        for (String extendedConf : extendedConfs) {
-                            if (resolvedConfs.contains(extendedConf)) {
-                                for (String depConf : depConfs) {
-                                    dep.addDependencyConfiguration(extendedConf, depConf);
-                                }
-                            }
-                        }
-                    }
-                    fixedmd.addDependency(dep);
-                }
-            }
-        }
-
         // add resolved dependencies
-        for (int i = 0; i < dependencies.size(); i++) {
-            IvyNode node = dependencies.get(i);
-            if (midToKeep != null && midToKeep.contains(node.getModuleId())) {
-                continue;
+        for (IvyNode dep : dependencies) {
+            ModuleRevisionId depMrid;
+            boolean force;
+            if (midToKeep != null && midToKeep.contains(dep.getModuleId())) {
+                depMrid = dep.getId();
+                force = false;
+            } else {
+                depMrid = dep.getResolvedId();
+                force = true;
             }
-            String[] rootConfs = node.getRootModuleConfigurations();
-            for (int j = 0; j < rootConfs.length; j++) {
-                if (node.isEvicted(rootConfs[j])) {
+            DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(fixedmd, depMrid,
+                    force, false, false);
+            boolean evicted = true;
+            for (String rootConf : dep.getRootModuleConfigurations()) {
+                if (dep.isEvicted(rootConf)) {
                     continue;
                 }
-                if (node.getAllArtifacts().length == 0) {
-                    // no artifact: it was probably useful transitively, hence it is useless here
-                    break;
+                evicted = false;
+                for (String targetConf : dep.getConfigurations(rootConf)) {
+                    dd.addDependencyConfiguration(rootConf, targetConf);
                 }
-                DefaultDependencyDescriptor dep = new DefaultDependencyDescriptor(fixedmd,
-                        node.getResolvedId(), true, false, false);
-                String[] targetConfs = node.getConfigurations(rootConfs[j]);
-                for (int k = 0; k < targetConfs.length; k++) {
-                    dep.addDependencyConfiguration(rootConfs[j], targetConfs[k]);
-                }
-                fixedmd.addDependency(dep);
+            }
+            if (!evicted) {
+                fixedmd.addDependency(dd);
             }
         }
 
