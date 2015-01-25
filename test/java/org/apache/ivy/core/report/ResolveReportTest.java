@@ -19,6 +19,7 @@ package org.apache.ivy.core.report;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -79,8 +80,8 @@ public class ResolveReportTest extends TestCase {
             String rev, String conf, String[] targetConfs) {
         assertEquals(ModuleRevisionId.newInstance(org, mod, rev), dep.getDependencyRevisionId());
         assertTrue(Arrays.asList(dep.getModuleConfigurations()).contains(conf));
-        assertEquals(Arrays.asList(targetConfs),
-            Arrays.asList(dep.getDependencyConfigurations(conf)));
+        assertEquals(new HashSet<String>(Arrays.asList(targetConfs)),
+            new HashSet<String>(Arrays.asList(dep.getDependencyConfigurations(conf))));
     }
 
     public void testFixedMdSimple() throws Exception {
