@@ -95,7 +95,7 @@ public class AntWorkspaceResolver extends DataType {
         this.haltOnError = haltOnError;
     }
 
-    public void addResourceCollection(ResourceCollection resources) {
+    public void addConfigured(ResourceCollection resources) {
         if (!resources.isFilesystemOnly()) {
             throw new BuildException("Only filesystem resource collection is supported");
         }

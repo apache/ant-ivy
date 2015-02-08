@@ -65,7 +65,7 @@ public class AntBuildResolverTest extends TestCase {
         fileset.setProject(project);
         fileset.setDir(new File("test/workspace"));
         fileset.setIncludes("*/ivy.xml");
-        antWorkspaceResolver.addResourceCollection(fileset);
+        antWorkspaceResolver.addConfigured(fileset);
         antWorkspaceResolver.setProject(project);
 
         configure = new IvyConfigure();
