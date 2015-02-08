@@ -212,9 +212,12 @@ public class AntWorkspaceResolver extends DataType {
             for (int i = 0; i < artifacts.length; i++) {
                 ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
                 dr.addArtifactReport(adr);
-                adr.setDownloadStatus(DownloadStatus.NO);
-                adr.setSize(0);
                 URL url = artifacts[i].getUrl();
+                if (url == null || !url.getProtocol().equals("file")) {
+                    // this is not an artifact managed by this resolver
+                    adr.setDownloadStatus(DownloadStatus.FAILED);
+                    return dr;
+                }
                 File f;
                 try {
                     f = new File(url.toURI());
@@ -222,6 +225,8 @@ public class AntWorkspaceResolver extends DataType {
                     f = new File(url.getPath());
                 }
                 adr.setLocalFile(f);
+                adr.setDownloadStatus(DownloadStatus.NO);
+                adr.setSize(0);
                 Message.verbose("\t[IN WORKSPACE] " + artifacts[i]);
             }
             return dr;
