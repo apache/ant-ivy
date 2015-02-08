@@ -915,9 +915,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         DependencyResolver resolver = resolversMap.get(resolverName);
         if (resolver == null) {
             Message.error("unknown resolver " + resolverName);
-        }
-        if (workspaceResolver != null && !(resolver instanceof WorkspaceChainResolver)) {
+        } else if (workspaceResolver != null && !(resolver instanceof WorkspaceChainResolver)) {
             resolver = new WorkspaceChainResolver(this, resolver, workspaceResolver);
+            resolversMap.put(resolver.getName(), resolver);
             resolversMap.put(resolverName, resolver);
         }
         return resolver;
