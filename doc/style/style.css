@@ -46,7 +46,7 @@ body, p, td, li, ul, ol  {
 h1, h2, h3, h4, h5, h6 {
   font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
-h1 {
+h2 {
 /*
   margin-left: 15px;
   margin-right: 15px;
@@ -58,13 +58,13 @@ h1 {
   -moz-border-radius-bottomright: 5px;
   -moz-border-radius-bottomleft: 5px;
 }
-h2 {
+h3 {
   font-size: 1.4em;
 }
-h3 {
+h4 {
   font-size: 1.2em;
 }
-h4 {
+h5 {
   font-size: 1.1em;
 }
 tr.dark td, tr.light td {
@@ -159,6 +159,17 @@ pre {
 }
 #sidebar-left li, #sidebar-right li {
   font-size: 1em;
+}
+.sidebar-title {
+  margin: 5px 0px 0px 0px;
+  padding: 1px 5px 1px 30px;
+  font-size: 1.2em;
+  font-weight: 700;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  color: #000;
+  background-color: #eee;
+  font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
 #content {
   table-layout:fixed;
@@ -311,4 +322,51 @@ tr.homeitems a:hover {
     border-color: #F0D88D;
     background-color: #FCFCCA;
     margin: 10px;
+}
+
+table.tableblock {
+    border-collapse: collapse;
+    width: 90%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+table.tableblock thead {
+	background-color: #DEE4CD;
+	border: 1px solid #7A9437;
+}
+
+table.tableblock th {
+	font-family: monospace;
+	border: 1px solid #7A9437;
+	padding: 5px;
+}
+
+table.tableblock tbody {
+    background-color: #FFFFFF;
+    border: 1px solid #7A9437;
+}
+
+table.tableblock td {
+    border: 1px dotted #7A9437;
+    padding: 5px;
+}
+
+table.tableblock td p:last-child {
+    margin: 0px;
+}
+
+.note {
+	margin: 10px 10px 10px 50px;
+	padding: 10px;
+	font-style: italic;
+	-moz-border-radius: 10px;
+	background-color: #F6FF7F;
+	border: 1px solid #FFB643;
+	color: #4E3000;
+}
+
+.note .title {
+	display:none;
 }

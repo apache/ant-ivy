@@ -51,14 +51,14 @@ html lang=(attr :lang, 'en' unless attr? :nolang)
         tr
           td id="sidebar-left"
             div class="block block-book" id="block-book-0"
-            h2 Apache Ivy&#153;
-            div class="content"
-              = page.menu()
-              center
-                iframe src="http://www.apache.org/ads/buttonbar.html" style="border-width:0;" frameborder="0" scrolling="no" width="135" height="265"
+                div class="sidebar-title" Apache Ivy&#153;
+                div class="content"
+                  = page.menu()
+                  center
+                    iframe src="http://www.apache.org/ads/buttonbar.html" style="border-width:0;" frameborder="0" scrolling="no" width="135" height="265"
           td valign="top"
             div id="main"
-              h1 class="title" = page.title
+              h1 = page.title
               #content=content
       table id="footer-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%"
         tr

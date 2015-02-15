@@ -753,7 +753,6 @@ xooki.input = {
                 var title;
                 var url;
                 var invalid = false;
-                
                 if (typeof xooki.toc.pages[xooki.toc.importRoot + id] != "undefined") {
                	    title = xooki.toc.pages[xooki.toc.importRoot + id].title;
                     url = pu(xooki.toc.importRoot + id);
@@ -810,7 +809,7 @@ xooki.input = {
                     + "\n----\n\n";
                 input = input.substring(0, codeSection.outerStart)
                     + processedSection
-                    + input.substring(codeSection.outerEnd);
+                    + input.substring(codeSection.outerEnd).trim();
                 from = codeSection.outerStart + processedSection.length;
     
                 codeSection = xooki.string.findXmlSection(input, "code", from);
@@ -827,7 +826,8 @@ xooki.input = {
 		        result = result + input.slice(lastStart,nextPos);
 		        lastStart = nextPos;
 		        nextPos = input.indexOf(">]" , lastStart);
-		        result = result + xooki.url.loadURL(lu(input.slice(lastStart+2,nextPos)));
+		        result = result + "include::" + lu(input.slice(lastStart+2,nextPos)) + "[]"
+		        //result = result + xooki.url.loadURL(lu(input.slice(lastStart+2,nextPos)));
 		        lastStart = nextPos + 2;
 		        nextPos = input.indexOf("[<" , lastStart);
 	        }
@@ -853,9 +853,19 @@ xooki.input = {
 		},
 
 		htmltags: function(input) {
-		    print('search href\n')
-            var s = xooki.string.findSection(input, new RegExp('<a\\s*href\\s*=\\s*\\"([^\\"]*)\\"[^>]*>'), new RegExp('</a>'));
+            print('search comment\n')
+            var s = xooki.string.findSection(input, new RegExp('<!--'), new RegExp('-->'));
             var from = 0;
+            while (s != null) {
+                processedSection = "\n////\n" + input.substring(s.innerStart, s.innerEnd) + "\n////\n";
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<!--'), new RegExp('-->'), from);
+            }
+		    
+		    print('search href\n')
+            s = xooki.string.findSection(input, new RegExp('<a\\s*href\\s*=\\s*\\"([^\\"]*)\\"[^>]*>'), new RegExp('</a>'));
+            from = 0;
             while (s != null) {
                 var href = s.matcherStart[1];
                 processedSection = "link:" + href + "[" + input.substring(s.innerStart, s.innerEnd) + "]";
@@ -875,6 +885,36 @@ xooki.input = {
                 s = xooki.string.findSection(input, new RegExp('<a\\s*name\\s*=\\s*\\"([^\\"]*)\\"[^>]*>'), new RegExp('</a>'), from);
             }
 
+            print('search tip\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"tip"[^>]*>'), new RegExp('</div>'));
+            from = 0;
+            while (s != null) {
+                processedSection = "\n[NOTE]\n====\n" + input.substring(s.innerStart, s.innerEnd) + "\n====\n";
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"tip"[^>]*>'), new RegExp('</div>'), from);
+            }
+
+            print('search step\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"step"[^>]*>'), new RegExp('</div>'));
+            from = 0;
+            while (s != null) {
+                processedSection = input.substring(s.innerStart, s.innerEnd);
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"step"[^>]*>'), new RegExp('</div>'), from);
+            }
+
+            print('search shell\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"shell"[^>]*>'), new RegExp('</div>'));
+            from = 0;
+            while (s != null) {
+                processedSection = input.substring(s.innerStart, s.innerEnd);
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"shell"[^>]*>'), new RegExp('</div>'), from);
+            }
+
             print('search img\n')
             s = xooki.string.find(input, new RegExp('<img\\s*src\\s*=\\s*\\"([^\\"]*)\\"\\s*/>'));
             from = 0;
@@ -888,7 +928,7 @@ xooki.input = {
             }
 
             print('search br\n')
-            s = xooki.string.find(input, new RegExp('<br\\s*/>'));
+            s = xooki.string.find(input, new RegExp('<br\\s*/?>'));
             from = 0;
             while (s != null) {
                 processedSection = "\n"
@@ -896,7 +936,19 @@ xooki.input = {
                     + processedSection
                     + input.substring(s.end);
                 from = s.begin + processedSection.length;
-                s = xooki.string.find(input, new RegExp('<br\\s*/>'), from);
+                s = xooki.string.find(input, new RegExp('<br\\s*/?>'), from);
+            }
+
+            print('search hr\n')
+            s = xooki.string.find(input, new RegExp('<hr\\s*/>'));
+            from = 0;
+            while (s != null) {
+                processedSection = "\n'''\n"
+                input = input.substring(0, s.begin)
+                    + processedSection
+                    + input.substring(s.end);
+                from = s.begin + processedSection.length;
+                s = xooki.string.find(input, new RegExp('<hr\\s*/>'), from);
             }
 
             print('search b\n')
@@ -908,6 +960,18 @@ xooki.input = {
                 input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
                 from = s.outerStart + processedSection.length;
                 s = xooki.string.findXmlSection(input, "b", from);
+                print("found=" + (s != null) + "\n")
+            }
+
+            print('search u\n')
+            s = xooki.string.findXmlSection(input, "u");
+            from = 0;
+            print("found=" + (s != null) + "\n")
+            while (s != null) {
+                processedSection = input.substring(s.innerStart, s.innerEnd);
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findXmlSection(input, "u", from);
                 print("found=" + (s != null) + "\n")
             }
 
@@ -1014,17 +1078,42 @@ xooki.input = {
                 s = xooki.string.findXmlSection(input, "tt", from);
             }
 
+            print('search pre\n')
+            s = xooki.string.findXmlSection(input, "pre");
+            from = 0;
+            while (s != null) {
+                processedSection = "\n[source]\n----\n" 
+                    + input.substring(s.innerStart, s.innerEnd)
+                    + "\n----\n\n";
+                input = input.substring(0, s.outerStart)
+                    + processedSection
+                    + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+    
+                s = xooki.string.findXmlSection(input, "pre", from);
+            }
+
             print('search em\n')
             s = xooki.string.findXmlSection(input, "em");
             from = 0;
             while (s != null) {
-                processedSection = "\n[NOTE]\n===============================\n" + input.substring(s.innerStart, s.innerEnd) + "\n===============================\n";
+                processedSection = "_" + input.substring(s.innerStart, s.innerEnd) + "_";
                 input = input.substring(0, s.outerStart)
                     + processedSection
                     + input.substring(s.outerEnd);
                 from = s.outerStart + processedSection.length;
     
                 s = xooki.string.findXmlSection(input, "em", from);
+            }
+
+            print('search div-since\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*\\"\\s*since\\s*\\"[^>]*>'), new RegExp('</div>'));
+            from = 0;
+            while (s != null) {
+                processedSection = "*__" + input.substring(s.innerStart, s.innerEnd) + "__*";
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*\\"\\s*since\\s*\\"[^>]*>'), new RegExp('</div>'), from);
             }
 
             print('search span-since\n')
@@ -1035,6 +1124,16 @@ xooki.input = {
                 input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
                 from = s.outerStart + processedSection.length;
                 s = xooki.string.findSection(input, new RegExp('<span\\s*class\\s*=\\s*\\"\\s*since\\s*\\"[^>]*>'), new RegExp('</span>'), from);
+            }
+
+            print('search span-tagdoc\n')
+            s = xooki.string.findSection(input, new RegExp('<span\\s*class\\s*=\\s*\\"\\s*tagdoc\\s*\\"[^>]*>'), new RegExp('</span>'));
+            from = 0;
+            while (s != null) {
+                processedSection = input.substring(s.innerStart, s.innerEnd);
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<span\\s*class\\s*=\\s*\\"\\s*tagdoc\\s*\\"[^>]*>'), new RegExp('</span>'), from);
             }
 
             print('search ul/ol\n')
@@ -1067,10 +1166,12 @@ xooki.input = {
                         break;
                     }
                     start = sli.outerStart;
+                    var betweenliContent = "";
                     if (!first) {
                         start = lastEnd;
+                        betweenliContent = input.substring(lastEnd, sli.outerStart);
                     }
-                    processedSection = "\n" + innerindent + input.substring(sli.innerStart, sli.innerEnd).replace(/\\s/, ' ');
+                    processedSection = betweenliContent + "\n" + innerindent + input.substring(sli.innerStart, sli.innerEnd).replace(/\\s/, ' ');
                     input = input.substring(0, start)
                         + processedSection
                         + input.substring(sli.outerEnd);
@@ -1097,7 +1198,12 @@ xooki.input = {
             print("found=" + (s != null) + "\n")
             while (s != null) {
                 tableContent = input.substring(s.innerStart, s.innerEnd);
-                processedSection = "\n"
+                var tablespec = ""
+                processedSection = ""
+
+                var ivyTable = input.substring(s.outerStart, s.innerStart).indexOf("class=\"ivy-attributes\"") > -1;
+                ivyTable = ivyTable || input.substring(s.outerStart, s.innerStart).indexOf("class=\"ant\"") > -1;
+                var nbCol = 0;
 
                 print('search tablehead\n')
                 s2 = xooki.string.findXmlSection(tableContent, "thead");
@@ -1105,15 +1211,18 @@ xooki.input = {
                 print("found=" + (s2 != null) + "\n")
                 if (s2 != null) {
                     tableHead = tableContent.substring(s2.innerStart, s2.innerEnd);
-                    processedSection += '[options="header"]\n'
+                    tablespec = "options=\"header\""
                     processedSection += '|=======\n'
 
                     print('search th\n')
                     s3 = xooki.string.findXmlSection(tableHead, "th");
+                    var nbTh = 0;
                     while (s3 != null) {
                         processedSection += "|" + tableHead.substring(s3.innerStart, s3.innerEnd);
                         s3 = xooki.string.findXmlSection(tableHead, "th", s3.outerEnd);
+                        nbTh++;
                     }
+                    nbCol = Math.max(nbTh, nbCol);
                     processedSection += "\n"
                     from2 = s2.outerEnd
                 } else {
@@ -1127,19 +1236,39 @@ xooki.input = {
 
                     print('search td\n')
                     s3 = xooki.string.findXmlSection(trContent, "td");
+                    var nbTd = 0;
                     while (s3 != null) {
                         processedSection += "|" + trContent.substring(s3.innerStart, s3.innerEnd);
                         s3 = xooki.string.findXmlSection(trContent, "td", s3.outerEnd);
+                        nbTd++;
                     }
                     processedSection += "\n"
+                    nbCol = Math.max(nbTd, nbCol);
                     
                     from2 = s2.outerEnd;
                     s2 = xooki.string.findXmlSection(tableContent, "tr", from2);
                 }
 
                 processedSection += '|=======\n'
-                
-                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+
+                if (ivyTable) {
+                    if (tablespec.length != 0) {
+                        tablespec += ","
+                    }
+                    tablespec += "cols=\""
+                    for (var i = 0; i < nbCol; i++) {
+                        if (i == 0) {
+                            tablespec += "15%";
+                        } else if (i == 1) {
+                            tablespec += ",50%";
+                        } else {
+                            tablespec += "," + Math.round(35 / (nbCol - 2)) + "%";
+                        }
+                    }
+                    tablespec += "\""
+                }
+                    
+                input = input.substring(0, s.outerStart) + '\n[' + tablespec + ']\n' + processedSection + input.substring(s.outerEnd);
                 from = s.outerStart + processedSection.length;
                 s = xooki.string.findXmlSection(input, "table", from);
                 print("found=" + (s != null) + "\n")
@@ -1408,7 +1537,7 @@ xooki.init = function() {
     xooki.template.source = xooki.url.loadURL(xooki.c.action == "print"?cu("printTemplate"):cu("template"));
 	if(xooki.template.source != null) {
         xooki.template.head = '';
-		xooki.template.body = '${title}\n====================\n\n${body}';		
+		xooki.template.body = '${body}';		
 	}
 	
 

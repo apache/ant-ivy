@@ -28,11 +28,11 @@ body  {
 h1, h2, h3, h4, h5, h6, .toc-title {
   color: #7a9438;
 }
-h1 {
+h2 {
   color: #fff;
   background-color: #7a9438;
 }
-.title {
+h1 {
   color: #7a9438;
   background-color: #fff;
   background: none;
@@ -140,10 +140,6 @@ pre {
 #nav a:hover,
 #nav a:active {
 	background: #9ebf47;
-}
-
-#content {
-  border-top: 3px solid #9ebf47;
 }
 
 #forum tr.dark {
