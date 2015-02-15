@@ -22,7 +22,12 @@ module IvyDocHelpers
         def link(printpage)
             l = ''
             if self.url
-                l += '<a href="' + printpage.relativeRoot + self.url + '"'
+                if self.url.start_with?('http')
+                    url = self.url
+                else
+                    url = printpage.relativeRoot + self.url
+                end
+                l += '<a href="' + url + '"'
                 if self.id == printpage.id
                     l += ' class="current"'
                 end
@@ -73,7 +78,7 @@ module IvyDocHelpers
         def innermenu(page)
             m = '<ul id="treemenu" class="treeview">' + "\n"
             page.children.each do |p|
-                m += '<li id="xooki-' + p.id + '"'
+                m += '<li id="xooki-' + (p.id || "undefined") + '"'
                 if p.children.length > 0
                     m += ' class="submenu"'
                 end
@@ -122,11 +127,11 @@ module IvyDocHelpers
         p.title = node['title']
         p.parent = parent
         if node.has_key?("importRoot")
-            p.id = path + child['importRoot'] + '/' + node['importNode']
+            p.id = path + node['importRoot'] + '/' + node['importNode']
             p.url = p.id + ".html"
-            toc = JSON.parse(IO.read(basedir + '/' + child['importRoot'] + "/toc.json"))
+            toc = JSON.parse(IO.read(basedir + '/' + node['importRoot'] + "/toc.json"))
             toc['children'].each do |child|
-                p.children << loadPage(basedir, p, child, path + child['importRoot'] + '/')
+                p.children << loadPage(basedir, node, child, path + node['importRoot'] + '/')
             end
         else
             p.id = node['id']

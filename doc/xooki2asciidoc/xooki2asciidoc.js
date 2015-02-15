@@ -927,6 +927,18 @@ xooki.input = {
                 s = xooki.string.find(input, new RegExp('<img\\s*src\\s*=\\s*\\"([^\\"]*)\\"\\s*/>'), from);
             }
 
+            print('search img title\n')
+            s = xooki.string.find(input, new RegExp('<img\\s*src\\s*=\\s*\\"([^\\"]*)\\"\\s*title\\s*=\\s*\\"([^\\"]*)\\"[^/]*/>'));
+            from = 0;
+            while (s != null) {
+                processedSection = " image:" + s.matcher[1] + "[" + s.matcher[2] + "]"
+                input = input.substring(0, s.begin)
+                    + processedSection
+                    + input.substring(s.end);
+                from = s.begin + processedSection.length;
+                s = xooki.string.find(input, new RegExp('<img\\s*src\\s*=\\s*\\"([^\\"]*)\\"\\s*title\\s*=\\s*\\"([^\\"]*)\\"[^/]*/>'), from);
+            }
+
             print('search br\n')
             s = xooki.string.find(input, new RegExp('<br\\s*/?>'));
             from = 0;
@@ -1063,6 +1075,32 @@ xooki.input = {
                 from = s.outerStart + processedSection.length;
     
                 s = xooki.string.findXmlSection(input, "center", from);
+            }
+
+            print('search p\n')
+            s = xooki.string.findXmlSection(input, "p");
+            from = 0;
+            while (s != null) {
+                processedSection = "\n\n" + input.substring(s.innerStart, s.innerEnd) + "\n\n";
+                input = input.substring(0, s.outerStart)
+                    + processedSection
+                    + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+    
+                s = xooki.string.findXmlSection(input, "p", from);
+            }
+
+            print('search blockquote\n')
+            s = xooki.string.findXmlSection(input, "blockquote");
+            from = 0;
+            while (s != null) {
+                processedSection = "\n[quote]\n____\n" + input.substring(s.innerStart, s.innerEnd) + "\n____\n\n";
+                input = input.substring(0, s.outerStart)
+                    + processedSection
+                    + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+    
+                s = xooki.string.findXmlSection(input, "blockquote", from);
             }
 
             print('search tt\n')
@@ -1685,15 +1723,34 @@ if (batchMode) {
 
         xooki.init();
         
-        xooki.pageContent = xooki.pageContent.replace(/<script type="text\/javascript" src="[^"]*xooki.js"><\/script>/g, '');
-
+        m = new RegExp('<script type="text/javascript" src="[^"]*xooki\\.js"></script>').exec(xooki.pageContent);
+        if (m != null) {
+            xooki.pageContent = xooki.pageContent.substring(0, m.index) + xooki.pageContent.substring(m.index + m[0].length);
+        }
+        
     	xooki.render.main();
 
 		var dest = generateTo.endsWith(".html") ? generateTo : generateTo+'/'+file;
 		dest = dest.substring(0, dest.length-5) + ".adoc";
     	print('generating to '+dest);
-        xooki.pageContent = xooki.pageContent.replace(/[\s\S]*<body>/i, '');
-        xooki.pageContent = xooki.pageContent.replace(/<\/body>[\s\S]*/i, '');
+
+        m = new RegExp('<body>').exec(xooki.pageContent);
+        if (m != null) {
+            xooki.pageContent = xooki.pageContent.substring(m.index + m[0].length);
+        }
+
+        lastM = null;
+        from = 0
+        m = new RegExp('</body>').exec(xooki.pageContent);
+        while (m != null) {
+            lastM = m;
+            from = from + m.index + m[0].length;
+            m = new RegExp('</body>').exec(xooki.pageContent.substring(from));
+        }
+        if (lastM) {
+            xooki.pageContent = xooki.pageContent.substring(0, from - lastM[0].length);            
+        }
+
     	xooki.io.saveFile(dest, xooki.pageContent);
     }
 } else {

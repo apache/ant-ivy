@@ -48,6 +48,7 @@
 		<taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path" />
 		<asciidoctor:convert sourceDirectory="${build.dir}/asciidoc" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="asciidoc-template" preserveDirectories="true">
 			<attribute key="basedir" value="${build.dir}/asciidoc" />
+		    <attribute key="imagesdir" value="" />
 		</asciidoctor:convert>
         <copy todir="${doc.build.dir}">
             <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
