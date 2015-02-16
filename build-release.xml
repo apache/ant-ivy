@@ -19,7 +19,7 @@
 <project name="IvyRelease" default="snapshot" 
 		xmlns:ivy="antlib:org.apache.ivy.ant"
         xmlns:ivy2="antlib:org.apache.ivy.ant_2"
-		xmlns:xooki="antlib:xooki"
+        xmlns:asciidoctor="antlib:org.asciidoctor.ant"
 		xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
 	<import file="build.xml"/>
 	
@@ -181,40 +181,20 @@
         </copy>     
 	</target>
 	
-	<target name="generate-doc" depends="generate-doc-init, generate-tutorial-output">
+    <target name="generate-doc" depends="init-ivy,generate-doc-init,generate-tutorial-output">
+        <ivy:cachepath pathid="asciidoctor.path">
+           <dependency org="org.asciidoctor" name="asciidoctor-ant" rev="1.5.0" />
+        </ivy:cachepath>
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path" />
+        <asciidoctor:convert sourceDirectory="${doc.tmp.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.src.dir}/templates" preserveDirectories="true">
+            <attribute key="basedir" value="${doc.tmp.dir}" />
+            <attribute key="imagesdir" value="" />
+        </asciidoctor:convert>
         <copy todir="${doc.build.dir}">
             <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
             <fileset dir="${doc.tmp.dir}" includes="tutorial/log/multi-project-general-publishall.txt" />
         </copy>
-
-        <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
-        <taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml" />
-        <xooki:generate destDir="${doc.build.dir}" checkUpToDate="true" xookidir="${doc.src.dir}/xooki">
-            <fileset dir="${doc.tmp.dir}">
-                <include name="**/*.html"/>
-                <exclude name="template.html"/>
-                <exclude name="*Template.html"/>
-                <exclude name="conflict-solving-algo.html"/>
-                <exclude name="use.html"/>
-                <exclude name="samples/**"/>
-                <exclude name="js/**"/>
-                <exclude name="reports/**"/>
-                <exclude name="xooki/**"/>
-            </fileset>
-        </xooki:generate>
-
-        <!-- generate print-friendly doc -->
-        <!-- modify the basedir because othwise xooki.js will not be found! --> 
-        <ant antfile="../build-release.xml" target="generate-print-doc" dir="doc" />
-	</target>
-		
-	<target name="generate-print-doc">
-        <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
-        <taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml" />
-        <xooki:print src="${doc.tmp.dir}/index.html" 
-                     dest="${doc.build.dir}/book.html"
-                     xookidir="${doc.src.dir}/xooki" />
-	</target>
+    </target>
 
 	<target name="all-doc" depends="javadoc, generate-doc" />
 	
