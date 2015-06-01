@@ -1,2 +1,2 @@
 # Set the eol of the Ivy files to Unix LF because that is where the checksums are calculated on
-*.xml eol=lf
+*.xml text eol=lf
