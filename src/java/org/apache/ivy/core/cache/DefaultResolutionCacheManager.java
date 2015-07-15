@@ -274,6 +274,10 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         public Namespace getContextNamespace() {
             return delegate.getContextNamespace();
         }
+
+        public String getVariable(String value) {
+            return delegate.getVariable(value);
+        }
     }
 
     private static class MapURLResolver extends RelativeUrlResolver {

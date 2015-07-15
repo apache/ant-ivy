@@ -59,4 +59,5 @@ public interface ParserSettings {
      */
     Namespace getContextNamespace();
 
+    String getVariable(String string);
 }

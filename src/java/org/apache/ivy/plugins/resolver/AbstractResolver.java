@@ -603,5 +603,9 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
             return AbstractResolver.this.getSettings().substitute(value);
         }
 
+        public String getVariable(String value) {
+            return AbstractResolver.this.getSettings().getVariable(value);
+        }
+
     }
 }

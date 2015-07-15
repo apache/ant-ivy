@@ -315,6 +315,14 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             // no main artifact in pom, we don't need to search for meta artifacts
             return;
         }
+
+        boolean sourcesLookup = !"false".equals(ivySettings.getVariable("ivy.maven.lookup.sources"));
+        boolean javadocLookup = !"false".equals(ivySettings.getVariable("ivy.maven.lookup.javadoc"));
+        if (!sourcesLookup && !javadocLookup) {
+            Message.debug("Sources and javadocs lookup disabled");
+            return;
+        }
+
         ModuleDescriptor md = mdBuilder.getModuleDescriptor();
         ModuleRevisionId mrid = md.getModuleRevisionId();
         DependencyResolver resolver = ivySettings.getResolver(mrid);
@@ -328,30 +336,39 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             if (!ArtifactOrigin.isUnknown(mainArtifact)) {
                 String mainArtifactLocation = mainArtifact.getLocation();
 
-                ArtifactOrigin sourceArtifact = resolver.locate(mdBuilder.getSourceArtifact());
-                if (!ArtifactOrigin.isUnknown(sourceArtifact)
-                        && !sourceArtifact.getLocation().equals(mainArtifactLocation)) {
-                    Message.debug("source artifact found for " + mrid);
-                    mdBuilder.addSourceArtifact();
-                } else {
-                    // it seems that sometimes the 'src' classifier is used instead of 'sources'
-                    // Cfr. IVY-1138
-                    ArtifactOrigin srcArtifact = resolver.locate(mdBuilder.getSrcArtifact());
-                    if (!ArtifactOrigin.isUnknown(srcArtifact)
-                            && !srcArtifact.getLocation().equals(mainArtifactLocation)) {
+                if (sourcesLookup) {
+                    ArtifactOrigin sourceArtifact = resolver.locate(mdBuilder.getSourceArtifact());
+                    if (!ArtifactOrigin.isUnknown(sourceArtifact)
+                            && !sourceArtifact.getLocation().equals(mainArtifactLocation)) {
                         Message.debug("source artifact found for " + mrid);
-                        mdBuilder.addSrcArtifact();
+                        mdBuilder.addSourceArtifact();
                     } else {
-                        Message.debug("no source artifact found for " + mrid);
+                        // it seems that sometimes the 'src' classifier is used instead of 'sources'
+                        // Cfr. IVY-1138
+                        ArtifactOrigin srcArtifact = resolver.locate(mdBuilder.getSrcArtifact());
+                        if (!ArtifactOrigin.isUnknown(srcArtifact)
+                                && !srcArtifact.getLocation().equals(mainArtifactLocation)) {
+                            Message.debug("source artifact found for " + mrid);
+                            mdBuilder.addSrcArtifact();
+                        } else {
+                            Message.debug("no source artifact found for " + mrid);
+                        }
                     }
-                }
-                ArtifactOrigin javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
-                if (!ArtifactOrigin.isUnknown(javadocArtifact)
-                        && !javadocArtifact.getLocation().equals(mainArtifactLocation)) {
-                    Message.debug("javadoc artifact found for " + mrid);
-                    mdBuilder.addJavadocArtifact();
                 } else {
-                    Message.debug("no javadoc artifact found for " + mrid);
+                    Message.debug("sources lookup disabled");
+                }
+
+                if (javadocLookup) {
+                    ArtifactOrigin javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
+                    if (!ArtifactOrigin.isUnknown(javadocArtifact)
+                            && !javadocArtifact.getLocation().equals(mainArtifactLocation)) {
+                        Message.debug("javadoc artifact found for " + mrid);
+                        mdBuilder.addJavadocArtifact();
+                    } else {
+                        Message.debug("no javadoc artifact found for " + mrid);
+                    }
+                } else {
+                    Message.debug("javadocs lookup disabled");
                 }
             }
         }
