@@ -35,6 +35,7 @@ import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -159,7 +160,15 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
             mdBuilder.setHomePage(domReader.getHomePage());
             mdBuilder.setDescription(domReader.getDescription());
-            mdBuilder.setLicenses(domReader.getLicenses());
+            // if this module doesn't have an explicit license, use the parent's license (if any)
+            final License[] licenses = domReader.getLicenses();
+            if (licenses != null && licenses.length > 0) {
+                mdBuilder.setLicenses(licenses);
+            } else {
+                if (parentDescr != null) {
+                    mdBuilder.setLicenses(parentDescr.getLicenses());
+                }
+            }
 
             ModuleRevisionId relocation = domReader.getRelocation();
 
