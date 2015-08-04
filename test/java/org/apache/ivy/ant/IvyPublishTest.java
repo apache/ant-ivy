@@ -956,4 +956,49 @@ public class IvyPublishTest extends TestCase {
         reader.close();
     }
 
+    /**
+     * Tests that if the version of a module contains the ':' character then it isn't considered as Windows OS'
+     * filesystem root drive name indicator. See IVY-1522 for the bug description.
+     *
+     * @throws Exception
+     */
+    public void testVersionWithColon() throws Exception {
+        final String org = "apache";
+        final String moduleName = "version-with-colon";
+        final String version = "1.0.0.20:18:36";
+
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-module-version-with-colon.xml");
+        final IvyResolve ivyResolve = new IvyResolve();
+        ivyResolve.setProject(project);
+        ivyResolve.execute();
+
+        // create the module artifact to be publish
+        final String moduleArtifactLocation = "build" + File.separator + "test" + File.separator + "publish"
+                + File.separator + moduleName + "-" + version + ".jar";
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), new File(moduleArtifactLocation), null);
+
+        // publish the module
+        publish.setResolver("1");
+        publish.execute();
+
+        // check the published ivy xml file - should have published the files with "1" resolver
+        final String publishedIvyXmlLocation = "test" + File.separator + "repositories" + File.separator + "1" + File.separator
+                + org + File.separator + moduleName + File.separator + "ivys" + File.separator + "ivy-" + version + ".xml";
+        assertTrue("Ivy xml for version " + version + " of module " + moduleName + " was not published at " + publishedIvyXmlLocation,
+                new File(publishedIvyXmlLocation).exists());
+
+        // should have updated published ivy version
+        final ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+                new IvySettings(),
+                new File(publishedIvyXmlLocation).toURI().toURL(),
+                false);
+        assertEquals("Unexpected version number in the published module", version, md.getModuleRevisionId().getRevision());
+
+        // check the published artifact
+        final String publishedArtifactLocation = "test" + File.separator + "repositories" + File.separator + "1" + File.separator
+                + org + File.separator + moduleName + File.separator + "jars" + File.separator + moduleName + "-" + version + ".jar";
+        assertTrue("Artifact for version " + version + " of module " + moduleName + " was not published at " + publishedArtifactLocation,
+                new File(publishedArtifactLocation).exists());
+
+    }
 }

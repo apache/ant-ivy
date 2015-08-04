@@ -595,8 +595,8 @@ public final class FileUtil {
         // }
         String root = null;
         int colon = path.indexOf(':');
-        if (colon > 0) { // && (ON_DOS || ON_NETWARE)) {
-
+        // essentially a Windows OS check (see IVY-1522 for more details)
+        if (colon > 0 && isFilesystemRoot(path.substring(0, colon + 1) + sep)) { // && (ON_DOS || ON_NETWARE)) {
             int next = colon + 1;
             root = path.substring(0, next);
             char[] ca = path.toCharArray();
@@ -623,6 +623,24 @@ public final class FileUtil {
             path = path.substring(1);
         }
         return new String[] {root, path};
+    }
+
+    private static boolean isFilesystemRoot(final String path) {
+        if (path == null) {
+            return false;
+        }
+        final File[] filesystemRoots = File.listRoots();
+        if (filesystemRoots == null) {
+            // in the rare cases when the listing of filesystem roots returns null, we have no way to ascertain
+            // if the "path" is a filesystem root. We return false in such cases
+            return false;
+        }
+        for (final File filesystemRoot : filesystemRoots) {
+            if (filesystemRoot.getName().equals(path)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
