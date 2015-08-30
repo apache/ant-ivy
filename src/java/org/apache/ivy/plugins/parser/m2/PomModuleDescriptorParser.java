@@ -315,6 +315,15 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             // no main artifact in pom, we don't need to search for meta artifacts
             return;
         }
+        
+        final boolean disabledForSourcesAndJavadoc = "true".equals(ivySettings.substitute("${disabledForSourcesAndJavadoc}"));
+        if(disabledForSourcesAndJavadoc){
+            Message.debug("disabledForSourcesAndJavadoc=true ( in ivysettings.xml or System property )  ignore sources and javadoc artifact");
+            return;
+        }else{
+            Message.debug("if you want ignore sources and javadoc artifact ,try set disabledForSourcesAndJavadoc=true  ( in ivysettings.xml or System property )  for speed up! ");
+        }
+        
         ModuleDescriptor md = mdBuilder.getModuleDescriptor();
         ModuleRevisionId mrid = md.getModuleRevisionId();
         DependencyResolver resolver = ivySettings.getResolver(mrid);
