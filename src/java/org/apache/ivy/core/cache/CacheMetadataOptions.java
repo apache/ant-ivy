@@ -32,6 +32,8 @@ public class CacheMetadataOptions extends CacheDownloadOptions {
 
     private boolean checkTTL = true;
 
+    private boolean useCacheOnly = false;
+
     public Namespace getNamespace() {
         return namespace;
     }
@@ -84,5 +86,14 @@ public class CacheMetadataOptions extends CacheDownloadOptions {
 
     public boolean isCheckTTL() {
         return checkTTL;
+    }
+
+    public CacheMetadataOptions setUseCacheOnly(boolean useCacheOnly) {
+        this.useCacheOnly = useCacheOnly;
+        return this;
+    }
+
+    public boolean isUseCacheOnly() {
+        return useCacheOnly;
     }
 }

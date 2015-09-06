@@ -435,6 +435,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
                 .setCheckmodified(
                     data.getOptions().isUseCacheOnly() ? Boolean.FALSE : checkmodified)
                 .setValidate(doValidate(data)).setNamespace(getNamespace())
+                .setUseCacheOnly(data.getOptions().isUseCacheOnly())
                 .setForce(data.getOptions().isRefresh())
                 .setListener(getDownloadListener(getDownloadOptions(data.getOptions())));
     }

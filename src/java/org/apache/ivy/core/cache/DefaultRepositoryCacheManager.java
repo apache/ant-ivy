@@ -686,7 +686,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             Message.verbose("don't use cache for " + mrid + ": checkModified=true");
             return null;
         }
-        if (isChanging(dd, requestedRevisionId, options)) {
+        if (!options.isUseCacheOnly() && isChanging(dd, requestedRevisionId, options)) {
             Message.verbose("don't use cache for " + mrid + ": changing=true");
             return null;
         }
