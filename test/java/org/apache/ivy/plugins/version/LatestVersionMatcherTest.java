@@ -17,12 +17,13 @@
  */
 package org.apache.ivy.plugins.version;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.Status;
 import org.apache.ivy.core.module.status.StatusManager;
+
+import junit.framework.TestCase;
 
 public class LatestVersionMatcherTest extends TestCase {
     private LatestVersionMatcher vm = new LatestVersionMatcher();
@@ -41,6 +42,13 @@ public class LatestVersionMatcherTest extends TestCase {
         assertNeed("latest.integration", false);
     }
 
+    public void testNeedModuleDescriptorForBranches() throws Exception {
+        assertNeed("latest.release", "trunk", true);
+        assertNeed("latest.milestone", "trunk", true);
+        // different branches will have different latest.integration artifacts
+        assertNeed("latest.integration", "trunk", true);
+    }
+
     public void testNeedModuleDescriptorCustomStatus() throws Exception {
         StatusManager.getCurrent().addStatus(new Status("release", false));
         StatusManager.getCurrent().addStatus(new Status("snapshot", true));
@@ -49,9 +57,50 @@ public class LatestVersionMatcherTest extends TestCase {
         assertNeed("latest.snapshot", false);
     }
 
+    public void testAcceptForStandardStatus() throws Exception {
+        assertAccept("latest.release", "release", true);
+        assertAccept("latest.release", "milestone", false);
+        assertAccept("latest.release", "integration", false);
+    }
+
+    public void testAcceptForSameBranches() throws Exception {
+        assertAccept("latest.release", "trunk", "release", "trunk", true);
+        assertAccept("latest.release", "trunk", "milestone", "trunk", false);
+        assertAccept("latest.release", "trunk", "integration", "trunk", false);
+    }
+
+    public void testAcceptForDifferentBranches() throws Exception {
+        assertAccept("latest.release", "trunk", "release", "feature", false);
+        assertAccept("latest.release", "trunk", "milestone", "feature", false);
+        assertAccept("latest.release", "trunk", "integration", "feature", false);
+    }
+
     // assertion helper methods
     private void assertNeed(String askedVersion, boolean b) {
         assertEquals(b, vm.needModuleDescriptor(
             ModuleRevisionId.newInstance("org", "name", askedVersion), null));
+    }
+
+    private void assertNeed(String askedVersion, String askedBranch, boolean b) {
+        assertEquals(b, vm.needModuleDescriptor(
+            ModuleRevisionId.newInstance("org", "name", askedBranch, askedVersion), null));
+    }
+
+    private void assertAccept(String askedVersion, String foundStatus, boolean b) {
+        ModuleRevisionId askedMrid = ModuleRevisionId.newInstance("org", "name", askedVersion);
+        DefaultModuleDescriptor foundMD = DefaultModuleDescriptor
+                .newDefaultInstance(ModuleRevisionId.newInstance("org", "name", null));
+        foundMD.setStatus(foundStatus);
+        assertEquals(b, vm.accept(askedMrid, foundMD));
+    }
+
+    private void assertAccept(String askedVersion, String askedBranch, String foundStatus,
+            String foundBranch, boolean b) {
+        ModuleRevisionId askedMrid = ModuleRevisionId.newInstance("org", "name", askedBranch,
+            askedVersion);
+        DefaultModuleDescriptor foundMD = DefaultModuleDescriptor.newDefaultInstance(
+            ModuleRevisionId.newInstance("org", "name", foundBranch, (String) null));
+        foundMD.setStatus(foundStatus);
+        assertEquals(b, vm.accept(askedMrid, foundMD));
     }
 }
