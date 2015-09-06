@@ -23,10 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Security;
-import java.security.SignatureException;
 import java.util.Iterator;
 
 import org.apache.ivy.plugins.signer.SignatureGenerator;
@@ -41,6 +38,11 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
+import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
+import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
+import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 
 public class OpenPGPSignatureGenerator implements SignatureGenerator {
 
@@ -101,11 +103,12 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
                 pgpSec = readSecretKey(keyIn);
             }
 
-            PGPPrivateKey pgpPrivKey = pgpSec.extractPrivateKey(password.toCharArray(),
-                BouncyCastleProvider.PROVIDER_NAME);
-            PGPSignatureGenerator sGen = new PGPSignatureGenerator(pgpSec.getPublicKey()
-                    .getAlgorithm(), PGPUtil.SHA1, BouncyCastleProvider.PROVIDER_NAME);
-            sGen.initSign(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
+            PBESecretKeyDecryptor decryptor = new BcPBESecretKeyDecryptorBuilder(
+                    new BcPGPDigestCalculatorProvider()).build(password.toCharArray());
+            PGPPrivateKey pgpPrivKey = pgpSec.extractPrivateKey(decryptor);
+            PGPSignatureGenerator sGen = new PGPSignatureGenerator(new BcPGPContentSignerBuilder(
+                    pgpSec.getPublicKey().getAlgorithm(), PGPUtil.SHA1));
+            sGen.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
             in = new FileInputStream(src);
             out = new BCPGOutputStream(new ArmoredOutputStream(new FileOutputStream(dest)));
@@ -116,19 +119,7 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
             }
 
             sGen.generate().encode(out);
-        } catch (SignatureException e) {
-            IOException ioexc = new IOException();
-            ioexc.initCause(e);
-            throw ioexc;
         } catch (PGPException e) {
-            IOException ioexc = new IOException();
-            ioexc.initCause(e);
-            throw ioexc;
-        } catch (NoSuchAlgorithmException e) {
-            IOException ioexc = new IOException();
-            ioexc.initCause(e);
-            throw ioexc;
-        } catch (NoSuchProviderException e) {
             IOException ioexc = new IOException();
             ioexc.initCause(e);
             throw ioexc;
@@ -156,14 +147,16 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
 
     private PGPSecretKey readSecretKey(InputStream in) throws IOException, PGPException {
         in = PGPUtil.getDecoderStream(in);
-        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(in);
+        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(in,
+                new BcKeyFingerprintCalculator());
 
         PGPSecretKey key = null;
-        for (Iterator it = pgpSec.getKeyRings(); key == null && it.hasNext();) {
-            PGPSecretKeyRing kRing = (PGPSecretKeyRing) it.next();
+        for (Iterator<PGPSecretKeyRing> it = pgpSec.getKeyRings(); key == null && it.hasNext();) {
+            PGPSecretKeyRing kRing = it.next();
 
-            for (Iterator it2 = kRing.getSecretKeys(); key == null && it2.hasNext();) {
-                PGPSecretKey k = (PGPSecretKey) it2.next();
+            for (Iterator<PGPSecretKey> it2 = kRing.getSecretKeys(); key == null
+                    && it2.hasNext();) {
+                PGPSecretKey k = it2.next();
                 if ((keyId == null) && k.isSigningKey()) {
                     key = k;
                 }

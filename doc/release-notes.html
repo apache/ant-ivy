@@ -36,6 +36,7 @@ reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
 Key features of this 2.5.0 release are
+* Ivy nows uses BoucyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
 * TODO
 * TODO
 * TODO
@@ -65,6 +66,7 @@ List of changes since Ivy 2.4.0:
 - FIX: useCacheOnly should allow lookup of changing dependencies in cache (IVY-1515) (Thanks to Ilya)
 
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
+- IMPROVEMENT: Update bouncycastle to 1.52 (IVY-1521) (Thanks to Michal Srb)
 
 - NEW: Lets ssh-based resolvers use an ~/.ssh/config file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
 - NEW: Add ivy.maven.sources.lookup and ivy.maven.javadoc.lookup variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (IVY-1529)
@@ -202,6 +204,7 @@ Here is the list of people who have contributed source code and documentation up
 <li>John Shields</li>
 <li>Nihal Sinha</li>
 <li>Gene Smith</li>
+<li>Michal Srb</li>
 <li>Colin Stanfill</li>
 <li>Simon Steiner</li>
 <li>Johan Stuyts</li>
