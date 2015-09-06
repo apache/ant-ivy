@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -40,8 +41,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 /**
  * Tests URLResolver. Http tests are based upon ibiblio site.
@@ -54,22 +53,16 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData data;
 
-    private File cache;
-
     protected void setUp() throws Exception {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
-        cache = new File("build/cache");
         data = new ResolveData(engine, new ResolveOptions());
-        cache.mkdirs();
-        settings.setDefaultCache(cache);
+        TestHelper.createCache();
+        settings.setDefaultCache(TestHelper.cache);
     }
 
     protected void tearDown() throws Exception {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testFile() throws Exception {

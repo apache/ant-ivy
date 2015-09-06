@@ -25,10 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
@@ -46,35 +45,24 @@ import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-public class RetrieveTest extends TestCase {
-    private Ivy ivy;
+import junit.framework.TestCase;
 
-    private File cache;
+public class RetrieveTest extends TestCase {
+
+    private Ivy ivy;
 
     protected void setUp() throws Exception {
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        createCache();
-        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        TestHelper.createCache();
+        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_INFO));
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
+        TestHelper.cleanCache();
         Delete del = new Delete();
         del.setProject(new Project());
         del.setDir(new File("build/test/retrieve"));
-        del.execute();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
         del.execute();
     }
 

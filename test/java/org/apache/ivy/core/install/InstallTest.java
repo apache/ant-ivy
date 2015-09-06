@@ -19,14 +19,15 @@ package org.apache.ivy.core.install;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.TestCase;
 
 public class InstallTest extends TestCase {
 
@@ -184,27 +185,13 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
     }
 
-    private File _cache;
-
     protected void setUp() throws Exception {
-        createCache();
-    }
-
-    private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        TestHelper.createCache();
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
+        TestHelper.cleanCache();
         cleanInstall();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(_cache);
-        del.execute();
     }
 
     private void cleanInstall() {

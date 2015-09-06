@@ -21,12 +21,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
+
+import junit.framework.TestCase;
 
 public class ConfigureTest extends TestCase {
     public void testDefault() throws ParseException, IOException {

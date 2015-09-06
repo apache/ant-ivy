@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Random;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -42,8 +43,6 @@ public class TestPerformance {
 
     private final Ivy ivy;
 
-    private File cache;
-
     public TestPerformance() throws Exception {
         ivy = new Ivy();
         FileSystemResolver resolver = new FileSystemResolver();
@@ -58,23 +57,11 @@ public class TestPerformance {
     }
 
     protected void setUp() throws Exception {
-        createCache();
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        TestHelper.createCache();
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     private void cleanRepo() {

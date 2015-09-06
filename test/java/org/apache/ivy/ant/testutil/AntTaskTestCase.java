@@ -17,17 +17,17 @@
  */
 package org.apache.ivy.ant.testutil;
 
-import junit.framework.TestCase;
-
-import org.apache.ivy.ant.AntTestHelper;
+import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.Project;
+
+import junit.framework.TestCase;
 
 public class AntTaskTestCase extends TestCase {
 
     private AntTestListener antTestListener;
 
     public Project configureProject() {
-        Project project = AntTestHelper.newProject();
+        Project project = TestHelper.newProject();
         antTestListener = new AntTestListener(Project.MSG_INFO);
         project.addBuildListener(antTestListener);
         return project;

@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Vector;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
@@ -35,6 +33,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
+
+import junit.framework.TestCase;
 
 public class AntCallTriggerTest extends TestCase {
     public void test() throws Exception {

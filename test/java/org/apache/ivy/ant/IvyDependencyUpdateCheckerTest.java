@@ -20,40 +20,27 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.testutil.AntTaskTestCase;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
-    private File cache;
 
     private IvyDependencyUpdateChecker dependencyUpdateChecker;
 
     protected void setUp() throws Exception {
-        createCache();
+        TestHelper.createCache();
         Project project = configureProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        project.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
 
         dependencyUpdateChecker = new IvyDependencyUpdateChecker();
         dependencyUpdateChecker.setProject(project);
     }
 
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
-    }
-
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSimple() throws Exception {

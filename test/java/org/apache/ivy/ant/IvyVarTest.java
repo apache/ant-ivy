@@ -17,15 +17,15 @@
  */
 package org.apache.ivy.ant;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
-import org.apache.tools.ant.Project;
+import org.apache.ivy.TestHelper;
+
+import junit.framework.TestCase;
 
 public class IvyVarTest extends TestCase {
     public void testSimple() {
         IvyVar task = new IvyVar();
-        task.setProject(new Project());
+        task.setProject(TestHelper.newProject());
         task.setName("mytest");
         task.setValue("myvalue");
         task.execute();
@@ -36,7 +36,7 @@ public class IvyVarTest extends TestCase {
 
     public void testPrefix() {
         IvyVar task = new IvyVar();
-        task.setProject(new Project());
+        task.setProject(TestHelper.newProject());
         task.setName("mytest");
         task.setValue("myvalue");
         task.setPrefix("myprefix");
@@ -48,7 +48,7 @@ public class IvyVarTest extends TestCase {
 
     public void testURL() {
         IvyVar task = new IvyVar();
-        task.setProject(new Project());
+        task.setProject(TestHelper.newProject());
         task.setUrl(IvyVarTest.class.getResource("vartest.properties").toExternalForm());
         task.execute();
         Ivy ivy = task.getIvyInstance();
@@ -59,7 +59,7 @@ public class IvyVarTest extends TestCase {
 
     public void testURLPrefix() {
         IvyVar task = new IvyVar();
-        task.setProject(new Project());
+        task.setProject(TestHelper.newProject());
         task.setUrl(IvyVarTest.class.getResource("vartest.properties").toExternalForm());
         task.setPrefix("myprefix.");
         task.execute();

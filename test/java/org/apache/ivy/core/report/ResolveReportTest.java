@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -32,6 +30,8 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 public class ResolveReportTest extends TestCase {
 

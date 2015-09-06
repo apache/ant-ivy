@@ -17,10 +17,7 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
-
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -31,8 +28,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.TestCase;
 
 public class MirroredURLResolverTest extends TestCase {
 
@@ -42,15 +39,12 @@ public class MirroredURLResolverTest extends TestCase {
 
     private ResolveData data;
 
-    private File cache;
-
     protected void setUp() throws Exception {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
-        cache = new File("build/cache");
         data = new ResolveData(engine, new ResolveOptions());
-        cache.mkdirs();
-        settings.setDefaultCache(cache);
+        TestHelper.createCache();
+        settings.setDefaultCache(TestHelper.cache);
         settings.setVariable("test.mirroredurl.mirrorlist-solo.url",
             this.getClass().getResource("mirrorlist-solo.txt").toExternalForm());
         settings.setVariable("test.mirroredurl.mirrorlist-failover.url", this.getClass()
@@ -62,10 +56,7 @@ public class MirroredURLResolverTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSolo() throws Exception {

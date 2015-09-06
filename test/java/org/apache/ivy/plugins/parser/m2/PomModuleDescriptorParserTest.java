@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -42,13 +41,9 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
-import org.apache.ivy.plugins.repository.BasicResource;
-import org.apache.ivy.plugins.repository.LazyResource;
-import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
-import org.xml.sax.SAXException;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
     // junit test -- DO NOT REMOVE used by ant to know it's a junit test

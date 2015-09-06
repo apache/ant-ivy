@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.core.repository;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.TestFixture;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.event.EventManager;
@@ -26,6 +24,8 @@ import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
+
+import junit.framework.TestCase;
 
 public class RepositoryManagementEngineTest extends TestCase {
     private RepositoryManagementEngine repository;

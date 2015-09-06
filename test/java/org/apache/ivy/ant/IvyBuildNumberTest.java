@@ -17,41 +17,26 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.File;
+import org.apache.ivy.TestHelper;
+import org.apache.tools.ant.Project;
 
 import junit.framework.TestCase;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
-
 public class IvyBuildNumberTest extends TestCase {
-    private File cache;
 
     private IvyBuildNumber buildNumber;
 
     protected void setUp() throws Exception {
-        createCache();
-        Project project = new Project();
+        TestHelper.createCache();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         buildNumber = new IvyBuildNumber();
         buildNumber.setProject(project);
     }
 
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
-    }
-
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testDefault() throws Exception {
@@ -162,7 +147,7 @@ public class IvyBuildNumberTest extends TestCase {
     }
 
     public void testWithBadChecksum() throws Exception {
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-checksums.xml");
 
         buildNumber = new IvyBuildNumber();
@@ -179,7 +164,7 @@ public class IvyBuildNumberTest extends TestCase {
 
     public void testChainResolver() throws Exception {
         // IVY-1037
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1037/ivysettings.xml");
 
         buildNumber = new IvyBuildNumber();

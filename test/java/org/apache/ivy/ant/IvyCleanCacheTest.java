@@ -19,10 +19,11 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import junit.framework.TestCase;
 
 public class IvyCleanCacheTest extends TestCase {
     private IvyCleanCache cleanCache;
@@ -36,7 +37,7 @@ public class IvyCleanCacheTest extends TestCase {
     private File resolutionCache;
 
     protected void setUp() throws Exception {
-        Project p = new Project();
+        Project p = TestHelper.newProject();
         cacheDir = new File("build/cache");
         p.setProperty("cache", cacheDir.getAbsolutePath());
         cleanCache = new IvyCleanCache();

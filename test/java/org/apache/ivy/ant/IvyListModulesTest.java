@@ -17,41 +17,26 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.File;
+import org.apache.ivy.TestHelper;
+import org.apache.tools.ant.Project;
 
 import junit.framework.TestCase;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
-
 public class IvyListModulesTest extends TestCase {
-    private File cache;
 
     private IvyListModules findModules;
 
     protected void setUp() throws Exception {
-        createCache();
-        Project project = new Project();
+        TestHelper.createCache();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         findModules = new IvyListModules();
         findModules.setProject(project);
     }
 
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
-    }
-
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testExact() throws Exception {

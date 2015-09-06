@@ -20,8 +20,6 @@ package org.apache.ivy.plugins.lock;
 import java.io.File;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
@@ -39,6 +37,8 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CopyProgressEvent;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
+
+import junit.framework.TestCase;
 
 public class ArtifactLockStrategyTest extends TestCase {
     protected void setUp() throws Exception {

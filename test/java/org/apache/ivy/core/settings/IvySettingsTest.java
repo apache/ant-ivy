@@ -20,10 +20,10 @@ package org.apache.ivy.core.settings;
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+
+import junit.framework.TestCase;
 
 public class IvySettingsTest extends TestCase {
 

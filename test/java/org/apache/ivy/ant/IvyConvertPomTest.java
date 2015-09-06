@@ -19,14 +19,14 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.apache.ivy.TestHelper;
 
-import org.apache.tools.ant.Project;
+import junit.framework.TestCase;
 
 public class IvyConvertPomTest extends TestCase {
     public void testSimple() throws Exception {
         IvyConvertPom task = new IvyConvertPom();
-        task.setProject(new Project());
+        task.setProject(TestHelper.newProject());
         task.setPomFile(new File("test/java/org/apache/ivy/ant/test.pom"));
         File destFile = File.createTempFile("ivy", ".xml");
         destFile.deleteOnExit();

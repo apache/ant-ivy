@@ -19,48 +19,34 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Parallel;
 
+import junit.framework.TestCase;
+
 public class IvyResolveTest extends TestCase {
-    private File cache;
 
     private Project project;
 
     private IvyResolve resolve;
 
     protected void setUp() throws Exception {
-        createCache();
-        project = new Project();
+        TestHelper.createCache();
+        project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        project.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
 
         resolve = new IvyResolve();
         resolve.setProject(project);
     }
 
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
-    }
-
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testIVY1455() throws Exception {
@@ -86,14 +72,14 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testIVY779() throws Exception {
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.local.default.root",
             new File("test/repositories/norev").getAbsolutePath());
         project.setProperty("ivy.local.default.ivy.pattern", "[module]/[artifact].[ext]");
         project.setProperty("ivy.local.default.artifact.pattern", "[module]/[artifact].[ext]");
 
         resolve.setProject(project);
-        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        project.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
         resolve.setFile(new File("test/repositories/norev/ivy.xml"));
         resolve.setKeep(true);
         resolve.execute();

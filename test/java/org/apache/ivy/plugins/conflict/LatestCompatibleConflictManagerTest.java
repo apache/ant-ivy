@@ -20,13 +20,13 @@ package org.apache.ivy.plugins.conflict;
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestFixture;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
+
+import junit.framework.TestCase;
 
 public class LatestCompatibleConflictManagerTest extends TestCase {
     private TestFixture fixture;

@@ -24,8 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
@@ -36,6 +35,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Echo;
+
+import junit.framework.TestCase;
 
 public class IvyPublishTest extends TestCase {
     private File cache;
@@ -48,7 +49,7 @@ public class IvyPublishTest extends TestCase {
         cleanTestDir();
         cleanRep();
         createCache();
-        project = new Project();
+        project = TestHelper.newProject();
         project.init();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("build", "build/test/publish");

@@ -19,11 +19,11 @@ package org.apache.ivy.plugins.resolver;
 
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+
+import junit.framework.Assert;
 
 /**
  * 

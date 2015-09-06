@@ -19,14 +19,14 @@ package org.apache.ivy.core.event;
 
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
 import org.apache.ivy.core.event.resolve.StartResolveEvent;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+
+import junit.framework.TestCase;
 
 public class IvyEventFilterTest extends TestCase {
 

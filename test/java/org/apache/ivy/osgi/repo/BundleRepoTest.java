@@ -29,8 +29,6 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
@@ -39,6 +37,8 @@ import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.tools.ant.BuildException;
 import org.xml.sax.SAXException;
+
+import junit.framework.TestCase;
 
 public class BundleRepoTest extends TestCase {
 

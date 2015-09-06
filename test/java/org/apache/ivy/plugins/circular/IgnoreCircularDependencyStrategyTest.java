@@ -17,11 +17,11 @@
  */
 package org.apache.ivy.plugins.circular;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
+
+import junit.framework.TestCase;
 
 public class IgnoreCircularDependencyStrategyTest extends TestCase {
     private CircularDependencyStrategy strategy;

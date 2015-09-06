@@ -19,14 +19,14 @@ package org.apache.ivy.core.settings;
 
 import java.net.URL;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
+
+import junit.framework.TestCase;
 
 /**
  * split from XmlIvyConfigurationParserTest due to dependency on network resource

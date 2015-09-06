@@ -23,15 +23,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.util.CollectionUtils;
-import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
+
+import junit.framework.TestCase;
 
 public class BuildOBRTaskTest extends TestCase {
 
@@ -43,12 +42,7 @@ public class BuildOBRTaskTest extends TestCase {
 
     protected void setUp() throws Exception {
         createCache();
-        project = new Project();
-        DefaultLogger logger = new DefaultLogger();
-        logger.setMessageOutputLevel(Project.MSG_INFO);
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-        project.addBuildListener(logger);
+        project = TestHelper.newProject();
 
         buildObr = new BuildOBRTask();
         buildObr.setProject(project);
@@ -61,14 +55,7 @@ public class BuildOBRTaskTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     private BundleRepoDescriptor readObr(File obrFile) throws FileNotFoundException,
@@ -106,13 +93,7 @@ public class BuildOBRTaskTest extends TestCase {
     }
 
     public void testResolve() throws Exception {
-        Project otherProject = new Project();
-        DefaultLogger logger = new DefaultLogger();
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-        logger.setMessageOutputLevel(Project.MSG_INFO);
-        otherProject.addBuildListener(logger);
-
+        Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/test-repo/bundlerepo/ivysettings.xml");
 
         IvyResolve resolve = new IvyResolve();

@@ -34,8 +34,6 @@ import java.util.Set;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -72,6 +70,8 @@ import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import junit.framework.TestCase;
 
 /**
  *

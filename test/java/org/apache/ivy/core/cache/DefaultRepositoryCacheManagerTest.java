@@ -24,8 +24,6 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -47,6 +45,8 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.TestCase;
 
 /**
  * @see DefaultResolutionCacheManager

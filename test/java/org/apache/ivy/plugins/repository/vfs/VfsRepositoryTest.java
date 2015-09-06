@@ -21,9 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 /**
  * Testing Testing was the single biggest hurdle I faced. I have tried to provide a complete test

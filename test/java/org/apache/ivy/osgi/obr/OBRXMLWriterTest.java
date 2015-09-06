@@ -24,8 +24,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.osgi.core.BundleArtifact;
 import org.apache.ivy.osgi.core.BundleInfo;
@@ -36,6 +34,8 @@ import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.CollectionUtils;
 import org.xml.sax.ContentHandler;
+
+import junit.framework.TestCase;
 
 public class OBRXMLWriterTest extends TestCase {
 

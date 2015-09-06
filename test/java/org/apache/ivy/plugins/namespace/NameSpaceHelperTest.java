@@ -20,12 +20,12 @@ package org.apache.ivy.plugins.namespace;
 import java.util.Collections;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+
+import junit.framework.TestCase;
 
 public class NameSpaceHelperTest extends TestCase {
     public void testTransformArtifactWithExtraAttributes() throws Exception {

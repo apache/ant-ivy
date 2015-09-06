@@ -21,50 +21,37 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.TestCase;
 
 public class IvyRepositoryReportTest extends TestCase {
-    private File cache;
 
     private IvyRepositoryReport report;
 
     protected void setUp() throws Exception {
-        createCache();
-        Project project = new Project();
+        TestHelper.createCache();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
 
         report = new IvyRepositoryReport();
         report.setProject(project);
-        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSimple() throws Exception {
         report.setOrganisation("org1");
         report.setOutputname("testsimple");
-        report.setTodir(cache);
+        report.setTodir(TestHelper.cache);
         report.execute();
 
-        File reportFile = new File(cache, "testsimple.xml");
+        File reportFile = new File(TestHelper.cache, "testsimple.xml");
         assertTrue(reportFile.exists());
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
 
@@ -81,10 +68,10 @@ public class IvyRepositoryReportTest extends TestCase {
         report.getProject().setProperty("ivy.settings.file",
             "test/repositories/IVY-716/ivysettings.xml");
         report.setOutputname("testbranch");
-        report.setTodir(cache);
+        report.setTodir(TestHelper.cache);
         report.execute();
 
-        File reportFile = new File(cache, "testbranch.xml");
+        File reportFile = new File(TestHelper.cache, "testbranch.xml");
         assertTrue(reportFile.exists());
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
 
@@ -100,10 +87,10 @@ public class IvyRepositoryReportTest extends TestCase {
         report.getProject().setProperty("ivy.settings.file",
             "test/repositories/IVY-729/ivysettings.xml");
         report.setOutputname("test-no-org");
-        report.setTodir(cache);
+        report.setTodir(TestHelper.cache);
         report.execute();
 
-        File reportFile = new File(cache, "test-no-org.xml");
+        File reportFile = new File(TestHelper.cache, "test-no-org.xml");
         assertTrue(reportFile.exists());
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
 

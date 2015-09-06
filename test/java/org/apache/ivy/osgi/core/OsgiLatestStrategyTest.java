@@ -23,9 +23,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.plugins.latest.ArtifactInfo;
+
+import junit.framework.TestCase;
 
 public class OsgiLatestStrategyTest extends TestCase {
 

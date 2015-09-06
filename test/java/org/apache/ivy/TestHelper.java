@@ -27,8 +27,6 @@ import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -46,6 +44,11 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.FileUtil;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.Assert;
 
 public class TestHelper {
 
@@ -325,5 +328,28 @@ public class TestHelper {
      */
     public static ResolveOptions newResolveOptions(IvySettings settings) {
         return new ResolveOptions();
+    }
+
+    public static Project newProject() {
+        Project project = new Project();
+        DefaultLogger logger = new DefaultLogger();
+        logger.setMessageOutputLevel(Project.MSG_INFO);
+        logger.setOutputPrintStream(System.out);
+        logger.setErrorPrintStream(System.out);
+        project.addBuildListener(logger);
+        return project;
+    }
+
+    public static File cache = new File("build/cache");
+
+    public static void createCache() {
+        cache.mkdirs();
+    }
+
+    public static void cleanCache() {
+        Delete del = new Delete();
+        del.setProject(new Project());
+        del.setDir(cache);
+        del.execute();
     }
 }

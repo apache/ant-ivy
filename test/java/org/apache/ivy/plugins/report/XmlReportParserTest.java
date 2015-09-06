@@ -19,44 +19,30 @@ package org.apache.ivy.plugins.report;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.TestCase;
 
 public class XmlReportParserTest extends TestCase {
-    private Ivy _ivy;
 
-    private File _cache;
+    private Ivy ivy;
 
     protected void setUp() throws Exception {
-        _ivy = new Ivy();
-        _ivy.configure(new File("test/repositories/ivysettings.xml"));
-        createCache();
-    }
-
-    private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
+        TestHelper.createCache();
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(_cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testGetResolvedModule() throws Exception {
-        ResolveReport report = _ivy.resolve(
+        ResolveReport report = ivy.resolve(
             new File("test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),
             getResolveOptions(new String[] {"default"}).setValidate(false).setResolveId(
                 "testGetResolvedModule"));
@@ -65,7 +51,7 @@ public class XmlReportParserTest extends TestCase {
         ModuleRevisionId modRevId = report.getModuleDescriptor().getModuleRevisionId();
 
         XmlReportParser parser = new XmlReportParser();
-        parser.parse(_ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
+        parser.parse(ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
             "testGetResolvedModule", "default"));
         ModuleRevisionId parsedModRevId = parser.getResolvedModule();
 

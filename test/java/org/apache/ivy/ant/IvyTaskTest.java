@@ -20,18 +20,19 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
 
+import junit.framework.TestCase;
+
 public class IvyTaskTest extends TestCase {
 
     public void testDefaultSettings() throws MalformedURLException {
-        Project p = new Project();
+        Project p = TestHelper.newProject();
         p.setBasedir("test/repositories");
         p.setProperty("myproperty", "myvalue");
         IvyTask task = new IvyTask() {
@@ -60,7 +61,7 @@ public class IvyTaskTest extends TestCase {
     }
 
     public void testReferencedSettings() throws MalformedURLException {
-        Project p = new Project();
+        Project p = TestHelper.newProject();
         p.setProperty("myproperty", "myvalue");
 
         IvyAntSettings antSettings = new IvyAntSettings();
@@ -92,7 +93,7 @@ public class IvyTaskTest extends TestCase {
     }
 
     public void testIvyVersionAsAntProperty() {
-        Project p = new Project();
+        Project p = TestHelper.newProject();
         p.setBasedir("test/repositories");
         IvyTask task = new IvyTask() {
             public void doExecute() throws BuildException {

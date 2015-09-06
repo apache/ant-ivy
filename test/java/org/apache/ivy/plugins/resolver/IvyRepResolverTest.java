@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.util.List;
 
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -34,8 +35,6 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 /**
  * 
@@ -47,22 +46,16 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData _data;
 
-    private File _cache;
-
     protected void setUp() throws Exception {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _cache = new File("build/cache");
         _data = new ResolveData(_engine, new ResolveOptions());
-        _cache.mkdirs();
-        _settings.setDefaultCache(_cache);
+        TestHelper.createCache();
+        _settings.setDefaultCache(TestHelper.cache);
     }
 
     protected void tearDown() throws Exception {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(_cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testDefaults() {

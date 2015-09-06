@@ -20,8 +20,6 @@ package org.apache.ivy.osgi.updatesite;
 import java.io.File;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -39,6 +37,8 @@ import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+
+import junit.framework.TestCase;
 
 public class UpdateSiteResolverTest extends TestCase {
 

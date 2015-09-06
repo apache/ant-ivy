@@ -17,9 +17,9 @@
  */
 package org.apache.ivy.plugins.namespace;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+
+import junit.framework.TestCase;
 
 public class MRIDTransformationRuleTest extends TestCase {
 

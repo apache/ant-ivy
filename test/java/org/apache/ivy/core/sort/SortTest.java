@@ -24,9 +24,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -37,6 +34,9 @@ import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.ExactVersionMatcher;
 import org.apache.ivy.plugins.version.LatestVersionMatcher;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class SortTest extends TestCase {
 

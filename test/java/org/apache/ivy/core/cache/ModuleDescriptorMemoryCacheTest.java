@@ -21,14 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ParserSettings;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class ModuleDescriptorMemoryCacheTest extends TestCase {
 

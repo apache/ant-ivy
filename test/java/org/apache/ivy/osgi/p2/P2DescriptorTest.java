@@ -19,8 +19,6 @@ package org.apache.ivy.osgi.p2;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -36,6 +34,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.updatesite.UpdateSiteResolver;
+
+import junit.framework.TestCase;
 
 public class P2DescriptorTest extends TestCase {
 

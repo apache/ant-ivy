@@ -19,9 +19,8 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
@@ -30,13 +29,15 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
 
+import junit.framework.TestCase;
+
 public class IvyConfigureTest extends TestCase {
     private IvyConfigure configure;
 
     private Project project;
 
     protected void setUp() throws Exception {
-        project = new Project();
+        project = TestHelper.newProject();
         project.setProperty("myproperty", "myvalue");
 
         configure = new IvyConfigure();
@@ -67,7 +68,7 @@ public class IvyConfigureTest extends TestCase {
             project.getProperty("ivy.cache.dir.test"));
 
         // test with a File
-        project = new Project();
+        project = TestHelper.newProject();
         configure = new IvyConfigure();
         configure.setProject(project);
         configure.setFile(new File("test/java/org/apache/ivy/ant/ivysettings-defaultCacheDir.xml"));
@@ -78,7 +79,7 @@ public class IvyConfigureTest extends TestCase {
             project.getProperty("ivy.cache.dir.test2"));
 
         // test if no defaultCacheDir is specified
-        project = new Project();
+        project = TestHelper.newProject();
         configure = new IvyConfigure();
         configure.setProject(project);
         configure

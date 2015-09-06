@@ -19,17 +19,16 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.AntWorkspaceResolver.WorkspaceArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+
+import junit.framework.TestCase;
 
 public class AntBuildResolverTest extends TestCase {
 
@@ -39,8 +38,6 @@ public class AntBuildResolverTest extends TestCase {
     private static final ModuleRevisionId MRID_PROJECT1 = ModuleRevisionId.newInstance(
         "org.apache.ivy.test", "project1", "0.1");
 
-    private File cache;
-
     private Project project;
 
     private IvyConfigure configure;
@@ -49,14 +46,9 @@ public class AntBuildResolverTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        createCache();
-        project = new Project();
-        DefaultLogger logger = new DefaultLogger();
-        logger.setMessageOutputLevel(Project.MSG_INFO);
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-        project.addBuildListener(logger);
-        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        TestHelper.cleanCache();
+        project = TestHelper.newProject();
+        project.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
 
         AntWorkspaceResolver antWorkspaceResolver = new AntWorkspaceResolver();
         antWorkspaceResolver.setName("test-workspace");
@@ -75,21 +67,9 @@ public class AntBuildResolverTest extends TestCase {
         configure.execute();
     }
 
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
-    }
-
     @Override
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testNoProject() throws Exception {
@@ -185,7 +165,7 @@ public class AntBuildResolverTest extends TestCase {
         assertEquals(
             new File("test/workspace/project1/target/dist/jars/project1.jar").getAbsolutePath(),
             path.list()[0]);
-        assertEquals(new File(cache, "org.acme/module1/jars/module1-1.1.jar").getAbsolutePath(),
+        assertEquals(new File(TestHelper.cache, "org.acme/module1/jars/module1-1.1.jar").getAbsolutePath(),
             path.list()[1]);
     }
 
@@ -207,7 +187,7 @@ public class AntBuildResolverTest extends TestCase {
         assertEquals(2, path.size());
         assertEquals(new File("test/workspace/project1/target/classes").getAbsolutePath(),
             path.list()[0]);
-        assertEquals(new File(cache, "org.acme/module1/jars/module1-1.1.jar").getAbsolutePath(),
+        assertEquals(new File(TestHelper.cache, "org.acme/module1/jars/module1-1.1.jar").getAbsolutePath(),
             path.list()[1]);
     }
 }

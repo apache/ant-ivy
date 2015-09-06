@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -38,6 +36,8 @@ import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 public class PublishEngineTest extends TestCase {
     protected void setUp() throws Exception {
