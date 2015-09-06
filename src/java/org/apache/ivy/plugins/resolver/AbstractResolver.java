@@ -513,22 +513,22 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(data, "data");
 
+        // always cache dynamic mrids because we can store per-resolver values
+        saveModuleRevisionIfNeeded(dd, newModuleFound);
+
         // check if latest is asked and compare to return the most recent
         ResolvedModuleRevision previousModuleFound = data.getCurrentResolvedModuleRevision();
         String newModuleDesc = describe(newModuleFound);
         Message.debug("\tchecking " + newModuleDesc + " against " + describe(previousModuleFound));
         if (previousModuleFound == null) {
             Message.debug("\tmodule revision kept as first found: " + newModuleDesc);
-            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else if (isAfter(newModuleFound, previousModuleFound, data.getDate())) {
             Message.debug("\tmodule revision kept as younger: " + newModuleDesc);
-            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else if (!newModuleFound.getDescriptor().isDefault()
                 && previousModuleFound.getDescriptor().isDefault()) {
             Message.debug("\tmodule revision kept as better (not default): " + newModuleDesc);
-            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else {
             Message.debug("\tmodule revision discarded as older: " + newModuleDesc);
@@ -540,8 +540,8 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
             ResolvedModuleRevision newModuleFound) {
         if (newModuleFound != null
                 && getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())) {
-            getRepositoryCacheManager().saveResolvedRevision(dd.getDependencyRevisionId(),
-                newModuleFound.getId().getRevision());
+            getRepositoryCacheManager().saveResolvedRevision(getName(),
+                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
         }
     }
 
