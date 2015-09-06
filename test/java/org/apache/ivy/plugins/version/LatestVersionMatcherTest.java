@@ -42,13 +42,6 @@ public class LatestVersionMatcherTest extends TestCase {
         assertNeed("latest.integration", false);
     }
 
-    public void testNeedModuleDescriptorForBranches() throws Exception {
-        assertNeed("latest.release", "trunk", true);
-        assertNeed("latest.milestone", "trunk", true);
-        // different branches will have different latest.integration artifacts
-        assertNeed("latest.integration", "trunk", true);
-    }
-
     public void testNeedModuleDescriptorCustomStatus() throws Exception {
         StatusManager.getCurrent().addStatus(new Status("release", false));
         StatusManager.getCurrent().addStatus(new Status("snapshot", true));

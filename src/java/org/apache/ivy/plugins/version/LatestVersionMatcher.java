@@ -39,12 +39,6 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
     }
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
-        // if asking for a branch, foundMrid will likely have an invalid value that doesn't
-        // come from the module descriptor itself. return true so accept is given the real
-        // module descriptor with the correct branch.
-        if (askedMrid.getBranch() != null) {
-            return true;
-        }
         List<Status> statuses = StatusManager.getCurrent().getStatuses();
         Status lowest = (Status) statuses.get(statuses.size() - 1);
         String latestLowest = "latest." + lowest.getName();
