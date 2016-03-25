@@ -74,6 +74,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: ApacheURLLister skips versions with URL encoded characters [jira:IVY-1442[]] [jira:IVY-1573[]]
 - FIX: Configuration lists are sensitive to whitespace; multiple split/merge methods [jira:IVY-309[]] [jira:IVY-1282[]]
 - FIX: Warnings about illegal reflection access due to lack of methods to retrieve default authenticator in Java 5 to 8 [jira:IVY-1569[]]
+- FIX: Cycle in parent POM ancestry yields StackOverflowError in PomModuleDescriptorParser [jira:IVY-1545] (Thanks to Brett Randall)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
