@@ -51,6 +51,13 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("\\- org1#mod1.2;2.0");
     }
 
+    public void testEmpty() throws Exception {
+        dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-empty.xml"));
+        dependencyTree.execute();
+        assertLogContaining("Dependency tree for apache-resolve-empty");
+        assertLogNotContaining("\\-");
+    }
+
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
