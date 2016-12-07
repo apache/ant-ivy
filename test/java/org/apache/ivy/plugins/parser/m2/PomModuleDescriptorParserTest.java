@@ -536,7 +536,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
-        assertEquals(3, dds.length);
+        assertEquals(4, dds.length);
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(
@@ -569,6 +569,17 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})),
             new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
         assertEquals(0, dds[2].getAllExcludeRules().length);
+
+        // test for IVY-1531 (where the pom.xml can have a exclusion for groupid=* and artifactid=*, implying transitive=false, in ivy land)
+        final DependencyDescriptor excludeAllTransitiveDepsDescriptor = dds[3];
+        assertEquals(ModuleRevisionId.newInstance("org.owasp.esapi", "esapi", "2.1.0"), excludeAllTransitiveDepsDescriptor.getDependencyRevisionId());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(excludeAllTransitiveDepsDescriptor.getModuleConfigurations())));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"master(*)", "compile(*)"})),
+                new HashSet(Arrays.asList(excludeAllTransitiveDepsDescriptor.getDependencyConfigurations("compile"))));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})),
+                new HashSet(Arrays.asList(excludeAllTransitiveDepsDescriptor.getDependencyConfigurations("runtime"))));
+        assertEquals("No exclusion elements were expected to be present for " + excludeAllTransitiveDepsDescriptor, 0, excludeAllTransitiveDepsDescriptor.getAllExcludeRules().length);
+        assertFalse("Dependency  " + excludeAllTransitiveDepsDescriptor + " was expected to have transitive=false", excludeAllTransitiveDepsDescriptor.isTransitive());
     }
 
     public void testWithPlugins() throws Exception {

@@ -290,9 +290,18 @@ public class PomModuleDescriptorBuilder {
         if ((mRevId != null) && mRevId.getModuleId().equals(moduleRevId.getModuleId())) {
             return;
         }
-
+        // experimentation shows the following, excluded modules are
+        // inherited from parent POMs if either of the following is true:
+        // the <exclusions> element is missing or the <exclusions> element
+        // is present, but empty.
+        List<ModuleId> excluded = dep.getExcludedModules();
+        if (excluded.isEmpty()) {
+            excluded = getDependencyMgtExclusions(ivyModuleDescriptor, dep.getGroupId(),
+                    dep.getArtifactId());
+        }
+        final boolean excludeAllTransitiveDeps = shouldExcludeAllTransitiveDeps(excluded);
         DefaultDependencyDescriptor dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor,
-                moduleRevId);
+                moduleRevId, !excludeAllTransitiveDeps);
         scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
         ConfMapper mapping = MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
@@ -327,16 +336,12 @@ public class PomModuleDescriptorBuilder {
             dd.addDependencyArtifact(optionalizedScope, depArtifact);
         }
 
-        // experimentation shows the following, excluded modules are
-        // inherited from parent POMs if either of the following is true:
-        // the <exclusions> element is missing or the <exclusions> element
-        // is present, but empty.
-        List<ModuleId> excluded = dep.getExcludedModules();
-        if (excluded.isEmpty()) {
-            excluded = getDependencyMgtExclusions(ivyModuleDescriptor, dep.getGroupId(),
-                dep.getArtifactId());
-        }
         for (ModuleId excludedModule : excluded) {
+            // This represents exclude all transitive dependencies, which we have already taken
+            // in account while defining the DefaultDependencyDescriptor itself
+            if ("*".equals(excludedModule.getOrganisation()) && "*".equals(excludedModule.getName())) {
+                continue;
+            }
             String[] confs = dd.getModuleConfigurations();
             for (int k = 0; k < confs.length; k++) {
                 dd.addExcludeRule(confs[k], new DefaultExcludeRule(new ArtifactId(excludedModule,
@@ -346,6 +351,21 @@ public class PomModuleDescriptorBuilder {
         }
 
         ivyModuleDescriptor.addDependency(dd);
+    }
+
+    private static boolean shouldExcludeAllTransitiveDeps(final List<ModuleId> exclusions) {
+        if (exclusions == null || exclusions.isEmpty()) {
+            return false;
+        }
+        for (final ModuleId exclusion : exclusions) {
+            if (exclusion == null) {
+                continue;
+            }
+            if ("*".equals(exclusion.getOrganisation()) && "*".equals(exclusion.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addDependency(DependencyDescriptor descriptor) {
@@ -690,8 +710,8 @@ public class PomModuleDescriptorBuilder {
         private final PomDependencyData pomDependencyData;
 
         private PomDependencyDescriptor(PomDependencyData pomDependencyData,
-                ModuleDescriptor moduleDescriptor, ModuleRevisionId revisionId) {
-            super(moduleDescriptor, revisionId, true, false, true);
+                ModuleDescriptor moduleDescriptor, ModuleRevisionId revisionId, final boolean transitive) {
+            super(moduleDescriptor, revisionId, true, false, transitive);
             this.pomDependencyData = pomDependencyData;
         }
 
