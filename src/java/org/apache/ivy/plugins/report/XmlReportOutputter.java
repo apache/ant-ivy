@@ -52,8 +52,10 @@ public class XmlReportOutputter implements ReportOutputter {
             ResolutionCacheManager cacheMgr) throws IOException {
         File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId,
             report.getConfiguration());
-        File reportParentDir = reportFile.getParentFile();
-        reportParentDir.mkdirs();
+        final File reportParentDir = reportFile.getParentFile();
+        if (reportParentDir != null) {
+            reportParentDir.mkdirs();
+        }
         OutputStream stream = new FileOutputStream(reportFile);
         writer.output(report, confs, stream);
         stream.close();
