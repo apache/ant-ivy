@@ -74,6 +74,12 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
     }
 
     public File getResolutionCacheRoot() {
+        if (basedir == null) {
+            if (settings == null) {
+                throw new IllegalStateException("The 'basedir' or 'IvySettings' has not been set on the ResolutionCacheManager");
+            }
+            basedir = settings.getDefaultResolutionCacheBasedir();
+        }
         return basedir;
     }
 
@@ -213,7 +219,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
     }
 
     public void clean() {
-        FileUtil.forceDelete(getBasedir());
+        FileUtil.forceDelete(getResolutionCacheRoot());
     }
 
     private static class CacheParserSettings implements ParserSettings {
