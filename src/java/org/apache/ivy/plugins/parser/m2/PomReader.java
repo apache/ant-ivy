@@ -52,6 +52,8 @@ import org.xml.sax.SAXParseException;
  */
 public class PomReader {
 
+    private static final String PROFILES_ELEMENT = "profiles";
+
     private static final String PACKAGING = "packaging";
 
     private static final String DEPENDENCY = "dependency";
@@ -106,6 +108,8 @@ public class PomReader {
 
     private static final String TYPE = "type";
 
+    private static final String PROFILE = "profile";
+
     private HashMap<String, String> properties = new HashMap<String, String>();
 
     private final Element projectElement;
@@ -113,8 +117,8 @@ public class PomReader {
     private final Element parentElement;
 
     public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
-        InputStream stream = new AddDTDFilterInputStream(URLHandlerRegistry.getDefault()
-                .openStream(descriptorURL));
+        InputStream stream = new AddDTDFilterInputStream(
+                URLHandlerRegistry.getDefault().openStream(descriptorURL));
         InputSource source = new InputSource(stream);
         source.setSystemId(XMLHelper.toSystemId(descriptorURL));
         try {
@@ -122,8 +126,8 @@ public class PomReader {
                 public InputSource resolveEntity(String publicId, String systemId)
                         throws SAXException, IOException {
                     if ((systemId != null) && systemId.endsWith("m2-entities.ent")) {
-                        return new InputSource(PomReader.class
-                                .getResourceAsStream("m2-entities.ent"));
+                        return new InputSource(
+                                PomReader.class.getResourceAsStream("m2-entities.ent"));
                     }
                     return null;
                 }
@@ -276,34 +280,60 @@ public class PomReader {
     }
 
     public List<PomDependencyData> getDependencies() {
-        Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCIES);
-        LinkedList<PomDependencyData> dependencies = new LinkedList<PomDependencyData>();
-        if (dependenciesElement != null) {
-            NodeList childs = dependenciesElement.getChildNodes();
-            for (int i = 0; i < childs.getLength(); i++) {
-                Node node = childs.item(i);
-                if (node instanceof Element && DEPENDENCY.equals(node.getNodeName())) {
-                    dependencies.add(new PomDependencyData((Element) node));
-                }
+        return getDependencies(projectElement);
+    }
+
+    private List<PomDependencyData> getDependencies(Element parent) {
+        Element dependenciesElement = getFirstChildElement(parent, DEPENDENCIES);
+        if (dependenciesElement == null) {
+            return Collections.emptyList();
+        }
+        List<PomDependencyData> dependencies = new LinkedList<PomDependencyData>();
+        NodeList children = dependenciesElement.getChildNodes();
+        for (int i = 0, sz = children.getLength(); i < sz; i++) {
+            Node node = children.item(i);
+            if (node instanceof Element && DEPENDENCY.equals(node.getNodeName())) {
+                dependencies.add(new PomDependencyData((Element) node));
             }
         }
         return dependencies;
     }
 
     public List<PomDependencyMgt> getDependencyMgt() {
-        Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCY_MGT);
-        dependenciesElement = getFirstChildElement(dependenciesElement, DEPENDENCIES);
-        LinkedList<PomDependencyMgt> dependencies = new LinkedList<PomDependencyMgt>();
-        if (dependenciesElement != null) {
-            NodeList childs = dependenciesElement.getChildNodes();
-            for (int i = 0; i < childs.getLength(); i++) {
-                Node node = childs.item(i);
-                if (node instanceof Element && DEPENDENCY.equals(node.getNodeName())) {
-                    dependencies.add(new PomDependencyMgtElement((Element) node));
-                }
+        return getDependencyMgt(projectElement);
+    }
+
+    private List<PomDependencyMgt> getDependencyMgt(Element parent) {
+        Element dependenciesElement = getFirstChildElement(
+            getFirstChildElement(parent, DEPENDENCY_MGT), DEPENDENCIES);
+        if (dependenciesElement == null) {
+            return Collections.emptyList();
+        }
+        List<PomDependencyMgt> dependencies = new LinkedList<PomDependencyMgt>();
+        NodeList children = dependenciesElement.getChildNodes();
+        for (int i = 0, sz = children.getLength(); i < sz; i++) {
+            Node node = children.item(i);
+            if (node instanceof Element && DEPENDENCY.equals(node.getNodeName())) {
+                dependencies.add(new PomDependencyMgtElement((Element) node));
             }
         }
         return dependencies;
+    }
+
+    public List<PomProfileElement> getProfiles() {
+        Element profilesElement = getFirstChildElement(projectElement, PROFILES_ELEMENT);
+        if (profilesElement == null) {
+            return Collections.emptyList();
+        }
+        List<PomProfileElement> result = new LinkedList<PomReader.PomProfileElement>();
+        NodeList children = profilesElement.getChildNodes();
+        for (int i = 0, sz = children.getLength(); i < sz; i++) {
+            Node node = children.item(i);
+            if (node instanceof Element && PROFILE.equals(node.getNodeName())) {
+                result.add(new PomProfileElement((Element) node));
+            }
+        }
+        return result;
     }
 
     public class PomDependencyMgtElement implements PomDependencyMgt {
@@ -319,7 +349,6 @@ public class PomReader {
 
         /*
          * (non-Javadoc)
-         * 
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getGroupId()
          */
         public String getGroupId() {
@@ -329,7 +358,6 @@ public class PomReader {
 
         /*
          * (non-Javadoc)
-         * 
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getArtifaceId()
          */
         public String getArtifactId() {
@@ -339,7 +367,6 @@ public class PomReader {
 
         /*
          * (non-Javadoc)
-         * 
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getVersion()
          */
         public String getVersion() {
@@ -354,17 +381,18 @@ public class PomReader {
 
         public List<ModuleId> getExcludedModules() {
             Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
+            if (exclusionsElement == null) {
+                return Collections.emptyList();
+            }
             LinkedList<ModuleId> exclusions = new LinkedList<ModuleId>();
-            if (exclusionsElement != null) {
-                NodeList childs = exclusionsElement.getChildNodes();
-                for (int i = 0; i < childs.getLength(); i++) {
-                    Node node = childs.item(i);
-                    if (node instanceof Element && EXCLUSION.equals(node.getNodeName())) {
-                        String groupId = getFirstChildText((Element) node, GROUP_ID);
-                        String artifactId = getFirstChildText((Element) node, ARTIFACT_ID);
-                        if ((groupId != null) && (artifactId != null)) {
-                            exclusions.add(ModuleId.newInstance(groupId, artifactId));
-                        }
+            NodeList children = exclusionsElement.getChildNodes();
+            for (int i = 0, sz = children.getLength(); i < sz; i++) {
+                Node node = children.item(i);
+                if (node instanceof Element && EXCLUSION.equals(node.getNodeName())) {
+                    String groupId = getFirstChildText((Element) node, GROUP_ID);
+                    String artifactId = getFirstChildText((Element) node, ARTIFACT_ID);
+                    if ((groupId != null) && (artifactId != null)) {
+                        exclusions.add(ModuleId.newInstance(groupId, artifactId));
                     }
                 }
             }
@@ -373,21 +401,22 @@ public class PomReader {
     }
 
     public List<PomPluginElement> getPlugins() {
-        LinkedList<PomPluginElement> plugins = new LinkedList<PomPluginElement>();
+        return getPlugins(projectElement);
+    }
 
-        Element buildElement = getFirstChildElement(projectElement, "build");
-        if (buildElement == null) {
-            return plugins;
-        }
-
+    private List<PomPluginElement> getPlugins(Element parent) {
+        Element buildElement = getFirstChildElement(parent, "build");
         Element pluginsElement = getFirstChildElement(buildElement, PLUGINS);
-        if (pluginsElement != null) {
-            NodeList childs = pluginsElement.getChildNodes();
-            for (int i = 0; i < childs.getLength(); i++) {
-                Node node = childs.item(i);
-                if (node instanceof Element && PLUGIN.equals(node.getNodeName())) {
-                    plugins.add(new PomPluginElement((Element) node));
-                }
+
+        if (pluginsElement == null) {
+            return Collections.emptyList();
+        }
+        NodeList children = pluginsElement.getChildNodes();
+        List<PomPluginElement> plugins = new LinkedList<PomPluginElement>();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node node = children.item(i);
+            if (node instanceof Element && PLUGIN.equals(node.getNodeName())) {
+                plugins.add(new PomPluginElement((Element) node));
             }
         }
         return plugins;
@@ -453,8 +482,80 @@ public class PomReader {
         }
 
         public boolean isOptional() {
-            Element e = getFirstChildElement(depElement, OPTIONAL);
-            return (e != null) && "true".equalsIgnoreCase(getTextContent(e));
+            return Boolean.parseBoolean(getFirstChildText(depElement, OPTIONAL));
+        }
+
+    }
+
+    public class PomProfileElement {
+
+        private static final String VALUE = "value";
+
+        private static final String NAME = "name";
+
+        private static final String PROPERTY = "property";
+
+        private static final String ID_ELEMENT = "id";
+
+        private static final String ACTIVATION_ELEMENT = "activation";
+
+        private static final String ACTIVE_BY_DEFAULT_ELEMENT = "activeByDefault";
+
+        private final Element profileElement;
+
+        PomProfileElement(Element profileElement) {
+            this.profileElement = profileElement;
+        }
+
+        public String getId() {
+            return getFirstChildText(profileElement, ID_ELEMENT);
+        }
+
+        public boolean isActive() {
+            return isActiveByDefault() || isActivatedByProperty();
+        }
+
+        public boolean isActiveByDefault() {
+            Element activation = getFirstChildElement(profileElement, ACTIVATION_ELEMENT);
+            return Boolean.parseBoolean(getFirstChildText(activation, ACTIVE_BY_DEFAULT_ELEMENT));
+        }
+
+        public boolean isActivatedByProperty() {
+            Element activation = getFirstChildElement(profileElement, ACTIVATION_ELEMENT);
+            Element propertyActivation = getFirstChildElement(activation, PROPERTY);
+            String propertyName = getFirstChildText(propertyActivation, NAME);
+            if (propertyName == null || "".equals(propertyName)) {
+                return false;
+            }
+            boolean negate = propertyName.charAt(0) == '!';
+            if (negate) {
+                propertyName = propertyName.substring(1);
+            }
+            if ("".equals(propertyName)) {
+                return false;
+            }
+            String propertyValue = getFirstChildText(propertyActivation, VALUE);
+            
+            Map<String, String> pomProperties = PomReader.this.getPomProperties();
+            boolean matched;
+            if (propertyValue == null || "".equals(propertyValue)) {
+                matched = pomProperties.containsKey(propertyName);
+            } else {
+                matched = propertyValue.equals(pomProperties.get(propertyName));
+            }
+            return matched ^ negate;
+        }
+
+        public List<PomDependencyData> getDependencies() {
+            return PomReader.this.getDependencies(profileElement);
+        }
+
+        public List<PomDependencyMgt> getDependencyMgt() {
+            return PomReader.this.getDependencyMgt(profileElement);
+        }
+
+        public List<PomPluginElement> getPlugins() {
+            return PomReader.this.getPlugins(profileElement);
         }
 
     }
@@ -483,7 +584,7 @@ public class PomReader {
     }
 
     private static String getTextContent(Element element) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {

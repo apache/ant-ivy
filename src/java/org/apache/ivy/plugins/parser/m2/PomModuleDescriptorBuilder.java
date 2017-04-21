@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -284,7 +283,7 @@ public class PomModuleDescriptorBuilder {
         ModuleRevisionId moduleRevId = ModuleRevisionId.newInstance(dep.getGroupId(),
             dep.getArtifactId(), version);
 
-        // Some POMs depend on theirselfves, don't add this dependency: Ivy doesn't allow this!
+        // Some POMs depend on themselves; Ivy doesn't allow this. Don't add this dependency!
         // Example: https://repo1.maven.org/maven2/net/jini/jsk-platform/2.1/jsk-platform-2.1.pom
         ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
         if ((mRevId != null) && mRevId.getModuleId().equals(moduleRevId.getModuleId())) {
@@ -533,7 +532,7 @@ public class PomModuleDescriptorBuilder {
     public static Map<ModuleId, String> getDependencyManagementMap(ModuleDescriptor md) {
         Map<ModuleId, String> ret = new LinkedHashMap<ModuleId, String>();
         if (md instanceof PomModuleDescriptor) {
-            for (Entry<ModuleId, PomDependencyMgt> e : ((PomModuleDescriptor) md)
+            for (Map.Entry<ModuleId, PomDependencyMgt> e : ((PomModuleDescriptor) md)
                     .getDependencyManagementMap().entrySet()) {
                 PomDependencyMgt dependencyMgt = e.getValue();
                 ret.put(e.getKey(), dependencyMgt.getVersion());
@@ -564,7 +563,7 @@ public class PomModuleDescriptorBuilder {
         } else {
             for (ExtraInfoHolder extraInfoHolder : md.getExtraInfos()) {
                 String key = extraInfoHolder.getName();
-                if ((key).startsWith(DEPENDENCY_MANAGEMENT)) {
+                if (key.startsWith(DEPENDENCY_MANAGEMENT)) {
                     String[] parts = key.split(EXTRA_INFO_DELIMITER);
                     if (parts.length != DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT) {
                         Message.warn("what seem to be a dependency management extra info "
@@ -592,7 +591,7 @@ public class PomModuleDescriptorBuilder {
 
     @Deprecated
     public void addExtraInfos(Map<String, String> extraAttributes) {
-        for (Entry<String, String> entry : extraAttributes.entrySet()) {
+        for (Map.Entry<String, String> entry : extraAttributes.entrySet()) {
             addExtraInfo(entry.getKey(), entry.getValue());
         }
     }
@@ -625,7 +624,7 @@ public class PomModuleDescriptorBuilder {
     @Deprecated
     public static Map<String, String> extractPomProperties(Map<String, String> extraInfo) {
         Map<String, String> r = new HashMap<String, String>();
-        for (Entry<String, String> extraInfoEntry : extraInfo.entrySet()) {
+        for (Map.Entry<String, String> extraInfoEntry : extraInfo.entrySet()) {
             if (extraInfoEntry.getKey().startsWith(PROPERTIES)) {
                 String prop = extraInfoEntry.getKey().substring(
                     PROPERTIES.length() + EXTRA_INFO_DELIMITER.length());
@@ -706,7 +705,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static class PomModuleDescriptor extends DefaultModuleDescriptor {
-        private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new HashMap<ModuleId, PomDependencyMgt>();
+        private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new LinkedHashMap<ModuleId, PomDependencyMgt>();
 
         public PomModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
             super(parser, res);
