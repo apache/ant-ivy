@@ -67,6 +67,7 @@ List of changes since Ivy 2.4.0:
 - FIX: dynamic revisions are not cached per resolver (IVY-1430) (Thanks to Stephen Haberman)
 - FIX: Dependencies failed using branch attribute (and extra attributes) (IVY-1141) (Thanks to Stephen Haberman)
 - FIX: useCacheOnly should allow lookup of changing dependencies in cache (IVY-1515) (Thanks to Ilya)
+- FIX: Translation of POM to Ivy XML with * exclusion is removing main artifact (IVY-1531) (Thanks to Jaikiran Pai)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (IVY-1482)
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
