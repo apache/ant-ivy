@@ -36,9 +36,37 @@
     <category rdf:resource="http://projects.apache.org/category/build-management" />
     <release>
       <Version>
+        <name>Apache Ivy 2.4.0</name>
+        <created>2014-12-26</created>
+        <revision>2.4.0</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
         <name>Apache Ivy 2.3.0</name>
-        <created>2013-01-20</created>
+        <created>2013-01-24</created>
         <revision>2.3.0</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache Ivy 2.2.0</name>
+        <created>2010-10-07</created>
+        <revision>2.2.0</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache Ivy 2.1.0</name>
+        <created>2009-10-13</created>
+        <revision>2.1.0</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache Ivy 2.0.0</name>
+        <created>2009-01-22</created>
+        <revision>2.0.0</revision>
       </Version>
     </release>
     <repository>
