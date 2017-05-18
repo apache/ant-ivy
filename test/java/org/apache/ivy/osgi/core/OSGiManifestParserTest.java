@@ -18,12 +18,16 @@
 package org.apache.ivy.osgi.core;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
+import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 
@@ -57,5 +61,24 @@ public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester
 
         assertNotNull(md.getDependencies());
         assertEquals(0, md.getDependencies().length);
+    }
+
+    /**
+     * Tests that the {@link OSGiManifestParser#parseDescriptor(ParserSettings, URL, Resource, boolean)} works fine for descriptors
+     * that are backed by {@link FileResource}
+     *
+     * @throws Exception
+     */
+    public void testFileResource() throws Exception {
+        final File manifestFile = new File("test/repositories/osgi/module1/META-INF/MANIFEST.MF");
+        assertTrue("Manifest file is either missing or not a file at " + manifestFile.getAbsolutePath(), manifestFile.isFile());
+
+        final Resource manifestFileResource = new FileResource(null, manifestFile);
+        final ModuleDescriptor md = OSGiManifestParser.getInstance().parseDescriptor(settings, manifestFile.toURI().toURL(), manifestFileResource, true);
+
+        assertNotNull("Module descriptor created through a OSGi parser was null", md);
+        assertEquals("Unexpected organization name in module descriptor created through a OSGi parser", "bundle", md.getModuleRevisionId().getOrganisation());
+        assertEquals("Unexpected module name in module descriptor created through a OSGi parser", "module1", md.getModuleRevisionId().getName());
+        assertEquals("Unexpected version in module descriptor created through a OSGi parser", "1.2.3", md.getModuleRevisionId().getRevision());
     }
 }
