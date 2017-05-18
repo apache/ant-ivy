@@ -699,7 +699,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             FileResource res = new FileResource(null, file);
             ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(
                 res);
-            return parser.parseDescriptor(getSettings(), file.toURL(), res, isValidate());
+            return parser.parseDescriptor(getSettings(), file.toURI().toURL(), res, isValidate());
         }
 
         /**

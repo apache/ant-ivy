@@ -62,14 +62,24 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException {
-        Manifest m = new Manifest(res.openStream());
-        BundleInfo bundleInfo = ManifestParser.parseManifest(m);
+        final InputStream resourceStream = res.openStream();
+        final Manifest manifest;
         try {
-            bundleInfo.addArtifact(new BundleArtifact(false, new URI(res.getName()), null));
+            manifest = new Manifest(resourceStream);
+        } finally {
+            try {
+                resourceStream.close();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
+        try {
+            bundleInfo.addArtifact(new BundleArtifact(false, descriptorURL.toURI(), null));
         } catch (URISyntaxException e) {
             throw new RuntimeException("Unsupported repository, resources names are not uris", e);
         }
-        return BundleInfoAdapter.toModuleDescriptor(this, null, bundleInfo, m, profileProvider);
+        return BundleInfoAdapter.toModuleDescriptor(this, null, bundleInfo, manifest, profileProvider);
     }
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
