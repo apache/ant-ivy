@@ -70,6 +70,7 @@ List of changes since Ivy 2.4.0:
 - FIX: Translation of POM to Ivy XML with * exclusion is removing main artifact (IVY-1531) (Thanks to Jaikiran Pai)
 - FIX: Have makepom task take description from ivy-module > info > description element (IVY-1520)
 - FIX: Fix RetrieveEngine to take into account the correct extension while dealing with unpacked artifacts (IVY-1478) (Thanks to Jaikiran Pai)
+- FIX: ParseException "Unsupported repository, resources names are not uris" for ivy.xml with parent on Windows (IVY-1448) (Thanks to Riccardo Foschia and Jaikiran Pai)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (IVY-1482)
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
@@ -134,6 +135,7 @@ Here is the list of people who have contributed source code and documentation up
 <li>Robin Fernandes</li>
 <li>Gregory Fernandez</li>
 <li>Danno Ferrin</li>
+<li>Riccardo Foschia</li>
 <li>Benjamin Francisoud</li>
 <li>Wolfgang Frank</li>
 <li>Jacob Grydholt Jensen</li>
