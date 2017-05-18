@@ -409,7 +409,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * 
      * @param md
      *            the module descriptor resolved
-     * @param name
+     * @param artifactResolverName
      *            artifact resolver name
      */
     public void saveResolvers(ModuleDescriptor md, String metadataResolverName,
@@ -1043,11 +1043,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         File archiveFile = getArchiveFileInCache(unpacked, null, false);
         if (archiveFile.exists() && !options.isForce()) {
             adr.setUnpackedLocalFile(archiveFile);
+            adr.setUnpackedArtifact(unpacked);
         } else {
             Message.info("\tUnpacking " + artifact.getId());
             try {
-                packagingManager.unpackArtifact(artifact, adr.getLocalFile(), archiveFile);
+                final Artifact unpackedArtifact = packagingManager.unpackArtifact(artifact, adr.getLocalFile(), archiveFile);
                 adr.setUnpackedLocalFile(archiveFile);
+                adr.setUnpackedArtifact(unpackedArtifact);
             } catch (Exception e) {
                 Message.debug(e);
                 adr.setDownloadStatus(DownloadStatus.FAILED);

@@ -352,6 +352,34 @@ public class RetrieveTest extends TestCase {
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
     }
 
+    /**
+     * Tests that the {@link RetrieveEngine} retrieves artifacts with the correct extension if the artifact is unpacked
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1478">IVY-1478</a>
+     */
+    public void testUnpackExt() throws Exception {
+        final ResolveOptions roptions = getResolveOptions(new String[] {"*"});
+
+        final URL url = new File("test/repositories/1/packaging/module10/ivys/ivy-1.0.xml").toURI()
+                .toURL();
+
+        // normal resolve, the file goes in the cache
+        final ResolveReport report = ivy.resolve(url, roptions);
+        assertFalse("Resolution report has errors", report.hasError());
+        final ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull("Module descriptor from report was null", md);
+
+        final String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
+
+        final RetrieveOptions options = getRetrieveOptions();
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+
+        final File dest = new File("build/test/retrieve/packaging/module9/default/jars/module9-1.0.jar");
+        assertTrue("Retrieved artifact is missing at " + dest.getAbsolutePath(), dest.exists());
+        assertTrue("Retrieved artifact at " + dest.getAbsolutePath() + " is not a file", dest.isFile());
+    }
+
     private RetrieveOptions getRetrieveOptions() {
         return new RetrieveOptions();
     }

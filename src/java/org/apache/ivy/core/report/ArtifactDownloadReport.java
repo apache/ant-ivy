@@ -57,6 +57,8 @@ public class ArtifactDownloadReport {
 
     private File unpackedLocalFile;
 
+    private Artifact unpackedArtifact;
+
     public ArtifactDownloadReport(Artifact artifact) {
         this.artifact = artifact;
     }
@@ -162,6 +164,14 @@ public class ArtifactDownloadReport {
 
     public File getUnpackedLocalFile() {
         return unpackedLocalFile;
+    }
+
+    public void setUnpackedArtifact(final Artifact unpackedArtifact) {
+        this.unpackedArtifact = unpackedArtifact;
+    }
+
+    public Artifact getUnpackedArtifact() {
+        return this.unpackedArtifact;
     }
 
     public int hashCode() {
