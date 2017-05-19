@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -639,6 +640,31 @@ public class XmlSettingsParserTest {
         assertEquals(new File("other/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
         assertEquals(new File("test/base/dir").getAbsolutePath(),
             settings.getVariable("ivy.basedir"));
+    }
+
+    /**
+     * Tests that a <code>&lt;ttl&gt;</code> containing the <code>matcher</code> attribute, in a ivy settings file,
+     * works as expected.
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1495">IVY-1495</a>
+     */
+    @Test
+    public void testCacheTTLMatcherAttribute() throws Exception {
+        final IvySettings settings = new IvySettings();
+        settings.setBaseDir(new File("test/base/dir"));
+        final XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-ttl-matcher.xml"));
+        // verify ttl
+        final DefaultRepositoryCacheManager cacheManager = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("foo");
+        assertNotNull("Missing cache manager 'foo'", cacheManager);
+        assertEquals("Unexpected default ttl on cache manager", 30000, cacheManager.getDefaultTTL());
+        final ModuleRevisionId module1 = new ModuleRevisionId(new ModuleId("foo", "bar"), "*");
+        final long module1SpecificTTL = cacheManager.getTTL(module1);
+        assertEquals("Unexpected ttl for module " + module1 + " on cache manager", 60000, module1SpecificTTL);
+        final ModuleRevisionId module2 = new ModuleRevisionId(new ModuleId("food", "*"), "1.2.4");
+        final long module2SpecificTTL = cacheManager.getTTL(module2);
+        assertEquals("Unexpected ttl for module " + module2 + " on cache manager", 60000, module2SpecificTTL);
     }
 
     public static class MyOutputter implements ReportOutputter {

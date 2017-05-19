@@ -25,8 +25,14 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
@@ -121,6 +127,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private PackagingManager packagingManager = new PackagingManager();
 
+    private final List<ConfiguredTTL> configuredTTLs = new ArrayList<ConfiguredTTL>();
+
     public DefaultRepositoryCacheManager() {
     }
 
@@ -134,9 +142,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return settings;
     }
 
-    public void setSettings(IvySettings settings) {
+    public void setSettings(final IvySettings settings) {
         this.settings = settings;
         packagingManager.setSettings(settings);
+        // process and setup the configured TTLs (which weren't yet processed since they needed a settings instance to be present)
+        for (final ConfiguredTTL configuredTTL : configuredTTLs) {
+            this.addTTL(configuredTTL.attributes,
+                    configuredTTL.matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(configuredTTL.matcher), configuredTTL.duration);
+        }
+        // clear off the configured TTLs since we have now processed them and created TTL rules out of them
+        this.configuredTTLs.clear();
     }
 
     public File getIvyFileInCache(ModuleRevisionId mrid) {
@@ -242,15 +257,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         ttlRules.defineRule(new MapMatcher(attributes, matcher), new Long(duration));
     }
 
-    public void addConfiguredTtl(Map<String, String> attributes) {
-        String duration = attributes.remove("duration");
-        if (duration == null) {
+    public void addConfiguredTtl(final Map<String, String> attributes) {
+        final String durationValue = attributes.get("duration");
+        if (durationValue == null) {
             throw new IllegalArgumentException("'duration' attribute is mandatory for ttl");
         }
-        String matcher = attributes.remove("matcher");
-        addTTL(attributes,
-            matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(matcher),
-            parseDuration(duration));
+        final long duration = parseDuration(durationValue);
+        final ConfiguredTTL configuredTTL = new ConfiguredTTL(duration, attributes.get("matcher"), attributes);
+        // Processing TTLs requires access to an initialized/usable IvySettings instance.
+        // we keep track of these configured TTLs and process them when the IvySettings instance becomes usable
+        this.configuredTTLs.add(configuredTTL);
     }
 
     public void setMemorySize(int size) {
@@ -1562,4 +1578,31 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     }
 
+    private static final class ConfiguredTTL {
+        // attributes on the TTL, that don't contribute to module matching
+        private static final Set<String> attributesNotContributingToMatching = new HashSet<String>();
+        static {
+            attributesNotContributingToMatching.add("duration");
+            attributesNotContributingToMatching.add("matcher");
+        }
+
+        private final String matcher;
+        private final long duration;
+        private final Map<String, String> attributes;
+
+        private ConfiguredTTL(final long duration, final String matcher, final Map<String, String> attributes) {
+            this.matcher = matcher;
+            this.duration = duration;
+            if (attributes == null) {
+                this.attributes = Collections.emptyMap();
+            } else {
+                final Map<String, String> attrs = new HashMap<String, String>(attributes);
+                for (final String removable : attributesNotContributingToMatching) {
+                    attrs.remove(removable);
+                }
+                this.attributes = Collections.unmodifiableMap(attrs);
+            }
+        }
+
+    }
 }
