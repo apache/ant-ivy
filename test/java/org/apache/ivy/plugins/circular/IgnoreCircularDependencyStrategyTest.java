@@ -18,7 +18,9 @@
 package org.apache.ivy.plugins.circular;
 
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MessageLoggerEngine;
 import org.apache.ivy.util.MockMessageLogger;
 
 import junit.framework.TestCase;
@@ -27,12 +29,17 @@ public class IgnoreCircularDependencyStrategyTest extends TestCase {
     private CircularDependencyStrategy strategy;
 
     private MockMessageLogger mockMessageImpl;
+    private MessageLoggerEngine messageLoggerEngine;
 
     protected void setUp() throws Exception {
         strategy = IgnoreCircularDependencyStrategy.getInstance();
 
         mockMessageImpl = new MockMessageLogger();
-        Message.setDefaultLogger(mockMessageImpl);
+        messageLoggerEngine = setupMockLogger(mockMessageImpl);
+    }
+
+    protected void tearDown() throws Exception {
+        resetMockLogger(messageLoggerEngine);
     }
 
     public void testLog() throws Exception {
@@ -47,5 +54,21 @@ public class IgnoreCircularDependencyStrategyTest extends TestCase {
 
         // should only log the circular dependency once
         assertEquals(1, mockMessageImpl.getLogs().size());
+    }
+
+    private MessageLoggerEngine setupMockLogger(final MockMessageLogger mockLogger) {
+        if (mockLogger == null) {
+            return null;
+        }
+        final MessageLoggerEngine loggerEngine = IvyContext.getContext().getIvy().getLoggerEngine();
+        loggerEngine.pushLogger(mockLogger);
+        return loggerEngine;
+    }
+
+    private void resetMockLogger(final MessageLoggerEngine loggerEngine) {
+        if (loggerEngine == null) {
+            return;
+        }
+        loggerEngine.popLogger();
     }
 }
