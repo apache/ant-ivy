@@ -64,6 +64,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             url = normalizeToURL(url);
             con = url.openConnection();
+            con.setConnectTimeout(timeout);
             con.setRequestProperty("User-Agent", getUserAgent());
             if (con instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) con;
