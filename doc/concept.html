@@ -200,19 +200,26 @@ If you don't want to use xml namespaces, it's possible but you will need to disa
 <span class="since">since 1.4</span>
 Ivy allows the use of checksums, also known as digests, to verify the correctness of a downloaded file.
 
-For the moment Ivy supports the md5 and sha1 algorithms.
-
-The configuration of using md5 and/or sha1 can be done globally or by dependency resolver.
-Globally, use the ivy.checksums variable to list the check to be done (only md5 and sha1 are supported).
+The configuration of using the algorithm can be done globally or by dependency resolver.
+Globally, use the ivy.checksums variable to list the check to be done.
 On each resolver you can use the checksums attribute to override the global setting.
 
 The setting is a comma separated list of checksum algorithms to use.
-During checking (at download time), the first checksum found is checked, and that's all. This means that if you have a "sha1, md5" setting, then if ivy finds a sha1 file, it will compare the downloaded file sha1 against this sha1, and if the comparison is ok, it will assume the file is ok. If no sha1 file is found, it will look for an md5 file. If none is found no checking is done.
+During checking (at download time), the first checksum found is checked, and that's all. This means that if you have a "SHA-256, sha1, md5" setting, then if ivy finds a SHA-256 file, it will compare the downloaded file SHA-256 against this SHA-256, and if the comparison is ok, it will assume the file is ok. If no SHA-256 file is found, it will look for an sha1 file. If that isn't found, then it checks for md5 and so on. If none is found no checking is done.
 During publish, all listed checksum algorithms are computed and uploaded.
 
 By default checksum algorithms are "sha1, md5".
 
 If you want to change this default, you can set the variable ivy.checksums. Hence, to disable checksum validation you just have to set ivy.checksums to "".
+
+<h2>Supported algorithms</h2>
+<span class="since">since 1.4</span>
+		<ul>
+			<li>md5</li>
+			<li>sha1</li>
+		</ul>
+<span class="since">since 2.5</span>
+Starting 2.5 version, in addition to md5 and sha1, Ivy supports SHA-256, SHA-512 and SHA-384 algorithms, if the Java runtime in which Ivy is running, supports those. For example, Java 6 runtime supports SHA-256 and SHA-512 as standard algorithms. If Ivy 2.5 and later versions are run under Java 6 or higher runtimes, these algorithms are supported by Ivy too.
 
 <h1><a name="event">Events and Triggers</a></h1>
 <span class="since">since 1.4</span>

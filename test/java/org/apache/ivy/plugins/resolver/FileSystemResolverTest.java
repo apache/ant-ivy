@@ -242,6 +242,64 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
     }
 
+    /**
+     * Tests that <code>SHA-256</code> algorithm can be used for checksums on resolvers
+     * @throws Exception
+     */
+    public void testSHA256Checksum() throws Exception {
+        final FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("sha256-checksum-resolver");
+        resolver.setSettings(settings);
+
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/checksums/[module]/[revision]/[artifact]-[revision].[ext]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/checksums/[module]/[revision]/[artifact]-[revision].[ext]");
+
+        resolver.setChecksums("SHA-256");
+        final ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "2.0");
+        final ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
+        assertNotNull("Resolved module revision was null for " + mrid, rmr);
+        final DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), getDownloadOptions());
+        final ArtifactDownloadReport[] successfulDownloadReports = dr.getArtifactsReports(DownloadStatus.SUCCESSFUL);
+        assertNotNull("No artifacts were downloaded successfully", successfulDownloadReports);
+        assertEquals("Unexpected number of successfully downloaded artifacts", 1, successfulDownloadReports.length);
+        final ArtifactDownloadReport successfulDownloadReport = successfulDownloadReports[0];
+        final Artifact downloadedArtifact = successfulDownloadReport.getArtifact();
+        assertEquals("Unexpected organization of downloaded artifact", "test", downloadedArtifact.getModuleRevisionId().getOrganisation());
+        assertEquals("Unexpected module of downloaded artifact", "allright", downloadedArtifact.getModuleRevisionId().getModuleId().getName());
+        assertEquals("Unexpected revision of downloaded artifact", "2.0", downloadedArtifact.getModuleRevisionId().getRevision());
+    }
+
+    /**
+     * Tests that <code>SHA-512</code> algorithm can be used for checksums on resolvers
+     * @throws Exception
+     */
+    public void testSHA512Checksum() throws Exception {
+        final FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("sha256-checksum-resolver");
+        resolver.setSettings(settings);
+
+        resolver.addIvyPattern(settings.getBaseDir()
+                + "/test/repositories/checksums/[module]/[revision]/[artifact]-[revision].[ext]");
+        resolver.addArtifactPattern(settings.getBaseDir()
+                + "/test/repositories/checksums/[module]/[revision]/[artifact]-[revision].[ext]");
+
+        resolver.setChecksums("SHA-512");
+        final ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "3.0");
+        final ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
+        assertNotNull("Resolved module revision was null for " + mrid, rmr);
+        final DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), getDownloadOptions());
+        final ArtifactDownloadReport[] successfulDownloadReports = dr.getArtifactsReports(DownloadStatus.SUCCESSFUL);
+        assertNotNull("No artifacts were downloaded successfully", successfulDownloadReports);
+        assertEquals("Unexpected number of successfully downloaded artifacts", 1, successfulDownloadReports.length);
+        final ArtifactDownloadReport successfulDownloadReport = successfulDownloadReports[0];
+        final Artifact downloadedArtifact = successfulDownloadReport.getArtifact();
+        assertEquals("Unexpected organization of downloaded artifact", "test", downloadedArtifact.getModuleRevisionId().getOrganisation());
+        assertEquals("Unexpected module of downloaded artifact", "allright", downloadedArtifact.getModuleRevisionId().getModuleId().getName());
+        assertEquals("Unexpected revision of downloaded artifact", "3.0", downloadedArtifact.getModuleRevisionId().getRevision());
+    }
+
     public void testCheckModified() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
