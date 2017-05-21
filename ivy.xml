@@ -43,9 +43,7 @@
         <artifact name="ivy" type="source" ext="jar" conf="source"/>
     </publications>
     <dependencies>
-        <dependency org="org.apache.ant" name="ant" rev="1.7.1" conf="default,ant->default"/>
-        <dependency org="org.apache.ant" name="ant-nodeps" rev="1.7.1" conf="default"/>
-        <dependency org="org.apache.ant" name="ant-trax" rev="1.7.1" conf="default"/>
+        <dependency org="org.apache.ant" name="ant" rev="1.9.9" conf="default,ant->default"/>
         <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0" conf="default,httpclient->runtime,master" />
         <dependency org="oro" name="oro" rev="2.0.8" conf="default,oro->default"/>
         <dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs->default" />
@@ -59,8 +57,8 @@
         <!-- Test dependencies -->
         <dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
         <dependency org="commons-lang" name="commons-lang" rev="2.6" conf="test->default" />
-        <dependency org="org.apache.ant" name="ant-testutil" rev="1.7.0" conf="test->default" transitive="false" />
-        <dependency org="ant" name="ant-launcher" rev="1.6.2" conf="test->default" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-testutil" rev="1.9.9" conf="test->default" transitive="false" />
+        <dependency org="org.apache.ant" name="ant-launcher" rev="1.9.9" conf="test->default" transitive="false"/>
         <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="test->default" transitive="false"/>
         <dependency org="xmlunit" name="xmlunit" rev="1.6" conf="test->default" transitive="false"/>
         
