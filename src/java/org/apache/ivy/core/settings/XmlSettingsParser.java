@@ -392,6 +392,7 @@ public class XmlSettingsParser extends DefaultHandler {
     private void includeStarted(Map attributes) throws IOException, ParseException {
         final IvyVariableContainer variables = ivy.getVariableContainer();
         ivy.setVariableContainer(new IvyVariableContainerWrapper(variables));
+        final boolean optionalInclude = "true".equals(attributes.get("optional"));
         try {
             String propFilePath = (String) attributes.get("file");
             URL settingsURL = null;
@@ -402,38 +403,60 @@ public class XmlSettingsParser extends DefaultHandler {
                             "bad include tag: specify file or url to include");
                 } else {
                     try {
-                        // First assume that it is an absolute URL
-                        settingsURL = new URL(propFilePath);
-                    } catch (MalformedURLException e) {
-                        // If that fail, it may be because it is a relative one.
-                        settingsURL = new URL(this.settings, propFilePath);
+                        try {
+                            // First assume that it is an absolute URL
+                            settingsURL = new URL(propFilePath);
+                        } catch (MalformedURLException e) {
+                            // If that fail, it may be because it is a relative one.
+                            settingsURL = new URL(this.settings, propFilePath);
+                        }
+                    } catch (IOException ioe) {
+                        if (!optionalInclude) {
+                            throw ioe;
+                        }
+                        Message.verbose("Skipping inclusion of optional URL " + propFilePath + " due to IOException - " + ioe.getMessage());
+                        return;
                     }
                     Message.verbose("including url: " + settingsURL.toString());
                     ivy.setSettingsVariables(settingsURL);
                 }
             } else {
-                settingsURL = urlFromFileAttribute(propFilePath);
-                Message.verbose("including file: " + settingsURL);
-                if ("file".equals(settingsURL.getProtocol())) {
-                    try {
-                        File settingsFile = new File(new URI(settingsURL.toExternalForm()));
-                        String optional = (String) attributes.get("optional");
-                        if ("true".equals(optional) && !settingsFile.exists()) {
-                            return;
+                try {
+                    settingsURL = urlFromFileAttribute(propFilePath);
+                    Message.verbose("including file: " + settingsURL);
+                    if ("file".equals(settingsURL.getProtocol())) {
+                        try {
+                            File settingsFile = new File(new URI(settingsURL.toExternalForm()));
+                            if (optionalInclude && !settingsFile.exists()) {
+                                return;
+                            }
+                            ivy.setSettingsVariables(Checks.checkAbsolute(settingsFile,
+                                    "settings include path"));
+                        } catch (URISyntaxException e) {
+                            // try to make the best of it...
+                            ivy.setSettingsVariables(Checks.checkAbsolute(settingsURL.getPath(),
+                                    "settings include path"));
                         }
-
-                        ivy.setSettingsVariables(Checks.checkAbsolute(settingsFile,
-                            "settings include path"));
-                    } catch (URISyntaxException e) {
-                        // try to make the best of it...
-                        ivy.setSettingsVariables(Checks.checkAbsolute(settingsURL.getPath(),
-                            "settings include path"));
+                    } else {
+                        ivy.setSettingsVariables(settingsURL);
                     }
-                } else {
-                    ivy.setSettingsVariables(settingsURL);
+                } catch (IOException ioe) {
+                    if (!optionalInclude) {
+                        throw ioe;
+                    }
+                    Message.verbose("Skipping inclusion of optional file " + propFilePath + " due to IOException - " + ioe.getMessage());
+                    return;
                 }
             }
-            new XmlSettingsParser(ivy).parse(configurator, settingsURL);
+            try {
+                new XmlSettingsParser(ivy).parse(configurator, settingsURL);
+            } catch (IOException ioe) {
+                if (!optionalInclude) {
+                    throw ioe;
+                }
+                Message.verbose("Skipping inclusion of optional settings URL " + settingsURL + " due to IOException - " + ioe.getMessage());
+                return;
+            }
         } finally {
             ivy.setVariableContainer(variables);
         }

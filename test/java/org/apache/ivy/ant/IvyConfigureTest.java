@@ -18,9 +18,11 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.module.status.Status;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
@@ -305,4 +307,22 @@ public class IvyConfigureTest {
         configure.setOverride("unknown");
     }
 
+    /**
+     * Tests that if the Ivy settings file <code>include</code>s another file as <code>optional</code>,
+     * then the absence of that file doesn't lead to failures
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testOptionalFileInclude() throws Exception {
+        final File ivySettingsXml = new File("test/repositories/ivysettings-optional-file-include.xml");
+        final Ivy ivy = new Ivy();
+        ivy.configure(ivySettingsXml);
+        final IvySettings ivySettings = ivy.getSettings();
+        // just test that it indeed parsed fine
+        assertTrue("Unexpected number of resolvers in Ivy settings", ivySettings.getResolvers().isEmpty());
+        final List<Status> statuses =ivySettings.getStatusManager().getStatuses();
+        assertEquals("Unexpected number of custom status in parsed Ivy settings", 1, statuses.size());
+        assertEquals("Custom status not found in the parsed Ivy settings", "ivy-1555", statuses.get(0).getName());
+    }
 }
