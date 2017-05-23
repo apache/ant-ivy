@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.File;
-
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.testutil.AntTaskTestCase;
 import org.apache.tools.ant.BuildException;
@@ -26,6 +24,9 @@ import org.apache.tools.ant.Project;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+
 
 public class IvyDependencyTreeTest extends AntTaskTestCase {
 
@@ -115,6 +116,31 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("+- org6#mod6.1;2.0");
         assertLogContaining("   \\- org1#mod1.2;2.2");
         assertLogContaining("\\- org1#mod1.2;2.2");
+    }
+
+
+    /**
+     * Tests that dependency tree task doesn't run into an infinite loop due to circular dependencies
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1540">IVY-1540</a> for more details
+     */
+    @Test
+    public void testCircularDep() throws Exception {
+        final String resolveId = "circular-dep-tree";
+        // resolve
+        final IvyResolve ivyResolve = new IvyResolve();
+        ivyResolve.setProject(project);
+        ivyResolve.setResolveId(resolveId);
+        ivyResolve.setFile(new File("test/repositories/1/org/foo-bar/ivys/ivy-1.2.3.xml"));
+        ivyResolve.execute();
+        // use the resolveid to fetch the dependency tree from that previous resolution
+        dependencyTree.setResolveId(resolveId);
+        dependencyTree.execute();
+        // check the logged message
+        assertLogContaining("Dependency tree for " + resolveId);
+        assertLogContaining("(circularly depends on) " + "org.circular#module1;1.0");
+        assertLogNotContaining("(circularly depends on) " + "org.circular#module2;2.0");
     }
 
 }
