@@ -63,8 +63,8 @@
 		</sequential>
 	</macrodef>
 	
-	<target name="generate-tutorial-output" depends="jar, generate-doc-init">
-        <property name="output.dir" value="${build.dir}/output" />
+	<target name="generate-tutorial-output" depends="jar" unless="skip.generate-tutorial-output">
+        <property name="output.dir" value="${basedir}/asciidoc/tutorial/log" />
 		<delete dir="${output.dir}" />
         <mkdir dir="${output.dir}" />
 		
@@ -164,35 +164,27 @@
 		<replace dir="${output.dir}" token="-f build.xml " value="" />
 		<replace dir="${output.dir}" token="${ivy.revision}" value="working@apache" />
 		
-		<copy todir="${doc.tmp.dir}/tutorial/log">
-			<fileset dir="${output.dir}" />
-		</copy>
 	</target>
 	
-	<target name="generate-doc-init" depends="release-version">
-        <!-- copy documentation to temp dir to replace version tokens -->
-        <property name="doc.tmp.dir" value="${build.dir}/tempdoc" />
-        <mkdir dir="${doc.tmp.dir}" />
-        <copy todir="${doc.tmp.dir}" preservelastmodified="true" overwrite="true">
-            <fileset dir="${doc.src.dir}" />
-            <filterset>
-              <filter token="version" value="${build.version}"/>
-            </filterset>
-        </copy>     
-	</target>
-	
-    <target name="generate-doc" depends="init-ivy,generate-doc-init,generate-tutorial-output">
+    <target name="generate-doc" depends="init-ivy">
         <ivy:cachepath pathid="asciidoctor.path">
-           <dependency org="org.asciidoctor" name="asciidoctor-ant" rev="1.5.0" />
+           <dependency org="org.asciidoctor" name="asciidoctor-ant" rev="1.5.4" />
         </ivy:cachepath>
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path" />
-        <asciidoctor:convert sourceDirectory="${doc.tmp.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.src.dir}/templates" preserveDirectories="true">
-            <attribute key="basedir" value="${doc.tmp.dir}" />
+        <asciidoctor:convert sourceDirectory="${doc.src.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.src.dir}/templates" preserveDirectories="true">
+            <attribute key="basedir" value="${doc.src.dir}" />
             <attribute key="imagesdir" value="" />
         </asciidoctor:convert>
+        <!-- the basedir seems to fuck up the path to the output directory, let's fix that manually >
+        <delete dir="${doc.build.dir}" />
+        <mkdir dir="${doc.build.dir}" />
+        <copy todir="${doc.build.dir}">
+            <fileset dir="${doc.src.dir}/${doc.build.dir}" />
+        </copy-->
+        <!-- copy static resources -->
         <copy todir="${doc.build.dir}">
             <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
-            <fileset dir="${doc.tmp.dir}" includes="tutorial/log/multi-project-general-publishall.txt" />
+            <fileset dir="${doc.src.dir}" includes="tutorial/log/multi-project-general-publishall.txt" />
         </copy>
     </target>
 

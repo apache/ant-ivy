@@ -353,7 +353,8 @@ xooki.string = {
             // empty match are not allowed
             return null;
         }
-        
+
+        print('matched!\n');
         //print('matched !' + str.substring(openResult.begin, closeResult.end) + '\n');
 
         var children = [];
@@ -805,7 +806,7 @@ xooki.input = {
             from = 0;
             while (codeSection != null) {
                 processedSection = "\n[source]\n----\n" 
-                    + input.substring(codeSection.innerStart, codeSection.innerEnd)
+                    + input.substring(codeSection.innerStart, codeSection.innerEnd).replace(/</g, "LOWER_THAN_IN_CODE").replace(/>/g, "GREATER_THAN_IN_CODE")
                     + "\n----\n\n";
                 input = input.substring(0, codeSection.outerStart)
                     + processedSection
@@ -895,6 +896,29 @@ xooki.input = {
                 s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"tip"[^>]*>'), new RegExp('</div>'), from);
             }
 
+            print('search postit\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"postit"[^>]*>'), new RegExp('</div>'));
+            from = 0;
+            while (s != null) {
+                processedSection = "\n[NOTE]\n====\n" + input.substring(s.innerStart, s.innerEnd) + "\n====\n";
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"tip"[^>]*>'), new RegExp('</div>'), from);
+            }
+
+            print('search shell\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"shell"[^>]*>'), new RegExp('</div>'));
+            from = 0;
+            while (s != null) {
+                processedSection = "\n[source,shell]\n----\n"
+                    + input.substring(s.innerStart, s.innerEnd).replace(/<pre>/g, "").replace(/<\/pre>/g, "")
+                    + "\n----\n\n";
+                print("processedSection='" + processedSection + "'")
+                input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
+                from = s.outerStart + processedSection.length;
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"shell"[^>]*>'), new RegExp('</div>'), from);
+            }
+
             print('search step\n')
             s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"step"[^>]*>'), new RegExp('</div>'));
             from = 0;
@@ -905,26 +929,27 @@ xooki.input = {
                 s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"step"[^>]*>'), new RegExp('</div>'), from);
             }
 
-            print('search shell\n')
-            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"shell"[^>]*>'), new RegExp('</div>'));
+            print('search ivy-file\n')
+            s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"ivy-file"[^>]*>'), new RegExp('</div>'));
             from = 0;
             while (s != null) {
                 processedSection = input.substring(s.innerStart, s.innerEnd);
                 input = input.substring(0, s.outerStart) + processedSection + input.substring(s.outerEnd);
                 from = s.outerStart + processedSection.length;
-                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"shell"[^>]*>'), new RegExp('</div>'), from);
+                s = xooki.string.findSection(input, new RegExp('<div\\s*class\\s*=\\s*"ivy-file"[^>]*>'), new RegExp('</div>'), from);
             }
 
             print('search img\n')
-            s = xooki.string.find(input, new RegExp('<img\\s*src\\s*=\\s*\\"([^\\"]*)\\"\\s*/>'));
+            s = xooki.string.find(input, new RegExp('<img\\s*(.*)\\s*/>'));
             from = 0;
             while (s != null) {
-                processedSection = " image:" + s.matcher[1] + "[]"
+                imgSrc = s.matcher[1].replace(new RegExp('^.*src\\s*=\\s*\\"([^\\"]*)\\".*$'), "$1")
+                processedSection = "image::" + imgSrc + "[]"
                 input = input.substring(0, s.begin)
                     + processedSection
                     + input.substring(s.end);
                 from = s.begin + processedSection.length;
-                s = xooki.string.find(input, new RegExp('<img\\s*src\\s*=\\s*\\"([^\\"]*)\\"\\s*/>'), from);
+                s = xooki.string.find(input, new RegExp('<img\\s*(.*)\\s*/>'), from);
             }
 
             print('search img title\n')
@@ -1208,6 +1233,15 @@ xooki.input = {
                     if (!first) {
                         start = lastEnd;
                         betweenliContent = input.substring(lastEnd, sli.outerStart);
+                        iSpace = 0
+                        while (iSpace < betweenliContent.length && (betweenliContent.charAt(iSpace) == ' ' || betweenliContent.charAt(iSpace) == '\t')) {
+                            iSpace++;
+                        }
+                        if (betweenliContent.charAt(iSpace) == "\n") {
+                            betweenliContent = " +" + betweenliContent;
+                        } else {
+                            betweenliContent = " +\n" + betweenliContent;
+                        }
                     }
                     processedSection = betweenliContent + "\n" + innerindent + input.substring(sli.innerStart, sli.innerEnd).replace(/\\s/, ' ');
                     input = input.substring(0, start)
@@ -1223,7 +1257,19 @@ xooki.input = {
                     print(input.substring(from, from + 100));
                     return input;
                 }
-                input = input.substring(0, s.begin) + input.substring(s.end);
+
+                afterLastContent = input.substring(lastEnd, s.begin);
+                iSpace = 0
+                while (iSpace < afterLastContent.length && (afterLastContent.charAt(iSpace) == ' ' || afterLastContent.charAt(iSpace) == '\t')) {
+                    iSpace++;
+                }
+                if (afterLastContent.charAt(iSpace) == "\n") {
+                    afterLastContent = " +" + afterLastContent;
+                } else {
+                    afterLastContent = " +\n" + afterLastContent;
+                }
+
+                input = input.substring(0, lastEnd) + afterLastContent + input.substring(s.end);
                 from = s.begin;
                 return htmllisttag(input, from, indent);
             }
@@ -1311,6 +1357,12 @@ xooki.input = {
                 s = xooki.string.findXmlSection(input, "table", from);
                 print("found=" + (s != null) + "\n")
             }
+
+            input = input.replace(/LOWER_THAN_IN_CODE/g, "<").replace(/GREATER_THAN_IN_CODE/g, ">")
+
+            input = input.replace(/include::..\/..\/tutorial/g, "include::asciidoc/tutorial")
+            input = input.replace(/include::..\/tutorial/g, "include::asciidoc/tutorial")
+            input = input.replace(/include::tutorial/g, "include::asciidoc/tutorial")
 
             return input;
 		},
