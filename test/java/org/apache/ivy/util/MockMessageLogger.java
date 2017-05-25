@@ -63,6 +63,7 @@ public class MockMessageLogger extends AbstractMessageLogger {
     }
 
     public void clear() {
+        super.clearProblems();
         _logs.clear();
         _rawLogs.clear();
         _endProgress.clear();

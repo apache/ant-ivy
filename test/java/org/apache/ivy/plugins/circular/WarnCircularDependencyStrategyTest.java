@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.circular;
 
+import junit.framework.TestCase;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.EventManager;
@@ -25,35 +26,40 @@ import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
-import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MessageLoggerEngine;
 import org.apache.ivy.util.MockMessageLogger;
 import org.junit.Before;
 import org.junit.Test;
+
 
 import static org.junit.Assert.assertEquals;
 
 public class WarnCircularDependencyStrategyTest {
     private CircularDependencyStrategy strategy;
 
-    private MockMessageLogger mockMessageImpl;
+    private MessageLoggerEngine loggerEngine;
+    private MockMessageLogger mockMessageLogger;
+
 
     @Before
     public void setUp() {
+        // setup a new IvyContext for each test
+        IvyContext.pushNewContext();
         strategy = WarnCircularDependencyStrategy.getInstance();
-
-        resetLogger();
+        mockMessageLogger = new MockMessageLogger();
+        loggerEngine = setupMockLogger(mockMessageLogger);
     }
 
-    private void resetLogger() {
-        mockMessageImpl = new MockMessageLogger();
-        Message.setDefaultLogger(mockMessageImpl);
+    protected void tearDown() throws Exception {
+        resetMockLogger(loggerEngine);
+        // pop the context we setup before
+        IvyContext.popContext();
     }
 
     @Test
     public void testLog() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.0, #B;1.0"));
-
-        mockMessageImpl.assertLogWarningContains("circular dependency found: #A;1.0->#B;1.0");
+        mockMessageLogger.assertLogWarningContains("circular dependency found: #A;1.0->#B;1.0");
     }
 
     @Test
@@ -62,29 +68,30 @@ public class WarnCircularDependencyStrategyTest {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
 
         // should only log the circular dependency once
-        assertEquals(1, mockMessageImpl.getLogs().size());
+        assertEquals(1, mockMessageLogger.getWarns().size());
     }
 
     @Test
     public void testRemoveDuplicates2() throws Exception {
         setResolveContext("1");
-        resetLogger();
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
 
         // should only log the circular dependency once
-        assertEquals(1, mockMessageImpl.getLogs().size());
+        assertEquals(1, mockMessageLogger.getWarns().size());
 
         setResolveContext("2");
-        resetLogger();
+        // clear previous logs
+        mockMessageLogger.clear();
+
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         // should log the message
-        assertEquals(1, mockMessageImpl.getLogs().size());
+        assertEquals(1, mockMessageLogger.getWarns().size());
 
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
 
         // should not log the message again
-        assertEquals(1, mockMessageImpl.getLogs().size());
+        assertEquals(1, mockMessageLogger.getWarns().size());
     }
 
     private void setResolveContext(String resolveId) {
@@ -92,5 +99,21 @@ public class WarnCircularDependencyStrategyTest {
         IvyContext.getContext().setResolveData(
             new ResolveData(new ResolveEngine(settings, new EventManager(),
                     new SortEngine(settings)), new ResolveOptions().setResolveId(resolveId)));
+    }
+
+    private MessageLoggerEngine setupMockLogger(final MockMessageLogger mockLogger) {
+        if (mockLogger == null) {
+            return null;
+        }
+        final MessageLoggerEngine loggerEngine = IvyContext.getContext().getIvy().getLoggerEngine();
+        loggerEngine.pushLogger(mockLogger);
+        return loggerEngine;
+    }
+
+    private void resetMockLogger(final MessageLoggerEngine loggerEngine) {
+        if (loggerEngine == null) {
+            return;
+        }
+        loggerEngine.popLogger();
     }
 }
