@@ -31,10 +31,13 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class SearchTest extends TestCase {
+public class SearchTest {
+    @Test
     public void testListInMavenRepo() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURI().toURL());
@@ -48,6 +51,7 @@ public class SearchTest extends TestCase {
             new HashSet(Arrays.asList(revs)));
     }
 
+    @Test
     public void testListInMavenRepo2() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURI().toURL());
@@ -62,6 +66,7 @@ public class SearchTest extends TestCase {
                 Arrays.asList(revs)));
     }
 
+    @Test
     public void testListModulesWithExtraAttributes() throws ParseException, IOException {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/IVY-1128/ivysettings.xml"));

@@ -35,10 +35,13 @@ import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.version.ExactVersionMatcher;
 import org.apache.ivy.plugins.version.LatestVersionMatcher;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SortTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+public class SortTest {
 
     private DefaultModuleDescriptor md1;
 
@@ -54,16 +57,11 @@ public class SortTest extends TestCase {
 
     private SilentNonMatchingVersionReporter nonMatchReporter;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-        md1 = createModuleDescriptorToSort("md1", null); // The revison is often not set in the
+    @Before
+    public void setUp() {
+        md1 = createModuleDescriptorToSort("md1", null); // The revision is often not set in the
         // ivy.xml file that are ordered
-        md2 = createModuleDescriptorToSort("md2", "rev2"); // But somtimes they are set
+        md2 = createModuleDescriptorToSort("md2", "rev2"); // But sometimes they are set
         md3 = createModuleDescriptorToSort("md3", "rev3");
         md4 = createModuleDescriptorToSort("md4", "rev4");
 
@@ -76,13 +74,14 @@ public class SortTest extends TestCase {
         nonMatchReporter = new SilentNonMatchingVersionReporter();
     }
 
+    @Test
     public void testSort() throws Exception {
         addDependency(md2, "md1", "rev1");
         addDependency(md3, "md2", "rev2");
         addDependency(md4, "md3", "rev3");
 
-        DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {{md1, md2,
-                md3, md4}};
+        DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {
+                {md1, md2, md3, md4}};
 
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
@@ -96,6 +95,7 @@ public class SortTest extends TestCase {
      * only. However the sort respect the transitive order when it is unambiguous. (if A depends
      * transitively of B, but B doesn't depends transitively on A then B always comes before A).
      */
+    @Test
     public void testCircularDependency() throws Exception {
         addDependency(md1, "md4", "rev4");
         addDependency(md2, "md1", "rev1");
@@ -113,15 +113,16 @@ public class SortTest extends TestCase {
         }
     }
 
+    @Test
     public void testCircularDependency2() throws Exception {
         addDependency(md2, "md3", "rev3");
         addDependency(md2, "md1", "rev1");
         addDependency(md3, "md2", "rev2");
         addDependency(md4, "md3", "rev3");
         DefaultModuleDescriptor[][] possibleOrder = new DefaultModuleDescriptor[][] {
-                {md1, md3, md2, md4}, {md1, md2, md3, md4} // ,
-        // {md3, md1, md2, md4} //we don't have this solution. The loops apear has one contigous
-        // element.
+                {md1, md3, md2, md4}, {md1, md2, md3, md4}
+                // {md3, md1, md2, md4}
+                // we don't have this solution. The loops appear has one contiguous element.
         };
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
@@ -131,6 +132,7 @@ public class SortTest extends TestCase {
     }
 
     // Test IVY-624
+    @Test
     public void testCircularDependencyInfiniteLoop() throws Exception {
         addDependency(md1, "md2", "rev2");
         addDependency(md1, "md3", "rev3");
@@ -146,6 +148,7 @@ public class SortTest extends TestCase {
     /**
      * In case of Circular dependency a warning is generated.
      */
+    @Test
     public void testCircularDependencyReport() {
         addDependency(md2, "md3", "rev3");
         addDependency(md2, "md1", "rev1");
@@ -163,7 +166,7 @@ public class SortTest extends TestCase {
             public void handleCircularDependency(ModuleRevisionId[] mrids) {
                 assertEquals("handleCircularDependency is expected to be called only once", 0,
                     nbOfCall);
-                String assertMsg = "incorrect cicular dependency invocation"
+                String assertMsg = "incorrect circular dependency invocation"
                         + CircularDependencyHelper.formatMessage(mrids);
                 final int expectedLength = 3;
                 assertEquals(assertMsg, expectedLength, mrids.length);
@@ -179,7 +182,7 @@ public class SortTest extends TestCase {
             }
 
             public void validate() {
-                Assert.assertEquals("handleCircularDependency has nor been called", 1, nbOfCall);
+                assertEquals("handleCircularDependency has not been called", 1, nbOfCall);
             }
         }
         CircularDependencyReporterMock circularDepReportMock = new CircularDependencyReporterMock();
@@ -195,6 +198,7 @@ public class SortTest extends TestCase {
      * The dependency can ask for the latest integration. It should match whatever the version
      * declared in the modules to order.
      */
+    @Test
     public void testLatestIntegration() {
 
         addDependency(md2, "md1", "latest.integration");
@@ -203,8 +207,8 @@ public class SortTest extends TestCase {
 
         settings.setVersionMatcher(new LatestVersionMatcher());
 
-        DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {{md1, md2,
-                md3, md4}};
+        DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {
+                {md1, md2, md3, md4}};
 
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
@@ -216,9 +220,10 @@ public class SortTest extends TestCase {
 
     /**
      * When the version asked by a dependency is not compatible with the version declared in the
-     * module to order, the two modules should be considered as independant NB: I'm sure of what
+     * module to order, the two modules should be considered as independent NB: I'm sure of what
      * 'compatible' means !
      */
+    @Test
     public void testDifferentVersionNotConsidered() {
         // To test it, I use a 'broken' loop (in one step, I change the revision) in such a way that
         // I get only one solution. If the loop was
@@ -229,8 +234,8 @@ public class SortTest extends TestCase {
         addDependency(md3, "md2", "rev2");
         addDependency(md4, "md3", "rev3");
 
-        DefaultModuleDescriptor[][] possibleOrder = new DefaultModuleDescriptor[][] {{md1, md2,
-                md3, md4}};
+        DefaultModuleDescriptor[][] possibleOrder = new DefaultModuleDescriptor[][] {
+                {md1, md2, md3, md4}};
 
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
@@ -243,6 +248,7 @@ public class SortTest extends TestCase {
     /**
      * In case of Different version a warning is generated.
      */
+    @Test
     public void testDifferentVersionWarning() {
         final DependencyDescriptor md4OtherDep = addDependency(md1, "md4", "rev4-other");
         addDependency(md2, "md1", "rev1");
@@ -255,15 +261,15 @@ public class SortTest extends TestCase {
 
             public void reportNonMatchingVersion(DependencyDescriptor descriptor,
                     ModuleDescriptor md) {
-                Assert.assertEquals("reportNonMatchingVersion should be invokded only once", 0,
+                assertEquals("reportNonMatchingVersion should be invoked only once", 0,
                     nbOfCall);
-                Assert.assertEquals(md4OtherDep, descriptor);
-                Assert.assertEquals(md4, md);
+                assertEquals(md4OtherDep, descriptor);
+                assertEquals(md4, md);
                 nbOfCall++;
             }
 
             public void validate() {
-                Assert.assertEquals("reportNonMatchingVersion has not be called", 1, nbOfCall);
+                assertEquals("reportNonMatchingVersion has not been called", 1, nbOfCall);
             }
         }
         NonMatchingVersionReporterMock nonMatchingVersionReporterMock = new NonMatchingVersionReporterMock();
@@ -316,7 +322,7 @@ public class SortTest extends TestCase {
             }
         }
         // failed, build a nice message
-        StringBuffer errorMessage = new StringBuffer();
+        StringBuilder errorMessage = new StringBuilder();
         errorMessage.append("Unexpected order : \n{ ");
         for (int i = 0; i < sorted.size(); i++) {
             if (i > 0) {
@@ -324,7 +330,7 @@ public class SortTest extends TestCase {
             }
             errorMessage.append(((DefaultModuleDescriptor) sorted.get(i)).getModuleRevisionId());
         }
-        errorMessage.append("}\nEpected : \n");
+        errorMessage.append("}\nExpected : \n");
         for (int i = 0; i < listOfPossibleSort.length; i++) {
             DefaultModuleDescriptor[] expectedList = listOfPossibleSort[i];
             if (i > 0) {

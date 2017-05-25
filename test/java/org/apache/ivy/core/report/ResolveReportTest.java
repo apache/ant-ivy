@@ -31,9 +31,13 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ResolveReportTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class ResolveReportTest {
 
     private Ivy ivy;
 
@@ -43,7 +47,8 @@ public class ResolveReportTest extends TestCase {
 
     private File workDir;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         cache = new File("build/cache");
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
         createCache();
@@ -62,7 +67,8 @@ public class ResolveReportTest extends TestCase {
         cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
         FileUtil.forceDelete(deliverDir);
         FileUtil.forceDelete(workDir);
@@ -84,6 +90,7 @@ public class ResolveReportTest extends TestCase {
             new HashSet<String>(Arrays.asList(dep.getDependencyConfigurations(conf))));
     }
 
+    @Test
     public void testFixedMdSimple() throws Exception {
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
@@ -103,6 +110,7 @@ public class ResolveReportTest extends TestCase {
             new String[] {"*"});
     }
 
+    @Test
     public void testFixedMdTransitiveDependencies() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
@@ -126,6 +134,7 @@ public class ResolveReportTest extends TestCase {
             new String[] {"*"});
     }
 
+    @Test
     public void testFixedMdMultipleExtends() throws Exception {
         // mod6.2 has two confs default and extension
         // mod6.2 depends on mod6.1 in conf (default->extension)
@@ -158,6 +167,7 @@ public class ResolveReportTest extends TestCase {
             new String[] {"default"});
     }
 
+    @Test
     public void testFixedMdRange() throws Exception {
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
@@ -180,6 +190,7 @@ public class ResolveReportTest extends TestCase {
             new String[] {"default"});
     }
 
+    @Test
     public void testFixedMdKeep() throws Exception {
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml"),
@@ -203,6 +214,7 @@ public class ResolveReportTest extends TestCase {
             "compile", new String[] {"default"});
     }
 
+    @Test
     public void testFixedMdTransitiveKeep() throws Exception {
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org2/mod2.9/ivys/ivy-0.6.xml"),

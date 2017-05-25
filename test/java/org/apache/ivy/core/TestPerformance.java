@@ -34,6 +34,9 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Not a Junit test, performance depends on the machine on which the test is run...
@@ -56,11 +59,13 @@ public class TestPerformance {
         ivy.getSettings().setDefaultResolver("def");
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
@@ -118,6 +123,7 @@ public class TestPerformance {
         }
     }
 
+    @Test
     public void testPerfs() throws Exception {
         generateModules(70, 2, 5, 2, 15);
 

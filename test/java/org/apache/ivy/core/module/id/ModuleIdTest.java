@@ -17,10 +17,13 @@
  */
 package org.apache.ivy.core.module.id;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ModuleIdTest extends TestCase {
+import static org.junit.Assert.*;
 
+public class ModuleIdTest {
+
+    @Test
     public void testModuleId() {
         String org = "apache";
         String name = "some-new-module";
@@ -30,6 +33,7 @@ public class ModuleIdTest extends TestCase {
         assertEquals(name, moduleId.getName());
     }
 
+    @Test
     public void testModuleIdIllegalArgumentException() {
         String org = "apache";
         String name = "some-new-module";
@@ -48,6 +52,7 @@ public class ModuleIdTest extends TestCase {
         }
     }
 
+    @Test
     public void testEqualsObjectTrue() {
         String org = "apache";
         String name = "some-new-module";
@@ -59,6 +64,7 @@ public class ModuleIdTest extends TestCase {
         assertTrue(moduleId2.equals(moduleId));
     }
 
+    @Test
     public void testEqualsObjectFalse() {
         String org = "apache";
         String name = "some-new-module";
@@ -70,6 +76,7 @@ public class ModuleIdTest extends TestCase {
         assertFalse(moduleId2.equals(moduleId));
     }
 
+    @Test
     public void testEncodeToString() {
         String org = "apache";
         String name = "some-new-module";
@@ -78,6 +85,7 @@ public class ModuleIdTest extends TestCase {
         assertEquals(org + ModuleId.ENCODE_SEPARATOR + name, moduleId.encodeToString());
     }
 
+    @Test
     public void testDecode() {
         String org = "apache";
         String name = "some-new-module";
@@ -87,6 +95,7 @@ public class ModuleIdTest extends TestCase {
         assertEquals(moduleId, moduleId2);
     }
 
+    @Test
     public void testCompareToNullObject() {
         String org = "apache";
         String name = "some-new-module";
@@ -100,6 +109,7 @@ public class ModuleIdTest extends TestCase {
         }
     }
 
+    @Test
     public void testCompareToEqual() {
         String org = "apache";
         String name = "some-new-module";
@@ -108,6 +118,7 @@ public class ModuleIdTest extends TestCase {
         assertTrue(moduleId.compareTo(new ModuleId(org, name)) == 0);
     }
 
+    @Test
     public void testCompareToLessThan() {
         String org = "apache";
         String name = "some-new-module";
@@ -119,7 +130,8 @@ public class ModuleIdTest extends TestCase {
         assertTrue(moduleId.compareTo(moduleId2) < 0);
     }
 
-    public void testCompareToGreatherThan() {
+    @Test
+    public void testCompareToGreaterThan() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);

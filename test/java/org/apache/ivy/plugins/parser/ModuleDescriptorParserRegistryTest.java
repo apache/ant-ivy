@@ -28,10 +28,12 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.Resource;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class ModuleDescriptorParserRegistryTest extends TestCase {
+public class ModuleDescriptorParserRegistryTest {
     public static class MyParser extends AbstractModuleDescriptorParser {
         public ModuleDescriptor parseDescriptor(ParserSettings ivy, URL descriptorURL,
                 Resource res, boolean validate) throws ParseException, IOException {
@@ -49,6 +51,7 @@ public class ModuleDescriptorParserRegistryTest extends TestCase {
 
     }
 
+    @Test
     public void testAddConfigured() throws Exception {
         IvySettings settings = new IvySettings();
         settings.addConfigured(new MyParser());

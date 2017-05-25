@@ -48,6 +48,11 @@ import org.apache.ivy.plugins.latest.LatestTimeStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -77,7 +82,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         setupLastModified();
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         cache = new File("build/cache");
@@ -100,10 +106,12 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         new File("test/repositories/1/org1/mod1.1/ivys/ivy-2.0.xml").setLastModified(time);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Test
     public void testFixedRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -149,6 +157,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testFindIvyFileRefWithMultipleIvyPatterns() throws Exception {
         // cfr IVY-676
         FileSystemResolver resolver = new FileSystemResolver();
@@ -173,6 +182,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         return new DownloadOptions();
     }
 
+    @Test
     public void testMaven2() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -196,6 +206,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         resolver.reportFailure();
     }
 
+    @Test
     public void testChecksum() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -246,6 +257,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
      * Tests that <code>SHA-256</code> algorithm can be used for checksums on resolvers
      * @throws Exception
      */
+	@Test
     public void testSHA256Checksum() throws Exception {
         final FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("sha256-checksum-resolver");
@@ -275,6 +287,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
      * Tests that <code>SHA-512</code> algorithm can be used for checksums on resolvers
      * @throws Exception
      */
+	@Test
     public void testSHA512Checksum() throws Exception {
         final FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("sha256-checksum-resolver");
@@ -300,6 +313,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals("Unexpected revision of downloaded artifact", "3.0", downloadedArtifact.getModuleRevisionId().getRevision());
     }
 
+	@Test
     public void testCheckModified() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -347,6 +361,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testNoRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -418,6 +433,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         r.close();
     }
 
+    @Test
     public void testChanging() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -497,6 +513,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         r.close();
     }
 
+    @Test
     public void testLatestTime() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -519,6 +536,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testLatestRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -541,6 +559,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testRelativePath() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -563,6 +582,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testFormattedLatestTime() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -585,6 +605,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testFormattedLatestRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -607,6 +628,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testPublish() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -639,6 +661,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testPublishOverwrite() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -680,6 +703,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         file.createNewFile();
     }
 
+    @Test
     public void testPublishTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -719,6 +743,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testPublishTransactionWithBranch() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -761,6 +786,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testPublishTransactionWithSubDirectories() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -802,6 +828,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testPublishTransactionWithDottedOrganisation() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -845,6 +872,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testAbortTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -875,6 +903,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testUnsupportedTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -897,13 +926,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 resolver.publish(artifact, src, false);
                 fail("publishing with transaction=true and an unsupported pattern should raise an exception");
             } catch (IllegalStateException ex) {
-                assertTrue(ex.getMessage().indexOf("transactional") != -1);
+                assertTrue(ex.getMessage().contains("transactional"));
             }
         } finally {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
 
+    @Test
     public void testUnsupportedTransaction2() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -928,13 +958,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 resolver.publish(artifact, src, false);
                 fail("publishing with transaction=true and an unsupported combination of patterns should raise an exception");
             } catch (IllegalStateException ex) {
-                assertTrue(ex.getMessage().indexOf("transactional") != -1);
+                assertTrue(ex.getMessage().contains("transactional"));
             }
         } finally {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
 
+    @Test
     public void testUnsupportedTransaction3() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -956,13 +987,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 resolver.publish(artifact, src, true);
                 fail("publishing with transaction=true and overwrite mode should raise an exception");
             } catch (IllegalStateException ex) {
-                assertTrue(ex.getMessage().indexOf("transactional") != -1);
+                assertTrue(ex.getMessage().contains("transactional"));
             }
         } finally {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
 
+    @Test
     public void testDisableTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -1002,6 +1034,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testListing() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
@@ -1032,6 +1065,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 "2.0", "2.1", "2.2"}, revs);
     }
 
+    @Test
     public void testDownloadWithUseOriginIsTrue() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");

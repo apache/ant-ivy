@@ -17,14 +17,18 @@
  */
 package org.apache.ivy.util.url;
 
+import org.junit.Test;
+
 import java.net.URL;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class ArtifactoryListingTest extends TestCase {
+public class ArtifactoryListingTest {
     // remote.test
 
+    @Test
     public void testWicketListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 

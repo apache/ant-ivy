@@ -18,11 +18,13 @@
 package org.apache.ivy.ant.testutil;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class AntTaskTestCase extends TestCase {
+public class AntTaskTestCase {
 
     private AntTestListener antTestListener;
 

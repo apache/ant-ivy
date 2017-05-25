@@ -22,25 +22,32 @@ import java.io.File;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-public class RegexpConflictManagerTest extends TestCase {
+public class RegexpConflictManagerTest {
     private Ivy ivy;
 
     private File _cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(RegexpConflictManagerTest.class.getResource("ivysettings-regexp-test.xml"));
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(_cache);
     }
 
+    @Test
     public void testNoApiConflictResolve() throws Exception {
         try {
             ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-no-regexp-conflict.xml"),
@@ -50,6 +57,7 @@ public class RegexpConflictManagerTest extends TestCase {
         }
     }
 
+    @Test
     public void testConflictResolve() throws Exception {
         try {
             ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-conflict.xml"),
@@ -60,14 +68,12 @@ public class RegexpConflictManagerTest extends TestCase {
             // this is expected
             assertTrue(
                 "bad exception message: " + e.getMessage(),
-                e.getMessage().indexOf(
-                    "org1#mod1.2;2.0.0:2.0 (needed by [apache#resolve-noconflict;1.0])") != -1);
+                    e.getMessage().contains("org1#mod1.2;2.0.0:2.0 (needed by [apache#resolve-noconflict;1.0])"));
             assertTrue("bad exception message: " + e.getMessage(),
-                e.getMessage().indexOf("conflicts with") != -1);
+                    e.getMessage().contains("conflicts with"));
             assertTrue(
                 "bad exception message: " + e.getMessage(),
-                e.getMessage().indexOf(
-                    "org1#mod1.2;2.1.0:2.1 (needed by [apache#resolve-noconflict;1.0])") != -1);
+                    e.getMessage().contains("org1#mod1.2;2.1.0:2.1 (needed by [apache#resolve-noconflict;1.0])"));
         }
     }
 

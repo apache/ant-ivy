@@ -20,17 +20,23 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyArtifactReportTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class IvyArtifactReportTest {
 
     private IvyArtifactReport prop;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -40,10 +46,12 @@ public class IvyArtifactReportTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         prop.setTofile(new File("build/test-artifact-report.xml"));
         prop.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));

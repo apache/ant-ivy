@@ -18,18 +18,15 @@
 package org.apache.ivy.util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
 
 public class MockMessageLogger extends AbstractMessageLogger {
 
-    private List _endProgress = new ArrayList();
+    private final List<String> _endProgress = new ArrayList<String>();
 
-    private List _logs = new ArrayList();
+    private final List<String> _logs = new ArrayList<String>();
 
-    private List _rawLogs = new ArrayList();
+    private final List<String> _rawLogs = new ArrayList<String>();
 
     private int _progressCalls;
 
@@ -49,11 +46,11 @@ public class MockMessageLogger extends AbstractMessageLogger {
         _rawLogs.add(level + " " + msg);
     }
 
-    public List getEndProgress() {
+    public List<String> getEndProgress() {
         return _endProgress;
     }
 
-    public List getLogs() {
+    public List<String> getLogs() {
         return _logs;
     }
 
@@ -61,7 +58,7 @@ public class MockMessageLogger extends AbstractMessageLogger {
         return _progressCalls;
     }
 
-    public List getRawLogs() {
+    public List<String> getRawLogs() {
         return _rawLogs;
     }
 
@@ -73,21 +70,19 @@ public class MockMessageLogger extends AbstractMessageLogger {
     }
 
     public void assertLogContains(String message) {
-        for (Iterator iter = _logs.iterator(); iter.hasNext();) {
-            String log = (String) iter.next();
-            if (log.indexOf(message) != -1) {
+        for (String log : _logs) {
+            if (log.contains(message)) {
                 return;
             }
         }
-        throw new AssertionFailedError("logs do not contain expected message: expected='" + message
+        throw new AssertionError("logs do not contain expected message: expected='" + message
                 + "' logs='\n" + join(_logs) + "'");
     }
 
     public void assertLogDoesntContain(String message) {
-        for (Iterator iter = _logs.iterator(); iter.hasNext();) {
-            String log = (String) iter.next();
-            if (log.indexOf(message) != -1) {
-                throw new AssertionFailedError("logs contain unexpected message: '" + message
+        for (String log : _logs) {
+            if (log.contains(message)) {
+                throw new AssertionError("logs contain unexpected message: '" + message
                         + "' logs='\n" + join(_logs) + "'");
             }
         }
@@ -111,10 +106,9 @@ public class MockMessageLogger extends AbstractMessageLogger {
         assertLogContains(Message.MSG_ERR + " " + message);
     }
 
-    private String join(List logs) {
-        StringBuffer sb = new StringBuffer();
-        for (Iterator iter = logs.iterator(); iter.hasNext();) {
-            String log = (String) iter.next();
+    private String join(List<String> logs) {
+        StringBuilder sb = new StringBuilder();
+        for (String log : logs) {
             sb.append(log).append("\n");
         }
         return sb.toString();

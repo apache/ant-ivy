@@ -24,11 +24,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.ivy.plugins.latest.ArtifactInfo;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class OsgiLatestStrategyTest extends TestCase {
+public class OsgiLatestStrategyTest {
 
+    @Test
     public void testComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.final", "1.0",
                 "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
@@ -40,6 +43,7 @@ public class OsgiLatestStrategyTest extends TestCase {
         assertEquals(Arrays.asList(revs), shuffled);
     }
 
+    @Test
     public void testSort() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.final", "1.0",
                 "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
@@ -54,6 +58,7 @@ public class OsgiLatestStrategyTest extends TestCase {
         assertEquals(Arrays.asList(revs), sorted);
     }
 
+    @Test
     public void testFindLatest() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.rc1",
                 "0.2.0.final", "1.0.0.dev1", "1.0.0.dev2", "1.0.0.alpha1", "1.0.0.alpha2",

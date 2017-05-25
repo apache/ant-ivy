@@ -46,13 +46,15 @@ import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 /**
  * TODO write javadoc
  */
-public class XmlSettingsParserTest extends TestCase {
+public class XmlSettingsParserTest {
+    @Test
     public void test() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -121,6 +123,7 @@ public class XmlSettingsParserTest extends TestCase {
             settings.getResolver(ModuleRevisionId.newInstance("apache", "ivyde", "1.0")).getName());
     }
 
+    @Test
     public void testTypedef() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -144,6 +147,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(subresolvers.get(1) instanceof MockResolver);
     }
 
+    @Test
     public void testStatuses() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -158,6 +162,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(true, settings.getStatusManager().isIntegration("bronze"));
     }
 
+    @Test
     public void testConflictManager() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -168,6 +173,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("all", settings.getConflictManager(new ModuleId("apache", "ant")).getName());
     }
 
+    @Test
     public void testResolveMode() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -179,6 +185,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ant")));
     }
 
+    @Test
     public void testExtraModuleAttribute() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -188,6 +195,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ivy")));
     }
 
+    @Test
     public void testCache() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -240,6 +248,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());
     }
 
+    @Test
     public void testInvalidCache() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -248,10 +257,11 @@ public class XmlSettingsParserTest extends TestCase {
             parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
             fail("resolver referencing a non existent cache should raise an exception");
         } catch (ParseException e) {
-            assertTrue(e.getMessage().indexOf("mycache") != -1);
+            assertTrue(e.getMessage().contains("mycache"));
         }
     }
 
+    @Test
     public void testVersionMatchers1() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -270,6 +280,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(chain.getMatchers().contains(settings.getVersionMatcher("latest")));
     }
 
+    @Test
     public void testVersionMatchers2() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -286,6 +297,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(chain.getMatchers().contains(mock));
     }
 
+    @Test
     public void testRef() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -324,6 +336,7 @@ public class XmlSettingsParserTest extends TestCase {
             ivyPatterns.get(0));
     }
 
+    @Test
     public void testMacro() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -374,6 +387,7 @@ public class XmlSettingsParserTest extends TestCase {
             ivyPatterns.get(0));
     }
 
+    @Test
     public void testMacroAndRef() throws Exception {
         // test case for IVY-319
         IvySettings settings = new IvySettings();
@@ -396,6 +410,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(shared instanceof FileSystemResolver);
     }
 
+    @Test
     public void testMacroAndRef2() throws Exception {
         // test case for IVY-860
         IvySettings settings = new IvySettings();
@@ -417,6 +432,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(testResolver, subresolvers.get(0));
     }
 
+    @Test
     public void testPropertiesMissingFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -429,6 +445,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("libraries", defaultResolver.getName());
     }
 
+    @Test
     public void testInclude() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -473,6 +490,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
     }
 
+    @Test
     public void testIncludeAbsoluteFile() throws Exception {
         // WARNING : this test will only work if the test are launched from the project root
         // directory
@@ -486,6 +504,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(inc instanceof ChainResolver);
     }
 
+    @Test
     public void testIncludeMissingFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -498,6 +517,7 @@ public class XmlSettingsParserTest extends TestCase {
         }
     }
 
+   @Test
     public void testIncludeSpecialCharInName() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -542,6 +562,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
     }
 
+    @Test
     public void testRelativePropertiesFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -551,6 +572,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertLocationEquals("lib", settings.getVariable("libraries.dir"));
     }
 
+    @Test
     public void testParser() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -559,6 +581,7 @@ public class XmlSettingsParserTest extends TestCase {
             ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
 
+    @Test
     public void testOutputter() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -571,6 +594,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(testOutputter instanceof MyOutputter);
     }
 
+    @Test
     public void testLockingStrategies() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -581,6 +605,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(lockStrategy instanceof MyLockStrategy);
     }
 
+    @Test
     public void testFileAttribute() throws Exception {
         IvySettings settings = new IvySettings();
         File basedir = new File("test").getAbsoluteFile();
@@ -596,6 +621,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(new File(basedir, "packager/cache"), packager.getResourceCache());
     }
 
+    @Test
     public void testBaseDirVariables() throws Exception {
         IvySettings settings = new IvySettings();
         settings.setBaseDir(new File("test/base/dir"));

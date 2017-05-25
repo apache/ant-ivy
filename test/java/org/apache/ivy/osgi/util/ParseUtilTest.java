@@ -17,10 +17,14 @@
  */
 package org.apache.ivy.osgi.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ParseUtilTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+public class ParseUtilTest {
+
+    @Test
     public void testParse() {
         final String[] result = ParseUtil.parseDelimitedString(
             "bravo;bundle-version=\"1.0.0\", delta;bundle-version=\"1.0.0\"", ",");

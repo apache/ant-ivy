@@ -37,10 +37,14 @@ import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class UpdateSiteResolverTest extends TestCase {
+public class UpdateSiteResolverTest {
 
     private IvySettings settings;
 
@@ -52,6 +56,7 @@ public class UpdateSiteResolverTest extends TestCase {
 
     private ResolveData data;
 
+    @Before
     public void setUp() throws Exception {
         settings = new IvySettings();
 
@@ -73,13 +78,14 @@ public class UpdateSiteResolverTest extends TestCase {
 
         ivy.getResolutionCacheManager().clean();
         RepositoryCacheManager[] caches = settings.getRepositoryCacheManagers();
-        for (int i = 0; i < caches.length; i++) {
-            caches[i].clean();
+        for (RepositoryCacheManager cache : caches) {
+            cache.clean();
         }
 
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
     }
 
+    @Test
     public void testListOrganization() throws Exception {
         OrganisationEntry[] orgs = resolver.listOrganisations();
         assertEquals(2, orgs.length);
@@ -89,6 +95,7 @@ public class UpdateSiteResolverTest extends TestCase {
                         .getOrganisation().equals(BundleInfo.BUNDLE_TYPE)));
     }
 
+    @Test
     public void testListModules() throws Exception {
         ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver,
                 BundleInfo.BUNDLE_TYPE));
@@ -129,6 +136,7 @@ public class UpdateSiteResolverTest extends TestCase {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testResolve() throws Exception {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy", "2.0.0.final_20090108225011");

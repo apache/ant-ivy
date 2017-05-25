@@ -48,7 +48,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 public class TestHelper {
 
@@ -97,7 +97,7 @@ public class TestHelper {
     public static void assertModuleRevisionIds(String expectedMrids,
             Collection/* <ModuleRevisionId> */mrids) {
         Collection expected = parseMrids(expectedMrids);
-        Assert.assertEquals(expected, mrids);
+        assertEquals(expected, mrids);
     }
 
     /**
@@ -284,8 +284,7 @@ public class TestHelper {
 
     /**
      * Cleans up the test repository and cache.
-     * 
-     * @see #newTestSettings()
+     *
      */
     public static void cleanTest() {
         cleanTestRepository();

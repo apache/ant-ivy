@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.osgi.updatesite;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -31,17 +34,22 @@ import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.CollectionUtils;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
-
-public class UpdateSiteLoaderTest extends TestCase {
+public class UpdateSiteLoaderTest {
 
     private UpdateSiteLoader loader;
 
     private File cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         IvySettings ivySettings = new IvySettings();
         cache = new File("build/cache");
         cache.mkdirs();
@@ -50,10 +58,12 @@ public class UpdateSiteLoaderTest extends TestCase {
         loader = new UpdateSiteLoader(ivySettings.getDefaultRepositoryCacheManager(), null, options);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Test
     public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
         RepoDescriptor site = loader.load(new URI(
                 "http://www.apache.org/dist/ant/ivyde/updatesite/"));
@@ -65,6 +75,7 @@ public class UpdateSiteLoaderTest extends TestCase {
         }
     }
 
+    @Test
     public void testM2Eclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
         RepoDescriptor site = loader.load(new URI(
@@ -72,12 +83,15 @@ public class UpdateSiteLoaderTest extends TestCase {
         assertTrue(CollectionUtils.toList(site.getModules()).size() > 20);
     }
 
-    public void _disabled_testHeliosEclipse() throws IOException, ParseException, SAXException,
+    @Ignore
+    @Test
+    public void testHeliosEclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
         RepoDescriptor site = loader.load(new URI("http://download.eclipse.org/releases/helios/"));
         assertTrue(CollectionUtils.toList(site.getModules()).size() > 900);
     }
 
+    @Test
     public void testComposite() throws Exception {
         RepoDescriptor site = loader.load(new File("test/test-p2/composite/").toURI());
         assertEquals(8, CollectionUtils.toList(site.getModules()).size());

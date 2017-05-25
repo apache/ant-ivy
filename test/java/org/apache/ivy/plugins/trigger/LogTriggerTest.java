@@ -26,10 +26,14 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class LogTriggerTest extends TestCase {
+public class LogTriggerTest {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private StartResolveEvent ev;
@@ -38,7 +42,8 @@ public class LogTriggerTest extends TestCase {
 
     private File testDir;
 
-    protected void setUp() {
+    @Before
+    public void setUp() {
         ev = new StartResolveEvent(DefaultModuleDescriptor.newBasicInstance(
             ModuleRevisionId.parse("o#A;1"), new Date()), new String[] {"c"});
         trigger = new LogTrigger();
@@ -47,10 +52,12 @@ public class LogTriggerTest extends TestCase {
         testDir.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(testDir);
     }
 
+    @Test
     public void testMessage() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
 
@@ -61,6 +68,7 @@ public class LogTriggerTest extends TestCase {
         mockLogger.assertLogInfoContains("msg: o A 1");
     }
 
+    @Test
     public void testFile() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
         File f = new File(testDir, "test.log");
@@ -77,6 +85,7 @@ public class LogTriggerTest extends TestCase {
             FileUtil.readEntirely(f));
     }
 
+    @Test
     public void testFileNoAppend() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
         File f = new File(testDir, "test.log");

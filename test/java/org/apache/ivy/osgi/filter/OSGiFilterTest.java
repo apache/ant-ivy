@@ -20,12 +20,14 @@ package org.apache.ivy.osgi.filter;
 import java.text.ParseException;
 
 import org.apache.ivy.osgi.filter.CompareFilter.Operator;
+import org.junit.Test;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public class OSGiFilterTest extends TestCase {
+public class OSGiFilterTest {
 
+    @Test
     public void testParser() throws Exception {
         assertParseFail("c>2");
         assertParseFail("");
@@ -56,7 +58,7 @@ public class OSGiFilterTest extends TestCase {
     private void assertParseFail(String toParse) {
         try {
             OSGiFilterParser.parse(toParse);
-            Assert.fail("Expecting a ParseException");
+            fail("Expecting a ParseException");
         } catch (ParseException e) {
             // OK
         }
@@ -64,6 +66,6 @@ public class OSGiFilterTest extends TestCase {
 
     private void checkParse(OSGiFilter expected, String toParse) throws ParseException {
         OSGiFilter parsed = OSGiFilterParser.parse(toParse);
-        Assert.assertEquals(expected, parsed);
+        assertEquals(expected, parsed);
     }
 }

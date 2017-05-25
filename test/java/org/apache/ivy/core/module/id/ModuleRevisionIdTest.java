@@ -17,13 +17,18 @@
  */
 package org.apache.ivy.core.module.id;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-public class ModuleRevisionIdTest extends TestCase {
+public class ModuleRevisionIdTest {
 
+    @Test
     public void testParse() throws Exception {
         testParse("#A;1.0");
         testParse("org#module;2.0");
@@ -44,10 +49,11 @@ public class ModuleRevisionIdTest extends TestCase {
             ModuleRevisionId.parse(mrid);
             fail("ModuleRevisionId.parse is supposed to raise an exception with " + mrid);
         } catch (IllegalArgumentException ex) {
-            assertTrue(ex.getMessage().indexOf(mrid) != -1);
+            assertTrue(ex.getMessage().contains(mrid));
         }
     }
 
+    @Test
     public void testEncodeDecodeToString() {
         testEncodeDecodeToString(ModuleRevisionId.newInstance("org", "name", "revision"));
         testEncodeDecodeToString(ModuleRevisionId.newInstance("org", "name", ""));

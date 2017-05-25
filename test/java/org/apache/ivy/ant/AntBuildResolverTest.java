@@ -24,13 +24,18 @@ import org.apache.ivy.ant.AntWorkspaceResolver.WorkspaceArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
+
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class AntBuildResolverTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class AntBuildResolverTest {
 
     private static final ModuleRevisionId MRID_MODULE1 = ModuleRevisionId.newInstance("org.acme",
         "module1", "1.1");
@@ -44,8 +49,8 @@ public class AntBuildResolverTest extends TestCase {
 
     private WorkspaceArtifact wa;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.cleanCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
@@ -67,11 +72,12 @@ public class AntBuildResolverTest extends TestCase {
         configure.execute();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testNoProject() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -84,6 +90,7 @@ public class AntBuildResolverTest extends TestCase {
         assertEquals(MRID_MODULE1, report.getDependencies().get(0).getResolvedId());
     }
 
+    @Test
     public void testProject() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -105,6 +112,7 @@ public class AntBuildResolverTest extends TestCase {
             report.getArtifactsReports(MRID_PROJECT1)[0].getLocalFile());
     }
 
+    @Test
     public void testProjectFolder() throws Exception {
         wa.setPath("target/classes");
 
@@ -127,6 +135,7 @@ public class AntBuildResolverTest extends TestCase {
             report.getArtifactsReports(MRID_PROJECT1)[0].getLocalFile());
     }
 
+    @Test
     public void testDependencyArtifact() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -148,6 +157,7 @@ public class AntBuildResolverTest extends TestCase {
             report.getArtifactsReports(MRID_PROJECT1)[0].getLocalFile());
     }
 
+    @Test
     public void testCachePath() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -169,6 +179,7 @@ public class AntBuildResolverTest extends TestCase {
             path.list()[1]);
     }
 
+    @Test
     public void testCachePathFolder() throws Exception {
         wa.setPath("target/classes");
 

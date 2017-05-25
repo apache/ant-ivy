@@ -34,10 +34,15 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.updatesite.UpdateSiteResolver;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-public class P2DescriptorTest extends TestCase {
+public class P2DescriptorTest {
 
     private File cache;
 
@@ -53,7 +58,8 @@ public class P2DescriptorTest extends TestCase {
 
     private ResolveData data;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         settings = new IvySettings();
 
         p2SourceResolver = new UpdateSiteResolver();
@@ -85,18 +91,19 @@ public class P2DescriptorTest extends TestCase {
 
         ivy.getResolutionCacheManager().clean();
         RepositoryCacheManager[] caches = settings.getRepositoryCacheManagers();
-        for (int i = 0; i < caches.length; i++) {
-            caches[i].clean();
+        for (RepositoryCacheManager cache : caches) {
+            cache.clean();
         }
 
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         ivy.getLoggerEngine().sumupProblems();
     }
 
+    @Test
     public void testResolveSource() throws Exception {
         settings.setDefaultResolver("p2-sources");
 
@@ -139,6 +146,7 @@ public class P2DescriptorTest extends TestCase {
         }
     }
 
+    @Test
     public void testResolveNotZipped() throws Exception {
         settings.setDefaultResolver("p2-zipped");
 
@@ -168,6 +176,7 @@ public class P2DescriptorTest extends TestCase {
         assertNull(ar.getUnpackedLocalFile());
     }
 
+    @Test
     public void testResolveZipped() throws Exception {
         settings.setDefaultResolver("p2-zipped");
 
@@ -204,6 +213,7 @@ public class P2DescriptorTest extends TestCase {
         }
     }
 
+    @Test
     public void testResolvePacked() throws Exception {
         settings.setDefaultResolver("p2-with-packed");
 

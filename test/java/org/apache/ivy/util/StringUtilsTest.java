@@ -17,17 +17,22 @@
  */
 package org.apache.ivy.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class StringUtilsTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+public class StringUtilsTest {
+
+    @Test
     public void testGetStackTrace() throws Exception {
         String trace = StringUtils.getStackTrace(new Exception());
-        assertTrue(trace.indexOf("java.lang.Exception") != -1);
-        assertTrue(trace
-                .indexOf("at org.apache.ivy.util.StringUtilsTest.testGetStackTrace(StringUtilsTest.java") != -1);
+        assertTrue(trace.contains("java.lang.Exception"));
+        assertTrue(trace.contains("at org.apache.ivy.util.StringUtilsTest.testGetStackTrace(StringUtilsTest.java"));
     }
 
+    @Test
     public void testEncryption() {
         assertEquals("apache", StringUtils.decrypt(StringUtils.encrypt("apache")));
         assertEquals("yet another string with 126 digits and others :;%_-$& characters",

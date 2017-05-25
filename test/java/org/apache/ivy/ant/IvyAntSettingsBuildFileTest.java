@@ -18,50 +18,66 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.tools.ant.BuildFileTest;
 
-public class IvyAntSettingsBuildFileTest extends BuildFileTest {
+import org.apache.tools.ant.BuildFileRule;
 
-    protected void setUp() throws Exception {
-        configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFile.xml");
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class IvyAntSettingsBuildFileTest {
+
+    @Rule
+    public final BuildFileRule buildRule = new BuildFileRule();
+
+    @Before
+    public void setUp() {
+        buildRule.configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFile.xml");
     }
 
+    @Test
     public void testOverrideNotSpecified() {
-        executeTarget("testOverrideNotSpecified");
-        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        buildRule.executeTarget("testOverrideNotSpecified");
+        ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
 
+    @Test
     public void testOverrideSetToFalse() {
-        executeTarget("testOverrideSetToFalse");
-        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        buildRule.executeTarget("testOverrideSetToFalse");
+        ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
 
+    @Test
     public void testUnnecessaryDefaultIvyInstance() {
-        executeTarget("testUnnecessaryDefaultIvyInstance");
-        assertNull("Default ivy.instance settings shouldn't have been loaded", getProject()
-                .getReference("ivy.instance"));
+        buildRule.executeTarget("testUnnecessaryDefaultIvyInstance");
+        assertNull("Default ivy.instance settings shouldn't have been loaded",
+                buildRule.getProject().getReference("ivy.instance"));
     }
 
+    @Test
     public void testSettingsWithIdIvyInstance() {
         // IVY-925
-        executeTarget("testSettingsWithPropertyAsId");
-        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        buildRule.executeTarget("testSettingsWithPropertyAsId");
+        ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
 
+    @Test
     public void testStackOverflow() {
         // IVY-924
-        configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFileStackOverflow.xml");
-        executeTarget("testStackOverflow");
-        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        buildRule.configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFileStackOverflow.xml");
+        buildRule.executeTarget("testStackOverflow");
+        ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());

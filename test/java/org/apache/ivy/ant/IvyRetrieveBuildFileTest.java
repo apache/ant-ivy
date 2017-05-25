@@ -18,17 +18,30 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.tools.ant.BuildFileTest;
 
-public class IvyRetrieveBuildFileTest extends BuildFileTest {
+import org.apache.tools.ant.BuildFileRule;
 
-    protected void setUp() throws Exception {
-        configureProject("test/java/org/apache/ivy/ant/IvyRetrieveBuildFile.xml");
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+public class IvyRetrieveBuildFileTest {
+    @Rule
+    public final BuildFileRule buildRule = new BuildFileRule();
+
+    @Before
+    public void setUp() {
+        buildRule.configureProject("test/java/org/apache/ivy/ant/IvyRetrieveBuildFile.xml");
     }
 
+    @Test
     public void testMultipleInlineRetrievesWithCacheCleaning() {
-        executeTarget("testMultipleInlineRetrievesWithCacheCleaning");
-        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        buildRule.executeTarget("testMultipleInlineRetrievesWithCacheCleaning");
+        ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());

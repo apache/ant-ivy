@@ -26,11 +26,13 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ParserSettings;
+import org.junit.Test;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class ModuleDescriptorMemoryCacheTest extends TestCase {
+
+public class ModuleDescriptorMemoryCacheTest {
 
     ModuleDescriptorMemoryCache cache = new ModuleDescriptorMemoryCache(2);
 
@@ -38,11 +40,11 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
 
     IvySettings ivySettings2 = new IvySettings();
 
-    File url1 = new File("file://cached/file.txt");;
+    File url1 = new File("file://cached/file.txt");
 
-    File url2 = new File("file://cached/file2.txt");;
+    File url2 = new File("file://cached/file2.txt");
 
-    File url3 = new File("file://cached/file3.txt");;
+    File url3 = new File("file://cached/file3.txt");
 
     ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("org", "name", "rev");
 
@@ -56,6 +58,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
 
     ModuleDescriptor md3 = DefaultModuleDescriptor.newDefaultInstance(mrid3);
 
+    @Test
     public void testUseModuleDescriptorProviderWhenModuleNotCached() throws ParseException,
             IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
@@ -63,6 +66,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         providerMock.assertCalled();
     }
 
+    @Test
     public void testCacheResultOfModuleDescriptorProvider() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = null;
@@ -70,15 +74,16 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         assertEquals(md1, cache.get(url1, ivySettings, false, providerMock2));
     }
 
+    @Test
     public void testValidationClearInvalidatedCache() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = new ModuleDescriptorProviderMock(md1);
-        ;
         assertEquals(md1, cache.get(url1, ivySettings, false, providerMock));
         assertEquals(md1, cache.get(url1, ivySettings, true, providerMock2));
         providerMock2.assertCalled();
     }
 
+    @Test
     public void testValidationDontClearvalidatedCache() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = null;
@@ -86,7 +91,8 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         assertEquals(md1, cache.get(url1, ivySettings, false, providerMock2));
     }
 
-    public void testSizeIsLimitied() throws ParseException, IOException {
+    @Test
+    public void testSizeIsLimited() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock1b = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = new ModuleDescriptorProviderMock(md2);
@@ -98,6 +104,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         providerMock1b.assertCalled();
     }
 
+    @Test
     public void testLastRecentlyUsedIsFlushedWhenSizeExceed() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = new ModuleDescriptorProviderMock(md2);
@@ -112,6 +119,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         providerMock2b.assertCalled();
     }
 
+    @Test
     public void testVariableChangeInvalidateEntry() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = new ModuleDescriptorProviderMock(md1);
@@ -121,6 +129,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         providerMock2.assertCalled();
     }
 
+    @Test
     public void testGetStaleDontReadFromCache() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = new ModuleDescriptorProviderMock(md2);
@@ -129,6 +138,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         providerMock2.assertCalled();
     }
 
+    @Test
     public void testGetStaleStoreResultInCache() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = null;
@@ -136,6 +146,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         assertEquals(md1, cache.get(url1, ivySettings, false, providerMock2));
     }
 
+    @Test
     public void testASizeOf0MeansNoCache() throws ParseException, IOException {
         cache = new ModuleDescriptorMemoryCache(0);
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
@@ -165,7 +176,7 @@ public class ModuleDescriptorMemoryCacheTest extends TestCase {
         }
 
         public void assertCalled() {
-            Assert.assertTrue(called);
+            assertTrue(called);
         }
     }
 

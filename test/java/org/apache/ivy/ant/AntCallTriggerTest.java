@@ -17,12 +17,16 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Vector;
 
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
@@ -34,9 +38,11 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Test;
 
-public class AntCallTriggerTest extends TestCase {
+public class AntCallTriggerTest {
+    @Test
     public void test() throws Exception {
         assertFalse(new File("test/triggers/ant-call/A/out/foo.txt").exists());
         runAnt(new File("test/triggers/ant-call/A/build.xml"), "resolve");
@@ -44,7 +50,8 @@ public class AntCallTriggerTest extends TestCase {
         assertTrue(new File("test/triggers/ant-call/A/out/foo.txt").exists());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(new File("test/triggers/ant-call/A/out"));
         FileUtil.forceDelete(new File("test/triggers/ant-call/cache"));
     }
@@ -173,6 +180,7 @@ public class AntCallTriggerTest extends TestCase {
      * @param project
      *            the project instance.
      * @param inputHandlerClassname
+     *            String
      * @exception BuildException
      *                if a specified InputHandler implementation could not be loaded.
      */

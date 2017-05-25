@@ -44,29 +44,27 @@
     </publications>
     <dependencies>
         <dependency org="org.apache.ant" name="ant" rev="1.9.9" conf="default,ant->default"/>
-        <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0" conf="default,httpclient->runtime,master" />
+        <dependency org="commons-httpclient" name="commons-httpclient" rev="3.1" conf="default,httpclient->runtime,master"/>
         <dependency org="oro" name="oro" rev="2.0.8" conf="default,oro->default"/>
-        <dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs->default" />
-        <dependency org="com.jcraft" name="jsch" rev="0.1.54" conf="default,sftp->default" />
-        <dependency org="com.jcraft" name="jsch.agentproxy" rev="0.0.9" conf="default,sftp->default" />
-        <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="0.0.9" conf="default,sftp->default" />
-        <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="0.0.9" conf="default,sftp->default" />
-        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.52" conf="default" />
-        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.52" conf="default" />
+        <dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs->default"/>
+        <dependency org="com.jcraft" name="jsch" rev="0.1.54" conf="default,sftp->default"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy" rev="0.0.9" conf="default,sftp->default"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="0.0.9" conf="default,sftp->default"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="0.0.9" conf="default,sftp->default"/>
+        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.52" conf="default"/>
+        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.52" conf="default"/>
 
         <!-- Test dependencies -->
-        <dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
-        <dependency org="commons-lang" name="commons-lang" rev="2.6" conf="test->default" />
-        <dependency org="org.apache.ant" name="ant-testutil" rev="1.9.9" conf="test->default" transitive="false" />
+        <dependency org="junit" name="junit" rev="4.12" conf="test->default"/>
+        <dependency org="org.hamcrest" name="hamcrest-core" rev="1.3" conf="test->default"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.6" conf="test->default"/>
+        <dependency org="org.apache.ant" name="ant-testutil" rev="1.9.9" conf="test->default" transitive="false"/>
         <dependency org="org.apache.ant" name="ant-launcher" rev="1.9.9" conf="test->default" transitive="false"/>
         <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="test->default" transitive="false"/>
         <dependency org="xmlunit" name="xmlunit" rev="1.6" conf="test->default" transitive="false"/>
-        
-        <!-- This dependency is necessary for having validation in junit tests when running with JDK1.4 -->
-        <dependency org="xerces" name="xercesImpl" rev="2.6.2" conf="test->default" />
-        <dependency org="xerces" name="xmlParserAPIs" rev="2.6.2" conf="test->default" />
 
-        <!-- Global exclude for junit -->
-        <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant" />
+        <!-- Global exclude for junit and hamcrest -->
+        <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
+        <exclude org="org.hamcrest" module="hamcrest-core" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
     </dependencies>
 </ivy-module>

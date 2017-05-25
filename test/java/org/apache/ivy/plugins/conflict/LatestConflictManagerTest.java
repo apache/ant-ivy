@@ -28,27 +28,34 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public class LatestConflictManagerTest extends TestCase {
+public class LatestConflictManagerTest {
 
     private Ivy ivy;
 
     private File _cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(LatestConflictManagerTest.class.getResource("ivysettings-latest.xml"));
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(_cache);
     }
 
     // Test case for issue IVY-388
+    @Test
     public void testIvy388() throws Exception {
         ResolveReport report = ivy.resolve(
             LatestConflictManagerTest.class.getResource("ivy-388.xml"), getResolveOptions());
@@ -73,6 +80,7 @@ public class LatestConflictManagerTest extends TestCase {
     }
 
     // Test case for issue IVY-383
+    @Test
     public void testIvy383() throws Exception {
         ResolveReport report = ivy.resolve(
             LatestConflictManagerTest.class.getResource("ivy-383.xml"), getResolveOptions());
@@ -89,6 +97,7 @@ public class LatestConflictManagerTest extends TestCase {
     }
 
     // Test case for issue IVY-407
+    @Test
     public void testLatestTime1() throws Exception {
         ivy = new Ivy();
         ivy.configure(LatestConflictManagerTest.class.getResource("ivysettings-latest-time.xml"));
@@ -116,6 +125,7 @@ public class LatestConflictManagerTest extends TestCase {
         }
     }
 
+    @Test
     public void testLatestTime2() throws Exception {
         ivy = new Ivy();
         ivy.configure(LatestConflictManagerTest.class.getResource("ivysettings-latest-time.xml"));
@@ -150,6 +160,7 @@ public class LatestConflictManagerTest extends TestCase {
      * ok and publish D-1.0.0 5) E needs D-1.0.0 and A-1.0.0 (D before A in ivy file) retrieve
      * failed to get C-1.0.2 from A (get apparently C-1.0.1 from D)
      */
+    @Test
     public void testLatestTimeTransitivity() throws Exception {
         ivy = new Ivy();
         ivy.configure(LatestConflictManagerTest.class
@@ -203,6 +214,7 @@ public class LatestConflictManagerTest extends TestCase {
      *         MyCompany#C;1
      *             conflicting-dependency#dep;1
      */
+    @Test
     public void testEvictedModules() throws Exception {
         ivy.configure(LatestConflictManagerTest.class
                 .getResource("ivysettings-evicted.xml"));

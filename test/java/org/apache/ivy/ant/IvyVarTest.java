@@ -20,9 +20,13 @@ package org.apache.ivy.ant;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class IvyVarTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class IvyVarTest {
+    @Test
     public void testSimple() {
         IvyVar task = new IvyVar();
         task.setProject(TestHelper.newProject());
@@ -34,6 +38,7 @@ public class IvyVarTest extends TestCase {
         assertEquals("myvalue", ivy.getVariable("mytest"));
     }
 
+    @Test
     public void testPrefix() {
         IvyVar task = new IvyVar();
         task.setProject(TestHelper.newProject());
@@ -46,6 +51,7 @@ public class IvyVarTest extends TestCase {
         assertEquals("myvalue", ivy.getVariable("myprefix.mytest"));
     }
 
+    @Test
     public void testURL() {
         IvyVar task = new IvyVar();
         task.setProject(TestHelper.newProject());
@@ -57,6 +63,7 @@ public class IvyVarTest extends TestCase {
         assertEquals("myvalue2", ivy.getVariable("mytest2"));
     }
 
+    @Test
     public void testURLPrefix() {
         IvyVar task = new IvyVar();
         task.setProject(TestHelper.newProject());

@@ -26,23 +26,21 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class VfsResourceTest extends TestCase {
+import static org.junit.Assert.fail;
+
+public class VfsResourceTest {
     private VfsTestHelper helper = null;
 
-    public VfsResourceTest() {
-        super();
-    }
-
-    public VfsResourceTest(String arg0) {
-        super(arg0);
-    }
-
+    @Before
     public void setUp() throws Exception {
         helper = new VfsTestHelper();
     }
 
+    @After
     public void tearDown() {
         helper = null;
     }
@@ -50,6 +48,8 @@ public class VfsResourceTest extends TestCase {
     /**
      * Validate VFSResource creation for a valid VFS URI pointing to an physically existing file
      */
+    @SuppressWarnings("unused")
+    @Test
     public void testCreateResourceThatExists() throws Exception {
         Iterator vfsURIs = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
         while (vfsURIs.hasNext()) {
@@ -89,7 +89,7 @@ public class VfsResourceTest extends TestCase {
      * Escape invalid URL characters (Copied from Wicket, just use StringUtils instead of Strings)
      * 
      * @param queryString
-     *            The orginal querystring
+     *            The original querystring
      * @return url The querystring with invalid characters escaped
      */
     private String escapeUrl(String queryString) {
@@ -109,6 +109,8 @@ public class VfsResourceTest extends TestCase {
      * Validating that resource can be created for files which don't physically exists - e.g.
      * resources that are going to created.
      */
+    @SuppressWarnings("unused")
+    @Test
     public void testCreateResourceThatDoesntExist() throws Exception {
         Iterator vfsURIs = helper.createVFSUriSet("zzyyxx.zzyyxx").iterator();
         while (vfsURIs.hasNext()) {
@@ -148,6 +150,8 @@ public class VfsResourceTest extends TestCase {
     /**
      * Validate VFSResource creation when given a poorly formed VFS identifier
      */
+    @SuppressWarnings("unused")
+    @Test
     public void testBadURI() throws Exception {
         String vfsURI = "smb1:/goobeldygook";
         VfsResource res = new VfsResource(vfsURI, helper.fsManager);
@@ -181,6 +185,7 @@ public class VfsResourceTest extends TestCase {
     /**
      * Validate getChildren when given a VFS URI for a directory
      */
+    @Test
     public void testListFolderChildren() throws Exception {
         final String testFolder = "2/mod10.1";
         final List expectedFiles = Arrays.asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml",
@@ -219,6 +224,7 @@ public class VfsResourceTest extends TestCase {
      * Validate that we don't get any results when we query a VFSResource file object for its
      * children
      */
+    @Test
     public void testListFileChildren() throws Exception {
         Iterator testSet = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
         while (testSet.hasNext()) {
@@ -235,6 +241,7 @@ public class VfsResourceTest extends TestCase {
      * Validate that we don't get any results if we ask an IMAGINARY VFSResource - a nonexistent
      * file - for a list of its children
      */
+    @Test
     public void testListImaginary() throws Exception {
         Iterator testSet = helper.createVFSUriSet("idontexistzzxx").iterator();
         while (testSet.hasNext()) {

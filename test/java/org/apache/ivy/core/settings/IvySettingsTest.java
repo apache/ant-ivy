@@ -23,10 +23,13 @@ import java.text.ParseException;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class IvySettingsTest extends TestCase {
+import static org.junit.Assert.*;
 
+public class IvySettingsTest {
+
+    @Test
     public void testChangeDefaultResolver() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault();
@@ -45,6 +48,7 @@ public class IvySettingsTest extends TestCase {
         assertEquals("resolver changed successfully", "public", newDefault.getName());
     }
 
+    @Test
     public void testVariables() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configureDefault();

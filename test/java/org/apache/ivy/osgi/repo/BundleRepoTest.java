@@ -36,16 +36,18 @@ import org.apache.ivy.osgi.obr.xml.OBRXMLWriter;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.tools.ant.BuildException;
+import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class BundleRepoTest extends TestCase {
+public class BundleRepoTest {
 
     private File bundlerepo = new File("test/test-repo/bundlerepo");
 
     private File ivyrepo = new File("test/test-repo/ivyrepo");
 
+    @Test
     public void testFS() throws Exception {
         FSManifestIterable it = new FSManifestIterable(bundlerepo);
         BundleRepoDescriptor repo = new BundleRepoDescriptor(bundlerepo.toURI(),
@@ -58,6 +60,7 @@ public class BundleRepoTest extends TestCase {
         assertEquals(repo, repo2);
     }
 
+    @Test
     public void testFileRepo() throws Exception {
         RepositoryManifestIterable it = new RepositoryManifestIterable(new FileRepository(
                 bundlerepo.getAbsoluteFile()));
@@ -71,6 +74,7 @@ public class BundleRepoTest extends TestCase {
         assertEquals(repo, repo2);
     }
 
+    @Test
     public void testResolver() throws Exception {
         FileSystemResolver fileSystemResolver = new FileSystemResolver();
         fileSystemResolver.setName("test");
@@ -90,6 +94,7 @@ public class BundleRepoTest extends TestCase {
         assertEquals(repo, repo2);
     }
 
+    @Test
     public void testXMLSerialisation() throws SAXException, ParseException, IOException {
         FSManifestIterable it = new FSManifestIterable(bundlerepo);
         BundleRepoDescriptor repo = new BundleRepoDescriptor(bundlerepo.toURI(),

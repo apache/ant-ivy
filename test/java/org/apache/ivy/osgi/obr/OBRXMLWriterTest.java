@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.osgi.obr;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,11 +36,12 @@ import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.CollectionUtils;
+
+import org.junit.Test;
+
 import org.xml.sax.ContentHandler;
 
-import junit.framework.TestCase;
-
-public class OBRXMLWriterTest extends TestCase {
+public class OBRXMLWriterTest {
 
     private static final Version BUNDLE_VERSION = new Version(1, 2, 3, null);
 
@@ -45,6 +49,7 @@ public class OBRXMLWriterTest extends TestCase {
 
     private static final String BUNDLE_2 = "org.apache.ivy.test2";
 
+    @Test
     public void testWriteWithSource() throws Exception {
         List<BundleInfo> bundles = new ArrayList<BundleInfo>();
 
@@ -61,8 +66,8 @@ public class OBRXMLWriterTest extends TestCase {
         File obrFile = new File("build/test-files/obr-sources.xml");
         FileOutputStream out = new FileOutputStream(obrFile);
         try {
-            ContentHandler hanlder = OBRXMLWriter.newHandler(out, "UTF-8", true);
-            OBRXMLWriter.writeBundles(bundles, hanlder);
+            ContentHandler handler = OBRXMLWriter.newHandler(out, "UTF-8", true);
+            OBRXMLWriter.writeBundles(bundles, handler);
         } finally {
             out.close();
         }

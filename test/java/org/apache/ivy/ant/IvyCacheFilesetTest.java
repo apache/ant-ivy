@@ -20,21 +20,32 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.FileSet;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-public class IvyCacheFilesetTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class IvyCacheFilesetTest {
 
     private IvyCacheFileset fileset;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -44,10 +55,12 @@ public class IvyCacheFilesetTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         fileset.setSetid("simple-setid");
@@ -76,6 +89,7 @@ public class IvyCacheFilesetTest extends TestCase {
             revision, artifact, type, ext);
     }
 
+    @Test
     public void testEmptyConf() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         fileset.setSetid("emptyconf-setid");
@@ -90,30 +104,24 @@ public class IvyCacheFilesetTest extends TestCase {
         assertEquals(0, directoryScanner.getIncludedFiles().length);
     }
 
+    @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            fileset.setSetid("failure-setid");
-            fileset.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raised an exception
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        fileset.setSetid("failure-setid");
+        fileset.execute();
+        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    @Test(expected = BuildException.class)
     public void testInvalidPattern() throws Exception {
-        try {
-            project.setProperty("ivy.settings.file",
-                "test/repositories/ivysettings-invalidcachepattern.xml");
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
-            fileset.setSetid("simple-setid");
-            fileset.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-invalidcachepattern.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        fileset.setSetid("simple-setid");
+        fileset.execute();
+        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    @Test
     public void testHaltOnFailure() throws Exception {
         try {
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
@@ -125,6 +133,7 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
+    @Test
     public void testWithoutPreviousResolveAndNonDefaultCache() throws Exception {
         File cache2 = new File("build/cache2");
         cache2.mkdirs();
@@ -152,6 +161,7 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetBaseDir() {
         File base = null;
         base = fileset.getBaseDir(base, new File("x/aa/b/c"));

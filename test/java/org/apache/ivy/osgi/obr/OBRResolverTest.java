@@ -53,10 +53,12 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class OBRResolverTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class OBRResolverTest {
 
     private static final ModuleRevisionId MRID_TEST_BUNDLE = ModuleRevisionId.newInstance(
         BundleInfo.BUNDLE_TYPE, "org.apache.ivy.osgi.testbundle", "1.2.3");
@@ -101,6 +103,7 @@ public class OBRResolverTest extends TestCase {
     private ExecutionEnvironmentProfileProvider profileProvider = ExecutionEnvironmentProfileProvider
             .getInstance();
 
+    @Before
     public void setUp() throws Exception {
         settings = new IvySettings();
 
@@ -148,25 +151,28 @@ public class OBRResolverTest extends TestCase {
 
         ivy.getResolutionCacheManager().clean();
         RepositoryCacheManager[] caches = settings.getRepositoryCacheManagers();
-        for (int i = 0; i < caches.length; i++) {
-            caches[i].clean();
+        for (RepositoryCacheManager cache : caches) {
+            cache.clean();
         }
 
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
     }
 
+    @Test
     public void testSimpleResolve() throws Exception {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy.osgi.testbundle", "1.2.3");
         genericTestResolveDownload(bundleResolver, mrid);
     }
 
+    @Test
     public void testSimpleUrlResolve() throws Exception {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy.osgi.testbundle", "1.2.3");
         genericTestResolveDownload(bundleUrlResolver, mrid);
     }
 
+    @Test
     public void testResolveDual() throws Exception {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy.osgi.testbundle", "1.2.3");
@@ -205,11 +211,13 @@ public class OBRResolverTest extends TestCase {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testResolveImporting() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing_3.2.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {MRID_TEST_BUNDLE});
     }
 
+    @Test
     public void testResolveImportingOptional() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.optional_3.2.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {});
@@ -218,6 +226,7 @@ public class OBRResolverTest extends TestCase {
             new ModuleRevisionId[] {MRID_TEST_BUNDLE});
     }
 
+    @Test
     public void testResolveImportingTransitiveOptional() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.transitiveoptional_3.2.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {});
@@ -227,39 +236,46 @@ public class OBRResolverTest extends TestCase {
                 MRID_TEST_BUNDLE, MRID_TEST_BUNDLE_IMPORTING_OPTIONAL});
     }
 
+    @Test
     public void testResolveImportingVersion() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.version_3.2.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {MRID_TEST_BUNDLE});
     }
 
+    @Test
     public void testResolveImportingRangeVersion() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.rangeversion_3.2.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {MRID_TEST_BUNDLE});
     }
 
+    @Test
     public void testResolveUse() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.use_2.2.2.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {});
     }
 
+    @Test
     public void testResolveImportingUse() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.use_3.2.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {MRID_TEST_BUNDLE_USE,
                 MRID_TEST_BUNDLE_IMPORTING, MRID_TEST_BUNDLE});
     }
 
+    @Test
     public void testResolveRequire() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.require_1.1.1.jar";
         genericTestResolve(jarName, "default", new ModuleRevisionId[] {MRID_TEST_BUNDLE,
                 MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }
 
+    @Test
     public void testResolveOptionalConf() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.require_1.1.1.jar";
         genericTestResolve(jarName, "optional", new ModuleRevisionId[] {MRID_TEST_BUNDLE,
                 MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }
 
+    @Test
     public void testResolveImportAmbiguity() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.ambiguity_3.2.1.jar";
         bundleResolver.setRequirementStrategy(RequirementStrategy.first);
@@ -268,12 +284,14 @@ public class OBRResolverTest extends TestCase {
                     MRID_TEST_BUNDLE, MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }
 
+    @Test
     public void testResolveImportNoAmbiguity() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.importing.ambiguity_3.2.1.jar";
         bundleResolver.setRequirementStrategy(RequirementStrategy.noambiguity);
         genericTestFailingResolve(jarName, "default");
     }
 
+    @Test
     public void testResolveRequireAmbiguity() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.require.ambiguity_1.1.1.jar";
         bundleResolver.setRequirementStrategy(RequirementStrategy.noambiguity);
@@ -281,6 +299,7 @@ public class OBRResolverTest extends TestCase {
                 MRID_TEST_BUNDLE_IMPORTING_VERSION});
     }
 
+    @Test
     public void testResolveRequireJre() throws Exception {
         String jarName = "org.apache.ivy.osgi.testbundle.requirejre_2.2.2.jar";
         bundleResolver.setRequirementStrategy(RequirementStrategy.noambiguity);
@@ -293,6 +312,7 @@ public class OBRResolverTest extends TestCase {
         genericTestResolve(jarName, conf, expectedMrids, null);
     }
 
+    @SuppressWarnings("resource")
     private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids,
             ModuleRevisionId[] expected2Mrids) throws Exception {
         Manifest manifest = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
@@ -319,7 +339,7 @@ public class OBRResolverTest extends TestCase {
                         Arrays.asList(expected2Mrids));
                 assertEquals(expected2, actual);
                 return; // test passed
-            } catch (AssertionFailedError e) {
+            } catch (AssertionError e) {
                 // too bad, let's continue
             }
         }

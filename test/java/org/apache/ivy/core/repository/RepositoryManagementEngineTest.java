@@ -25,24 +25,31 @@ import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class RepositoryManagementEngineTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class RepositoryManagementEngineTest {
     private RepositoryManagementEngine repository;
 
     private TestFixture fixture;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         fixture = new TestFixture();
         IvySettings settings = fixture.getSettings();
         repository = new RepositoryManagementEngine(settings, new SearchEngine(settings),
                 new ResolveEngine(settings, new EventManager(), new SortEngine(settings)));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         fixture.clean();
     }
 
+    @Test
     public void testLoad() throws Exception {
         fixture.addMD("o1#A;1").addMD("o1#A;2").addMD("o1#A;3").addMD("o1#B;1")
                 .addMD("o1#B;2->o1#A;2").addMD("o2#C;1->{o1#B;1 o1#A;1}").init();
@@ -52,6 +59,7 @@ public class RepositoryManagementEngineTest extends TestCase {
         assertEquals(6, repository.getRevisionsNumber());
     }
 
+    @Test
     public void testOrphans() throws Exception {
         fixture.addMD("o1#A;1").addMD("o1#A;2").addMD("o1#A;3").addMD("o1#B;1")
                 .addMD("o1#B;2->o1#A;2").addMD("o2#C;1->{o1#B;1 o1#A;1}").init();

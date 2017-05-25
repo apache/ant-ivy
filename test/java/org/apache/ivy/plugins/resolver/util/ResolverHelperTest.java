@@ -22,10 +22,14 @@ import java.util.Arrays;
 
 import org.apache.ivy.plugins.repository.file.FileRepository;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ResolverHelperTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+public class ResolverHelperTest {
+
+    @Test
     public void testListTokenValuesForIvy1238() {
         FileRepository rep = new FileRepository(new File(".").getAbsoluteFile());
         String[] revisions = ResolverHelper.listTokenValues(rep,

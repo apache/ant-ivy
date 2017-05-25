@@ -20,18 +20,26 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyArtifactPropertyTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+public class IvyArtifactPropertyTest {
 
     private IvyArtifactProperty prop;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -41,10 +49,12 @@ public class IvyArtifactPropertyTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         prop.setName("[module].[artifact]-[revision]");
@@ -56,6 +66,7 @@ public class IvyArtifactPropertyTest extends TestCase {
             new File(val).getCanonicalPath());
     }
 
+    @Test
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -80,6 +91,7 @@ public class IvyArtifactPropertyTest extends TestCase {
             new File(val).getCanonicalPath());
     }
 
+    @Test
     public void testWithResolveIdWithoutResolve() throws Exception {
         try {
             prop.setName("[module].[artifact]-[revision]");

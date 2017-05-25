@@ -17,15 +17,19 @@
  */
 package org.apache.ivy.plugins.latest;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class LatestRevisionStrategyTest extends TestCase {
+public class LatestRevisionStrategyTest {
+    @Test
     public void testComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
@@ -37,6 +41,7 @@ public class LatestRevisionStrategyTest extends TestCase {
         assertEquals(Arrays.asList(revs), shuffled);
     }
 
+    @Test
     public void testSort() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
@@ -51,6 +56,7 @@ public class LatestRevisionStrategyTest extends TestCase {
         assertEquals(Arrays.asList(revs), sorted);
     }
 
+    @Test
     public void testFindLatest() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
@@ -66,6 +72,7 @@ public class LatestRevisionStrategyTest extends TestCase {
         assertEquals("2.0", latest.getRevision());
     }
 
+    @Test
     public void testSpecialMeaningComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.1", "0.2-pre", "0.2-dev", "0.2-rc1",
                 "0.2-final", "0.2-QA", "1.0-dev1"});

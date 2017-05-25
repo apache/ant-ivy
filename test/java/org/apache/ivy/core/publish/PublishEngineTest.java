@@ -37,18 +37,27 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.FileUtil;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PublishEngineTest extends TestCase {
-    protected void setUp() throws Exception {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+public class PublishEngineTest {
+    @Before
+    public void setUp() {
         System.setProperty("ivy.cache.dir", new File("build/test/publish/cache").getAbsolutePath());
         FileUtil.forceDelete(new File("build/test/publish"));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(new File("build/test/publish"));
     }
 
+    @Test
     public void testAtomicity() throws Exception {
         IvySettings settings = new IvySettings();
         final PublishEngine engine = new PublishEngine(settings, new EventManager());

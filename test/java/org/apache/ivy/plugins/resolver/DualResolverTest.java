@@ -18,6 +18,8 @@
 package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 
@@ -33,6 +35,11 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 /**
  * Test for DualResolver
  */
@@ -45,7 +52,8 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
 
     private File _cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
@@ -54,6 +62,7 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         _settings.setDefaultCache(_cache);
     }
 
+    @Test
     public void testFromConf() throws Exception {
         new XmlSettingsParser(_settings).parse(DualResolverTest.class
                 .getResource("dualresolverconf.xml"));
@@ -75,29 +84,24 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         assertNull(dual.getArtifactResolver());
     }
 
-    public void testFromBadConf() throws Exception {
-        try {
-            new XmlSettingsParser(_settings).parse(DualResolverTest.class
-                    .getResource("dualresolverconf-bad.xml"));
-            fail("bad dual resolver configuration should raise exception");
-        } catch (Exception ex) {
-            // ok -> bad conf has raised an exception
-        }
+    @Test(expected = ParseException.class)
+    public void testFromBadConf() throws IOException, ParseException {
+        new XmlSettingsParser(_settings).parse(DualResolverTest.class
+                .getResource("dualresolverconf-bad.xml"));
+        fail("bad dual resolver configuration should raise exception");
     }
 
-    public void testBad() throws Exception {
+    @Test(expected = IllegalStateException.class)
+    public void testBad() throws ParseException {
         DualResolver dual = new DualResolver();
         dual.setIvyResolver(new IBiblioResolver());
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
                 ModuleRevisionId.newInstance("org", "mod", "rev"), false);
-        try {
-            dual.getDependency(dd, _data);
-            fail("bad dual resolver configuration should raise exception");
-        } catch (Exception ex) {
-            // ok -> should have raised an exception
-        }
+        dual.getDependency(dd, _data);
+        fail("bad dual resolver configuration should raise exception");
     }
 
+   @Test
     public void testResolve() throws Exception {
         DualResolver dual = new DualResolver();
         MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", true,
@@ -116,6 +120,7 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         assertTrue(artifactResolver.askedDeps.isEmpty());
     }
 
+    @Test
     public void testResolveFromArtifact() throws Exception {
         DualResolver dual = new DualResolver();
         MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", false,
@@ -134,6 +139,7 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), artifactResolver.askedDeps);
     }
 
+    @Test
     public void testResolveFail() throws Exception {
         DualResolver dual = new DualResolver();
         MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", false,

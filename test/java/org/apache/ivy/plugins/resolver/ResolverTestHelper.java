@@ -23,7 +23,7 @@ import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -31,8 +31,8 @@ import junit.framework.Assert;
 public class ResolverTestHelper {
     static void assertOrganisationEntries(DependencyResolver resolver, String[] orgNames,
             OrganisationEntry[] orgs) {
-        Assert.assertNotNull(orgs);
-        Assert.assertEquals(
+        assertNotNull(orgs);
+        assertEquals(
             "invalid organisation entries: unmatched number: expected: " + Arrays.asList(orgNames)
                     + " but was " + Arrays.asList(orgs), orgNames.length, orgs.length);
         assertOrganisationEntriesContains(resolver, orgNames, orgs);
@@ -40,23 +40,23 @@ public class ResolverTestHelper {
 
     static void assertOrganisationEntriesContains(DependencyResolver resolver, String[] orgNames,
             OrganisationEntry[] orgs) {
-        Assert.assertNotNull(orgs);
-        for (int i = 0; i < orgNames.length; i++) {
+        assertNotNull(orgs);
+        for (String orgName : orgNames) {
             boolean found = false;
-            for (int j = 0; j < orgs.length; j++) {
-                if (orgNames[i].equals(orgs[j].getOrganisation())) {
+            for (OrganisationEntry org : orgs) {
+                if (orgName.equals(org.getOrganisation())) {
                     found = true;
-                    Assert.assertEquals(resolver, orgs[j].getResolver());
+                    assertEquals(resolver, org.getResolver());
                 }
             }
-            Assert.assertTrue("organisation not found: " + orgNames[i], found);
+            assertTrue("organisation not found: " + orgName, found);
         }
     }
 
     static void assertModuleEntries(DependencyResolver resolver, OrganisationEntry org,
             String[] names, ModuleEntry[] mods) {
-        Assert.assertNotNull(mods);
-        Assert.assertEquals(
+        assertNotNull(mods);
+        assertEquals(
             "invalid module entries: unmatched number: expected: " + Arrays.asList(names)
                     + " but was " + Arrays.asList(mods), names.length, mods.length);
         assertModuleEntriesContains(resolver, org, names, mods);
@@ -64,24 +64,24 @@ public class ResolverTestHelper {
 
     static void assertModuleEntriesContains(DependencyResolver resolver, OrganisationEntry org,
             String[] names, ModuleEntry[] mods) {
-        Assert.assertNotNull(mods);
-        for (int i = 0; i < names.length; i++) {
+        assertNotNull(mods);
+        for (String name : names) {
             boolean found = false;
-            for (int j = 0; j < mods.length; j++) {
-                if (names[i].equals(mods[j].getModule())) {
+            for (ModuleEntry mod : mods) {
+                if (name.equals(mod.getModule())) {
                     found = true;
-                    Assert.assertEquals(resolver, mods[j].getResolver());
-                    Assert.assertEquals(org, mods[j].getOrganisationEntry());
+                    assertEquals(resolver, mod.getResolver());
+                    assertEquals(org, mod.getOrganisationEntry());
                 }
             }
-            Assert.assertTrue("module not found: " + names[i], found);
+            assertTrue("module not found: " + name, found);
         }
     }
 
     static void assertRevisionEntries(DependencyResolver resolver, ModuleEntry mod, String[] names,
             RevisionEntry[] revs) {
-        Assert.assertNotNull(revs);
-        Assert.assertEquals(
+        assertNotNull(revs);
+        assertEquals(
             "invalid revision entries: unmatched number: expected: " + Arrays.asList(names)
                     + " but was " + Arrays.asList(revs), names.length, revs.length);
         assertRevisionEntriesContains(resolver, mod, names, revs);
@@ -89,37 +89,37 @@ public class ResolverTestHelper {
 
     static void assertRevisionEntriesContains(DependencyResolver resolver, ModuleEntry mod,
             String[] names, RevisionEntry[] revs) {
-        Assert.assertNotNull(revs);
-        for (int i = 0; i < names.length; i++) {
+        assertNotNull(revs);
+        for (String name : names) {
             boolean found = false;
-            for (int j = 0; j < revs.length; j++) {
-                if (names[i].equals(revs[j].getRevision())) {
+            for (RevisionEntry rev : revs) {
+                if (name.equals(rev.getRevision())) {
                     found = true;
-                    Assert.assertEquals(resolver, revs[j].getResolver());
-                    Assert.assertEquals(mod, revs[j].getModuleEntry());
+                    assertEquals(resolver, rev.getResolver());
+                    assertEquals(mod, rev.getModuleEntry());
                 }
             }
-            Assert.assertTrue("revision not found: " + names[i], found);
+            assertTrue("revision not found: " + name, found);
         }
     }
 
     static OrganisationEntry getEntry(OrganisationEntry[] orgs, String name) {
-        for (int i = 0; i < orgs.length; i++) {
-            if (name.equals(orgs[i].getOrganisation())) {
-                return orgs[i];
+        for (OrganisationEntry org : orgs) {
+            if (name.equals(org.getOrganisation())) {
+                return org;
             }
         }
-        Assert.fail("organisation not found: " + name);
+        fail("organisation not found: " + name);
         return null; // for compilation only
     }
 
     static ModuleEntry getEntry(ModuleEntry[] mods, String name) {
-        for (int i = 0; i < mods.length; i++) {
-            if (name.equals(mods[i].getModule())) {
-                return mods[i];
+        for (ModuleEntry mod : mods) {
+            if (name.equals(mod.getModule())) {
+                return mod;
             }
         }
-        Assert.fail("module not found: " + name);
+        fail("module not found: " + name);
         return null; // for compilation only
     }
 

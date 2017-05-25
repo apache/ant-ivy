@@ -38,9 +38,13 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PublishEventsTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class PublishEventsTest {
 
     // maps ArtifactRevisionId to PublishTestCase instance.
     private HashMap expectedPublications;
@@ -82,9 +86,8 @@ public class PublishEventsTest extends TestCase {
 
     private PublishEngine publishEngine;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         // reset test case state.
         resetCounters();
 
@@ -134,9 +137,8 @@ public class PublishEventsTest extends TestCase {
         IvyContext.getContext().push(PublishEventsTest.class.getName(), this);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
+    @After
+    public void tearDown() {
         // reset test state.
         resetCounters();
 
@@ -173,6 +175,7 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test a simple artifact publish, without errors or overwrite settings.
      */
+    @Test
     public void testPublishNoOverwrite() throws IOException {
         // no modifications to input required for this case -- call out to the resolver, and verify
         // that
@@ -191,6 +194,7 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test a simple artifact publish, with overwrite set to true.
      */
+    @Test
     public void testPublishWithOverwrite() throws IOException {
         // we expect the overwrite settings to be passed through the event listeners and into the
         // publisher.
@@ -213,6 +217,7 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test an attempted publish with an invalid data file path.
      */
+    @Test
     public void testPublishMissingFile() throws IOException {
         // delete the datafile. the publish should fail
         // and the ivy artifact should still publish successfully.
@@ -237,6 +242,7 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test an attempted publish in which the target resolver throws an IOException.
      */
+    @Test
     public void testPublishWithException() {
         // set an error to be thrown during publication of the data file.
         this.publishError = new IOException("boom!");
@@ -347,9 +353,8 @@ public class PublishEventsTest extends TestCase {
                     assertEquals("event declares correct value for " + attributes[i], values[i],
                         event.getAttributes().get(attributes[i]));
                 }
-                // we test file separately, since it is hard to guaranteean exact path match, but we
-                // want
-                // to make sure that both paths point to the same canonical location on the
+                // we test file separately, since it is hard to guarantee an exact path match, but we
+                // want to make sure that both paths point to the same canonical location on the
                 // filesystem
                 String filePath = event.getAttributes().get("file").toString();
                 assertEquals("event declares correct value for file",

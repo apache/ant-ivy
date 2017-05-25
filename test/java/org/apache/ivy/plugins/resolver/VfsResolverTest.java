@@ -17,21 +17,31 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 public class VfsResolverTest extends AbstractDependencyResolverTest {
     VfsResolver resolver = null;
 
+    @Before
     public void setUp() {
         resolver = new VfsResolver();
     }
 
+    @After
     public void tearDown() {
         resolver = null;
     }
 
+    @Test
     public void testInit() {
         assertEquals(resolver.getClass(), VfsResolver.class);
     }
 
+    @Test
     public void testTypeName() {
         assertEquals(resolver.getTypeName(), "vfs");
     }

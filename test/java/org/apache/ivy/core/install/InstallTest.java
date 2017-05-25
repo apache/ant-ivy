@@ -26,11 +26,16 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class InstallTest extends TestCase {
+public class InstallTest {
 
+    @Test
     public void testSimple() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -42,6 +47,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    @Test
     public void testValidate() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -54,10 +60,12 @@ public class InstallTest extends TestCase {
                 .exists());
     }
 
+    @Test
     public void testMaven() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
 
+        @SuppressWarnings("unused")
         ResolveReport rr = ivy.install(ModuleRevisionId.newInstance("org.apache", "test", "1.0"),
             ivy.getSettings().getDefaultResolver().getName(), "install", new InstallOptions());
 
@@ -75,6 +83,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
 
+    @Test
     public void testNoValidate() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -87,6 +96,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar").exists());
     }
 
+    @Test
     public void testSimpleWithoutDefaultResolver() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
@@ -98,6 +108,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    @Test
     public void testDependencies() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -112,6 +123,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    @Test
     public void testLatestDependenciesNoDefaultResolver() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
@@ -128,6 +140,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
     }
 
+    @Test
     public void testLatestDependenciesDummyDefaultResolver() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-dummydefaultresolver.xml"));
@@ -144,6 +157,7 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
     }
 
+    @Test
     public void testNotTransitive() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -159,6 +173,7 @@ public class InstallTest extends TestCase {
         assertFalse(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    @Test
     public void testRegexpMatcher() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
@@ -185,11 +200,13 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
         cleanInstall();
     }

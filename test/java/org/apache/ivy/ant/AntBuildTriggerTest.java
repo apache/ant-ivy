@@ -23,9 +23,14 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Test;
 
-public class AntBuildTriggerTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class AntBuildTriggerTest {
+    @Test
     public void test() throws Exception {
         assertFalse(new File("test/triggers/ant-build/A/A.jar").exists());
 
@@ -39,7 +44,8 @@ public class AntBuildTriggerTest extends TestCase {
         assertTrue(new File("test/triggers/ant-build/local/A/A.jar").exists());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(new File("test/triggers/ant-build/local/A"));
         FileUtil.forceDelete(new File("test/triggers/ant-build/cache"));
     }

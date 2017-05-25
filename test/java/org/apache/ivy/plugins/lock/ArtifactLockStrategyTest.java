@@ -37,18 +37,25 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CopyProgressEvent;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class ArtifactLockStrategyTest extends TestCase {
-    protected void setUp() throws Exception {
+public class ArtifactLockStrategyTest {
+    @Before
+    public void setUp() {
         FileUtil.forceDelete(new File("build/test/cache"));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(new File("build/test/cache"));
     }
 
+    @Test
     public void testConcurrentResolve() throws Exception {
         // we use different settings because Ivy do not support multi thread resolve with the same
         // settings yet and this is not what this test is about: the focus of this test is running

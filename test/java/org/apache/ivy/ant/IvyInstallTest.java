@@ -21,19 +21,28 @@ import java.io.File;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyInstallTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
+public class IvyInstallTest {
     private File cache;
 
     private IvyInstall install;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         createCache();
         cleanInstall();
 
@@ -49,7 +58,8 @@ public class IvyInstallTest extends TestCase {
         cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         cleanCache();
         cleanInstall();
     }
@@ -63,6 +73,7 @@ public class IvyInstallTest extends TestCase {
         FileUtil.forceDelete(new File("build/test/install2"));
     }
 
+    @Test
     public void testInstallDummyDefault() {
         project.setProperty("ivy.settings.file",
             "test/repositories/ivysettings-dummydefaultresolver.xml");
@@ -84,6 +95,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
     }
 
+    @Test
     public void testInstallWithAnyType() {
         project.setProperty("ivy.settings.file",
             "test/repositories/ivysettings-dummydefaultresolver.xml");
@@ -99,6 +111,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());
     }
 
+    @Test
     public void testInstallWithMultipleType() {
         project.setProperty("ivy.settings.file",
             "test/repositories/ivysettings-dummydefaultresolver.xml");
@@ -117,6 +130,7 @@ public class IvyInstallTest extends TestCase {
     /**
      * Normal case; no confs set (should use the default->* configuration).
      */
+    @Test
     public void testInstallWithConfsDefaultSettings() {
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1313/ivysettings.xml");
         install.setOrganisation("org1");
@@ -136,6 +150,7 @@ public class IvyInstallTest extends TestCase {
     /**
      * Test retrieving artifacts under only the master and runtime configuration.
      */
+    @Test
     public void testInstallWithConfsRuntimeOnly() {
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1313/ivysettings.xml");
         install.setOrganisation("org1");
@@ -153,6 +168,7 @@ public class IvyInstallTest extends TestCase {
         assertFalse(new File("build/test/install/org1/mod3/jars/mod3-1.0.jar").exists());
     }
 
+    @Test
     public void testInstallWithClassifiers() throws Exception {
         // IVY-1324
         project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml")
@@ -175,6 +191,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org.apache/test-sources/ivy-1.0.xml").exists());
     }
 
+    @Test
     public void testInstallWithUnusedType() {
         project.setProperty("ivy.settings.file",
             "test/repositories/ivysettings-dummydefaultresolver.xml");
@@ -190,6 +207,7 @@ public class IvyInstallTest extends TestCase {
         assertFalse(new File("build/test/install/org8/mod8.1/a-1.1.txt").exists());
     }
 
+    @Test
     public void testInstallWithOriginalMetadata() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("org.apache");
@@ -219,6 +237,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
 
+    @Test
     public void testIVY843() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-IVY843.xml");
         install.setOrganisation("org1");
@@ -238,6 +257,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install2/org1/mod1.4/ivy-1.0.1.xml").exists());
     }
 
+    @Test
     public void testInstallWithBranch() {
         project.setProperty("ivy.settings.file", "test/repositories/branches/ivysettings.xml");
         install.setOrganisation("foo");
@@ -252,6 +272,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/foo/foo1/branch1/ivy-2.xml").exists());
     }
 
+    @Test
     public void testInstallWithNamespace() {
         project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
         install.setOrganisation("systemorg");
@@ -267,6 +288,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/systemorg/systemmod/ivy-1.0.xml").exists());
     }
 
+    @Test
     public void testInstallWithNamespace2() {
         project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
         install.setOrganisation("A");
@@ -284,6 +306,7 @@ public class IvyInstallTest extends TestCase {
         }
     }
 
+    @Test
     public void testInstallWithNamespace3() {
         project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
         install.setOrganisation("*");
@@ -299,6 +322,7 @@ public class IvyInstallTest extends TestCase {
         assertTrue(new File("build/test/install/systemorg/systemmod/ivy-1.0.xml").exists());
     }
 
+    @Test
     public void testDependencyNotFoundFailure() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("xxx");
@@ -315,6 +339,7 @@ public class IvyInstallTest extends TestCase {
         }
     }
 
+    @Test
     public void testDependencyNotFoundSuccess() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("xxx");

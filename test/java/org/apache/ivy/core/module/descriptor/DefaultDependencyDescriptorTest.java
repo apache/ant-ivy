@@ -18,18 +18,23 @@
 
 package org.apache.ivy.core.module.descriptor;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
 
-public class DefaultDependencyDescriptorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+public class DefaultDependencyDescriptorTest {
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(DefaultDependencyDescriptorTest.class);
+        JUnitCore.runClasses(DefaultDependencyDescriptorTest.class);
     }
 
     /*
      * Test method for
      * 'org.apache.ivy.DefaultDependencyDescriptor.replaceSelfFallbackPattern(String, String)'
      */
+    @Test
     public void testReplaceSelfFallbackPattern() {
         String replacedConf = DefaultDependencyDescriptor.replaceSelfFallbackPattern("@(default)",
             "compile");
@@ -47,6 +52,7 @@ public class DefaultDependencyDescriptorTest extends TestCase {
      * Test method for
      * 'org.apache.ivy.DefaultDependencyDescriptor.replaceThisFallbackPattern(String, String)'
      */
+    @Test
     public void testReplaceThisFallbackPattern() {
         String replacedConf = DefaultDependencyDescriptor.replaceThisFallbackPattern("#(default)",
             "compile");

@@ -26,16 +26,21 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.XMLHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.xml.sax.helpers.DefaultHandler;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class XmlReportWriterTest extends TestCase {
+public class XmlReportWriterTest {
     private Ivy _ivy;
 
     private File _cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         _ivy = new Ivy();
         _ivy.configure(new File("test/repositories/ivysettings.xml"));
         createCache();
@@ -46,7 +51,8 @@ public class XmlReportWriterTest extends TestCase {
         _cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         cleanCache();
     }
 
@@ -54,6 +60,7 @@ public class XmlReportWriterTest extends TestCase {
         CacheCleaner.deleteDir(_cache);
     }
 
+    @Test
     public void testWriteOrigin() throws Exception {
         ResolveReport report = _ivy.resolve(new File(
                 "test/repositories/1/special-encoding-root-ivy.xml"),
@@ -73,16 +80,17 @@ public class XmlReportWriterTest extends TestCase {
         String expectedOrg = "organisation=\"sp\u00E9cial\"";
 
         assertTrue("XML doesn't contain artifact location attribute",
-            xml.indexOf(expectedLocation) != -1);
+                xml.contains(expectedLocation));
         assertTrue("XML doesn't contain artifact is-local attribute",
-            xml.indexOf(expectedIsLocal) != -1);
-        assertTrue("XML doesn't contain the organisation", xml.indexOf(expectedOrg) != -1);
+                xml.contains(expectedIsLocal));
+        assertTrue("XML doesn't contain the organisation", xml.contains(expectedOrg));
 
         // check that the XML is valid
         XMLHelper.parse(new ByteArrayInputStream(buffer.toByteArray()), null, new DefaultHandler(),
             null);
     }
 
+    @Test
     public void testEscapeXml() throws Exception {
         _ivy.configure(new File("test/repositories/IVY-635/ivysettings.xml"));
         ResolveReport report = _ivy.resolve(new File(
@@ -98,9 +106,10 @@ public class XmlReportWriterTest extends TestCase {
 
         String expectedArtName = "art1&amp;_.txt";
 
-        assertTrue("XML doesn't contain escaped artifact name", xml.indexOf(expectedArtName) != -1);
+        assertTrue("XML doesn't contain escaped artifact name", xml.contains(expectedArtName));
     }
 
+    @Test
     public void testWriteModuleInfo() throws Exception {
         ResolveReport report = _ivy.resolve(new File(
                 "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),
@@ -119,11 +128,11 @@ public class XmlReportWriterTest extends TestCase {
         String extra1Attribute = "extra-blabla=\"abc\"";
         String extra2Attribute = "extra-blabla2=\"123\"";
 
-        assertTrue("XML doesn't contain organisation attribute", xml.indexOf(orgAttribute) != -1);
-        assertTrue("XML doesn't contain module attribute", xml.indexOf(modAttribute) != -1);
-        assertTrue("XML doesn't contain revision attribute", xml.indexOf(revAttribute) != -1);
-        assertTrue("XML doesn't contain extra attribute 1", xml.indexOf(extra1Attribute) != -1);
-        assertTrue("XML doesn't contain extra attribute 2", xml.indexOf(extra2Attribute) != -1);
+        assertTrue("XML doesn't contain organisation attribute", xml.contains(orgAttribute));
+        assertTrue("XML doesn't contain module attribute", xml.contains(modAttribute));
+        assertTrue("XML doesn't contain revision attribute", xml.contains(revAttribute));
+        assertTrue("XML doesn't contain extra attribute 1", xml.contains(extra1Attribute));
+        assertTrue("XML doesn't contain extra attribute 2", xml.contains(extra2Attribute));
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {

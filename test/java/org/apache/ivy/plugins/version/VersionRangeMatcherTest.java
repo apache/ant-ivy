@@ -19,12 +19,14 @@ package org.apache.ivy.plugins.version;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class VersionRangeMatcherTest extends TestCase {
-    VersionMatcher vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
+public class VersionRangeMatcherTest {
+    final VersionMatcher vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
 
+    @Test
     public void testMavenExcludeParenthesis() throws Exception {
         assertAccept("[3.8,4.0)", "3.7", false);
         assertAccept("[3.8,4.0)", "3.8", true);
@@ -45,6 +47,7 @@ public class VersionRangeMatcherTest extends TestCase {
         assertAccept("(3.8,4.0)", "4.1", false);
     }
 
+    @Test
     public void testDynamic() {
         assertDynamic("lastest.integration", false);
         assertDynamic("[1.0]", false);
@@ -86,6 +89,7 @@ public class VersionRangeMatcherTest extends TestCase {
         assertDynamic("( , 1.0 ]", true);
     }
 
+    @Test
     public void testIncludingFinite() {
         assertAccept("[1.0,2.0]", "1.1", true);
         assertAccept("[1.0,2.0]", "0.9", false);
@@ -100,6 +104,7 @@ public class VersionRangeMatcherTest extends TestCase {
         assertAccept("[ 1.0 , 2.0 ]", "2.0", true);
     }
 
+    @Test
     public void testExcludingFinite() {
         assertAccept("]1.0,2.0[", "1.1", true);
         assertAccept("]1.0,2.0[", "0.9", false);
@@ -114,6 +119,7 @@ public class VersionRangeMatcherTest extends TestCase {
         assertAccept("]1.0,2.0]", "2.0", true);
     }
 
+    @Test
     public void testIncludingInfinite() {
         assertAccept("[1.0,)", "1.1", true);
         assertAccept("[1.0,)", "2.0", true);
@@ -135,6 +141,7 @@ public class VersionRangeMatcherTest extends TestCase {
         assertAccept("[ 1.0, )", "1.0", true);
     }
 
+    @Test
     public void testExcludingInfinite() {
         assertAccept("]1.0,)", "1.1", true);
         assertAccept("]1.0,)", "2.0", true);

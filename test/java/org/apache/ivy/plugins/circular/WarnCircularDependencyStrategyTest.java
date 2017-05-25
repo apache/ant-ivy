@@ -27,15 +27,18 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class WarnCircularDependencyStrategyTest extends TestCase {
+public class WarnCircularDependencyStrategyTest {
     private CircularDependencyStrategy strategy;
 
     private MockMessageLogger mockMessageImpl;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         strategy = WarnCircularDependencyStrategy.getInstance();
 
         resetLogger();
@@ -46,12 +49,14 @@ public class WarnCircularDependencyStrategyTest extends TestCase {
         Message.setDefaultLogger(mockMessageImpl);
     }
 
+    @Test
     public void testLog() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.0, #B;1.0"));
 
         mockMessageImpl.assertLogWarningContains("circular dependency found: #A;1.0->#B;1.0");
     }
 
+    @Test
     public void testRemoveDuplicates() throws Exception {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
@@ -60,6 +65,7 @@ public class WarnCircularDependencyStrategyTest extends TestCase {
         assertEquals(1, mockMessageImpl.getLogs().size());
     }
 
+    @Test
     public void testRemoveDuplicates2() throws Exception {
         setResolveContext("1");
         resetLogger();

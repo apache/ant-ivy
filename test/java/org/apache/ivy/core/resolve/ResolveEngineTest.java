@@ -30,15 +30,22 @@ import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.CacheCleaner;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ResolveEngineTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class ResolveEngineTest {
 
     private Ivy ivy;
 
     private File cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         cache = new File("build/cache");
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
         createCache();
@@ -47,10 +54,12 @@ public class ResolveEngineTest extends TestCase {
         ivy.configure(new File("test/repositories/ivysettings.xml"));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Test
     public void testInlineResolveWithNonExistingModule() throws Exception {
         ResolveEngine engine = new ResolveEngine(ivy.getSettings(), ivy.getEventManager(),
                 ivy.getSortEngine());
@@ -65,6 +74,7 @@ public class ResolveEngineTest extends TestCase {
         assertTrue(report.hasError());
     }
 
+    @Test
     public void testLocateThenDownload() throws Exception {
         ResolveEngine engine = new ResolveEngine(ivy.getSettings(), ivy.getEventManager(),
                 ivy.getSortEngine());

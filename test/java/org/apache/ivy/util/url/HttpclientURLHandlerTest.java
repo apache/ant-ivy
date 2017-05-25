@@ -23,33 +23,43 @@ import java.net.URL;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test HttpClientHandler
  */
-public class HttpclientURLHandlerTest extends TestCase {
+public class HttpclientURLHandlerTest {
     // remote.test
     private File testDir;
 
     private HttpClientHandler handler;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         testDir = new File("build/HttpclientURLHandlerTest");
         testDir.mkdirs();
 
         handler = new HttpClientHandler();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(testDir);
     }
 
+    @Test
     public void testIsReachable() throws Exception {
         assertTrue(handler.isReachable(new URL("http://www.google.fr/")));
         assertFalse(handler.isReachable(new URL("http://www.google.fr/unknownpage.html")));
     }
 
+    @Test
     public void testGetURLInfo() throws Exception {
         // IVY-390
         URLHandler handler = new HttpClientHandler();
@@ -60,6 +70,7 @@ public class HttpclientURLHandlerTest extends TestCase {
         assertEquals(URLHandler.UNAVAILABLE, info);
     }
 
+    @Test
     public void testContentEncoding() throws Exception {
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html"), new File(
                 testDir, "gzip.txt"));

@@ -17,14 +17,22 @@
  */
 package org.apache.ivy.plugins.matcher;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.regex.PatternSyntaxException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
  */
 public class ExactOrRegexpPatternMatcherTest extends AbstractPatternMatcherTest {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         setUp(new ExactOrRegexpPatternMatcher());
     }
 
@@ -36,6 +44,7 @@ public class ExactOrRegexpPatternMatcherTest extends AbstractPatternMatcherTest 
         return new String[] {"abc+", "12.3", "abc-123*", "abc_123\\d"};
     }
 
+    @Test(expected = PatternSyntaxException.class)
     public void testImplementation() {
         Matcher matcher = patternMatcher.getMatcher(".");
         assertFalse(matcher.isExact());
@@ -54,11 +63,7 @@ public class ExactOrRegexpPatternMatcherTest extends AbstractPatternMatcherTest 
         matcher = patternMatcher.getMatcher("abc-123_ABC");
         assertTrue(matcher.isExact());
 
-        try {
-            matcher = patternMatcher.getMatcher("(");
-            fail("Should fail on invalid regexp syntax");
-        } catch (PatternSyntaxException e) {
-
-        }
+        matcher = patternMatcher.getMatcher("(");
+        fail("Should fail on invalid regexp syntax");
     }
 }

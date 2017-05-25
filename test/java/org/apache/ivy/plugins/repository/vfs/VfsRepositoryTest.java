@@ -23,7 +23,12 @@ import java.util.Iterator;
 
 import org.apache.ivy.util.FileUtil;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Testing Testing was the single biggest hurdle I faced. I have tried to provide a complete test
@@ -40,19 +45,15 @@ import junit.framework.TestCase;
  * (http://jsystemtest.sourceforge.net/) in other projects and am finding it a much better solution
  * than straight junit. Stephen Nesbitt
  */
-public class VfsRepositoryTest extends TestCase {
+public class VfsRepositoryTest {
     private VfsRepository repo = null;
 
     private VfsTestHelper helper = null;
 
     private File scratchDir = null;
 
-    public VfsRepositoryTest(String arg0) throws Exception {
-        super(arg0);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         helper = new VfsTestHelper();
         repo = new VfsRepository();
         scratchDir = new File(FileUtil.concat(VfsTestHelper.TEST_REPO_DIR,
@@ -60,8 +61,8 @@ public class VfsRepositoryTest extends TestCase {
         scratchDir.mkdir();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() {
         repo = null;
         if (scratchDir.exists()) {
             FileUtil.forceDelete(scratchDir);
@@ -73,6 +74,7 @@ public class VfsRepositoryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testPutValid() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         String srcFile = FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, testResource);
@@ -104,6 +106,7 @@ public class VfsRepositoryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testPutOverwriteTrue() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         String srcFile = FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, testResource);
@@ -144,6 +147,7 @@ public class VfsRepositoryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testPutOverwriteFalse() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         String srcFile = FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, testResource);
@@ -169,6 +173,7 @@ public class VfsRepositoryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testGetNoExisting() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         String testFile = FileUtil.concat(scratchDir.getAbsolutePath(), testResource);
@@ -198,6 +203,7 @@ public class VfsRepositoryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testGetOverwriteExisting() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         File testFile = new File(FileUtil.concat(scratchDir.getAbsolutePath(), testResource));
@@ -233,6 +239,7 @@ public class VfsRepositoryTest extends TestCase {
      * Validate that we get a non null Resource instance when passed a well-formed VfsURI pointing
      * to an existing file
      */
+    @Test
     public void testGetResourceValidExist() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
 
@@ -253,6 +260,7 @@ public class VfsRepositoryTest extends TestCase {
      * Validate that we get a non null Resource instance when passed a well-formed VfsURI pointing
      * to a non-existent file.
      */
+    @Test
     public void testGetResourceValidNoExist() throws Exception {
         String testResource = VfsTestHelper.SCRATCH_DIR + "/nosuchfile.jar";
 

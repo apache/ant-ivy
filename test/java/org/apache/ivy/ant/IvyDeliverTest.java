@@ -35,18 +35,25 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyDeliverTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class IvyDeliverTest {
 
     private IvyDeliver deliver;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         cleanTestDir();
         cleanRetrieveDir();
         cleanRep();
@@ -61,7 +68,8 @@ public class IvyDeliverTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
         cleanTestDir();
         cleanRetrieveDir();
@@ -89,6 +97,7 @@ public class IvyDeliverTest extends TestCase {
         del.execute();
     }
 
+   @Test
     public void testMergeParent() throws IOException, ParseException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
@@ -148,6 +157,7 @@ public class IvyDeliverTest extends TestCase {
         }
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
@@ -173,6 +183,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDynamicConstraintDependencyRevisionId());
     }
 
+    @Test
     public void testNotGenerateRevConstraint() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
@@ -199,6 +210,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDynamicConstraintDependencyRevisionId());
     }
 
+    @Test
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -230,6 +242,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testWithResolveIdInAnotherBuild() throws Exception {
         // create a new build
         Project other = TestHelper.newProject();
@@ -267,6 +280,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testReplaceBranchInfo() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
@@ -287,6 +301,7 @@ public class IvyDeliverTest extends TestCase {
             md.getModuleRevisionId());
     }
 
+    @Test
     public void testWithBranch() throws Exception {
         // test case for IVY-404
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-branch.xml");
@@ -311,6 +326,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testReplaceBranch() throws Exception {
         IvyConfigure settings = new IvyConfigure();
         settings.setProject(project);
@@ -346,6 +362,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDynamicConstraintDependencyRevisionId());
     }
 
+    @Test
     public void testWithExtraAttributes() throws Exception {
         // test case for IVY-415
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
@@ -374,6 +391,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testWithDynEvicted() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-dyn-evicted.xml");
         IvyResolve res = new IvyResolve();
@@ -419,6 +437,7 @@ public class IvyDeliverTest extends TestCase {
             expectedFileSet, actualFileSet);
     }
 
+    @Test
     public void testWithDynEvicted2() throws Exception {
         // same as previous but dynamic dependency is placed after the one causing the conflict
         // test case for IVY-707
@@ -467,6 +486,7 @@ public class IvyDeliverTest extends TestCase {
         list.delete();
     }
 
+    @Test
     public void testReplaceImportedConfigurations() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-import-confs.xml");
         IvyResolve res = new IvyResolve();
@@ -483,11 +503,12 @@ public class IvyDeliverTest extends TestCase {
         String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(
                 deliveredIvyFile)));
         assertTrue("import not replaced: import can still be found in file",
-            deliveredFileContent.indexOf("import") == -1);
+                !deliveredFileContent.contains("import"));
         assertTrue("import not replaced: conf1 cannot be found in file",
-            deliveredFileContent.indexOf("conf1") != -1);
+                deliveredFileContent.contains("conf1"));
     }
 
+    @Test
     public void testReplaceVariables() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-with-variables.xml");
         IvyResolve res = new IvyResolve();
@@ -506,11 +527,12 @@ public class IvyDeliverTest extends TestCase {
         String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(
                 deliveredIvyFile)));
         assertTrue("variable not replaced: myvar can still be found in file",
-            deliveredFileContent.indexOf("myvar") == -1);
+                !deliveredFileContent.contains("myvar"));
         assertTrue("variable not replaced: myvalue cannot be found in file",
-            deliveredFileContent.indexOf("myvalue") != -1);
+                deliveredFileContent.contains("myvalue"));
     }
 
+    @Test
     public void testNoReplaceDynamicRev() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
@@ -535,6 +557,7 @@ public class IvyDeliverTest extends TestCase {
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testDifferentRevisionsForSameModule() throws Exception {
         project.setProperty("ivy.dep.file",
             "test/java/org/apache/ivy/ant/ivy-different-revisions.xml");

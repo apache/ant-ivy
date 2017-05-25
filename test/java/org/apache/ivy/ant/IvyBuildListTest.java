@@ -24,16 +24,23 @@ import java.util.List;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 // CheckStyle:MagicNumber| OFF
 // The test very often use MagicNumber. Using a constant is less expressive.
 
-public class IvyBuildListTest extends TestCase {
+public class IvyBuildListTest {
 
     private File cache;
 
@@ -41,7 +48,8 @@ public class IvyBuildListTest extends TestCase {
 
     private IvyBuildList buildlist;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         createCache();
 
         project = TestHelper.newProject();
@@ -53,7 +61,8 @@ public class IvyBuildListTest extends TestCase {
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         cleanCache();
     }
 
@@ -92,6 +101,7 @@ public class IvyBuildListTest extends TestCase {
      * C B has no dependency C -> B D -> A , B E has no dependency F -> G G -> F
      */
 
+    @Test
     public void testSimple() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -108,6 +118,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D", "E"}, files);
     }
 
+    @Test
     public void testReverse() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -125,6 +136,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"E", "D", "A", "C", "B"}, files);
     }
 
+    @Test
     public void testWithRoot() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -142,6 +154,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"B", "C"}, files);
     }
 
+    @Test
     public void testWithRootCircular() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -156,6 +169,7 @@ public class IvyBuildListTest extends TestCase {
         assertEquals(2, files.length); // F and G should be in the list
     }
 
+    @Test
     public void testWithTwoRoots() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -173,6 +187,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"B", "C", "E"}, files);
     }
 
+    @Test
     public void testWithRootExclude() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -191,6 +206,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"B"}, files);
     }
 
+    @Test
     public void testWithRootAndOnlyDirectDep() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -209,6 +225,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"C", "A"}, files);
     }
 
+    @Test
     public void testWithLeaf() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -226,6 +243,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"C", "A", "D"}, files);
     }
 
+    @Test
     public void testWithLeafCircular() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -240,6 +258,7 @@ public class IvyBuildListTest extends TestCase {
         assertEquals(2, files.length);
     }
 
+    @Test
     public void testWithTwoLeafs() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -257,6 +276,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"C", "A", "D", "E"}, files);
     }
 
+    @Test
     public void testWithLeafExclude() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -275,6 +295,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"A", "D"}, files);
     }
 
+    @Test
     public void testWithLeafAndOnlyDirectDep() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -293,6 +314,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"C", "A"}, files);
     }
 
+    @Test
     public void testRestartFrom() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -310,6 +332,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"C", "A", "D", "E"}, files);
     }
 
+    @Test
     public void testOnMissingDescriptor() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -326,6 +349,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D", "E", "H"}, files);
     }
 
+    @Test
     public void testOnMissingDescriptor2() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -342,6 +366,7 @@ public class IvyBuildListTest extends TestCase {
         assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D", "E"}, files);
     }
 
+    @Test
     public void testWithModuleWithSameNameAndDifferentOrg() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -368,6 +393,7 @@ public class IvyBuildListTest extends TestCase {
             other.get(1));
     }
 
+    @Test
     public void testNoParents() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlists/testNoParents"));
@@ -385,6 +411,7 @@ public class IvyBuildListTest extends TestCase {
                 "ireland", "germany", "master-parent", "croatia"}, files);
     }
 
+    @Test
     public void testOneParent() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlists/testOneParent"));
@@ -402,6 +429,7 @@ public class IvyBuildListTest extends TestCase {
                 "master-parent", "croatia", "ireland", "germany"}, files);
     }
 
+    @Test
     public void testTwoParents() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlists/testTwoParents"));
@@ -419,6 +447,7 @@ public class IvyBuildListTest extends TestCase {
                 "master-parent", "croatia", "ireland", "germany"}, files);
     }
 
+    @Test
     public void testRelativePathToParent() {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlists/testRelativePathToParent"));
@@ -436,6 +465,7 @@ public class IvyBuildListTest extends TestCase {
                 "bootstrap-parent", "master-parent", "croatia", "ireland", "germany"}, files);
     }
 
+    @Test
     public void testAbsolutePathToParent() {
         project.setProperty("master-parent.dir", new File(
                 "test/buildlists/testAbsolutePathToParent/master-parent").getAbsolutePath());

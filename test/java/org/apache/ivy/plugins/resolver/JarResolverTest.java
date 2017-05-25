@@ -30,10 +30,13 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.util.CacheCleaner;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
-public class JarResolverTest extends TestCase {
+public class JarResolverTest {
 
     private IvySettings settings;
 
@@ -43,9 +46,11 @@ public class JarResolverTest extends TestCase {
 
     private ResolveData data;
 
+    @SuppressWarnings("unused")
     private DefaultRepositoryCacheManager cacheManager;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         cache = new File("build/cache");
@@ -55,10 +60,12 @@ public class JarResolverTest extends TestCase {
         cacheManager = (DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Test
     public void testSimpleFile() throws Exception {
         JarResolver resolver = new JarResolver();
         resolver.setName("jarresolver1");
@@ -73,6 +80,7 @@ public class JarResolverTest extends TestCase {
         assertNotNull(rmr);
     }
 
+    @Test
     public void testSubdirInFile() throws Exception {
         JarResolver resolver = new JarResolver();
         resolver.setName("jarresolver1_subdir");
@@ -87,6 +95,7 @@ public class JarResolverTest extends TestCase {
         assertNotNull(rmr);
     }
 
+    @Test
     public void testUrl() throws Exception {
         JarResolver resolver = new JarResolver();
         resolver.setName("jarresolver1");

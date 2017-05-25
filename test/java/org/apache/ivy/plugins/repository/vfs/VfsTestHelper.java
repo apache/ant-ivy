@@ -73,7 +73,7 @@ public class VfsTestHelper {
      * 
      * @param resource
      *            name of the resource
-     * @return <class>List</class> of well-formed VFS reosurce identifiers
+     * @return <class>List</class> of well-formed VFS resource identifiers
      */
     public List createVFSUriSet(String resource) {
         List set = new ArrayList();

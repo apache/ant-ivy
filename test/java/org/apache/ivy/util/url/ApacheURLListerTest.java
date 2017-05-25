@@ -21,18 +21,23 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link ApacheURLLister}.
  */
-public class ApacheURLListerTest extends TestCase {
+public class ApacheURLListerTest {
 
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
      * 
      * @throws Exception
      */
+    @Test
     public void testRetrieveListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
@@ -62,6 +67,7 @@ public class ApacheURLListerTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testRetrieveListingWithSpaces() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
@@ -71,6 +77,7 @@ public class ApacheURLListerTest extends TestCase {
         assertTrue(files.size() > 0);
     }
 
+    @Test
     public void testRetrieveArtifactoryListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
@@ -80,6 +87,7 @@ public class ApacheURLListerTest extends TestCase {
         assertEquals(1, files.size());
     }
 
+   @Test
     public void testRetrieveArchivaListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
@@ -91,6 +99,7 @@ public class ApacheURLListerTest extends TestCase {
         // assertEquals(3, d.size());
     }
 
+    @Test
     public void testRetrieveFixedArchivaListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
@@ -100,6 +109,7 @@ public class ApacheURLListerTest extends TestCase {
         assertEquals(3, d.size());
     }
 
+    @Test
     public void testRetrieveMavenProxyListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 

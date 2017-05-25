@@ -47,6 +47,11 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -60,7 +65,8 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData _data;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _data = new ResolveData(_engine, new ResolveOptions());
@@ -68,10 +74,12 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         _settings.setDefaultCache(TestHelper.cache);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testDefaults() {
         IBiblioResolver resolver = new IBiblioResolver();
         _settings.setVariable("ivy.ibiblio.default.artifact.root",
@@ -86,6 +94,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
             l.get(0));
     }
 
+    @Test
     public void testInitFromConf() throws Exception {
         _settings.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/maven/");
         _settings.setVariable("ivy.ibiblio.default.artifact.pattern",
@@ -149,6 +158,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
             l.get(0));
     }
 
+    @Test
     public void testIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -193,6 +203,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testMaven2Listing() throws Exception {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setName("test");
@@ -227,6 +238,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals("commons-lang", values[0]);
     }
 
+    @Test
     public void testErrorReport() throws Exception {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setRoot("http://unknown.host.comx/");
@@ -250,6 +262,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
                 .assertLogContains("tried http://unknown.host.comx/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
     }
 
+    @Test
     public void testIBiblioArtifacts() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -313,6 +326,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testUnknown() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {

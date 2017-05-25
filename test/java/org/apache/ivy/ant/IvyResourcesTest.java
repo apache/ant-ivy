@@ -24,17 +24,25 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.resources.FileResource;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyResourcesTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class IvyResourcesTest {
 
     private IvyResources resources;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -44,7 +52,8 @@ public class IvyResourcesTest extends TestCase {
         resources.setProject(project);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
@@ -69,6 +78,7 @@ public class IvyResourcesTest extends TestCase {
         return resources;
     }
 
+    @Test
     public void testSimple() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -81,6 +91,7 @@ public class IvyResourcesTest extends TestCase {
             files.get(0));
     }
 
+    @Test
     public void testMultiple() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -106,6 +117,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testMultipleWithConf() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -128,6 +140,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testMultipleWithConf2() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -152,6 +165,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testExclude() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -178,6 +192,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testDependencyExclude() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -203,6 +218,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testDependencyInclude() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -225,6 +241,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testFail() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");

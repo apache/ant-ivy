@@ -52,12 +52,16 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
     private IvySettings settings = null;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() {
         Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_WARN));
 
         this.settings = new IvySettings();
@@ -65,6 +69,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         settings.setDefaultCache(new File("build/cache"));
     }
 
+    @Test
     public void testSimple() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-simple.xml"), true);
@@ -87,6 +92,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, md.getDependencies().length);
     }
 
+    @Test
     public void testNamespaces() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-namespaces.xml"), true);
@@ -102,6 +108,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("http://ant.apache.org/ivy/extra", md.getExtraAttributesNamespaces().get("e"));
     }
 
+    @Test
     public void testEmptyDependencies() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-empty-dependencies.xml"), true);
@@ -124,6 +131,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, md.getDependencies().length);
     }
 
+    @Test
     public void testBad() throws IOException {
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -132,11 +140,13 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         } catch (ParseException ex) {
             if (XMLHelper.canUseSchemaValidation()) {
                 assertTrue("exception message not explicit. It should contain 'modul', but it's:"
-                        + ex.getMessage(), ex.getMessage().indexOf("'modul'") != -1);
+                        + ex.getMessage(),
+                    ex.getMessage().contains("'modul'"));
             }
         }
     }
 
+    @Test
     public void testBadOrg() throws IOException {
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -147,11 +157,12 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         } catch (ParseException ex) {
             if (XMLHelper.canUseSchemaValidation()) {
                 assertTrue("invalid exception: " + ex.getMessage(),
-                    ex.getMessage().indexOf("organization") != -1);
+                    ex.getMessage().contains("organization"));
             }
         }
     }
 
+    @Test
     public void testBadConfs() throws IOException {
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -160,10 +171,11 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         } catch (ParseException ex) {
             ex.printStackTrace();
             assertTrue("invalid exception: " + ex.getMessage(),
-                ex.getMessage().indexOf("invalidConf") != -1);
+                ex.getMessage().contains("invalidConf"));
         }
     }
 
+    @Test
     public void testCyclicConfs() throws IOException {
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -171,7 +183,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
             assertTrue("invalid exception: " + ex.getMessage(),
-                ex.getMessage().indexOf("A => B => A") != -1);
+                ex.getMessage().contains("A => B => A"));
         }
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -179,25 +191,25 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
             assertTrue("invalid exception: " + ex.getMessage(),
-                ex.getMessage().indexOf("A => C => B => A") != -1);
+                ex.getMessage().contains("A => C => B => A"));
         }
     }
 
+    @Test
     public void testNoValidate() throws IOException, ParseException {
         XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-novalidate.xml"), false);
     }
 
-    public void testBadVersion() throws IOException {
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+    @Test(expected = ParseException.class)
+    public void testBadVersion() throws IOException, ParseException {
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-bad-version.xml"), true);
-            fail("bad version ivy file raised no error");
-        } catch (ParseException ex) {
-            // ok
-        }
+        fail("bad version ivy file raised no error");
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test.xml"), true);
@@ -491,6 +503,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(rules[1].getConfigurations()));
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
     public void testFullNoValidation() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test.xml"), false);
@@ -499,6 +513,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
     public void testExtraInfos() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extrainfo.xml"), true);
@@ -520,6 +536,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, secondExtraInfoElement.getNestedExtraInfoHolder().size());
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
     public void testExtraInfosNested() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extrainfo-nested.xml"), true);
@@ -555,6 +573,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, yetAnotherExtraInfoElement.getNestedExtraInfoHolder().size());
     }
 
+    @Test
     public void testBug60() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-bug60.xml"), true);
@@ -572,6 +591,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertArtifacts(md.getArtifacts("default"), new String[] {"myartifact1", "myartifact2"});
     }
 
+    @Test
     public void testNoArtifact() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-noartifact.xml"), true);
@@ -592,6 +612,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, md.getDependencies().length);
     }
 
+    @Test
     public void testNoPublication() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-nopublication.xml"), true);
@@ -614,6 +635,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(1, md.getDependencies().length);
     }
 
+    @Test
     public void testArtifactsDefaults() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-artifacts-defaults.xml"), true);
@@ -632,6 +654,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 + "/" + artifact.getExt());
     }
 
+    @Test
     public void testDefaultConfWithDefaultConfMapping() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-defaultconf-withdefaultconfmapping.xml"), true);
@@ -662,6 +685,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("test")));
     }
 
+    @Test
     public void testDefaultConf() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-defaultconf.xml"), true);
@@ -691,6 +715,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("default")));
     }
 
+    @Test
     public void testDefaultConf2() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-defaultconf2.xml"), true);
@@ -723,6 +748,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("test")));
     }
 
+    @Test
     public void testPublicationDefaultConf() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-publication-defaultconf.xml"), true);
@@ -741,6 +767,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(1, artifacts.length);
     }
 
+    @Test
     public void testDefaultConfMapping() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-defaultconfmapping.xml"), true);
@@ -772,6 +799,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("test")));
     }
 
+   @Test
     public void testExtraAttributes() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extra-attributes.xml"), false);
@@ -800,6 +828,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("depextravalue", dd.getDependencyRevisionId().getAttribute("depextra"));
     }
 
+    @Test
     public void testImportConfigurations1() throws Exception {
         // import configurations
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -832,6 +861,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("conf1")));
     }
 
+    @Test
     public void testImportConfigurations2() throws Exception {
         // import configurations and add another one
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -867,6 +897,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("conf3")));
     }
 
+    @Test
     public void testImportConfigurations3() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -901,6 +932,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("conf1")));
     }
 
+    @Test
     public void testImportConfigurations5() throws Exception {
         // import configurations
         settings.setVariable("base.dir", new File(".").getAbsolutePath());
@@ -934,6 +966,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("conf1")));
     }
 
+    @Test
     public void testExtendOtherConfigs() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -949,6 +982,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"default", "test"}), Arrays.asList(allPublicExt));
     }
 
+    @Test
     public void testImportConfigurationsWithExtendOtherConfigs() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -965,6 +999,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(allPublicExt));
     }
 
+    @Test
     public void testImportConfigurationsWithMappingOverride() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -993,6 +1028,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("conf2")));
     }
 
+    @Test
     public void testImportConfigurationsWithWildcardAndMappingOverride() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1021,6 +1057,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("all-public")));
     }
 
+    @Test
     public void testDefaultConfMappingWithSelectors() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1052,38 +1089,30 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("bla")));
     }
 
+    // IVY-442
+    @Test(expected = ParseException.class)
     public void testWithNonExistingConfigInDependency() throws Exception {
-        // IVY-442
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-incorrectconf1.xml"), true);
-            fail("ParseException hasn't been thrown");
-        } catch (ParseException e) {
-            // expected
-        }
+        fail("ParseException hasn't been thrown");
     }
 
+    @Test(expected = ParseException.class)
     public void testWithNonExistingConfigInPublications() throws Exception {
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-incorrectconf2.xml"), true);
-            fail("ParseException hasn't been thrown");
-        } catch (ParseException e) {
-            // expected
-        }
+        fail("ParseException hasn't been thrown");
     }
 
+    // IVY-441
+    @Test(expected = ParseException.class)
     public void testWithExistingConfigsInPublicationsSeparatedBySemiColon() throws Exception {
-        // IVY-441
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-incorrectconf3.xml"), true);
-            fail("ParseException hasn't been thrown");
-        } catch (ParseException e) {
-            // expected
-        }
+        fail("ParseException hasn't been thrown");
     }
 
+    @Test
     public void testExtendsAll() throws Exception {
         Message.setDefaultLogger(new DefaultMessageLogger(99));
 
@@ -1133,6 +1162,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
+    @Test
     public void testExtendsDependencies() throws Exception {
         // descriptor specifies that only parent dependencies should be included
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1179,6 +1209,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
+    @Test
     public void testExtendsConfigurations() throws Exception {
         // descriptor specifies that only parent configurations should be included
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1219,6 +1250,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
+    @Test
     public void testExtendsDescription() throws Exception {
         // descriptor specifies that only parent description should be included
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1258,6 +1290,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
+    @Test
     public void testExtendsDescriptionWithOverride() throws Exception {
         // descriptor specifies that only parent description should be included
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1297,6 +1330,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
+    @Test
     public void testExtendsMixed() throws Exception {
         // descriptor specifies that parent configurations and dependencies should be included
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -1344,6 +1378,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
+    @Test
     public void testExtendsCached() throws Exception {
         // configure a resolver to serve the parent descriptor, so that parse succeeds.
         File resolveRoot = new File("build/tmp/xmlModuleDescriptorTest");

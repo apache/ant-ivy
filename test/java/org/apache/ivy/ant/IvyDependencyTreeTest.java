@@ -21,8 +21,15 @@ import java.io.File;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.testutil.AntTaskTestCase;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 public class IvyDependencyTreeTest extends AntTaskTestCase {
 
@@ -30,7 +37,8 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = configureProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -40,10 +48,12 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         dependencyTree.execute();
@@ -51,6 +61,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("\\- org1#mod1.2;2.0");
     }
 
+    @Test
     public void testEmpty() throws Exception {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-empty.xml"));
         dependencyTree.execute();
@@ -58,6 +69,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogNotContaining("\\-");
     }
 
+    @Test
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -76,6 +88,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("\\- org1#mod1.2;latest.integration");
     }
 
+    @Test
     public void testWithResolveIdWithoutResolve() throws Exception {
         try {
             dependencyTree.execute();
@@ -85,6 +98,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         }
     }
 
+    @Test
     public void testWithEvictedModule() throws Exception {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-dyn-evicted.xml"));
         dependencyTree.execute();
@@ -95,6 +109,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("\\- org1#mod1.2;2.2");
     }
 
+    @Test
     public void testShowEvictedModule() throws Exception {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-dyn-evicted.xml"));
         dependencyTree.setShowEvicted(true);

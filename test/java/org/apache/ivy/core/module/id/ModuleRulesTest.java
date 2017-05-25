@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.core.module.id;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,15 +28,16 @@ import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.NoFilter;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class ModuleRulesTest extends TestCase {
+public class ModuleRulesTest {
     private ModuleRules rules;
 
     private Object[] rule;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         rules = new ModuleRules();
         rule = new Object[10];
         for (int i = 0; i < rule.length; i++) {
@@ -42,8 +45,7 @@ public class ModuleRulesTest extends TestCase {
         }
     }
 
-    // tests
-
+    @Test
     public void testGetRule() throws Exception {
         // fixture
         rules.defineRule(mapMatcher().organization("apache").build(), rule[0]);
@@ -56,6 +58,7 @@ public class ModuleRulesTest extends TestCase {
         assertRule(null, "unknown#module1;1.5");
     }
 
+    @Test
     public void testGetRuleWithFilter() throws Exception {
         // fixture
         rules.defineRule(mapMatcher().organization("apache").build(), rule[0]);

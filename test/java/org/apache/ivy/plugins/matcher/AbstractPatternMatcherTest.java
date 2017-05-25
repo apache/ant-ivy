@@ -17,20 +17,23 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Base test classes for PatternMatcher testcase implementation
  */
-public abstract class AbstractPatternMatcherTest extends TestCase {
+public abstract class AbstractPatternMatcherTest {
     protected PatternMatcher patternMatcher;
 
-    protected abstract void setUp() throws Exception;
-
+    // used by setUp() in subclasses
     protected void setUp(PatternMatcher matcher) {
         this.patternMatcher = matcher;
     }
 
+    @Test
     public void testAnyExpression() {
         Matcher matcher = patternMatcher.getMatcher("*");
         assertTrue(matcher.matches(""));
@@ -38,6 +41,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
         assertTrue(matcher.matches("        "));
     }
 
+    @Test
     public void testIsExact() {
         // '*' is a special matcher
         Matcher matcher = patternMatcher.getMatcher("*");
@@ -69,27 +73,22 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
 
     protected abstract String[] getInexactExpressions();
 
+    @Test(expected = NullPointerException.class)
     public void testNullInput() {
         Matcher matcher = patternMatcher.getMatcher("some expression");
-        try {
-            matcher.matches(null);
-            fail("Should fail for null input");
-        } catch (NullPointerException expected) {
-
-        }
+        matcher.matches(null);
+        fail("Should fail for null input");
     }
 
+    @Test(expected = NullPointerException.class)
     public void testNullExpression() {
-        try {
-            patternMatcher.getMatcher(null);
-            fail("Should fail for null expression");
-        } catch (NullPointerException expected) {
-
-        }
+        patternMatcher.getMatcher(null);
+        fail("Should fail for null expression");
     }
 
     public abstract void testImplementation();
 
+    @Test
     public void testLoadTestMatches() {
         Matcher matcher = patternMatcher.getMatcher("this.is.an.expression");
         String[] inputs = {"this.is.an.expression", "this:is:an:expression",
@@ -100,6 +99,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoadTestGetMatcher() {
         String[] inputs = {"this.is.an.expression", "this:is:an:expression",
                 "this is an expression", "whatever this is", "maybe, maybe not"};

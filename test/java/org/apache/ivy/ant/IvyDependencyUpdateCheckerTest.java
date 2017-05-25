@@ -22,14 +22,22 @@ import java.io.File;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.testutil.AntTaskTestCase;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     private IvyDependencyUpdateChecker dependencyUpdateChecker;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = configureProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -39,10 +47,16 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         dependencyUpdateChecker.setProject(project);
     }
 
-    protected void tearDown() throws Exception {
+   @After
+   public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    private Ivy getIvy() {
+        return dependencyUpdateChecker.getIvyInstance();
+    }
+
+    @Test
     public void testSimple() throws Exception {
         // depends on org="org1" name="mod1.1" rev="1.0"
         // has transitive dependency on org="org1" name="mod1.2" rev="2.0"
@@ -57,6 +71,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogNotContaining("org1#mod1.2 (transitive)\t2.0 -> 2.1");
     }
 
+    @Test
     public void testSimpleAndShowTransitiveDependencies() throws Exception {
         // depends on org="org1" name="mod1.1" rev="1.0"
         // has transitive dependency on org="org1" name="mod1.2" rev="2.0"
@@ -72,6 +87,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogContaining("org1#mod1.2 (transitive)\t2.0 -> 2.1");
     }
 
+    @Test
     public void testResolveWithoutIvyFile() throws Exception {
         // depends on org="org1" name="mod1.2" rev="2.0"
 
@@ -84,6 +100,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
     }
 
+    @Test
     public void testInline() throws Exception {
         // same as before, but expressing dependency directly without ivy file
         dependencyUpdateChecker.setOrganisation("org1");
@@ -97,31 +114,26 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     }
 
+    @Test(expected = BuildException.class)
     public void testInlineForNonExistingModule() throws Exception {
-        try {
-            dependencyUpdateChecker.setOrganisation("org1XXYZ");
-            dependencyUpdateChecker.setModule("mod1.2");
-            dependencyUpdateChecker.setRevision("2.0");
-            dependencyUpdateChecker.setInline(true);
-            dependencyUpdateChecker.setHaltonfailure(true);
-            dependencyUpdateChecker.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        dependencyUpdateChecker.setOrganisation("org1XXYZ");
+        dependencyUpdateChecker.setModule("mod1.2");
+        dependencyUpdateChecker.setRevision("2.0");
+        dependencyUpdateChecker.setInline(true);
+        dependencyUpdateChecker.setHaltonfailure(true);
+        dependencyUpdateChecker.execute();
+        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
-        try {
-            dependencyUpdateChecker
-                    .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
-            dependencyUpdateChecker.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        dependencyUpdateChecker
+                .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        dependencyUpdateChecker.execute();
+        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    @Test
     public void testFailureWithMissingConfigurations() throws Exception {
         try {
             dependencyUpdateChecker
@@ -130,32 +142,27 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
             dependencyUpdateChecker.execute();
             fail("missing configurations didn't raised an exception");
         } catch (BuildException ex) {
-            assertTrue(ex.getMessage().indexOf("unknown") != -1);
+            assertTrue(ex.getMessage().contains("unknown"));
         }
     }
 
+    @Test(expected = BuildException.class)
     public void testFailureOnBadDependencyIvyFile() throws Exception {
-        try {
-            dependencyUpdateChecker.setFile(new File(
-                    "test/java/org/apache/ivy/ant/ivy-failure2.xml"));
-            dependencyUpdateChecker.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        dependencyUpdateChecker.setFile(new File(
+                "test/java/org/apache/ivy/ant/ivy-failure2.xml"));
+        dependencyUpdateChecker.execute();
+        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    @Test(expected = BuildException.class)
     public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
-        try {
-            dependencyUpdateChecker.setFile(new File(
-                    "test/java/org/apache/ivy/ant/ivy-failure3.xml"));
-            dependencyUpdateChecker.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        dependencyUpdateChecker.setFile(new File(
+                "test/java/org/apache/ivy/ant/ivy-failure3.xml"));
+        dependencyUpdateChecker.execute();
+        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    @Test
     public void testHaltOnFailure() throws Exception {
         try {
             dependencyUpdateChecker
@@ -168,6 +175,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         }
     }
 
+    @Test
     public void testExcludedConf() throws Exception {
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         dependencyUpdateChecker.setConf("*,!default");
@@ -182,9 +190,10 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogContaining("All dependencies are up to date");
         // test the properties
         Project project = dependencyUpdateChecker.getProject();
-        assertFalse(project.getProperty("ivy.resolved.configurations").indexOf("default") > -1);
+        assertFalse(project.getProperty("ivy.resolved.configurations").contains("default"));
     }
 
+    @Test
     public void testResolveWithAbsoluteFile() {
         // IVY-396
         File ivyFile = new File("test/java/org/apache/ivy/ant/ivy-simple.xml");
@@ -195,6 +204,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         // ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
 
+    @Test
     public void testResolveWithRelativeFile() {
         // IVY-396
         dependencyUpdateChecker.getProject().setProperty("ivy.dep.file",
@@ -208,10 +218,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
     }
 
-    private Ivy getIvy() {
-        return dependencyUpdateChecker.getIvyInstance();
-    }
-
+    @Test
     public void testSimpleExtends() throws Exception {
         dependencyUpdateChecker.setFile(new File(
                 "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
@@ -233,7 +240,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
         // inherited from parent
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
-
     }
 
 }
