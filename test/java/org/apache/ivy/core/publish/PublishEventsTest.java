@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.IvyEvent;
@@ -39,6 +37,8 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
+
+import junit.framework.TestCase;
 
 public class PublishEventsTest extends TestCase {
 

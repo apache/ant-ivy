@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public final class PomModuleDescriptorWriter {
     private static final String SKIP_LINE = "SKIP_LINE";
 
     private static final ConfigurationScopeMapping DEFAULT_MAPPING = new ConfigurationScopeMapping(
-            new HashMap() {
+            new LinkedHashMap<String, String>() {
                 {
                     put("compile", "compile");
                     put("runtime", "runtime");
@@ -178,6 +179,8 @@ public final class PomModuleDescriptorWriter {
         }
         if (options.getDescription() != null) {
             variables.setVariable("ivy.pom.description", options.getDescription(), true);
+        } else if (md.getDescription() != null && md.getDescription().length() > 0) {
+            variables.setVariable("ivy.pom.description", md.getDescription(), true);
         }
         if (md.getHomePage() != null) {
             variables.setVariable("ivy.pom.url", md.getHomePage(), true);

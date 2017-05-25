@@ -38,6 +38,7 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
         super(REGEXP);
     }
 
+    @Override
     protected Matcher newMatcher(String expression) {
         return new RegexpMatcher(expression);
     }

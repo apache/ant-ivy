@@ -25,14 +25,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
+
+import junit.framework.TestCase;
 
 public class SearchTest extends TestCase {
     public void testListInMavenRepo() throws Exception {

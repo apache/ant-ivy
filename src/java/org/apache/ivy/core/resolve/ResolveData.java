@@ -37,7 +37,8 @@ import org.apache.ivy.util.Message;
 public class ResolveData {
     private ResolveEngine engine;
 
-    private Map visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
+    // shared map of all visit data
+    private Map<ModuleRevisionId, VisitData> visitData;
 
     private ConfigurationResolveReport report;
 
@@ -55,16 +56,16 @@ public class ResolveData {
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options) {
-        this(engine, options, null, new LinkedHashMap());
+        this(engine, options, null, new LinkedHashMap<ModuleRevisionId, VisitData>());
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options,
             ConfigurationResolveReport report) {
-        this(engine, options, report, new LinkedHashMap());
+        this(engine, options, report, new LinkedHashMap<ModuleRevisionId, VisitData>());
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options,
-            ConfigurationResolveReport report, Map visitData) {
+            ConfigurationResolveReport report, Map<ModuleRevisionId, VisitData> visitData) {
         this.engine = engine;
         this.report = report;
         this.visitData = visitData;
@@ -80,30 +81,28 @@ public class ResolveData {
         return visitData == null ? null : visitData.getNode();
     }
 
-    public Collection getNodes() {
-        Collection nodes = new ArrayList();
-        for (Iterator iter = visitData.values().iterator(); iter.hasNext();) {
-            VisitData vdata = (VisitData) iter.next();
+    public Collection<IvyNode> getNodes() {
+        Collection<IvyNode> nodes = new ArrayList<IvyNode>();
+        for (VisitData vdata : visitData.values()) {
             nodes.add(vdata.getNode());
         }
         return nodes;
     }
 
-    public Collection getNodeIds() {
+    public Collection<ModuleRevisionId> getNodeIds() {
         return visitData.keySet();
     }
 
     public VisitData getVisitData(ModuleRevisionId mrid) {
-        VisitData result = (VisitData) visitData.get(mrid);
+        VisitData result = visitData.get(mrid);
 
         if (result == null) {
             // search again, now ignore the missing extra attributes
-            for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Entry) it.next();
-                ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
+            for (Entry<ModuleRevisionId, VisitData> entry : visitData.entrySet()) {
+                ModuleRevisionId current = entry.getKey();
 
                 if (isSubMap(mrid.getAttributes(), current.getAttributes())) {
-                    result = (VisitData) entry.getValue();
+                    result = entry.getValue();
                     break;
                 }
             }
@@ -115,7 +114,7 @@ public class ResolveData {
     /**
      * Checks whether one map is a sub-map of the other.
      */
-    private static boolean isSubMap(Map map1, Map map2) {
+    private static <K, V> boolean isSubMap(Map<K, V> map1, Map<K, V> map2) {
         int map1Size = map1.size();
         int map2Size = map2.size();
 
@@ -123,11 +122,10 @@ public class ResolveData {
             return map1.equals(map2);
         }
 
-        Map smallest = map1Size < map2Size ? map1 : map2;
-        Map largest = map1Size < map2Size ? map2 : map1;
+        Map<K, V> smallest = map1Size < map2Size ? map1 : map2;
+        Map<K, V> largest = map1Size < map2Size ? map2 : map1;
 
-        for (Iterator it = smallest.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Entry) it.next();
+        for (Entry<K, V> entry : smallest.entrySet()) {
 
             if (!largest.containsKey(entry.getKey())) {
                 return false;
@@ -258,9 +256,10 @@ public class ResolveData {
     }
 
     void blacklist(IvyNode node) {
-        for (Iterator iter = visitData.entrySet().iterator(); iter.hasNext();) {
-            Entry entry = (Entry) iter.next();
-            VisitData vdata = (VisitData) entry.getValue();
+        for (Iterator<Entry<ModuleRevisionId, VisitData>> iter = visitData.entrySet().iterator(); iter
+                .hasNext();) {
+            Entry<ModuleRevisionId, VisitData> entry = iter.next();
+            VisitData vdata = entry.getValue();
             if (vdata.getNode() == node && !node.getResolvedId().equals(entry.getKey())) {
                 // this visit data was associated with the blacklisted node,
                 // we discard this association
@@ -298,14 +297,13 @@ public class ResolveData {
         VisitNode current = getCurrentVisitNode();
         if (current != null) {
             // mediating dd through dependers stack
-            List dependers = new ArrayList(current.getPath());
+            List<VisitNode> dependers = new ArrayList<VisitNode>(current.getPath());
             // the returned path contains the currently visited node, we are only interested in
             // the dependers, so we remove the currently visted node from the end
             dependers.remove(dependers.size() - 1);
             // we want to apply mediation going up in the dependers stack, not the opposite
             Collections.reverse(dependers);
-            for (Iterator iterator = dependers.iterator(); iterator.hasNext();) {
-                VisitNode n = (VisitNode) iterator.next();
+            for (VisitNode n : dependers) {
                 ModuleDescriptor md = n.getDescriptor();
                 if (md != null) {
                     dd = md.mediate(dd);

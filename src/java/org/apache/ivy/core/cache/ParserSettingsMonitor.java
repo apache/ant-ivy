@@ -150,5 +150,9 @@ class ParserSettingsMonitor {
             }
             return r;
         }
+
+        public String getVariable(String value) {
+            return delegatedSettings.getVariable(value);
+        }
     };
 }

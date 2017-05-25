@@ -19,11 +19,12 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import junit.framework.TestCase;
 
 public class IvyInstallTest extends TestCase {
     private File cache;
@@ -36,7 +37,7 @@ public class IvyInstallTest extends TestCase {
         createCache();
         cleanInstall();
 
-        project = AntTestHelper.newProject();
+        project = TestHelper.newProject();
 
         install = new IvyInstall();
         install.setProject(project);

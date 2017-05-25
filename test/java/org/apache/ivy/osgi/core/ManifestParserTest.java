@@ -23,9 +23,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.osgi.util.VersionRange;
+
+import junit.framework.TestCase;
 
 public class ManifestParserTest extends TestCase {
 

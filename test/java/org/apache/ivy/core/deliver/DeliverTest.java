@@ -23,12 +23,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.IvyDeliver;
 import org.apache.ivy.ant.IvyResolve;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
+
+import junit.framework.TestCase;
 
 public class DeliverTest extends TestCase {
     private File cache;
@@ -45,7 +46,7 @@ public class DeliverTest extends TestCase {
         deliverDir = new File("build/test/deliver");
         deliverDir.mkdirs();
 
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.init();
 
         ivyDeliver = new IvyDeliver();

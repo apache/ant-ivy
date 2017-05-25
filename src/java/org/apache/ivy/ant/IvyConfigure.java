@@ -130,6 +130,11 @@ public class IvyConfigure extends Task {
         settings.setPasswd(passwd);
     }
 
+    public void addConfiguredWorkspaceResolver(AntWorkspaceResolver resolver) {
+        settings.addConfiguredWorkspaceResolver(resolver);
+    }
+
+    @Override
     public void execute() throws BuildException {
         String settingsId = settings.getId();
         Object otherRef = getProject().getReference(settingsId);

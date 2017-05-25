@@ -34,7 +34,7 @@ public interface ParserSettings {
 
     String substitute(String value);
 
-    Map/* <String, String> */substitute(Map/* <String, String> */strings);
+    Map<String, String> substitute(Map<String, String> strings);
 
     ResolutionCacheManager getResolutionCacheManager();
 
@@ -59,4 +59,5 @@ public interface ParserSettings {
      */
     Namespace getContextNamespace();
 
+    String getVariable(String string);
 }

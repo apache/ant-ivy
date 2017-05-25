@@ -31,10 +31,11 @@ import org.apache.ivy.core.IvyPatternHelper;
  * 
  * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
-public class ModuleId implements Comparable {
+public class ModuleId implements Comparable<ModuleId> {
+
     static final String ENCODE_SEPARATOR = ":#@#:";
 
-    private static final Map/* <ModuleId, WeakReference<ModuleId>> */CACHE = new WeakHashMap();
+    private static final Map<ModuleId, WeakReference<ModuleId>> CACHE = new WeakHashMap<ModuleId, WeakReference<ModuleId>>();
 
     /**
      * Returns a ModuleId for the given organization and module name.
@@ -65,13 +66,13 @@ public class ModuleId implements Comparable {
         ModuleId r = null;
 
         synchronized (CACHE) {
-            WeakReference ref = (WeakReference) CACHE.get(moduleId);
+            WeakReference<ModuleId> ref = CACHE.get(moduleId);
             if (ref != null) {
-                r = (ModuleId) ref.get();
+                r = ref.get();
             }
             if (r == null) {
                 r = moduleId;
-                CACHE.put(r, new WeakReference(r));
+                CACHE.put(r, new WeakReference<ModuleId>(r));
             }
         }
 
@@ -84,7 +85,7 @@ public class ModuleId implements Comparable {
 
     private int hash;
 
-    private Map/* <String, String> */attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
 
     /**
      * Constructor.
@@ -122,7 +123,7 @@ public class ModuleId implements Comparable {
         return organisation;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ModuleId)) {
             return false;
@@ -135,7 +136,7 @@ public class ModuleId implements Comparable {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         if (hash == 0) {
             // CheckStyle:MagicNumber| OFF
@@ -147,14 +148,12 @@ public class ModuleId implements Comparable {
         return hash;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return organisation + "#" + name;
     }
 
-    /** {@inheritDoc} */
-    public int compareTo(Object obj) {
-        ModuleId that = (ModuleId) obj;
+    public int compareTo(ModuleId that) {
         int result = organisation.compareTo(that.organisation);
         if (result == 0) {
             result = name.compareTo(that.name);
@@ -177,7 +176,7 @@ public class ModuleId implements Comparable {
      * 
      * @return A Map instance containing all the attributes and their values.
      */
-    public Map getAttributes() {
+    public Map<String, String> getAttributes() {
         return attributes;
     }
 

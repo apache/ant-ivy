@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -32,13 +31,13 @@ import org.apache.tools.ant.BuildException;
 
 public class IvyDependency {
 
-    private List/* <IvyDependencyConf> */confs = new ArrayList();
+    private List<IvyDependencyConf> confs = new ArrayList<IvyDependencyConf>();
 
-    private List/* <IvyDependencyArtifact> */artifacts = new ArrayList();
+    private List<IvyDependencyArtifact> artifacts = new ArrayList<IvyDependencyArtifact>();
 
-    private List/* <IvyDependencyExclude> */excludes = new ArrayList();
+    private List<IvyDependencyExclude> excludes = new ArrayList<IvyDependencyExclude>();
 
-    private List/* <IvyDependencyIncludes> */includes = new ArrayList();
+    private List<IvyDependencyInclude> includes = new ArrayList<IvyDependencyInclude>();
 
     private String org;
 
@@ -161,28 +160,20 @@ public class IvyDependency {
             dd.addDependencyConfiguration(masterConf, "*");
         }
 
-        Iterator itConfs = confs.iterator();
-        while (itConfs.hasNext()) {
-            IvyDependencyConf c = (IvyDependencyConf) itConfs.next();
+        for (IvyDependencyConf c : confs) {
             c.addConf(dd, masterConf);
         }
 
-        Iterator itArtifacts = artifacts.iterator();
-        while (itArtifacts.hasNext()) {
-            IvyDependencyArtifact artifact = (IvyDependencyArtifact) itArtifacts.next();
+        for (IvyDependencyArtifact artifact : artifacts) {
             artifact.addArtifact(dd, masterConf);
         }
 
-        Iterator itExcludes = excludes.iterator();
-        while (itExcludes.hasNext()) {
-            IvyDependencyExclude exclude = (IvyDependencyExclude) itExcludes.next();
+        for (IvyDependencyExclude exclude : excludes) {
             DefaultExcludeRule rule = exclude.asRule(settings);
             dd.addExcludeRule(masterConf, rule);
         }
 
-        Iterator itIncludes = includes.iterator();
-        while (itIncludes.hasNext()) {
-            IvyDependencyInclude include = (IvyDependencyInclude) itIncludes.next();
+        for (IvyDependencyInclude include : includes) {
             DefaultIncludeRule rule = include.asRule(settings);
             dd.addIncludeRule(masterConf, rule);
         }

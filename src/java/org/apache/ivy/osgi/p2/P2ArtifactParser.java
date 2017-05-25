@@ -80,6 +80,7 @@ public class P2ArtifactParser implements XMLInputParser {
             // }
             // });
             addChild(new MappingsHandler(), new ChildElementHandler<MappingsHandler>() {
+                @Override
                 public void childHanlded(MappingsHandler child) {
                     for (Entry<String, String> entry : child.outputByFilter.entrySet()) {
                         OSGiFilter filter;
@@ -95,6 +96,7 @@ public class P2ArtifactParser implements XMLInputParser {
             });
             addChild(new ArtifactsHandler(p2Descriptor, artifactPatterns, repoUrl),
                 new ChildElementHandler<ArtifactsHandler>() {
+                    @Override
                     public void childHanlded(ArtifactsHandler child) {
                         // nothing to do
                     }
@@ -118,12 +120,14 @@ public class P2ArtifactParser implements XMLInputParser {
         public MappingsHandler() {
             super(MAPPINGS);
             addChild(new RuleHandler(), new ChildElementHandler<RuleHandler>() {
+                @Override
                 public void childHanlded(RuleHandler child) {
                     outputByFilter.put(child.filter, child.output);
                 }
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
             outputByFilter = new LinkedHashMap<String, String>(size);
@@ -147,6 +151,7 @@ public class P2ArtifactParser implements XMLInputParser {
             super(RULE);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) {
             filter = atts.getValue(FILTER);
             output = atts.getValue(OUTPUT);
@@ -164,6 +169,7 @@ public class P2ArtifactParser implements XMLInputParser {
                 final Map<OSGiFilter, String> artifactPatterns, final String repoUrl) {
             super(ARTIFACTS);
             addChild(new ArtifactHandler(), new ChildElementHandler<ArtifactHandler>() {
+                @Override
                 public void childHanlded(ArtifactHandler child) throws SAXParseException {
                     String url = getPattern(child.p2Artifact, child.properties);
                     if (url != null) {
@@ -224,12 +230,14 @@ public class P2ArtifactParser implements XMLInputParser {
         public ArtifactHandler() {
             super(ARTIFACT);
             addChild(new PropertiesHandler(), new ChildElementHandler<PropertiesHandler>() {
+                @Override
                 public void childHanlded(PropertiesHandler child) {
                     properties = child.properties;
                 }
             });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
             Version version;

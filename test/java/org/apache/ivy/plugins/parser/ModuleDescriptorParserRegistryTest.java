@@ -23,13 +23,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.Resource;
+
+import junit.framework.TestCase;
 
 public class ModuleDescriptorParserRegistryTest extends TestCase {
     public static class MyParser extends AbstractModuleDescriptorParser {

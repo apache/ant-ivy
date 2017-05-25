@@ -19,15 +19,16 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.Project;
+
+import junit.framework.TestCase;
 
 public class IvyInfoTest extends TestCase {
     private IvyInfo info;
 
     protected void setUp() throws Exception {
-        Project project = new Project();
+        Project project = TestHelper.newProject();
 
         info = new IvyInfo();
         info.setProject(project);

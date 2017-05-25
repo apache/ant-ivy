@@ -20,9 +20,9 @@ package org.apache.ivy.util.url;
 import java.io.File;
 import java.net.URL;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 /**
  * Test BasicURLHandler
@@ -45,15 +45,16 @@ public class BasicURLHandlerTest extends TestCase {
     }
 
     public void testIsReachable() throws Exception {
-        assertTrue(handler.isReachable(new URL("http://www.google.fr/")));
-        assertFalse(handler.isReachable(new URL("http://www.google.fr/unknownpage.html")));
+        final int connectionTimeoutInMillis = 15000; // 15 seconds
+        assertTrue(handler.isReachable(new URL("http://www.google.fr/"), connectionTimeoutInMillis));
+        assertFalse(handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), connectionTimeoutInMillis));
 
-        assertTrue(handler.isReachable(new File("build.xml").toURI().toURL()));
-        assertFalse(handler.isReachable(new File("unknownfile.xml").toURI().toURL()));
+        assertTrue(handler.isReachable(new File("build.xml").toURI().toURL(), connectionTimeoutInMillis));
+        assertFalse(handler.isReachable(new File("unknownfile.xml").toURI().toURL(), connectionTimeoutInMillis));
 
         // to test ftp we should know of an anonymous ftp site... !
         // assertTrue(handler.isReachable(new URL("ftp://ftp.mozilla.org/pub/dir.sizes")));
-        assertFalse(handler.isReachable(new URL("ftp://ftp.mozilla.org/unknown.file")));
+        assertFalse(handler.isReachable(new URL("ftp://ftp.mozilla.org/unknown.file"), connectionTimeoutInMillis));
     }
 
     public void testContentEncoding() throws Exception {

@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -168,6 +167,7 @@ public class IvyRepResolver extends URLResolver {
         updateWholeIvyPattern();
     }
 
+    @Override
     public void setM2compatible(boolean m2compatible) {
         if (m2compatible) {
             throw new IllegalArgumentException(
@@ -219,12 +219,14 @@ public class IvyRepResolver extends URLResolver {
         updateWholeArtPattern();
     }
 
+    @Override
     public OrganisationEntry[] listOrganisations() {
         ensureIvyConfigured(getSettings());
         try {
             URL content = new URL(ivyroot + "content.xml");
-            final List ret = new ArrayList();
+            final List<OrganisationEntry> ret = new ArrayList<OrganisationEntry>();
             XMLHelper.parse(content, null, new DefaultHandler() {
+                @Override
                 public void startElement(String uri, String localName, String qName,
                         org.xml.sax.Attributes attributes) throws SAXException {
                     if ("organisation".equals(qName)) {
@@ -235,7 +237,7 @@ public class IvyRepResolver extends URLResolver {
                     }
                 }
             });
-            return (OrganisationEntry[]) ret.toArray(new OrganisationEntry[ret.size()]);
+            return ret.toArray(new OrganisationEntry[ret.size()]);
         } catch (MalformedURLException e) {
             // ???
         } catch (Exception e) {
@@ -246,63 +248,72 @@ public class IvyRepResolver extends URLResolver {
 
     // overwrite parent to use only ivy patterns (and not artifact ones, cause ibiblio is too slow
     // to answer)
+    @Override
     public ModuleEntry[] listModules(OrganisationEntry org) {
         ensureIvyConfigured(getSettings());
-        Map tokenValues = new HashMap();
+        Map<String, String> tokenValues = new HashMap<String, String>();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
-        Collection names = findIvyNames(tokenValues, IvyPatternHelper.MODULE_KEY);
+        Collection<String> names = findIvyNames(tokenValues, IvyPatternHelper.MODULE_KEY);
         ModuleEntry[] ret = new ModuleEntry[names.size()];
         int i = 0;
-        for (Iterator iter = names.iterator(); iter.hasNext(); i++) {
-            String name = (String) iter.next();
+        for (String name : names) {
             ret[i] = new ModuleEntry(org, name);
         }
         return ret;
     }
 
+    @Override
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
         ensureIvyConfigured(getSettings());
         ensureArtifactConfigured(getSettings());
         return super.listRevisions(mod);
     }
 
+    @Override
     public String getTypeName() {
         return "ivyrep";
     }
 
     // override some methods to ensure configuration
+    @Override
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         ensureIvyConfigured(data.getSettings());
         return super.getDependency(dd, data);
     }
 
+    @Override
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ensureArtifactConfigured(getSettings());
         return super.findArtifactRef(artifact, date);
     }
 
+    @Override
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         ensureArtifactConfigured(getSettings());
         return super.download(artifacts, options);
     }
 
+    @Override
     public boolean exists(Artifact artifact) {
         ensureArtifactConfigured(getSettings());
         return super.exists(artifact);
     }
 
+    @Override
     public ArtifactOrigin locate(Artifact artifact) {
         ensureArtifactConfigured(getSettings());
         return super.locate(artifact);
     }
 
-    public List getIvyPatterns() {
+    @Override
+    public List<String> getIvyPatterns() {
         ensureIvyConfigured(getSettings());
         return super.getIvyPatterns();
     }
 
-    public List getArtifactPatterns() {
+    @Override
+    public List<String> getArtifactPatterns() {
         ensureArtifactConfigured(getSettings());
         return super.getArtifactPatterns();
     }

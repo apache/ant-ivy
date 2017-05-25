@@ -31,5 +31,5 @@ public interface URLLister {
      */
     boolean accept(String pattern);
 
-    List listAll(URL url) throws IOException;
+    List<URL> listAll(URL url) throws IOException;
 }

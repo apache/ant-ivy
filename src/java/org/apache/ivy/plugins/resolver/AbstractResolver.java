@@ -170,11 +170,11 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         Message.verbose("no failure report implemented by " + getName());
     }
 
-    public String[] listTokenValues(String token, Map otherTokenValues) {
+    public String[] listTokenValues(String token, Map<String, String> otherTokenValues) {
         return new String[0];
     }
 
-    public Map[] listTokenValues(String[] tokens, Map criteria) {
+    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         return new Map[0];
     }
 
@@ -190,6 +190,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         return new RevisionEntry[0];
     }
 
+    @Override
     public String toString() {
         return getName();
     }
@@ -434,6 +435,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
                 .setCheckmodified(
                     data.getOptions().isUseCacheOnly() ? Boolean.FALSE : checkmodified)
                 .setValidate(doValidate(data)).setNamespace(getNamespace())
+                .setUseCacheOnly(data.getOptions().isUseCacheOnly())
                 .setForce(data.getOptions().isRefresh())
                 .setListener(getDownloadListener(getDownloadOptions(data.getOptions())));
     }
@@ -512,22 +514,22 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(data, "data");
 
+        // always cache dynamic mrids because we can store per-resolver values
+        saveModuleRevisionIfNeeded(dd, newModuleFound);
+
         // check if latest is asked and compare to return the most recent
         ResolvedModuleRevision previousModuleFound = data.getCurrentResolvedModuleRevision();
         String newModuleDesc = describe(newModuleFound);
         Message.debug("\tchecking " + newModuleDesc + " against " + describe(previousModuleFound));
         if (previousModuleFound == null) {
             Message.debug("\tmodule revision kept as first found: " + newModuleDesc);
-            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else if (isAfter(newModuleFound, previousModuleFound, data.getDate())) {
             Message.debug("\tmodule revision kept as younger: " + newModuleDesc);
-            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else if (!newModuleFound.getDescriptor().isDefault()
                 && previousModuleFound.getDescriptor().isDefault()) {
             Message.debug("\tmodule revision kept as better (not default): " + newModuleDesc);
-            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else {
             Message.debug("\tmodule revision discarded as older: " + newModuleDesc);
@@ -539,8 +541,8 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
             ResolvedModuleRevision newModuleFound) {
         if (newModuleFound != null
                 && getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())) {
-            getRepositoryCacheManager().saveResolvedRevision(dd.getDependencyRevisionId(),
-                newModuleFound.getId().getRevision());
+            getRepositoryCacheManager().saveResolvedRevision(getName(),
+                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
         }
     }
 
@@ -600,6 +602,10 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
         public String substitute(String value) {
             return AbstractResolver.this.getSettings().substitute(value);
+        }
+
+        public String getVariable(String value) {
+            return AbstractResolver.this.getSettings().getVariable(value);
         }
 
     }

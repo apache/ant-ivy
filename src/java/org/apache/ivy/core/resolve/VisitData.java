@@ -38,7 +38,7 @@ public class VisitData {
      * The associated visit nodes, per rootModuleConf Note that the value is a List, because a node
      * can be visited from several parents during the resolution process
      */
-    private Map visitNodes = new HashMap(); // Map (String rootModuleConf -> List(VisitNode))
+    private Map<String, List<VisitNode>> visitNodes = new HashMap<String, List<VisitNode>>();
 
     public VisitData(IvyNode node) {
         this.node = node;
@@ -49,10 +49,10 @@ public class VisitData {
         getVisitNodes(rootModuleConf).add(node);
     }
 
-    public List getVisitNodes(String rootModuleConf) {
-        List visits = (List) visitNodes.get(rootModuleConf);
+    public List<VisitNode> getVisitNodes(String rootModuleConf) {
+        List<VisitNode> visits = visitNodes.get(rootModuleConf);
         if (visits == null) {
-            visits = new ArrayList();
+            visits = new ArrayList<VisitNode>();
             visitNodes.put(rootModuleConf, visits);
         }
         return visits;
@@ -66,7 +66,7 @@ public class VisitData {
         this.node = node;
     }
 
-    public void addVisitNodes(String rootModuleConf, List visitNodes) {
+    public void addVisitNodes(String rootModuleConf, List<VisitNode> visitNodes) {
         getVisitNodes(rootModuleConf).addAll(visitNodes);
     }
 }

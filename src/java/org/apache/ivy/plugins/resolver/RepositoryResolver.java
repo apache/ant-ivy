@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +72,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         this.repository = repository;
     }
 
+    @Override
     public void setName(String name) {
         super.setName(name);
         if (repository instanceof AbstractRepository) {
@@ -84,6 +84,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         this.signerName = signerName;
     }
 
+    @Override
     protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern,
             Artifact artifact, ResourceMDParser rmdparser, Date date) {
         String name = getName();
@@ -160,6 +161,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         }
     }
 
+    @Override
     protected Resource getResource(String source) throws IOException {
         return repository.getResource(source);
     }
@@ -184,6 +186,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         return ResolverHelper.findAll(repository, mrid, pattern, artifact);
     }
 
+    @Override
     protected long get(Resource resource, File dest) throws IOException {
         Message.verbose("\t" + getName() + ": downloading " + resource.getName());
         Message.debug("\t\tto " + dest);
@@ -197,9 +200,9 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         String destPattern;
         if ("ivy".equals(artifact.getType()) && !getIvyPatterns().isEmpty()) {
-            destPattern = (String) getIvyPatterns().get(0);
+            destPattern = getIvyPatterns().get(0);
         } else if (!getArtifactPatterns().isEmpty()) {
-            destPattern = (String) getArtifactPatterns().get(0);
+            destPattern = getArtifactPatterns().get(0);
         } else {
             throw new IllegalStateException("impossible to publish " + artifact + " using " + this
                     + ": no artifact pattern defined");
@@ -276,6 +279,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         }
     }
 
+    @Override
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         EventManager eventManager = getEventManager();
         try {
@@ -290,23 +294,26 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         }
     }
 
-    protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
-        for (Iterator iter = patterns.iterator(); iter.hasNext();) {
-            String pattern = (String) iter.next();
+    @Override
+    protected void findTokenValues(Collection<String> names, List<String> patterns,
+            Map<String, String> tokenValues, String token) {
+        for (String pattern : patterns) {
             String partiallyResolvedPattern = IvyPatternHelper.substituteTokens(pattern,
                 tokenValues);
             String[] values = ResolverHelper.listTokenValues(repository, partiallyResolvedPattern,
                 token);
             if (values != null) {
-                names.addAll(filterNames(new ArrayList(Arrays.asList(values))));
+                names.addAll(filterNames(new ArrayList<String>(Arrays.asList(values))));
             }
         }
     }
 
+    @Override
     protected String[] listTokenValues(String pattern, String token) {
         return ResolverHelper.listTokenValues(repository, pattern, token);
     }
 
+    @Override
     protected boolean exist(String path) {
         try {
             Resource resource = repository.getResource(path);
@@ -317,15 +324,18 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         }
     }
 
+    @Override
     public String getTypeName() {
         return "repository";
     }
 
+    @Override
     public void dumpSettings() {
         super.dumpSettings();
         Message.debug("\t\trepository: " + getRepository());
     }
 
+    @Override
     public void setSettings(ResolverSettings settings) {
         super.setSettings(settings);
         if (settings != null) {

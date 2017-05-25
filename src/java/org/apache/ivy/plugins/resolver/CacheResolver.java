@@ -51,6 +51,7 @@ public class CacheResolver extends FileSystemResolver {
         setName("cache");
     }
 
+    @Override
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         clearIvyAttempts();
@@ -101,6 +102,7 @@ public class CacheResolver extends FileSystemResolver {
         }
     }
 
+    @Override
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         ensureConfigured();
         clearArtifactAttempts();
@@ -125,44 +127,51 @@ public class CacheResolver extends FileSystemResolver {
         return dr;
     }
 
+    @Override
     public boolean exists(Artifact artifact) {
         ensureConfigured();
         return super.exists(artifact);
     }
 
+    @Override
     public ArtifactOrigin locate(Artifact artifact) {
         ensureConfigured();
         return super.locate(artifact);
     }
 
+    @Override
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         ensureConfigured();
         super.publish(artifact, src, overwrite);
     }
 
+    @Override
     public OrganisationEntry[] listOrganisations() {
         ensureConfigured();
         return super.listOrganisations();
     }
 
+    @Override
     public ModuleEntry[] listModules(OrganisationEntry org) {
         ensureConfigured();
         return super.listModules(org);
     }
 
+    @Override
     public RevisionEntry[] listRevisions(ModuleEntry module) {
         ensureConfigured();
         return super.listRevisions(module);
     }
 
+    @Override
     public void dumpSettings() {
         Message.verbose("\t" + getName() + " [cache]");
     }
 
     private void ensureConfigured() {
         if (getIvyPatterns().isEmpty()) {
-            setIvyPatterns(new ArrayList());
-            setArtifactPatterns(new ArrayList());
+            setIvyPatterns(new ArrayList<String>());
+            setArtifactPatterns(new ArrayList<String>());
             RepositoryCacheManager[] caches = getSettings().getRepositoryCacheManagers();
             for (int i = 0; i < caches.length; i++) {
                 if (caches[i] instanceof DefaultRepositoryCacheManager) {
@@ -179,6 +188,7 @@ public class CacheResolver extends FileSystemResolver {
         }
     }
 
+    @Override
     public String getTypeName() {
         return "cache";
     }

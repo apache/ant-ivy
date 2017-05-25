@@ -69,7 +69,7 @@ public class ChainResolver extends AbstractResolver {
 
     private boolean returnFirst = false;
 
-    private List chain = new ArrayList();
+    private List<DependencyResolver> chain = new ArrayList<DependencyResolver>();
 
     private boolean dual;
 
@@ -81,7 +81,7 @@ public class ChainResolver extends AbstractResolver {
             throws ParseException {
         data = new ResolveData(data, doValidate(data));
 
-        List errors = new ArrayList();
+        List<Exception> errors = new ArrayList<Exception>();
 
         ResolvedModuleRevision resolved = data.getCurrentResolvedModuleRevision();
         ResolvedModuleRevision mr = resolved;
@@ -95,8 +95,7 @@ public class ChainResolver extends AbstractResolver {
             }
         }
 
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
             try {
                 ResolvedModuleRevision previouslyResolved = mr;
@@ -117,7 +116,7 @@ public class ChainResolver extends AbstractResolver {
         }
         if (mr == null && !errors.isEmpty()) {
             if (errors.size() == 1) {
-                Exception ex = (Exception) errors.get(0);
+                Exception ex = errors.get(0);
                 if (ex instanceof RuntimeException) {
                     throw (RuntimeException) ex;
                 } else if (ex instanceof ParseException) {
@@ -127,8 +126,7 @@ public class ChainResolver extends AbstractResolver {
                 }
             } else {
                 StringBuffer err = new StringBuffer();
-                for (Iterator iter = errors.iterator(); iter.hasNext();) {
-                    Exception ex = (Exception) iter.next();
+                for (Exception ex : errors) {
                     err.append("\t").append(StringUtils.getErrorMessage(ex)).append("\n");
                 }
                 err.setLength(err.length() - 1);
@@ -173,8 +171,7 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             ResolvedResource result = resolver.findIvyFileRef(dd, data);
             if (result != null) {
                 return result;
@@ -184,39 +181,40 @@ public class ChainResolver extends AbstractResolver {
         return null;
     }
 
-    public Map[] listTokenValues(String[] tokens, Map criteria) {
-        Set result = new HashSet();
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
-            Map[] temp = resolver.listTokenValues(tokens, new HashMap(criteria));
+    @Override
+    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
+        Set<Map<String, String>> result = new HashSet<Map<String, String>>();
+        for (DependencyResolver resolver : chain) {
+            Map<String, String>[] temp = resolver.listTokenValues(tokens,
+                new HashMap<String, Object>(criteria));
             result.addAll(Arrays.asList(temp));
         }
 
-        return (Map[]) result.toArray(new Map[result.size()]);
+        return result.toArray(new Map[result.size()]);
     }
 
+    @Override
     public void reportFailure() {
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             resolver.reportFailure();
         }
     }
 
+    @Override
     public void reportFailure(Artifact art) {
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             resolver.reportFailure(art);
         }
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        List artifactsToDownload = new ArrayList(Arrays.asList(artifacts));
+        List<Artifact> artifactsToDownload = new ArrayList<Artifact>(Arrays.asList(artifacts));
         DownloadReport report = new DownloadReport();
-        for (Iterator iter = chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (Iterator<DependencyResolver> iter = chain.iterator(); iter.hasNext()
+                && !artifactsToDownload.isEmpty();) {
+            DependencyResolver resolver = iter.next();
             DownloadReport r = resolver.download(
-                (Artifact[]) artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]),
-                options);
+                artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), options);
             ArtifactDownloadReport[] adr = r.getArtifactsReports();
             for (int i = 0; i < adr.length; i++) {
                 if (adr[i].getDownloadStatus() != DownloadStatus.FAILED) {
@@ -225,8 +223,7 @@ public class ChainResolver extends AbstractResolver {
                 }
             }
         }
-        for (Iterator iter = artifactsToDownload.iterator(); iter.hasNext();) {
-            Artifact art = (Artifact) iter.next();
+        for (Artifact art : artifactsToDownload) {
             ArtifactDownloadReport adr = new ArtifactDownloadReport(art);
             adr.setDownloadStatus(DownloadStatus.FAILED);
             report.addArtifactReport(adr);
@@ -234,7 +231,7 @@ public class ChainResolver extends AbstractResolver {
         return report;
     }
 
-    public List getResolvers() {
+    public List<DependencyResolver> getResolvers() {
         return chain;
     }
 
@@ -243,15 +240,18 @@ public class ChainResolver extends AbstractResolver {
         getFirstResolver().publish(artifact, src, overwrite);
     }
 
+    @Override
     public void abortPublishTransaction() throws IOException {
         getFirstResolver().abortPublishTransaction();
     }
 
+    @Override
     public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
             throws IOException {
         getFirstResolver().beginPublishTransaction(module, overwrite);
     }
 
+    @Override
     public void commitPublishTransaction() throws IOException {
         getFirstResolver().commitPublishTransaction();
     }
@@ -260,7 +260,7 @@ public class ChainResolver extends AbstractResolver {
         if (chain.isEmpty()) {
             throw new IllegalStateException("invalid chain resolver with no sub resolver");
         }
-        return ((DependencyResolver) chain.get(0));
+        return chain.get(0);
     }
 
     public boolean isReturnFirst() {
@@ -271,19 +271,19 @@ public class ChainResolver extends AbstractResolver {
         this.returnFirst = returnFirst;
     }
 
+    @Override
     public void dumpSettings() {
         Message.verbose("\t" + getName() + " [chain] " + chain);
         Message.debug("\t\treturn first: " + isReturnFirst());
         Message.debug("\t\tdual: " + isDual());
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver r = (DependencyResolver) iter.next();
-            Message.debug("\t\t-> " + r.getName());
+        for (DependencyResolver resolver : chain) {
+            Message.debug("\t\t-> " + resolver.getName());
         }
     }
 
+    @Override
     public boolean exists(Artifact artifact) {
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             if (resolver.exists(artifact)) {
                 return true;
             }
@@ -291,9 +291,9 @@ public class ChainResolver extends AbstractResolver {
         return false;
     }
 
+    @Override
     public ArtifactOrigin locate(Artifact artifact) {
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             ArtifactOrigin origin = resolver.locate(artifact);
             if (!ArtifactOrigin.isUnknown(origin)) {
                 return origin;
@@ -302,9 +302,9 @@ public class ChainResolver extends AbstractResolver {
         return ArtifactOrigin.unkwnown(artifact);
     }
 
+    @Override
     public ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options) {
-        for (Iterator iter = chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver) iter.next();
+        for (DependencyResolver resolver : chain) {
             ArtifactDownloadReport adr = resolver.download(artifact, options);
             if (adr.getDownloadStatus() != DownloadStatus.FAILED) {
                 return adr;

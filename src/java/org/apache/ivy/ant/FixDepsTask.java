@@ -32,7 +32,7 @@ public class FixDepsTask extends IvyPostResolveTask {
 
     private File dest;
 
-    private List/* <Keep> */keeps = new ArrayList();
+    private List<Keep> keeps = new ArrayList<Keep>();
 
     public void setToFile(File dest) {
         this.dest = dest;
@@ -59,6 +59,7 @@ public class FixDepsTask extends IvyPostResolveTask {
         return k;
     }
 
+    @Override
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
@@ -72,10 +73,9 @@ public class FixDepsTask extends IvyPostResolveTask {
 
         ResolveReport report = getResolvedReport();
 
-        List/* <ModuleId> */midToKeep = new ArrayList();
-        for (int i = 0; i < keeps.size(); i++) {
-            midToKeep.add(ModuleId.newInstance(((Keep) keeps.get(i)).org,
-                ((Keep) keeps.get(i)).module));
+        List<ModuleId> midToKeep = new ArrayList<ModuleId>();
+        for (Keep keep : keeps) {
+            midToKeep.add(ModuleId.newInstance(keep.org, keep.module));
         }
 
         ModuleDescriptor md = report.toFixedModuleDescriptor(getSettings(), midToKeep);

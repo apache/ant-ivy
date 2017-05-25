@@ -122,7 +122,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     /** Used for test purpose */
     ModuleDescriptor parseDescriptor(ParserSettings ivySettings, InputStream descriptor,
-            Resource res, boolean validate) throws ParseException, IOException {
+            Resource res, boolean validate) throws ParseException {
         Parser parser = newParser(ivySettings);
         parser.setValidate(validate);
         parser.setResource(res);
@@ -209,8 +209,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
-        protected static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1",
-                "1.2", "1.3", "1.4", "2.0", "2.1", "2.2", "2.3", "2.4"});
+        protected static final List<String> ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0",
+                "1.1", "1.2", "1.3", "1.4", "2.0", "2.1", "2.2", "2.3", "2.4"});
 
         /* how and what do we have to parse */
         private ParserSettings settings;
@@ -261,7 +261,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             this.validate = validate;
         }
 
-        public void parse() throws ParseException, IOException {
+        public void parse() throws ParseException {
             try {
                 URL schemaURL = validate ? getSchemaURL() : null;
                 if (descriptorURL != null) {
@@ -297,6 +297,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
             try {
@@ -426,7 +427,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String extendType = attributes.getValue("extendType") != null ? settings
                     .substitute(attributes.getValue("extendType").toLowerCase(Locale.US)) : "all";
 
-            List/* <String> */extendTypes = Arrays.asList(extendType.split(","));
+            List<String> extendTypes = Arrays.asList(extendType.split(","));
             ModuleId parentMid = new ModuleId(parentOrganisation, parentModule);
             ModuleRevisionId parentMrid = new ModuleRevisionId(parentMid, parentRevision);
 
@@ -472,7 +473,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
 
             DefaultExtendsDescriptor ed = new DefaultExtendsDescriptor(parent, location,
-                    (String[]) extendTypes.toArray(new String[extendTypes.size()]), local);
+                    extendTypes.toArray(new String[extendTypes.size()]), local);
             getMd().addInheritedDescriptor(ed);
 
             mergeWithOtherModuleDescriptor(extendTypes, parent);
@@ -487,8 +488,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * @param parent
          *            a given parent module descriptor
          */
-        protected void mergeWithOtherModuleDescriptor(List/* <String> */extendTypes,
-                ModuleDescriptor parent) throws ParseException {
+        protected void mergeWithOtherModuleDescriptor(List<String> extendTypes,
+                ModuleDescriptor parent) {
 
             if (extendTypes.contains("all")) {
                 mergeAll(parent);
@@ -577,8 +578,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             return override == null ? inherited : override;
         }
 
-        private static Map mergeValues(Map inherited, Map overrides) {
-            LinkedHashMap dup = new LinkedHashMap(inherited.size() + overrides.size());
+        private static Map<String, String> mergeValues(Map<String, String> inherited,
+                Map<String, String> overrides) {
+            LinkedHashMap<String, String> dup = new LinkedHashMap<String, String>(inherited.size()
+                    + overrides.size());
             dup.putAll(inherited);
             dup.putAll(overrides);
             return dup;
@@ -696,7 +699,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             FileResource res = new FileResource(null, file);
             ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(
                 res);
-            return parser.parseDescriptor(getSettings(), file.toURL(), res, isValidate());
+            return parser.parseDescriptor(getSettings(), file.toURI().toURL(), res, isValidate());
         }
 
         /**
@@ -922,8 +925,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String rev = settings.substitute(attributes.getValue("rev"));
             String revConstraint = settings.substitute(attributes.getValue("revConstraint"));
 
-            Map extraAttributes = ExtendableItemHelper.getExtraAttributes(settings, attributes,
-                DEPENDENCY_REGULAR_ATTRIBUTES);
+            Map<String, String> extraAttributes = ExtendableItemHelper.getExtraAttributes(settings,
+                attributes, DEPENDENCY_REGULAR_ATTRIBUTES);
 
             ModuleRevisionId revId = ModuleRevisionId.newInstance(org, name, branch, rev,
                 extraAttributes);
@@ -1124,8 +1127,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             ext = ext != null ? ext : type;
             if (state == State.DEP_ARTIFACT) {
                 String url = settings.substitute(attributes.getValue("url"));
-                Map extraAtt = ExtendableItemHelper.getExtraAttributes(settings, attributes,
-                    new String[] {"name", "type", "ext", "url", "conf"});
+                Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
+                    attributes, new String[] {"name", "type", "ext", "url", "conf"});
                 confAware = new DefaultDependencyArtifactDescriptor(dd, name, type, ext,
                         url == null ? null : new URL(url), extraAtt);
             } else if (state == State.ARTIFACT_INCLUDE) {
@@ -1135,8 +1138,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String module = settings.substitute(attributes.getValue("module"));
                 module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-                Map extraAtt = ExtendableItemHelper.getExtraAttributes(settings, attributes,
-                    new String[] {"org", "module", "name", "type", "ext", "matcher", "conf"});
+                Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
+                    attributes, new String[] {"org", "module", "name", "type", "ext", "matcher",
+                            "conf"});
                 confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
             } else { // _state == ARTIFACT_EXCLUDE || EXCLUDE
                 PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
@@ -1145,8 +1149,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String module = settings.substitute(attributes.getValue("module"));
                 module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-                Map extraAtt = ExtendableItemHelper.getExtraAttributes(settings, attributes,
-                    new String[] {"org", "module", "name", "type", "ext", "matcher", "conf"});
+                Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
+                    attributes, new String[] {"org", "module", "name", "type", "ext", "matcher",
+                            "conf"});
                 confAware = new DefaultExcludeRule(aid, matcher, extraAtt);
             }
             String confs = settings.substitute(attributes.getValue("conf"));
@@ -1197,12 +1202,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             return matcher;
         }
 
+        @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (buffer != null) {
                 buffer.append(ch, start, length);
             }
         }
 
+        @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (state == State.PUB && "artifact".equals(qName)
                     && artifact.getConfigurations().length == 0) {
@@ -1380,6 +1387,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
     }
 
+    @Override
     public String toString() {
         return "ivy parser";
     }

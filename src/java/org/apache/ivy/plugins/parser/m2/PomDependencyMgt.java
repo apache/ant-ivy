@@ -19,6 +19,8 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.util.List;
 
+import org.apache.ivy.core.module.id.ModuleId;
+
 public interface PomDependencyMgt {
 
     public abstract String getGroupId();
@@ -29,5 +31,5 @@ public interface PomDependencyMgt {
 
     public abstract String getScope();
 
-    public List /* <ModuleId> */getExcludedModules();
+    public List<ModuleId> getExcludedModules();
 }

@@ -34,15 +34,13 @@ public class IBiblioHelper {
 
     public static String getIBiblioMirror() throws Exception {
         if (!_checked) {
-            String[] mirrors = new String[] {"https://repo1.maven.org/maven/REPOSITORY-V1.txt",
-                    "http://www.ibiblio.org/maven"};
-            String[] mirrorsRoot = new String[] {"https://repo1.maven.org/maven",
-                    "http://www.ibiblio.org/maven"};
+            String[] mirrors = new String[] {"http://maven.ibiblio.org/maven"};
+            String[] mirrorsRoot = new String[] {"http://maven.ibiblio.org/maven"};
 
             long best = -1;
             for (int i = 0; i < mirrors.length; i++) {
                 long start = System.currentTimeMillis();
-                if (handler.isReachable(new URL(mirrors[i]), 300)) {
+                if (handler.isReachable(new URL(mirrors[i]), 500)) {
                     long took = System.currentTimeMillis() - start;
                     System.out.println("reached " + mirrors[i] + " in " + took + "ms");
                     if (best == -1 || took < best) {

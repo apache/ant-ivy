@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -48,6 +46,8 @@ import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
+
+import junit.framework.TestCase;
 
 /**
  * TODO write javadoc

@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.updatesite.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,8 +31,8 @@ import org.xml.sax.SAXException;
 
 public class UpdateSiteDigestParser {
 
-    public static UpdateSiteDescriptor parse(InputStream in, UpdateSite site)
-            throws ParseException, IOException, SAXException {
+    public static UpdateSiteDescriptor parse(InputStream in, UpdateSite site) throws IOException,
+            SAXException {
         DigestHandler handler = new DigestHandler(site);
         try {
             XMLHelper.parse(in, null, handler, null);
@@ -54,6 +53,7 @@ public class UpdateSiteDigestParser {
             repoDescriptor = new UpdateSiteDescriptor(site.getUri(),
                     ExecutionEnvironmentProfileProvider.getInstance());
             addChild(new FeatureHandler(), new ChildElementHandler<FeatureHandler>() {
+                @Override
                 public void childHanlded(FeatureHandler child) {
                     repoDescriptor.addFeature(child.feature);
                 }

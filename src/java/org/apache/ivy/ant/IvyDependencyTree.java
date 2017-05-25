@@ -49,7 +49,10 @@ public class IvyDependencyTree extends IvyPostResolveTask {
             IvyNode dependency = (IvyNode) iterator.next();
             populateDependencyTree(dependency, mrid, report);
         }
-        printDependencies((List) dependencies.get(mrid), 0);
+        List dependencyList = (List) dependencies.get(mrid);
+        if (dependencyList != null) {
+            printDependencies(dependencyList, 0);
+        }
     }
 
     private void printDependencies(List/* <IvyNode> */dependencyList, int indent) {

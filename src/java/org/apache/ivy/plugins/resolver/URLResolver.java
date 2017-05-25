@@ -28,6 +28,7 @@ public class URLResolver extends RepositoryResolver {
         setRepository(new URLRepository());
     }
 
+    @Override
     public String getTypeName() {
         return "url";
     }

@@ -46,6 +46,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.pack.PackagingManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
@@ -331,12 +332,29 @@ public class RetrieveEngine {
                     artifacts.add(parser.getMetadataArtifactReport(mrids[j]));
                 }
             }
-            for (ArtifactDownloadReport adr : artifacts) {
+            final PackagingManager packagingManager = new PackagingManager();
+            packagingManager.setSettings(IvyContext.getContext().getSettings());
 
-                Artifact artifact = adr.getArtifact();
-                String ext = artifact.getExt();
-                if (adr.getUnpackedLocalFile() != null) {
-                    ext = "";
+            for (final ArtifactDownloadReport adr : artifacts) {
+
+                final Artifact artifact = adr.getArtifact();
+                final String ext;
+                if (adr.getUnpackedLocalFile() == null) {
+                    ext = artifact.getExt();
+                } else {
+                    final Artifact unpackedArtifact;
+                    // check if the download report is aware of the unpacked artifact
+                    if (adr.getUnpackedArtifact() != null) {
+                        unpackedArtifact = adr.getUnpackedArtifact();
+                    } else {
+                        // use the packaging manager to get hold of the unpacked artifact
+                        unpackedArtifact = packagingManager.getUnpackedArtifact(artifact);
+                    }
+                    if (unpackedArtifact == null) {
+                        throw new RuntimeException("Could not determine unpacked artifact for " + artifact +
+                                " while determining artifacts to copy for module " + mrid);
+                    }
+                    ext = unpackedArtifact.getExt();
                 }
 
                 String destPattern = "ivy".equals(adr.getType()) ? destIvyPattern : destFilePattern;

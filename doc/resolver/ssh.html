@@ -55,6 +55,10 @@ This resolver shares the <a href="../settings/resolvers.html#common">common attr
         <td>No, defaults to host given on the patterns, fail if none is set</td></tr>
     <tr><td>port</td><td>The port to connect to</td>
         <td>No, defaults to 22</td></tr>
+    <tr><td>sshConfig</td><td>Path to an OpenSSH-style config file containing additional
+            configuration</td>
+        <td>No</td></tr>
+
     <tr><td>publishPermissions</td><td>A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of the published files. <span class="since">(since 2.0)</span>
 </td><td>No, defaults to scp standard behaviour</td></tr>
 </tbody>
@@ -89,6 +93,13 @@ Will connect to myhost.com using myuser and prompt for the password.
 </code>
 Will connect to yourserver.com on port 8022 with user geheim and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user geheim with the same keyFile/keyFilePassword pair for the artifacts.
 
+<code type="xml">
+<ssh host="myhost" sshConfig="/path/to/.ssh/config">
+  <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
+  <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
+</ssh>
+</code>
+Will connect to the host named by myhost according to the config file in /path/to/.ssh/config, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

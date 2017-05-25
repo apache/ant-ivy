@@ -71,19 +71,20 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         super(name, strategy);
     }
 
-    public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
+    @Override
+    public Collection<IvyNode> resolveConflicts(IvyNode parent, Collection<IvyNode> conflicts) {
         if (conflicts.size() < 2) {
             return conflicts;
         }
         VersionMatcher versionMatcher = getSettings().getVersionMatcher();
 
-        Iterator iter = conflicts.iterator();
-        IvyNode node = (IvyNode) iter.next();
+        Iterator<IvyNode> iter = conflicts.iterator();
+        IvyNode node = iter.next();
         ModuleRevisionId mrid = node.getResolvedId();
 
         if (versionMatcher.isDynamic(mrid)) {
             while (iter.hasNext()) {
-                IvyNode other = (IvyNode) iter.next();
+                IvyNode other = iter.next();
                 if (versionMatcher.isDynamic(other.getResolvedId())) {
                     // two dynamic versions in conflict, not enough information yet
                     return null;
@@ -98,17 +99,17 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             if (conflicts.size() == 2) {
                 // very common special case of only two modules in conflict,
                 // let's return the second one (static)
-                Iterator it = conflicts.iterator();
+                Iterator<IvyNode> it = conflicts.iterator();
                 it.next();
                 return Collections.singleton(it.next());
             }
-            Collection newConflicts = new LinkedHashSet(conflicts);
+            Collection<IvyNode> newConflicts = new LinkedHashSet<IvyNode>(conflicts);
             newConflicts.remove(node);
             return super.resolveConflicts(parent, newConflicts);
         } else {
             // the first node is a static revision, let's see if all other versions match
             while (iter.hasNext()) {
-                IvyNode other = (IvyNode) iter.next();
+                IvyNode other = iter.next();
                 if (!versionMatcher.accept(other.getResolvedId(), mrid)) {
                     // incompatibility found
                     if (!handleIncompatibleConflict(parent, conflicts, node, other)) {
@@ -152,8 +153,8 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      * @return true if the incompatible conflict has been handled, false otherwise (in which case
      *         resolveConflicts should return null)
      */
-    private boolean handleIncompatibleConflict(IvyNode parent, Collection conflicts, IvyNode node,
-            IvyNode other) {
+    private boolean handleIncompatibleConflict(IvyNode parent, Collection<IvyNode> conflicts,
+            IvyNode node, IvyNode other) {
         // we never actually return anything else than false or throw an exception,
         // but returning a boolean make the calling code cleaner
         try {
@@ -184,14 +185,14 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
 
     private void blackListIncompatibleCallerAndRestartResolveIfPossible(IvySettings settings,
             IvyNode parent, IvyNode selected, IvyNode evicted) {
-        Stack callerStack = new Stack();
+        Stack<IvyNode> callerStack = new Stack<IvyNode>();
         callerStack.push(evicted);
-        final Collection toBlacklist = blackListIncompatibleCaller(settings.getVersionMatcher(),
-            parent, selected, evicted, callerStack);
+        Collection<IvyNodeBlacklist> toBlacklist = blackListIncompatibleCaller(
+            settings.getVersionMatcher(), parent, selected, evicted, callerStack);
         if (toBlacklist != null) {
             final StringBuffer blacklisted = new StringBuffer();
-            for (Iterator iterator = toBlacklist.iterator(); iterator.hasNext();) {
-                IvyNodeBlacklist blacklist = (IvyNodeBlacklist) iterator.next();
+            for (Iterator<IvyNodeBlacklist> iterator = toBlacklist.iterator(); iterator.hasNext();) {
+                IvyNodeBlacklist blacklist = iterator.next();
                 blacklist.getBlacklistedNode().blacklist(blacklist);
                 blacklisted.append(blacklist.getBlacklistedNode());
                 if (iterator.hasNext()) {
@@ -212,9 +213,9 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         }
     }
 
-    private boolean handleIncompatibleCaller(Stack callerStack, IvyNode node, IvyNode callerNode,
-            IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode,
-            Collection blacklisted, VersionMatcher versionMatcher) {
+    private boolean handleIncompatibleCaller(Stack<IvyNode> callerStack, IvyNode node,
+            IvyNode callerNode, IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode,
+            Collection<IvyNodeBlacklist> blacklisted, VersionMatcher versionMatcher) {
         if (callerStack.subList(0, callerStack.size() - 1).contains(node)) {
             // circular dependency found and handled: the current top of the stack (node)
             // was already contained in the rest of the stack, the circle is closed, nothing
@@ -222,8 +223,8 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             return true;
         } else {
             callerStack.push(callerNode);
-            Collection sub = blackListIncompatibleCaller(versionMatcher, conflictParent,
-                selectedNode, evictedNode, callerStack);
+            Collection<IvyNodeBlacklist> sub = blackListIncompatibleCaller(versionMatcher,
+                conflictParent, selectedNode, evictedNode, callerStack);
             callerStack.pop();
             if (sub == null) {
                 // propagate the fact that a path with unblacklistable caller has been found
@@ -251,11 +252,11 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      * @return the collection of blacklisting to do, null if a blacklist is not possible in at least
      *         one caller path
      */
-    private Collection/* <IvyNodeBlacklist> */blackListIncompatibleCaller(
-            VersionMatcher versionMatcher, IvyNode conflictParent, IvyNode selectedNode,
-            IvyNode evictedNode, Stack/* <IvyNode> */callerStack) {
-        Collection/* <IvyNodeBlacklist> */blacklisted = new ArrayList/* <IvyNodeBlacklist> */();
-        IvyNode node = (IvyNode) callerStack.peek();
+    private Collection<IvyNodeBlacklist> blackListIncompatibleCaller(VersionMatcher versionMatcher,
+            IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode,
+            Stack<IvyNode> callerStack) {
+        Collection<IvyNodeBlacklist> blacklisted = new ArrayList<IvyNodeBlacklist>();
+        IvyNode node = callerStack.peek();
         String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
         Caller[] callers = node.getCallers(rootModuleConf);
         for (int i = 0; i < callers.length; i++) {
@@ -282,30 +283,30 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         return blacklisted;
     }
 
-    protected void handleUnsolvableConflict(IvyNode parent, Collection conflicts, IvyNode node1,
-            IvyNode node2) {
+    protected void handleUnsolvableConflict(IvyNode parent, Collection<IvyNode> conflicts,
+            IvyNode node1, IvyNode node2) {
         throw new StrictConflictException(node1, node2);
     }
 
+    @Override
     public void handleAllBlacklistedRevisions(DependencyDescriptor dd,
-            Collection/* <ModuleRevisionId> */foundBlacklisted) {
+            Collection<ModuleRevisionId> foundBlacklisted) {
         ResolveData resolveData = IvyContext.getContext().getResolveData();
-        Collection/* <IvyNode> */blacklisted = new HashSet();
-        for (Iterator iterator = foundBlacklisted.iterator(); iterator.hasNext();) {
-            ModuleRevisionId mrid = (ModuleRevisionId) iterator.next();
+        Collection<IvyNode> blacklisted = new HashSet<IvyNode>();
+        for (ModuleRevisionId mrid : foundBlacklisted) {
             blacklisted.add(resolveData.getNode(mrid));
         }
 
-        for (Iterator iterator = blacklisted.iterator(); iterator.hasNext();) {
-            IvyNode node = (IvyNode) iterator.next();
+        for (IvyNode node : blacklisted) {
             IvyNodeBlacklist bdata = node.getBlacklistData(resolveData.getReport()
                     .getConfiguration());
             handleUnsolvableConflict(bdata.getConflictParent(),
-                Arrays.asList(new Object[] {bdata.getEvictedNode(), bdata.getSelectedNode()}),
+                Arrays.asList(bdata.getEvictedNode(), bdata.getSelectedNode()),
                 bdata.getEvictedNode(), bdata.getSelectedNode());
         }
     }
 
+    @Override
     public String toString() {
         return getName();
     }

@@ -83,6 +83,7 @@ public class SshResolver extends AbstractSshBasedResolver {
         ((SshRepository) getRepository()).setExistCommand(cmd);
     }
 
+    @Override
     public String getTypeName() {
         return "ssh";
     }

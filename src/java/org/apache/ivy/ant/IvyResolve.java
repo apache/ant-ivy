@@ -23,7 +23,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
@@ -91,11 +90,11 @@ public class IvyResolve extends IvyTask {
 
     private boolean checkIfChanged = true; // for backward compatibility
 
-    private List/* <IvyDependency> */dependencies = new ArrayList();
+    private List<IvyDependency> dependencies = new ArrayList<IvyDependency>();
 
-    private List/* <IvyExclude> */excludes = new ArrayList();
+    private List<IvyExclude> excludes = new ArrayList<IvyExclude>();
 
-    private List/* <IvyConflict> */conflicts = new ArrayList();
+    private List<IvyConflict> conflicts = new ArrayList<IvyConflict>();
 
     public boolean isUseOrigin() {
         return useOrigin;
@@ -229,11 +228,13 @@ public class IvyResolve extends IvyTask {
         return c;
     }
 
+    @Override
     protected void prepareTask() {
         super.prepareTask();
         Message.setShowProgress(showProgress);
     }
 
+    @Override
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -267,24 +268,18 @@ public class IvyResolve extends IvyTask {
                     Ivy.getWorkingRevision());
                 DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(mrid, null);
 
-                Iterator itDeps = dependencies.iterator();
-                while (itDeps.hasNext()) {
-                    IvyDependency dep = (IvyDependency) itDeps.next();
+                for (IvyDependency dep : dependencies) {
                     DependencyDescriptor dd = dep.asDependencyDescriptor(md, "default", settings);
                     md.addDependency(dd);
                 }
 
-                Iterator itExcludes = excludes.iterator();
-                while (itExcludes.hasNext()) {
-                    IvyExclude exclude = (IvyExclude) itExcludes.next();
+                for (IvyExclude exclude : excludes) {
                     DefaultExcludeRule rule = exclude.asRule(settings);
                     rule.addConfiguration("default");
                     md.addExcludeRule(rule);
                 }
 
-                Iterator itConflicts = conflicts.iterator();
-                while (itConflicts.hasNext()) {
-                    IvyConflict conflict = (IvyConflict) itConflicts.next();
+                for (IvyConflict conflict : conflicts) {
                     conflict.addConflict(md, settings);
                 }
 
@@ -426,9 +421,9 @@ public class IvyResolve extends IvyTask {
         }
     }
 
-    protected Collection/* <String> */getAllowedLogOptions() {
-        return Arrays.asList(new String[] {LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
-                LogOptions.LOG_QUIET});
+    protected Collection<String> getAllowedLogOptions() {
+        return Arrays.asList(LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
+            LogOptions.LOG_QUIET);
     }
 
     private ResolveOptions getResolveOptions(Ivy ivy, String[] confs, IvySettings settings) {

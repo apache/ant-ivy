@@ -289,6 +289,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return found;
     }
 
+    @Override
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         URL url = artifact.getUrl();
         if (url == null) {
@@ -313,20 +314,20 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     }
 
     @Override
-    protected Collection/* <String> */filterNames(Collection/* <String> */names) {
+    protected Collection<String> filterNames(Collection<String> names) {
         getSettings().filterIgnore(names);
         return names;
     }
 
     @Override
-    protected Collection findNames(Map tokenValues, String token) {
+    protected Collection<String> findNames(Map<String, String> tokenValues, String token) {
         if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
             return getRepoDescriptor().getCapabilities();
         }
 
-        String osgiType = (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
+        String osgiType = tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null || osgiType.length() == 0) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         if (IvyPatternHelper.MODULE_KEY.equals(token)) {
@@ -334,7 +335,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
 
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
-            String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
+            String name = tokenValues.get(IvyPatternHelper.MODULE_KEY);
             List<String> versions = new ArrayList<String>();
             Set<ModuleDescriptorWrapper> mds = getRepoDescriptor().findModules(osgiType, name);
             if (mds != null) {
@@ -346,9 +347,9 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
 
         if (IvyPatternHelper.CONF_KEY.equals(token)) {
-            String name = (String) tokenValues.get(IvyPatternHelper.MODULE_KEY);
+            String name = tokenValues.get(IvyPatternHelper.MODULE_KEY);
             if (name == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
             if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 return Collections.singletonList(BundleInfoAdapter.CONF_USE_PREFIX + name);
@@ -356,11 +357,11 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             Collection<ModuleDescriptor> mds = ModuleDescriptorWrapper.unwrap(getRepoDescriptor()
                     .findModules(osgiType, name));
             if (mds == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
-            String version = (String) tokenValues.get(IvyPatternHelper.REVISION_KEY);
+            String version = tokenValues.get(IvyPatternHelper.REVISION_KEY);
             if (version == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
             ModuleDescriptor found = null;
             for (ModuleDescriptor md : mds) {
@@ -369,12 +370,12 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                 }
             }
             if (found == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
             List<String> confs = Arrays.asList(found.getConfigurationsNames());
             return confs;
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
@@ -404,42 +405,50 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     }
 
     @Override
-    public Map[] listTokenValues(String[] tokens, Map criteria) {
+    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         Set<String> tokenSet = new HashSet<String>(Arrays.asList(tokens));
         Set<Map<String, String>> listTokenValues = listTokenValues(tokenSet, criteria);
         return listTokenValues.toArray(new Map[listTokenValues.size()]);
     }
 
     private Set<Map<String, String>> listTokenValues(Set<String> tokens,
-            Map<String, String> criteria) {
+            Map<String, Object> criteria) {
+        Map<String, String> stringCriteria = new HashMap<String, String>();
+        for (Entry<String, Object> entry : criteria.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (!(value instanceof String)) {
+                // no support for matcher for now
+                return Collections.emptySet();
+            }
+            stringCriteria.put(key, (String) value);
+        }
+
         if (tokens.isEmpty()) {
-            return Collections.singleton(criteria);
+            // no more tokens to resolve
+            return Collections.singleton(stringCriteria);
         }
 
         Set<String> remainingTokens = new HashSet<String>(tokens);
 
-        Map<String, String> values = new HashMap<String, String>();
-
         remainingTokens.remove(IvyPatternHelper.ORGANISATION_KEY);
-        String osgiType = criteria.get(IvyPatternHelper.ORGANISATION_KEY);
-        if (osgiType == null || osgiType.length() == 0) {
-            return Collections.emptySet();
-        }
-        values.put(IvyPatternHelper.ORGANISATION_KEY, osgiType);
-
+        String osgiType = stringCriteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null) {
             Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
-            Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+            Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.BUNDLE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
-            newCriteria = new HashMap<String, String>(criteria);
+            newCriteria = new HashMap<String, Object>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.PACKAGE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
-            newCriteria = new HashMap<String, String>(criteria);
+            newCriteria = new HashMap<String, Object>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.SERVICE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             return tokenValues;
         }
+
+        Map<String, String> values = new HashMap<String, String>();
+        values.put(IvyPatternHelper.ORGANISATION_KEY, osgiType);
 
         Set<String> capabilities = getRepoDescriptor().getCapabilityValues(osgiType);
         if (capabilities == null || capabilities.isEmpty()) {
@@ -447,11 +456,11 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
 
         remainingTokens.remove(IvyPatternHelper.MODULE_KEY);
-        String module = criteria.get(IvyPatternHelper.MODULE_KEY);
+        String module = stringCriteria.get(IvyPatternHelper.MODULE_KEY);
         if (module == null) {
             Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
             for (String name : capabilities) {
-                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+                Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
                 newCriteria.put(IvyPatternHelper.MODULE_KEY, name);
                 tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             }
@@ -460,7 +469,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         values.put(IvyPatternHelper.MODULE_KEY, module);
 
         remainingTokens.remove(IvyPatternHelper.REVISION_KEY);
-        String rev = criteria.get(IvyPatternHelper.REVISION_KEY);
+        String rev = stringCriteria.get(IvyPatternHelper.REVISION_KEY);
         if (rev == null) {
             Set<ModuleDescriptorWrapper> mdws = getRepoDescriptor().findModules(osgiType, module);
             if (mdws == null || mdws.isEmpty()) {
@@ -468,7 +477,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             }
             Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
             for (ModuleDescriptorWrapper mdw : mdws) {
-                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+                Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
                 newCriteria.put(IvyPatternHelper.REVISION_KEY, mdw.getBundleInfo().getVersion()
                         .toString());
                 tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
@@ -478,7 +487,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         values.put(IvyPatternHelper.REVISION_KEY, rev);
 
         remainingTokens.remove(IvyPatternHelper.CONF_KEY);
-        String conf = criteria.get(IvyPatternHelper.CONF_KEY);
+        String conf = stringCriteria.get(IvyPatternHelper.CONF_KEY);
         if (conf == null) {
             if (osgiType.equals(BundleInfo.PACKAGE_TYPE)) {
                 values.put(IvyPatternHelper.CONF_KEY, BundleInfoAdapter.CONF_USE_PREFIX + module);
@@ -508,7 +517,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             List<String> configurations = BundleInfoAdapter
                     .getConfigurations(found.getBundleInfo());
             for (int i = 0; i < configurations.size(); i++) {
-                Map<String, String> newCriteria = new HashMap<String, String>(criteria);
+                Map<String, String> newCriteria = new HashMap<String, String>(stringCriteria);
                 newCriteria.put(IvyPatternHelper.CONF_KEY, configurations.get(i));
                 tokenValues.add(newCriteria);
             }
@@ -519,6 +528,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return Collections.singleton(values);
     }
 
+    @Override
     protected long get(Resource resource, File dest) throws IOException {
         Message.verbose("\t" + getName() + ": downloading " + resource.getName());
         Message.debug("\t\tto " + dest);
@@ -529,6 +539,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         return dest.length();
     }
 
+    @Override
     protected Resource getResource(String source) throws IOException {
         return getRepository().getResource(source);
     }

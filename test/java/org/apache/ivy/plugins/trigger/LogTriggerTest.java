@@ -20,14 +20,14 @@ package org.apache.ivy.plugins.trigger;
 import java.io.File;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.event.resolve.StartResolveEvent;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
+
+import junit.framework.TestCase;
 
 public class LogTriggerTest extends TestCase {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");

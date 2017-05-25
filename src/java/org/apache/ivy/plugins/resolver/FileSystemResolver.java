@@ -67,7 +67,7 @@ public class FileSystemResolver extends RepositoryResolver {
      * Map between actual patterns and patterns used during the transaction to put files in a
      * temporary directory
      */
-    private Map/* <String,String> */fullTransactionPatterns = new HashMap();
+    private Map<String, String> fullTransactionPatterns = new HashMap<String, String>();
 
     /**
      * Location where files are published during the transaction
@@ -83,6 +83,7 @@ public class FileSystemResolver extends RepositoryResolver {
         setRepository(new FileRepository());
     }
 
+    @Override
     public String getTypeName() {
         return "file";
     }
@@ -99,10 +100,11 @@ public class FileSystemResolver extends RepositoryResolver {
         return (FileRepository) getRepository();
     }
 
+    @Override
     protected String getDestination(String pattern, Artifact artifact, ModuleRevisionId mrid) {
         if (supportTransaction() && isTransactionStarted()) {
 
-            String destPattern = (String) fullTransactionPatterns.get(pattern);
+            String destPattern = fullTransactionPatterns.get(pattern);
             if (destPattern == null) {
                 throw new IllegalArgumentException(
                         "unsupported pattern for publish destination pattern: " + pattern
@@ -118,6 +120,7 @@ public class FileSystemResolver extends RepositoryResolver {
         return transactionTempDir != null;
     }
 
+    @Override
     public void abortPublishTransaction() throws IOException {
         if (supportTransaction()) {
             if (isTransactionStarted()) {
@@ -133,6 +136,7 @@ public class FileSystemResolver extends RepositoryResolver {
         }
     }
 
+    @Override
     public void commitPublishTransaction() throws IOException {
         if (supportTransaction()) {
             if (!isTransactionStarted()) {
@@ -169,6 +173,7 @@ public class FileSystemResolver extends RepositoryResolver {
         }
     }
 
+    @Override
     public void beginPublishTransaction(ModuleRevisionId module, boolean overwrite)
             throws IOException {
         if (supportTransaction()) {
@@ -194,11 +199,12 @@ public class FileSystemResolver extends RepositoryResolver {
         }
     }
 
-    protected Collection filterNames(Collection values) {
+    @Override
+    protected Collection<String> filterNames(Collection<String> values) {
         if (supportTransaction()) {
             values = super.filterNames(values);
-            for (Iterator iterator = values.iterator(); iterator.hasNext();) {
-                String v = (String) iterator.next();
+            for (Iterator<String> iterator = values.iterator(); iterator.hasNext();) {
+                String v = iterator.next();
                 if (v.endsWith(TRANSACTION_DESTINATION_SUFFIX)) {
                     iterator.remove();
                 }
@@ -225,11 +231,11 @@ public class FileSystemResolver extends RepositoryResolver {
     private void checkSupportTransaction() {
         if (supportTransaction == null) {
             supportTransaction = Boolean.FALSE;
-            List ivyPatterns = getIvyPatterns();
-            List artifactPatterns = getArtifactPatterns();
+            List<String> ivyPatterns = getIvyPatterns();
+            List<String> artifactPatterns = getArtifactPatterns();
 
             if (ivyPatterns.size() > 0) {
-                String pattern = (String) ivyPatterns.get(0);
+                String pattern = ivyPatterns.get(0);
                 Matcher m = TRANSACTION_PATTERN.matcher(pattern);
                 if (!m.matches()) {
                     unsupportedTransaction("ivy pattern does not use revision as a directory");
@@ -241,7 +247,7 @@ public class FileSystemResolver extends RepositoryResolver {
                 }
             }
             if (artifactPatterns.size() > 0) {
-                String pattern = (String) artifactPatterns.get(0);
+                String pattern = artifactPatterns.get(0);
                 Matcher m = TRANSACTION_PATTERN.matcher(pattern);
                 if (!m.matches()) {
                     unsupportedTransaction("artifact pattern does not use revision as a directory");
@@ -299,23 +305,27 @@ public class FileSystemResolver extends RepositoryResolver {
         this.transactional = transactional;
     }
 
+    @Override
     public void addConfiguredIvy(IvyPattern p) {
         File file = Checks.checkAbsolute(p.getPattern(), "ivy pattern");
         p.setPattern(file.getAbsolutePath());
         super.addConfiguredIvy(p);
     }
 
+    @Override
     public void addIvyPattern(String pattern) {
         File file = Checks.checkAbsolute(pattern, "ivy pattern");
         super.addIvyPattern(file.getAbsolutePath());
     }
 
+    @Override
     public void addConfiguredArtifact(IvyPattern p) {
         File file = Checks.checkAbsolute(p.getPattern(), "artifact pattern");
         p.setPattern(file.getAbsolutePath());
         super.addConfiguredArtifact(p);
     }
 
+    @Override
     public void addArtifactPattern(String pattern) {
         File file = Checks.checkAbsolute(pattern, "artifact pattern");
         super.addArtifactPattern(file.getAbsolutePath());

@@ -33,8 +33,7 @@ import org.xml.sax.SAXException;
 
 public class FeatureParser {
 
-    public static EclipseFeature parse(InputStream in) throws ParseException, IOException,
-            SAXException {
+    public static EclipseFeature parse(InputStream in) throws IOException, SAXException {
         FeatureHandler handler = new FeatureHandler();
         try {
             XMLHelper.parse(in, null, handler, null);
@@ -81,26 +80,31 @@ public class FeatureParser {
         public FeatureHandler() {
             super(FEATURE);
             addChild(new DescriptionHandler(), new ChildElementHandler<DescriptionHandler>() {
+                @Override
                 public void childHanlded(DescriptionHandler child) {
                     feature.setDescription(child.getBufferedChars().trim());
                 }
             });
             addChild(new LicenseHandler(), new ChildElementHandler<LicenseHandler>() {
+                @Override
                 public void childHanlded(LicenseHandler child) {
                     feature.setLicense(child.getBufferedChars().trim());
                 }
             });
             addChild(new CopyrightHandler(), new ChildElementHandler<CopyrightHandler>() {
+                @Override
                 public void childHanlded(CopyrightHandler child) {
                     feature.setCopyright(child.getBufferedChars().trim());
                 }
             });
             addChild(new PluginHandler(), new ChildElementHandler<PluginHandler>() {
+                @Override
                 public void childHanlded(PluginHandler child) {
                     feature.addPlugin(child.plugin);
                 }
             });
             addChild(new RequiresHandler(), new ChildElementHandler<RequiresHandler>() {
+                @Override
                 public void childHanlded(RequiresHandler child) {
                     for (Require require : child.requires) {
                         feature.addRequire(require);
@@ -113,6 +117,7 @@ public class FeatureParser {
             // });
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
             String version = atts.getValue(VERSION);
@@ -159,6 +164,7 @@ public class FeatureParser {
             super(PLUGIN);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             plugin = new EclipsePlugin();
 
@@ -189,6 +195,7 @@ public class FeatureParser {
             setBufferingChar(true);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             // String url = atts.getValue(URL);
         }
@@ -205,6 +212,7 @@ public class FeatureParser {
             setBufferingChar(true);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             // String url = atts.getValue(URL);
         }
@@ -222,6 +230,7 @@ public class FeatureParser {
             setBufferingChar(true);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             // String url = atts.getValue(URL);
         }
@@ -236,6 +245,7 @@ public class FeatureParser {
         public RequiresHandler() {
             super(REQUIRES);
             addChild(new ImportHandler(), new ChildElementHandler<ImportHandler>() {
+                @Override
                 public void childHanlded(ImportHandler child) {
                     requires.add(child.require);
                 }
@@ -263,6 +273,7 @@ public class FeatureParser {
             super(IMPORT);
         }
 
+        @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             require = new Require();
 

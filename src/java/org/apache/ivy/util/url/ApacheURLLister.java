@@ -54,7 +54,7 @@ public class ApacheURLLister {
      * @throws IOException
      *             If an error occures retrieving the HTML.
      */
-    public List listAll(URL url) throws IOException {
+    public List<URL> listAll(URL url) throws IOException {
         return retrieveListing(url, true, true);
     }
 
@@ -67,7 +67,7 @@ public class ApacheURLLister {
      * @throws IOException
      *             If an error occures retrieving the HTML.
      */
-    public List listDirectories(URL url) throws IOException {
+    public List<URL> listDirectories(URL url) throws IOException {
         return retrieveListing(url, false, true);
     }
 
@@ -81,7 +81,7 @@ public class ApacheURLLister {
      * @throws IOException
      *             If an error occures retrieving the HTML.
      */
-    public List listFiles(URL url) throws IOException {
+    public List<URL> listFiles(URL url) throws IOException {
         return retrieveListing(url, true, false);
     }
 
@@ -99,9 +99,9 @@ public class ApacheURLLister {
      * @throws IOException
      *             If an error occures retrieving the HTML.
      */
-    public List retrieveListing(URL url, boolean includeFiles, boolean includeDirectories)
+    public List<URL> retrieveListing(URL url, boolean includeFiles, boolean includeDirectories)
             throws IOException {
-        List urlList = new ArrayList();
+        List<URL> urlList = new ArrayList<URL>();
 
         // add trailing slash for relative urls
         if (!url.getPath().endsWith("/") && !url.getPath().endsWith(".html")) {

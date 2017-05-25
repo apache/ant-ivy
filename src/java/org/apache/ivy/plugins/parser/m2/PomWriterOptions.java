@@ -19,7 +19,7 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class PomWriterOptions {
 
     private String artifactPackaging;
 
-    private List/* <ExtraDependency> */extraDependencies = new ArrayList();
+    private List<ExtraDependency> extraDependencies = new ArrayList<ExtraDependency>();
 
     private String description;
 
@@ -91,11 +91,11 @@ public class PomWriterOptions {
         return this;
     }
 
-    public List/* <ExtraDependency> */getExtraDependencies() {
+    public List<ExtraDependency> getExtraDependencies() {
         return extraDependencies;
     }
 
-    public PomWriterOptions setExtraDependencies(List/* <ExtraDependency> */extraDependencies) {
+    public PomWriterOptions setExtraDependencies(List<ExtraDependency> extraDependencies) {
         this.extraDependencies = extraDependencies;
         return this;
     }
@@ -128,10 +128,11 @@ public class PomWriterOptions {
     }
 
     public static class ConfigurationScopeMapping {
-        private Map/* <String,String> */scopes;
+        private Map<String, String> scopes;
 
-        public ConfigurationScopeMapping(Map/* <String,String> */scopesMapping) {
-            this.scopes = new HashMap(scopesMapping);
+        public ConfigurationScopeMapping(Map<String, String> scopesMapping) {
+            // preserve the order
+            this.scopes = new LinkedHashMap<String, String>(scopesMapping);
         }
 
         /**
@@ -144,7 +145,7 @@ public class PomWriterOptions {
         public String getScope(String[] confs) {
             for (int i = 0; i < confs.length; i++) {
                 if (scopes.containsKey(confs[i])) {
-                    return (String) scopes.get(confs[i]);
+                    return scopes.get(confs[i]);
                 }
             }
 

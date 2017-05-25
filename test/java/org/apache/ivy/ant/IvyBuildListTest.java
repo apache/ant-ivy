@@ -22,12 +22,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+
+import junit.framework.TestCase;
 
 // CheckStyle:MagicNumber| OFF
 // The test very often use MagicNumber. Using a constant is less expressive.
@@ -43,7 +44,7 @@ public class IvyBuildListTest extends TestCase {
     protected void setUp() throws Exception {
         createCache();
 
-        project = new Project();
+        project = TestHelper.newProject();
         project.init();
 
         buildlist = new IvyBuildList();

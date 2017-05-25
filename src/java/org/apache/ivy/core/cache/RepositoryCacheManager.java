@@ -188,7 +188,22 @@ public interface RepositoryCacheManager {
      *            the dynamic module revision id
      * @param revision
      *            the resolved revision
+     * @deprecated See {@link #saveResolvedRevision(String, ModuleRevisionId, String)} which
+     *             prevents cache + * thrashing when multiple resolvers store the same dynamicMrid
      */
     public void saveResolvedRevision(ModuleRevisionId dynamicMrid, String revision);
+
+    /**
+     * Caches a dynamic revision constraint resolution for a specific resolver.
+     * 
+     * @param resolverName
+     *            the resolver in which this dynamic revision was resolved
+     * @param dynamicMrid
+     *            the dynamic module revision id
+     * @param revision
+     *            the resolved revision
+     */
+    public void saveResolvedRevision(String resolverName, ModuleRevisionId dynamicMrid,
+            String revision);
 
 }

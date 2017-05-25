@@ -19,42 +19,29 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.testutil.AntTaskTestCase;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyDependencyTreeTest extends AntTaskTestCase {
-    private File cache;
 
     private IvyDependencyTree dependencyTree;
 
     private Project project;
 
     protected void setUp() throws Exception {
-        createCache();
+        TestHelper.createCache();
         project = configureProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         dependencyTree = new IvyDependencyTree();
         dependencyTree.setProject(project);
-        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSimple() throws Exception {
@@ -62,6 +49,13 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         dependencyTree.execute();
         assertLogContaining("Dependency tree for apache-resolve-simple");
         assertLogContaining("\\- org1#mod1.2;2.0");
+    }
+
+    public void testEmpty() throws Exception {
+        dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-empty.xml"));
+        dependencyTree.execute();
+        assertLogContaining("Dependency tree for apache-resolve-empty");
+        assertLogNotContaining("\\-");
     }
 
     public void testWithResolveId() throws Exception {

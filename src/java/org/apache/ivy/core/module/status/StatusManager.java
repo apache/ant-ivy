@@ -42,14 +42,14 @@ public class StatusManager {
         return IvyContext.getContext().getSettings().getStatusManager();
     }
 
-    private List status = new ArrayList();
+    private List<Status> status = new ArrayList<Status>();
 
     private String defaultStatus;
 
     // for easier querying only
-    private Map statusPriorityMap;
+    private Map<String, Integer> statusPriorityMap;
 
-    private Map statusIntegrationMap;
+    private Map<String, Boolean> statusIntegrationMap;
 
     private String deliveryStatusListString;
 
@@ -71,7 +71,7 @@ public class StatusManager {
         this.defaultStatus = defaultStatus;
     }
 
-    public List getStatuses() {
+    public List<Status> getStatuses() {
         return status;
     }
 
@@ -79,14 +79,14 @@ public class StatusManager {
         if (status.isEmpty()) {
             throw new IllegalStateException("badly configured statuses: no status found");
         }
-        statusPriorityMap = new HashMap();
-        for (ListIterator iter = status.listIterator(); iter.hasNext();) {
-            Status status = (Status) iter.next();
+        statusPriorityMap = new HashMap<String, Integer>();
+        for (ListIterator<Status> iter = status.listIterator(); iter.hasNext();) {
+            Status status = iter.next();
             statusPriorityMap.put(status.getName(), new Integer(iter.previousIndex()));
         }
-        statusIntegrationMap = new HashMap();
-        for (Iterator iter = status.iterator(); iter.hasNext();) {
-            Status status = (Status) iter.next();
+        statusIntegrationMap = new HashMap<String, Boolean>();
+        for (Iterator<Status> iter = status.iterator(); iter.hasNext();) {
+            Status status = iter.next();
             statusIntegrationMap.put(status.getName(), Boolean.valueOf(status.isIntegration()));
         }
     }
@@ -125,8 +125,7 @@ public class StatusManager {
     public String getDeliveryStatusListString() {
         if (deliveryStatusListString == null) {
             StringBuffer ret = new StringBuffer();
-            for (Iterator iter = status.iterator(); iter.hasNext();) {
-                Status status = (Status) iter.next();
+            for (Status status : this.status) {
                 if (!status.isIntegration()) {
                     ret.append(status.getName()).append(",");
                 }

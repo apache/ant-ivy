@@ -102,6 +102,8 @@ public class IvyAntSettings extends DataType {
 
     private boolean autoRegistered = false;
 
+    private AntWorkspaceResolver antWorkspaceResolver;
+
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
      * created using the given project to back the VariableContainer.
@@ -275,6 +277,10 @@ public class IvyAntSettings extends DataType {
             defineDefaultSettingFile(ivyAntVariableContainer, task);
         }
 
+        if (antWorkspaceResolver != null) {
+            settings.addConfigured(antWorkspaceResolver.getResolver());
+        }
+
         Ivy ivy = Ivy.newInstance(settings);
         try {
             ivy.pushContext();
@@ -388,4 +394,7 @@ public class IvyAntSettings extends DataType {
         URLHandlerRegistry.setDefault(dispatcher);
     }
 
+    public void addConfiguredWorkspaceResolver(AntWorkspaceResolver antWorkspaceResolver) {
+        this.antWorkspaceResolver = antWorkspaceResolver;
+    }
 }

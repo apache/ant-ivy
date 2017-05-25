@@ -92,6 +92,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         return charBuffer.toString();
     }
 
+    @Override
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
         for (DelegatingHandler subHandler : saxHandlerMapping.values()) {
@@ -146,6 +147,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         }
     }
 
+    @Override
     public final void startDocument() throws SAXException {
         if (skip) {
             return;
@@ -164,6 +166,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void endDocument() throws SAXException {
         if (skip) {
             return;
@@ -182,6 +185,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void startElement(final String uri, final String localName, final String n,
             final Attributes atts) throws SAXException {
         // reset the char buffer
@@ -246,6 +250,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void endElement(final String uri, final String localName, final String n)
             throws SAXException {
         if (delegate != null) {
@@ -297,6 +302,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
 
     }
 
+    @Override
     public final void characters(char[] ch, int start, int length) throws SAXException {
         if (skip) {
             return;
@@ -317,6 +323,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         }
     }
 
+    @Override
     public final void startPrefixMapping(String prefix, String uri) throws SAXException {
         if (skip) {
             return;
@@ -335,6 +342,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void endPrefixMapping(String prefix) throws SAXException {
         if (skip) {
             return;
@@ -353,6 +361,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
         if (skip) {
             return;
@@ -371,6 +380,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void notationDecl(String name, String publicId, String systemId)
             throws SAXException {
         if (skip) {
@@ -391,6 +401,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void processingInstruction(String target, String data) throws SAXException {
         if (skip) {
             return;
@@ -409,6 +420,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void skippedEntity(String name) throws SAXException {
         if (skip) {
             return;
@@ -427,9 +439,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
-    /**
-     * @throws SAXException
-     */
+    @Override
     public final void unparsedEntityDecl(String name, String publicId, String systemId,
             String notationName) throws SAXException {
         if (skip) {
@@ -452,6 +462,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
 
     // ERROR HANDLING
 
+    @Override
     public final void warning(SAXParseException exception) throws SAXException {
         if (skip) {
             return;
@@ -470,6 +481,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void error(SAXParseException exception) throws SAXException {
         if (skip) {
             return;
@@ -488,6 +500,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         // by default do nothing
     }
 
+    @Override
     public final void fatalError(SAXParseException exception) throws SAXException {
         if (skip) {
             return;

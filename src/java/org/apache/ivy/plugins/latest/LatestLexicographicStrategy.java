@@ -26,10 +26,10 @@ public class LatestLexicographicStrategy extends ComparatorLatestStrategy {
      * assumed to be the greater. If a partial latest is found, then it is assumed to be greater
      * than any matching fixed revision.
      */
-    private static final Comparator COMPARATOR = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            String rev1 = ((ArtifactInfo) o1).getRevision();
-            String rev2 = ((ArtifactInfo) o2).getRevision();
+    private static final Comparator<ArtifactInfo> COMPARATOR = new Comparator<ArtifactInfo>() {
+        public int compare(ArtifactInfo o1, ArtifactInfo o2) {
+            String rev1 = o1.getRevision();
+            String rev2 = o2.getRevision();
             if (rev1.startsWith("latest")) {
                 return 1;
             }

@@ -57,6 +57,7 @@ public abstract class AbstractPatternMatcher implements PatternMatcher {
      */
     protected abstract/* @NotNull */Matcher newMatcher(/* @NotNull */String expression);
 
+    @Override
     public String toString() {
         return getName();
     }

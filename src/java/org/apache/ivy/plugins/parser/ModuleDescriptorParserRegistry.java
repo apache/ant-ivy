@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
         return INSTANCE;
     }
 
-    private List parsers = new LinkedList();
+    private List<ModuleDescriptorParser> parsers = new LinkedList<ModuleDescriptorParser>();
 
     private ModuleDescriptorParserRegistry() {
         parsers.add(PomModuleDescriptorParser.getInstance());
@@ -63,13 +62,11 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
     }
 
     public ModuleDescriptorParser[] getParsers() {
-        return (ModuleDescriptorParser[]) parsers
-                .toArray(new ModuleDescriptorParser[parsers.size()]);
+        return parsers.toArray(new ModuleDescriptorParser[parsers.size()]);
     }
 
     public ModuleDescriptorParser getParser(Resource res) {
-        for (Iterator iter = parsers.iterator(); iter.hasNext();) {
-            ModuleDescriptorParser parser = (ModuleDescriptorParser) iter.next();
+        for (ModuleDescriptorParser parser : parsers) {
             if (parser.accept(res)) {
                 return parser;
             }

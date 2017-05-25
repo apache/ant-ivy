@@ -19,8 +19,6 @@ package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -32,6 +30,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.util.CacheCleaner;
+
+import junit.framework.TestCase;
 
 public class JarResolverTest extends TestCase {
 

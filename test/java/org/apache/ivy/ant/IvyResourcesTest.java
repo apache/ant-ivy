@@ -22,51 +22,30 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.resources.FileResource;
 
-public class IvyResourcesTest extends TestCase {
+import junit.framework.TestCase;
 
-    private File cache;
+public class IvyResourcesTest extends TestCase {
 
     private IvyResources resources;
 
     protected void setUp() throws Exception {
-        createCache();
-        Project project = new Project();
-        DefaultLogger logger = new DefaultLogger();
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-        logger.setMessageOutputLevel(Project.MSG_INFO);
-        project.addBuildListener(logger);
+        TestHelper.createCache();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        project.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
 
         resources = new IvyResources();
         resources.setProject(project);
     }
 
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
-    }
-
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision,

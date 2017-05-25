@@ -20,44 +20,31 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
+
+import junit.framework.TestCase;
 
 public class IvyReportTest extends TestCase {
-    private File cache;
 
     private IvyReport report;
 
     private Project project;
 
     protected void setUp() throws Exception {
-        createCache();
-        project = new Project();
+        TestHelper.createCache();
+        project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         report = new IvyReport();
         report.setTaskName("report");
         report.setProject(project);
-        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSimple() throws Exception {
@@ -72,12 +59,12 @@ public class IvyReportTest extends TestCase {
             res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
             res.execute();
 
-            report.setTodir(new File(cache, "report"));
+            report.setTodir(new File(TestHelper.cache, "report"));
             report.execute();
 
-            assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
-            assertTrue(new File(cache, "report/ivy-report.css").exists()); // IVY-826
-            assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-default.html").exists());
+            assertTrue(new File(TestHelper.cache, "report/ivy-report.css").exists()); // IVY-826
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-default.graphml").exists());
         } finally {
             Locale.setDefault(oldLocale);
         }
@@ -95,11 +82,11 @@ public class IvyReportTest extends TestCase {
             res.setFile(new File("test/repositories/1/org6/mod6.2/ivys/ivy-0.7.xml"));
             res.execute();
 
-            report.setTodir(new File(cache, "report"));
+            report.setTodir(new File(TestHelper.cache, "report"));
             report.setXml(true);
             report.execute();
 
-            File xmlReport = new File(cache, "report/org6-mod6.2-default.xml");
+            File xmlReport = new File(TestHelper.cache, "report/org6-mod6.2-default.xml");
             assertTrue(xmlReport.exists());
             // check that revision 2.2 of mod1.2 is only present once
             String reportContent = FileUtil.readEntirely(xmlReport);
@@ -148,13 +135,13 @@ public class IvyReportTest extends TestCase {
             res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
             res.execute();
 
-            report.setTodir(new File(cache, "report"));
+            report.setTodir(new File(TestHelper.cache, "report"));
             report.setOutputpattern("[organisation]-[module]-[revision].[ext]");
             report.setConf("default");
             report.execute();
 
-            assertTrue(new File(cache, "report/apache-resolve-simple-1.0.html").exists());
-            assertTrue(new File(cache, "report/apache-resolve-simple-1.0.graphml").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-1.0.html").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-1.0.graphml").exists());
         } finally {
             Locale.setDefault(oldLocale);
         }
@@ -172,13 +159,13 @@ public class IvyReportTest extends TestCase {
             res.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
             res.execute();
 
-            report.setTodir(new File(cache, "report"));
+            report.setTodir(new File(TestHelper.cache, "report"));
             report.execute();
 
-            assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
-            assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
-            assertTrue(new File(cache, "report/apache-resolve-simple-compile.html").exists());
-            assertTrue(new File(cache, "report/apache-resolve-simple-compile.graphml").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-default.html").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-default.graphml").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-compile.html").exists());
+            assertTrue(new File(TestHelper.cache, "report/apache-resolve-simple-compile.graphml").exists());
         } finally {
             Locale.setDefault(oldLocale);
         }
@@ -196,13 +183,13 @@ public class IvyReportTest extends TestCase {
             res.setProject(project);
             res.execute();
 
-            report.setTodir(new File(cache, "report"));
+            report.setTodir(new File(TestHelper.cache, "report"));
             report.setXml(true);
 
             report.execute();
 
-            assertTrue(new File(cache, "report/org11-mod11.1-compile.xml").exists());
-            assertTrue(new File(cache, "report/org11-mod11.1-compile.html").exists());
+            assertTrue(new File(TestHelper.cache, "report/org11-mod11.1-compile.xml").exists());
+            assertTrue(new File(TestHelper.cache, "report/org11-mod11.1-compile.html").exists());
         } finally {
             Locale.setDefault(oldLocale);
         }

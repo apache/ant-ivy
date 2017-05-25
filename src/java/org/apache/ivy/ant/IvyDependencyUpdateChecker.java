@@ -211,4 +211,11 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         this.showTransitive = showTransitive;
     }
 
+    public boolean isCheckIfChanged() {
+        return checkIfChanged;
+    }
+
+    public void setCheckIfChanged(boolean checkIfChanged) {
+        this.checkIfChanged = checkIfChanged;
+    }
 }

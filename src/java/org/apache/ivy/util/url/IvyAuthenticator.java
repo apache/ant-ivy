@@ -114,44 +114,10 @@ public final class IvyAuthenticator extends Authenticator {
     }
 
     /**
-     * Checks if the current authentication request is for the proxy server. This functionality is
-     * not available in JDK1.4, so we check this in a very dirty way which is probably not very
-     * portable, but will work for the SUN 1.4 JDKs.
-     * 
-     * @return
+     * Checks if the current authentication request is for the proxy server.
      */
     private boolean isProxyAuthentication() {
-        try {
-            // we first try to invoke the getRequestorType() method which is a JDK1.5+ method
-            Method m = Authenticator.class.getDeclaredMethod("getRequestorType", null);
-            Object result = m.invoke(this, null);
-            return "PROXY".equals(String.valueOf(result));
-        } catch (NoSuchMethodException e) {
-            // do nothing, this is a JDK1.5+ method
-        } catch (Throwable t) {
-            Message.debug("Error occurred while checking if the authentication request is for the proxy server: "
-                    + t.getMessage());
-        }
-
-        // now we will do something very dirty and analyse the stack trace to see
-        // if this method is called from within the 'getHttpProxyAuthentication' method
-        // or the 'getServerAuthentication' method which are both part of the
-        // sun.net.www.protocol.http.HttpURLConnection class.
-        // This might not work on other 1.4 JVM's!
-        // This code should be removed when Ivy requires JDK1.5+
-        StackTraceElement[] stackTrace = (new Exception()).getStackTrace();
-        for (int i = 0; i < stackTrace.length; i++) {
-            if ("getHttpProxyAuthentication".equals(stackTrace[i].getMethodName())) {
-                return true;
-            }
-            if ("getServerAuthentication".equals(stackTrace[i].getMethodName())) {
-                return false;
-            }
-        }
-
-        // fallback to the Ivy 2.2.0 behavior
-        String proxyHost = System.getProperty("http.proxyHost");
-        return getRequestingHost().equals(proxyHost);
+        return RequestorType.PROXY.equals(getRequestorType());
     }
 
 }

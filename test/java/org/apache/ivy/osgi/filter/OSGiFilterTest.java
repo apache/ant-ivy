@@ -19,10 +19,10 @@ package org.apache.ivy.osgi.filter;
 
 import java.text.ParseException;
 
+import org.apache.ivy.osgi.filter.CompareFilter.Operator;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.apache.ivy.osgi.filter.CompareFilter.Operator;
 
 public class OSGiFilterTest extends TestCase {
 

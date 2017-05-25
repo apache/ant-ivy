@@ -21,13 +21,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.util.CollectionUtils;
+
+import junit.framework.TestCase;
 
 public class OBRParserTest extends TestCase {
 

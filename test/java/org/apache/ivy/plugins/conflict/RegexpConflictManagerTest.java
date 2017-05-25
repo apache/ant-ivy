@@ -19,11 +19,11 @@ package org.apache.ivy.plugins.conflict;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 public class RegexpConflictManagerTest extends TestCase {
     private Ivy ivy;

@@ -30,10 +30,11 @@ public class ApacheHttpURLLister implements URLLister {
         return pattern.startsWith("http");
     }
 
-    public List listAll(URL url) throws IOException {
+    public List<URL> listAll(URL url) throws IOException {
         return lister.listAll(url);
     }
 
+    @Override
     public String toString() {
         return "apache http lister";
     }

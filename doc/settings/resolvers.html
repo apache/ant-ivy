@@ -95,6 +95,13 @@ Any standard resolver can be used in force mode, which is used mainly to handle 
 By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules A and C, where A -> B -> C, and pick up the local build for C without having to publish a local version of B.
 <span class="since">since 2.0</span>
 
+<h3>Maven</h3>
+
+Any resolver which is able to parse a Maven pom.xml file has to detect the related sources or javadocs artifacts. This often involves sevrals network connection even if neither the sources nor the javadoc are requested to be downloaded.
+
+<span class="since">since 2.5</span> Setting the property <tt>ivy.maven.lookup.sources<tt> to <tt>false</tt> disable the lookup of the sources artifact. 
+And setting the property <tt>ivy.maven.lookup.javadoc<tt> to <tt>false</tt> disable the lookup of the javadoc artifact. 
+
 <h2>Attributes</h2>
 <table class="ivy-attributes">
 <thead>

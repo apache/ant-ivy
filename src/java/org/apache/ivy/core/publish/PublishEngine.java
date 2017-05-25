@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -75,8 +74,9 @@ public class PublishEngine {
      * the name, type, ext url and extra attributes of the artifacts are really used. Other methods
      * can return null safely.
      */
-    public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern,
-            String resolverName, PublishOptions options) throws IOException {
+    public Collection<Artifact> publish(ModuleRevisionId mrid,
+            Collection<String> srcArtifactPattern, String resolverName, PublishOptions options)
+            throws IOException {
         Message.info(":: publishing :: " + mrid.getModuleId());
         Message.verbose("\tvalidate = " + options.isValidate());
         long start = System.currentTimeMillis();
@@ -111,7 +111,8 @@ public class PublishEngine {
                     tmp.deleteOnExit();
 
                     String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
-                    Set confsToRemove = new HashSet(Arrays.asList(md.getConfigurationsNames()));
+                    Set<String> confsToRemove = new HashSet<String>(Arrays.asList(md
+                            .getConfigurationsNames()));
                     confsToRemove.removeAll(Arrays.asList(confs));
 
                     try {
@@ -131,8 +132,7 @@ public class PublishEngine {
                                     .setMerge(options.isMerge())
                                     .setMergedDescriptor(md)
                                     .setConfsToExclude(
-                                        (String[]) confsToRemove.toArray(new String[confsToRemove
-                                                .size()])));
+                                        confsToRemove.toArray(new String[confsToRemove.size()])));
                         ivyFile = tmp;
                         // we parse the new file to get updated module descriptor
                         md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -169,15 +169,15 @@ public class PublishEngine {
         }
 
         // collect all declared artifacts of this module
-        Collection missing = publish(md, srcArtifactPattern, resolver, options);
+        Collection<Artifact> missing = publish(md, srcArtifactPattern, resolver, options);
         Message.verbose("\tpublish done (" + (System.currentTimeMillis() - start) + "ms)");
         return missing;
     }
 
-    public Collection publish(ModuleDescriptor md, Collection srcArtifactPattern,
+    public Collection<Artifact> publish(ModuleDescriptor md, Collection<String> srcArtifactPattern,
             DependencyResolver resolver, PublishOptions options) throws IOException {
-        Collection missing = new ArrayList();
-        Set artifactsSet = new LinkedHashSet();
+        Collection<Artifact> missing = new ArrayList<Artifact>();
+        Set<Artifact> artifactsSet = new LinkedHashSet<Artifact>();
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
         for (int i = 0; i < confs.length; i++) {
@@ -195,11 +195,9 @@ public class PublishEngine {
             }
         }
         // now collects artifacts files
-        Map/* <Artifact,File> */artifactsFiles = new LinkedHashMap();
-        for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact) iter.next();
-            for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
-                String pattern = (String) iterator.next();
+        Map<Artifact, File> artifactsFiles = new LinkedHashMap<Artifact, File>();
+        for (Artifact artifact : artifactsSet) {
+            for (String pattern : srcArtifactPattern) {
                 File artifactFile = settings.resolveFile(IvyPatternHelper.substitute(
                     settings.substitute(pattern), artifact));
                 if (artifactFile.exists()) {
@@ -210,8 +208,7 @@ public class PublishEngine {
             if (!artifactsFiles.containsKey(artifact)) {
                 StringBuffer sb = new StringBuffer();
                 sb.append("missing artifact " + artifact + ":\n");
-                for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
-                    String pattern = (String) iterator.next();
+                for (String pattern : srcArtifactPattern) {
                     sb.append("\t"
                             + settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))
                             + " file does not exist\n");
@@ -253,10 +250,9 @@ public class PublishEngine {
         try {
             resolver.beginPublishTransaction(md.getModuleRevisionId(), options.isOverwrite());
             // for each declared published artifact in this descriptor, do:
-            for (Iterator iter = artifactsFiles.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Entry) iter.next();
-                Artifact artifact = (Artifact) entry.getKey();
-                File artifactFile = (File) entry.getValue();
+            for (Entry<Artifact, File> entry : artifactsFiles.entrySet()) {
+                Artifact artifact = entry.getKey();
+                File artifactFile = entry.getValue();
                 publish(artifact, artifactFile, resolver, options.isOverwrite());
             }
             resolver.commitPublishTransaction();

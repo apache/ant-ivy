@@ -34,10 +34,12 @@ public class VfsResolver extends RepositoryResolver {
         setRepository(new VfsRepository());
     }
 
+    @Override
     public String getTypeName() {
         return "vfs";
     }
 
+    @Override
     public String hidePassword(String name) {
         return prepareForDisplay(name);
     }

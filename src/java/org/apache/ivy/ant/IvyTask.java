@@ -265,6 +265,7 @@ public abstract class IvyTask extends Task {
     /**
      * Ant task execute. Calls prepareTask, doExecute, finalzeTask
      */
+    @Override
     public final void execute() throws BuildException {
         try {
             prepareTask();
@@ -282,6 +283,7 @@ public abstract class IvyTask extends Task {
      */
     public abstract void doExecute() throws BuildException;
 
+    @Override
     public String toString() {
         return getClass().getName() + ":" + getTaskName();
     }

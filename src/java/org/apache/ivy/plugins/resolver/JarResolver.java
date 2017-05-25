@@ -40,6 +40,7 @@ public class JarResolver extends RepositoryResolver {
         setRepository(new JarRepository());
     }
 
+    @Override
     public String getTypeName() {
         return "jar";
     }
@@ -72,6 +73,7 @@ public class JarResolver extends RepositoryResolver {
         getJarRepository().setJarFile(jar);
     }
 
+    @Override
     public void setSettings(ResolverSettings settings) {
         super.setSettings(settings);
         // let's resolve the url

@@ -19,9 +19,7 @@ package org.apache.ivy.core.report;
 
 import java.io.File;
 import java.util.Arrays;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.util.HashSet;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -32,6 +30,8 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 public class ResolveReportTest extends TestCase {
 
@@ -80,8 +80,8 @@ public class ResolveReportTest extends TestCase {
             String rev, String conf, String[] targetConfs) {
         assertEquals(ModuleRevisionId.newInstance(org, mod, rev), dep.getDependencyRevisionId());
         assertTrue(Arrays.asList(dep.getModuleConfigurations()).contains(conf));
-        assertEquals(Arrays.asList(targetConfs),
-            Arrays.asList(dep.getDependencyConfigurations(conf)));
+        assertEquals(new HashSet<String>(Arrays.asList(targetConfs)),
+            new HashSet<String>(Arrays.asList(dep.getDependencyConfigurations(conf))));
     }
 
     public void testFixedMdSimple() throws Exception {
@@ -146,15 +146,15 @@ public class ResolveReportTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {"default", "extension"}),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
-        assertEquals(4, fixedMd.getDependencies().length);
+        assertEquals(2, fixedMd.getDependencies().length);
 
         checkFixedMdDependency(fixedMd.getDependencies()[0], "org6", "mod6.1", "0.4", "extension",
             new String[] {"extension", "default"});
-        checkFixedMdDependency(fixedMd.getDependencies()[1], "org6", "mod6.1", "0.4", "default",
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org6", "mod6.1", "0.4", "default",
             new String[] {"extension", "default"});
-        checkFixedMdDependency(fixedMd.getDependencies()[2], "org1", "mod1.2", "2.0", "extension",
+        checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "2.0", "extension",
             new String[] {"default"});
-        checkFixedMdDependency(fixedMd.getDependencies()[3], "org1", "mod1.2", "2.0", "default",
+        checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "2.0", "default",
             new String[] {"default"});
     }
 
@@ -172,19 +172,12 @@ public class ResolveReportTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {"default", "compile"}),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
-        assertEquals(2, fixedMd.getDependencies().length);
+        assertEquals(1, fixedMd.getDependencies().length);
 
-        try {
-            checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1",
-                "default", new String[] {"*"});
-            checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "1.1",
-                "compile", new String[] {"default"});
-        } catch (AssertionFailedError e) {
-            checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "1.1",
-                "default", new String[] {"*"});
-            checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1",
-                "compile", new String[] {"default"});
-        }
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1", "default",
+            new String[] {"*"});
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "1.1", "compile",
+            new String[] {"default"});
     }
 
     public void testFixedMdKeep() throws Exception {
@@ -207,7 +200,34 @@ public class ResolveReportTest extends TestCase {
         checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "[1.0,2.0[",
             "default", new String[] {"*"});
         checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.2", "[1.0,2.0[",
-            "compile", new String[] {"*"});
+            "compile", new String[] {"default"});
+    }
+
+    public void testFixedMdTransitiveKeep() throws Exception {
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.9/ivys/ivy-0.6.xml"),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        ModuleDescriptor fixedMd = report.toFixedModuleDescriptor(ivy.getSettings(),
+            Arrays.asList(new ModuleId[] {ModuleId.newInstance("org1", "mod1.2")}));
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.9", "0.6");
+        assertEquals(mrid, fixedMd.getModuleRevisionId());
+
+        assertEquals(Arrays.asList(new String[] {"default", "compile"}),
+            Arrays.asList(fixedMd.getConfigurationsNames()));
+
+        assertEquals(2, fixedMd.getDependencies().length);
+
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.4", "1.0.2", "default",
+            new String[] {"*"});
+        checkFixedMdDependency(fixedMd.getDependencies()[0], "org1", "mod1.4", "1.0.2", "compile",
+            new String[] {"default", "compile"});
+        checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "[1.0,2.0[",
+            "default", new String[] {"*"});
+        checkFixedMdDependency(fixedMd.getDependencies()[1], "org1", "mod1.2", "[1.0,2.0[",
+            "compile", new String[] {"default"});
     }
 
 }

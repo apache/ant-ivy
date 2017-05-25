@@ -15,20 +15,28 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.ant;
+package org.apache.ivy.core.module.descriptor;
 
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
+import java.util.Date;
 
-public class AntTestHelper {
-    // this is probably already available in some Ant class or helper...
-    public static Project newProject() {
-        Project project = new Project();
-        DefaultLogger logger = new DefaultLogger();
-        logger.setMessageOutputLevel(Project.MSG_INFO);
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.out);
-        project.addBuildListener(logger);
-        return project;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.repository.Resource;
+
+public class DefaultWorkspaceModuleDescriptor extends DefaultModuleDescriptor implements
+        WorkspaceModuleDescriptor {
+
+    public DefaultWorkspaceModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
+        super(parser, res);
     }
+
+    public DefaultWorkspaceModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
+        super(id, status, pubDate);
+    }
+
+    public DefaultWorkspaceModuleDescriptor(ModuleRevisionId id, String status, Date pubDate,
+            boolean isDefault) {
+        super(id, status, pubDate, isDefault);
+    }
+
 }

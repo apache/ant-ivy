@@ -19,45 +19,31 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.Path;
 
+import junit.framework.TestCase;
+
 public class IvyCachePathTest extends TestCase {
-    private File cache;
 
     private IvyCachePath path;
 
     private Project project;
 
     protected void setUp() throws Exception {
-        createCache();
-        project = new Project();
+        TestHelper.createCache();
+        project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         path = new IvyCachePath();
         path.setProject(project);
-        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSimple() throws Exception {
@@ -184,7 +170,7 @@ public class IvyCachePathTest extends TestCase {
     }
 
     public void testWithResolveIdWithoutResolve() throws Exception {
-        Project otherProject = new Project();
+        Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         IvyResolve resolve = new IvyResolve();
@@ -214,7 +200,7 @@ public class IvyCachePathTest extends TestCase {
     }
 
     public void testWithResolveIdAndMissingConfs() throws Exception {
-        Project otherProject = new Project();
+        Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         IvyResolve resolve = new IvyResolve();

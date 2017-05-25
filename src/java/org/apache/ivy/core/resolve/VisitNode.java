@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -70,7 +69,7 @@ public class VisitNode {
      * Direct path from root to this node. Note that the colleciton is ordered but is not a list
      * implementation This collection is null until it is required, see getPath
      */
-    private Collection path = null; // Collection(VisitNode)
+    private Collection<VisitNode> path = null;
 
     /**
      * The configuration of the parent module in the current visit
@@ -159,16 +158,16 @@ public class VisitNode {
      * 
      * @return
      */
-    public Collection/* <VisitNode> */getPath() {
+    public Collection<VisitNode> getPath() {
         if (path == null) {
             path = computePath();
         }
         return path;
     }
 
-    private Collection/* <VisitNode> */computePath() {
+    private Collection<VisitNode> computePath() {
         if (parent != null) {
-            Collection p = new LinkedHashSet(parent.getPath());
+            Collection<VisitNode> p = new LinkedHashSet<VisitNode>(parent.getPath());
             p.add(this);
             return p;
         } else {
@@ -200,7 +199,7 @@ public class VisitNode {
 
     public static VisitNode getRoot(VisitNode parent) {
         VisitNode root = parent;
-        Collection path = new HashSet();
+        Collection<VisitNode> path = new HashSet<VisitNode>();
         path.add(root);
         while (root.getParent() != null && !root.getNode().isRoot()) {
             if (path.contains(root.getParent())) {
@@ -309,11 +308,10 @@ public class VisitNode {
         return loaded;
     }
 
-    public Collection/* <VisitNode> */getDependencies(String conf) {
-        Collection/* <IvyNode> */deps = node.getDependencies(rootModuleConf, conf, requestedConf);
-        Collection/* <VisitNode> */ret = new ArrayList(deps.size());
-        for (Iterator iter = deps.iterator(); iter.hasNext();) {
-            IvyNode depNode = (IvyNode) iter.next();
+    public Collection<VisitNode> getDependencies(String conf) {
+        Collection<IvyNode> deps = node.getDependencies(rootModuleConf, conf, requestedConf);
+        Collection<VisitNode> ret = new ArrayList<VisitNode>(deps.size());
+        for (IvyNode depNode : deps) {
             ret.add(traverseChild(conf, depNode));
         }
         return ret;
@@ -336,9 +334,8 @@ public class VisitNode {
         }
         VisitData visitData = data.getVisitData(node.getId());
         if (visitData != null) {
-            List visitNodes = visitData.getVisitNodes(rootModuleConf);
-            for (Iterator iter = visitNodes.iterator(); iter.hasNext();) {
-                VisitNode vnode = (VisitNode) iter.next();
+            List<VisitNode> visitNodes = visitData.getVisitNodes(rootModuleConf);
+            for (VisitNode vnode : visitNodes) {
                 if ((parent == null && vnode.getParent() == null)
                         || (parent != null && parent.getId().equals(vnode.getParent().getId()))) {
                     vnode.parentConf = parentConf;
@@ -371,11 +368,10 @@ public class VisitNode {
         return new VisitNode(data, node, parent, rootModuleConf, parentConf, usage);
     }
 
-    private ModuleRevisionId[] toMrids(Collection path, ModuleRevisionId last) {
+    private ModuleRevisionId[] toMrids(Collection<VisitNode> path, ModuleRevisionId last) {
         ModuleRevisionId[] ret = new ModuleRevisionId[path.size() + 1];
         int i = 0;
-        for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
-            VisitNode node = (VisitNode) iter.next();
+        for (VisitNode node : path) {
             ret[i] = node.getNode().getId();
         }
         ret[ret.length - 1] = last;
@@ -386,7 +382,7 @@ public class VisitNode {
         return node.getResolvedId();
     }
 
-    public void updateConfsToFetch(Collection confs) {
+    public void updateConfsToFetch(Collection<String> confs) {
         node.updateConfsToFetch(confs);
     }
 
@@ -432,8 +428,7 @@ public class VisitNode {
             if (parent != null) {
                 isCircular = Boolean.FALSE; // asumme it's false, and see if it isn't by checking
                 // the parent path
-                for (Iterator iter = parent.getPath().iterator(); iter.hasNext();) {
-                    VisitNode ancestor = (VisitNode) iter.next();
+                for (VisitNode ancestor : parent.getPath()) {
                     if (getId().getModuleId().equals(ancestor.getId().getModuleId())) {
                         isCircular = Boolean.TRUE;
                         break;
@@ -458,7 +453,7 @@ public class VisitNode {
         return node.getModuleId();
     }
 
-    public Collection getResolvedRevisions(ModuleId mid) {
+    public Collection<ModuleRevisionId> getResolvedRevisions(ModuleId mid) {
         return node.getResolvedRevisions(mid, rootModuleConf);
     }
 
@@ -481,7 +476,8 @@ public class VisitNode {
      * @param selected
      *            a Collection of {@link IvyNode} which have been selected
      */
-    public void markEvicted(VisitNode parent, ConflictManager conflictMgr, Collection selected) {
+    public void markEvicted(VisitNode parent, ConflictManager conflictMgr,
+            Collection<IvyNode> selected) {
         node.markEvicted(rootModuleConf, parent.getNode(), conflictMgr, selected);
     }
 
@@ -493,7 +489,7 @@ public class VisitNode {
         return node.getEvictionDataInRoot(rootModuleConf, ancestor.getNode());
     }
 
-    public Collection getEvictedRevisions(ModuleId moduleId) {
+    public Collection<ModuleRevisionId> getEvictedRevisions(ModuleId moduleId) {
         return node.getEvictedRevisions(moduleId, rootModuleConf);
     }
 
@@ -508,6 +504,7 @@ public class VisitNode {
     // rootModuleConf = rootModuleConf;
     // }
 
+    @Override
     public String toString() {
         return node.toString();
     }

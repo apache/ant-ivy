@@ -20,8 +20,6 @@ package org.apache.ivy.core.resolve;
 import java.io.File;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -31,6 +29,8 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.CacheCleaner;
+
+import junit.framework.TestCase;
 
 public class ResolveEngineTest extends TestCase {
 

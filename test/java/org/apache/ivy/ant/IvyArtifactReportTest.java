@@ -19,42 +19,29 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
+import org.apache.ivy.TestHelper;
+import org.apache.tools.ant.Project;
+
 import junit.framework.TestCase;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
-
 public class IvyArtifactReportTest extends TestCase {
-    private File cache;
 
     private IvyArtifactReport prop;
 
     private Project project;
 
     protected void setUp() throws Exception {
-        createCache();
-        project = new Project();
+        TestHelper.createCache();
+        project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         prop = new IvyArtifactReport();
         prop.setProject(project);
-        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testSimple() throws Exception {

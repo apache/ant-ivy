@@ -23,12 +23,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.FileUtil;
+
+import junit.framework.TestCase;
 
 public class PomModuleDescriptorWriterTest extends TestCase {
     private static String LICENSE;

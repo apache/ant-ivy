@@ -25,10 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
@@ -46,35 +45,24 @@ import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-public class RetrieveTest extends TestCase {
-    private Ivy ivy;
+import junit.framework.TestCase;
 
-    private File cache;
+public class RetrieveTest extends TestCase {
+
+    private Ivy ivy;
 
     protected void setUp() throws Exception {
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        createCache();
-        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        TestHelper.createCache();
+        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_INFO));
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
+        TestHelper.cleanCache();
         Delete del = new Delete();
         del.setProject(new Project());
         del.setDir(new File("build/test/retrieve"));
-        del.execute();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
         del.execute();
     }
 
@@ -362,6 +350,34 @@ public class RetrieveTest extends TestCase {
         assertEquals(new File(dest, "META-INF"), jarContents[0]);
         assertEquals(new File(dest, "test.txt"), jarContents[1]);
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
+    }
+
+    /**
+     * Tests that the {@link RetrieveEngine} retrieves artifacts with the correct extension if the artifact is unpacked
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1478">IVY-1478</a>
+     */
+    public void testUnpackExt() throws Exception {
+        final ResolveOptions roptions = getResolveOptions(new String[] {"*"});
+
+        final URL url = new File("test/repositories/1/packaging/module10/ivys/ivy-1.0.xml").toURI()
+                .toURL();
+
+        // normal resolve, the file goes in the cache
+        final ResolveReport report = ivy.resolve(url, roptions);
+        assertFalse("Resolution report has errors", report.hasError());
+        final ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull("Module descriptor from report was null", md);
+
+        final String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
+
+        final RetrieveOptions options = getRetrieveOptions();
+        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+
+        final File dest = new File("build/test/retrieve/packaging/module9/default/jars/module9-1.0.jar");
+        assertTrue("Retrieved artifact is missing at " + dest.getAbsolutePath(), dest.exists());
+        assertTrue("Retrieved artifact at " + dest.getAbsolutePath() + " is not a file", dest.isFile());
     }
 
     private RetrieveOptions getRetrieveOptions() {

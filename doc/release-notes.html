@@ -36,6 +36,7 @@ reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
 Key features of this 2.5.0 release are
+* Ivy nows uses BoucyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
 * TODO
 * TODO
 * TODO
@@ -57,7 +58,27 @@ http://issues.apache.org/jira/browse/ivy
  
 List of changes since Ivy 2.4.0:
 
+- FIX: Made the maven 'test' configuration public so we can use the test-jar as dependency (IVY-1444)
+- FIX: NullPointerException in dependencytree with no dependencies (IVY-1539)
+- FIX: checkIfChanged is not settable attribute for checkdepsupdate ant task (IVY-1549)
 - FIX: ArrayIndexOutOfBoundsException when using a p2 repository for dependencies (IVY-1504)
+- FIX: fixdeps remove transitive 'kept' dependencies
+- FIX: PomModuleDescriptorParser should parse licenses from parent POM (IVY-1526) (Thanks to Jaikiran Pai)
+- FIX: dynamic revisions are not cached per resolver (IVY-1430) (Thanks to Stephen Haberman)
+- FIX: Dependencies failed using branch attribute (and extra attributes) (IVY-1141) (Thanks to Stephen Haberman)
+- FIX: useCacheOnly should allow lookup of changing dependencies in cache (IVY-1515) (Thanks to Ilya)
+- FIX: Translation of POM to Ivy XML with * exclusion is removing main artifact (IVY-1531) (Thanks to Jaikiran Pai)
+- FIX: Have makepom task take description from ivy-module > info > description element (IVY-1520)
+- FIX: Fix RetrieveEngine to take into account the correct extension while dealing with unpacked artifacts (IVY-1478) (Thanks to Jaikiran Pai)
+- FIX: ParseException "Unsupported repository, resources names are not uris" for ivy.xml with parent on Windows (IVY-1448) (Thanks to Riccardo Foschia and Jaikiran Pai)
+
+- IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (IVY-1482)
+- IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
+- IMPROVEMENT: Update bouncycastle to 1.52 (IVY-1521) (Thanks to Michal Srb)
+
+- NEW: Lets ssh-based resolvers use an ~/.ssh/config file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
+- NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (IVY-1529)
+- NEW: Add (conditional) support for SHA-256 SHA-512 and SHA-384 checksum algorithms (IVY-1554) (Thanks to Jaikiran Pai)
 
 <!-- Samples :
 - NEW: bla bla bla (IVY-1234) (Thanks to Jane Doe)
@@ -115,6 +136,7 @@ Here is the list of people who have contributed source code and documentation up
 <li>Robin Fernandes</li>
 <li>Gregory Fernandez</li>
 <li>Danno Ferrin</li>
+<li>Riccardo Foschia</li>
 <li>Benjamin Francisoud</li>
 <li>Wolfgang Frank</li>
 <li>Jacob Grydholt Jensen</li>
@@ -122,7 +144,7 @@ Here is the list of people who have contributed source code and documentation up
 <li>Mitch Gitman</li>
 <li>Evgeny Goldin</li>
 <li>Scott Goldstein</li>
-<li>Pierre Hägnestrand</li>
+<li>Pierre H&#228;gnestrand</li>
 <li>Scott Hebert</li>
 <li>Tobias Himstedt</li>
 <li>Aaron Hachez</li>
@@ -132,6 +154,7 @@ Here is the list of people who have contributed source code and documentation up
 <li>Scott Hebert</li>
 <li>Payam Hekmat</li>
 <li>Achim Huegen</li>
+<li>Ilya</li>
 <li>Matt Inger</li>
 <li>Anders Jacobsson</li>
 <li>Anders Janmyr</li>
@@ -167,6 +190,7 @@ Here is the list of people who have contributed source code and documentation up
 <li>Mathias Muller</li>
 <li>Randy Nott</li>
 <li>Peter Oxenham</li>
+<li>Jaikiran Pai</li>
 <li>Douglas Palmer</li>
 <li>Jesper Pedersen</li>
 <li>Emmanuel Pellereau</li>
@@ -190,12 +214,15 @@ Here is the list of people who have contributed source code and documentation up
 <li>John Shields</li>
 <li>Nihal Sinha</li>
 <li>Gene Smith</li>
+<li>Michal Srb</li>
+<li>Colin Stanfill</li>
 <li>Simon Steiner</li>
 <li>Johan Stuyts</li>
 <li>John Tinetti</li>
 <li>Erwin Tratar</li>
 <li>Jason Trump</li>
 <li>David Turner</li>
+<li>Ernestas Vaiciukevi&#269;ius</li>
 <li>Tjeerd Verhagen</li>
 <li>Richard Vowles</li>
 <li>Sven Walter</li>

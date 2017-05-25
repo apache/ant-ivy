@@ -25,12 +25,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.osgi.repo.RelativeURLRepository;
+import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.url.ChainedRepository;
 import org.apache.ivy.plugins.repository.url.URLRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
@@ -50,17 +50,15 @@ public class MirroredURLResolver extends RepositoryResolver {
 
     private void setupMirrors() {
         File mirrorListFile = downloadMirrorList();
-        List mirrorBaseUrls;
+        List<String> mirrorBaseUrls;
         try {
             mirrorBaseUrls = readMirrorList(mirrorListFile);
         } catch (IOException e) {
             throw new IllegalStateException("The mirror list could not be read from "
                     + mirrorListUrl + " (" + e.getMessage() + ")");
         }
-        List/* <Repository> */repositories = new ArrayList();
-        Iterator it = mirrorBaseUrls.iterator();
-        while (it.hasNext()) {
-            String baseUrl = (String) it.next();
+        List<Repository> repositories = new ArrayList<Repository>();
+        for (String baseUrl : mirrorBaseUrls) {
             URL url = null;
             try {
                 url = new URL(baseUrl);
@@ -88,10 +86,10 @@ public class MirroredURLResolver extends RepositoryResolver {
         return report.getLocalFile();
     }
 
-    private List/* <String> */readMirrorList(File mirrorListFile) throws IOException {
+    private List<String> readMirrorList(File mirrorListFile) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(
                 mirrorListFile)));
-        List/* <String> */list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         try {
             String line = in.readLine();
             while (line != null) {
@@ -104,10 +102,12 @@ public class MirroredURLResolver extends RepositoryResolver {
         return list;
     }
 
+    @Override
     public String getTypeName() {
         return "mirroredurl";
     }
 
+    @Override
     public void validate() {
         super.validate();
         setupMirrors();

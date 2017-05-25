@@ -71,14 +71,14 @@ public class PackagingManager implements IvySettingsAware {
         return unpacked;
     }
 
-    public void unpackArtifact(Artifact artifact, File localFile, File archiveFile)
+    public Artifact unpackArtifact(Artifact artifact, File localFile, File archiveFile)
             throws IOException {
         String packaging = artifact.getExtraAttribute("packaging");
         if (packaging == null) {
             // not declared as packed, nothing to do
-            return;
+            return null;
         }
-
+        String ext = artifact.getExt();
         String[] packings = packaging.split(",");
         InputStream in = null;
         try {
@@ -94,6 +94,7 @@ public class PackagingManager implements IvySettingsAware {
                             + packings[i] + "' in the streamed chain: " + packaging);
                 }
                 in = ((StreamPacking) packing).unpack(in);
+                ext = packing.getUnpackedExtension(ext);
             }
             ArchivePacking packing = settings.getPackingRegistry().get(packings[0]);
             if (packing == null) {
@@ -101,6 +102,7 @@ public class PackagingManager implements IvySettingsAware {
                         + "' in the packing chain: " + packaging);
             }
             packing.unpack(in, archiveFile);
+            ext = packing.getUnpackedExtension(ext);
         } finally {
             if (in != null) {
                 try {
@@ -110,6 +112,12 @@ public class PackagingManager implements IvySettingsAware {
                 }
             }
         }
+        final DefaultArtifact unpacked = new DefaultArtifact(artifact.getModuleRevisionId(),
+                artifact.getPublicationDate(), artifact.getName(),
+                artifact.getType() + "_unpacked", ext);
+
+        return unpacked;
+
     }
 
 }

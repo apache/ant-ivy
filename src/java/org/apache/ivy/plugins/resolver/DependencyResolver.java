@@ -169,7 +169,7 @@ public interface DependencyResolver {
      * with the Namespace returned by {@link #getNamespace()}.
      * </p>
      */
-    String[] listTokenValues(String token, Map otherTokenValues);
+    String[] listTokenValues(String token, Map<String, String> otherTokenValues);
 
     /**
      * Same as {@link #listTokenValues(String, Map)} but more generic.
@@ -178,9 +178,9 @@ public interface DependencyResolver {
      *            the tokens of the query
      * @param criteria
      *            the token which have values
-     * @return the list of token values (Map<Strin, String>[]), must not be <code>null</code>
+     * @return the list of token values, must not be <code>null</code>
      */
-    Map[] listTokenValues(String[] tokens, Map criteria);
+    Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria);
 
     OrganisationEntry[] listOrganisations();
 

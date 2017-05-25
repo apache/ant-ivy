@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.conflict;
 import java.util.Collection;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 
 public interface ConflictManager {
@@ -38,7 +39,7 @@ public interface ConflictManager {
      * @return a Collection of IvyNode which have not been evicted, or null if conflict management
      *         resolution is not possible yet
      */
-    Collection resolveConflicts(IvyNode parent, Collection conflicts);
+    Collection<IvyNode> resolveConflicts(IvyNode parent, Collection<IvyNode> conflicts);
 
     String getName();
 
@@ -56,5 +57,5 @@ public interface ConflictManager {
      *            the list of all ModuleRevisionId found which are blacklisted
      */
     void handleAllBlacklistedRevisions(DependencyDescriptor dd,
-            Collection/* <ModuleRevisionId> */foundBlacklisted);
+            Collection<ModuleRevisionId> foundBlacklisted);
 }

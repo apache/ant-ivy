@@ -20,8 +20,6 @@ package org.apache.ivy.osgi.core;
 import java.io.File;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -40,6 +38,8 @@ import org.apache.ivy.osgi.repo.AbstractOSGiResolver.RequirementStrategy;
 import org.apache.ivy.osgi.repo.AggregatedOSGiResolver;
 import org.apache.ivy.osgi.updatesite.UpdateSiteResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+
+import junit.framework.TestCase;
 
 public class AggregatedOSGiResolverTest extends TestCase {
 

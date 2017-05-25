@@ -27,9 +27,6 @@ import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -55,6 +52,9 @@ import org.apache.ivy.osgi.repo.AbstractOSGiResolver.RequirementStrategy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 public class OBRResolverTest extends TestCase {
 

@@ -17,13 +17,13 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -44,35 +44,28 @@ import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
 import org.apache.ivy.util.MockMessageLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 /**
  * Tests ChainResolver
  */
 public class ChainResolverTest extends AbstractDependencyResolverTest {
+
     private IvySettings settings;
 
     private ResolveEngine engine;
 
     private ResolveData data;
 
-    private File cache;
-
     protected void setUp() throws Exception {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
-        cache = new File("build/cache");
+        TestHelper.createCache();
         data = new ResolveData(engine, new ResolveOptions());
-        cache.mkdirs();
-        settings.setDefaultCache(cache);
+        settings.setDefaultCache(TestHelper.cache);
     }
 
     protected void tearDown() throws Exception {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testOrderFromConf() throws Exception {

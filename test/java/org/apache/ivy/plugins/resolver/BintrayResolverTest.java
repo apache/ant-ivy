@@ -17,8 +17,7 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -38,8 +37,6 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.util.MockMessageLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
@@ -49,24 +46,17 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData _data;
 
-    private File _cache;
-
     @Override
     protected void setUp() throws Exception {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _cache = new File("build/cache");
         _data = new ResolveData(_engine, new ResolveOptions());
-        _cache.mkdirs();
-        _settings.setDefaultCache(_cache);
+        _settings.setDefaultCache(TestHelper.cache);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(_cache);
-        del.execute();
+        TestHelper.cleanCache();
     }
 
     public void testDefaults() {

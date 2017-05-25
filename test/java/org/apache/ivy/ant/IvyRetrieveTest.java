@@ -20,13 +20,13 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import junit.framework.TestCase;
 
 public class IvyRetrieveTest extends TestCase {
     private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
@@ -42,7 +42,7 @@ public class IvyRetrieveTest extends TestCase {
     protected void setUp() throws Exception {
         createCache();
         CacheCleaner.deleteDir(new File("build/test/lib"));
-        project = new Project();
+        project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         retrieve = new IvyRetrieve();
@@ -166,7 +166,7 @@ public class IvyRetrieveTest extends TestCase {
 
     public void testWithAPreviousResolve() throws Exception {
         // first we do a resolve in another project
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
@@ -185,7 +185,7 @@ public class IvyRetrieveTest extends TestCase {
 
     public void testWithAPreviousResolveAndResolveId() throws Exception {
         // first we do a resolve in another project
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
@@ -207,7 +207,7 @@ public class IvyRetrieveTest extends TestCase {
     public void testUseOrigin() throws Exception {
         // test case for IVY-304
         // first we do a resolve with useOrigin=true in another project
-        Project project = new Project();
+        Project project = TestHelper.newProject();
         project.init();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");

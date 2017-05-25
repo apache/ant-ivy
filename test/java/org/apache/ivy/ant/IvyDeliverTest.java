@@ -28,8 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -39,8 +38,9 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
+import junit.framework.TestCase;
+
 public class IvyDeliverTest extends TestCase {
-    private File cache;
 
     private IvyDeliver deliver;
 
@@ -50,34 +50,22 @@ public class IvyDeliverTest extends TestCase {
         cleanTestDir();
         cleanRetrieveDir();
         cleanRep();
-        createCache();
-        project = new Project();
+        TestHelper.createCache();
+        project = TestHelper.newProject();
         project.init();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("build", "build/test/deliver");
 
         deliver = new IvyDeliver();
         deliver.setProject(project);
-        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
-    }
-
-    private void createCache() {
-        cache = new File("build/cache");
-        cache.mkdirs();
+        System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
+        TestHelper.cleanCache();
         cleanTestDir();
         cleanRetrieveDir();
         cleanRep();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
     }
 
     private void cleanTestDir() {
@@ -244,7 +232,7 @@ public class IvyDeliverTest extends TestCase {
 
     public void testWithResolveIdInAnotherBuild() throws Exception {
         // create a new build
-        Project other = new Project();
+        Project other = TestHelper.newProject();
         other.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         other.setProperty("build", "build/test/deliver");
 

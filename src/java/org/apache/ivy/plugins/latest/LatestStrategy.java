@@ -39,7 +39,7 @@ public interface LatestStrategy {
      * @param infos
      * @return
      */
-    List sort(ArtifactInfo[] infos);
+    List<ArtifactInfo> sort(ArtifactInfo[] infos);
 
     String getName();
 }

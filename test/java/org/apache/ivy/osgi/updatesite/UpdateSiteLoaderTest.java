@@ -24,8 +24,6 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.cache.CacheResourceOptions;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
@@ -34,6 +32,8 @@ import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.CollectionUtils;
 import org.xml.sax.SAXException;
+
+import junit.framework.TestCase;
 
 public class UpdateSiteLoaderTest extends TestCase {
 

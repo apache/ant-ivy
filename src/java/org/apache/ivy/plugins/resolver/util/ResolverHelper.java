@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,7 +82,7 @@ public final class ResolverHelper {
                         }
                     }
                     Message.debug("\t\t" + ret.size() + " matched " + pattern);
-                    return (String[]) ret.toArray(new String[ret.size()]);
+                    return ret.toArray(new String[ret.size()]);
                 } else {
                     return null;
                 }
@@ -98,19 +97,18 @@ public final class ResolverHelper {
         try {
             String fileSep = rep.getFileSeparator();
             Message.debug("\tusing " + rep + " to list all in " + parent);
-            List all = rep.list(parent);
+            List<String> all = rep.list(parent);
             if (all != null) {
                 Message.debug("\t\tfound " + all.size() + " resources");
-                List names = new ArrayList(all.size());
-                for (Iterator iter = all.iterator(); iter.hasNext();) {
-                    String path = (String) iter.next();
+                List<String> names = new ArrayList<String>(all.size());
+                for (String path : all) {
                     if (path.endsWith(fileSep)) {
                         path = path.substring(0, path.length() - 1);
                     }
                     int slashIndex = path.lastIndexOf(fileSep);
                     names.add(path.substring(slashIndex + 1));
                 }
-                return (String[]) names.toArray(new String[names.size()]);
+                return names.toArray(new String[names.size()]);
             } else {
                 Message.debug("\t\tno resources found");
                 return null;
@@ -137,7 +135,7 @@ public final class ResolverHelper {
             IvyPatternHelper.REVISION_KEY);
         if (revs != null) {
             Message.debug("\tfound revs: " + Arrays.asList(revs));
-            List ret = new ArrayList(revs.length);
+            List<ResolvedResource> ret = new ArrayList<ResolvedResource>(revs.length);
             for (int i = 0; i < revs.length; i++) {
                 String rres = IvyPatternHelper.substituteToken(partiallyResolvedPattern,
                     IvyPatternHelper.REVISION_KEY, revs[i]);
@@ -157,7 +155,7 @@ public final class ResolverHelper {
             if (revs.length != ret.size()) {
                 Message.debug("\tfound resolved res: " + ret);
             }
-            return (ResolvedResource[]) ret.toArray(new ResolvedResource[ret.size()]);
+            return ret.toArray(new ResolvedResource[ret.size()]);
         } else if (partiallyResolvedPattern.indexOf("[" + IvyPatternHelper.REVISION_KEY + "]") == -1) {
             // the partially resolved pattern is completely resolved, check the resource
             try {
@@ -267,9 +265,9 @@ public final class ResolverHelper {
 
                 try {
                     Message.debug("\tusing " + lister + " to list all in " + root);
-                    List all = lister.listAll(new URL(root));
+                    List<URL> all = lister.listAll(new URL(root));
                     Message.debug("\t\tfound " + all.size() + " urls");
-                    List ret = new ArrayList(all.size());
+                    List<String> ret = new ArrayList<String>(all.size());
                     int endNameIndex = pattern.indexOf('/', slashIndex + 1);
                     String namePattern;
                     if (endNameIndex != -1) {
@@ -281,8 +279,7 @@ public final class ResolverHelper {
                             + IvyPatternHelper.substituteToken(namePattern, token, "([^/]+)")
                             + ".*";
                     Pattern p = Pattern.compile(acceptNamePattern.toString());
-                    for (Iterator iter = all.iterator(); iter.hasNext();) {
-                        URL url = (URL) iter.next();
+                    for (URL url : all) {
                         String path = standardize(url.getPath());
                         Matcher m = p.matcher(path);
                         if (m.matches()) {
@@ -291,7 +288,7 @@ public final class ResolverHelper {
                         }
                     }
                     Message.debug("\t\t" + ret.size() + " matched " + pattern);
-                    return (String[]) ret.toArray(new String[ret.size()]);
+                    return ret.toArray(new String[ret.size()]);
                 } catch (Exception e) {
                     Message.warn("problem while listing files in " + root, e);
                     return null;
@@ -309,11 +306,10 @@ public final class ResolverHelper {
         try {
             if (lister.accept(root.toExternalForm())) {
                 Message.debug("\tusing " + lister + " to list all in " + root);
-                List all = lister.listAll(root);
+                List<URL> all = lister.listAll(root);
                 Message.debug("\t\tfound " + all.size() + " urls");
-                List names = new ArrayList(all.size());
-                for (Iterator iter = all.iterator(); iter.hasNext();) {
-                    URL dir = (URL) iter.next();
+                List<String> names = new ArrayList<String>(all.size());
+                for (URL dir : all) {
                     String path = dir.getPath();
                     if (path.endsWith("/")) {
                         path = path.substring(0, path.length() - 1);
@@ -321,7 +317,7 @@ public final class ResolverHelper {
                     int slashIndex = path.lastIndexOf('/');
                     names.add(path.substring(slashIndex + 1));
                 }
-                return (String[]) names.toArray(new String[names.size()]);
+                return names.toArray(new String[names.size()]);
             }
             return null;
         } catch (Exception e) {

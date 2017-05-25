@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -44,6 +42,8 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXParseException;
+
+import junit.framework.TestCase;
 
 public class XmlModuleUpdaterTest extends TestCase {
 

@@ -19,6 +19,7 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
@@ -52,10 +54,13 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
                 throws ParseException {
             // TODO make it a real mock and check that dd and data are the one that are expected
-            DefaultModuleDescriptor moduleDesc = DefaultModuleDescriptor.newDefaultInstance(dd
-                    .getDependencyRevisionId());
+            final ModuleDescriptor moduleDesc = getModuleDescriptor(dd);
             ResolvedModuleRevision r = new ResolvedModuleRevision(this, this, moduleDesc, null);
             return r;
+        }
+
+        protected ModuleDescriptor getModuleDescriptor(final DependencyDescriptor dependencyDescriptor) {
+            return DefaultModuleDescriptor.newDefaultInstance(dependencyDescriptor.getDependencyRevisionId());
         }
     }
 
@@ -335,7 +340,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     // IVY-392
-    public void testDependenciesWithProfile() throws Exception {
+    public void testDependenciesWithInactiveProfile() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencies-with-profile.pom"), false);
         assertNotNull(md);
@@ -531,7 +536,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
-        assertEquals(3, dds.length);
+        assertEquals(4, dds.length);
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(
@@ -564,6 +569,17 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})),
             new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
         assertEquals(0, dds[2].getAllExcludeRules().length);
+
+        // test for IVY-1531 (where the pom.xml can have a exclusion for groupid=* and artifactid=*, implying transitive=false, in ivy land)
+        final DependencyDescriptor excludeAllTransitiveDepsDescriptor = dds[3];
+        assertEquals(ModuleRevisionId.newInstance("org.owasp.esapi", "esapi", "2.1.0"), excludeAllTransitiveDepsDescriptor.getDependencyRevisionId());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(excludeAllTransitiveDepsDescriptor.getModuleConfigurations())));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"master(*)", "compile(*)"})),
+                new HashSet(Arrays.asList(excludeAllTransitiveDepsDescriptor.getDependencyConfigurations("compile"))));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})),
+                new HashSet(Arrays.asList(excludeAllTransitiveDepsDescriptor.getDependencyConfigurations("runtime"))));
+        assertEquals("No exclusion elements were expected to be present for " + excludeAllTransitiveDepsDescriptor, 0, excludeAllTransitiveDepsDescriptor.getAllExcludeRules().length);
+        assertFalse("Dependency  " + excludeAllTransitiveDepsDescriptor + " was expected to have transitive=false", excludeAllTransitiveDepsDescriptor.isTransitive());
     }
 
     public void testWithPlugins() throws Exception {
@@ -607,6 +623,47 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("The Apache Software License, Version 2.0", licenses[0].getName());
         assertEquals("http://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
     }
+
+    /**
+     * Tests that if a module doesn't have a license specified, then parent pom's license (if any) is used for the child
+     * module
+     *
+     * @throws Exception
+     */
+    public void testLicenseFromParent() throws Exception {
+        final IvySettings customIvySettings = createIvySettingsForParentLicenseTesting("test-parent-with-licenses.pom",
+                "org.apache", "test-ivy-license-parent");
+        final String pomFile = "test-project-with-parent-licenses.pom";
+        final ModuleDescriptor childModule = PomModuleDescriptorParser.getInstance().parseDescriptor(customIvySettings,
+                this.getClass().getResource(pomFile), false);
+        assertNotNull("Could not find " + pomFile, pomFile);
+        final License[] licenses = childModule.getLicenses();
+        assertNotNull("No licenses found in the module " + childModule, licenses);
+        assertEquals("Unexpected number of licenses found in the module " + childModule, 1, licenses.length);
+        assertEquals("Unexpected license name", "MIT License", licenses[0].getName());
+        assertEquals("Unexpected license URL", "http://opensource.org/licenses/MIT", licenses[0].getUrl());
+    }
+
+    /**
+     * Tests that if a project explicitly specifies the licenses, then the licenses (if any) from its parent pom
+     * aren't applied to the child project
+     *
+     * @throws Exception
+     */
+    public void testOverriddenLicense() throws Exception {
+        final IvySettings customIvySettings = createIvySettingsForParentLicenseTesting("test-parent-with-licenses.pom",
+                "org.apache", "test-ivy-license-parent");
+        final String pomFile = "test-project-with-overridden-licenses.pom";
+        final ModuleDescriptor childModule = PomModuleDescriptorParser.getInstance().parseDescriptor(customIvySettings,
+                this.getClass().getResource(pomFile), false);
+        assertNotNull("Could not find " + pomFile, pomFile);
+        final License[] licenses = childModule.getLicenses();
+        assertNotNull("No licenses found in the module " + childModule, licenses);
+        assertEquals("Unexpected number of licenses found in the module " + childModule, 1, licenses.length);
+        assertEquals("Unexpected license name", "The Apache Software License, Version 2.0", licenses[0].getName());
+        assertEquals("Unexpected license URL", "http://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
+    }
+
 
     public void testDependencyManagment() throws ParseException, IOException {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -842,4 +899,123 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifact[0].getType());
     }
 
+    public void testParentBomImport() throws ParseException, IOException {
+        settings.setDictatorResolver(new MockResolver() {
+            public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+                    throws ParseException {
+                try {
+                    ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance()
+                            .parseDescriptor(settings,
+                                getClass().getResource(
+                                    String.format("depmgt/%s.pom", dd.getDependencyId().getName())),
+                                false);
+                    return new ResolvedModuleRevision(null, null, moduleDescriptor, null);
+                } catch (IOException e) {
+                    throw new AssertionError(e);
+                }
+            }
+        });
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("depmgt/child.pom"), false);
+        assertNotNull(md);
+        assertEquals("1.0", md.getRevision());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+            dds[0].getDependencyRevisionId());
+    }
+
+    public void testGrandparentBomImport() throws ParseException, IOException {
+        settings.setDictatorResolver(new MockResolver() {
+            public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+                    throws ParseException {
+                try {
+                    ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance()
+                            .parseDescriptor(settings,
+                                getClass().getResource(
+                                    String.format("depmgt/%s.pom", dd.getDependencyId().getName())),
+                                false);
+                    return new ResolvedModuleRevision(null, null, moduleDescriptor, null);
+                } catch (IOException e) {
+                    throw new AssertionError(e);
+                }
+            }
+        });
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("depmgt/grandchild.pom"), false);
+        assertNotNull(md);
+        assertEquals("1.0", md.getRevision());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(2, dds.length);
+
+        assertEquals(
+            ModuleRevisionId.newInstance("commons-collection", "commons-collection", "1.0.5"),
+            dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+            dds[1].getDependencyRevisionId());
+    }
+
+    public void testParentProfileBomImport() throws ParseException, IOException {
+        settings.setDictatorResolver(new MockResolver() {
+            public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+                    throws ParseException {
+                try {
+                    ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance()
+                            .parseDescriptor(settings,
+                                getClass().getResource(
+                                    String.format("depmgt/%s.pom", dd.getDependencyId().getName())),
+                                false);
+                    return new ResolvedModuleRevision(null, null, moduleDescriptor, null);
+                } catch (IOException e) {
+                    throw new AssertionError(e);
+                }
+            }
+        });
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("depmgt/profile-parent-child.pom"), false);
+        assertNotNull(md);
+        assertEquals("1.0", md.getRevision());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+            dds[0].getDependencyRevisionId());
+    }
+
+    private IvySettings createIvySettingsForParentLicenseTesting(final String parentPomFileName, final String parentOrgName,
+                                                                 final String parentModuleName) throws Exception {
+        final URL parentPomURL = this.getClass().getResource(parentPomFileName);
+        assertNotNull("Could not find " + parentPomFileName, parentPomURL);
+        final PomReader parentPomReader = new PomReader(parentPomURL, new URLResource(parentPomURL));
+        final License[] parentLicenses = parentPomReader.getLicenses();
+        assertNotNull("Missing licenses in parent pom " + parentPomFileName, parentLicenses);
+        assertEquals("Unexpected number of licenses in parent pom " + parentPomFileName, 1, parentLicenses.length);
+        final DependencyResolver dependencyResolver = new MockedDependencyResolver() {
+            @Override
+            protected ModuleDescriptor getModuleDescriptor(DependencyDescriptor dependencyDescriptor) {
+                final String depOrg = dependencyDescriptor.getDependencyId().getOrganisation();
+                final String depModuleName = dependencyDescriptor.getDependencyId().getName();
+                if (depOrg.equals(parentOrgName) && depModuleName.equals(parentModuleName)) {
+                    final DefaultModuleDescriptor moduleDescriptor = DefaultModuleDescriptor.newDefaultInstance(dependencyDescriptor.getDependencyRevisionId());
+                    for (final License license : parentLicenses) {
+                        moduleDescriptor.addLicense(license);
+                    }
+                    return moduleDescriptor;
+                } else {
+                    return super.getModuleDescriptor(dependencyDescriptor);
+                }
+            }
+        };
+        final IvySettings ivySettings = new IvySettings();
+        ivySettings.setDictatorResolver(dependencyResolver);
+
+        return ivySettings;
+    }
 }
