@@ -88,7 +88,7 @@ public class TestHelper {
      * <p>
      * Expected mrids is given as a String of comma separated string representations of
      * {@link ModuleRevisionId}.
-     * 
+     *
      * @param expectedMrids
      *            the expected set of mrids
      * @param mrids
@@ -103,7 +103,7 @@ public class TestHelper {
     /**
      * Returns a Set of {@link ModuleRevisionId} corresponding to the given comma separated list of
      * their text representation.
-     * 
+     *
      * @param mrids
      *            the text representation of the {@link ModuleRevisionId}
      * @return a collection of {@link ModuleRevisionId}

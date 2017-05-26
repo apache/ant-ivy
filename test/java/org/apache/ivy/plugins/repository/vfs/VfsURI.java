@@ -84,7 +84,7 @@ public class VfsURI {
 
     /**
      * Create a wellformed VFS resource identifier
-     * 
+     *
      * @param scheme
      *            the name of the scheme used to access the resource
      * @param user
@@ -122,7 +122,7 @@ public class VfsURI {
 
     /**
      * Return a well-formed VFS Resource identifier
-     * 
+     *
      * @return <code>String<code> representing a well formed VFS resource identifier
      */
     public String getVfsURI() {
@@ -153,7 +153,7 @@ public class VfsURI {
 
     /**
      * Convert a resource path to the format required for a VFS resource identifier
-     * 
+     *
      * @param path
      *            <code>String</code> path to the resource
      * @return <code>String</code> representing a normalized resource path

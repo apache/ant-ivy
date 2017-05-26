@@ -136,7 +136,6 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
     @Test
     public void testBintray() throws Exception {
-
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSettings(_settings);
         ModuleRevisionId mrid = ModuleRevisionId

@@ -70,7 +70,7 @@ public class VfsRepositoryTest {
 
     /**
      * Basic validation of happy path put - valid VFS URI and no conflict with existing file
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -100,7 +100,7 @@ public class VfsRepositoryTest {
 
     /**
      * Validate that we can overwrite an existing file
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -138,7 +138,7 @@ public class VfsRepositoryTest {
 
     /**
      * Validate that we put will respect a request not to overwrite an existing file
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = IOException.class)
@@ -159,7 +159,7 @@ public class VfsRepositoryTest {
 
     /**
      * Test the retrieval of an artifact from the repository creating a new artifact
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -187,7 +187,7 @@ public class VfsRepositoryTest {
 
     /**
      * Test the retrieval of an artifact from the repository overwriting an existing artifact
-     * 
+     *
      * @throws Exception
      */
     @Test

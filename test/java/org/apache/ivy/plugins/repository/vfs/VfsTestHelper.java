@@ -70,7 +70,7 @@ public class VfsTestHelper {
 
     /**
      * Generate a set of well-formed VFS resource identifiers
-     * 
+     *
      * @param resource
      *            name of the resource
      * @return <class>List</class> of well-formed VFS resource identifiers

@@ -300,7 +300,7 @@ public class SortTest {
 
     /**
      * Verifies that sorted in one of the list of listOfPossibleSort.
-     * 
+     *
      * @param listOfPossibleSort
      *            array of possible sort result
      * @param sorted

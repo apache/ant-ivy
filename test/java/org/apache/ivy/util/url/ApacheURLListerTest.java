@@ -31,10 +31,9 @@ import static org.junit.Assert.assertTrue;
  * Tests {@link ApacheURLLister}.
  */
 public class ApacheURLListerTest {
-
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -64,7 +63,7 @@ public class ApacheURLListerTest {
 
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
-     * 
+     *
      * @throws Exception
      */
     @Test

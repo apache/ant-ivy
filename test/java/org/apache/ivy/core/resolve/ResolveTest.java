@@ -782,7 +782,7 @@ public class ResolveTest {
      * Configures an Ivy instance using a resolver locating modules on file system, in a
      * build/testCache2 location which is created for the test and removed after, and can thus
      * easily simulate a repository availability problem
-     * 
+     *
      * @return the configured ivy instance
      */
     private Ivy ivyTestCache() {
@@ -4694,11 +4694,11 @@ public class ResolveTest {
     @Test
     public void testResolveMaven2ParentPomDualResolver() throws Exception {
         // test has a dependency on test2 but there is no version listed. test
-		// has a parent of parent(2.0) then parent2. Both parents have a
-		// dependencyManagement element for test2, and each list the version as
+        // has a parent of parent(2.0) then parent2. Both parents have a
+        // dependencyManagement element for test2, and each list the version as
         // ${pom.version}. The parent version should take precedence over
-		// parent2, so the version should be test2 version 2.0. Test3 is also a
-		// dependency of parent, and it's version is listed
+        // parent2, so the version should be test2 version 2.0. Test3 is also a
+        // dependency of parent, and it's version is listed
         // as 1.0 in parent2. (dependencies inherited from parent comes after)
 
         // now run tests with dual resolver
@@ -4759,12 +4759,12 @@ public class ResolveTest {
         // test;2.0 has a dependency on test2;3.0.
         // test has a parent of parent(2.0) then parent2.
         // Both parents have a dependencyManagement element for test2, and each
-		// list the version as ${pom.version}. The version for test2 in test
-		// should take precedence, so the version should be test2 version 3.0.
+        // list the version as ${pom.version}. The version for test2 in test
+        // should take precedence, so the version should be test2 version 3.0.
         // test2;3.0 -> test4;2.0, but parent has a dependencyManagement
-		// section specifying test4;1.0.
+        // section specifying test4;1.0.
         // since maven 2.0.6, the information in parent should override
-		// transitive dependency version, and thus we should get test4;1.0
+        // transitive dependency version, and thus we should get test4;1.0
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
         ivy.getSettings().setDefaultResolver("parentChain");
@@ -5700,13 +5700,13 @@ public class ResolveTest {
             "releasebranch", "1");
 
         // check that the resolve report has the expected results, namely that
-		// trunk/5 is considered later than branch/1 purely because 5>1. Of
-		// course it is more likely that we would want to consider this a
+        // trunk/5 is considered later than branch/1 purely because 5>1. Of
+        // course it is more likely that we would want to consider this a
         // 'bad comparison', but this Unit Test is not about that. It is about
-		// inconsistency of results between the resolve report and the
+        // inconsistency of results between the resolve report and the
         // delivered descriptor. In fact the delivered descriptor is out of
-		// step, because retrieve and the report both agree that trunk/5 is
-		// selected. Deliver begs to differ.
+        // step, because retrieve and the report both agree that trunk/5 is
+        // selected. Deliver begs to differ.
 
         Set<ModuleRevisionId> reportMrids = report.getConfigurationReport("default")
                 .getModuleRevisionIds();

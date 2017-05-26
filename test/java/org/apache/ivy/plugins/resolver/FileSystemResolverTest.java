@@ -265,7 +265,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
      * Tests that <code>SHA-256</code> algorithm can be used for checksums on resolvers
      * @throws Exception
      */
-	@Test
+    @Test
     public void testSHA256Checksum() throws Exception {
         final FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("sha256-checksum-resolver");

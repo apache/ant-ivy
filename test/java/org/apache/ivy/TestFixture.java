@@ -35,7 +35,7 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  * Fixture easing the development of tests requiring to set up a simple repository with some
  * modules, using micro ivy format to describe the repository. <br/>
  * Example of use:
- * 
+ *
  * <pre>
  * public class MyTest {
  *     private TestFixture fixture;
