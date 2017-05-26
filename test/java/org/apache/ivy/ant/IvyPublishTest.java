@@ -854,7 +854,12 @@ public class IvyPublishTest {
         assertEquals("1.3", md.getModuleRevisionId().getRevision());
     }
 
-    @Test
+    /**
+     * Test must not publish ivy file with bad revision.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testBadNoDeliver() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
@@ -870,12 +875,8 @@ public class IvyPublishTest {
 
         File art = new File("build/test/publish/resolve-latest-1.3.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        try {
-            publish.execute();
-            fail("shouldn't publish ivy file with bad revision");
-        } catch (BuildException ex) {
-            // normal
-        }
+
+        publish.execute();
     }
 
     @Test

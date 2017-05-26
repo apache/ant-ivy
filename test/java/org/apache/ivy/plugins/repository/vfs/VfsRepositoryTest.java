@@ -27,8 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Testing Testing was the single biggest hurdle I faced. I have tried to provide a complete test
@@ -90,10 +89,8 @@ public class VfsRepositoryTest {
 
             try {
                 repo.put(new File(srcFile), vfsURI.toString(), false);
-                if (!new File(srcFile).exists()) {
-                    fail("Put didn't happen. Src VfsURI: " + vfsURI.toString()
-                            + ".\nExpected file: " + destFile);
-                }
+                assertTrue("Put didn't happen. Src VfsURI: " + vfsURI.toString()
+                        + ".\nExpected file: " + destFile, new File(srcFile).exists());
             } catch (IOException e) {
                 fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
                         + e.getLocalizedMessage());
@@ -128,13 +125,10 @@ public class VfsRepositoryTest {
 
             try {
                 repo.put(new File(srcFile), vfsURI.toString(), true);
-                if (!new File(srcFile).exists()) {
-                    fail("Put didn't happen. Src VfsURI: " + vfsURI.toString()
-                            + ".\nExpected file: " + destFile);
-                }
-                if (destFile.length() == 0) {
-                    fail("Zero file size indicates file not overwritten");
-                }
+                assertTrue("Put didn't happen. Src VfsURI: " + vfsURI.toString()
+                        + ".\nExpected file: " + destFile, new File(srcFile).exists());
+                assertNotEquals("Zero file size indicates file not overwritten", 0,
+                        destFile.length());
             } catch (IOException e) {
                 fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
                         + e.getLocalizedMessage());
@@ -147,7 +141,7 @@ public class VfsRepositoryTest {
      * 
      * @throws Exception
      */
-    @Test
+    @Test(expected = IOException.class)
     public void testPutOverwriteFalse() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         String srcFile = FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, testResource);
@@ -159,12 +153,7 @@ public class VfsRepositoryTest {
         Iterator vfsURIs = helper.createVFSUriSet(destResource).iterator();
         while (vfsURIs.hasNext()) {
             VfsURI vfsURI = (VfsURI) vfsURIs.next();
-
-            try {
-                repo.put(new File(srcFile), vfsURI.toString(), false);
-                fail("Did not throw expected IOException from attempted overwrite of existing file");
-            } catch (IOException e) {
-            }
+            repo.put(new File(srcFile), vfsURI.toString(), false);
         }
     }
 
@@ -187,10 +176,8 @@ public class VfsRepositoryTest {
 
             try {
                 repo.get(vfsURI.toString(), new File(testFile));
-                if (!new File(testFile).exists()) {
-                    fail("Expected file: " + testFile + "not found. Failed vfsURI: "
-                            + vfsURI.toString());
-                }
+                assertTrue("Expected file: " + testFile + "not found. Failed vfsURI: "
+                        + vfsURI.toString(), new File(testFile).exists());
             } catch (IOException e) {
                 fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
                         + e.getLocalizedMessage());
@@ -221,13 +208,10 @@ public class VfsRepositoryTest {
 
             try {
                 repo.get(vfsURI.toString(), testFile);
-                if (!testFile.exists()) {
-                    fail("Expected file: " + testFile + "not found. Failed vfsURI: "
-                            + vfsURI.toString());
-                }
-                if (testFile.length() == 0) {
-                    fail("Zero file size indicates file not overwritten");
-                }
+                assertTrue("Expected file: " + testFile + "not found. Failed vfsURI: "
+                        + vfsURI.toString(), testFile.exists());
+                assertNotEquals("Zero file size indicates file not overwritten", 0,
+                        testFile.length());
             } catch (IOException e) {
                 fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
                         + e.getLocalizedMessage());

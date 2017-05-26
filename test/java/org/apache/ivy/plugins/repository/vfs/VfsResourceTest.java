@@ -30,7 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class VfsResourceTest {
     private VfsTestHelper helper = null;
@@ -56,32 +56,20 @@ public class VfsResourceTest {
             VfsURI vfsURI = (VfsURI) vfsURIs.next();
             String resId = vfsURI.toString();
             VfsResource res = new VfsResource(resId, helper.fsManager);
-            if (res == null) {
-                fail("Unexpected null value on VFS URI: " + resId);
-            }
-
-            if (!res.exists()) {
-                fail("Resource does not exist and it should: " + resId);
-            }
+            assertNotNull("Unexpected null value on VFS URI: " + resId, res);
+            assertTrue("Resource does not exist and it should: " + resId, res.exists());
 
             // VFS apparently does some weird normalization so that resource id used to create
             // the VFS resource is not necessarily identical to the id returned from the getName
             // method <sigh>. We try to work around this by transforming things into java URIs.
-            if (!new URI(escapeUrl(resId)).equals(new URI(escapeUrl(res.getName())).normalize())) {
-                fail("Failed on getName. Expected: " + resId + ". Actual: " + res.getName());
-            }
-
-            if (res.getLastModified() == 0) {
-                fail("Expected non-null file modification date for URI: " + resId);
-            }
-
-            if (res.getContentLength() == 0) {
-                fail("Expected non-zero file length for URI: " + resId);
-            }
-
-            if (!res.physicallyExists()) {
-                fail("Physical existence check returned false for existing resource: " + resId);
-            }
+            assertEquals("Failed on getName. Expected: " + resId + ". Actual: " + res.getName(),
+                    new URI(escapeUrl(resId)), new URI(escapeUrl(res.getName())).normalize());
+            assertNotEquals("Expected non-null file modification date for URI: " + resId,
+                    0, res.getLastModified());
+            assertNotEquals("Expected non-zero file length for URI: " + resId,
+                    0, res.getContentLength());
+            assertTrue("Physical existence check returned false for existing resource: " + resId,
+                    res.physicallyExists());
         }
     }
 
@@ -117,34 +105,21 @@ public class VfsResourceTest {
             VfsURI vfsURI = (VfsURI) vfsURIs.next();
             String resId = vfsURI.toString();
             VfsResource res = new VfsResource(resId, helper.fsManager);
-            if (res == null) {
-                fail("Unexpected null value on VFS URI: " + resId);
-            }
-
-            if (res.exists()) {
-                fail("Resource does not exist and it shouldn't: " + resId);
-            }
+            assertNotNull("Unexpected null value on VFS URI: " + resId, res);
+            assertFalse("Resource does exist and it should not: " + resId, res.exists());
 
             // VFS apparently does some weird normalization so that resource id used to create
             // the VFS resource is not necessarily identical to the id returned from the getName
             // method <sigh>. We try to work around this by transforming things into java URIs.
-            if (!new URI(escapeUrl(resId)).equals(new URI(escapeUrl(res.getName())).normalize())) {
-                fail("Failed on getName. Expected: " + resId + ". Actual: " + res.getName());
-            }
-
-            if (res.getLastModified() != 0) {
-                fail("Expected null file modification date for URI: " + resId + ": "
-                        + res.getLastModified());
-            }
-
-            if (res.getContentLength() != 0) {
-                fail("Expected non-zero file length for URI: " + resId);
-            }
-
-            if (res.physicallyExists()) {
-                fail("Physical existence check returned true for non-existent resource: " + resId);
-            }
-        }
+            assertEquals("Failed on getName. Expected: " + resId + ". Actual: " + res.getName(),
+                    new URI(escapeUrl(resId)), new URI(escapeUrl(res.getName())).normalize());
+            assertEquals("Expected null file modification date for URI: " + resId,
+                    0, res.getLastModified());
+            assertEquals("Expected zero file length for URI: " + resId,
+                    0, res.getContentLength());
+            assertFalse("Physical existence check returned true for non-existent resource: " + resId,
+                    res.physicallyExists());
+       }
     }
 
     /**
@@ -156,30 +131,16 @@ public class VfsResourceTest {
         String vfsURI = "smb1:/goobeldygook";
         VfsResource res = new VfsResource(vfsURI, helper.fsManager);
 
-        if (res == null) {
-            fail("Unexpected null value on VFS URI: " + vfsURI);
-        }
-
-        if (res.exists()) {
-            fail("Resource is marked as existing and it should not: " + vfsURI);
-        }
-
-        if (!res.getName().equals("smb1:/goobeldygook")) {
-            fail("Failed on getName. Expected: " + vfsURI + ". Actual: " + res.getName());
-        }
-
-        if (res.getLastModified() != 0) {
-            fail("Expected null file modification date for URI: " + vfsURI + ": "
-                    + res.getLastModified());
-        }
-
-        if (res.getContentLength() != 0) {
-            fail("Expected zero file length for URI: " + vfsURI);
-        }
-
-        if (res.physicallyExists()) {
-            fail("Physical existence check returned false for existing resource: " + vfsURI);
-        }
+        assertNotNull("Unexpected null value on VFS URI: " + vfsURI, res);
+        assertFalse("Resource is marked as existing and it should not: " + vfsURI, res.exists());
+        assertEquals("Failed on getName. Expected: " + vfsURI + ". Actual: " + res.getName(),
+                res.getName(), "smb1:/goobeldygook");
+        assertEquals("Expected null file modification date for URI: " + vfsURI + ": "
+                        + res.getLastModified(), 0, res.getLastModified());
+        assertEquals("Expected zero file length for URI: " + vfsURI,
+                0, res.getContentLength());
+        assertFalse("Physical existence check returned true for non-existent resource: " + vfsURI,
+                res.physicallyExists());
     }
 
     /**
@@ -214,9 +175,8 @@ public class VfsResourceTest {
 
             Collections.sort(actual);
             Collections.sort(expected);
-            if (!actual.equals(expected)) {
-                fail("\nExpected: " + expected.toString() + "\n.Actual: " + actual.toString());
-            }
+            assertTrue("\nExpected: " + expected.toString() + "\nActual: " + actual.toString(),
+                    actual.equals(expected));
         }
     }
 
@@ -231,9 +191,8 @@ public class VfsResourceTest {
             VfsURI vfsURI = (VfsURI) testSet.next();
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
             List results = res.getChildren();
-            if (results.size() > 0) {
-                fail("getChildren query on file provided results when it shouldn't have");
-            }
+            assertEquals("getChildren query on file provided results when it shouldn't have",
+                    0, results.size());
         }
     }
 
@@ -248,9 +207,8 @@ public class VfsResourceTest {
             VfsURI vfsURI = (VfsURI) testSet.next();
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
             List results = res.getChildren();
-            if (results.size() > 0) {
-                fail("getChildren query on file provided results when it shouldn't have");
-            }
+            assertEquals("getChildren query on file provided results when it shouldn't have",
+                    0, results.size());
         }
     }
 }

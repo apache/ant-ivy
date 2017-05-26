@@ -37,7 +37,9 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -50,6 +52,9 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     private ResolveEngine _engine;
 
     private ResolveData _data;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -89,22 +94,23 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
             l.get(0));
     }
 
+    /**
+     * IVY-625: should fail if no ivyroot specified.
+     *
+     * @throws Exception
+     */
     @Test
     public void testMandatoryRoot() throws Exception {
-        // IVY-625: should fail if no ivyroot specified
+        expExc.expect(IllegalStateException.class);
+        expExc.expectMessage("ivyroot");
+
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
         resolver.setSettings(_settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-cli", "1.0");
-        try {
-            resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
-            fail("using ivyrep resolver without ivyroot should raise an exception");
-        } catch (IllegalStateException ex) {
-            assertTrue(
-                "exception thrown when using ivyrep with no ivyroot should talk about the root",
-                ex.getMessage().contains("ivyroot"));
-        }
+
+        resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
     }
 
     @Test

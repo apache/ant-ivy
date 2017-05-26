@@ -52,6 +52,5 @@ public class RegexpPatternMatcherTest extends AbstractPatternMatcherTest {
         assertTrue(matcher.matches("aa"));
 
         matcher = patternMatcher.getMatcher("(");
-        fail("Should fail on invalid syntax");
     }
 }

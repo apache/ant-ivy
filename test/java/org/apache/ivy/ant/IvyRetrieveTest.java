@@ -279,21 +279,28 @@ public class IvyRetrieveTest {
         assertTrue(new File("build/test/lib/default/mod1.2-2.2.jar").exists());
     }
 
+    /**
+     * Retrieve without previous resolve must fail.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailureWithoutAPreviousResolve() throws Exception {
-        // we do a retrieve with the module information whereas no resolve has been previously done
         retrieve.setOrganisation("apache");
         retrieve.setModule("resolve-simple");
         retrieve.setConf("default");
         retrieve.execute();
-        fail("retrieve without previous resolve should have thrown an exception");
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         retrieve.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
     @Test
@@ -302,7 +309,6 @@ public class IvyRetrieveTest {
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
             retrieve.setHaltonfailure(false);
             retrieve.execute();
-
         } catch (BuildException ex) {
             fail("failure raised an exception with haltonfailure set to false");
         }

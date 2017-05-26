@@ -65,28 +65,26 @@ public class StrictConflictManagerTest {
             getResolveOptions());
     }
 
-    @Test
+    /**
+     * Resolve must fail with a conflict.
+     *
+     * @throws Exception
+     */
+    @Test(expected = StrictConflictException.class)
     public void testConflictResolve() throws Exception {
-        try {
-            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"),
+        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"),
                 getResolveOptions());
-
-            fail("Resolve should have failed with a conflict");
-        } catch (StrictConflictException e) {
-            // this is expected
-        }
     }
 
-    @Test
+    /**
+     * Resolve must fail with a conflict.
+     *
+     * @throws Exception
+     */
+    @Test(expected = StrictConflictException.class)
     public void testConflictWithDynamicRevisionResolve() throws Exception {
-        try {
-            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict-dynamic.xml"),
+        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict-dynamic.xml"),
                 getResolveOptions());
-
-            fail("Resolve should have failed with a conflict");
-        } catch (StrictConflictException e) {
-            // this is expected
-        }
     }
 
     private ResolveOptions getResolveOptions() {

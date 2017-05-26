@@ -43,8 +43,10 @@ import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
 
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
 
+import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXParseException;
 
 import static org.junit.Assert.*;
@@ -239,21 +241,13 @@ public class XmlModuleUpdaterTest {
         assertNotNull("myconf4 has been removed", updatedMd.getConfiguration("myconf4"));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testUpdateWithExcludeConfigurations2() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingFile = new File("test/java/org/apache/ivy/plugins/parser/xml/"
                 + "test-update-excludedconfs2.xml").toURI().toURL();
-        try {
-            XmlModuleDescriptorUpdater
-                    .update(settingFile, buffer, getUpdateOptions("release", "mynewrev")
-                            .setConfsToExclude(new String[] {"myconf2"}));
-            fail("IllegalArgumentException hasn't been thrown");
-        } catch (IllegalArgumentException e) {
-            // this is ok
-        } catch (SAXParseException e) {
-            // this is ok too
-        }
+        XmlModuleDescriptorUpdater.update(settingFile, buffer, getUpdateOptions("release", "mynewrev")
+                .setConfsToExclude(new String[] {"myconf2"}));
     }
 
     @Test

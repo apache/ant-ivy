@@ -42,15 +42,12 @@ public class BuildOBRTaskTest {
 
     private BuildOBRTask buildObr;
 
-    private Project project;
-
     @Before
     public void setUp() {
         createCache();
-        project = TestHelper.newProject();
 
         buildObr = new BuildOBRTask();
-        buildObr.setProject(project);
+        buildObr.setProject(TestHelper.newProject());
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 

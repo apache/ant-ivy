@@ -213,17 +213,14 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "1", false, null),
                 MockResolver.buildMockResolver(settings, "2", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
-                // ->
-                // but
-                // default
+                    new GregorianCalendar(2005, 1, 22).getTime(), true),
+                    // latest -> but default
                 MockResolver.buildMockResolver(settings, "3", false, null),
                 MockResolver.buildMockResolver(settings, "4", false, null),
                 MockResolver.buildMockResolver(settings, "5", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
-                // should the
-                // one kept
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                    // latest -> should be the one kept
                 MockResolver.buildMockResolver(settings, "6", false, null),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
         for (MockResolver resolver : resolvers) {
@@ -300,14 +297,13 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "1", false, null),
                 MockResolver.buildMockResolver(settings, "2", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime(), true), // default
+                    new GregorianCalendar(2005, 1, 22).getTime(), true),
+                    // default
                 MockResolver.buildMockResolver(settings, "3", false, null),
                 MockResolver.buildMockResolver(settings, "4", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime()), // not
-                                                                   // default
-                // -> should the
-                // one kept
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                    // not default -> should be the one kept
                 MockResolver.buildMockResolver(settings, "5", false, null)};
         for (MockResolver resolver : resolvers) {
             chain.add(resolver);

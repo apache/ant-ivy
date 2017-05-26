@@ -88,14 +88,14 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("\\- org1#mod1.2;latest.integration");
     }
 
-    @Test
+    /**
+     * Task must fail because no resolve was performed.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testWithResolveIdWithoutResolve() throws Exception {
-        try {
-            dependencyTree.execute();
-            fail("Task should have failed because no resolve was performed!");
-        } catch (BuildException e) {
-            // this is expected!
-        }
+        dependencyTree.execute();
     }
 
     @Test

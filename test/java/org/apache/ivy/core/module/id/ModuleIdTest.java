@@ -34,8 +34,7 @@ public class ModuleIdTest {
     }
 
     @Test
-    public void testModuleIdIllegalArgumentException() {
-        String org = "apache";
+    public void testModuleIdIllegalArgumentException1() {
         String name = "some-new-module";
 
         try {
@@ -43,13 +42,12 @@ public class ModuleIdTest {
         } catch (IllegalArgumentException iae) {
             fail("A null should be allowed for argument 'org'.");
         }
+    }
 
-        try {
-            new ModuleId(org, null);
-            fail("A IllegalArgumentException should have been thrown for the argument 'name'.");
-        } catch (IllegalArgumentException iae) {
-            // success
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void testModuleIdIllegalArgumentException2() {
+        String org = "apache";
+        new ModuleId(org, null);
     }
 
     @Test
@@ -95,18 +93,12 @@ public class ModuleIdTest {
         assertEquals(moduleId, moduleId2);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testCompareToNullObject() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
-
-        try {
-            moduleId.compareTo(null);
-            fail("A NullPointerException was expected.");
-        } catch (NullPointerException npe) {
-            // success
-        }
+        moduleId.compareTo(null);
     }
 
     @Test

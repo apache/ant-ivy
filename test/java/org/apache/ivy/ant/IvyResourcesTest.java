@@ -241,19 +241,13 @@ public class IvyResourcesTest {
             "jar")));
     }
 
-    @Test
+    @Test(expected = BuildException.class)
     public void testFail() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("noexisting");
         dependency.setRev("2.0");
-
-        try {
-            resources.iterator();
-            fail("A fail resolved should have raised a build exception");
-        } catch (BuildException e) {
-            // ok
-        }
+        resources.iterator();
     }
 
 }

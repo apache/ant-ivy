@@ -28,10 +28,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Parallel;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -40,6 +38,9 @@ public class IvyResolveTest {
     private Project project;
 
     private IvyResolve resolve;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -265,15 +266,10 @@ public class IvyResolveTest {
         assertEquals("1.1", getIvy().getVariable("ivy.revision"));
     }
 
-    @Test
+    @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
-        try {
-            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
-            resolve.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        resolve.execute();
     }
 
     @Test
@@ -288,36 +284,24 @@ public class IvyResolveTest {
 
     @Test
     public void testFailureWithMissingConfigurations() throws Exception {
-        try {
-            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-            resolve.setConf("default,unknown");
-            resolve.execute();
-            fail("missing configurations didn't raised an exception");
-        } catch (BuildException ex) {
-            assertTrue(ex.getMessage().contains("unknown"));
-        }
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("unknown");
+
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setConf("default,unknown");
+        resolve.execute();
     }
 
-    @Test
+    @Test(expected = BuildException.class)
     public void testFailureOnBadDependencyIvyFile() throws Exception {
-        try {
-            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure2.xml"));
-            resolve.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure2.xml"));
+        resolve.execute();
     }
 
-    @Test
+    @Test(expected = BuildException.class)
     public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
-        try {
-            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure3.xml"));
-            resolve.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure3.xml"));
+        resolve.execute();
     }
 
     @Test
@@ -624,19 +608,18 @@ public class IvyResolveTest {
         assertTrue(getArchiveFileInCache("org2", "mod2.2", "0.9", "art22-1", "jar", "jar").exists());
     }
 
-    @Test
+    /**
+     * Test a failing resolve.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testChildsFail() throws Exception {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("noexisting");
         dependency.setRev("2.0");
-
-        try {
-            resolve.execute();
-            fail("A fail resolved should have raised a build exception");
-        } catch (BuildException e) {
-            // ok
-        }
+        resolve.execute();
     }
 
     @Test

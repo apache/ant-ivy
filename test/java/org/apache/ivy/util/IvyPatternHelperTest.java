@@ -34,20 +34,14 @@ public class IvyPatternHelperTest {
             IvyPatternHelper.substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
-    @Test
+    @Test(expected = Exception.class)
     public void testCyclicSubstitute() {
         String pattern = "${var}";
         Map variables = new HashMap();
         variables.put("var", "${othervar}");
         variables.put("othervar", "${var}");
-        try {
-            IvyPatternHelper.substituteVariables(pattern, variables);
-            fail("cyclic var should raise an exception");
-        } catch (Exception ex) {
-            // ok
-        } catch (Error er) {
-            fail("cyclic var shouldn't raise an error: " + er);
-        }
+
+        IvyPatternHelper.substituteVariables(pattern, variables);
     }
 
     @Test

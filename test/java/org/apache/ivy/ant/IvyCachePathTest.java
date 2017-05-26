@@ -132,12 +132,16 @@ public class IvyCachePathTest {
         assertEquals(0, p.size());
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         path.setPathid("failure-pathid");
         path.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
     @Test

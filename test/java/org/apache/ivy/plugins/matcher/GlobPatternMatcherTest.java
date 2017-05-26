@@ -98,6 +98,5 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
     @Test(expected = PatternSyntaxException.class)
     public void testInvalidSyntax() {
         patternMatcher.getMatcher("[");
-        fail("Should fail on invalid regexp syntax");
     }
 }

@@ -425,8 +425,7 @@ public class IvyDeliverTest {
         String[] files = list.list();
         HashSet actualFileSet = new HashSet(Arrays.asList(files));
         HashSet expectedFileSet = new HashSet();
-        for (int i = 0; i < dds.length; i++) {
-            DependencyDescriptor dd = dds[i];
+        for (DependencyDescriptor dd : dds) {
             String name = dd.getDependencyId().getName();
             String rev = dd.getDependencyRevisionId().getRevision();
             String ext = "jar";
@@ -473,8 +472,7 @@ public class IvyDeliverTest {
         String[] files = list.list();
         HashSet actualFileSet = new HashSet(Arrays.asList(files));
         HashSet expectedFileSet = new HashSet();
-        for (int i = 0; i < dds.length; i++) {
-            DependencyDescriptor dd = dds[i];
+        for (DependencyDescriptor dd : dds) {
             String name = dd.getDependencyId().getName();
             String rev = dd.getDependencyRevisionId().getRevision();
             String ext = "jar";

@@ -71,7 +71,9 @@ import org.apache.ivy.util.StringUtils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -89,6 +91,9 @@ public class ResolveTest {
     private File deliverDir;
 
     private File workDir;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -3258,96 +3263,99 @@ public class ResolveTest {
         assertFalse(report.hasError());
     }
 
+    /**
+     * Circular dependency: mod6.3 depends on mod6.2, which itself depends on mod6.3;
+     * circular dependency strategy set to error.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCircular() throws Exception {
-        // mod6.3 depends on mod6.2, which itself depends on mod6.3
+        expExc.expect(CircularDependencyException.class);
+        expExc.expectMessage("org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration");
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-            getResolveOptions(new String[] {"default"}));
-        assertFalse(report.hasError());
-
-        ivy.getSettings().setCircularDependencyStrategy(
-            IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-            getResolveOptions(new String[] {"default"}));
-        assertFalse(report.hasError());
-
-        ivy.getSettings().setCircularDependencyStrategy(
-            WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-            getResolveOptions(new String[] {"default"}));
-        assertFalse(report.hasError());
-
-        ivy.getSettings().setCircularDependencyStrategy(
-            ErrorCircularDependencyStrategy.getInstance());
-        try {
-            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
                 getResolveOptions(new String[] {"default"}));
-            fail("no exception with circular dependency strategy set to error");
-        } catch (CircularDependencyException ex) {
-            assertEquals("org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration",
-                ex.getMessage());
-        }
+        assertFalse(report.hasError());
+
+        ivy.getSettings().setCircularDependencyStrategy(
+                IgnoreCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
+                getResolveOptions(new String[] {"default"}));
+        assertFalse(report.hasError());
+
+        ivy.getSettings().setCircularDependencyStrategy(
+                WarnCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
+                getResolveOptions(new String[] {"default"}));
+        assertFalse(report.hasError());
+
+        ivy.getSettings().setCircularDependencyStrategy(
+                ErrorCircularDependencyStrategy.getInstance());
+        ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
+                getResolveOptions(new String[] {"default"}));
     }
 
+    /**
+     * Circular dependency: mod 9.1 (no revision) depends on mod9.2, which depends on mod9.1 2.+;
+     * circular dependency strategy set to error.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCircular2() throws Exception {
-        // mod 9.1 (no revision) depends on mod9.2, which depends on mod9.1 2.+
+        expExc.expect(CircularDependencyException.class);
+        expExc.expectMessage("org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+");
 
         ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml"),
-            getResolveOptions(new String[] {"*"}));
+                getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
         ivy.getSettings().setCircularDependencyStrategy(
-            ErrorCircularDependencyStrategy.getInstance());
-        try {
-            ivy.resolve(new File("test/repositories/circular/ivy.xml"),
+                ErrorCircularDependencyStrategy.getInstance());
+        ivy.resolve(new File("test/repositories/circular/ivy.xml"),
                 getResolveOptions(new String[] {"*"}));
-            fail("no exception with circular dependency strategy set to error");
-        } catch (CircularDependencyException ex) {
-            // ok
-            assertEquals("org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+", ex.getMessage());
-        }
     }
 
+    /**
+     * Test case for IVY-400.
+     * Circular dependency: mod6.3 depends on mod6.2, which itself depends on mod6.3,
+     * in both configuration default and test; circular dependency strategy set to error.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCircular3() throws Exception {
-        // test case for IVY-400
-        // mod6.3 depends on mod6.2, which itself depends on mod6.3,
-        // in both configuration default and test
+        expExc.expect(CircularDependencyException.class);
+        expExc.expectMessage("org6#mod6.3;1.2->org6#mod6.2;1.1->...");
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-            getResolveOptions(new String[] {"default", "test"}));
+                getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         // we should have mod 6.2 artifact in both configurations
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
         ivy.getSettings().setCircularDependencyStrategy(
-            IgnoreCircularDependencyStrategy.getInstance());
+                IgnoreCircularDependencyStrategy.getInstance());
         report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-            getResolveOptions(new String[] {"default", "test"}));
-        assertFalse(report.hasError());
-        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
-        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
-
-        ivy.getSettings().setCircularDependencyStrategy(
-            WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-            getResolveOptions(new String[] {"default", "test"}));
-        assertFalse(report.hasError());
-        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
-        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
-
-        ivy.getSettings().setCircularDependencyStrategy(
-            ErrorCircularDependencyStrategy.getInstance());
-        try {
-            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
                 getResolveOptions(new String[] {"default", "test"}));
-            fail("no exception with circular dependency strategy set to error");
-        } catch (CircularDependencyException ex) {
-            assertEquals("org6#mod6.3;1.2->org6#mod6.2;1.1->...", ex.getMessage());
-        }
+        assertFalse(report.hasError());
+        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
+        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
+
+        ivy.getSettings().setCircularDependencyStrategy(
+                WarnCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
+            getResolveOptions(new String[] {"default", "test"}));
+        assertFalse(report.hasError());
+        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
+        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
+
+        ivy.getSettings().setCircularDependencyStrategy(
+                ErrorCircularDependencyStrategy.getInstance());
+        ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
+                getResolveOptions(new String[] {"default", "test"}));
     }
 
     @Test
@@ -4345,7 +4353,7 @@ public class ResolveTest {
     }
 
     @Test
-    public void testResolveVesionRelocationChainedWithGroupRelocation() throws Exception {
+    public void testResolveVersionRelocationChainedWithGroupRelocation() throws Exception {
         ivy = new Ivy();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ivy.pushContext();
@@ -4685,13 +4693,12 @@ public class ResolveTest {
 
     @Test
     public void testResolveMaven2ParentPomDualResolver() throws Exception {
-        // test has a dependency on test2 but there is no version listed. test has a parent of
-        // parent(2.0)
-        // then parent2. Both parents have a dependencyManagement element for test2, and each list
-        // the version as
-        // ${pom.version}. The parent version should take precedence over parent2,
-        // so the version should be test2 version 2.0. Test3 is also a dependency of parent, and
-        // it's version is listed
+        // test has a dependency on test2 but there is no version listed. test
+		// has a parent of parent(2.0) then parent2. Both parents have a
+		// dependencyManagement element for test2, and each list the version as
+        // ${pom.version}. The parent version should take precedence over
+		// parent2, so the version should be test2 version 2.0. Test3 is also a
+		// dependency of parent, and it's version is listed
         // as 1.0 in parent2. (dependencies inherited from parent comes after)
 
         // now run tests with dual resolver
@@ -4751,14 +4758,13 @@ public class ResolveTest {
             throws Exception {
         // test;2.0 has a dependency on test2;3.0.
         // test has a parent of parent(2.0) then parent2.
-        // Both parents have a dependencyManagement element for test2, and each list the version as
-        // ${pom.version}. The version for test2 in test should take precedence,
-        // so the version should be test2 version 3.0.
-        // test2;3.0 -> test4;2.0, but parent has a dependencyManagement section specifying
-        // test4;1.0.
-        // since maven 2.0.6, the information in parent should override transitive dependency
-        // version,
-        // and thus we should get test4;1.0
+        // Both parents have a dependencyManagement element for test2, and each
+		// list the version as ${pom.version}. The version for test2 in test
+		// should take precedence, so the version should be test2 version 3.0.
+        // test2;3.0 -> test4;2.0, but parent has a dependencyManagement
+		// section specifying test4;1.0.
+        // since maven 2.0.6, the information in parent should override
+		// transitive dependency version, and thus we should get test4;1.0
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
         ivy.getSettings().setDefaultResolver("parentChain");
@@ -5348,19 +5354,17 @@ public class ResolveTest {
     }
 
     private void assertContainsArtifact(ConfigurationResolveReport conf, Artifact art) {
-        if (!containsArtifact(art, conf.getDownloadedArtifactsReports())) {
-            fail("artifact " + art + " should be part of " + conf.getConfiguration() + " from "
-                    + conf.getModuleDescriptor().getModuleRevisionId());
-        }
+        assertTrue("artifact " + art + " should be part of " + conf.getConfiguration()
+                + " from " + conf.getModuleDescriptor().getModuleRevisionId(),
+                containsArtifact(art, conf.getDownloadedArtifactsReports()));
     }
 
     private void assertDoesntContainArtifact(String org, String module, String rev, String artName,
             String type, String ext, ConfigurationResolveReport conf) {
         Artifact art = getArtifact(org, module, rev, artName, type, ext);
-        if (containsArtifact(art, conf.getDownloadedArtifactsReports())) {
-            fail("artifact " + art + " should NOT be part of " + conf.getConfiguration() + " from "
-                    + conf.getModuleDescriptor().getModuleRevisionId());
-        }
+        assertFalse("artifact " + art + " should NOT be part of " + conf.getConfiguration()
+                + " from " + conf.getModuleDescriptor().getModuleRevisionId(),
+                containsArtifact(art, conf.getDownloadedArtifactsReports()));
     }
 
     private Artifact getArtifact(String org, String module, String rev, String artName,
@@ -5571,17 +5575,12 @@ public class ResolveTest {
         assertFalse(report.hasError());
     }
 
-    @Test
+    @Test(expected = StrictConflictException.class)
     public void testIVY956() throws Exception {
         ivy.getSettings().setDefaultConflictManager(
-            ivy.getSettings().getConflictManager("latest-compatible"));
-        try {
-            ivy.resolve(ResolveTest.class.getResource("ivy-956.xml"),
+                ivy.getSettings().getConflictManager("latest-compatible"));
+        ivy.resolve(ResolveTest.class.getResource("ivy-956.xml"),
                 getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
-            fail("No StrictConflictException has been thrown");
-        } catch (StrictConflictException e) {
-            // ignore
-        }
     }
 
     @Test
@@ -5700,15 +5699,14 @@ public class ResolveTest {
         ModuleRevisionId modBExpectedRevId = ModuleRevisionId.newInstance("myorg", "modB",
             "releasebranch", "1");
 
-        // check that the resolve report has the expected results, namely that trunk/5 is considered
-        // later than branch/1
-        // purely because 5>1. Of course it is more likely that we would want to consider this a
-        // 'bad comparison', but
-        // this Unit Test is not about that. It is about inconsistency of results between the
-        // resolve report and the
-        // delivered descriptor. In fact the delivered descriptor is out of step, because retrieve
-        // and the report both
-        // agree that trunk/5 is selected. Deliver begs to differ.
+        // check that the resolve report has the expected results, namely that
+		// trunk/5 is considered later than branch/1 purely because 5>1. Of
+		// course it is more likely that we would want to consider this a
+        // 'bad comparison', but this Unit Test is not about that. It is about
+		// inconsistency of results between the resolve report and the
+        // delivered descriptor. In fact the delivered descriptor is out of
+		// step, because retrieve and the report both agree that trunk/5 is
+		// selected. Deliver begs to differ.
 
         Set<ModuleRevisionId> reportMrids = report.getConfigurationReport("default")
                 .getModuleRevisionIds();

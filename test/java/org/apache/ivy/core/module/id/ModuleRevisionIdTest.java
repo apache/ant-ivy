@@ -17,7 +17,9 @@
  */
 package org.apache.ivy.core.module.id;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,9 @@ import static org.junit.Assert.fail;
 
 public class ModuleRevisionIdTest {
 
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
     @Test
     public void testParse() throws Exception {
         testParse("#A;1.0");
@@ -37,20 +42,37 @@ public class ModuleRevisionIdTest {
         testParse("org#module#branch;working@test");
         testParse(" org#module#branch;[1.2,1.3] ");
         testParse(" org#module#branch;[1.2,1.3) ");
+    }
 
+    private void testParse(String mrid) {
+        assertEquals(mrid.trim(), ModuleRevisionId.parse(mrid).toString());
+    }
+
+    @Test
+    public void testParseFailure1() throws Exception {
         testParseFailure("bad");
+    }
+
+    @Test
+    public void testParseFailure2() throws Exception {
         testParseFailure("org#mod");
+    }
+
+    @Test
+    public void testParseFailure3() throws Exception {
         testParseFailure("#;1");
+    }
+
+    @Test
+    public void testParseFailure4() throws Exception {
         testParseFailure("#A%;1.0");
     }
 
     private void testParseFailure(String mrid) {
-        try {
-            ModuleRevisionId.parse(mrid);
-            fail("ModuleRevisionId.parse is supposed to raise an exception with " + mrid);
-        } catch (IllegalArgumentException ex) {
-            assertTrue(ex.getMessage().contains(mrid));
-        }
+        expExc.expect(IllegalArgumentException.class);
+        expExc.expectMessage(mrid);
+
+        ModuleRevisionId.parse(mrid);
     }
 
     @Test
@@ -77,7 +99,4 @@ public class ModuleRevisionIdTest {
         assertEquals(mrid, ModuleRevisionId.decode(mrid.encodeToString()));
     }
 
-    private void testParse(String mrid) {
-        assertEquals(mrid.trim(), ModuleRevisionId.parse(mrid).toString());
-    }
 }

@@ -137,16 +137,24 @@ public class LatestCompatibleConflictManagerTest {
         resolveAndAssert("#A;1", "#B;2, #C;2");
     }
 
+    /**
+     * Resolve must fail with a conflict.
+     *
+     * @throws Exception
+     */
     @Test(expected = StrictConflictException.class)
     public void testConflict() throws Exception {
         fixture.addMD("#A;conflict-> { #B;[1.5,1.6] #C;2.5 }").addMD("#B;1.5->#D;2.0")
                 .addMD("#B;1.6->#D;2.0").addMD("#C;2.5->#D;[1.0,1.6]").addMD("#D;1.5")
                 .addMD("#D;1.6").addMD("#D;2.0").init();
         fixture.resolve("#A;conflict");
-
-        fail("Resolve should have failed with a conflict");
     }
 
+    /**
+     * Resolve must fail with a conflict.
+     *
+     * @throws Exception
+     */
     @Test(expected = StrictConflictException.class)
     public void testDynamicRootConflict() throws Exception {
         fixture.addMD("#A;conflict-> {#B;[1.2,2.0[ #C;pCC.main.+ #D;[1.5,1.7[ }")
@@ -157,8 +165,6 @@ public class LatestCompatibleConflictManagerTest {
                 .addMD("#C;pCC.main.1.9-> {#B;pCC.main.+ #D;[1.6.0,1.7[ }").addMD("#D;1.6.1")
                 .init();
         fixture.resolve("#A;conflict");
-
-        fail("Resolve should have failed with a conflict");
     }
 
     private void resolveAndAssert(String mrid, String expectedModuleSet) throws ParseException,

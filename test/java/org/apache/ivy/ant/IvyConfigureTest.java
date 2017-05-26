@@ -31,7 +31,9 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -39,6 +41,9 @@ public class IvyConfigureTest {
     private IvyConfigure configure;
 
     private Project project;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -261,8 +266,17 @@ public class IvyConfigureTest {
         assertTrue(ivy == getIvyInstance());
     }
 
+    /**
+     * Calling settings twice with the same id with override=notallowed must fail
+     *
+     * @throws Exception
+     */
     @Test
     public void testOverrideNotAllowed() throws Exception {
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("Overriding a previous definition of ivy:settings with the id '"
+                + configure.getSettingsId() + "' is not allowed when using override='notallowed'.");
+
         configure.setFile(new File("test/repositories/ivysettings.xml"));
         configure.execute();
 
@@ -274,24 +288,21 @@ public class IvyConfigureTest {
         configure.setOverride("notallowed");
         configure.setFile(new File("test/repositories/ivysettings.xml"));
 
-        try {
-            configure.execute();
-            fail("calling settings twice with the same id with "
-                    + "override=notallowed should raise an exception");
-        } catch (BuildException e) {
-            assertTrue(e.getMessage().contains("notallowed"));
-            assertTrue(e.getMessage().contains(configure.getSettingsId()));
-        }
+        configure.execute();
     }
 
+    /**
+     * Settings override with invalid value must fail.
+     *
+     * @throws Exception
+     */
     @Test
     public void testInvalidOverride() throws Exception {
-        try {
-            configure.setOverride("unknown");
-            fail("settings override with invalid value should raise an exception");
-        } catch (Exception e) {
-            assertTrue(e.getMessage().contains("unknown"));
-        }
+        expExc.expect(IllegalArgumentException.class);
+        expExc.expectMessage("invalid override value 'unknown'. Valid values are "
+                + "[true, false, notallowed]");
+
+        configure.setOverride("unknown");
     }
 
 }

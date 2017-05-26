@@ -105,6 +105,11 @@ public class IvyCleanCacheTest {
         assertTrue(repoCache2.exists());
     }
 
+    /**
+     * clean cache must fail with unknown cache
+     *
+     * @throws Exception
+     */
     @Test
     public void testUnknownCache() throws Exception {
         expExc.expect(BuildException.class);
@@ -112,6 +117,5 @@ public class IvyCleanCacheTest {
         cleanCache.setResolution(false);
         cleanCache.setCache("yourcache");
         cleanCache.perform();
-        fail("clean cache should have raised an exception with unknown cache");
     }
 }

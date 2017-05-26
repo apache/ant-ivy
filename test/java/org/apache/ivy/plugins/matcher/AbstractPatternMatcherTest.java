@@ -77,13 +77,11 @@ public abstract class AbstractPatternMatcherTest {
     public void testNullInput() {
         Matcher matcher = patternMatcher.getMatcher("some expression");
         matcher.matches(null);
-        fail("Should fail for null input");
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullExpression() {
         patternMatcher.getMatcher(null);
-        fail("Should fail for null expression");
     }
 
     public abstract void testImplementation();

@@ -91,16 +91,16 @@ public class IvyArtifactPropertyTest {
             new File(val).getCanonicalPath());
     }
 
-    @Test
+    /**
+     * Test must fail because no resolve was performed
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testWithResolveIdWithoutResolve() throws Exception {
-        try {
-            prop.setName("[module].[artifact]-[revision]");
-            prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
-            prop.setResolveId("abc");
-            prop.execute();
-            fail("Task should have failed because no resolve was performed!");
-        } catch (BuildException e) {
-            // this is expected!
-        }
+        prop.setName("[module].[artifact]-[revision]");
+        prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+        prop.setResolveId("abc");
+        prop.execute();
     }
 }

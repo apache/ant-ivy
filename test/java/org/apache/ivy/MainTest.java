@@ -25,13 +25,18 @@ import org.apache.ivy.util.cli.ParseException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
 public class MainTest {
 
     private File cache;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -51,22 +56,18 @@ public class MainTest {
 
     @Test
     public void testBadOption() throws Exception {
-        try {
-            run(new String[] {"-bad"});
-            fail("running Ivy Main with -bad option should raise an exception");
-        } catch (ParseException ex) {
-            assertEquals("Unrecognized option: -bad", ex.getMessage());
-        }
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("Unrecognized option: -bad");
+
+        run(new String[] {"-bad"});
     }
 
     @Test
     public void testMissingParameter() throws Exception {
-        try {
-            run(new String[] {"-ivy"});
-            fail("running Ivy Main with missing argument for -ivy option should raise an exception");
-        } catch (ParseException ex) {
-            assertEquals("no argument for: ivy", ex.getMessage());
-        }
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("no argument for: ivy");
+
+        run(new String[] {"-ivy"});
     }
 
     @Test

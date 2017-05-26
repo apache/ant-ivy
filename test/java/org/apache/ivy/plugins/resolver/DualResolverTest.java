@@ -84,13 +84,23 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         assertNull(dual.getArtifactResolver());
     }
 
+    /**
+     * Test fails due to bad resolver configuration.
+     *
+     * @throws IOException
+     * @throws ParseException
+     */
     @Test(expected = ParseException.class)
     public void testFromBadConf() throws IOException, ParseException {
         new XmlSettingsParser(_settings).parse(DualResolverTest.class
                 .getResource("dualresolverconf-bad.xml"));
-        fail("bad dual resolver configuration should raise exception");
     }
 
+    /**
+     * Test fails due to bad resolver configuration
+     *
+     * @throws ParseException
+     */
     @Test(expected = IllegalStateException.class)
     public void testBad() throws ParseException {
         DualResolver dual = new DualResolver();
@@ -98,7 +108,6 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
                 ModuleRevisionId.newInstance("org", "mod", "rev"), false);
         dual.getDependency(dd, _data);
-        fail("bad dual resolver configuration should raise exception");
     }
 
    @Test

@@ -288,8 +288,13 @@ public class IvyInstallTest {
         assertTrue(new File("build/test/install/systemorg/systemmod/ivy-1.0.xml").exists());
     }
 
-    @Test
-    public void testInstallWithNamespace2() {
+    /**
+     * Installing a module with namespace coordinates instead of system one should fail.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
+    public void testInstallWithNamespace2() throws Exception {
         project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
         install.setOrganisation("A");
         install.setModule("B");
@@ -297,13 +302,7 @@ public class IvyInstallTest {
         install.setTransitive(true);
         install.setFrom("ns");
         install.setTo("install");
-
-        try {
-            install.execute();
-            fail("installing module with namespace coordinates instead of system one should fail");
-        } catch (BuildException ex) {
-            // expected
-        }
+        install.execute();
     }
 
     @Test
@@ -322,21 +321,20 @@ public class IvyInstallTest {
         assertTrue(new File("build/test/install/systemorg/systemmod/ivy-1.0.xml").exists());
     }
 
-    @Test
-    public void testDependencyNotFoundFailure() {
+    /**
+     * Fail on unknown dependency when haltonfailure=true.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
+    public void testDependencyNotFoundFailure() throws Exception {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("xxx");
         install.setModule("yyy");
         install.setRevision("zzz");
         install.setFrom("test");
         install.setTo("install");
-
-        try {
-            install.execute();
-            fail("unknown dependency, failure expected (haltonfailure=true)");
-        } catch (BuildException be) {
-            // success
-        }
+        install.execute();
     }
 
     @Test

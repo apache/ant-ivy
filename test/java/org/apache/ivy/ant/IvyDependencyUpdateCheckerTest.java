@@ -28,13 +28,18 @@ import org.apache.tools.ant.Project;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     private IvyDependencyUpdateChecker dependencyUpdateChecker;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -90,7 +95,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     @Test
     public void testResolveWithoutIvyFile() throws Exception {
         // depends on org="org1" name="mod1.2" rev="2.0"
-
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         dependencyUpdateChecker.setConf("default");
         dependencyUpdateChecker.setHaltonfailure(false);
@@ -111,9 +115,13 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
         assertLogContaining("Dependencies updates available :");
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
-
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testInlineForNonExistingModule() throws Exception {
         dependencyUpdateChecker.setOrganisation("org1XXYZ");
@@ -122,44 +130,58 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         dependencyUpdateChecker.setInline(true);
         dependencyUpdateChecker.setHaltonfailure(true);
         dependencyUpdateChecker.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
         dependencyUpdateChecker
                 .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         dependencyUpdateChecker.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    /**
+     * Test must fail because of missing configurations.
+     *
+     * @throws Exception
+     */
     @Test
     public void testFailureWithMissingConfigurations() throws Exception {
-        try {
-            dependencyUpdateChecker
-                    .setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-            dependencyUpdateChecker.setConf("default,unknown");
-            dependencyUpdateChecker.execute();
-            fail("missing configurations didn't raised an exception");
-        } catch (BuildException ex) {
-            assertTrue(ex.getMessage().contains("unknown"));
-        }
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("unknown");
+
+        dependencyUpdateChecker
+                .setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        dependencyUpdateChecker.setConf("default,unknown");
+        dependencyUpdateChecker.execute();
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailureOnBadDependencyIvyFile() throws Exception {
         dependencyUpdateChecker.setFile(new File(
                 "test/java/org/apache/ivy/ant/ivy-failure2.xml"));
         dependencyUpdateChecker.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
         dependencyUpdateChecker.setFile(new File(
                 "test/java/org/apache/ivy/ant/ivy-failure3.xml"));
         dependencyUpdateChecker.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
     @Test

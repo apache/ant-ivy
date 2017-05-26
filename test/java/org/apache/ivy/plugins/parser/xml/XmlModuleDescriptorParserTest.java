@@ -53,12 +53,17 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
     private IvySettings settings = null;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -132,67 +137,52 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
-    public void testBad() throws IOException {
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+    public void testBad() throws IOException, ParseException {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("'modul'");
+
+        assertTrue(XMLHelper.canUseSchemaValidation());
+
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-bad.xml"), true);
-            fail("bad ivy file raised no error");
-        } catch (ParseException ex) {
-            if (XMLHelper.canUseSchemaValidation()) {
-                assertTrue("exception message not explicit. It should contain 'modul', but it's:"
-                        + ex.getMessage(),
-                    ex.getMessage().contains("'modul'"));
-            }
-        }
     }
 
     @Test
-    public void testBadOrg() throws IOException {
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+    public void testBadOrg() throws IOException, ParseException {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("organization");
+
+        assertTrue(XMLHelper.canUseSchemaValidation());
+
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-bad-org.xml"), true);
-            if (XMLHelper.canUseSchemaValidation()) {
-                fail("bad ivy file raised no error");
-            }
-        } catch (ParseException ex) {
-            if (XMLHelper.canUseSchemaValidation()) {
-                assertTrue("invalid exception: " + ex.getMessage(),
-                    ex.getMessage().contains("organization"));
-            }
-        }
     }
 
     @Test
-    public void testBadConfs() throws IOException {
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+    public void testBadConfs() throws IOException, ParseException {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("invalidConf");
+
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-bad-confs.xml"), true);
-            fail("bad ivy file raised no error");
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-            assertTrue("invalid exception: " + ex.getMessage(),
-                ex.getMessage().contains("invalidConf"));
-        }
     }
 
     @Test
-    public void testCyclicConfs() throws IOException {
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+    public void testCyclicConfs2() throws IOException, ParseException {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("A => B => A");
+
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-cyclic-confs1.xml"), true);
-            fail("bad ivy file raised no error");
-        } catch (ParseException ex) {
-            assertTrue("invalid exception: " + ex.getMessage(),
-                ex.getMessage().contains("A => B => A"));
-        }
-        try {
-            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+    }
+
+    @Test
+    public void testCyclicConfs3() throws IOException, ParseException {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("A => C => B => A");
+
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-cyclic-confs2.xml"), true);
-            fail("bad ivy file raised no error");
-        } catch (ParseException ex) {
-            assertTrue("invalid exception: " + ex.getMessage(),
-                ex.getMessage().contains("A => C => B => A"));
-        }
     }
 
     @Test
@@ -201,11 +191,16 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             getClass().getResource("test-novalidate.xml"), false);
     }
 
+    /**
+     * Test must fail because of bad version.
+     *
+     * @throws IOException
+     * @throws ParseException
+     */
     @Test(expected = ParseException.class)
     public void testBadVersion() throws IOException, ParseException {
         XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-bad-version.xml"), true);
-        fail("bad version ivy file raised no error");
     }
 
     @SuppressWarnings("deprecation")
@@ -1089,27 +1084,37 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(dd.getDependencyConfigurations("bla")));
     }
 
-    // IVY-442
+    /**
+     * IVY-442: test for parser failure.
+     *
+     * @throws Exception
+     */
     @Test(expected = ParseException.class)
     public void testWithNonExistingConfigInDependency() throws Exception {
         XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-incorrectconf1.xml"), true);
-        fail("ParseException hasn't been thrown");
     }
 
+    /**
+     * Test for parser failure.
+     *
+     * @throws Exception
+     */
     @Test(expected = ParseException.class)
     public void testWithNonExistingConfigInPublications() throws Exception {
         XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-incorrectconf2.xml"), true);
-        fail("ParseException hasn't been thrown");
     }
 
-    // IVY-441
+    /**
+     * IVY-441: test for parser failure.
+     *
+     * @throws Exception
+     */
     @Test(expected = ParseException.class)
     public void testWithExistingConfigsInPublicationsSeparatedBySemiColon() throws Exception {
         XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
                 getClass().getResource("test-incorrectconf3.xml"), true);
-        fail("ParseException hasn't been thrown");
     }
 
     @Test

@@ -44,14 +44,16 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
+
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
-    // junit test -- DO NOT REMOVE used by ant to know it's a junit test
 
     private IvySettings settings = new IvySettings();
 
@@ -71,6 +73,9 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     private File dest = new File("build/test/test-write.xml");
 
     private MockResolver mockedResolver = new MockedDependencyResolver();
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -201,13 +206,11 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
     @Test
     public void testParentNotFound() throws Exception {
-        try {
-            PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(),
+        expExc.expect(IOException.class);
+        expExc.expectMessage("Impossible to load parent");
+
+        PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(),
                 getClass().getResource("test-parent-not-found.pom"), false);
-            fail("IOException should have been thrown!");
-        } catch (IOException e) {
-            assertTrue(e.getMessage().contains("Impossible to load parent"));
-        }
     }
 
     @Test

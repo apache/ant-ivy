@@ -104,21 +104,29 @@ public class IvyCacheFilesetTest {
         assertEquals(0, directoryScanner.getIncludedFiles().length);
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         fileset.setSetid("failure-setid");
         fileset.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
     @Test(expected = BuildException.class)
     public void testInvalidPattern() throws Exception {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-invalidcachepattern.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         fileset.setSetid("simple-setid");
         fileset.execute();
-        fail("failure didn't raised an exception with default haltonfailure setting");
     }
 
     @Test

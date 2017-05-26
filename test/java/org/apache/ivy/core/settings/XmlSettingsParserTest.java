@@ -46,7 +46,10 @@ import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -54,6 +57,9 @@ import static org.junit.Assert.*;
  * TODO write javadoc
  */
 public class XmlSettingsParserTest {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
     @Test
     public void test() throws Exception {
         IvySettings settings = new IvySettings();
@@ -248,17 +254,20 @@ public class XmlSettingsParserTest {
         assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());
     }
 
+    /**
+     * Test of esolver referencing a non existent cache.
+     *
+     * @throws Exception
+     */
     @Test
     public void testInvalidCache() throws Exception {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("mycache");
+
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
 
-        try {
-            parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
-            fail("resolver referencing a non existent cache should raise an exception");
-        } catch (ParseException e) {
-            assertTrue(e.getMessage().contains("mycache"));
-        }
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
     }
 
     @Test
@@ -504,17 +513,12 @@ public class XmlSettingsParserTest {
         assertTrue(inc instanceof ChainResolver);
     }
 
-    @Test
+    @Test(expected = Exception.class)
     public void testIncludeMissingFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        try {
-            parser.parse(XmlSettingsParserTest.class
-                    .getResource("ivysettings-include-missing-file.xml"));
-            fail("An exception must be throwed");
-        } catch (Exception e) {
-            // An exception must be throwed
-        }
+        parser.parse(XmlSettingsParserTest.class
+                .getResource("ivysettings-include-missing-file.xml"));
     }
 
    @Test
