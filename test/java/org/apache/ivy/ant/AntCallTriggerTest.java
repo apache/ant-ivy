@@ -163,7 +163,7 @@ public class AntCallTriggerTest {
     /**
      * Adds the listeners specified in the command line arguments, along with the default listener,
      * to the specified project.
-     * 
+     *
      * @param project
      *            The project to add listeners to. Must not be <code>null</code>.
      */
@@ -176,7 +176,7 @@ public class AntCallTriggerTest {
 
     /**
      * Creates the InputHandler and adds it to the project.
-     * 
+     *
      * @param project
      *            the project instance.
      * @param inputHandlerClassname
@@ -191,7 +191,7 @@ public class AntCallTriggerTest {
             handler = new DefaultInputHandler();
         } else {
             try {
-                handler = (InputHandler) (Class.forName(inputHandlerClassname).newInstance());
+                handler = (InputHandler) Class.forName(inputHandlerClassname).newInstance();
                 if (project != null) {
                     project.setProjectReference(handler);
                 }
@@ -214,7 +214,7 @@ public class AntCallTriggerTest {
     // loggers could have failed to be created due to this failure)?
     /**
      * Creates the default build logger for sending build events to the ant log.
-     * 
+     *
      * @return the logger instance for this build.
      */
     private BuildLogger createLogger(int level) {

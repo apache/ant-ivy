@@ -22,6 +22,8 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLoggerEngine;
 import org.apache.ivy.util.MockMessageLogger;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +43,8 @@ public class IgnoreCircularDependencyStrategyTest {
         messageLoggerEngine = setupMockLogger(mockMessageImpl);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         resetMockLogger(messageLoggerEngine);
     }
 

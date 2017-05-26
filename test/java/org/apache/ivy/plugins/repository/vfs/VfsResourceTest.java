@@ -75,7 +75,7 @@ public class VfsResourceTest {
 
     /**
      * Escape invalid URL characters (Copied from Wicket, just use StringUtils instead of Strings)
-     * 
+     *
      * @param queryString
      *            The original querystring
      * @return url The querystring with invalid characters escaped

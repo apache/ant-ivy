@@ -255,7 +255,7 @@ public class XmlSettingsParserTest {
     }
 
     /**
-     * Test of esolver referencing a non existent cache.
+     * Test of resolver referencing a non existent cache.
      *
      * @throws Exception
      */

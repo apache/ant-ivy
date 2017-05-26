@@ -59,7 +59,7 @@ public class PatternVersionMatcherTest {
     /**
      * Generates a Match instance that has the following xml representation: <match revision="foo"
      * pattern="${major}\.${minor}\.\d+" args="major, minor" matcher="regexp" />
-     * 
+     *
      * @return Match
      */
     private Match generateRegexpMatch1() {
@@ -75,7 +75,7 @@ public class PatternVersionMatcherTest {
     /**
      * Generates a Match instance that has the following xml representation: <match revision="foo"
      * pattern="${major}\.${minor}" args="major, minor" matcher="regexp" />
-     * 
+     *
      * @return Match
      */
     private Match generateRegexpMatch2() {

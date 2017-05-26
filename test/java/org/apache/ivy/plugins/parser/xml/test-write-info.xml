@@ -24,7 +24,7 @@
 		status="integration"
 		publication="20050501110000"
 	>
-		<license name="Apache Sofware License" url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
+		<license name="Apache Software License" url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
 		<description homepage="http://myorg.com/mymodule">
 		My module description.
 		</description>

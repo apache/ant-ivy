@@ -44,7 +44,7 @@ public class AntTestListener implements BuildListener {
     /**
      * Fired after the last target has finished. This event will still be thrown if an error
      * occurred during the build.
-     * 
+     *
      * @see BuildEvent#getException()
      */
     public void buildFinished(BuildEvent event) {
@@ -52,7 +52,7 @@ public class AntTestListener implements BuildListener {
 
     /**
      * Fired when a target is started.
-     * 
+     *
      * @see BuildEvent#getTarget()
      */
     public void targetStarted(BuildEvent event) {
@@ -62,7 +62,7 @@ public class AntTestListener implements BuildListener {
     /**
      * Fired when a target has finished. This event will still be thrown if an error occurred during
      * the build.
-     * 
+     *
      * @see BuildEvent#getException()
      */
     public void targetFinished(BuildEvent event) {
@@ -71,7 +71,7 @@ public class AntTestListener implements BuildListener {
 
     /**
      * Fired when a task is started.
-     * 
+     *
      * @see BuildEvent#getTask()
      */
     public void taskStarted(BuildEvent event) {
@@ -81,7 +81,7 @@ public class AntTestListener implements BuildListener {
     /**
      * Fired when a task has finished. This event will still be throw if an error occurred during
      * the build.
-     * 
+     *
      * @see BuildEvent#getException()
      */
     public void taskFinished(BuildEvent event) {
@@ -90,7 +90,7 @@ public class AntTestListener implements BuildListener {
 
     /**
      * Fired whenever a message is logged.
-     * 
+     *
      * @see BuildEvent#getMessage()
      * @see BuildEvent#getPriority()
      */

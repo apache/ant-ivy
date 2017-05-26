@@ -26,7 +26,7 @@ import org.apache.ivy.core.search.RevisionEntry;
 import static org.junit.Assert.*;
 
 /**
- * 
+ *
  */
 public class ResolverTestHelper {
     static void assertOrganisationEntries(DependencyResolver resolver, String[] orgNames,
@@ -122,5 +122,4 @@ public class ResolverTestHelper {
         fail("module not found: " + name);
         return null; // for compilation only
     }
-
 }

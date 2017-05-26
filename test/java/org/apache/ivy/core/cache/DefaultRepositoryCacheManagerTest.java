@@ -45,6 +45,7 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -57,7 +58,7 @@ import static org.junit.Assert.assertTrue;
  * @see DefaultResolutionCacheManager
  */
 public class DefaultRepositoryCacheManagerTest {
-    
+
     private DefaultRepositoryCacheManager cacheManager;
     private Artifact artifact;
     private ArtifactOrigin origin;
@@ -70,7 +71,7 @@ public class DefaultRepositoryCacheManagerTest {
         ivy.configureDefault();
         ivy.getLoggerEngine().setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         IvyContext.pushNewContext().setIvy(ivy);
-        
+
         IvySettings settings = ivy.getSettings();
         f.delete(); // we want to use the file as a directory, so we delete the file itself
         cacheManager = new DefaultRepositoryCacheManager();

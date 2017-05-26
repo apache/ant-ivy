@@ -84,6 +84,7 @@ public class BuildOBRTaskTest {
         assertEquals(14, CollectionUtils.toList(obr.getModules()).size());
     }
 
+    @Test
     public void testEmptyDir() throws Exception {
         buildObr.setBaseDir(new File("test/test-p2/composite"));
         File obrFile = new File("build/cache/obr.xml");
@@ -95,6 +96,7 @@ public class BuildOBRTaskTest {
         assertEquals(0, CollectionUtils.toList(obr.getModules()).size());
     }
 
+    @Test
     public void testResolve() throws Exception {
         Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/test-repo/bundlerepo/ivysettings.xml");
