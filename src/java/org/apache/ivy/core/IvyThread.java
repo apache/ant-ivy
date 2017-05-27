@@ -19,7 +19,7 @@ package org.apache.ivy.core;
 
 /**
  * A simple thread subclass associated the same IvyContext as the thread in which it is
- * instanciated. If you override the run target, then you will have to call initContext() to do the
+ * instantiated. If you override the run target, then you will have to call initContext() to do the
  * association with the original IvyContext.
  * 
  * @see IvyContext

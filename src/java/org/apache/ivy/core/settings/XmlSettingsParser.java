@@ -302,7 +302,7 @@ public class XmlSettingsParser extends DefaultHandler {
             Message.deprecated("'checkUpToDate' is deprecated, "
                     + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings
                     + ")");
-            ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+            ivy.setCheckUpToDate(Boolean.valueOf(up2d));
         }
         String resolutionDir = (String) attributes.get("resolutionCacheDir");
         if (resolutionDir != null) {
@@ -310,7 +310,7 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         String useOrigin = (String) attributes.get("useOrigin");
         if (useOrigin != null) {
-            ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin).booleanValue());
+            ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin));
         }
         String cacheIvyPattern = (String) attributes.get("ivyPattern");
         if (cacheIvyPattern != null) {
@@ -346,18 +346,18 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         String validate = (String) attributes.get("validate");
         if (validate != null) {
-            ivy.setValidate(Boolean.valueOf(validate).booleanValue());
+            ivy.setValidate(Boolean.valueOf(validate));
         }
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
             Message.deprecated("'checkUpToDate' is deprecated, "
                     + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings
                     + ")");
-            ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+            ivy.setCheckUpToDate(Boolean.valueOf(up2d));
         }
         String useRemoteConfig = (String) attributes.get("useRemoteConfig");
         if (useRemoteConfig != null) {
-            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig).booleanValue());
+            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig));
         }
         String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
         if (cacheIvyPattern != null) {
@@ -402,7 +402,7 @@ public class XmlSettingsParser extends DefaultHandler {
                             "bad include tag: specify file or url to include");
                 } else {
                     try {
-                        // First asume that it is an absolute URL
+                        // First assume that it is an absolute URL
                         settingsURL = new URL(propFilePath);
                     } catch (MalformedURLException e) {
                         // If that fail, it may be because it is a relative one.
@@ -477,8 +477,7 @@ public class XmlSettingsParser extends DefaultHandler {
         String environmentPrefix = (String) attributes.get("environment");
         if (propFilePath != null) {
             String overrideStr = (String) attributes.get("override");
-            boolean override = overrideStr == null ? true : Boolean.valueOf(overrideStr)
-                    .booleanValue();
+            boolean override = (overrideStr == null) ? true : Boolean.valueOf(overrideStr);
             Message.verbose("loading properties: " + propFilePath);
             try {
                 URL fileUrl = urlFromFileAttribute(propFilePath);
@@ -506,8 +505,8 @@ public class XmlSettingsParser extends DefaultHandler {
         if (value == null) {
             throw new IllegalArgumentException("missing attribute value on property tag");
         }
-        ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override)
-                .booleanValue(), isSetVar, unlessSetVar);
+        ivy.setVariable(name, value, (override == null) ? true : Boolean.valueOf(override),
+                isSetVar, unlessSetVar);
     }
 
     private void typedefStarted(Map attributes) {

@@ -29,7 +29,7 @@ public interface NonMatchingVersionReporter {
      * @param descriptor
      *            The non matching dependency descriptor.
      * @param md
-     *            The module to sort having the corect moduleID but a non matching revision
+     *            The module to sort having the correct moduleID but a non matching revision
      */
     public void reportNonMatchingVersion(DependencyDescriptor descriptor, ModuleDescriptor md);
 

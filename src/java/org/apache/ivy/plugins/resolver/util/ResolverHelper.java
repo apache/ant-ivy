@@ -278,7 +278,7 @@ public final class ResolverHelper {
                     String acceptNamePattern = ".*"
                             + IvyPatternHelper.substituteToken(namePattern, token, "([^/]+)")
                             + ".*";
-                    Pattern p = Pattern.compile(acceptNamePattern.toString());
+                    Pattern p = Pattern.compile(acceptNamePattern);
                     for (URL url : all) {
                         String path = standardize(url.getPath());
                         Matcher m = p.matcher(path);

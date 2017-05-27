@@ -43,7 +43,7 @@ import org.apache.ivy.util.Message;
 
 /**
  * Repository using SecureCRT vsftp command line program to access an sftp repository This is
- * especially useful to leverage the gssapi authentication supported by SecureCRT. In caseswhere
+ * especially useful to leverage the gssapi authentication supported by SecureCRT. In cases where
  * usual sftp is enough, prefer the 100% java solution of sftp repository. This requires SecureCRT
  * to be in the PATH. Tested with SecureCRT 5.0.5
  */
@@ -305,7 +305,7 @@ public class VsftpRepository extends AbstractRepository {
      * stream, even if everything is ok. So it's quite difficult if there was an error or not. Hence
      * we compare the response with the expected message and deal with it. The problem is that this
      * is very specific to the version of vsftp used for the test, That's why expected messages are
-     * obtained using overridable protected methods.
+     * obtained using overriddable protected methods.
      */
     protected void sendCommand(String command, Pattern expectedResponse, long timeout)
             throws IOException {
@@ -366,6 +366,7 @@ public class VsftpRepository extends AbstractRepository {
         return readResponse(sendErrorAsResponse, readTimeout);
     }
 
+    @SuppressWarnings("deprecation")
     protected synchronized String readResponse(final boolean sendErrorAsResponse, long timeout)
             throws IOException {
         final StringBuffer response = new StringBuffer();
@@ -638,9 +639,9 @@ public class VsftpRepository extends AbstractRepository {
     /**
      * Parses a ls -l line and transforms it in a resource
      * 
-     * @param file
-     * @param responseLine
-     * @return
+     * @param file ditto
+     * @param responseLine ditto
+     * @return Resource
      */
     protected Resource lslToResource(String file, String responseLine) {
         if (responseLine == null || responseLine.startsWith("ls")) {
@@ -729,7 +730,7 @@ public class VsftpRepository extends AbstractRepository {
      * Sets the reuse connection time. The same connection will be reused if the time here does not
      * last between two commands. O indicates that the connection should never be reused
      * 
-     * @param time
+     * @param time long
      */
     public void setReuseConnection(long time) {
         this.reuseConnection = time;

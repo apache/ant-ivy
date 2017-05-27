@@ -90,7 +90,7 @@ public abstract class XMLHelper {
                 canDisableExternalDtds = Boolean.FALSE;
             }
         }
-        return canDisableExternalDtds.booleanValue();
+        return canDisableExternalDtds;
     }
 
     /**

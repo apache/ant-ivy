@@ -284,7 +284,8 @@ public class TestHelper {
 
     /**
      * Cleans up the test repository and cache.
-     *
+     * 
+     * @see #newTestRepository()
      */
     public static void cleanTest() {
         cleanTestRepository();

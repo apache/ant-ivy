@@ -35,7 +35,7 @@ public final class CircularDependencyHelper {
     /**
      * Returns a string representation of this circular dependency graph
      * 
-     * @param descriptors
+     * @param mrids
      *            in order of circular dependency
      * @return a string representation of this circular dependency graph
      */

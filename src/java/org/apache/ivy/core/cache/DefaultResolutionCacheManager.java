@@ -169,7 +169,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
      * 
      * @param moduleDescriptorFile
      *            a given module descriptor
-     * @return
+     * @return ModuleDescriptorParser
      */
     protected ModuleDescriptorParser getModuleDescriptorParser(File moduleDescriptorFile) {
         return XmlModuleDescriptorParser.getInstance();

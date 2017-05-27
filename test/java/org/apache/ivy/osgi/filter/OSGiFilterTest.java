@@ -17,13 +17,12 @@
  */
 package org.apache.ivy.osgi.filter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.ParseException;
 
 import org.apache.ivy.osgi.filter.CompareFilter.Operator;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class OSGiFilterTest {
 

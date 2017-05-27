@@ -359,12 +359,12 @@ public class IvyDeliver extends IvyTask {
         if (resolveId == null) {
             if (organisation == null) {
                 throw new BuildException("no organisation provided for ivy deliver task: "
-                        + "It can either be set explicitely via the attribute 'organisation' "
+                        + "It can either be set explicitly via the attribute 'organisation' "
                         + "or via 'ivy.organisation' property or a prior call to <resolve/>");
             }
             if (module == null) {
                 throw new BuildException("no module name provided for ivy deliver task: "
-                        + "It can either be set explicitely via the attribute 'module' "
+                        + "It can either be set explicitly via the attribute 'module' "
                         + "or via 'ivy.module' property or a prior call to <resolve/>");
             }
         }

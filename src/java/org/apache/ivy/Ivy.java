@@ -219,7 +219,7 @@ public class Ivy {
     /**
      * True if this instance of Ivy has already been bound to its dependencies, false otherwise.
      * 
-     * @see bind()
+     * @see #bind()
      */
     private boolean bound;
 
@@ -358,8 +358,8 @@ public class Ivy {
      * 
      * </p>
      * 
-     * @param callback
-     * @return
+     * @param callback IvyCallback
+     * @return Object
      */
     public Object execute(IvyCallback callback) {
         pushContext();
@@ -545,6 +545,7 @@ public class Ivy {
     // RETRIEVE
     // ///////////////////////////////////////////////////////////////////////
 
+    @SuppressWarnings("deprecation")
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
         pushContext();
@@ -594,10 +595,10 @@ public class Ivy {
      * Example of use: deliver(mrid, "1.5", "target/ivy/ivy-[revision].xml",
      * DeliverOptions.newInstance(settings).setStatus("release").setValidate(false));
      * 
-     * @param mrid
-     * @param revision
-     * @param destIvyPattern
-     * @param options
+     * @param mrid ModuleRevisionId
+     * @param revision String
+     * @param destIvyPattern String
+     * @param options DeliverOptions
      * @throws IOException
      * @throws ParseException
      */
@@ -779,6 +780,7 @@ public class Ivy {
      * Interrupts the current running operation in the given operating thread, no later than
      * interruptTimeout milliseconds after the call
      */
+    @SuppressWarnings("deprecation")
     public void interrupt(Thread operatingThread) {
         if (operatingThread != null && operatingThread.isAlive()) {
             if (operatingThread == Thread.currentThread()) {

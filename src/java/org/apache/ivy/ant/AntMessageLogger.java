@@ -81,10 +81,10 @@ public class AntMessageLogger extends AbstractMessageLogger {
             }
 
             public void taskFinished(BuildEvent event) {
-                // NB: There is somtimes task created by an other task
+                // NB: There is sometimes task created by an other task
                 // in that case, we should not uninit Message. The log should stay associated
                 // with the initial task, except if it was an antcall, ant or subant target
-                // NB2 : Testing the identity of the task is not enought, event.getTask() return
+                // NB2 : Testing the identity of the task is not enough, event.getTask() return
                 // an instance of UnknownElement is wrapping the concrete instance
                 stackDepth--;
                 if (stackDepth == -1) {
@@ -106,9 +106,9 @@ public class AntMessageLogger extends AbstractMessageLogger {
     private StringBuffer buf = new StringBuffer();
 
     /**
-     * Constructs a new AntMEssageImpl instance.
+     * Constructs a new AntMessageImpl instance.
      * 
-     * @param antProjectComponent
+     * @param task
      *            the ant project component this message implementation should use for logging. Must
      *            not be <code>null</code>.
      */

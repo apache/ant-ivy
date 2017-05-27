@@ -150,10 +150,7 @@ public class IvyEventFilter implements Filter {
     }
 
     public boolean accept(Object o) {
-        if (!(o instanceof IvyEvent)) {
-            return false;
-        }
-        return nameFilter.accept(o) && attFilter.accept(o);
+        return o instanceof IvyEvent && nameFilter.accept(o) && attFilter.accept(o);
     }
 
 }

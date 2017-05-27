@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,18 +27,12 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.resources.FileResource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class IvyResourcesTest {
 

@@ -182,9 +182,7 @@ public class PublishEngine {
 
         for (int i = 0; i < confs.length; i++) {
             Artifact[] artifacts = md.getArtifacts(confs[i]);
-            for (int j = 0; j < artifacts.length; j++) {
-                artifactsSet.add(artifacts[j]);
-            }
+            artifactsSet.addAll(Arrays.asList(artifacts));
         }
         Artifact[] extraArtifacts = options.getExtraArtifacts();
         if (extraArtifacts != null) {
@@ -207,11 +205,9 @@ public class PublishEngine {
             }
             if (!artifactsFiles.containsKey(artifact)) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("missing artifact " + artifact + ":\n");
+                sb.append("missing artifact ").append(artifact).append(":\n");
                 for (String pattern : srcArtifactPattern) {
-                    sb.append("\t"
-                            + settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))
-                            + " file does not exist\n");
+                    sb.append("\t").append(settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))).append(" file does not exist\n");
                 }
                 if (options.isWarnOnMissing() || options.isHaltOnMissing()) {
                     Message.warn(sb.toString());

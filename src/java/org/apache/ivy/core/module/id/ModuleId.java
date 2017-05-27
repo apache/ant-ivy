@@ -183,7 +183,7 @@ public class ModuleId implements Comparable<ModuleId> {
     /**
      * Returns a ModuleId
      * 
-     * @param encoded
+     * @param encoded String
      * @return The new ModuleId.
      * @throws IllegalArgumentException
      *             If the given String could not be decoded.

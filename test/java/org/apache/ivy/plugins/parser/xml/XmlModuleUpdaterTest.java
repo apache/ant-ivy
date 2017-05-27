@@ -17,6 +17,12 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -41,15 +47,8 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
-
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
-
-import org.junit.rules.ExpectedException;
-import org.xml.sax.SAXParseException;
-
-import static org.junit.Assert.*;
 
 public class XmlModuleUpdaterTest {
 

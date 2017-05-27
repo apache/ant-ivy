@@ -86,6 +86,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
      * @return a fully initialized resource, able to answer to all its methods without needing any
      *         further connection
      */
+    @SuppressWarnings("unchecked")
     public Resource resolveResource(String path) {
         try {
             ChannelSftp c = getSftpChannel(path);
@@ -105,7 +106,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             }
         } catch (Exception e) {
             Message.debug("Error while resolving resource " + path, e);
-            // silent fail, return unexisting resource
+            // silent fail, return nonexistent resource
         }
 
         return new BasicResource(path, false, 0, 0, false);
@@ -199,6 +200,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public List list(String parent) throws IOException {
         try {
             ChannelSftp c = getSftpChannel(parent);
@@ -240,12 +242,9 @@ public class SFTPRepository extends AbstractSshBasedRepository {
      *            to check
      * @param channel
      *            to use
-     * @returns true if file exists, false otherwise
-     * @throws IOException
-     * @throws SftpException
+     * @return true if file exists, false otherwise
      */
-    private boolean checkExistence(String file, ChannelSftp channel) throws IOException,
-            SftpException {
+    private boolean checkExistence(String file, ChannelSftp channel) {
         try {
             return channel.stat(file) != null;
         } catch (SftpException ex) {

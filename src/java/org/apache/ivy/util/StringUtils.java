@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
 /**
- * Convenient class used only for uncapitalization Usually use commons lang but here we do not want
+ * Convenient class used only for uncapitalization. Usually use commons lang but here we do not want
  * to have such a dependency for only one feature
  */
 public final class StringUtils {
@@ -96,7 +96,7 @@ public final class StringUtils {
      *            The array of objects (<code>toString()</code> is used).
      * @param sep
      *            The separator to use.
-     * @return The concatinated string.
+     * @return The concatenated string.
      */
     public static String join(Object[] objs, String sep) {
         StringBuffer buf = new StringBuffer();

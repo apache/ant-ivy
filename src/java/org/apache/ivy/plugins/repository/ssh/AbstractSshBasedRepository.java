@@ -63,7 +63,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
      **/
     private static HashMap credentialsCache = new HashMap();
 
-    private static final int MAX_CREDENTILAS_CACHE_SIZE = 100;
+    private static final int MAX_CREDENTIALS_CACHE_SIZE = 100;
 
     /**
      * get a new session using the default attributes if the given String is a full uri, use the
@@ -168,7 +168,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * Called, when user was not found in URL. Maintain static hashe of credentials and retrieve or
+     * Called, when user was not found in URL. Maintain static hash of credentials and retrieve or
      * ask credentials for host.
      * 
      * @param host
@@ -181,7 +181,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
             Credentials c = CredentialsUtil.promptCredentials(new Credentials(null, host, user,
                     userPassword), getPassFile());
             if (c != null) {
-                if (credentialsCache.size() > MAX_CREDENTILAS_CACHE_SIZE) {
+                if (credentialsCache.size() > MAX_CREDENTIALS_CACHE_SIZE) {
                     credentialsCache.clear();
                 }
                 credentialsCache.put(host, c);

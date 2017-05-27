@@ -81,7 +81,7 @@ public class IvyRepositoryReport extends IvyTask {
         }
         if (module == null && PatternMatcher.EXACT.equals(matcher)) {
             throw new BuildException("no module name provided for ivy repository graph task: "
-                    + "It can either be set explicitely via the attribute 'module' or "
+                    + "It can either be set explicitly via the attribute 'module' or "
                     + "via 'ivy.module' property or a prior call to <resolve/>");
         } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
             module = PatternMatcher.ANY_EXPRESSION;

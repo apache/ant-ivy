@@ -34,8 +34,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * <b> Note that this matcher is available only with <a href="http://jakarta.apache.org/oro"Apache
  * Jakarta Oro 2.0.8</a> in your classpath.</b>
  * 
- * @see <a
- *      href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
+ * @see <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
  */
 public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatcher {
 
@@ -83,7 +82,7 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
             if (exact == null) {
                 exact = calculateExact();
             }
-            return exact.booleanValue();
+            return exact;
         }
 
         private Boolean calculateExact() {

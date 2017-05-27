@@ -176,7 +176,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             + " relocated to " + relocation
                             + ". Please update your dependency to directly use the right version.");
                     Message.warn("Resolution will only pick dependencies of the relocated element."
-                            + "  Artefact and other metadata will be ignored.");
+                            + "  Artifact and other metadata will be ignored.");
                     ResolvedModuleRevision relocatedModule = parseOtherPom(ivySettings, relocation);
                     if (relocatedModule == null) {
                         throw new ParseException(
@@ -233,7 +233,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     // add plugins from parent
                     for (PomDependencyMgt pomDependencyMgt : PomModuleDescriptorBuilder
                             .getPlugins(parentDescr)) {
-                        mdBuilder.addPlugin((PomDependencyMgt) pomDependencyMgt);
+                        mdBuilder.addPlugin(pomDependencyMgt);
                     }
                 }
 
@@ -399,8 +399,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             return null;
         } else {
             dd = NameSpaceHelper.toSystem(dd, ivySettings.getContextNamespace());
-            ResolvedModuleRevision otherModule = resolver.getDependency(dd, data);
-            return otherModule;
+            return resolver.getDependency(dd, data);
         }
     }
 

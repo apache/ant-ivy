@@ -40,7 +40,7 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         List<Status> statuses = StatusManager.getCurrent().getStatuses();
-        Status lowest = (Status) statuses.get(statuses.size() - 1);
+        Status lowest = statuses.get(statuses.size() - 1);
         String latestLowest = "latest." + lowest.getName();
         return !latestLowest.equals(askedMrid.getRevision());
     }

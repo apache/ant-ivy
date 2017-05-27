@@ -23,12 +23,13 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
  * Unchecked exception thrown when a circular dependency exists between projects.
  */
 
+@SuppressWarnings("serial")
 public class CircularDependencyException extends RuntimeException {
 
     private ModuleRevisionId[] mrids;
 
     /**
-     * @param descriptors
+     * @param mrids
      *            module descriptors in order of circular dependency
      */
     public CircularDependencyException(final ModuleRevisionId[] mrids) {

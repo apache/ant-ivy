@@ -41,7 +41,7 @@ import org.apache.ivy.util.Message;
  * 
  * The regular expression must contain a capturing group. The group will be used to resolve the
  * conflicts by an String.equals() test. If ignoreNonMatching is false non matching modules will
- * result in an exception. If it is true they will be compaired by their full revision.
+ * result in an exception. If it is true they will be compared by their full revision.
  */
 public class RegexpConflictManager extends AbstractConflictManager {
     private Pattern pattern = Pattern.compile("(.*)");

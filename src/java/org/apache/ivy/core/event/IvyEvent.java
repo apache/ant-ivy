@@ -52,8 +52,8 @@ public class IvyEvent {
     /**
      * Should only be called during event object construction, since events should be immutable
      * 
-     * @param key
-     * @param value
+     * @param key ditto
+     * @param value ditto
      */
     protected void addAttribute(String key, String value) {
         attributes.put(key, value);

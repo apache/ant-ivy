@@ -17,6 +17,12 @@
  */
 package org.apache.ivy.plugins.repository.vfs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,13 +30,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class VfsResourceTest {
     private VfsTestHelper helper = null;
@@ -48,7 +50,6 @@ public class VfsResourceTest {
     /**
      * Validate VFSResource creation for a valid VFS URI pointing to an physically existing file
      */
-    @SuppressWarnings("unused")
     @Test
     public void testCreateResourceThatExists() throws Exception {
         Iterator vfsURIs = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
@@ -81,23 +82,15 @@ public class VfsResourceTest {
      * @return url The querystring with invalid characters escaped
      */
     private String escapeUrl(String queryString) {
-        queryString = StringUtils.replace(queryString, " ", "%20");
-        queryString = StringUtils.replace(queryString, "\"", "%22");
-        queryString = StringUtils.replace(queryString, "%", "%26");
-        queryString = StringUtils.replace(queryString, "=", "%3D");
-        queryString = StringUtils.replace(queryString, "/", "%2F");
-        queryString = StringUtils.replace(queryString, "+", "%2B");
-        queryString = StringUtils.replace(queryString, "&", "%26");
-        queryString = StringUtils.replace(queryString, "~", "%7E");
-        queryString = StringUtils.replace(queryString, "?", "%3F");
-        return queryString;
+        return queryString.replaceAll(" ", "%20").replaceAll("\"", "%22").replaceAll("%", "%26")
+                .replaceAll("=", "%3D").replaceAll("/", "%2F").replaceAll("\\+", "%2B")
+                .replaceAll("&", "%26").replaceAll("~", "%7E").replaceAll("\\?", "%3F");
     }
 
     /**
      * Validating that resource can be created for files which don't physically exists - e.g.
      * resources that are going to created.
      */
-    @SuppressWarnings("unused")
     @Test
     public void testCreateResourceThatDoesntExist() throws Exception {
         Iterator vfsURIs = helper.createVFSUriSet("zzyyxx.zzyyxx").iterator();
@@ -125,7 +118,6 @@ public class VfsResourceTest {
     /**
      * Validate VFSResource creation when given a poorly formed VFS identifier
      */
-    @SuppressWarnings("unused")
     @Test
     public void testBadURI() throws Exception {
         String vfsURI = "smb1:/goobeldygook";

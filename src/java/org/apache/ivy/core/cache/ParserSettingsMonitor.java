@@ -39,7 +39,7 @@ import org.apache.ivy.util.Message;
  * Keep traces of the usage of a ParserSettings in order to check afterwards that the relevant
  * settings didn't changed.
  * <p>
- * A ParserSettingsMonitor provide a ParserSettings that must be used in place of the orignal one.
+ * A ParserSettingsMonitor provide a ParserSettings that must be used in place of the original one.
  * </p>
  * <p>
  * The current implementation consider that a settings changed iff one of the used variable has
@@ -58,7 +58,7 @@ class ParserSettingsMonitor {
     }
 
     /**
-     * @return The parser settings that must be used in place of the orignal settings The returned
+     * @return The parser settings that must be used in place of the original settings The returned
      *         object delegates all the call to the original settings.
      */
     public ParserSettings getMonitoredSettings() {
@@ -66,7 +66,7 @@ class ParserSettingsMonitor {
     }
 
     /**
-     * Free the ressource used during the monitoring, keeping only the info required to evaluate
+     * Free the resource used during the monitoring, keeping only the info required to evaluate
      * hasChanged.
      */
     public void endMonitoring() {

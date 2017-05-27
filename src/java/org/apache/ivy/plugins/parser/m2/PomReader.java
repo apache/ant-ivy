@@ -153,8 +153,9 @@ public class PomReader {
     }
 
     /**
-     * Add a property if not yet set and value is not null. This garantee that property keep the
-     * first value that is put on it and that the properties are never null.
+     * Add a property if not yet set and value is not null. This guarantees
+     * that property keeps the first value that is put on it and that the
+     * properties are never null.
      */
     public void setProperty(String prop, String val) {
         if (!properties.containsKey(prop) && val != null) {
@@ -535,7 +536,7 @@ public class PomReader {
                 return false;
             }
             String propertyValue = getFirstChildText(propertyActivation, VALUE);
-            
+
             Map<String, String> pomProperties = PomReader.this.getPomProperties();
             boolean matched;
             if (propertyValue == null || "".equals(propertyValue)) {
@@ -695,8 +696,7 @@ public class PomReader {
                 return prefix[count++];
             }
 
-            int result = super.read();
-            return result;
+            return super.read();
         }
 
         @Override

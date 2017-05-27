@@ -71,7 +71,7 @@ public class MatcherLookup {
      * 
      * If matcher is not exact pattern matcher, it will be placed into non-keyed collection
      * 
-     * @param matcher
+     * @param matcher MapMatcher
      */
     public void add(MapMatcher matcher) {
         if (!(matcher.getPatternMatcher() instanceof ExactPatternMatcher)) {

@@ -92,8 +92,7 @@ public final class FileUtil {
                 }
 
                 // Add to our buffer of commands
-                sb.append("ln -s -f \"" + srcFile.getAbsolutePath() + "\"  \""
-                        + destFile.getAbsolutePath() + "\";");
+                sb.append("ln -s -f \"").append(srcFile.getAbsolutePath()).append("\"  \"").append(destFile.getAbsolutePath()).append("\";");
                 if (keyItr.hasNext()) {
                     sb.append("\n");
                 }
@@ -377,7 +376,7 @@ public final class FileUtil {
 
             String line = in.readLine();
             while (line != null) {
-                buf.append(line + "\n");
+                buf.append(line).append("\n");
                 line = in.readLine();
             }
             return buf.toString();
@@ -459,7 +458,7 @@ public final class FileUtil {
      * Returns a list of Files composed of all directories being parent of file and child of root +
      * file and root themselves. Example: getPathFiles(new File("test"), new
      * File("test/dir1/dir2/file.txt")) => {new File("test/dir1"), new File("test/dir1/dir2"), new
-     * File("test/dir1/dir2/file.txt") } Note that if root is not an ancester of file, or if root is
+     * File("test/dir1/dir2/file.txt") } Note that if root is not an ancestor of file, or if root is
      * null, all directories from the file system root will be returned.
      */
     public static List<File> getPathFiles(File root, File file) {
@@ -484,7 +483,7 @@ public final class FileUtil {
      *            extracted.
      * @param ignore
      *            a Collection of filenames which must be excluded from listing
-     * @return A collectoin containing all the files of the given directory and it's subdirectories.
+     * @return A collection containing all the files of the given directory and it's subdirectories.
      */
     public static Collection<File> listAll(File dir, Collection<String> ignore) {
         return listAll(dir, new ArrayList<File>(), ignore);

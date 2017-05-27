@@ -391,7 +391,7 @@ public class IvyNode implements Comparable<IvyNode> {
             // no callers, but maybe some exclude
             Boolean exclude = doesExclude(md, rootModuleConf, new String[] {rootModuleConf}, dd, a,
                 new Stack<ModuleRevisionId>());
-            return exclude == null ? false : exclude.booleanValue();
+            return exclude != null && exclude;
         }
         return callers.doesCallersExclude(rootModuleConf, a);
     }
@@ -516,7 +516,8 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * returns the required configurations from the given node
      * 
-     * @param in
+     * @param in IvyNode
+     * @param inConf ditto
      * @return array of configuration names
      */
     public String[] getRequiredConfigurations(IvyNode in, String inConf) {
@@ -564,7 +565,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Returns the configurations of the dependency required in a given root module configuration.
      * 
-     * @param rootModuleConf
+     * @param rootModuleConf String
      * @return array of configuration names
      */
     public String[] getConfigurations(String rootModuleConf) {
@@ -762,7 +763,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * Returns all the artifacts of this dependency required in the root module configurations in
      * which the node is not evicted nor blacklisted
      * 
-     * @param artifactFilter
+     * @param artifactFilter Filter
      * @return array of {@link Artifact}s
      */
     public Artifact[] getSelectedArtifacts(Filter<Artifact> artifactFilter) {
@@ -780,7 +781,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * Returns the artifacts of this dependency required in the configurations themselves required
      * in the given root module configuration
      * 
-     * @param rootModuleConf
+     * @param rootModuleConf String
      * @return array of {@link Artifact}s
      */
     public Artifact[] getArtifacts(String rootModuleConf) {
@@ -993,7 +994,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Returns the last modified timestamp of the module represented by this Node, or 0 if the last
-     * modified timestamp is currently unkwown (module not loaded)
+     * modified timestamp is currently unknown (module not loaded)
      * 
      * @return the last modified timestamp of the module represented by this Node
      */
@@ -1190,7 +1191,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * Returns a collection of Nodes in conflict for which conflict has been detected but conflict
      * resolution hasn't been done yet
      * 
-     * @param rootModuleConf
+     * @param rootModuleConf ditto
      * @param mid
      *            the module id for which pending conflicts should be found
      * @return a Collection of IvyNode in pending conflict
@@ -1217,7 +1218,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * {@link LatestCompatibleConflictManager}
      * </p>
      * 
-     * @param rootModuleConf
+     * @param bdata
      *            the root module configuration in which the node should be blacklisted
      */
     public void blacklist(IvyNodeBlacklist bdata) {
@@ -1259,7 +1260,7 @@ public class IvyNode implements Comparable<IvyNode> {
      *            the root module conf for which we'd like to know if the node is blacklisted
      * 
      * @return true if this node is blacklisted int he given root module conf, false otherwise
-     * @see #blacklist(String)
+     * @see #blacklist(IvyNodeBlacklist)
      */
     public boolean isBlacklisted(String rootModuleConf) {
         return usage.isBlacklisted(rootModuleConf);
@@ -1269,7 +1270,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * Indicates if this node has been blacklisted in all root module configurations.
      * 
      * @return true if this node is blacklisted in all root module configurations, false otherwise
-     * @see #blacklist(String)
+     * @see #blacklist(IvyNodeBlacklist)
      */
     public boolean isCompletelyBlacklisted() {
         if (isRoot()) {

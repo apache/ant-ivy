@@ -116,13 +116,7 @@ public class SshResource implements Resource {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("SshResource:");
-        buffer.append(uri);
-        buffer.append(" (");
-        buffer.append(len);
-        buffer.append(")]");
-        return buffer.toString();
+        return "SshResource:" + uri + " (" + len + ")]";
     }
 
     public boolean isLocal() {

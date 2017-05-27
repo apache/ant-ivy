@@ -502,14 +502,14 @@ public class PomModuleDescriptorBuilder {
         return result;
     }
 
-    private static String getDependencyMgtExtraInfoKeyForVersion(String groupId, String artifaceId) {
+    private static String getDependencyMgtExtraInfoKeyForVersion(String groupId, String artifactId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId + EXTRA_INFO_DELIMITER
-                + artifaceId + EXTRA_INFO_DELIMITER + "version";
+                + artifactId + EXTRA_INFO_DELIMITER + "version";
     }
 
-    private static String getDependencyMgtExtraInfoKeyForScope(String groupId, String artifaceId) {
+    private static String getDependencyMgtExtraInfoKeyForScope(String groupId, String artifactId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId + EXTRA_INFO_DELIMITER
-                + artifaceId + EXTRA_INFO_DELIMITER + "scope";
+                + artifactId + EXTRA_INFO_DELIMITER + "scope";
     }
 
     private static String getPropertyExtraInfoKey(String propertyName) {
@@ -517,9 +517,9 @@ public class PomModuleDescriptorBuilder {
     }
 
     private static String getDependencyMgtExtraInfoPrefixForExclusion(String groupId,
-            String artifaceId) {
+            String artifactId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId + EXTRA_INFO_DELIMITER
-                + artifaceId + EXTRA_INFO_DELIMITER + "exclusion_";
+                + artifactId + EXTRA_INFO_DELIMITER + "exclusion_";
     }
 
     private static List<ModuleId> getDependencyMgtExclusions(ModuleDescriptor descriptor,

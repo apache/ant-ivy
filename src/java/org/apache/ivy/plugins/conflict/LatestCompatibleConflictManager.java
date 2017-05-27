@@ -177,7 +177,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                 return false;
             }
         } catch (NoConflictResolvedYetException ex) {
-            // we have not enough informations in the nodes to resolve conflict
+            // we have not enough information in the nodes to resolve conflict
             // according to the resolveConflicts contract, resolveConflicts must return null
             return false;
         }
@@ -247,8 +247,8 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      *            the node in favor of which the conflict is resolved
      * @param evictedNode
      *            the node which will be evicted if we are able to blacklist all paths
-     * @param node
-     *            the node for which callers should be considered
+     * @param callerStack
+     *            ditto
      * @return the collection of blacklisting to do, null if a blacklist is not possible in at least
      *         one caller path
      */

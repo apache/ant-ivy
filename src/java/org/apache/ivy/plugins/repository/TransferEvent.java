@@ -23,7 +23,7 @@ import org.apache.ivy.core.event.IvyEvent;
 
 /**
  * TransferEvent is used to notify TransferListeners about progress in transfer of resources form/to
- * the respository This class is LARGELY inspired by org.apache.maven.wagon.events.TransferEvent
+ * the repository This class is LARGELY inspired by org.apache.maven.wagon.events.TransferEvent
  * released under the following copyright license:
  * 
  * <pre>
@@ -44,7 +44,7 @@ import org.apache.ivy.core.event.IvyEvent;
  * 
  * </pre>
  * 
- * Orginal class written by Michal Maczka.
+ * Original class written by Michal Maczka.
  */
 public class TransferEvent extends IvyEvent {
     /**

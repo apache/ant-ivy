@@ -37,7 +37,7 @@ public class ConfigurationGroup extends Configuration {
      * <p>
      * This list is built from the configuration name, if some of these configuration names have
      * actually not been recognized in the module, they will be <code>null</code> when accessed from
-     * {@link #getIntersectedConfiguration(String)}.
+     * {@link org.apache.ivy.core.module.descriptor.ConfigurationIntersection#getIntersectedConfiguration(String)}.
      * </p>
      * 
      * @return the list of configurations' names this object is an intersection of.

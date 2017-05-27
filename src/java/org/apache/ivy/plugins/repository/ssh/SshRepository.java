@@ -71,7 +71,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      * 
      * @param source
      *            ssh uri for the file to get info for
-     * @return SshResource filled with the needed informations
+     * @return SshResource filled with the needed information
      * @see org.apache.ivy.plugins.repository.Repository#getResource(java.lang.String)
      */
     public SshResource resolveResource(String source) {
@@ -195,9 +195,8 @@ public class SshRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * @param session
-     * @return
-     * @throws JSchException
+     * @param session Session
+     * @return ChannelExec
      */
     private ChannelExec getExecChannel(Session session) throws IOException {
         ChannelExec channel;
@@ -215,7 +214,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      * 
      * @param command
      *            with argument placeholder or not
-     * @param argument
+     * @param argument ditto
      * @return replaced full command
      */
     private String replaceArgument(String command, String argument) {
@@ -283,7 +282,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      * 
      * @param path
      *            to create
-     * @param connnection
+     * @param session
      *            to use
      */
     private void makePath(String path, Session session) throws IOException {

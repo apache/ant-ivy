@@ -31,7 +31,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 /**
- * Wrap a collection of descriptores wrapped themself in ModuleInSort elements. It contains some
+ * Wrap a collection of descriptors wrapped themselves in ModuleInSort elements. It contains some
  * dedicated function to retrieve module descriptors based on dependencies descriptors.<br>
  * <i>This class is designed to be used internally by the ModuleDescriptorSorter.</i>
  */
@@ -51,7 +51,7 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
      * @param matcher
      *            The matcher to used to check if dependencyDescriptor match a module in this
      *            collection
-     * @param nonMatchingVersionReporter
+     * @param nonMatchingVersionReporter ditto
      */
     public CollectionOfModulesToSort(Collection<ModuleDescriptor> modulesToSort,
             VersionMatcher matcher, NonMatchingVersionReporter nonMatchingVersionReporter) {
@@ -87,7 +87,7 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
     /**
      * Find a matching module descriptor in the list of module to sort.
      * 
-     * @param descriptor
+     * @param descriptor ditto
      * @return a ModuleDescriptor from the collection of module descriptors to sort. If none exists
      *         returns null.
      */

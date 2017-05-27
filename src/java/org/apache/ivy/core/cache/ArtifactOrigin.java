@@ -32,7 +32,7 @@ public class ArtifactOrigin {
     /**
      * ArtifactOrigin instance used when the origin is unknown.
      */
-    public static final ArtifactOrigin unkwnown(Artifact artifact) {
+    public static final ArtifactOrigin unknown(Artifact artifact) {
         return new ArtifactOrigin(artifact, false, UNKNOWN);
     }
 
@@ -110,7 +110,7 @@ public class ArtifactOrigin {
      * The last time the resource was checked to be up to date. Maybe <code>null</code> if this
      * information is not actually used by in some case.
      * 
-     * @return
+     * @return Long timestamp
      */
     public Long getLastChecked() {
         return lastChecked;
@@ -143,10 +143,7 @@ public class ArtifactOrigin {
 
         ArtifactOrigin that = (ArtifactOrigin) o;
 
-        if (isLocal != that.isLocal) {
-            return false;
-        }
-        if (!location.equals(that.location)) {
+        if (isLocal != that.isLocal || !location.equals(that.location)) {
             return false;
         }
         if (lastChecked == null) {
@@ -156,11 +153,8 @@ public class ArtifactOrigin {
         } else if (!lastChecked.equals(that.lastChecked)) {
             return false;
         }
-        if (exists != that.exists) {
-            return false;
-        }
 
-        return true;
+        return exists == that.exists;
     }
 
     public int hashCode() {

@@ -52,7 +52,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
     /**
      * Default bundle filter that select only .jar files
      */
-    public static final FilenameFilter DEFAULT_BUNLDE_FILTER = new FilenameFilter() {
+    public static final FilenameFilter DEFAULT_BUNDLE_FILTER = new FilenameFilter() {
         public boolean accept(File dir, String name) {
             return name.endsWith(".jar");
         }
@@ -60,7 +60,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
 
     private FilenameFilter dirFilter = DEFAULT_DIR_FILTER;
 
-    private FilenameFilter bundleFilter = DEFAULT_BUNLDE_FILTER;
+    private FilenameFilter bundleFilter = DEFAULT_BUNDLE_FILTER;
 
     /**
      * Default constructor
@@ -105,10 +105,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
     protected List<File> listBundleFiles(File dir) {
         return Arrays.asList(dir.listFiles(new FileFilter() {
             public boolean accept(File f) {
-                if (!f.isFile()) {
-                    return false;
-                }
-                return bundleFilter.accept(f.getParentFile(), f.getName());
+                return f.isFile() && bundleFilter.accept(f.getParentFile(), f.getName());
             }
         }));
     }
@@ -116,10 +113,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
     protected List<File> listDirs(File dir) {
         return Arrays.asList(dir.listFiles(new FileFilter() {
             public boolean accept(File f) {
-                if (!f.isDirectory()) {
-                    return false;
-                }
-                return dirFilter == null || dirFilter.accept(f.getParentFile(), f.getName());
+                return f.isDirectory() && (dirFilter == null || dirFilter.accept(f.getParentFile(), f.getName()));
             }
         }));
     }

@@ -29,10 +29,10 @@ public interface PublishingDependencyRevisionResolver {
      * Returns the revision of the dependency for the publishing of the 'published' module in
      * 'publishedStatus' status.
      * 
-     * @param published
-     * @param publishedStatus
-     * @param depMrid
-     * @param status
+     * @param published ModuleDescriptor
+     * @param publishedStatus ditto
+     * @param depMrid ModuleRevisionId
+     * @param status ditto
      * @return the revision of the dependency
      */
     String resolve(ModuleDescriptor published, String publishedStatus, ModuleRevisionId depMrid,

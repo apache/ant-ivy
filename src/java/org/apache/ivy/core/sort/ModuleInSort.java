@@ -34,7 +34,8 @@ import org.apache.ivy.util.Message;
  * ModuleInSort can be used in only one ModuleDescriptorSorter at a time.<br>
  * The added fields are : <br>
  * <ul>
- * <li><code>isSorted</code> : is true iff this module has already been added to the sorted list.</li>
+ * <li><code>isSorted</code> : is true iff this module has already been added to the sorted list.
+ * </li>
  * <li><code>loopElements</code> : When the module is the root of a loop (=the first element of a
  * loop met during the sort), <code>loopElements</code> contains all ModuleInSort of the loop
  * (excluding the root itself.</li>
@@ -99,12 +100,12 @@ class ModuleInSort {
 
     /**
      * Check if a adding this element as a dependency of caller will introduce a circular
-     * dependency. If it is, all the elements of the loop are flaged as 'loopIntermediateElement',
+     * dependency. If it is, all the elements of the loop are flagged as 'loopIntermediateElement',
      * and the loopElements of this module (which is the root of the loop) is updated. The
      * depStrategy is invoked on order to report a correct circular loop message.
      * 
-     * @param futurCaller
-     * @param depStrategy
+     * @param futurCaller ModuleInSort
+     * @param depStrategy CircularDependencyStrategy
      * @return true if a loop is detected.
      */
     public boolean checkLoop(ModuleInSort futurCaller, CircularDependencyStrategy depStrategy) {

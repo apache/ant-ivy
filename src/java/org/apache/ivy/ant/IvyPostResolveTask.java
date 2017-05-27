@@ -127,13 +127,13 @@ public abstract class IvyPostResolveTask extends IvyTask {
             if (organisation == null) {
                 throw new BuildException(
                         "no organisation provided for ivy cache task in inline mode: "
-                                + "It can either be set explicitely via the attribute 'organisation' "
+                                + "It can either be set explicitly via the attribute 'organisation' "
                                 + "or via 'ivy.organisation' property");
             }
             if (module == null) {
                 throw new BuildException(
                         "no module name provided for ivy cache task in inline mode: "
-                                + "It can either be set explicitely via the attribute 'module' "
+                                + "It can either be set explicitly via the attribute 'module' "
                                 + "or via 'ivy.module' property");
             }
             String[] toResolve = getConfsToResolve(getOrganisation(), getModule() + "-caller",
@@ -192,17 +192,17 @@ public abstract class IvyPostResolveTask extends IvyTask {
         module = getProperty(module, settings, "ivy.module");
         if (organisation == null) {
             throw new BuildException("no organisation provided for ivy cache task: "
-                    + "It can either be set explicitely via the attribute 'organisation' "
+                    + "It can either be set explicitly via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (module == null) {
             throw new BuildException("no module name provided for ivy cache task: "
-                    + "It can either be set explicitely via the attribute 'module' "
+                    + "It can either be set explicitly via the attribute 'module' "
                     + "or via 'ivy.module' property or a prior call to <resolve/>");
         }
         if (conf == null) {
             throw new BuildException("no conf provided for ivy cache task: "
-                    + "It can either be set explicitely via the attribute 'conf' or "
+                    + "It can either be set explicitly via the attribute 'conf' or "
                     + "via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
 
@@ -427,11 +427,11 @@ public abstract class IvyPostResolveTask extends IvyTask {
     }
 
     public void setKeep(boolean keep) {
-        this.keep = Boolean.valueOf(keep);
+        this.keep = keep;
     }
 
     public boolean isKeep() {
-        return this.keep == null ? !isInline() : this.keep.booleanValue();
+        return this.keep == null ? !isInline() : this.keep;
     }
 
     public void setChanging(boolean changing) {

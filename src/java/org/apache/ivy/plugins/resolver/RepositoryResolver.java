@@ -347,11 +347,11 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     }
 
     public boolean isAlwaysCheckExactRevision() {
-        return alwaysCheckExactRevision == null ? true : alwaysCheckExactRevision.booleanValue();
+        return alwaysCheckExactRevision == null || alwaysCheckExactRevision;
     }
 
     public void setAlwaysCheckExactRevision(boolean alwaysCheckExactRevision) {
-        this.alwaysCheckExactRevision = Boolean.valueOf(alwaysCheckExactRevision);
+        this.alwaysCheckExactRevision = alwaysCheckExactRevision;
     }
 
 }

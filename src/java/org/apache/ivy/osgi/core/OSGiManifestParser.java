@@ -20,7 +20,6 @@ package org.apache.ivy.osgi.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
@@ -54,10 +53,8 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
     }
 
     public boolean accept(Resource res) {
-        if (res == null || res.getName() == null || res.getName().trim().equals("")) {
-            return false;
-        }
-        return res.getName().toUpperCase(Locale.US).endsWith("MANIFEST.MF");
+        return !(res == null || res.getName() == null || res.getName().trim().equals(""))
+                && res.getName().toUpperCase(Locale.US).endsWith("MANIFEST.MF");
     }
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,

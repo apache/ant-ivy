@@ -35,7 +35,7 @@ import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 
 /**
- * Triggers an ant build on an event occurence.
+ * Triggers an ant build on an event occurrence.
  * <p>
  * Example of use:
  * 
@@ -128,11 +128,8 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
     }
 
     private File getBuildFile(IvyEvent event) {
-        return IvyContext
-                .getContext()
-                .getSettings()
-                .resolveFile(
-                    IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
+        return IvyContext.getContext().getSettings().resolveFile(
+            IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
     }
 
     public String getBuildFilePattern() {

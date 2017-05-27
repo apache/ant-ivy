@@ -53,7 +53,7 @@ public class IvyCleanCache extends IvyTask {
     }
 
     /**
-     * Sets weither the resolution cache should be cleaned or not.
+     * Sets whether the resolution cache should be cleaned or not.
      * 
      * @param resolution
      *            <code>true</code> if the resolution cache should be cleaned, <code>false</code>

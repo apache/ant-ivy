@@ -220,7 +220,7 @@ public class FileSystemResolver extends RepositoryResolver {
             return false;
         }
         checkSupportTransaction();
-        return supportTransaction.booleanValue();
+        return supportTransaction;
     }
 
     private void closeTransaction() {

@@ -36,9 +36,7 @@ import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.CollectionUtils;
-
 import org.junit.Test;
-
 import org.xml.sax.ContentHandler;
 
 public class OBRXMLWriterTest {

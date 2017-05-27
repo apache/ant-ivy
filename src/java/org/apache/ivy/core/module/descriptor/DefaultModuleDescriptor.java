@@ -134,9 +134,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * in system namespace, because they aren't transformable (the name space hasn't the ability to
      * convert regular expressions)</i>
      * 
-     * @param md
-     * @param ns
-     * @return
+     * @param md ModuleDescriptor
+     * @param ns Namespace
+     * @return ModuleDescriptor
      */
     public static ModuleDescriptor transformInstance(ModuleDescriptor md, Namespace ns) {
         NamespaceTransformer t = ns.getToSystemTransformer();
@@ -362,8 +362,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * Artifact configurations are not used since added artifact may not be entirely completed, so
      * its configurations data may not be accurate
      * 
-     * @param conf
-     * @param artifact
+     * @param conf ditto
+     * @param artifact ditto
      */
     public void addArtifact(String conf, Artifact artifact) {
         Configuration c = getConfiguration(conf);
@@ -600,9 +600,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * regular expressions as explained in Pattern class may be used in ModuleId organisation and
      * name
      * 
-     * @param moduleId
-     * @param matcher
-     * @param resolverName
+     * @param moduleId ditto
+     * @param matcher PatternMatcher
+     * @param manager ConflictManager
      */
     public void addConflictManager(ModuleId moduleId, PatternMatcher matcher,
             ConflictManager manager) {

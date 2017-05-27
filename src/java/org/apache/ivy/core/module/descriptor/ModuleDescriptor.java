@@ -49,7 +49,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Returns true if this descriptor is a default one, i.e. one generated for a module not
      * actually having one.
      * 
-     * @return
+     * @return boolean
      */
     boolean isDefault();
 
@@ -61,14 +61,14 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * the returned ModuleRevisionId. This revision must be the same as the module descriptor
      * resolved revision id unless no module descriptor is defined
      * 
-     * @return
+     * @return ModuleRevisionId
      */
     ModuleRevisionId getResolvedModuleRevisionId();
 
     /**
      * This method update the resolved module revision id
      * 
-     * @param revId
+     * @param revId ModuleRevisionId
      */
     void setResolvedModuleRevisionId(ModuleRevisionId revId);
 
@@ -81,7 +81,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     /**
      * This method update the resolved publication date
      * 
-     * @param publicationDate
+     * @param publicationDate Date
      */
     void setResolvedPublicationDate(Date publicationDate);
 
@@ -90,7 +90,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     /**
      * May be <code>null</code> if unknown in the descriptor itself.
      * 
-     * @return The publication date or <code>null</code> when not knwon.
+     * @return The publication date or <code>null</code> when not known.
      */
     Date getPublicationDate();
 
@@ -125,23 +125,24 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     Artifact[] getAllArtifacts();
 
     /**
-     * @retun The dependencies of the module. If there is no dependencies return an empty array (non
+     * @return The dependencies of the module. If there is no dependencies return an empty array (non
      *        null)
      */
     DependencyDescriptor[] getDependencies();
 
     /**
-     * Returns true if the module described by this descriptor dependes directly upon the given
+     * Returns true if the module described by this descriptor depends directly upon the given
      * module descriptor
-     * 
-     * @param md
-     * @return
+     *
+     * @param matcher VersionMatcher
+     * @param md ModuleDescriptor
+     * @return boolean
      */
     boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md);
 
     /**
-     * @param confName
-     * @return
+     * @param confName ditto
+     * @return Configuration
      */
     Configuration getConfiguration(String confName);
 
@@ -149,15 +150,15 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Returns the conflict manager to use for the given ModuleId, or <code>null</code> if no
      * specific conflict manager is associated with the given module id in this module descriptor.
      * 
-     * @param id
-     * @return
+     * @param id ModuleId
+     * @return ConflictManager
      */
     ConflictManager getConflictManager(ModuleId id);
 
     /**
      * Returns the licenses of the module described by this descriptor
      * 
-     * @return
+     * @return License[]
      */
     License[] getLicenses();
 
@@ -180,7 +181,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     /**
      * The ModuleDescriptorParser used to parse this module descriptor, null is no parser was used.
      * 
-     * @return
+     * @return ModuleDescriptorParser
      */
     ModuleDescriptorParser getParser();
 
@@ -188,7 +189,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * The resource being the source of this module descriptor, null if no resource corresponds to
      * this module descriptor
      * 
-     * @return
+     * @return Resource
      */
     Resource getResource();
 
@@ -216,9 +217,9 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Returns true if an exclude rule of this module attached to any of the given configurations
      * matches the given artifact id, and thus exclude it
      * 
-     * @param moduleConfs
-     * @param artifactId
-     * @return
+     * @param moduleConfs String[]
+     * @param artifactId ditto
+     * @return boolean
      */
     boolean doesExclude(String[] moduleConfs, ArtifactId artifactId);
 
@@ -271,7 +272,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * description are given.
      * 
      * @since 2.4.0
-     * @return
+     * @return List&lt;ExtraInfoHolder&gt;
      */
     List<ExtraInfoHolder> getExtraInfos();
 
@@ -279,7 +280,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Returns content from first extrainfo matching with given tag name
      * 
      * @since 2.4.0
-     * @return
+     * @return ditto
      */
     String getExtraInfoContentByTagName(String tagName);
 
@@ -287,7 +288,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Returns first extrainfo matching with given tag name
      * 
      * @since 2.4.0
-     * @return
+     * @return ExtraInfoHolder
      */
     ExtraInfoHolder getExtraInfoByTagName(String tagName);
 }

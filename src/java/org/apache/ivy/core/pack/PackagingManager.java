@@ -64,11 +64,9 @@ public class PackagingManager implements IvySettingsAware {
         }
         ext = packing.getUnpackedExtension(ext);
 
-        DefaultArtifact unpacked = new DefaultArtifact(artifact.getModuleRevisionId(),
+        return new DefaultArtifact(artifact.getModuleRevisionId(),
                 artifact.getPublicationDate(), artifact.getName(),
                 artifact.getType() + "_unpacked", ext);
-
-        return unpacked;
     }
 
     public Artifact unpackArtifact(Artifact artifact, File localFile, File archiveFile)

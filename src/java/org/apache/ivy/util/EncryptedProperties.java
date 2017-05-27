@@ -29,9 +29,9 @@ import java.util.Properties;
  * putAll puts given values without encrypting them. It this thus recommended to void using them,
  * use setProperty and getProperty instead.
  */
-public class EncrytedProperties extends Properties {
+public class EncryptedProperties extends Properties {
 
-    public EncrytedProperties() {
+    public EncryptedProperties() {
         super();
     }
 

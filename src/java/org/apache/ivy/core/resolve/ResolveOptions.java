@@ -184,7 +184,7 @@ public class ResolveOptions extends LogOptions {
 
     /**
      * @pre can only be called if useSpecialConfs()==false. When it is true, you have to provide a
-     *      module desciptor so that configurations can be resolved.
+     *      module descriptor so that configurations can be resolved.
      * @see #getConfs(ModuleDescriptor)
      */
     public String[] getConfs() {
@@ -196,7 +196,7 @@ public class ResolveOptions extends LogOptions {
     }
 
     /**
-     * Get the aksed confs. Special confs (like *) use the moduleDescriptor to find the values *
+     * Get the asked confs. Special confs (like *) use the moduleDescriptor to find the values *
      * 
      * @param md
      *            Used to get the exact values for special confs.

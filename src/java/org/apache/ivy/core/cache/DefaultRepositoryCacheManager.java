@@ -318,7 +318,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void setCheckmodified(boolean check) {
-        checkmodified = Boolean.valueOf(check);
+        checkmodified = check;
     }
 
     /**
@@ -329,11 +329,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         if (useOrigin == null) {
             return getSettings() != null && getSettings().isDefaultUseOrigin();
         }
-        return useOrigin.booleanValue();
+        return useOrigin;
     }
 
     public void setUseOrigin(boolean b) {
-        useOrigin = Boolean.valueOf(b);
+        useOrigin = b;
     }
 
     /**
@@ -409,6 +409,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * 
      * @param md
      *            the module descriptor resolved
+     * @param metadataResolverName
+     *            metadata resolver name
      * @param artifactResolverName
      *            artifact resolver name
      */
@@ -471,7 +473,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
-            return ArtifactOrigin.unkwnown(artifact);
+            return ArtifactOrigin.unknown(artifact);
         }
         try {
             PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
@@ -481,11 +483,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             String exists = cdf.getProperty(getExistsKey(artifact));
             String original = cdf.getProperty(getOriginalKey(artifact));
 
-            boolean isLocal = Boolean.valueOf(local).booleanValue();
+            boolean isLocal = Boolean.valueOf(local);
 
             if (location == null) {
                 // origin has not been specified, return null
-                return ArtifactOrigin.unkwnown(artifact);
+                return ArtifactOrigin.unknown(artifact);
             }
 
             if (original != null) {
@@ -560,7 +562,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 origin.setLastChecked(Long.valueOf(lastChecked));
             }
             if (exists != null) {
-                origin.setExist(Boolean.parseBoolean(exists));
+                origin.setExist(Boolean.valueOf(exists));
             }
 
             return origin;
@@ -667,16 +669,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public ResolvedModuleRevision findModuleInCache(DependencyDescriptor dd,
             ModuleRevisionId requestedRevisionId, CacheMetadataOptions options,
             String expectedResolver) {
-        ModuleRevisionId mrid = requestedRevisionId;
         if (isCheckmodified(dd, requestedRevisionId, options)) {
-            Message.verbose("don't use cache for " + mrid + ": checkModified=true");
+            Message.verbose("don't use cache for " + requestedRevisionId + ": checkModified=true");
             return null;
         }
         if (!options.isUseCacheOnly() && isChanging(dd, requestedRevisionId, options)) {
-            Message.verbose("don't use cache for " + mrid + ": changing=true");
+            Message.verbose("don't use cache for " + requestedRevisionId + ": changing=true");
             return null;
         }
-        return doFindModuleInCache(mrid, options, expectedResolver);
+        return doFindModuleInCache(requestedRevisionId, options, expectedResolver);
     }
 
     private ResolvedModuleRevision doFindModuleInCache(ModuleRevisionId mrid,
@@ -788,7 +789,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * 
      * @param moduleDescriptorFile
      *            a given module descriptor
-     * @return
+     * @return ModuleDescriptorParser
      */
     protected ModuleDescriptorParser getModuleDescriptorParser(File moduleDescriptorFile) {
         return XmlModuleDescriptorParser.getInstance();
@@ -1199,8 +1200,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void originalToCachedModuleDescriptor(DependencyResolver resolver,
-            ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
-            ResolvedModuleRevision rmr, ModuleDescriptorWriter writer) {
+                                                 ResolvedResource originalMetadataRef, Artifact requestedMetadataArtifact,
+                                                 ResolvedModuleRevision rmr, ModuleDescriptorWriter writer) {
         ModuleDescriptor md = rmr.getDescriptor();
         Artifact originalMetadataArtifact = getOriginalMetadataArtifact(requestedMetadataArtifact);
         File mdFileInCache = getIvyFileInCache(md.getResolvedModuleRevisionId());
@@ -1212,7 +1213,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
         try {
             File originalFileInCache = getArchiveFileInCache(originalMetadataArtifact);
-            writer.write(orginalMetadataRef, md, originalFileInCache, mdFileInCache);
+            writer.write(originalMetadataRef, md, originalFileInCache, mdFileInCache);
 
             getMemoryCache().putInCache(mdFileInCache, new ParserSettingsMonitor(settings), true,
                 md);
@@ -1226,10 +1227,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             throw e;
         } catch (Exception e) {
             String metadataRef;
-            if (orginalMetadataRef == null) {
+            if (originalMetadataRef == null) {
                 metadataRef = String.valueOf(md.getResolvedModuleRevisionId());
             } else {
-                metadataRef = String.valueOf(orginalMetadataRef);
+                metadataRef = String.valueOf(originalMetadataRef);
             }
             Message.warn("impossible to put metadata file in cache: " + metadataRef, e);
         } finally {
@@ -1486,7 +1487,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private boolean isCheckmodified(DependencyDescriptor dd, ModuleRevisionId requestedRevisionId,
             CacheMetadataOptions options) {
         if (options.isCheckmodified() != null) {
-            return options.isCheckmodified().booleanValue();
+            return options.isCheckmodified();
         }
         return isCheckmodified();
     }
@@ -1507,7 +1508,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * Resource downloader which makes a copy of the previously existing file before overriding it.
      * <p>
-     * The backup file can be restored or cleanuped later
+     * The backup file can be restored or cleaned up later
      */
     private final class BackupResourceDownloader implements ResourceDownloader {
 

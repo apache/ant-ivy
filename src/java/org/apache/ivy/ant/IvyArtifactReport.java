@@ -126,9 +126,9 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     private void generateXml(IvyNode[] dependencies, Map moduleRevToArtifactsMap,
             Map artifactsToCopy) {
         try {
-            FileOutputStream fileOuputStream = new FileOutputStream(tofile);
+            FileOutputStream fileOutputStream = new FileOutputStream(tofile);
             try {
-                TransformerHandler saxHandler = createTransformerHandler(fileOuputStream);
+                TransformerHandler saxHandler = createTransformerHandler(fileOutputStream);
 
                 saxHandler.startDocument();
                 saxHandler.startElement(null, "modules", "modules", new AttributesImpl());
@@ -169,7 +169,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                 saxHandler.endElement(null, "modules", "modules");
                 saxHandler.endDocument();
             } finally {
-                fileOuputStream.close();
+                fileOutputStream.close();
             }
         } catch (SAXException e) {
             throw new BuildException("impossible to generate report", e);
@@ -180,7 +180,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private TransformerHandler createTransformerHandler(FileOutputStream fileOuputStream)
+    private TransformerHandler createTransformerHandler(FileOutputStream fileOutputStream)
             throws TransformerFactoryConfigurationError, TransformerConfigurationException,
             SAXException {
         SAXTransformerFactory transformerFact = (SAXTransformerFactory) SAXTransformerFactory
@@ -188,7 +188,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         TransformerHandler saxHandler = transformerFact.newTransformerHandler();
         saxHandler.getTransformer().setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         saxHandler.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
-        saxHandler.setResult(new StreamResult(fileOuputStream));
+        saxHandler.setResult(new StreamResult(fileOutputStream));
         return saxHandler;
     }
 

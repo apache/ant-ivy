@@ -126,10 +126,7 @@ public class ResolvedModuleRevision {
     }
 
     public boolean equals(Object obj) {
-        if (!(obj instanceof ResolvedModuleRevision)) {
-            return false;
-        }
-        return ((ResolvedModuleRevision) obj).getId().equals(getId());
+        return obj instanceof ResolvedModuleRevision && ((ResolvedModuleRevision) obj).getId().equals(getId());
     }
 
     public int hashCode() {

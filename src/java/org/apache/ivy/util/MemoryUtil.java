@@ -65,8 +65,7 @@ public final class MemoryUtil {
         long totalMemory = Runtime.getRuntime().totalMemory();
         gc();
         long freeMemory = Runtime.getRuntime().freeMemory();
-        long usedMemory = totalMemory - freeMemory;
-        return usedMemory;
+        return totalMemory - freeMemory;
     }
 
     private static void gc() {

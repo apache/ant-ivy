@@ -310,6 +310,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             }
         }
 
+        @SuppressWarnings("resource")
         public boolean tryLock(File file) {
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {

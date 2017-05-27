@@ -17,6 +17,11 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -44,14 +49,11 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.*;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
 

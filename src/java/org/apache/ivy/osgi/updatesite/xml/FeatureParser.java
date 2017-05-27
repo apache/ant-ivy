@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.updatesite.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,38 +80,38 @@ public class FeatureParser {
             super(FEATURE);
             addChild(new DescriptionHandler(), new ChildElementHandler<DescriptionHandler>() {
                 @Override
-                public void childHanlded(DescriptionHandler child) {
+                public void childHandled(DescriptionHandler child) {
                     feature.setDescription(child.getBufferedChars().trim());
                 }
             });
             addChild(new LicenseHandler(), new ChildElementHandler<LicenseHandler>() {
                 @Override
-                public void childHanlded(LicenseHandler child) {
+                public void childHandled(LicenseHandler child) {
                     feature.setLicense(child.getBufferedChars().trim());
                 }
             });
             addChild(new CopyrightHandler(), new ChildElementHandler<CopyrightHandler>() {
                 @Override
-                public void childHanlded(CopyrightHandler child) {
+                public void childHandled(CopyrightHandler child) {
                     feature.setCopyright(child.getBufferedChars().trim());
                 }
             });
             addChild(new PluginHandler(), new ChildElementHandler<PluginHandler>() {
                 @Override
-                public void childHanlded(PluginHandler child) {
+                public void childHandled(PluginHandler child) {
                     feature.addPlugin(child.plugin);
                 }
             });
             addChild(new RequiresHandler(), new ChildElementHandler<RequiresHandler>() {
                 @Override
-                public void childHanlded(RequiresHandler child) {
+                public void childHandled(RequiresHandler child) {
                     for (Require require : child.requires) {
                         feature.addRequire(require);
                     }
                 }
             });
             // addChild(new UrlHandler(), new ChildElementHandler<UrlHandler>() {
-            // public void childHanlded(UrlHandler child) {
+            // public void childHandled(UrlHandler child) {
             // }
             // });
         }
@@ -121,12 +120,7 @@ public class FeatureParser {
         protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
             String version = atts.getValue(VERSION);
-            try {
-                feature = new EclipseFeature(id, new Version(version));
-            } catch (ParseException e) {
-                throw new SAXException("Incorrect version on feature '" + id + "': " + version
-                        + " (" + e.getMessage() + ")");
-            }
+            feature = new EclipseFeature(id, new Version(version));
 
             feature.setOS(atts.getValue(OS));
             feature.setWS(atts.getValue(WS));
@@ -134,8 +128,8 @@ public class FeatureParser {
             feature.setArch(atts.getValue(ARCH));
             feature.setApplication(atts.getValue(APPLICATION));
             feature.setPlugin(atts.getValue(PLUGIN));
-            feature.setExclusive(Boolean.valueOf(atts.getValue(EXCLUSIVE)).booleanValue());
-            feature.setPrimary(Boolean.valueOf(atts.getValue(PRIMARY)).booleanValue());
+            feature.setExclusive(Boolean.valueOf(atts.getValue(EXCLUSIVE)));
+            feature.setPrimary(Boolean.valueOf(atts.getValue(PRIMARY)));
             feature.setColocationAffinity(atts.getValue(COLOCATION_AFFINITY));
             feature.setProviderName(atts.getValue(PROVIDER_NAME));
             feature.setLabel(atts.getValue(LABEL));
@@ -172,13 +166,8 @@ public class FeatureParser {
             String version = atts.getValue(VERSION);
 
             plugin.setId(id);
-            try {
-                plugin.setVersion(new Version(version));
-            } catch (ParseException e) {
-                throw new SAXException("Incorrect version on feature's plugin '" + id + "': "
-                        + version + " (" + e.getMessage() + ")");
-            }
-            plugin.setUnpack(Boolean.valueOf(atts.getValue(UNPACK)).booleanValue());
+            plugin.setVersion(new Version(version));
+            plugin.setUnpack(Boolean.valueOf(atts.getValue(UNPACK)));
             plugin.setFragment(atts.getValue(FRAGMENT));
             plugin.setFilter(atts.getValue(FILTER));
         }
@@ -246,7 +235,7 @@ public class FeatureParser {
             super(REQUIRES);
             addChild(new ImportHandler(), new ChildElementHandler<ImportHandler>() {
                 @Override
-                public void childHanlded(ImportHandler child) {
+                public void childHandled(ImportHandler child) {
                     requires.add(child.require);
                 }
             });
@@ -281,18 +270,13 @@ public class FeatureParser {
 
             require.setFeature(atts.getValue(FEATURE));
             require.setPlugin(atts.getValue(PLUGIN));
-            try {
-                require.setVersion(new Version(version));
-            } catch (ParseException e) {
-                throw new SAXException("Incorrect version on feature's import: " + version + " ("
-                        + e.getMessage() + ")");
-            }
+            require.setVersion(new Version(version));
             require.setMatch(atts.getValue(MATCH));
             require.setFilter(atts.getValue(FILTER));
         }
     }
 
-    // private static class IncludesHandler extends DelegetingHandler {
+    // private static class IncludesHandler extends DelegatingHandler {
     //
     // private static final String INCLUDES = "includes";
     //
@@ -317,7 +301,7 @@ public class FeatureParser {
     //
     // }
 
-    // private static class InstallHandlerHandler extends DelegetingHandler {
+    // private static class InstallHandlerHandler extends DelegatingHandler {
     //
     // private static final String INSTALL_HANDLER = "install-handler";
     //
@@ -339,25 +323,25 @@ public class FeatureParser {
     //
     // }
 
-    // private static class UrlHandler extends DelegetingHandler {
+    // private static class UrlHandler extends DelegatingHandler {
     //
     // private static final String URL = "url";
     //
     // public UrlHandler() {
     // super(URL);
     // addChild(new UpdateHandler(), new ChildElementHandler<UpdateHandler>() {
-    // public void childHanlded(UpdateHandler child) {
+    // public void childHandled(UpdateHandler child) {
     // }
     // });
     // addChild(new DiscoveryHandler(), new ChildElementHandler<DiscoveryHandler>() {
-    // public void childHanlded(DiscoveryHandler child) {
+    // public void childHandled(DiscoveryHandler child) {
     // }
     // });
     // }
     //
     // }
 
-    // private static class UpdateHandler extends DelegetingHandler {
+    // private static class UpdateHandler extends DelegatingHandler {
     //
     // private static final String UPDATE = "update";
     //
@@ -376,7 +360,7 @@ public class FeatureParser {
     //
     // }
 
-    // private static class DiscoveryHandler extends DelegetingHandler {
+    // private static class DiscoveryHandler extends DelegatingHandler {
     //
     // private static final String DISCOVERY = "discovery";
     //

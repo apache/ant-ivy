@@ -299,7 +299,7 @@ public class ChainResolver extends AbstractResolver {
                 return origin;
             }
         }
-        return ArtifactOrigin.unkwnown(artifact);
+        return ArtifactOrigin.unknown(artifact);
     }
 
     @Override

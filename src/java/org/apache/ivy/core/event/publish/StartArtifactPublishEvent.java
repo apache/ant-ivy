@@ -30,6 +30,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
  */
 public class StartArtifactPublishEvent extends PublishEvent {
 
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = -1134274781039590219L;
 
     public static final String NAME = "pre-publish-artifact";

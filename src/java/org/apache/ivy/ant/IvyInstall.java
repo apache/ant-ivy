@@ -64,19 +64,19 @@ public class IvyInstall extends IvyTask {
         IvySettings settings = ivy.getSettings();
         if (organisation == null) {
             throw new BuildException("no organisation provided for ivy publish task: "
-                    + "It can either be set explicitely via the attribute 'organisation' "
+                    + "It can either be set explicitly via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (module == null && PatternMatcher.EXACT.equals(matcher)) {
             throw new BuildException("no module name provided for ivy publish task: "
-                    + "It can either be set explicitely via the attribute 'module' "
+                    + "It can either be set explicitly via the attribute 'module' "
                     + "or via 'ivy.module' property or a prior call to <resolve/>");
         } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
             module = PatternMatcher.ANY_EXPRESSION;
         }
         if (revision == null && PatternMatcher.EXACT.equals(matcher)) {
             throw new BuildException("no module revision provided for ivy publish task: "
-                    + "It can either be set explicitely via the attribute 'revision' "
+                    + "It can either be set explicitly via the attribute 'revision' "
                     + "or via 'ivy.revision' property or a prior call to <resolve/>");
         } else if (revision == null && !PatternMatcher.EXACT.equals(matcher)) {
             revision = PatternMatcher.ANY_EXPRESSION;

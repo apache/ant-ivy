@@ -51,6 +51,7 @@ public final class PomModuleDescriptorWriter {
 
     private static final String SKIP_LINE = "SKIP_LINE";
 
+    @SuppressWarnings("serial")
     private static final ConfigurationScopeMapping DEFAULT_MAPPING = new ConfigurationScopeMapping(
             new LinkedHashMap<String, String>() {
                 {

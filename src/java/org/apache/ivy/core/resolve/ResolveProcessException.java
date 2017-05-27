@@ -27,6 +27,7 @@ package org.apache.ivy.core.resolve;
  * Some subclasses have even a stronger power over the resolve process, like
  * {@link RestartResolveProcess} which orders to restart the resolve process at the start.
  */
+@SuppressWarnings("serial")
 public class ResolveProcessException extends RuntimeException {
 
     public ResolveProcessException() {

@@ -17,20 +17,17 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 public class IvyArtifactPropertyTest {
 

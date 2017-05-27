@@ -57,9 +57,9 @@ public class IvyConflict {
     }
 
     void addConflict(DefaultModuleDescriptor md, IvySettings settings) {
-        String matcherName = matcher == null ? PatternMatcher.EXACT : matcher;
-        String orgPattern = org == null ? PatternMatcher.ANY_EXPRESSION : org;
-        String modulePattern = module == null ? PatternMatcher.ANY_EXPRESSION : module;
+        String matcherName = (matcher == null) ? PatternMatcher.EXACT : matcher;
+        String orgPattern = (org == null) ? PatternMatcher.ANY_EXPRESSION : org;
+        String modulePattern = (module == null) ? PatternMatcher.ANY_EXPRESSION : module;
         ConflictManager cm = null;
         if (rev != null) {
             String[] revs = rev.split(",");

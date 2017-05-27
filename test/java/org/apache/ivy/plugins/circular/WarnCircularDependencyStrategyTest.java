@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.circular;
 
-import junit.framework.TestCase;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.EventManager;

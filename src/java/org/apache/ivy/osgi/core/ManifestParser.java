@@ -49,12 +49,14 @@ public class ManifestParser {
 
     private static final String BUNDLE_VERSION = "Bundle-Version";
 
+    @SuppressWarnings("unused")
     private static final String BUNDLE_NAME = "Bundle-Name";
 
     private static final String BUNDLE_DESCRIPTION = "Bundle-Description";
 
     private static final String BUNDLE_SYMBOLIC_NAME = "Bundle-SymbolicName";
 
+    @SuppressWarnings("unused")
     private static final String BUNDLE_MANIFEST_VERSION = "Bundle-ManifestVersion";
 
     private static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment";
@@ -73,20 +75,19 @@ public class ManifestParser {
 
     public static BundleInfo parseJarManifest(InputStream jarStream) throws IOException,
             ParseException {
+    @SuppressWarnings("resource")
         JarInputStream jis = new JarInputStream(jarStream);
         Manifest manifest = jis.getManifest();
         if (manifest == null) {
             return null;
         }
-        BundleInfo bundleInfo = parseManifest(manifest);
-        return bundleInfo;
+        return parseManifest(manifest);
     }
 
     public static BundleInfo parseManifest(File manifestFile) throws IOException, ParseException {
         FileInputStream fis = new FileInputStream(manifestFile);
         try {
-            BundleInfo parseManifest = parseManifest(fis);
-            return parseManifest;
+            return parseManifest(fis);
         } finally {
             try {
                 fis.close();
@@ -184,7 +185,7 @@ public class ManifestParser {
 
         parseCapability(bundleInfo, mainAttributes, EXPORT_SERVICE, BundleInfo.SERVICE_TYPE);
 
-        // handle Eclipse specific source attachement
+        // handle Eclipse specific source attachment
         String eclipseSourceBundle = mainAttributes.getValue(ECLIPSE_SOURCE_BUNDLE);
         if (eclipseSourceBundle != null) {
             bundleInfo.setSource(true);
@@ -269,8 +270,8 @@ public class ManifestParser {
      * Ensure that the lines are not longer than 72 characters, so it can be parsed by the
      * {@link Manifest} class
      * 
-     * @param manifest
-     * @return
+     * @param manifest ditto
+     * @return String
      */
     public static String formatLines(String manifest) {
         StringBuffer buffer = new StringBuffer(manifest.length());

@@ -144,18 +144,18 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     protected boolean doValidate(ResolveData data) {
         if (validate != null) {
-            return validate.booleanValue();
+            return validate;
         } else {
             return data.isValidate();
         }
     }
 
     public boolean isValidate() {
-        return validate == null ? true : validate.booleanValue();
+        return validate == null || validate;
     }
 
     public void setValidate(boolean validate) {
-        this.validate = Boolean.valueOf(validate);
+        this.validate = validate;
     }
 
     protected void checkInterrupted() {
@@ -377,7 +377,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     }
 
     public void setCheckmodified(boolean check) {
-        checkmodified = Boolean.valueOf(check);
+        checkmodified = check;
     }
 
     public RepositoryCacheManager getRepositoryCacheManager() {
@@ -499,9 +499,10 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
      * Returns true if rmr1 is after rmr2, using the latest strategy to determine which is the
      * latest
      * 
-     * @param rmr1
-     * @param rmr2
-     * @return
+     * @param rmr1 ResolvedModuleRevision
+     * @param rmr2 ResolvedModuleRevision
+     * @param date Date
+     * @return boolean
      */
     protected boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
         ArtifactInfo[] ais = new ArtifactInfo[] {new ResolvedModuleRevisionArtifactInfo(rmr1),

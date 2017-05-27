@@ -91,7 +91,7 @@ public class OBRResolver extends AbstractOSGiResolver {
                     options.setTtl(metadataTtl.longValue());
                 }
                 if (forceMetadataUpdate != null) {
-                    options.setForce(forceMetadataUpdate.booleanValue());
+                    options.setForce(forceMetadataUpdate);
                 }
                 report = getRepositoryCacheManager().downloadRepositoryResource(obrResource, "obr",
                     "obr", "xml", options, getRepository());

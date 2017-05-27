@@ -42,7 +42,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
             } else if ("public".equals(name)) {
                 return PUBLIC;
             } else {
-                throw new IllegalArgumentException("unknwon visibility " + name);
+                throw new IllegalArgumentException("unknown visibility " + name);
             }
         }
 
@@ -203,10 +203,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Configuration)) {
-            return false;
-        }
-        return ((Configuration) obj).getName().equals(getName());
+        return obj instanceof Configuration && ((Configuration) obj).getName().equals(getName());
     }
 
     @Override

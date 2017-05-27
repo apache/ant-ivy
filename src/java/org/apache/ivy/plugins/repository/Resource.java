@@ -47,7 +47,7 @@ public interface Resource {
     /**
      * Get the name of the resource.
      * 
-     * @return the repositorie's assigned resource name/identifier.
+     * @return the repository's assigned resource name/identifier.
      */
     public String getName();
 

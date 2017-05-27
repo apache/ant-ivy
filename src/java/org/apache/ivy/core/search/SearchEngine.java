@@ -52,8 +52,9 @@ public class SearchEngine {
      * Returns an empty array when no token values are found.
      * 
      * @param token
+     *            ditto
      * @param otherTokenValues
-     * @return
+     * @return String[]
      */
     public String[] listTokenValues(String token, Map<String, Object> otherTokenValues) {
         Set<String> entries = new LinkedHashSet<String>();
@@ -177,9 +178,10 @@ public class SearchEngine {
      * ModuleId are returned in the system namespace.
      * </p>
      * 
-     * @param criteria
+     * @param moduleCrit
+     *            ModuleId
      * @param matcher
-     * @return
+     * @return ModuleId[]
      */
     public ModuleId[] listModules(ModuleId moduleCrit, PatternMatcher matcher) {
         List<ModuleId> ret = new ArrayList<ModuleId>();
@@ -213,9 +215,10 @@ public class SearchEngine {
      * ModuleRevisionId are returned in the system namespace.
      * </p>
      * 
-     * @param criteria
+     * @param moduleCrit
+     *            ModuleRevisionId
      * @param matcher
-     * @return
+     * @return ModuleRevisionId[]
      */
     public ModuleRevisionId[] listModules(ModuleRevisionId moduleCrit, PatternMatcher matcher) {
         List<ModuleRevisionId> ret = new ArrayList<ModuleRevisionId>();

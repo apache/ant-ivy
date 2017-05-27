@@ -17,12 +17,16 @@
  */
 package org.apache.ivy.osgi.obr;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -52,11 +56,8 @@ import org.apache.ivy.osgi.repo.AbstractOSGiResolver.RequirementStrategy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class OBRResolverTest {
 
@@ -327,9 +328,8 @@ public class OBRResolverTest {
         assertFalse("resolve failed " + resolveReport.getAllProblemMessages(),
             resolveReport.hasError());
         Set<ModuleRevisionId> actual = new HashSet<ModuleRevisionId>();
-        List<Artifact> artifacts = resolveReport.getArtifacts();
-        for (Artifact artfact : artifacts) {
-            actual.add(artfact.getModuleRevisionId());
+        for (Artifact artifact : resolveReport.getArtifacts()) {
+            actual.add(artifact.getModuleRevisionId());
         }
         Set<ModuleRevisionId> expected = new HashSet<ModuleRevisionId>(Arrays.asList(expectedMrids));
         if (expected2Mrids != null) {
@@ -346,6 +346,7 @@ public class OBRResolverTest {
         assertEquals(expected, actual);
     }
 
+    @SuppressWarnings("resource")
     private void genericTestFailingResolve(String jarName, String conf) throws Exception {
         Manifest manifest = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
                 + jarName)).getManifest();

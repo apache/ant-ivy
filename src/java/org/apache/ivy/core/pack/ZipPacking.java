@@ -18,7 +18,6 @@
 package org.apache.ivy.core.pack;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +82,7 @@ public class ZipPacking extends ArchivePacking {
         }
     }
 
-    protected void writeFile(InputStream zip, File f) throws FileNotFoundException, IOException {
+    protected void writeFile(InputStream zip, File f) throws IOException {
         FileOutputStream out = new FileOutputStream(f);
         try {
             FileUtil.copy(zip, out, null, false);

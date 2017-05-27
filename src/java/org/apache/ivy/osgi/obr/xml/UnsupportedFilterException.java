@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.osgi.obr.xml;
 
+@SuppressWarnings("serial")
 public class UnsupportedFilterException extends Exception {
 
     public UnsupportedFilterException(String message) {

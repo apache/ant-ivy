@@ -151,9 +151,9 @@ public class IvyNodeCallers {
     }
 
     /**
-     * @param rootModuleConf
-     * @param mrid
-     * @param callerConf
+     * @param rootModuleConf ditto
+     * @param callerNode IvyNode
+     * @param callerConf ditto
      * @param dependencyConfs
      *            '*' must have been resolved
      * @param dd
@@ -252,9 +252,9 @@ public class IvyNodeCallers {
     /**
      * Returns true if ALL callers exclude the given artifact in the given root module conf
      * 
-     * @param rootModuleConf
-     * @param artifact
-     * @return
+     * @param rootModuleConf ditto
+     * @param artifact Artifact
+     * @return boolean
      */
     boolean doesCallersExclude(String rootModuleConf, Artifact artifact) {
         return doesCallersExclude(rootModuleConf, artifact, new Stack<ModuleRevisionId>());
@@ -268,7 +268,7 @@ public class IvyNodeCallers {
             if (callers.length == 0) {
                 return false;
             }
-            boolean allUnconclusive = true;
+            boolean allInconclusive = true;
             for (int i = 0; i < callers.length; i++) {
                 if (!callers[i].canExclude()) {
                     return false;
@@ -278,13 +278,13 @@ public class IvyNodeCallers {
                     callers[i].getCallerConfigurations(), callers[i].getDependencyDescriptor(),
                     artifact, callersStack);
                 if (doesExclude != null) {
-                    if (!doesExclude.booleanValue()) {
+                    if (!doesExclude) {
                         return false;
                     }
-                    allUnconclusive = false;
+                    allInconclusive = false;
                 }
             }
-            return allUnconclusive ? false : true;
+            return !allInconclusive;
         } finally {
             callersStack.pop();
         }

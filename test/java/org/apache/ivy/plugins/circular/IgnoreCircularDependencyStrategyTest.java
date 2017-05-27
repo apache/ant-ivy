@@ -17,22 +17,21 @@
  */
 package org.apache.ivy.plugins.circular;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyContext;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLoggerEngine;
 import org.apache.ivy.util.MockMessageLogger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class IgnoreCircularDependencyStrategyTest {
     private CircularDependencyStrategy strategy;
 
     private MockMessageLogger mockMessageImpl;
+
     private MessageLoggerEngine messageLoggerEngine;
 
     @Before

@@ -373,7 +373,7 @@ public class IvyResolve extends IvyTask {
 
                 Boolean hasChanged = null;
                 if (getCheckIfChanged()) {
-                    hasChanged = Boolean.valueOf(report.hasChanged());
+                    hasChanged = report.hasChanged();
                     getProject().setProperty("ivy.deps.changed", hasChanged.toString());
                     settings.setVariable("ivy.deps.changed", hasChanged.toString());
                 }
@@ -471,11 +471,11 @@ public class IvyResolve extends IvyTask {
     }
 
     public boolean isKeep() {
-        return keep == null ? organisation == null : keep.booleanValue();
+        return (keep == null) ? organisation == null : keep;
     }
 
     public void setKeep(boolean keep) {
-        this.keep = Boolean.valueOf(keep);
+        this.keep = keep;
     }
 
     public boolean isInline() {

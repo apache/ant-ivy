@@ -17,6 +17,10 @@
  */
 package org.apache.ivy.osgi.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -30,13 +34,8 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester {
 

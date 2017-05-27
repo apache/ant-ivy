@@ -131,7 +131,7 @@ public class URLRepository extends AbstractRepository {
                 }
                 return ret;
             } else {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
 
         }

@@ -44,7 +44,7 @@ public class IvyDependencyTree extends IvyPostResolveTask {
         ResolveReport report = getResolvedReport();
         log("Dependency tree for " + report.getResolveId());
         ModuleRevisionId mrid = report.getModuleDescriptor().getModuleRevisionId();
-        // make dependency tree easier to fetch informations
+        // make dependency tree easier to fetch information
         for (Iterator iterator = report.getDependencies().iterator(); iterator.hasNext();) {
             IvyNode dependency = (IvyNode) iterator.next();
             populateDependencyTree(dependency, mrid, report);

@@ -79,10 +79,10 @@ public class RetrieveEngine {
     @Deprecated
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
-        RetrieveOptions retieveOptions = new RetrieveOptions(options);
-        retieveOptions.setDestArtifactPattern(destFilePattern);
+        RetrieveOptions retrieveOptions = new RetrieveOptions(options);
+        retrieveOptions.setDestArtifactPattern(destFilePattern);
 
-        RetrieveReport result = retrieve(mrid, retieveOptions);
+        RetrieveReport result = retrieve(mrid, retrieveOptions);
         return result.getNbrArtifactsCopied();
     }
 
@@ -486,7 +486,7 @@ public class RetrieveEngine {
      * The returned comparator should consider greater the artifact which gains the conflict battle.
      * This is used only during retrieve... prefer resolve conflict manager to resolve conflicts.
      * 
-     * @return
+     * @return Comparator&lt;ArtifactDownloadReport&gt;
      */
     private Comparator<ArtifactDownloadReport> getConflictResolvingPolicy() {
         return new Comparator<ArtifactDownloadReport>() {

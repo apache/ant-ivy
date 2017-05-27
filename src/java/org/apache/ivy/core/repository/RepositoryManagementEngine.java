@@ -62,7 +62,7 @@ import org.apache.ivy.util.Message;
  * </p>
  * <p>
  * This engine is not intended to be used concurrently with publish, the order of repository loaded
- * being undeterministic and long, it could end up in having an inconsistent in memory state.
+ * being nondeterministic and long, it could end up in having an inconsistent in memory state.
  * </p>
  * <p>
  * For better performance, we strongly suggest using this engine with cache in useOrigin mode.

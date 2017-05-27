@@ -58,9 +58,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * namespace, because they aren't transformable (the name space hasn't the ability to convert
      * regular expressions). However, method doesExclude will work with system artifacts.</i>
      * 
-     * @param dd
-     * @param ns
-     * @return
+     * @param dd DependencyDescriptor
+     * @param ns Namespace
+     * @return DependencyDescriptor
      */
     public static DependencyDescriptor transformInstance(DependencyDescriptor dd, Namespace ns) {
         NamespaceTransformer t = ns.getToSystemTransformer();
@@ -77,9 +77,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * will be attached to the transformed dependency descriptor, so calling doesExclude is not
      * recommended (doesExclude only works when namespace is properly set)
      * 
-     * @param dd
-     * @param t
-     * @return
+     * @param dd DependencyDescriptor
+     * @param t NamespaceTransformer
+     * @return DefaultDependencyDescriptor
      */
     public static DefaultDependencyDescriptor transformInstance(DependencyDescriptor dd,
             NamespaceTransformer t, boolean fromSystem) {
@@ -607,9 +607,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     /**
-     * Returns true if this descriptor contains any exclusion rule
      * 
-     * @return
+     * @return true if this descriptor contains any exclusion rule
      */
     public boolean canExclude() {
         return excludeRules != null && !excludeRules.isEmpty();

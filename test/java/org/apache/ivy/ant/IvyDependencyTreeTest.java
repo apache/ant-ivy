@@ -21,15 +21,11 @@ import java.io.File;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.testutil.AntTaskTestCase;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.fail;
 
 public class IvyDependencyTreeTest extends AntTaskTestCase {
 

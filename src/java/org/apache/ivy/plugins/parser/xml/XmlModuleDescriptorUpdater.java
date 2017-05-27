@@ -221,7 +221,7 @@ public final class XmlModuleDescriptorUpdater {
             if (options.getConfsToExclude() != null) {
                 this.confs = Arrays.asList(options.getConfsToExclude());
             } else {
-                this.confs = Collections.EMPTY_LIST;
+                this.confs = Collections.emptyList();
             }
         }
 
@@ -920,7 +920,9 @@ public final class XmlModuleDescriptorUpdater {
             }
         }
 
-        /** get the whitespace that should precede new elements at the current depth in the document */
+        /**
+         * get the whitespace that should precede new elements at the current depth in the document
+         */
         private String getIndent() {
             int level = context.size() - 1;
             fillIndents(level);
@@ -1279,11 +1281,11 @@ public final class XmlModuleDescriptorUpdater {
             if (print == null) {
                 return defaultPrint;
             }
-            return print.booleanValue();
+            return print;
         }
 
         void setPrint(boolean print) {
-            this.print = Boolean.valueOf(print);
+            this.print = print;
         }
 
         void setDefaultPrint(boolean print) {

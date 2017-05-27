@@ -17,13 +17,12 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.regex.PatternSyntaxException;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @see RegexpPatternMatcher

@@ -112,9 +112,9 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     /**
      * Returns true if
      * 
-     * @param moduleConfigurations
-     * @param artifactId
-     * @return
+     * @param moduleConfigurations ditto
+     * @param artifactId ditto
+     * @return boolean
      */
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
 

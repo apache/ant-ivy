@@ -80,7 +80,7 @@ public class BundleInfoAdapter {
      * 
      * @param baseUri
      *            uri to help build the absolute url if the bundle info has a relative uri.
-     * @return
+     * @return DefaultModuleDescriptor ditto
      * @throws ProfileNotFoundException
      */
     public static DefaultModuleDescriptor toModuleDescriptor(ModuleDescriptorParser parser,
@@ -249,7 +249,7 @@ public class BundleInfoAdapter {
         try {
             return new URI(builder.toString());
         } catch (URISyntaxException e) {
-            throw new RuntimeException("illformed ivy url", e);
+            throw new RuntimeException("ill-formed ivy url", e);
         }
     }
 
@@ -301,8 +301,7 @@ public class BundleInfoAdapter {
         }
 
         ModuleRevisionId amrid = ModuleRevisionId.newInstance(org, name, branch, rev);
-        DefaultArtifact artifact = new DefaultArtifact(amrid, null, art, type, ext);
-        return artifact;
+        return new DefaultArtifact(amrid, null, art, type, ext);
     }
 
     private static void requirementAsDependency(DefaultModuleDescriptor md, BundleInfo bundleInfo,
@@ -360,6 +359,7 @@ public class BundleInfoAdapter {
         return ModuleRevisionId.newInstance(type, name, revision);
     }
 
+    @SuppressWarnings("serial")
     public static class ProfileNotFoundException extends RuntimeException {
 
         public ProfileNotFoundException(String msg) {

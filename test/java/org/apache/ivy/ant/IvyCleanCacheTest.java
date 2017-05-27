@@ -17,22 +17,18 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class IvyCleanCacheTest {
     private IvyCleanCache cleanCache;

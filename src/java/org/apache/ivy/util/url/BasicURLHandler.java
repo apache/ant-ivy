@@ -29,7 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;

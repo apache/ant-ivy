@@ -54,7 +54,7 @@ public final class FilterHelper {
     }
 
     /**
-     * Returns a new collection containing only the items from the given collectoin, which are
+     * Returns a new collection containing only the items from the given collection, which are
      * accepted by the filter.
      * 
      * @param col
@@ -63,9 +63,9 @@ public final class FilterHelper {
      *            The filter to use.
      * @return A new collection instance containing the only the instance accepted by the filter.
      * 
-     * <br />
-     *         Comment: We could have used <a
-     *         href="http://jakarta.apache.org/commons/collections/">Commons-Collections</a>
+     *         <br />
+     *         Comment: We could have used
+     *         <a href="http://jakarta.apache.org/commons/collections/">Commons-Collections</a>
      *         facility for this. If we accepted to add dependencies on third party jars.
      */
     public static <T> Collection<T> filter(Collection<T> col, Filter<T> filter) {

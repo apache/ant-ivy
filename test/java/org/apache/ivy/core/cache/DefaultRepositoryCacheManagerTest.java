@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.core.cache;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,14 +48,10 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @see DefaultResolutionCacheManager
@@ -60,8 +59,11 @@ import static org.junit.Assert.assertTrue;
 public class DefaultRepositoryCacheManagerTest {
 
     private DefaultRepositoryCacheManager cacheManager;
+
     private Artifact artifact;
+
     private ArtifactOrigin origin;
+
     private Ivy ivy;
 
     @Before
@@ -145,7 +147,7 @@ public class DefaultRepositoryCacheManagerTest {
 
         // and a latest.integration mrid/dd
         ModuleRevisionId mridLatest = new ModuleRevisionId(mi, "trunk", "latest.integration");
-        DependencyDescriptor ddLatest = new DefaultDependencyDescriptor(mridLatest,  false);
+        DependencyDescriptor ddLatest = new DefaultDependencyDescriptor(mridLatest, false);
 
         // and some random options
         CacheMetadataOptions options = new CacheMetadataOptions().setCheckTTL(false);
@@ -175,8 +177,8 @@ public class DefaultRepositoryCacheManagerTest {
 
         // latest.integration will resolve to 1.1 in resolver1
         ModuleRevisionId mrid11 = new ModuleRevisionId(mi, "trunk", "1.1");
-        DependencyDescriptor dd11 = new DefaultDependencyDescriptor(mrid11,  false);
         DefaultArtifact artifact11 = new DefaultArtifact(mrid11, new Date(), "module-1.1.ivy", "ivy", "ivy", true);
+        DependencyDescriptor dd11 = new DefaultDependencyDescriptor(mrid11, false);
         BasicResource resource11 = new BasicResource("/module-1-1.ivy", true, 1, 0, true);
         ResolvedResource mdRef11 = new ResolvedResource(resource11, "1.1");
 

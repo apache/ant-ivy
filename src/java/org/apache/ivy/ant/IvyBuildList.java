@@ -350,12 +350,12 @@ public class IvyBuildList extends IvyTask {
     }
 
     /**
-     * Returns a collection of ModuleDescriptors that are conatined in the input collection of
+     * Returns a collection of ModuleDescriptors that are contained in the input collection of
      * ModuleDescriptors and upon which the root module depends
      * 
      * @param mds
      *            input collection of ModuleDescriptors
-     * @param rootmd
+     * @param rootmds
      *            root module
      * @return filtered list of modules
      */
@@ -421,12 +421,12 @@ public class IvyBuildList extends IvyTask {
     }
 
     /**
-     * Returns a collection of ModuleDescriptors that are conatined in the input collection of
+     * Returns a collection of ModuleDescriptors that are contained in the input collection of
      * ModuleDescriptors which depends on the leaf module
      * 
      * @param mds
      *            input collection of ModuleDescriptors
-     * @param leafmd
+     * @param leafmds
      *            leaf module
      * @return filtered list of modules
      */

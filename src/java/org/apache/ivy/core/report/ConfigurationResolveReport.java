@@ -83,8 +83,6 @@ public class ConfigurationResolveReport {
      * the new report is serialized there.</br> This function also use the internal dependencies
      * that must already be filled. This function might be 'heavy' because it may have to parse the
      * previous report.
-     * 
-     * @return
      */
     public void checkIfChanged() {
         ResolutionCacheManager cache = resolveEngine.getSettings().getResolutionCacheManager();
@@ -98,7 +96,7 @@ public class ConfigurationResolveReport {
                         .getDependencyRevisionIds());
                 HashSet<ModuleRevisionId> previousDepSet = new HashSet<ModuleRevisionId>(
                         previousDeps);
-                hasChanged = Boolean.valueOf(!previousDepSet.equals(getModuleRevisionIds()));
+                hasChanged = !previousDepSet.equals(getModuleRevisionIds());
             } catch (Exception e) {
                 Message.warn("Error while parsing configuration resolve report "
                         + previousReportFile.getAbsolutePath(), e);
@@ -113,7 +111,7 @@ public class ConfigurationResolveReport {
      * @pre checkIfChanged has been called.
      */
     public boolean hasChanged() {
-        return hasChanged.booleanValue();
+        return hasChanged;
     }
 
     /**
@@ -292,7 +290,7 @@ public class ConfigurationResolveReport {
      * specific download status, and also remove the download report for the evicted modules.
      * 
      * @param downloadStatus
-     *            the status of download to retreive. Set it to <code>null</code> for no restriction
+     *            the status of download to retrieve. Set it to <code>null</code> for no restriction
      *            on the download status
      * @param withEvicted
      *            set it to <code>true</code> if the report for the evicted modules have to be
@@ -322,7 +320,7 @@ public class ConfigurationResolveReport {
     }
 
     /**
-     * Get the report on the sucessfull download requests with the evicted modules
+     * Get the report on the successful download requests with the evicted modules
      * 
      * @return the list of reports, never <code>null</code>
      */

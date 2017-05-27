@@ -173,8 +173,8 @@ public class IvyExtractFromSources extends Task {
     }
 
     /**
-     * @param pack
-     * @return
+     * @param pack String
+     * @return ModuleRevisionId
      */
     private ModuleRevisionId getMapping(String pack) {
         String askedPack = pack;

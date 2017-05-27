@@ -75,7 +75,7 @@ public final class ChecksumHelper {
      * @param algorithm
      *            the checksum algorithm to use
      * @throws IOException
-     *             if an IO problem occur whle reading files or if the checksum is not compliant
+     *             if an IO problem occur while reading files or if the checksum is not compliant
      */
     public static void check(File dest, File checksumFile, String algorithm) throws IOException {
         String csFileContent = FileUtil

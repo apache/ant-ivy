@@ -275,6 +275,7 @@ public class Scp {
         fileInfo.setLastModified(modtime);
     }
 
+    @SuppressWarnings("resource")
     private void sendFile(Channel channel, String localFile, String remoteName, String mode)
             throws IOException, RemoteScpException {
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -354,7 +355,7 @@ public class Scp {
      *            ssh channel to use
      * @param file
      *            to receive from remote
-     * @param target
+     * @param targetStream
      *            to store file into (if null, get only file info)
      * @return file information of the file we received
      * @throws IOException
@@ -450,7 +451,7 @@ public class Scp {
     }
 
     /**
-     * @return
+     * @return ChannelExec
      * @throws JSchException
      */
     private ChannelExec getExecChannel() throws JSchException {
@@ -476,6 +477,7 @@ public class Scp {
      * @throws RemoteScpException
      *             in case of problems on the target system (connection ok)
      */
+    @SuppressWarnings("unused")
     public void put(String localFile, String remoteTargetDir, String remoteTargetName, String mode)
             throws IOException, RemoteScpException {
         ChannelExec channel = null;
@@ -550,6 +552,7 @@ public class Scp {
      */
     public void get(String remoteFile, OutputStream localTarget) throws IOException,
             RemoteScpException {
+    @SuppressWarnings("unused")
         ChannelExec channel = null;
 
         if ((remoteFile == null) || (localTarget == null)) {

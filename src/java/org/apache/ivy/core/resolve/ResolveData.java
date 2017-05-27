@@ -171,7 +171,7 @@ public class ResolveData {
      * Sets the currently visited node. WARNING: This should only be called by Ivy core
      * ResolveEngine!
      * 
-     * @param currentVisitNode
+     * @param currentVisitNode VisitNode
      */
     void setCurrentVisitNode(VisitNode currentVisitNode) {
         this.currentVisitNode = currentVisitNode;
@@ -217,7 +217,7 @@ public class ResolveData {
         }
         // replace visit data in Map (discards old one)
         this.visitData.put(mrid, keptVisitData);
-        // update visit data with discarde visit nodes
+        // update visit data with discarded visit nodes
         keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
 
         report.updateDependency(mrid, node);
@@ -299,7 +299,7 @@ public class ResolveData {
             // mediating dd through dependers stack
             List<VisitNode> dependers = new ArrayList<VisitNode>(current.getPath());
             // the returned path contains the currently visited node, we are only interested in
-            // the dependers, so we remove the currently visted node from the end
+            // the dependers, so we remove the currently visited node from the end
             dependers.remove(dependers.size() - 1);
             // we want to apply mediation going up in the dependers stack, not the opposite
             Collections.reverse(dependers);

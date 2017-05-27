@@ -69,7 +69,7 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
             if (exact == null) {
                 exact = calculateExact();
             }
-            return exact.booleanValue();
+            return exact;
         }
 
         private Boolean calculateExact() {

@@ -52,7 +52,7 @@ public class ApacheURLLister {
      *            The base URL from which to retrieve the listing.
      * @return a list of sub urls of the given url.
      * @throws IOException
-     *             If an error occures retrieving the HTML.
+     *             If an error occurs retrieving the HTML.
      */
     public List<URL> listAll(URL url) throws IOException {
         return retrieveListing(url, true, true);
@@ -65,7 +65,7 @@ public class ApacheURLLister {
      *            The base URL from which to retrieve the listing.
      * @return a list of sub 'directories' of the given url.
      * @throws IOException
-     *             If an error occures retrieving the HTML.
+     *             If an error occurs retrieving the HTML.
      */
     public List<URL> listDirectories(URL url) throws IOException {
         return retrieveListing(url, false, true);
@@ -79,7 +79,7 @@ public class ApacheURLLister {
      *            The base URL from which to retrieve the listing.
      * @return a list of sub 'files' of the given url.
      * @throws IOException
-     *             If an error occures retrieving the HTML.
+     *             If an error occurs retrieving the HTML.
      */
     public List<URL> listFiles(URL url) throws IOException {
         return retrieveListing(url, true, false);
@@ -97,7 +97,7 @@ public class ApacheURLLister {
      *            If true include directories in the returned list.
      * @return A {@link List} of {@link URL}s.
      * @throws IOException
-     *             If an error occures retrieving the HTML.
+     *             If an error occurs retrieving the HTML.
      */
     public List<URL> retrieveListing(URL url, boolean includeFiles, boolean includeDirectories)
             throws IOException {

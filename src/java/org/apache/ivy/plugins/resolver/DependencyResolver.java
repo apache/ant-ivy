@@ -149,7 +149,7 @@ public interface DependencyResolver {
     /**
      * Reports last artifact download failure as Messages
      * 
-     * @param art
+     * @param art Artifact
      */
     void reportFailure(Artifact art);
 

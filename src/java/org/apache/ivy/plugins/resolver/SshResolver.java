@@ -54,7 +54,7 @@ public class SshResolver extends AbstractSshBasedResolver {
     /**
      * set the command to get a directory listing the command has to be a shell command working on
      * the target system and has to produce a listing of filenames, with each filename on a new line
-     * the term %arg can be used in the command to substitue the path to be listed (e.g.
+     * the term %arg can be used in the command to substitute the path to be listed (e.g.
      * "ls -1 %arg | grep -v CVS" to get a listing without CVS directory) if %arg is not part of the
      * command, the path will be appended to the command default is: "ls -1"
      */
@@ -66,7 +66,7 @@ public class SshResolver extends AbstractSshBasedResolver {
      * set the command to check for existence of a file the command has to be a shell command
      * working on the target system and has to create an exit status of 0 for an existent file and
      * <> 0 for a non existing file given as argument the term %arg can be used in the command to
-     * substitue the path to be listed if %arg is not part of the command, the path will be appended
+     * substitute the path to be listed if %arg is not part of the command, the path will be appended
      * to the command default is: "ls"
      */
     public void setExistCommand(String cmd) {
@@ -76,7 +76,7 @@ public class SshResolver extends AbstractSshBasedResolver {
     /**
      * set the command to create a directory on the target system the command has to be a shell
      * command working on the target system and has to create a directory with the given argument
-     * the term %arg can be used in the command to substitue the path to be listed if %arg is not
+     * the term %arg can be used in the command to substitute the path to be listed if %arg is not
      * part of the command, the path will be appended to the command default is: "mkdir"
      */
     public void setCreateDirCommand(String cmd) {

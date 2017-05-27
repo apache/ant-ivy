@@ -231,17 +231,11 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         }
         ModuleRevisionId other = (ModuleRevisionId) obj;
 
-        if (!other.getRevision().equals(getRevision())) {
-            return false;
-        } else if (other.getBranch() == null && getBranch() != null) {
-            return false;
-        } else if (other.getBranch() != null && !other.getBranch().equals(getBranch())) {
-            return false;
-        } else if (!other.getModuleId().equals(getModuleId())) {
-            return false;
-        } else {
-            return other.getQualifiedExtraAttributes().equals(getQualifiedExtraAttributes());
-        }
+        return other.getRevision().equals(getRevision())
+                && !(other.getBranch() == null && getBranch() != null)
+                && !(other.getBranch() != null && !other.getBranch().equals(getBranch()))
+                && other.getModuleId().equals(getModuleId())
+                && other.getQualifiedExtraAttributes().equals(getQualifiedExtraAttributes());
     }
 
     @Override
@@ -337,7 +331,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static String normalizeRevision(String revision) {
         if (revision.startsWith("[") && revision.endsWith("]") && revision.indexOf(',') == -1) {
             if (IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY).equals(revision)) {
-                // this is the case when listing dynamic revions
+                // this is the case when listing dynamic revisions
                 return revision;
             }
 

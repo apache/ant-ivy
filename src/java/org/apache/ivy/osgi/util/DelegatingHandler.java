@@ -267,7 +267,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
                 if (childHandler != null) {
                     skipOnError(new SkipOnErrorCallback() {
                         public void call() throws SAXException {
-                            childHandler._childHanlded(savedDelegate);
+                            childHandler._childHandled(savedDelegate);
                         }
                     });
                 }
@@ -292,12 +292,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
 
     public static abstract class ChildElementHandler<DH extends DelegatingHandler> {
 
-        public abstract void childHanlded(DH child) throws SAXParseException;
+        public abstract void childHandled(DH child) throws SAXParseException;
 
         // because we know what we're doing
         @SuppressWarnings("unchecked")
-        private void _childHanlded(DelegatingHandler delegate) throws SAXParseException {
-            childHanlded((DH) delegate);
+        private void _childHandled(DelegatingHandler delegate) throws SAXParseException {
+            childHandled((DH) delegate);
         }
 
     }
@@ -539,6 +539,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         return "[line " + locator.getLineNumber() + " col. " + locator.getColumnNumber() + "] ";
     }
 
+    @SuppressWarnings("unused")
     private void skipOnError(DelegatingHandler currentHandler,
             Class<? extends DelegatingHandler> handlerClassToSkip, String message) {
         DelegatingHandler handlerToSkip = currentHandler;
@@ -628,7 +629,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         if (value == null) {
             return defaultValue;
         }
-        return Boolean.valueOf(parseBoolean(name, value));
+        return parseBoolean(name, value);
     }
 
     static final String TRUE = Boolean.TRUE.toString().toLowerCase(Locale.US);

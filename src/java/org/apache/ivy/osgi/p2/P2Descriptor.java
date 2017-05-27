@@ -136,8 +136,6 @@ public class P2Descriptor extends EditableRepoDescriptor {
             }
         }
 
-        BundleArtifact best = artifact;
-
         if (same != null) {
             // we have two artifacts for the same bundle, let's choose a "packed" one
             if (artifact.getFormat() == null || same.getFormat() != null) {
@@ -147,6 +145,6 @@ public class P2Descriptor extends EditableRepoDescriptor {
             bundle.removeArtifact(same);
         }
 
-        bundle.addArtifact(best);
+        bundle.addArtifact(artifact);
     }
 }

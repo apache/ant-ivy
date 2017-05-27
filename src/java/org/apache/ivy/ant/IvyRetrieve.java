@@ -225,7 +225,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         // checks if the basePath ends with the file separator (which can for instance
         // happen if the basePath is the root on unix)
         if (!absoluteBasePath.endsWith(File.separator)) {
-            beginIndex++; // skip the seperator char as well
+            beginIndex++; // skip the separator char as well
         }
 
         return file.getAbsolutePath().substring(beginIndex);

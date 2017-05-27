@@ -86,16 +86,15 @@ public final class IvyPatternHelper {
     }
 
     public static String substitute(String pattern, Artifact artifact, ArtifactOrigin origin) {
-        return substitute(pattern, artifact.getModuleRevisionId(), artifact, (String) null, origin);
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, null, origin);
     }
 
     public static String substitute(String pattern, Artifact artifact, String conf) {
-        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf,
-            (ArtifactOrigin) null);
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf, null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact) {
-        return substitute(pattern, mrid, artifact, (String) null, (ArtifactOrigin) null);
+        return substitute(pattern, mrid, artifact, null, null);
     }
 
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact,
@@ -107,22 +106,22 @@ public final class IvyPatternHelper {
 
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext) {
-        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext,
-            (String) null, (ArtifactOrigin) null, (Map) null, (Map) null);
+        return substitute(pattern, org, module, null, revision, artifact, type, ext,
+                null, null, null, null);
     }
 
     // CheckStyle:ParameterNumber OFF
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext, String conf) {
-        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf,
-            (ArtifactOrigin) null, (Map) null, (Map) null);
+        return substitute(pattern, org, module, null, revision, artifact, type, ext, conf,
+                null, null, null);
     }
 
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext, String conf, Map extraModuleAttributes,
             Map extraArtifactAttributes) {
-        return substitute(pattern, org, module, (String) null, revision, artifact, type, ext, conf,
-            (ArtifactOrigin) null, extraModuleAttributes, extraArtifactAttributes);
+        return substitute(pattern, org, module, null, revision, artifact, type, ext, conf,
+                null, extraModuleAttributes, extraArtifactAttributes);
     }
 
     public static String substitute(String pattern, String org, String module, String branch,
@@ -450,7 +449,7 @@ public final class IvyPatternHelper {
         }
 
         /**
-         * @param origin
+         * @param origin ArtifactOrigin
          */
         public OriginalArtifactNameValue(ArtifactOrigin origin) {
             this.origin = origin;

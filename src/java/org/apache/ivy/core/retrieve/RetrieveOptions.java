@@ -67,7 +67,7 @@ public class RetrieveOptions extends LogOptions {
     private String overwriteMode = OVERWRITEMODE_NEWER;
 
     /**
-     * True if the original files should be used insteaad of their cache copy.
+     * True if the original files should be used instead of their cache copy.
      */
     private boolean useOrigin = false;
 

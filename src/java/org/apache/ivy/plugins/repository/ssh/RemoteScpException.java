@@ -19,7 +19,7 @@ package org.apache.ivy.plugins.repository.ssh;
 
 /**
  * This exception will be used for Remote SCP Exceptions (failures on the target system, no
- * connetion probs)
+ * connection probs)
  */
 public class RemoteScpException extends Exception {
 
@@ -29,22 +29,22 @@ public class RemoteScpException extends Exception {
     }
 
     /**
-     * @param message
+     * @param message ditto
      */
     public RemoteScpException(String message) {
         super(message);
     }
 
     /**
-     * @param cause
+     * @param cause Throwable
      */
     public RemoteScpException(Throwable cause) {
         super(cause);
     }
 
     /**
-     * @param message
-     * @param cause
+     * @param message ditto
+     * @param cause Throwable
      */
     public RemoteScpException(String message, Throwable cause) {
         super(message, cause);

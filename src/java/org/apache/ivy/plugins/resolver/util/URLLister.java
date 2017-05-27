@@ -26,8 +26,8 @@ public interface URLLister {
      * Indicates if this lister is able to list urls with the given pattern. In general, only
      * protocol is used.
      * 
-     * @param pattern
-     * @return
+     * @param pattern ditto
+     * @return boolean
      */
     boolean accept(String pattern);
 

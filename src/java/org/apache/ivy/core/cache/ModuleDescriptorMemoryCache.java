@@ -42,7 +42,7 @@ class ModuleDescriptorMemoryCache {
     /**
      * Create a cache of the given size
      * 
-     * @param size
+     * @param size int
      */
     public ModuleDescriptorMemoryCache(int size) {
         this.maxSize = size;
@@ -73,7 +73,7 @@ class ModuleDescriptorMemoryCache {
 
     ModuleDescriptor getFromCache(File ivyFile, ParserSettings ivySettings, boolean validated) {
         if (maxSize <= 0) {
-            // cache is disbaled
+            // cache is disabled
             return null;
         }
         CacheEntry entry = (CacheEntry) valueMap.get(ivyFile);

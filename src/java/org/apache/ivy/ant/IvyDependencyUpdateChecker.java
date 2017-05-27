@@ -101,9 +101,8 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 if (originalDependency.getModuleId().equals(latest.getModuleId())) {
                     if (!originalDependency.getResolvedId().getRevision()
                             .equals(latest.getResolvedId().getRevision())) {
-                        // is this dependency a transitive dependency ? or direct dependency
-                        // (unfortunatly
-                        // .isTranstive() methods doesn't have the same meaning)
+                        // is this dependency a transitive or a direct dependency?
+                        // (unfortunately .isTransitive() methods do not have the same meaning)
                         boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
                                 .getRoot()) == null;
                         if ((!isTransitiveDependency) || (isTransitiveDependency && showTransitive)) {

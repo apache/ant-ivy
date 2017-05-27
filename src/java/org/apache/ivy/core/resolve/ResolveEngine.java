@@ -495,12 +495,8 @@ public class ResolveEngine {
      * 
      * @param ivySource
      *            url of the ivy file to use for dependency resolving
-     * @param confs
-     *            an array of configuration names to resolve - must not be null nor empty
-     * @param getCache
-     *            the cache to use - default cache is used if null
-     * @param date
-     *            the date to which resolution must be done - may be null
+     * @param options
+     *            ditto
      * @return an array of the resolved dependencies
      * @throws ParseException
      *             if a parsing problem occurred in the ivy file
@@ -610,7 +606,7 @@ public class ResolveEngine {
                 }
             }
 
-            // prune and reverse sort fectched dependencies
+            // prune and reverse sort fetched dependencies
             Collection<IvyNode> nodes = data.getNodes();
             // use a Set to avoid duplicates, linked to preserve order
             Collection<IvyNode> dependencies = new LinkedHashSet<IvyNode>(nodes.size());
@@ -623,7 +619,7 @@ public class ResolveEngine {
                 SortOptions.SILENT);
             Collections.reverse(sortedDependencies);
 
-            handleTransiviteEviction(md, confs, data, sortedDependencies);
+            handleTransitiveEviction(md, confs, data, sortedDependencies);
 
             return dependencies.toArray(new IvyNode[dependencies.size()]);
         } finally {
@@ -631,8 +627,8 @@ public class ResolveEngine {
         }
     }
 
-    private void handleTransiviteEviction(ModuleDescriptor md, String[] confs, ResolveData data,
-            List<IvyNode> sortedDependencies) {
+    private void handleTransitiveEviction(ModuleDescriptor md, String[] confs, ResolveData data,
+                                          List<IvyNode> sortedDependencies) {
         // handle transitive eviction now:
         // if a module has been evicted then all its dependencies required only by it should be
         // evicted too. Since nodes are now sorted from the more dependent to the less one, we
@@ -811,7 +807,7 @@ public class ResolveEngine {
             }
             markDependenciesFetched(node.getNode(), conf);
         }
-        // we have finiched with this configuration, if it was the original requested conf
+        // we have finished with this configuration, if it was the original requested conf
         // we can clean it now
         if (requestedConfSet) {
             node.setRequestedConf(null);
@@ -840,9 +836,8 @@ public class ResolveEngine {
 
     private String getDependenciesFetchedKey(IvyNode node, String conf) {
         ModuleRevisionId moduleRevisionId = node.getResolvedId();
-        String key = moduleRevisionId.getOrganisation() + "|" + moduleRevisionId.getName() + "|"
+        return moduleRevisionId.getOrganisation() + "|" + moduleRevisionId.getName() + "|"
                 + moduleRevisionId.getRevision() + "|" + conf;
-        return key;
     }
 
     private void resolveConflict(VisitNode node, String conf) {

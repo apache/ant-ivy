@@ -54,7 +54,7 @@ public final class ConfigurationUtils {
      *            the configurations, can contain wildcards
      * @param md
      *            the configurations where the wildcards are replaced
-     * @return
+     * @return configurations
      */
     public static String[] replaceWildcards(String[] confs, ModuleDescriptor md) {
         if (confs == null) {

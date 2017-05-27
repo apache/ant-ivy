@@ -80,8 +80,8 @@ public class VfsResource implements Resource {
     }
 
     /**
-     * Get a list of direct descendents of the given resource. Note that attempts to get a list of
-     * children does <emphasize>not</emphasize> result in an error. Instead an error message is
+     * Get a list of direct descendants of the given resource. Note that attempts to get a list of
+     * children does <em>not</em> result in an error. Instead an error message is
      * logged and an empty ArrayList returned.
      * 
      * @return A <code>ArrayList</code> of VFSResources
@@ -127,7 +127,7 @@ public class VfsResource implements Resource {
      * The VFS FileName getURI method seems to have a bug in it where file: URIs will have 4 forward
      * slashes instead of 3.
      * 
-     * @param vfsURI
+     * @param vfsURI ditto
      * @return a normalized <class>String</class> representing the VFS URI
      */
     public static String normalize(String vfsURI) {
@@ -185,9 +185,9 @@ public class VfsResource implements Resource {
             return resourceImpl.exists();
             // originally I only checked for a FileSystemException. I expanded it to
             // include all exceptions when I found it would throw a NPE exception when the query was
-            // run on non-wellformed VFS URI.
+            // run on ill-formed VFS URI.
         } catch (Exception e) {
-            Message.verbose("Fail to check the existance of the resource " + getName(), e);
+            Message.verbose("Fail to check the existence of the resource " + getName(), e);
             return false;
         }
     }

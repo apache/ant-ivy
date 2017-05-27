@@ -324,6 +324,7 @@ public class IvyContext {
      * @param value
      *            value to be saved under the key
      */
+    @SuppressWarnings("unchecked")
     public void push(String key, Object value) {
         synchronized (contextMap) {
             if (!contextMap.containsKey(key)) {

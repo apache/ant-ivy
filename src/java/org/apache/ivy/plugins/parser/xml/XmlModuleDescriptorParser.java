@@ -100,13 +100,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     /**
-     * @param settings
+     * @param ivySettings ParserSettings
      * @param xmlURL
      *            the url pointing to the file to parse
      * @param res
      *            the real resource to parse, used for log only
-     * @param validate
-     * @return
+     * @param validate boolean
+     * @return ModuleDescriptor
      * @throws ParseException
      * @throws IOException
      */
@@ -412,7 +412,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * <li>ask repositories to retrieve the parent module descriptor</li>
          * </ul>
          * 
-         * @param attributes
+         * @param attributes Attributes
          * @throws ParseException
          */
         protected void extendsStarted(Attributes attributes) throws ParseException {
@@ -523,7 +523,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * Merge everything from a given parent
          * 
          * @param parent
-         *            a given parent module desciptor
+         *            a given parent module descriptor
          */
         protected void mergeAll(ModuleDescriptor parent) {
             mergeInfo(parent);
@@ -535,10 +535,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         /**
-         * Explain how to inherit metadatas related to info element
+         * Explain how to inherit metadata related to info element
          * 
          * @param parent
-         *            a given parent module decriptor
+         *            a given parent module descriptor
          */
         protected void mergeInfo(ModuleDescriptor parent) {
             ModuleRevisionId parentMrid = parent.getModuleRevisionId();
@@ -590,10 +590,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         /**
          * Describes how to merge configurations elements
          * 
-         * @param sourceMrid
-         *            the source module revision id
-         * @param configurations
-         *            array of configurations to be inherited
+         * @param parent
+         *            the module descriptor
          */
         protected void mergeConfigurations(ModuleDescriptor parent) {
             ModuleRevisionId sourceMrid = parent.getModuleRevisionId();
@@ -849,14 +847,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     String visibility = settings.substitute(attributes.getValue("visibility"));
                     String ext = settings.substitute(attributes.getValue("extends"));
                     String transitiveValue = attributes.getValue("transitive");
-                    boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(
-                        attributes.getValue("transitive")).booleanValue();
+                    boolean transitive = (transitiveValue == null) ? true
+                            : Boolean.valueOf(attributes.getValue("transitive"));
                     String deprecated = attributes.getValue("deprecated");
                     Configuration configuration = new Configuration(conf,
-                            Configuration.Visibility.getVisibility(visibility == null ? "public"
-                                    : visibility), settings.substitute(attributes
-                                    .getValue("description")), ext == null ? null : ext.split(","),
-                            transitive, deprecated);
+                            Configuration.Visibility.getVisibility((visibility == null) ? "public"
+                                    : visibility), settings.substitute(attributes.getValue("description")),
+                                    (ext == null) ? null : ext.split(","), transitive, deprecated);
                     ExtendableItemHelper.fillExtraAttributes(settings, configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive", "description",
                                 "deprecated"});
@@ -903,14 +900,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             if (org == null) {
                 org = getMd().getModuleRevisionId().getOrganisation();
             }
-            boolean force = Boolean.valueOf(settings.substitute(attributes.getValue("force")))
-                    .booleanValue();
-            boolean changing = Boolean
-                    .valueOf(settings.substitute(attributes.getValue("changing"))).booleanValue();
+            boolean force = Boolean.valueOf(settings.substitute(attributes.getValue("force")));
+            boolean changing = Boolean.valueOf(settings.substitute(attributes.getValue("changing")));
 
             String transitiveValue = settings.substitute(attributes.getValue("transitive"));
-            boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(
-                attributes.getValue("transitive")).booleanValue();
+            boolean transitive = (transitiveValue == null) ? true
+                    : Boolean.valueOf(attributes.getValue("transitive"));
 
             String name = settings.substitute(attributes.getValue("name"));
             String branch = settings.substitute(attributes.getValue("branch"));
@@ -1008,7 +1003,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String confMappingOverride = settings.substitute(attributes
                     .getValue("confmappingoverride"));
             if (confMappingOverride != null) {
-                getMd().setMappingOverride(Boolean.valueOf(confMappingOverride).booleanValue());
+                getMd().setMappingOverride(Boolean.valueOf(confMappingOverride));
             }
             checkConfigurations();
         }
@@ -1018,8 +1013,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             setDefaultConfMapping(settings.substitute(attributes.getValue("defaultconfmapping")));
             setDefaultConf(settings.substitute(attributes.getValue("defaultconf")));
             getMd().setMappingOverride(
-                Boolean.valueOf(settings.substitute(attributes.getValue("confmappingoverride")))
-                        .booleanValue());
+                    Boolean.valueOf(settings.substitute(attributes.getValue("confmappingoverride"))));
         }
 
         protected void infoStarted(Attributes attributes) {
@@ -1053,7 +1047,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             getMd().setStatus(
                 status == null ? settings.getStatusManager().getDefaultStatus() : status);
             getMd().setDefault(
-                Boolean.valueOf(settings.substitute(attributes.getValue("default"))).booleanValue());
+                    Boolean.valueOf(settings.substitute(attributes.getValue("default"))));
             String pubDate = settings.substitute(attributes.getValue("publication"));
             if (pubDate != null && pubDate.length() > 0) {
                 try {
@@ -1271,7 +1265,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     buffer.deleteCharAt(buffer.length() - 1);
                     buffer.append("/>");
                 } else {
-                    buffer.append("</" + qName + ">");
+                    buffer.append("</").append(qName).append(">");
                 }
             }
         }

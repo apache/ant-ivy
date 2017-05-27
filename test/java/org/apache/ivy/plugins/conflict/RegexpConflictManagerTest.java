@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.conflict;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.apache.ivy.Ivy;
@@ -27,9 +29,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class RegexpConflictManagerTest {
     private Ivy ivy;

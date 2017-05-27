@@ -116,7 +116,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, ResolverSettings,
         ResolveEngineSettings, RetrieveEngineSettings, RepositoryManagementEngineSettings {
-    private static final long INTERUPT_TIMEOUT = 2000;
+    private static final long INTERRUPT_TIMEOUT = 2000;
 
     private Map<String, Class<?>> typeDefs = new HashMap<String, Class<?>>();
 
@@ -642,7 +642,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Returns the variables loaded in configuration file. Those variables may better be seen as ant
      * properties
      * 
-     * @return
+     * @return IvyVariableContainer
      */
     public synchronized IvyVariableContainer getVariables() {
         return variableContainer;
@@ -1212,7 +1212,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Filters the names list by removing all names that should be ignored as defined by the listing
      * ignore list
      * 
-     * @param names
+     * @param names ditto
      */
     public synchronized void filterIgnore(Collection<String> names) {
         names.removeAll(listingIgnore);
@@ -1325,42 +1325,42 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public synchronized boolean logModulesInUse() {
         String var = getVariable("ivy.log.modules.in.use");
-        return var == null || Boolean.valueOf(var).booleanValue();
+        return var == null || Boolean.valueOf(var);
     }
 
     public synchronized boolean logModuleWhenFound() {
         String var = getVariable("ivy.log.module.when.found");
-        return var == null || Boolean.valueOf(var).booleanValue();
+        return var == null || Boolean.valueOf(var);
     }
 
     public synchronized boolean logResolvedRevision() {
         String var = getVariable("ivy.log.resolved.revision");
-        return var == null || Boolean.valueOf(var).booleanValue();
+        return var == null || Boolean.valueOf(var);
     }
 
     public synchronized boolean debugConflictResolution() {
         if (debugConflictResolution == null) {
             String var = getVariable("ivy.log.conflict.resolution");
-            debugConflictResolution = Boolean.valueOf(var != null
-                    && Boolean.valueOf(var).booleanValue());
+            debugConflictResolution = var != null
+                    && Boolean.valueOf(var);
         }
-        return debugConflictResolution.booleanValue();
+        return debugConflictResolution;
     }
 
     public synchronized boolean debugLocking() {
         if (debugLocking == null) {
             String var = getVariable("ivy.log.locking");
-            debugLocking = Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
+            debugLocking = var != null && Boolean.valueOf(var);
         }
-        return debugLocking.booleanValue();
+        return debugLocking;
     }
 
     public synchronized boolean dumpMemoryUsage() {
         if (dumpMemoryUsage == null) {
             String var = getVariable("ivy.log.memory");
-            dumpMemoryUsage = Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
+            dumpMemoryUsage = var != null && Boolean.valueOf(var);
         }
-        return dumpMemoryUsage.booleanValue();
+        return dumpMemoryUsage;
     }
 
     public synchronized boolean logNotConvertedExclusionRule() {
@@ -1422,7 +1422,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public final long getInterruptTimeout() {
-        return INTERUPT_TIMEOUT;
+        return INTERRUPT_TIMEOUT;
     }
 
     public synchronized Collection<DependencyResolver> getResolvers() {
@@ -1444,7 +1444,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Use a different variable container.
      * 
-     * @param variables
+     * @param variables IvyVariableContainer
      */
     public synchronized void setVariableContainer(IvyVariableContainer variables) {
         variableContainer = variables;
@@ -1509,7 +1509,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Validates all {@link Validatable} objects in the collection.
      * 
-     * @param objects
+     * @param values
      *            the collection of objects to validate.
      * @throws IllegalStateException
      *             if any of the objects is not valid.

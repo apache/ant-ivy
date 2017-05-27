@@ -552,6 +552,7 @@ public final class XmlModuleDescriptorWriter {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static boolean requireInnerInfoElement(ModuleDescriptor md) {
         return md.getExtraInfo().size() > 0 || md.getExtraInfos().size() > 0
                 || md.getHomePage() != null

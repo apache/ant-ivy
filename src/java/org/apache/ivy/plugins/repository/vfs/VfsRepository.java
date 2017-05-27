@@ -118,7 +118,7 @@ public class VfsRepository extends AbstractRepository {
     /**
      * Get a VfsResource
      * 
-     * @param source
+     * @param vfsURI
      *            a <code>String</code> identifying a VFS Resource
      * @throws <code>IOException</code> on failure
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
@@ -190,7 +190,7 @@ public class VfsRepository extends AbstractRepository {
      * Transfer an Ivy resource to a VFS repository
      * 
      * @param source
-     *            a <code>File</code> indentifying the local file to transfer to the repository
+     *            a <code>File</code> identifying the local file to transfer to the repository
      * @param vfsURI
      *            a <code>String</code> identifying the destination VFS Resource.
      * @param overwrite

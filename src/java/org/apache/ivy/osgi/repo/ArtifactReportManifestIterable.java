@@ -148,10 +148,7 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
                     }
                 }
             }
-            if (next == null) {
-                return false;
-            }
-            return true;
+            return next != null;
         }
 
         public ManifestAndLocation next() {
