@@ -68,10 +68,11 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     /**
      * get a new session using the default attributes if the given String is a full uri, use the
      * data from the uri instead
-     * 
+     *
      * @param pathOrUri
      *            might be just a path or a full ssh or sftp uri
      * @return matching Session
+     * @throws IOException if something goes wrong
      */
     protected Session getSession(String pathOrUri) throws IOException {
         URI uri = parseURI(pathOrUri);
@@ -134,7 +135,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     /**
      * Just check the uri for sanity
-     * 
+     *
      * @param source
      *            String of the uri
      * @return URI object of the String or null
@@ -170,7 +171,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     /**
      * Called, when user was not found in URL. Maintain static hash of credentials and retrieve or
      * ask credentials for host.
-     * 
+     *
      * @param host
      *            host for which we want to get credentials.
      * @return credentials for given host
@@ -194,7 +195,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     /**
      * closes the session and remove it from the cache (eg. on case of errors)
-     * 
+     *
      * @param session
      *            key for the cache
      * @param pathOrUri
@@ -207,7 +208,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     /**
      * set the default user to use for the connection if no user is given or a PEM file is used
-     * 
+     *
      * @param user
      *            to use
      */
@@ -224,7 +225,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     /**
      * Sets the full file path to use for accessing a PEM key file
-     * 
+     *
      * @param filePath
      *            fully qualified name
      */

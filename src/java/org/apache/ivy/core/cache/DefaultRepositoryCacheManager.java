@@ -306,7 +306,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * True if this cache should check lastmodified date to know if ivy files are up to date.
-     * 
+     *
      * @return boolean
      */
     public boolean isCheckmodified() {
@@ -324,6 +324,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * True if this cache should use artifacts original location when possible, false if they should
      * be copied to cache.
+     *
+     * @return boolean
      */
     public boolean isUseOrigin() {
         if (useOrigin == null) {
@@ -340,6 +342,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * Returns a File object pointing to where the artifact can be found on the local file system.
      * This is usually in the cache, but it can be directly in the repository if it is local and if
      * the resolve has been done with useOrigin = true
+     *
+     * @param artifact Artifact
+     * @return File
      */
     public File getArchiveFileInCache(Artifact artifact) {
         ArtifactOrigin origin = getSavedArtifactOrigin(artifact);
@@ -350,6 +355,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * Returns a File object pointing to where the artifact can be found on the local file system.
      * This is usually in the cache, but it can be directly in the repository if it is local and if
      * the resolve has been done with useOrigin = true
+     *
+     * @param artifact Artifact
+     * @param origin ArtifactOrigin
+     * @return File
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
@@ -368,6 +377,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * using or not the original location depending on the availability of origin information
      * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
      * always return the file in the cache.
+     *
+     * @param artifact Artifact
+     * @param origin ArtifactOrigin
+     * @param useOrigin boolean
+     * @return File
      */
     private File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
         if (useOrigin && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
@@ -390,7 +404,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * Saves the information of which resolver was used to resolve a md, so that this info can be
      * retrieve later (even after a jvm restart) by getSavedResolverName(ModuleDescriptor md)
-     * 
+     *
      * @param md
      *            the module descriptor resolved
      * @param name
@@ -406,7 +420,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * Saves the information of which resolver was used to resolve a md, so that this info can be
      * retrieve later (even after a jvm restart) by getSavedArtResolverName(ModuleDescriptor md)
-     * 
+     *
      * @param md
      *            the module descriptor resolved
      * @param metadataResolverName
@@ -573,7 +587,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Creates the unique prefix key that will reference the artifact within the properties.
-     * 
+     *
      * @param artifact
      *            the artifact to create the unique key from. Cannot be null.
      * @return the unique prefix key as a string.
@@ -588,7 +602,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the location of the artifact.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact location.
@@ -600,7 +614,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify if the artifact is local.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact locality.
@@ -612,7 +626,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the last time the artifact was checked to be up to date.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact's last check date.
@@ -624,7 +638,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the existence of the remote artifact.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the existence of the artifact.
@@ -636,7 +650,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the original artifact.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the original artifact.
@@ -786,7 +800,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Choose write module descriptor parser for a given moduleDescriptor
-     * 
+     *
      * @param moduleDescriptorFile
      *            a given module descriptor
      * @return ModuleDescriptorParser
@@ -1153,7 +1167,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Compute a SHA1 of the resource name, encoded in base64, so we can use it as a file name.
-     * 
+     *
      * @param resource
      *            the resource which name will be hashed
      * @return the hash
@@ -1169,7 +1183,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Check that a cached file can be considered up to date and thus not downloaded
-     * 
+     *
      * @param archiveFile
      *            the file in the cache
      * @param resource

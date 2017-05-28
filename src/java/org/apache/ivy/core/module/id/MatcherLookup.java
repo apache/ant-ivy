@@ -33,24 +33,22 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
  * matcher's attributes. When matcher is looked up against specific module, the key is recreated
  * from module's attributes.
  * <p>
- * </p>
  * The lookup doesn't target to speed up lookup for non exact pattern matcher. All non exact
  * matchers are placed in non-keyed collection.
- * <p>
  * </p>
+ * <p>
  * At lookup for matchers against specific module, all non exact pattern matchers are iterated to
  * match with module attributes, and exact pattern matchers binding to the same key will also
  * iterated to match with module attributes.
- * <p>
  * </p>
+ * <p>
  * If there are much more exact pattern matchers than non exact pattern matchers, the matcher lookup
  * speed can benefit from this class significantly. A quick example could be user declares lots of
  * dependencyOverrides which are typically exact pattern matchers.
- * <p>
  * </p>
+ * <p>
  * If there are balanced exact and non exact pattern matchers, the matcher lookup speed doesn't hurt
  * by this class.
- * <p>
  * </p>
  */
 public class MatcherLookup {
@@ -65,12 +63,12 @@ public class MatcherLookup {
 
     /**
      * Add matcher.
-     * 
+     *
      * If matcher is exact pattern matcher, it will be associated with a key and placed in keyed
      * collection.
-     * 
+     *
      * If matcher is not exact pattern matcher, it will be placed into non-keyed collection
-     * 
+     *
      * @param matcher MapMatcher
      */
     public void add(MapMatcher matcher) {
@@ -88,12 +86,10 @@ public class MatcherLookup {
     }
 
     /**
-     * Get a list of matchers which can apply to module with specified attributes
-     * 
      * @param attrs
      *            A map of attributes that matcher should match.
-     * 
-     * @return list A list of candidate matchers that matches specified attributes
+     *
+     * @return a list of matchers that can apply to module withs specified attributes
      */
     public List<MapMatcher> get(Map<String, String> attrs) {
         List<MapMatcher> matchers = new ArrayList<MapMatcher>();
@@ -131,7 +127,7 @@ public class MatcherLookup {
 
     /**
      * Create a key from specified attributes
-     * 
+     *
      * @param attrs
      *            A map of attributes
      * @return key object

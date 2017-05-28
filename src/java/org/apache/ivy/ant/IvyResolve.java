@@ -193,6 +193,7 @@ public class IvyResolve extends IvyTask {
     }
 
     /**
+     * @param failureProperty String
      * @deprecated Use {@link #setFailureProperty(String)} instead
      */
     @Deprecated

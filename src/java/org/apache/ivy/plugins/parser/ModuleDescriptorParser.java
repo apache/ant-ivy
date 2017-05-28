@@ -39,8 +39,12 @@ public interface ModuleDescriptorParser {
      * Convert a module descriptor to an ivy file. This method MUST close the given input stream
      * when job is finished
      * 
-     * @param is
-     *            input stream with opened on original module descriptor resource
+     * @param is input stream with opened on original module descriptor resource
+     * @param res Resource
+     * @param destFile File
+     * @param md ModuleDescriptor
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
             throws ParseException, IOException;

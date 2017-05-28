@@ -45,7 +45,7 @@ public interface VersionMatcher {
     /**
      * Indicates if the given asked ModuleRevisionId should be considered as dynamic for the current
      * VersionMatcher or not.
-     * 
+     *
      * @param askedMrid
      *            the dependency module revision id as asked by a module
      * @return true if this revision is considered as a dynamic one, false otherwise
@@ -55,7 +55,7 @@ public interface VersionMatcher {
     /**
      * Indicates if this version matcher considers that the module revision found matches the asked
      * one.
-     * 
+     *
      * @param askedMrid ModuleRevisionId
      * @param foundMrid ModuleRevisionId
      * @return boolean
@@ -66,7 +66,9 @@ public interface VersionMatcher {
      * Indicates if this VersionMatcher needs module descriptors to determine if a module revision
      * matches the asked one. Note that returning true in this method may imply big performance
      * issues.
-     * 
+     *
+     * @param askedMrid ModuleRevisionId
+     * @param foundMrid ModuleRevisionId
      * @return boolean
      */
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid);
@@ -76,7 +78,7 @@ public interface VersionMatcher {
      * method can be called even needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId
      * foundMrid) returns false, so it is required to implement it in any case, a usual default
      * implementation being: return accept(askedMrid, foundMD.getResolvedModuleRevisionId());
-     * 
+     *
      * @param askedMrid ModuleRevisionId
      * @param foundMD ModuleDescriptor
      * @return boolean
@@ -88,7 +90,7 @@ public interface VersionMatcher {
      * should be considered the greater. If there is not enough information to know which one is the
      * greater, the dynamic one should be considered greater and this method should return 0. This
      * method should never be called with a askedMrid for which isDynamic returns false.
-     * 
+     *
      * @param askedMrid
      *            the dynamic revision to compare
      * @param foundMrid
@@ -103,7 +105,7 @@ public interface VersionMatcher {
 
     /**
      * Returns the version matcher name identifying this version matcher
-     * 
+     *
      * @return the version matcher name identifying this version matcher
      */
     public String getName();

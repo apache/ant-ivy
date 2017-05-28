@@ -81,14 +81,14 @@ public class PackagerCacheEntry {
 
     /**
      * Attempt to build this entry.
-     * 
+     *
      * @param packagerResource
      *            packager metadata resource
      * @param properties
      *            a map of properties to pass to the child Ant build responsible for dependency
      *            packaging
-     * 
-     * @throws IllegalStateException
+     *
+     * @throws IOException
      *             if this entry has already been built
      */
     public synchronized void build(Resource packagerResource, Map properties) throws IOException {
@@ -176,6 +176,8 @@ public class PackagerCacheEntry {
 
     /**
      * Has this entry been successfully built?
+     *
+     * @return boolean
      */
     public synchronized boolean isBuilt() {
         return this.built;
@@ -183,7 +185,9 @@ public class PackagerCacheEntry {
 
     /**
      * Get a built artifact.
-     * 
+     *
+     * @param artifact ditto
+     * @return ResolvedResource
      * @throws IllegalStateException
      *             if this entry's built has not (yet) completed successfully
      */

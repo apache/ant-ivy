@@ -306,6 +306,11 @@ public class VsftpRepository extends AbstractRepository {
      * we compare the response with the expected message and deal with it. The problem is that this
      * is very specific to the version of vsftp used for the test, That's why expected messages are
      * obtained using overriddable protected methods.
+     *
+     * @param command String
+     * @param expectedResponse Pattern
+     * @param timeout long
+     * @throws IOException if something goes wrong
      */
     protected void sendCommand(String command, Pattern expectedResponse, long timeout)
             throws IOException {
@@ -638,7 +643,7 @@ public class VsftpRepository extends AbstractRepository {
 
     /**
      * Parses a ls -l line and transforms it in a resource
-     * 
+     *
      * @param file ditto
      * @param responseLine ditto
      * @return Resource
@@ -729,7 +734,7 @@ public class VsftpRepository extends AbstractRepository {
     /**
      * Sets the reuse connection time. The same connection will be reused if the time here does not
      * last between two commands. O indicates that the connection should never be reused
-     * 
+     *
      * @param time long
      */
     public void setReuseConnection(long time) {

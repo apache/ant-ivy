@@ -107,8 +107,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
      *            the real resource to parse, used for log only
      * @param validate boolean
      * @return ModuleDescriptor
-     * @throws ParseException
-     * @throws IOException
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL xmlURL, Resource res,
             boolean validate) throws ParseException, IOException {
@@ -136,7 +136,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
      * <p>
      * Override this method if you want to use a custom Parser.
      * </p>
-     * 
+     *
      * @param ivySettings
      *            the settings to use during parsing
      * @return the Parser instance used for parsing Ivy files
@@ -396,7 +396,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Default parent location to check (for dev ONLY)
-         * 
+         *
          * @return a relative path to a parent module descriptor
          */
         protected String getDefaultParentLocation() {
@@ -411,9 +411,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * <li>cache to find a resolved parent descriptor</li>
          * <li>ask repositories to retrieve the parent module descriptor</li>
          * </ul>
-         * 
+         *
          * @param attributes Attributes
-         * @throws ParseException
+         * @throws ParseException if something goes wrong
          */
         protected void extendsStarted(Attributes attributes) throws ParseException {
             String parentOrganisation = settings.substitute(attributes.getValue("organisation"));
@@ -482,7 +482,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         /**
          * Merge current module with a given module descriptor and specify what should be inherited
          * through extendTypes argument
-         * 
+         *
          * @param extendTypes
          *            specify what should be inherited
          * @param parent
@@ -521,7 +521,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Merge everything from a given parent
-         * 
+         *
          * @param parent
          *            a given parent module descriptor
          */
@@ -536,7 +536,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Explain how to inherit metadata related to info element
-         * 
+         *
          * @param parent
          *            a given parent module descriptor
          */
@@ -589,7 +589,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge configurations elements
-         * 
+         *
          * @param parent
          *            the module descriptor
          */
@@ -612,7 +612,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how dependencies should be inherited
-         * 
+         *
          * @param dependencies
          *            array of dependencies to inherit
          */
@@ -628,7 +628,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge description
-         * 
+         *
          * @param description
          *            description going to be inherited
          */
@@ -641,7 +641,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge licenses
-         * 
+         *
          * @param licenses
          *            licenses going to be inherited
          */
@@ -653,7 +653,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge exclude rules
-         * 
+         *
          * @param excludeRules
          *            exclude rules going to be inherited
          */
@@ -665,11 +665,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Returns the parent module using the location attribute (for dev purpose).
-         * 
+         *
          * @param location
          *            a given location
-         * @throws IOException
-         * @throws ParseException
+         * @throws IOException if something goes wrong
+         * @throws ParseException if something goes wrong
          */
         private ModuleDescriptor parseParentModuleOnFilesystem(String location) throws IOException,
                 ParseException {
@@ -702,12 +702,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describe how to parse a {@link ModuleDescriptor} by asking repositories
-         * 
+         *
          * @param parentMrid
          *            a given {@link ModuleRevisionId} to find
          * @return a {@link ModuleDescriptor} if found. Return null if no {@link ModuleDescriptor}
          *         was found
-         * @throws ParseException
+         * @throws ParseException if something goes wrong
          */
         protected ModuleDescriptor parseOtherIvyFile(ModuleRevisionId parentMrid)
                 throws ParseException {
@@ -911,11 +911,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String branch = settings.substitute(attributes.getValue("branch"));
             String branchConstraint = settings.substitute(attributes.getValue("branchConstraint"));
 
-            // if (branchConstraint == null) {
-            // // there was no branch constraint before, so we should
-            // // set the branchConstraint to the current default branch
-            // branchConstraint = settings.getDefaultBranch(ModuleId.newInstance(org, name));
-            // }
+            /* if (branchConstraint == null) {
+             * // there was no branch constraint before, so we should
+             * // set the branchConstraint to the current default branch
+             * branchConstraint = settings.getDefaultBranch(ModuleId.newInstance(org, name));
+             * }
+             */
 
             String rev = settings.substitute(attributes.getValue("rev"));
             String revConstraint = settings.substitute(attributes.getValue("revConstraint"));
@@ -1167,15 +1168,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         protected void addConfiguration(String c) {
             confAware.addConfiguration(c);
             if (state == State.EXCLUDE) {
-                // we are adding a configuration to a module wide exclude rule
-                // we have nothing special to do here, the rule has already been added to the module
-                // descriptor
+                // we are adding a configuration to a module wide exclude rule we have nothing
+                // special to do here, the rule has already been added to the module descriptor
             } else {
                 // we are currently adding a configuration to either an include, exclude or artifact
-                // element
-                // of a dependency. This means that we have to add this element to the corresponding
-                // conf
-                // of the current dependency descriptor
+                // element of a dependency. This means that we have to add this element to the
+                // corresponding conf of the current dependency descriptor
                 if (confAware instanceof DependencyArtifactDescriptor) {
                     dd.addDependencyArtifact(c, (DependencyArtifactDescriptor) confAware);
                 } else if (confAware instanceof IncludeRule) {

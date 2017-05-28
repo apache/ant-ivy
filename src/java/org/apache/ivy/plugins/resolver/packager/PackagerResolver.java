@@ -36,10 +36,11 @@ import org.apache.ivy.util.Message;
 
 /**
  * Resolver that performs a "build" operation to resolve artifacts.
- * 
+ *
  * <p>
  * The resolver is configured with a base URL, from which the "ivy.xml" and "packager.xml" files are
  * resolved. The latter file contains instructions describing how to build the actual artifacts.
+ * </p>
  */
 public class PackagerResolver extends URLResolver {
 
@@ -93,6 +94,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set root directory under which builds take place.
+     *
+     * @param buildRoot File
      */
     public void setBuildRoot(File buildRoot) {
         this.buildRoot = buildRoot;
@@ -100,6 +103,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Returns root directory under which builds take place.
+     *
+     * @return File
      */
     public File getBuildRoot() {
         return buildRoot;
@@ -107,6 +112,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set resource cache directory.
+     *
+     * @param resourceCache File
      */
     public void setResourceCache(File resourceCache) {
         this.resourceCache = resourceCache;
@@ -114,6 +121,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Get resource cache directory.
+     *
+     * @return File
      */
     public File getResourceCache() {
         return resourceCache;
@@ -121,6 +130,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set base resource override URL pattern.
+     *
+     * @param resourceURL String
      */
     public void setResourceURL(String resourceURL) {
         this.resourceURL = resourceURL;
@@ -128,6 +139,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set pattern for locating "packager.xml" files.
+     *
+     * @param pattern String
      */
     public void setPackagerPattern(String pattern) {
         ArrayList list = new ArrayList();
@@ -137,6 +150,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set whether to preserve build directories. Default is false.
+     *
+     * @param preserve boolean
      */
     public void setPreserveBuildDirectories(boolean preserve) {
         this.preserve = preserve;
@@ -144,6 +159,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set whether to enable restricted mode. Default is true.
+     *
+     * @param restricted boolean
      */
     public void setRestricted(boolean restricted) {
         this.restricted = restricted;
@@ -151,6 +168,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set whether to run ant with the -verbose flag. Default is false.
+     *
+     * @param verbose boolean
      */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -158,6 +177,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set whether to run ant with the -quiet flag. Default is false.
+     *
+     * @param quiet boolean
      */
     public void setQuiet(boolean quiet) {
         this.quiet = quiet;
@@ -165,6 +186,8 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Set whether to validate downloaded packager.xml files. Default is true.
+     *
+     * @param validate boolean
      */
     public void setValidate(boolean validate) {
         this.validate = validate;
@@ -185,7 +208,7 @@ public class PackagerResolver extends URLResolver {
 
     /**
      * Sets a property to be passed to the child Ant build responsible for packaging the dependency.
-     * 
+     *
      * @param propertyKey
      *            the property to pass
      * @param propertyValue

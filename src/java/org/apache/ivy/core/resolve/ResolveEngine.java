@@ -76,7 +76,7 @@ import org.apache.ivy.util.filter.Filter;
  * {@link #resolve(URL)} which allow to simply resolve dependencies of a single module descriptor,
  * or more complete one, like the {@link #resolve(ModuleDescriptor, ResolveOptions)} which allows to
  * provide options to the resolution engine.
- * 
+ *
  * @see ResolveOptions
  */
 public class ResolveEngine {
@@ -92,7 +92,7 @@ public class ResolveEngine {
 
     /**
      * Constructs a ResolveEngine.
-     * 
+     *
      * @param settings
      *            the settings to use to configure the engine. Must not be null.
      * @param eventManager
@@ -112,7 +112,7 @@ public class ResolveEngine {
     /**
      * Returns the currently configured dictator resolver, which when non null is used in place of
      * any specified resolver in the {@link IvySettings}
-     * 
+     *
      * @return the currently configured dictator resolver, may be null.
      */
     public DependencyResolver getDictatorResolver() {
@@ -122,7 +122,7 @@ public class ResolveEngine {
     /**
      * Sets a dictator resolver, which is used in place of regular dependency resolver for
      * subsequent dependency resolution by this engine.
-     * 
+     *
      * @param dictatorResolver
      *            the dictator resolver to use in this engine, null if regular settings should used
      */
@@ -142,6 +142,13 @@ public class ResolveEngine {
     /**
      * Resolves the module identified by the given mrid with its dependencies if transitive is set
      * to true.
+     *
+     * @param mrid ModuleRevisionId
+     * @param options ResolveOptions
+     * @param changing boolean
+     * @return ResolveReport
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public ResolveReport resolve(final ModuleRevisionId mrid, ResolveOptions options,
             boolean changing) throws ParseException, IOException {
@@ -176,6 +183,12 @@ public class ResolveEngine {
 
     /**
      * Resolve dependencies of a module described by an ivy file.
+     *
+     * @param ivySource URL
+     * @param options ResolveOptions
+     * @return ResolveReport
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
             IOException {
@@ -197,6 +210,11 @@ public class ResolveEngine {
 
     /**
      * Resolve dependencies of a module described by a module descriptor.
+     * @param md ModuleDescriptor
+     * @param options ResolveOptions
+     * @return ResolveReport
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
             throws ParseException, IOException {
@@ -434,9 +452,10 @@ public class ResolveEngine {
      * It is possible to track the progression of the download using classical ivy progress
      * monitoring feature (see addTransferListener).
      * </p>
-     * 
+     *
      * @param artifact
      *            the artifact to download
+     * @param options DownloadOptions
      * @return a report concerning the download
      * @see #download(ArtifactOrigin, DownloadOptions)
      */
@@ -449,7 +468,7 @@ public class ResolveEngine {
     /**
      * Locates an artifact in dependency resolvers, and return its location if it can be located and
      * actually exists, or an unknown {@link ArtifactOrigin} in other cases.
-     * 
+     *
      * @param artifact
      *            the artifact to locate.
      * @return the artifact location, should be tested with
@@ -475,9 +494,10 @@ public class ResolveEngine {
      * It is possible to track the progression of the download using classical ivy progress
      * monitoring feature (see addTransferListener).
      * </p>
-     * 
+     *
      * @param origin
      *            the artifact origin to materialize
+     * @param options DownloadOptions
      * @return a report concerning the download
      * @see #download(Artifact, DownloadOptions)
      * @see #locate(Artifact)
@@ -492,7 +512,7 @@ public class ResolveEngine {
      * Resolve the dependencies of a module without downloading corresponding artifacts. The module
      * to resolve is given by its ivy file URL. This method requires appropriate configuration of
      * the ivy instance, especially resolvers.
-     * 
+     *
      * @param ivySource
      *            url of the ivy file to use for dependency resolving
      * @param options
@@ -517,7 +537,7 @@ public class ResolveEngine {
      * <p>
      * The <code>IvyNode</code>s are ordered from the most dependent to the less dependent, so that
      * an IvyNode is always found in the list after all IvyNode depending directly on it.
-     * 
+     *
      * @param md
      *            the descriptor of the module for which we want to get dependencies - must not be
      *            null
@@ -817,7 +837,7 @@ public class ResolveEngine {
 
     /**
      * Returns true if we've already fetched the dependencies for this node and configuration
-     * 
+     *
      * @param node
      *            node to check
      * @param conf
@@ -847,11 +867,12 @@ public class ResolveEngine {
     /**
      * Resolves conflict for the given node in the given ancestor. This method do conflict
      * resolution in ancestor parents recursively, unless not necessary.
-     * 
+     *
      * @param node
      *            the node for which conflict resolution should be done
      * @param ancestor
      *            the ancestor in which the conflict resolution should be done
+     * @param conf String
      * @param toevict
      *            a collection of IvyNode to evict (as computed by conflict resolution in
      *            descendants of ancestor)
@@ -1033,7 +1054,7 @@ public class ResolveEngine {
     /**
      * Compute possible conflicts for a node, in the context of an ancestor (a node which has a
      * dependency - direct or indirect - on the node for which conflicts should be computed.
-     * 
+     *
      * @param node
      *            the node for which conflicts should be computed
      * @param ancestor
@@ -1159,7 +1180,7 @@ public class ResolveEngine {
      * The mediated dependency descriptor must return the actually requested module revision id when
      * the method {@link DependencyDescriptor#getDependencyRevisionId()} is called.
      * </p>
-     * 
+     *
      * @param dd
      *            the dependency descriptor for which the requested module revision id should be
      *            returned

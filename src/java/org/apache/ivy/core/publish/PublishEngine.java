@@ -73,6 +73,13 @@ public class PublishEngine {
      * reports. The extra artifacts array can be null (= no extra artifacts), and if non null only
      * the name, type, ext url and extra attributes of the artifacts are really used. Other methods
      * can return null safely.
+     *
+     * @param mrid ModuleRevisionId
+     * @param srcArtifactPattern a Collection of String
+     * @param resolverName String
+     * @param options PublishOptions
+     * @return Collection&lt;Artifact&gt;
+     * @throws IOException if something goes wrong
      */
     public Collection<Artifact> publish(ModuleRevisionId mrid,
             Collection<String> srcArtifactPattern, String resolverName, PublishOptions options)

@@ -46,7 +46,7 @@ public interface DependencyResolver {
 
     /**
      * Should only be used by configurator
-     * 
+     *
      * @param name
      *            the new name of the resolver
      */
@@ -57,8 +57,11 @@ public interface DependencyResolver {
      * latest one (i.e. a revision uniquely identifying the revision of a module in the current
      * environment - If this revision is not able to identify uniquely the revision of the module
      * outside of the current environment, then the resolved revision must begin by ##)
-     * 
-     * @throws ParseException
+     *
+     * @param dd DependencyDescriptor
+     * @param data ResolveData
+     * @return ResolvedModuleRevision
+     * @throws ParseException if something goes wrong
      */
     ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException;
@@ -66,7 +69,7 @@ public interface DependencyResolver {
     /**
      * Finds the module descriptor for the specified <tt>DependencyDescriptor</tt>. If this resolver
      * can't find the module descriptor, <tt>null</tt> is returned.
-     * 
+     *
      * @param dd
      *            the dependency descriptor
      * @param data
@@ -86,7 +89,7 @@ public interface DependencyResolver {
      * The returned DownloadReport is never <code>null</code>, and always contain an
      * {@link ArtifactDownloadReport} for each requested Artifact.
      * </p>
-     * 
+     *
      * @param artifacts
      *            an array of artifacts to download. Must not be <code>null</code>.
      * @param options
@@ -102,7 +105,7 @@ public interface DependencyResolver {
      * locates and downloads a set of artifacts. This method uses an {@link ArtifactOrigin}, and as
      * such is only used to materialize an already located Artifact.
      * </p>
-     * 
+     *
      * @param artifact
      *            the location of the artifact to download. Must not be <code>null</code>.
      * @param options
@@ -114,7 +117,7 @@ public interface DependencyResolver {
     /**
      * Returns <code>true</code> if the given artifact can be located by this resolver and actually
      * exist.
-     * 
+     *
      * @param artifact
      *            the artifact which should be tested.
      * @return <code>true</code> if the given artifact can be located by this resolver and actually
@@ -125,7 +128,7 @@ public interface DependencyResolver {
     /**
      * Locates the given artifact and returns its location if it can be located by this resolver and
      * if it actually exists, or <code>null</code> in other cases.
-     * 
+     *
      * @param artifact
      *            the artifact which should be located
      * @return the artifact location, or <code>null</code> if it can't be located by this resolver
@@ -148,7 +151,7 @@ public interface DependencyResolver {
 
     /**
      * Reports last artifact download failure as Messages
-     * 
+     *
      * @param art Artifact
      */
     void reportFailure(Artifact art);
@@ -159,21 +162,26 @@ public interface DependencyResolver {
     // are registered in ivy too.
 
     /**
-     * List all the values the given token can take if other tokens are set as described in the
-     * otherTokenValues map. For instance, if token = "revision" and the map contains
-     * "organisation"->"foo" "module"->"bar" The results will be the list of revisions of the module
-     * bar from the org foo.
+     * List all the values the given token can take if other tokens are set as
+     * described in the otherTokenValues map. For instance, if
+     * token = "revision" and the map contains "organisation"-&gt;"foo" "module"-&gt;"bar"
+     * The results will be the list of revisions of the module bar from the org foo.
      * <p>
-     * Note that listing does not take into account namespaces, and return raw information without
-     * any namespace transformation. The caller is responsible for calling namespace transformation
-     * with the Namespace returned by {@link #getNamespace()}.
+     * Note that listing does not take into account namespaces, and return raw
+     * information without any namespace transformation. The caller is
+     * responsible for calling namespace transformation with the Namespace
+     * returned by {@link #getNamespace()}.
      * </p>
+     *
+     * @param token String
+     * @param otherTokenValues Map
+     * @return String[]
      */
     String[] listTokenValues(String token, Map<String, String> otherTokenValues);
 
     /**
      * Same as {@link #listTokenValues(String, Map)} but more generic.
-     * 
+     *
      * @param tokens
      *            the tokens of the query
      * @param criteria
@@ -190,7 +198,7 @@ public interface DependencyResolver {
 
     /**
      * Returns the namespace associated with this resolver.
-     * 
+     *
      * @return the namespace associated with this resolver.
      */
     Namespace getNamespace();
@@ -202,7 +210,7 @@ public interface DependencyResolver {
     /**
      * Returns the {@link RepositoryCacheManager} used to manage the repository cache associated
      * with this dependency resolver.
-     * 
+     *
      * @return the {@link RepositoryCacheManager} used to manage the repository cache associated
      *         with this dependency resolver.
      */

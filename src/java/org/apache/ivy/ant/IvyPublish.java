@@ -98,6 +98,7 @@ public class IvyPublish extends IvyTask {
     }
 
     /**
+     * @return String
      * @deprecated use {@link #getSrcivypattern()} instead.
      */
     @Deprecated
@@ -106,6 +107,7 @@ public class IvyPublish extends IvyTask {
     }
 
     /**
+     * @param destivypattern String
      * @deprecated use {@link #setSrcivypattern(String)} instead.
      */
     @Deprecated

@@ -38,7 +38,8 @@ public final class DownloadStatus {
 
     /**
      * Returns the {@link DownloadStatus} corresponding to the given String representation.
-     * 
+     *
+     * @param status String
      * @return the {@link DownloadStatus} corresponding to the given String representation.
      * @throws IllegalArgumentException
      *             if the given String does not correspond to any {@link DownloadStatus}.

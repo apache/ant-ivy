@@ -29,7 +29,7 @@ import org.apache.ivy.util.filter.FilterHelper;
 
 /**
  * A set of options used during resolve related tasks
- * 
+ *
  * @see ResolveEngine
  */
 public class ResolveOptions extends LogOptions {
@@ -153,7 +153,7 @@ public class ResolveOptions extends LogOptions {
     /**
      * Returns the resolve mode to use, or <code>null</code> to use settings configured resolve
      * mode.
-     * 
+     *
      * @return the resolve mode to use.
      */
     public String getResolveMode() {
@@ -169,7 +169,8 @@ public class ResolveOptions extends LogOptions {
      * Indicates if the configurations use a special configuration * , *(private) or *(public). When
      * special configurations are used, you must have the module descriptor in order to get the list
      * of configurations.
-     * 
+     *
+     * @return boolean
      * @see #getConfs()
      * @see #getConfs(ModuleDescriptor)
      */
@@ -185,6 +186,7 @@ public class ResolveOptions extends LogOptions {
     /**
      * @pre can only be called if useSpecialConfs()==false. When it is true, you have to provide a
      *      module descriptor so that configurations can be resolved.
+     * @return String[]
      * @see #getConfs(ModuleDescriptor)
      */
     public String[] getConfs() {
@@ -197,10 +199,11 @@ public class ResolveOptions extends LogOptions {
 
     /**
      * Get the asked confs. Special confs (like *) use the moduleDescriptor to find the values *
-     * 
+     *
      * @param md
      *            Used to get the exact values for special confs.
-     * */
+     * @return String[]
+     */
     public String[] getConfs(ModuleDescriptor md) {
         // TODO add isInline, in that case, replace * by *(public).
         return ConfigurationUtils.replaceWildcards(confs, md);

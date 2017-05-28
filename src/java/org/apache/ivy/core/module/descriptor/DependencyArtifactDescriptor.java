@@ -27,44 +27,32 @@ import org.apache.ivy.util.extendable.ExtendableItem;
  */
 public interface DependencyArtifactDescriptor extends ExtendableItem {
     /**
-     * Returns the dependency descriptor in which this dependency artifact descriptor is declared.
-     * 
      * @return the dependency descriptor in which this dependency artifact descriptor is declared.
      */
     public DependencyDescriptor getDependencyDescriptor();
 
     /**
-     * Returns the name of the artifact asked
-     * 
-     * @return
+     * @return the name of the artifact asked
      */
     public String getName();
 
     /**
-     * Returns the type of the artifact asked
-     * 
-     * @return
+     * @return the type of the artifact asked
      */
     public String getType();
 
     /**
-     * Returns the ext of the artifact asked
-     * 
-     * @return
+     * @return the ext of the artifact asked
      */
     public String getExt();
 
     /**
-     * Returns the url to look this artifact at
-     * 
-     * @return
+     * @return the url to look this artifact up at
      */
     public URL getUrl();
 
     /**
-     * Returns the configurations of the module in which the artifact is asked
-     * 
-     * @return an array of configuration names in which the artifact is asked
+     * @return an array of configuration names of the module in which the artifact is asked
      */
     public String[] getConfigurations();
 }

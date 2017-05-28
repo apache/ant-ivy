@@ -71,7 +71,12 @@ public class RetrieveEngine {
      * localCacheDirectory to determine an ivy report file, used as input for the copy If such a
      * file does not exist for any conf (resolve has not been called before ?) then an
      * IllegalStateException is thrown and nothing is copied.
-     * 
+     *
+     * @param mrid ModuleRevisionId
+     * @param destFilePattern String
+     * @param options RetrieveOptions
+     * @return int
+     * @throws IOException if something goes wrong
      * @deprecated Use
      *             {@link #retrieve(org.apache.ivy.core.module.id.ModuleRevisionId, RetrieveOptions)}
      *             instead
@@ -485,7 +490,7 @@ public class RetrieveEngine {
     /**
      * The returned comparator should consider greater the artifact which gains the conflict battle.
      * This is used only during retrieve... prefer resolve conflict manager to resolve conflicts.
-     * 
+     *
      * @return Comparator&lt;ArtifactDownloadReport&gt;
      */
     private Comparator<ArtifactDownloadReport> getConflictResolvingPolicy() {

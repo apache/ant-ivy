@@ -107,7 +107,7 @@ public class IvyAntSettings extends DataType {
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
      * created using the given project to back the VariableContainer.
-     * 
+     *
      * @param task
      *            TODO add text.
      * @return An IvySetting instance.
@@ -241,7 +241,8 @@ public class IvyAntSettings extends DataType {
 
     /**
      * Return the configured Ivy instance.
-     * 
+     *
+     * @param task ProjectComponent
      * @return Returns the configured Ivy instance.
      */
     public Ivy getConfiguredIvyInstance(ProjectComponent task) {
@@ -336,7 +337,7 @@ public class IvyAntSettings extends DataType {
 
     /**
      * Set file or url to its default value
-     * 
+     *
      * @param variableContainer IvyVariableContainer
      */
     private void defineDefaultSettingFile(IvyVariableContainer variableContainer,

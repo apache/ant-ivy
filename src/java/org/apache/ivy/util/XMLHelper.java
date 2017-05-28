@@ -95,6 +95,9 @@ public abstract class XMLHelper {
 
     /**
      * Convert an URL to a valid systemId according to RFC 2396.
+     *
+     * @param url URL
+     * @return String
      */
     public static String toSystemId(URL url) {
         try {
@@ -105,9 +108,9 @@ public abstract class XMLHelper {
     }
 
     // IMPORTANT: validation errors are only notified to the given handler, and
-    // do not cause exception
-    // implement warning error and fatalError methods in handler to be informed
-    // of validation errors
+    // do not cause exception implement warning error and fatalError methods in
+    // handler to be informed of validation errors
+
     public static void parse(URL xmlURL, URL schema, DefaultHandler handler) throws SAXException,
             IOException, ParserConfigurationException {
         parse(xmlURL, schema, handler, null);
@@ -177,12 +180,12 @@ public abstract class XMLHelper {
 
     /**
      * Escapes invalid XML characters in the given character data using XML entities. For the
-     * moment, only the following characters are being escaped: (<), (&), (') and (").
-     * 
-     * Remark: we don't escape the (>) character to keep the readability of the configuration
-     * mapping! The XML spec only requires that the (&) and (<) characters are being escaped inside
-     * character data.
-     * 
+     * moment, only the following characters are being escaped: (&lt;), (&amp;), (') and (&quot;).
+     *
+     * Remark: we don't escape the (&gt;) character to keep the readability of the configuration
+     * mapping! The XML spec only requires that the (&amp;) and (&lt;) characters are being escaped
+     * inside character data.
+     *
      * @param text
      *            the character data to escape
      * @return the escaped character data

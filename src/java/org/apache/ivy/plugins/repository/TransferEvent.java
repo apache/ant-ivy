@@ -25,25 +25,25 @@ import org.apache.ivy.core.event.IvyEvent;
  * TransferEvent is used to notify TransferListeners about progress in transfer of resources form/to
  * the repository This class is LARGELY inspired by org.apache.maven.wagon.events.TransferEvent
  * released under the following copyright license:
- * 
+ *
  * <pre>
- * 
+ *
  *  Copyright 2001-2005 The Apache Software Foundation.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- * 
+ *
  * </pre>
- * 
+ *
  * Original class written by Michal Maczka.
  */
 public class TransferEvent extends IvyEvent {
@@ -184,9 +184,9 @@ public class TransferEvent extends IvyEvent {
 
     /**
      * Returns the request type.
-     * 
+     *
      * @return Returns the request type. The Request type is one of
-     *         <code>TransferEvent.REQUEST_GET<code> or <code>TransferEvent.REQUEST_PUT<code>
+     *         TransferEvent.REQUEST_GET or TransferEvent.REQUEST_PUT
      */
     public int getRequestType() {
         return requestType;
@@ -194,10 +194,10 @@ public class TransferEvent extends IvyEvent {
 
     /**
      * Sets the request type
-     * 
+     *
      * @param requestType
      *            The requestType to set. The Request type value should be either
-     *            <code>TransferEvent.REQUEST_GET<code> or <code>TransferEvent.REQUEST_PUT<code>.
+     *            TransferEvent.REQUEST_GET or TransferEvent.REQUEST_PUT
      * @throws IllegalArgumentException
      *             when
      */
@@ -303,22 +303,16 @@ public class TransferEvent extends IvyEvent {
     /**
      * Returns the elapsed time (in ms) between when the event entered one type until it entered
      * another event time.
-     * <p>
-     * This is especially useful to get the elapsed transfer time:
-     * 
+     * <p>This is especially useful to get the elapsed transfer time:</p>
      * <pre>
      * getElapsedTime(TransferEvent.TRANSFER_STARTED, TransferEvent.TRANSFER_COMPLETED);
      * </pre>
-     * 
-     * </p>
-     * <p>
-     * Special cases:
+     * <p>Special cases:</p>
      * <ul>
      * <li>returns -1 if the event never entered the fromEventType or the toEventType.</li>
      * <li>returns 0 if the event entered toEventType before fromEventType</li>
      * </ul>
-     * </p>
-     * 
+     *
      * @param fromEventType
      *            the event type constant from which time should be measured
      * @param toEventType
@@ -345,7 +339,7 @@ public class TransferEvent extends IvyEvent {
     /**
      * Checks the given event type is a valid event type, throws an {@link IllegalArgumentException}
      * if it isn't
-     * 
+     *
      * @param eventType
      *            the event type to check
      */

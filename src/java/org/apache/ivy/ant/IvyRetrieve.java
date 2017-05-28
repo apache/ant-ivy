@@ -159,6 +159,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Option to create symlinks instead of copying.
+     *
+     * @param symlink boolean
      */
     public void setSymlink(boolean symlink) {
         this.symlink = symlink;
@@ -166,6 +168,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Option to create symlinks in one mass action, instead of separately.
+     *
+     * @param symlinkmass boolean
      */
     public void setSymlinkmass(boolean symlinkmass) {
         this.symlinkmass = symlinkmass;
@@ -185,9 +189,9 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Add a mapper to convert the file names.
-     * 
+     *
      * @param mapper
-     *            a <code>Mapper</code> value.
+     *            a Mapper value.
      */
     public void addMapper(Mapper mapper) {
         if (this.mapper != null) {
@@ -198,7 +202,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Add a nested filenamemapper.
-     * 
+     *
      * @param fileNameMapper
      *            the mapper to add.
      */
@@ -210,7 +214,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
     /**
      * Returns the path of the file relative to the given base directory.
-     * 
+     *
      * @param base
      *            the parent directory to which the file must be evaluated.
      * @param file

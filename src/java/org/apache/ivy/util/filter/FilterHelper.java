@@ -54,19 +54,19 @@ public final class FilterHelper {
     }
 
     /**
-     * Returns a new collection containing only the items from the given collection, which are
-     * accepted by the filter.
-     * 
+     * @param <T> The type parameter
      * @param col
      *            The collection to filter.
      * @param filter
      *            The filter to use.
-     * @return A new collection instance containing the only the instance accepted by the filter.
+     * @return a new collection instance containing the only the the items from the given
+     *         collection, which are accepted by the filter.
      * 
-     *         <br />
-     *         Comment: We could have used
-     *         <a href="http://jakarta.apache.org/commons/collections/">Commons-Collections</a>
-     *         facility for this. If we accepted to add dependencies on third party jars.
+     * <p>
+     * Comment: We could have used
+     * <a href="http://jakarta.apache.org/commons/collections/">Commons Collections</a> facility for
+     * this, if we accepted additional dependencies on third party jars.
+     * </p>
      */
     public static <T> Collection<T> filter(Collection<T> col, Filter<T> filter) {
         if (filter == null) {

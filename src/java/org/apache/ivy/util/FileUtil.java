@@ -57,9 +57,9 @@ public final class FileUtil {
         // Utility class
     }
 
-    // according to tests by users, 64kB seems to be a good value for the buffer used during copy
+    // according to tests by users, 64kB seems to be a good value for the buffer used during copy;
     // further improvements could be obtained using NIO API
-    private static final int BUFFER_SIZE = 64 * 1024;
+	private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
@@ -67,13 +67,12 @@ public final class FileUtil {
 
     public static void symlinkInMass(Map<File, File> destToSrcMap, boolean overwrite)
             throws IOException {
-
-        // This pattern could be more forgiving if somebody wanted it to be...
-        // ...but this should satisfy 99+% of all needs, without letting unsafe operations be done.
+        // This pattern could be more forgiving if somebody wanted it to be... but this should
+        // satisfy 99+% of all needs, without letting unsafe operations be done.
         // If you paths is not supported, you then skip this mass option.
         // NOTE: A space inside the path is allowed (I can't control other programmers who like them
-        // in their working directory names)...
-        // but trailing spaces on file names will be checked otherwise and refused.
+        // in their working directory names)... but trailing spaces on file names will be checked
+        // otherwise and refused.
         try {
             StringBuffer sb = new StringBuffer();
 
@@ -456,10 +455,14 @@ public final class FileUtil {
 
     /**
      * Returns a list of Files composed of all directories being parent of file and child of root +
-     * file and root themselves. Example: getPathFiles(new File("test"), new
-     * File("test/dir1/dir2/file.txt")) => {new File("test/dir1"), new File("test/dir1/dir2"), new
-     * File("test/dir1/dir2/file.txt") } Note that if root is not an ancestor of file, or if root is
-     * null, all directories from the file system root will be returned.
+     * file and root themselves. Example: <code>getPathFiles(new File("test"), new
+     * File("test/dir1/dir2/file.txt")) =&gt; {new File("test/dir1"), new File("test/dir1/dir2"),
+     * new File("test/dir1/dir2/file.txt") }</code> Note that if root is not an ancestor of file, or
+     * if root is null, all directories from the file system root will be returned.
+     *
+     * @param root File
+     * @param file File
+     * @return List&lt;File&gt;
      */
     public static List<File> getPathFiles(File root, File file) {
         List<File> ret = new ArrayList<File>();
@@ -475,15 +478,13 @@ public final class FileUtil {
     }
 
     /**
-     * Returns a collection of all Files being contained in the given directory, recursively,
-     * including directories.
-     * 
      * @param dir
      *            The directory from which all files, including files in subdirectory) are
      *            extracted.
      * @param ignore
      *            a Collection of filenames which must be excluded from listing
-     * @return A collection containing all the files of the given directory and it's subdirectories.
+     * @return a collection containing all the files of the given directory and it's subdirectories,
+     *         recursively.
      */
     public static Collection<File> listAll(File dir, Collection<String> ignore) {
         return listAll(dir, new ArrayList<File>(), ignore);
@@ -534,12 +535,9 @@ public final class FileUtil {
      * Unlike {@link File#getCanonicalPath()} this method specifically does not resolve symbolic
      * links.
      * 
-     * @param path
-     *            the path to be normalized.
+     * @param path the path to be normalized.
      * @return the normalized version of the path.
-     * 
-     * @throws java.lang.NullPointerException
-     *             if path is null.
+     * @throws NullPointerException if path is null.
      */
     public static File normalize(final String path) {
         Stack<String> s = new Stack<String>();
@@ -577,21 +575,20 @@ public final class FileUtil {
     /**
      * Dissect the specified absolute path.
      * 
-     * @param path
-     *            the path to dissect.
+     * @param path the path to dissect.
      * @return String[] {root, remaining path}.
-     * @throws java.lang.NullPointerException
-     *             if path is null.
+     * @throws NullPointerException if path is null.
      * @since Ant 1.7
      */
     private static String[] dissect(String path) {
         char sep = File.separatorChar;
         path = path.replace('/', sep).replace('\\', sep);
 
-        // // make sure we are dealing with an absolute path
-        // if (!isAbsolutePath(path)) {
-        // throw new BuildException(path + " is not an absolute path");
-        // }
+        /* // make sure we are dealing with an absolute path
+         * if (!isAbsolutePath(path)) {
+         * throw new BuildException(path + " is not an absolute path");
+		 * }
+		 */
         String root = null;
         int colon = path.indexOf(':');
         if (colon > 0) { // && (ON_DOS || ON_NETWARE)) {
@@ -627,8 +624,8 @@ public final class FileUtil {
     /**
      * Get the length of the file, or the sum of the children lengths if it is a directory
      * 
-     * @param file
-     * @return
+     * @param file File
+     * @return long
      */
     public static long getFileLength(File file) {
         long l = 0;

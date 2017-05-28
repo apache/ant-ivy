@@ -420,8 +420,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Default initialization of settings, useful when you don't want to load your settings from a
      * settings file or URL, but prefer to set them manually. By calling this method you will still
      * have the basic initialization done when loading settings.
-     * 
-     * @throws IOException
+     *
+     * @throws IOException if something goes wrong
      */
     public synchronized void defaultInit() throws IOException {
         if (getVariable("ivy.default.ivy.user.dir") != null) {
@@ -491,7 +491,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Sets a deprecated variable with the value of the new variable
-     * 
+     *
      * @param deprecatedKey
      *            the deprecated variable name
      * @param newKey
@@ -611,7 +611,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Substitute variables in the given string by their value found in the current set of variables
-     * 
+     *
      * @param str
      *            the string in which substitution should be made
      * @return the string where all current ivy variables have been substituted by their value If
@@ -624,7 +624,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Substitute variables in the given map values by their value found in the current set of
      * variables
-     * 
+     *
      * @param strings
      *            the map of strings in which substitution should be made
      * @return a new map of strings in which all current ivy variables in values have been
@@ -641,7 +641,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Returns the variables loaded in configuration file. Those variables may better be seen as ant
      * properties
-     * 
+     *
      * @return IvyVariableContainer
      */
     public synchronized IvyVariableContainer getVariables() {
@@ -775,6 +775,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * regular expressions as explained in Pattern class may be used in attributes
+     *
+     * @param attributes Map
+     * @param matcher PatternMatcher
+     * @param resolverName String
+     * @param branch String
+     * @param conflictManager String
+     * @param resolveMode String
      */
     public synchronized void addModuleConfiguration(Map<String, String> attributes,
             PatternMatcher matcher, String resolverName, String branch, String conflictManager,
@@ -789,12 +796,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * <p>
      * If the specified file name is relative it is resolved with respect to the settings's base
      * directory.
-     * 
+     *
      * @param fileName
      *            The name of the file to resolve. Must not be <code>null</code>.
-     * 
+     *
      * @return the resolved File.
-     * 
+     *
      */
     public synchronized File resolveFile(String fileName) {
         return FileUtil.resolveFile(baseDir, fileName);
@@ -1211,7 +1218,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Filters the names list by removing all names that should be ignored as defined by the listing
      * ignore list
-     * 
+     *
      * @param names ditto
      */
     public synchronized void filterIgnore(Collection<String> names) {
@@ -1443,7 +1450,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Use a different variable container.
-     * 
+     *
      * @param variables IvyVariableContainer
      */
     public synchronized void setVariableContainer(IvyVariableContainer variables) {
@@ -1490,7 +1497,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Validates the settings, throwing an {@link IllegalStateException} if the current state is not
      * valid.
-     * 
+     *
      * @throws IllegalStateException
      *             if the settings is not valid.
      */
@@ -1508,7 +1515,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Validates all {@link Validatable} objects in the collection.
-     * 
+     *
      * @param values
      *            the collection of objects to validate.
      * @throws IllegalStateException

@@ -132,7 +132,16 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * After the call node may be discarded. To avoid using discarded node, make sure to get the
-     * real node after the call IvyNode node = ... node.loadData(); node = node.getRealNode(); ...
+     * real node after the call
+     * <code>IvyNode node = ... node.loadData(); node = node.getRealNode(); ...</code>
+     *
+     * @param rootModuleConf String
+     * @param parent IvyNode
+     * @param parentConf String
+     * @param conf String
+     * @param shouldBePublic boolean
+     * @param usage IvyNodeUsage
+     * @return boolean
      */
     public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf,
             boolean shouldBePublic, IvyNodeUsage usage) {
@@ -312,7 +321,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * Load the dependencies of the current node
      * <p>
      * The resulting collection of nodes may have some configuration to load
-     * 
+     *
      * @param rootModuleConf
      *            the requested configuration of the root module
      * @param conf
@@ -515,7 +524,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * returns the required configurations from the given node
-     * 
+     *
      * @param in IvyNode
      * @param inConf ditto
      * @return array of configuration names
@@ -537,7 +546,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * returns all the current required configurations of the node
-     * 
+     *
      * @return array of configuration names
      */
     public String[] getRequiredConfigurations() {
@@ -564,7 +573,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Returns the configurations of the dependency required in a given root module configuration.
-     * 
+     *
      * @param rootModuleConf String
      * @return array of configuration names
      */
@@ -620,7 +629,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Returns the root module configurations in which this dependency is required
-     * 
+     *
      * @return array of configuration names
      */
     public String[] getRootModuleConfigurations() {
@@ -630,7 +639,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Returns the root module configurations in which this dependency is required
-     * 
+     *
      * @return {@link Set} of configuration names
      */
     public Set<String> getRootModuleConfigurationsSet() {
@@ -675,7 +684,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Finds and returns a path in callers from the given module id to the current node
-     * 
+     *
      * @param from
      *            the module id to start the path from
      * @return a collection representing the path, starting with the from node, followed by the list
@@ -707,7 +716,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Update data in this node from data of the given node, for the given root module
      * configuration.
-     * 
+     *
      * @param node
      *            the source node from which data should be copied
      * @param rootModuleConf
@@ -748,7 +757,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Returns all the artifacts of this dependency required in all the root module configurations
-     * 
+     *
      * @return array of {@link Artifact}s
      */
     public Artifact[] getAllArtifacts() {
@@ -762,7 +771,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Returns all the artifacts of this dependency required in the root module configurations in
      * which the node is not evicted nor blacklisted
-     * 
+     *
      * @param artifactFilter Filter
      * @return array of {@link Artifact}s
      */
@@ -780,7 +789,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Returns the artifacts of this dependency required in the configurations themselves required
      * in the given root module configuration
-     * 
+     *
      * @param rootModuleConf String
      * @return array of {@link Artifact}s
      */
@@ -995,7 +1004,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Returns the last modified timestamp of the module represented by this Node, or 0 if the last
      * modified timestamp is currently unknown (module not loaded)
-     * 
+     *
      * @return the last modified timestamp of the module represented by this Node
      */
     public long getLastModified() {
@@ -1085,7 +1094,13 @@ public class IvyNode implements Comparable<IvyNode> {
     // EVICTION MANAGEMENT
     // /////////////////////////////////////////////////////////////////////////////
 
-    /** A copy of the set of resolved nodes (real nodes) */
+    /**
+     * A copy of the set of resolved nodes (real nodes)
+     *
+     * @param moduleId ditto
+     * @param rootModuleConf String
+     * @return Set&lt;IvyNode&gt;
+     */
     public Set<IvyNode> getResolvedNodes(ModuleId moduleId, String rootModuleConf) {
         return eviction.getResolvedNodes(moduleId, rootModuleConf);
     }
@@ -1190,7 +1205,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Returns a collection of Nodes in conflict for which conflict has been detected but conflict
      * resolution hasn't been done yet
-     * 
+     *
      * @param rootModuleConf ditto
      * @param mid
      *            the module id for which pending conflicts should be found
@@ -1217,7 +1232,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * implementation which use a best effort strategy to find compatible dependency set, like
      * {@link LatestCompatibleConflictManager}
      * </p>
-     * 
+     *
      * @param bdata
      *            the root module configuration in which the node should be blacklisted
      */
@@ -1255,10 +1270,10 @@ public class IvyNode implements Comparable<IvyNode> {
      * <p>
      * A blacklisted node should be considered as if it doesn't even exist on the repository.
      * </p>
-     * 
+     *
      * @param rootModuleConf
      *            the root module conf for which we'd like to know if the node is blacklisted
-     * 
+     *
      * @return true if this node is blacklisted int he given root module conf, false otherwise
      * @see #blacklist(IvyNodeBlacklist)
      */
@@ -1268,7 +1283,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     /**
      * Indicates if this node has been blacklisted in all root module configurations.
-     * 
+     *
      * @return true if this node is blacklisted in all root module configurations, false otherwise
      * @see #blacklist(IvyNodeBlacklist)
      */
@@ -1287,7 +1302,7 @@ public class IvyNode implements Comparable<IvyNode> {
     /**
      * Returns the blacklist data of this node in the given root module conf, or <code>null</code>
      * if this node is not blacklisted in this root module conf.
-     * 
+     *
      * @param rootModuleConf
      *            the root module configuration to consider
      * @return the blacklist data if any
@@ -1308,7 +1323,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * given root module conf which has a dependency descriptor with transitive == true, then it
      * returns true. Otherwise it returns false.
      * </p>
-     * 
+     *
      * @param rootModuleConf
      *            the root module configuration to consider
      * @return true if there is any merged usage with transitive dd, false otherwise.

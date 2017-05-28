@@ -59,11 +59,13 @@ import org.xml.sax.SAXException;
 /**
  * A parser for Maven 2 POM.
  * <p>
- * The configurations used in the generated module descriptor mimics the behavior defined by maven 2
- * scopes, as documented here:<br/>
- * http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html The
- * PomModuleDescriptorParser use a PomDomReader to read the pom, and the PomModuleDescriptorBuilder
- * to write the ivy module descriptor using the info read by the PomDomReader.
+ * The configurations used in the generated module descriptor mimics the behavior defined by Maven 2
+ * scopes, as documented
+ * <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">here</a>.
+ * The PomModuleDescriptorParser use a PomDomReader to read the pom, and the
+ * PomModuleDescriptorBuilder to write the ivy module descriptor using the info read by the
+ * PomDomReader.
+ * </p>
  */
 public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 

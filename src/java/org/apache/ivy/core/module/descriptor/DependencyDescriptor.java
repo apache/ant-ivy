@@ -34,11 +34,11 @@ import org.apache.ivy.util.extendable.ExtendableItem;
  * </p>
  * <p>
  * Then there is the dynamic constraint, which can either be the same as the default constraint, or
- * the original dependency constraint when an Ivy file is delivered an published to a repository.
- * This dynamic constraint is returned by {@link #getDynamicConstraintDependencyRevisionId()}, and
- * corresponds to the <code>revconstraint</code> attribute in the Ivy file. In some resolve mode,
- * this constraint can be used instead of the default dependency constraint when performing
- * dependency resolution.
+ * the original dependency constraint when an Ivy file is delivered an published to a
+ * repository. This dynamic constraint is returned by
+ * {@link #getDynamicConstraintDependencyRevisionId()}, and corresponds to the
+ * <code>revconstraint</code> attribute in the Ivy file. In some resolve mode, this constraint can
+ * be used instead of the default dependency constraint when performing dependency resolution.
  * </p>
  */
 public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
@@ -47,7 +47,7 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently of
      * conflicts manager. This only works for direct dependencies, and not transitive ones.
-     * 
+     *
      * @return true if this dependency should be used, false if conflicts manager can do its work.
      */
     boolean isForce();
@@ -57,7 +57,7 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
      * that the revision may have its artifacts modified without revision change. When new artifacts
      * are published a new ivy file should also be published with a new publication date to indicate
      * to ivy that artifacts have changed and that they should be downloaded again.
-     * 
+     *
      * @return true if this dependency is a changing one
      */
     boolean isChanging();
@@ -68,14 +68,14 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
 
     /**
      * Returns the constraint on dependency this descriptor represents.
-     * 
+     *
      * @return the constraint on dependency.
      */
     ModuleRevisionId getDependencyRevisionId();
 
     /**
      * Returns the dynamic constraint on dependency this descriptor represents.
-     * 
+     *
      * @return the dynamic constraint on dependency, or exact constraint if no dynamic constraint is
      *         specified.
      */
@@ -111,7 +111,7 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
 
     /**
      * Returns true if
-     * 
+     *
      * @param moduleConfigurations ditto
      * @param artifactId ditto
      * @return boolean
@@ -119,8 +119,6 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
 
     /**
-     * Returns true if this descriptor contains any exclusion rule
-     * 
      * @return true if this descriptor contains any exclusion rule
      */
     public boolean canExclude();
@@ -129,7 +127,7 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
 
     /**
      * Clones current dependency descriptor with another revision.
-     * 
+     *
      * @param revision
      *            the revision of the cloned dependency descriptor
      * @return the cloned dependency descriptor

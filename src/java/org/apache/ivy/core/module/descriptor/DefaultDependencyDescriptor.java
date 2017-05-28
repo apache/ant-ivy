@@ -57,7 +57,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * descriptor in the system namespace. <i>Note that exclude rules are not converted in system
      * namespace, because they aren't transformable (the name space hasn't the ability to convert
      * regular expressions). However, method doesExclude will work with system artifacts.</i>
-     * 
+     *
      * @param dd DependencyDescriptor
      * @param ns Namespace
      * @return DependencyDescriptor
@@ -76,9 +76,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * Transforms a dependency descriptor using the given transformer. Note that no namespace info
      * will be attached to the transformed dependency descriptor, so calling doesExclude is not
      * recommended (doesExclude only works when namespace is properly set)
-     * 
+     *
      * @param dd DependencyDescriptor
      * @param t NamespaceTransformer
+     * @param fromSystem boolean
      * @return DefaultDependencyDescriptor
      */
     public static DefaultDependencyDescriptor transformInstance(DependencyDescriptor dd,
@@ -252,6 +253,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * extending one). Both moduleConfiguration and requestedConfiguration are configurations of the
      * caller, the array returned is composed of the required configurations of the dependency
      * described by this descriptor.
+     * </p>
      */
     public String[] getDependencyConfigurations(String moduleConfiguration,
             String requestedConfiguration) {
@@ -288,16 +290,22 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                                  * we do not handle special confs like *!sg or [cond]* in right hand
                                  * confs yet: it would require supporting parenthesis grouping in
                                  * configurations intersection interpretation
-                                 * 
-                                 * for (Iterator it2 = depConfs.iterator(); it2.hasNext();) { String
-                                 * depConf = (String) it2.next(); if (depConf.startsWith("*")) { if
-                                 * (intersectedDepConf .indexOf("(" + depConf + ")") != -1) {
-                                 * intersectedDepConfs.add(intersectedDepConf); } else {
-                                 * intersectedDepConfs.add( "(" + intersectedDepConf + ")+(" +
-                                 * depConf + ")"); } } else if (intersectedDepConf.startsWith("*"))
-                                 * { if (depConf .indexOf("(" + intersectedDepConf + ")") != -1) {
-                                 * intersectedDepConfs.add(depConf); } else {
-                                 * intersectedDepConfs.add( depConf + "+" + intersectedDepConf); } }
+                                 *
+                                 * for (Iterator it2 = depConfs.iterator(); it2.hasNext();) {
+                                 *     String depConf = (String) it2.next();
+                                 *     if (depConf.startsWith("*")) {
+                                 *         if (intersectedDepConf .indexOf("(" + depConf + ")") != -1) {
+                                 *             intersectedDepConfs.add(intersectedDepConf);
+                                 *         } else {
+                                 *             intersectedDepConfs.add( "(" + intersectedDepConf + ")+(" + depConf + ")");
+                                 *         }
+                                 *     } else if (intersectedDepConf.startsWith("*")) {
+                                 *         if (depConf .indexOf("(" + intersectedDepConf + ")") != -1) {
+                                 *             intersectedDepConfs.add(depConf);
+                                 *         } else {
+                                 *             intersectedDepConfs.add( depConf + "+" + intersectedDepConf);
+                                 *         }
+                                 *     }
                                  * }
                                  */
                             }
@@ -406,7 +414,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     /**
      * Replaces fallback patterns with correct values if fallback pattern exists.
-     * 
+     *
      * @param pattern
      *            pattern to look for
      * @param conf
@@ -607,7 +615,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     /**
-     * 
+     *
      * @return true if this descriptor contains any exclusion rule
      */
     public boolean canExclude() {

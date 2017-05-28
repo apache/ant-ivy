@@ -278,8 +278,8 @@ public abstract class IvyTask extends Task {
     /**
      * The real logic of task execution after project has been set in the context. MUST be
      * implemented by subclasses
-     * 
-     * @throws BuildException
+     *
+     * @throws BuildException if something goes wrong
      */
     public abstract void doExecute() throws BuildException;
 

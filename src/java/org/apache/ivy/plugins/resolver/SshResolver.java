@@ -31,6 +31,8 @@ public class SshResolver extends AbstractSshBasedResolver {
     /**
      * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of
      * the published files.
+     *
+     * @param permissions String
      */
     public void setPublishPermissions(String permissions) {
         ((SshRepository) getRepository()).setPublishPermissions(permissions);
@@ -39,7 +41,7 @@ public class SshResolver extends AbstractSshBasedResolver {
     /**
      * sets the path separator used on the target system. Not sure if this is used or if '/' is used
      * on all implementation. default is to use '/'
-     * 
+     *
      * @param sep
      *            file separator to use on the target system
      */
@@ -57,6 +59,8 @@ public class SshResolver extends AbstractSshBasedResolver {
      * the term %arg can be used in the command to substitute the path to be listed (e.g.
      * "ls -1 %arg | grep -v CVS" to get a listing without CVS directory) if %arg is not part of the
      * command, the path will be appended to the command default is: "ls -1"
+     *
+     * @param cmd String
      */
     public void setListCommand(String cmd) {
         ((SshRepository) getRepository()).setListCommand(cmd);
@@ -65,9 +69,11 @@ public class SshResolver extends AbstractSshBasedResolver {
     /**
      * set the command to check for existence of a file the command has to be a shell command
      * working on the target system and has to create an exit status of 0 for an existent file and
-     * <> 0 for a non existing file given as argument the term %arg can be used in the command to
-     * substitute the path to be listed if %arg is not part of the command, the path will be appended
-     * to the command default is: "ls"
+     * &lt;&gt; 0 for a non existing file given as argument the term %arg can be used in the command
+     * to substitute the path to be listed if %arg is not part of the command, the path will be
+     * appended to the command default is: "ls"
+     *
+     * @param cmd String
      */
     public void setExistCommand(String cmd) {
         ((SshRepository) getRepository()).setExistCommand(cmd);
@@ -78,6 +84,8 @@ public class SshResolver extends AbstractSshBasedResolver {
      * command working on the target system and has to create a directory with the given argument
      * the term %arg can be used in the command to substitute the path to be listed if %arg is not
      * part of the command, the path will be appended to the command default is: "mkdir"
+     *
+     * @param cmd String
      */
     public void setCreateDirCommand(String cmd) {
         ((SshRepository) getRepository()).setExistCommand(cmd);

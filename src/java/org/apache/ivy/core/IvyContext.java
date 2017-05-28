@@ -36,7 +36,7 @@ import org.apache.ivy.util.MessageLogger;
 /**
  * This class represents an execution context of an Ivy action. It contains several getters to
  * retrieve information, like the used Ivy instance, the cache location...
- * 
+ *
  * @see IvyThread
  */
 public class IvyContext {
@@ -90,7 +90,7 @@ public class IvyContext {
      * {@link #popContext()} should usually be called when the job for which this context has been
      * pushed is finished.
      * </p>
-     * 
+     *
      * @return the newly pushed context
      */
     public static IvyContext pushNewContext() {
@@ -104,7 +104,7 @@ public class IvyContext {
      * {@link #popContext()} should usually be called when the job for which this context has been
      * pushed is finished.
      * </p>
-     * 
+     *
      * @return the newly pushed context
      */
     public static IvyContext pushNewCopyContext() {
@@ -115,7 +115,7 @@ public class IvyContext {
      * Changes the context associated with this thread. This is especially useful when launching a
      * new thread, to associate it with the same context as the initial one. Do not forget to call
      * {@link #popContext()} when done.
-     * 
+     *
      * @param context
      *            the new context to use in this thread.
      * @return the pushed context
@@ -129,7 +129,7 @@ public class IvyContext {
      * Pops one context used with this thread. This is usually called after having finished a task
      * for which a call to {@link #pushNewContext()} or {@link #pushContext(IvyContext)} was done
      * prior to beginning the task.
-     * 
+     *
      * @return the popped context
      */
     public static IvyContext popContext() {
@@ -144,7 +144,7 @@ public class IvyContext {
      * This methods does a similar job to {@link #peek(String)}, except that it considers the whole
      * context stack and not only one instance.
      * </p>
-     * 
+     *
      * @param key
      *            context key for the string
      * @return top object from the list (index 0) of the first context in the stack containing this
@@ -172,7 +172,7 @@ public class IvyContext {
      * Then, or if no ivy method has been called, a default ivy instance is returned by this method,
      * so that it never returns <code>null</code>.
      * </p>
-     * 
+     *
      * @return the current ivy instance
      */
     public Ivy getIvy() {
@@ -187,7 +187,7 @@ public class IvyContext {
      * If you want get a default Ivy instance in case no instance if currently associated, use
      * {@link #getIvy()}.
      * </p>
-     * 
+     *
      * @return the current ivy instance, or <code>null</code> if there is no current ivy instance.
      */
     public Ivy peekIvy() {
@@ -233,7 +233,7 @@ public class IvyContext {
     /**
      * Reads the first object from the list saved under given key in the context. If value under key
      * represents non List object then a RuntimeException is thrown.
-     * 
+     *
      * @param key
      *            context key for the string
      * @return top object from the list (index 0) or null if no key or list empty
@@ -259,7 +259,7 @@ public class IvyContext {
     /**
      * Removes and returns first object from the list saved under given key in the context. If value
      * under key represents non List object then a RuntimeException is thrown.
-     * 
+     *
      * @param key
      *            context key for the string
      * @return top object from the list (index 0) or null if no key or list empty
@@ -286,9 +286,11 @@ public class IvyContext {
      * Removes and returns first object from the list saved under given key in the context but only
      * if it equals the given expectedValue - if not a false value is returned. If value under key
      * represents non List object then a RuntimeException is thrown.
-     * 
+     *
      * @param key
      *            context key for the string
+     * @param expectedValue
+     *            expected value of the key
      * @return true if the r
      */
     public boolean pop(String key, Object expectedValue) {
@@ -318,7 +320,7 @@ public class IvyContext {
      * under key represents non List object then a RuntimeException is thrown. If no list exists
      * under given key a new LinkedList is created. This is kept without WeakReference in opposite
      * to the put() results.
-     * 
+     *
      * @param key
      *            key context key for the string
      * @param value

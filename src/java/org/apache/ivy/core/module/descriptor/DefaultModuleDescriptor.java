@@ -133,7 +133,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * descriptor in the system namespace. <i>Note that dependency exclude rules are not converted
      * in system namespace, because they aren't transformable (the name space hasn't the ability to
      * convert regular expressions)</i>
-     * 
+     *
      * @param md ModuleDescriptor
      * @param ns Namespace
      * @return ModuleDescriptor
@@ -280,6 +280,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     /**
      * IMPORTANT : at least call setModuleRevisionId and setResolvedPublicationDate with instances
      * created by this constructor !
+     *
+     * @param parser ModuleDescriptorParser
+     * @param res Resource
      */
     public DefaultModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
         this.parser = parser;
@@ -361,7 +364,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     /**
      * Artifact configurations are not used since added artifact may not be entirely completed, so
      * its configurations data may not be accurate
-     * 
+     *
      * @param conf ditto
      * @param artifact ditto
      */
@@ -427,6 +430,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     /**
      * Returns the configuration object with the given name in the current module descriptor, null
      * if not found.
+     *
+     * @param confName String
      */
     public Configuration getConfiguration(String confName) {
         Configuration configuration = configurations.get(confName);
@@ -599,7 +604,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     /**
      * regular expressions as explained in Pattern class may be used in ModuleId organisation and
      * name
-     * 
+     *
      * @param moduleId ditto
      * @param matcher PatternMatcher
      * @param manager ConflictManager
@@ -681,7 +686,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     /**
-     * Throws an exception if the module descriptor is inconsistent For the moment, only extended
+     * Throws an exception if the module descriptor is inconsistent. For the moment, only extended
      * configurations existence and cycles are checked
      */
     public void check() {
@@ -781,8 +786,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     /**
-     * only works when namespace is properly set. The behaviour is not specified if namespace is not
-     * set
+     * Only works when namespace is properly set. The behaviour is not specified if namespace is
+     * not set.
+     *
+     * @param moduleConfigurations String[]
+     * @param artifactId ditto
+     * @return boolean
      */
     public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
         if (namespace != null) {

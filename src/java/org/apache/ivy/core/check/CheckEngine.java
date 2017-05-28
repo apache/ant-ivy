@@ -52,6 +52,10 @@ public class CheckEngine {
      * are available in the corresponding resolver. Note that the check is not performed
      * recursively, i.e. if a dependency has itself dependencies badly described or not available,
      * this check will not discover it.
+     *
+     * @param ivyFile URL
+     * @param resolvername String
+     * @return boolean
      */
     public boolean check(URL ivyFile, String resolvername) {
         try {

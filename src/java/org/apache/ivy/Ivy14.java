@@ -61,17 +61,17 @@ import org.apache.ivy.util.filter.FilterHelper;
  * instance of this class.
  * <p>
  * For instance, where you were doing:
- * 
+ *
  * <pre>
  * Ivy ivy = new Ivy();
  * </pre>
- * 
+ *
  * do instead:
- * 
+ *
  * <pre>
  * Ivy14 ivy = new Ivy14();
  * </pre>
- * 
+ *
  * And that should be enough in most cases!
  */
 public class Ivy14 {

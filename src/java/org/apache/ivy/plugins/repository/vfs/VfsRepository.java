@@ -117,10 +117,10 @@ public class VfsRepository extends AbstractRepository {
 
     /**
      * Get a VfsResource
-     * 
+     *
      * @param vfsURI
      *            a <code>String</code> identifying a VFS Resource
-     * @throws <code>IOException</code> on failure
+     * @throws IOException on failure
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
      */
     public Resource getResource(String vfsURI) throws IOException {
@@ -129,12 +129,12 @@ public class VfsRepository extends AbstractRepository {
 
     /**
      * Transfer a VFS Resource from the repository to the local file system.
-     * 
+     *
      * @param srcVfsURI
      *            a <code>String</code> identifying the VFS resource to be fetched
      * @param destination
      *            a <code>File</code> identifying the destination file
-     * @throws <code>IOException</code> on failure
+     * @throws IOException on failure
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
      */
     public void get(String srcVfsURI, File destination) throws IOException {
@@ -159,7 +159,7 @@ public class VfsRepository extends AbstractRepository {
     /**
      * Return a listing of the contents of a parent directory. Listing is a set of strings
      * representing VFS URIs.
-     * 
+     *
      * @param vfsURI
      *            providing identifying a VFS provided resource
      * @throws IOException
@@ -188,14 +188,14 @@ public class VfsRepository extends AbstractRepository {
 
     /**
      * Transfer an Ivy resource to a VFS repository
-     * 
+     *
      * @param source
      *            a <code>File</code> identifying the local file to transfer to the repository
      * @param vfsURI
      *            a <code>String</code> identifying the destination VFS Resource.
      * @param overwrite
      *            whether to overwrite an existing resource.
-     * @throws <code>IOException</code> on failure.
+     * @throws IOException on failure.
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
      */
     public void put(File source, String vfsURI, boolean overwrite) throws IOException {

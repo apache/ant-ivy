@@ -34,7 +34,7 @@ public final class CircularDependencyHelper {
 
     /**
      * Returns a string representation of this circular dependency graph
-     * 
+     *
      * @param mrids
      *            in order of circular dependency
      * @return a string representation of this circular dependency graph
@@ -62,7 +62,8 @@ public final class CircularDependencyHelper {
 
     /**
      * @param loopElements
-     *            a List<ModuleDescriptor>
+     *            a List&lt;ModuleDescriptor&gt;
+     * @return String
      */
     public static String formatMessageFromDescriptors(List loopElements) {
         ModuleRevisionId[] mrids = new ModuleRevisionId[loopElements.size()];

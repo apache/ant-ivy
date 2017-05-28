@@ -322,6 +322,8 @@ public class XmlReportParser {
 
     /**
      * Returns the <tt>ModuleRevisionId</tt> of the resolved module.
+     *
+     * @return ModuleRevisionId
      */
     public ModuleRevisionId getResolvedModule() {
         return parser.getResolvedModule();

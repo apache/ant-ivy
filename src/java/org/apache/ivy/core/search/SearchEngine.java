@@ -50,10 +50,10 @@ public class SearchEngine {
 
     /**
      * Returns an empty array when no token values are found.
-     * 
+     *
      * @param token
      *            ditto
-     * @param otherTokenValues
+     * @param otherTokenValues Map
      * @return String[]
      */
     public String[] listTokenValues(String token, Map<String, Object> otherTokenValues) {
@@ -177,10 +177,9 @@ public class SearchEngine {
      * <p>
      * ModuleId are returned in the system namespace.
      * </p>
-     * 
-     * @param moduleCrit
-     *            ModuleId
-     * @param matcher
+     *
+     * @param moduleCrit ModuleId
+     * @param matcher PatternMatcher
      * @return ModuleId[]
      */
     public ModuleId[] listModules(ModuleId moduleCrit, PatternMatcher matcher) {
@@ -214,10 +213,9 @@ public class SearchEngine {
      * <p>
      * ModuleRevisionId are returned in the system namespace.
      * </p>
-     * 
-     * @param moduleCrit
-     *            ModuleRevisionId
-     * @param matcher
+     *
+     * @param moduleCrit ModuleRevisionId
+     * @param matcher PatternMatcher
      * @return ModuleRevisionId[]
      */
     public ModuleRevisionId[] listModules(ModuleRevisionId moduleCrit, PatternMatcher matcher) {
@@ -269,7 +267,7 @@ public class SearchEngine {
      * <p>
      * ModuleRevisionId are returned in the system namespace.
      * </p>
-     * 
+     *
      * @param resolver
      *            the resolver in which modules should looked up
      * @param moduleCrit

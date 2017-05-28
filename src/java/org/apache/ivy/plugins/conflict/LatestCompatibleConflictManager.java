@@ -46,17 +46,17 @@ import org.apache.ivy.util.Message;
  * set of compatible dependencies, even if it requires stepping back to older revisions (as long as
  * they are in the set of compatibility).
  * <p>
- * Here is an example of what this conflict manager is able to do:<br/>
+ * Here is an example of what this conflict manager is able to do:
+ * </p>
  * <b>Available Modules</b>:
- * 
  * <pre>
  * #A;2-&gt;{ #B;[1.0,1.5] #C;[2.0,2.5] }
  * #B;1.4-&gt;#D;1.5
  * #B;1.5-&gt;#D;2.0
  * #C;2.5-&gt;#D;[1.0,1.6]
  * </pre>
- * 
- * <b>Result</b>: #B;1.4, #C;2.5, #D;1.5<br/>
+ * <b>Result</b>: #B;1.4, #C;2.5, #D;1.5
+ * <p>
  * <b>Details</b>The conflict manager finds that the latest matching version of #B (1.5) depends on
  * a version of #D incompatible with what is expected by the latest matching version of #C. Hence
  * the conflict manager blacklists #B;1.5, and the version range [1.0,1.5] is resolved again to end
@@ -126,7 +126,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      * Handles an incompatible conflict
      * <p>
      * An incompatible conflicts is handled with this pseudo algorithm:
-     * 
+     *
      * <pre>
      * take latest among two nodes in conflict
      *   for all callers
@@ -139,9 +139,9 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      *   else
      *     throw strict conflict exception
      * </pre>
-     * 
+     *
      * </p>
-     * 
+     *
      * @param parent
      *            the parent node of nodes in conflict
      * @param conflicts
@@ -238,7 +238,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
 
     /**
      * Tries to blacklist exactly one version for all callers paths.
-     * 
+     *
      * @param versionMatcher
      *            the version matcher to use to interpret versions
      * @param conflictParent

@@ -154,6 +154,7 @@ public class IvyNodeCallers {
      * @param rootModuleConf ditto
      * @param callerNode IvyNode
      * @param callerConf ditto
+     * @param requestedConf ditto
      * @param dependencyConfs
      *            '*' must have been resolved
      * @param dd
@@ -251,7 +252,7 @@ public class IvyNodeCallers {
 
     /**
      * Returns true if ALL callers exclude the given artifact in the given root module conf
-     * 
+     *
      * @param rootModuleConf ditto
      * @param artifact Artifact
      * @return boolean

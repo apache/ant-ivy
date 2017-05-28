@@ -68,7 +68,7 @@ public class SshRepository extends AbstractSshBasedRepository {
     /**
      * Fetch the needed file information for a given file (size, last modification time) and report
      * it back in a SshResource
-     * 
+     *
      * @param source
      *            ssh uri for the file to get info for
      * @return SshResource filled with the needed information
@@ -103,7 +103,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /**
      * Reads out the output of a ssh session exec
-     * 
+     *
      * @param channel
      *            Channel to read from
      * @param strStdout
@@ -157,7 +157,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Repository#list(java.lang.String)
      */
     public List list(String parent) throws IOException {
@@ -211,7 +211,7 @@ public class SshRepository extends AbstractSshBasedRepository {
     /**
      * Replace the argument placeholder with argument or append the argument if no placeholder is
      * present
-     * 
+     *
      * @param command
      *            with argument placeholder or not
      * @param argument ditto
@@ -229,7 +229,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Repository#put(java.io.File, java.lang.String, boolean)
      */
     public void put(File source, String destination, boolean overwrite) throws IOException {
@@ -279,7 +279,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /**
      * Tries to create a directory path on the target system
-     * 
+     *
      * @param path
      *            to create
      * @param session
@@ -316,7 +316,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /**
      * check for existence of file or dir on target system
-     * 
+     *
      * @param filePath
      *            to the object to check
      * @param session
@@ -337,7 +337,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Repository#get(java.lang.String, java.io.File)
      */
     public void get(String source, File destination) throws IOException {
@@ -373,7 +373,7 @@ public class SshRepository extends AbstractSshBasedRepository {
     /**
      * sets the list command to use for a directory listing listing must be only the filename and
      * each filename on a separate line
-     * 
+     *
      * @param cmd
      *            to use. default is "ls -1"
      */
@@ -422,7 +422,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      * The file separator is the separator to use on the target system On a unix system it is '/',
      * but I don't know, how this is solved on different ssh implementations. Using the default
      * might be fine
-     * 
+     *
      * @param fileSeparator
      *            The fileSeparator to use. default '/'
      */
@@ -433,6 +433,8 @@ public class SshRepository extends AbstractSshBasedRepository {
     /**
      * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of
      * the published files.
+     *
+     * @param permissions String
      */
     public void setPublishPermissions(String permissions) {
         this.publishPermissions = permissions;
@@ -448,10 +450,11 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /**
      * Not really streaming...need to implement a proper streaming approach?
-     * 
+     *
      * @param resource
      *            to stream
      * @return InputStream of the resource data
+     * @throws IOException if something goes wrong
      */
     public InputStream openStream(SshResource resource) throws IOException {
         Session session = getSession(resource.getName());

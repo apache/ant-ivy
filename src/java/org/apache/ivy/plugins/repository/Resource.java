@@ -29,18 +29,17 @@ import java.io.InputStream;
  * <li>size of the resource in bytes.</li>
  * <li>if the resource is available.</li>
  * </ul>
- * </p> <h4>Implementation Notes</h4> In implementing the interface you need to ensure the following
- * behaviors:
+ * <h3>Implementation Notes</h3>
+ * In implementing the interface you need to ensure the following behaviors:
  * <ul>
- * <li>All of the methods specified in the interface fail by returning an empty value (
- * <code>false</code>, <code>0</code>, <code>""</code>). In other words, the specified interface
+ * <li>All of the methods specified in the interface fail by returning an empty value
+ * (<code>false</code>, <code>0</code>, <code>""</code>). In other words, the specified interface
  * methods should not throw RuntimeExceptions.</li>
  * <li>Failure conditions should be logged using the {@link org.apache.ivy.util.Message#verbose}
  * method.</li>
  * <li>Failure of one of the interface's specified methods results in all other interface specified
  * methods returning an empty value (<code>false</code>, <code>0</code>, <code>""</code>).</li>
  * </ul>
- * </p>
  */
 
 public interface Resource {
@@ -68,7 +67,7 @@ public interface Resource {
     public long getContentLength();
 
     /**
-     * Determine if the resource is available. </p> Note that this method only checks for
+     * Determine if the resource is available. Note that this method only checks for
      * availability, not for actual existence.
      * 
      * @return <code>boolean</code> value indicating if the resource is available.
@@ -95,6 +94,7 @@ public interface Resource {
      * Opens a stream on this resource
      * 
      * @return the opened input stream
+     * @throws IOException if something goes wrong
      */
     public InputStream openStream() throws IOException;
 }
