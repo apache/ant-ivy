@@ -261,8 +261,9 @@ public final class PomModuleDescriptorWriter {
                 } else {
                     String scope = mapping.getScope(dds[i].getModuleConfigurations());
                     boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
+                    final String classifier = dds[i].getExtraAttribute("classifier");
                     printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
-                        mrid.getRevision(), null, null, scope, optional, dds[i].isTransitive(),
+                        mrid.getRevision(), null, classifier, scope, optional, dds[i].isTransitive(),
                         excludes);
                 }
             }
