@@ -469,7 +469,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private Set getCollectionForConfiguration(String moduleConfiguration, Map collectionMap) {
         if (collectionMap == null || collectionMap.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         Collection artifacts = (Collection) collectionMap.get(moduleConfiguration);
         Collection defArtifacts = (Collection) collectionMap.get("*");

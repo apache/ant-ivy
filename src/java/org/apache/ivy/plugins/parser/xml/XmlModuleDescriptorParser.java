@@ -312,7 +312,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         getBuffer().append("\"");
                     }
                     getBuffer().append(">");
-                    return;
                 } else if ("ivy-module".equals(qName)) {
                     ivyModuleStarted(attributes);
                 } else if ("info".equals(qName)) {
@@ -847,8 +846,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     String visibility = settings.substitute(attributes.getValue("visibility"));
                     String ext = settings.substitute(attributes.getValue("extends"));
                     String transitiveValue = attributes.getValue("transitive");
-                    boolean transitive = (transitiveValue == null) ? true
-                            : Boolean.valueOf(attributes.getValue("transitive"));
+                    boolean transitive = (transitiveValue == null)
+                            || Boolean.valueOf(attributes.getValue("transitive"));
                     String deprecated = attributes.getValue("deprecated");
                     Configuration configuration = new Configuration(conf,
                             Configuration.Visibility.getVisibility((visibility == null) ? "public"
@@ -904,8 +903,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             boolean changing = Boolean.valueOf(settings.substitute(attributes.getValue("changing")));
 
             String transitiveValue = settings.substitute(attributes.getValue("transitive"));
-            boolean transitive = (transitiveValue == null) ? true
-                    : Boolean.valueOf(attributes.getValue("transitive"));
+            boolean transitive = (transitiveValue == null)
+                    || Boolean.valueOf(attributes.getValue("transitive"));
 
             String name = settings.substitute(attributes.getValue("name"));
             String branch = settings.substitute(attributes.getValue("branch"));

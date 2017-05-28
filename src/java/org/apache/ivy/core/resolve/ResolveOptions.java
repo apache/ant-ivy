@@ -198,7 +198,7 @@ public class ResolveOptions extends LogOptions {
     }
 
     /**
-     * Get the asked confs. Special confs (like *) use the moduleDescriptor to find the values *
+     * Get the asked confs. Special confs (like *) use the moduleDescriptor to find the values
      *
      * @param md
      *            Used to get the exact values for special confs.

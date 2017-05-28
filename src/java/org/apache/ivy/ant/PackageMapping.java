@@ -59,8 +59,8 @@ public class PackageMapping {
         return pkg;
     }
 
-    public void setPackage(String package1) {
-        pkg = package1;
+    public void setPackage(String packageName) {
+        pkg = packageName;
     }
 
     public ModuleRevisionId getModuleRevisionId() {

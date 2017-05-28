@@ -453,6 +453,7 @@
            printsummary="yes"
            includeantruntime="yes"
            dir="${basedir}"
+           tempdir="${build.dir}"
            fork="true">
             <classpath>
                 <path refid="test.classpath"/>

@@ -477,7 +477,7 @@ public class XmlSettingsParser extends DefaultHandler {
         String environmentPrefix = (String) attributes.get("environment");
         if (propFilePath != null) {
             String overrideStr = (String) attributes.get("override");
-            boolean override = (overrideStr == null) ? true : Boolean.valueOf(overrideStr);
+            boolean override = (overrideStr == null) || Boolean.valueOf(overrideStr);
             Message.verbose("loading properties: " + propFilePath);
             try {
                 URL fileUrl = urlFromFileAttribute(propFilePath);
@@ -505,8 +505,8 @@ public class XmlSettingsParser extends DefaultHandler {
         if (value == null) {
             throw new IllegalArgumentException("missing attribute value on property tag");
         }
-        ivy.setVariable(name, value, (override == null) ? true : Boolean.valueOf(override),
-                isSetVar, unlessSetVar);
+        ivy.setVariable(name, value, (override == null) || Boolean.valueOf(override), isSetVar,
+            unlessSetVar);
     }
 
     private void typedefStarted(Map attributes) {

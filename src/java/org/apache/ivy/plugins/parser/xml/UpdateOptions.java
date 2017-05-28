@@ -39,12 +39,12 @@ public class UpdateOptions {
     /**
      * Map from ModuleId of dependencies to new revision (as String)
      */
-    private Map resolvedRevisions = Collections.EMPTY_MAP;
+    private Map resolvedRevisions = Collections.emptyMap();
 
     /**
      * Map from ModuleId of dependencies to new branch (as String)
      */
-    private Map resolvedBranches = Collections.EMPTY_MAP;
+    private Map resolvedBranches = Collections.emptyMap();
 
     /**
      * the new status, <code>null</code> to keep the old one

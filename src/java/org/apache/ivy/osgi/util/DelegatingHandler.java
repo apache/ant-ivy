@@ -125,7 +125,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         parent.delegate = null;
         skip = false;
         started = false;
-        for (DelegatingHandler/* <?> */subHandler : saxHandlerMapping.values()) {
+        for (DelegatingHandler subHandler : saxHandlerMapping.values()) {
             subHandler.stopDelegating();
         }
     }

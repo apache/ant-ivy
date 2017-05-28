@@ -152,7 +152,7 @@ public class FileSystemResolver extends RepositoryResolver {
             try {
                 getFileRepository().move(transactionTempDir, transactionDestDir);
 
-                Message.info("\tpublish commited: moved " + transactionTempDir + " \n\t\tto "
+                Message.info("\tpublish committed: moved " + transactionTempDir + " \n\t\tto "
                         + transactionDestDir);
             } catch (IOException ex) {
                 IOException commitEx;
