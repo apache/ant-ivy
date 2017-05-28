@@ -648,7 +648,8 @@
                   description="JVMArgs for invoking Findbugs"/>
 
         <mkdir dir="${findbugs.download.to}"/>
-        <get src="${findbugs.download.url}" dest="${findbugs.download.to}/${findbugs.download.file}"/>
+        <get src="${findbugs.download.url}" dest="${findbugs.download.to}/${findbugs.download.file}"
+            usetimestamp="true" skipexisting="true"/>
         <unzip src="${findbugs.download.to}/${findbugs.download.file}" dest="${findbugs.download.to}"/>
         <property name="findbugs.home" location="${findbugs.download.to}/${findbugs.download.name}"/>
         <mkdir dir="${findbugs.home}/plugin"/>
