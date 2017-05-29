@@ -510,7 +510,7 @@
     </target>
 
     <target name="prepare-snapshot"
-            depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, coverage-report" />
+            depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, test-report"/>
     <target name="snapshot"
             depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-maven2, snapshot-checksums"
             description="used for nightly and integration builds"/>

@@ -16,7 +16,7 @@
    specific language governing permissions and limitations
    under the License.
 -->
-<project name="ivy" default="coverage-report" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="ivy" default="test-report" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property environment="env"/>
     <property file="version.properties"/>
@@ -58,7 +58,7 @@
     <target name="install-ant" depends="init-ivy-home,jar"
         description="build Ivy and install it in Ant home lib">
         <condition property="ant.home" value="${env.ANT_HOME}">
-          <isset property="env.ANT_HOME"/>
+            <isset property="env.ANT_HOME"/>
         </condition>
         <fail unless="ant.home" message="ANT_HOME environment variable or ant.home property required"/>
         <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ant.home}/lib/ivy.jar"/>
@@ -115,13 +115,13 @@
         <mkdir dir="${test.build.dir}"/>
         <mkdir dir="${artifacts.build.dir}"/>
         <mkdir dir="${test.report.dir}"/>
-        <mkdir dir="${ivy.report.dir}"/>
     </target>
 
     <target name="clean" description="delete all generated files keeping sources only">
         <delete dir="${classes.build.dir}"/>
         <delete dir="${test.build.dir}"/>
         <delete dir="${artifacts.build.dir}"/>
+        <delete dir="${ivy.report.dir}"/>
         <delete dir="${test.report.dir}"/>
         <delete dir="${javadoc.build.dir}"/>
         <delete dir="${doc.build.dir}"/>
@@ -345,6 +345,22 @@
     <!-- =================================================================
          TESTS
          ================================================================= -->
+    <target name="build-test" depends="jar">
+        <javac  srcdir="${test.dir}"
+                destdir="${test.build.dir}"
+                classpathref="run.classpath"
+                source="${ivy.minimum.javaversion}"
+                target="${ivy.minimum.javaversion}"
+                debug="${debug.mode}"
+                encoding="UTF-8"
+                includeantruntime="no"/>
+        <copy todir="${test.build.dir}">
+            <fileset dir="${test.dir}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
     <target name="build-custom-resolver-jar" depends="jar">
         <mkdir dir="${build.dir}/custom-classpath"/>
         <javac  srcdir="${basedir}/test/custom-classpath"
@@ -375,58 +391,6 @@
 
     <target name="init-tests" depends="init-tests-offline,init-tests-online"/>
 
-    <target name="emma" depends="jar" unless="skip.test">
-        <ivy:cachepath organisation="emma" module="emma" revision="2.0.5312"
-                       inline="true" conf="default" pathid="emma.classpath"
-                       log="download-only"/>
-        <ivy:cachepath organisation="emma" module="emma_ant" revision="2.0.5312"
-                       inline="true" conf="default" pathid="emma.ant.classpath" transitive="false"
-                       log="download-only"/>
-        <taskdef resource="emma_ant.properties">
-            <classpath refid="emma.classpath"/>
-            <classpath refid="emma.ant.classpath"/>
-        </taskdef>
-        <property name="emma.enabled" value="true"/>
-        <property name="coverage.dir" value="${build.dir}/coverage"/>
-        <property name="coverage.classes.dir" value="${coverage.dir}/classes"/>
-        <mkdir dir="${coverage.dir}"/>
-        <mkdir dir="${coverage.classes.dir}"/>
-        <emma enabled="${emma.enabled}">
-          <instr mode="copy"
-                 destdir="${coverage.dir}/classes"
-                 metadatafile="${coverage.dir}/metadata.emma">
-            <instrpath>
-                <pathelement location="${core.classes.build.dir}"/>
-                <pathelement location="${ant.classes.build.dir}"/>
-                <pathelement location="${optional.classes.build.dir}"/>
-            </instrpath>
-          </instr>
-        </emma>
-        <delete file="${coverage.dir}/coverage.emma"/>
-        <!-- add emma path to test path, because emma jars need to be available when running
-             instrumented classes -->
-        <ivy:addpath topath="test.classpath" first="true">
-          <pathelement location="${coverage.dir}/classes"/>
-          <path refid="emma.classpath"/>
-        </ivy:addpath>
-    </target>
-
-    <target name="build-test" depends="jar">
-        <javac  srcdir="${test.dir}"
-                destdir="${test.build.dir}"
-                classpathref="run.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                encoding="ISO-8859-1"
-                includeantruntime="no"/>
-        <copy todir="${test.build.dir}">
-            <fileset dir="${test.dir}">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-
     <target name="prepare-osgi-tests" depends="resolve" unless="skip.test">
         <ant dir="${basedir}/test/test-repo" target="generate-bundles"/>
     </target>
@@ -441,48 +405,55 @@
         </jar>
     </target>
 
-    <target name="test-internal" depends="build-test,init-tests,prepare-osgi-tests,prepare-test-jar-repositories" unless="skip.test">
+    <target name="init-jacoco" depends="jar" unless="skip.test">
+        <ivy:cachepath organisation="org.jacoco" module="org.jacoco.ant" revision="0.7.9"
+                       inline="true" conf="default" pathid="jacoco.classpath" log="download-only"/>
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"
+                 classpathref="jacoco.classpath"/>
+    </target>
+
+    <target name="test-internal" depends="build-test,init-tests,prepare-osgi-tests,prepare-test-jar-repositories,init-jacoco" unless="skip.test">
         <mkdir dir="${test.xml.dir}"/>
 
-        <junit
-           haltonfailure="off"
-           haltonerror="off"
-           errorproperty="test.failed"
-           failureproperty="test.failed"
-           showoutput="no"
-           printsummary="yes"
-           includeantruntime="yes"
-           dir="${basedir}"
-           tempdir="${build.dir}"
-           fork="true">
-            <classpath>
-                <path refid="test.classpath"/>
-                <pathelement path="${ant.home}/lib/ant-nodeps.jar"/>
-                <pathelement path="${ant.home}/lib/ant-trax.jar"/>
-            </classpath>
+        <jacoco:coverage xmlns:jacoco="antlib:org.jacoco.ant" destfile="${jacoco.log}"
+                         exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader">
+            <junit
+                haltonfailure="off"
+                haltonerror="off"
+                errorproperty="test.failed"
+                failureproperty="test.failed"
+                showoutput="no"
+                printsummary="yes"
+                includeantruntime="yes"
+                dir="${basedir}"
+                tempdir="${build.dir}"
+                fork="true">
+                <classpath>
+                    <path refid="test.classpath"/>
+                </classpath>
 
-            <!-- pass the proxy properties to the forked junit process to use correct proxy -->
-            <syspropertyset>
-                <propertyref prefix="http"/>
-            </syspropertyset>
-            <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma"/>
-            <jvmarg value="-Demma.coverage.out.merge=true"/>
-            <!-- Added so that the bytecode generated by Emma (in Java 7) isn't verified in "Strict" mode
-                which fails due to Emma's inability to create Java 7 bytecode. Can be removed if/when we
-                move to a different code coverage tool -->
-            <jvmarg value="-noverify"/>
+                <!-- pass the proxy properties to the forked junit process to use correct proxy -->
+                <syspropertyset>
+                    <propertyref prefix="http"/>
+                </syspropertyset>
 
-            <!-- Added this to test IVY-65 -->
-            <jvmarg value="-Duser.region=TR"/>
-            <jvmarg value="-Duser.language=tr"/>
+                <!-- Added this to test IVY-65 -->
+                <jvmarg value="-Duser.region=TR"/>
+                <jvmarg value="-Duser.language=tr"/>
 
-            <formatter type="xml"/>
-            <batchtest todir="${test.xml.dir}">
-                <fileset refid="test.fileset"/>
-            </batchtest>
-        </junit>
+                <formatter type="xml"/>
+                <batchtest todir="${test.xml.dir}">
+                    <fileset refid="test.fileset"/>
+                </batchtest>
+            </junit>
+        </jacoco:coverage>
     </target>
-    
+
+    <target name="test" depends="test-internal" description="Run the test">
+        <fail if="test.failed"
+              message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)"/>
+    </target>
+
     <target name="x" depends="init,build-test">
         <java classname="org.apache.ivy.plugins.resolver.FileSystemResolverTest">
             <classpath>
@@ -493,41 +464,44 @@
         </java>
     </target>
 
-    <target name="test" depends="test-internal" description="Run the test">
-        <fail if="test.failed"
-              message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)"/>
-    </target>
-
     <!-- =================================================================
          REPORTS AND DOCUMENTATION
          ================================================================= -->
-    <target name="test-report" depends="test-internal" unless="skip.test">
+    <target name="test-report" depends="test-internal" unless="skip.test"
+            description="run tests with instrumentation and generate coverage report">
         <junitreport todir="${test.xml.dir}">
             <fileset dir="${test.xml.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${test.report.dir}"/>
         </junitreport>
+
+        <mkdir dir="${coverage.report.dir}"/>
+        <jacoco:report xmlns:jacoco="antlib:org.jacoco.ant">
+            <executiondata>
+                <file file="${jacoco.log}"/>
+            </executiondata>
+
+            <structure name="Ivy">
+                <classfiles>
+                    <fileset dir="${classes.build.dir}"/>
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${src.dir}"/>
+                </sourcefiles>
+            </structure>
+
+            <html destdir="${coverage.report.dir}"/>
+        </jacoco:report>
+
         <fail if="test.failed"
               message="At least one test has failed. See logs (in ${test.xml.dir}) or report (in ${test.report.dir})"/>
     </target>
 
-    <target name="coverage-report" depends="emma,test-report"  unless="skip.test"
-            description="run tests with instrumentation and generate coverage report">
-        <mkdir dir="${coverage.report.dir}"/>
-        <emma>
-            <report sourcepath="${src.dir}">
-                <fileset dir="${coverage.dir}">
-                    <include name="*.emma"/>
-                </fileset>
-
-                <txt outfile="${coverage.report.dir}/coverage.txt"/>
-                <html outfile="${coverage.report.dir}/coverage.html"/>
-             </report>
-         </emma>
-    </target>
+    <target name="coverage-report" depends="test-report"/>
 
     <target name="ivy-report" depends="resolve">
+        <mkdir dir="${ivy.report.dir}"/>
         <ivy:report todir="${ivy.report.dir}"/>
     </target>
 
@@ -578,16 +552,19 @@
             excludes="${eol.native.excludes}"/>
     </target>
 
+    <target name="init-checkstyle" depends="jar">
+        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8"
+                inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
+        <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
+                 resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
+    </target>
+    
     <!-- Checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config  -->
-    <target name="checkstyle-internal" depends="jar">
-        <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="5.0"
-                inline="true" conf="default" pathid="checkstyle.classpath" transitive="true"
-                log="download-only"/>
-        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
-
+    <target name="checkstyle-internal" depends="init-checkstyle">
         <mkdir dir="${checkstyle.report.dir}"/>
-        <checkstyle config="${checkstyle.src.dir}/checkstyle-config"
-            failOnViolation="false" failureProperty="checkstyle.failed">
+        <cs:checkstyle xmlns:cs="antlib:com.puppycrawl.tools.checkstyle.ant"
+		       config="${checkstyle.src.dir}/checkstyle-config"
+		       failOnViolation="false" failureProperty="checkstyle.failed">
             <classpath>
                 <path refid="run.classpath"/>
             </classpath>
@@ -598,10 +575,11 @@
             <fileset dir="${example.dir}">
                 <include name="**/*.java"/>
             </fileset>
-        </checkstyle>
-      </target>
+        </cs:checkstyle>
+    </target>
 
-    <target name="checkstyle" depends="checkstyle-internal" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
+    <target name="checkstyle" depends="checkstyle-internal"
+	    description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
         <fail if="checkstyle.failed"
             message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
     </target>
@@ -612,6 +590,7 @@
                 style="${checkstyle.src.dir}/checkstyle-frames.xsl"
                 out="${checkstyle.report.dir}/output.txt">
             <param name="basedir" expression="${checkstyle.basedir}"/>
+            <param name="output.dir" expression="${checkstyle.report.dir}"/>
         </xslt>
     </target>
 
@@ -644,10 +623,10 @@
                   description="Where to store Findbugs results"/>
         <property name="findbugs.raw"
                   value="raw.xml"
-                  description="Findbugs Output xml-file"/>
+                  description="Findbugs output xml file"/>
         <property name="findbugs.xsl"
                   value="fancy.xsl"
-                  description="Which XSL to use for generating Output: default, fancy, plain, summary"/>
+                  description="Which XSL to use for generating output: default, fancy, plain, summary"/>
         <property name="findbugs.jvmargs"
                   value="-Xms128m -Xmx512m"
                   description="JVMArgs for invoking Findbugs"/>
@@ -657,15 +636,13 @@
             usetimestamp="true" skipexisting="true"/>
         <unzip src="${findbugs.download.to}/${findbugs.download.file}" dest="${findbugs.download.to}"/>
         <property name="findbugs.home" location="${findbugs.download.to}/${findbugs.download.name}"/>
-        <mkdir dir="${findbugs.home}/plugin"/>
     </target>
 
     <target name="findbugs" description="checks Ivy codebase with Findbugs" depends="init-findbugs,compile-core" xmlns:fb="http://findbugs.sourceforge.net/">
-        <path id="findbugs.real.classpath">
-           <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
-        </path>
-
         <!-- Load the Findbugs AntTasks -->
+        <path id="findbugs.real.classpath">
+            <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
+        </path>
         <taskdef uri="http://findbugs.sourceforge.net/" resource="edu/umd/cs/findbugs/anttask/tasks.properties" classpathref="findbugs.real.classpath"/>
 
         <!-- Start Findbugs -->
@@ -687,6 +664,8 @@
             </style>
         </xslt>
     </target>
+
+    <target name="docs" depends="test-report,checkstyle-report,findbugs,ivy-report,javadoc"/>
 
     <!-- =================================================================
          IDE SPECIFIC
