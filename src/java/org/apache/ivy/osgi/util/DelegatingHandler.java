@@ -302,6 +302,14 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
 
     public static abstract class ChildElementHandler<DH extends DelegatingHandler> {
 
+        /**
+         * Deprecated because of renaming due spell check.
+         */
+        @Deprecated
+        public void childHanlded(DH child) throws SAXParseException {
+            childHandled(child);
+        }
+
         public abstract void childHandled(DH child) throws SAXParseException;
 
         // because we know what we're doing

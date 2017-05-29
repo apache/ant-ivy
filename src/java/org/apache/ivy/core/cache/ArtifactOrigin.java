@@ -30,6 +30,14 @@ public class ArtifactOrigin {
     private static final String UNKNOWN = "UNKNOWN";
 
     /**
+     * Deprecated because of renaming due spell check.
+     */
+    @Deprecated
+    public static final ArtifactOrigin unkwnown(Artifact artifact) {
+        return unknown(artifact);
+    }
+
+    /**
      * ArtifactOrigin instance used when the origin is unknown.
      *
      * @param artifact ditto

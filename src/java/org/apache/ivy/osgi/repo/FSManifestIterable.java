@@ -58,6 +58,12 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
         }
     };
 
+    /**
+     * Deprecated because of renaming due spell check.
+     */
+    @Deprecated
+    public static final FilenameFilter DEFAULT_BUNLDE_FILTER = DEFAULT_BUNDLE_FILTER;
+
     private FilenameFilter dirFilter = DEFAULT_DIR_FILTER;
 
     private FilenameFilter bundleFilter = DEFAULT_BUNDLE_FILTER;
