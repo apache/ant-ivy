@@ -1245,6 +1245,18 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return variableContainer.getVariable(name);
     }
 
+    /**
+     * Returns a variable as boolean value.
+     * @param name name of the variable
+     * @param valueIfUnset value if the variable is unset
+     * @return <tt>true</tt> if the variable is <tt>'true'</tt> (ignoring case)
+     *     or the value of <i>valueIfUnset</i> if the variable is <tt>null</tt>
+     */
+    public synchronized boolean getVariableAsBoolean(String name, boolean valueIfUnset) {
+        String var = getVariable(name);
+        return var == null ? valueIfUnset : Boolean.valueOf(var);
+    }
+
     public synchronized ConflictManager getDefaultConflictManager() {
         if (defaultConflictManager == null) {
             defaultConflictManager = new LatestConflictManager(getDefaultLatestStrategy());
@@ -1331,41 +1343,34 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized boolean logModulesInUse() {
-        String var = getVariable("ivy.log.modules.in.use");
-        return var == null || Boolean.valueOf(var);
+        return getVariableAsBoolean("ivy.log.modules.in.use", true);
     }
 
     public synchronized boolean logModuleWhenFound() {
-        String var = getVariable("ivy.log.module.when.found");
-        return var == null || Boolean.valueOf(var);
+        return getVariableAsBoolean("ivy.log.module.when.found", true);
     }
 
     public synchronized boolean logResolvedRevision() {
-        String var = getVariable("ivy.log.resolved.revision");
-        return var == null || Boolean.valueOf(var);
+        return getVariableAsBoolean("ivy.log.resolved.revision", true);
     }
 
     public synchronized boolean debugConflictResolution() {
         if (debugConflictResolution == null) {
-            String var = getVariable("ivy.log.conflict.resolution");
-            debugConflictResolution = var != null
-                    && Boolean.valueOf(var);
+            debugConflictResolution = getVariableAsBoolean("ivy.log.conflict.resolution", false);
         }
         return debugConflictResolution;
     }
 
     public synchronized boolean debugLocking() {
         if (debugLocking == null) {
-            String var = getVariable("ivy.log.locking");
-            debugLocking = var != null && Boolean.valueOf(var);
+            debugLocking = getVariableAsBoolean("ivy.log.locking", false);
         }
         return debugLocking;
     }
 
     public synchronized boolean dumpMemoryUsage() {
         if (dumpMemoryUsage == null) {
-            String var = getVariable("ivy.log.memory");
-            dumpMemoryUsage = var != null && Boolean.valueOf(var);
+            dumpMemoryUsage = getVariableAsBoolean("ivy.log.memory", false);
         }
         return dumpMemoryUsage;
     }
