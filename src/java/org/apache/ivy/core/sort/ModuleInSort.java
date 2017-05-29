@@ -36,15 +36,15 @@ import org.apache.ivy.util.Message;
  * The added fields are:
  * </p>
  * <ul>
- * <li><code>isSorted</code> : is true iff this module has already been added to the sorted
- * list.</li>
- * <li><code>loopElements</code> : When the module is the root of a loop (=the first element of a
- * loop met during the sort), <code>loopElements</code> contains all ModuleInSort of the loop
- * (excluding the root itself.</li>
- * <li><code>isLoopIntermediateElement</code> : When a loop is detected, all modules included in the
- * loop (except the root) have <code>isLoopIntermediateElement</code> set to true.</li>
- * <li><code>caller</code> : During the sort, we traverse recursively the graph. When doing that,
- * caller point to the parent element.</li>
+ * <li><code>isSorted</code> : is <i>true</i> if and only if this module has already been added to 
+ *     the sorted list.</li>
+ * <li><code>loopElements</code> : When the module is the root of a loop (=the first element of a 
+ *     loop met during the sort), <code>loopElements</code> contains all ModuleInSort of the loop 
+ *     (excluding the root itself.</li>
+ * <li><code>isLoopIntermediateElement</code> : When a loop is detected, all modules included in 
+ *     the loop (except the root) have <code>isLoopIntermediateElement</code> set to true.</li>
+ * <li><code>caller</code> : During the sort, we traverse recursively the graph. When doing that, 
+ *     caller point to the parent element.</li>
  * </ul>
  */
 class ModuleInSort {
