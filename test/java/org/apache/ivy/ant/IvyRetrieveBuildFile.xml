@@ -19,17 +19,21 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" basedir="../../../../../..">
   <target name="setUp">
     <property name="ivy.cache.repository" value="build/cache" />
+    <property name="build.retrieve.dir" value="build/retrieve"/>
   </target>
 
   <target name="tearDown">
   	<delete dir="build/cache" />
+    <delete dir="${build.retrieve.dir}"/>
   </target>
 
   <target name="testMultipleInlineRetrievesWithCacheCleaning">
   	<ivy:settings file="test/repositories/ivysettings.xml" />
-  	<ivy:retrieve organisation="org1" module="mod1.2" revision="2.0" inline="true" keep="true" />
+  	<ivy:retrieve pattern="${build.retrieve.dir}/[organisation]/[module]/[artifact]-[rev].[ext]"
+                  organisation="org1" module="mod1.2" revision="2.0" inline="true" keep="true" />
   	<ivy:cleancache />
-  	<ivy:retrieve organisation="org1" module="mod1.2" revision="2.0" inline="true" keep="true" />
+  	<ivy:retrieve pattern="${build.retrieve.dir}/[organisation]/[module]/[artifact]-[rev].[ext]"
+            organisation="org1" module="mod1.2" revision="2.0" inline="true" keep="true" />
   </target>
 
 </project>
