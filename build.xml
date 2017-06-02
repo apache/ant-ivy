@@ -415,6 +415,8 @@
     <target name="test-internal" depends="build-test,init-tests,prepare-osgi-tests,prepare-test-jar-repositories,init-jacoco" unless="skip.test">
         <mkdir dir="${test.xml.dir}"/>
 
+        <!-- multiple runs into the same logfile let the later report generation fail -->
+        <delete file="${jacoco.log}"/>
         <jacoco:coverage xmlns:jacoco="antlib:org.jacoco.ant" destfile="${jacoco.log}"
                          exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader">
             <junit
