@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -664,6 +665,49 @@ public final class FileUtil {
         unpacker.unpack(new UncloseInputStream(in), jar);
         jar.close();
         return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    /**
+     * Returns the common base directory between the passed <code>file1</code> and <code>file2</code>.
+     * <p>
+     * The returned base directory must be a parent of both the <code>file1</code> and <code>file2</code>.
+     * </p>
+     *
+     * @param file1 One of the files, for which the common base directory is being sought, may be null.
+     * @param file2 The other file for which the common base directory should be returned.
+     * @return the common base directory between a <code>file1</code> and <code>file2</code>. Returns null
+     * if no common base directory could be determined or if either <code>file1</code> or <code>file2</code>
+     * is null
+     */
+    public static File getBaseDir(final File file1, final File file2) {
+        if (file1 == null || file2 == null) {
+            return null;
+        }
+        final Iterator bases = getParents(file1).iterator();
+        final Iterator fileParents = getParents(file2.getAbsoluteFile()).iterator();
+        File result = null;
+        while (bases.hasNext() && fileParents.hasNext()) {
+            File next = (File) bases.next();
+            if (next.equals(fileParents.next())) {
+                result = next;
+            } else {
+                break;
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * @return a list of files, starting with the root and ending with the file itself
+     */
+    private static LinkedList<File> getParents(File file) {
+        final LinkedList r = new LinkedList();
+        while (file != null) {
+            r.addFirst(file);
+            file = file.getParentFile();
+        }
+        return r;
     }
 
     /**

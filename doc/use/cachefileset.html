@@ -32,7 +32,13 @@ Please prefer the use of retrieve + standard ant path creation, which make your 
 more independent from ivy (once artifacts are properly retrieved, ivy is not required any more).<br/><br/>
 Built fileset is registered in ant with a given id, and can thus be used like any other ant fileset using
 refid.
-  
+
+<h2>Limitation</h2>
+A fileset, in Ant, requires a base directory from within which the files are included/excluded. The cachefileset task, in Ivy, internally tries to determine a common base directory across all the resolved artifacts' files that have been downloaded in the Ivy repository cache(s). Given that Ivy can be configured to consist multiple repository caches and each one can potentially be on a different filesystem root, there are times, when cachefileset cannot determine a common base directory for these resolved artifacts. The cachefileset throws an exception in such cases.
+
+<h2>Alternative task</h2>
+If cachefileset doesn't fit the need of your use case (maybe due to the limitations noted above), the [[use/resources]] task could be an alternative task to use in certain cases.
+
 <table class="ant">
 <thead>
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
