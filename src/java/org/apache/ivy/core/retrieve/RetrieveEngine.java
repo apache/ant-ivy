@@ -362,8 +362,11 @@ public class RetrieveEngine {
                     ext = unpackedArtifact.getExt();
                 }
 
-                String destPattern = "ivy".equals(adr.getType()) ? destIvyPattern : destFilePattern;
-
+                final String destPattern = "ivy".equals(adr.getType()) ? destIvyPattern : destFilePattern;
+                if (destPattern == null) {
+                    Message.debug("Could not determine the destination path, from artifact download report, for artifact " + artifact);
+                    continue;
+                }
                 if (!"ivy".equals(adr.getType())
                         && !options.getArtifactFilter().accept(adr.getArtifact())) {
                     continue; // skip this artifact, the filter didn't accept it!

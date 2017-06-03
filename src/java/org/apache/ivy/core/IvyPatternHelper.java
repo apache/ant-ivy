@@ -223,6 +223,9 @@ public final class IvyPatternHelper {
     }
 
     public static String substituteTokens(String pattern, Map tokens) {
+        if (pattern == null) {
+            return null;
+        }
         Map tokensCopy = new HashMap(tokens);
         if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_KEY2)) {
             tokensCopy.put(ORGANISATION_KEY2, tokensCopy.get(ORGANISATION_KEY));
