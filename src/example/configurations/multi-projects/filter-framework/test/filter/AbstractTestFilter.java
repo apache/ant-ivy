@@ -29,17 +29,17 @@ public abstract class AbstractTestFilter {
      */
     public abstract IFilter getIFilter();
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testFilterNull() {
             getIFilter().filter(null, null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testFilterNullValues() {
         getIFilter().filter(null, "test");
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testFilterNullPrefix() {
         getIFilter().filter(new String[]{"test"}, null);
     } 

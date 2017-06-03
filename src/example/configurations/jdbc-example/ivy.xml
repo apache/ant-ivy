@@ -39,6 +39,6 @@
         <!-- when launching our app in production environement we needs other jdbc driver -->
         <dependency org="mm-mysql" name="mm-mysql" rev="2.0.7" conf="runprod->default"/> 
         <!-- junit is only need in the test configuration-->        
-        <dependency org="junit" name="junit" rev="3.8" conf="test->default"/> 
+        <dependency org="junit" name="junit" rev="4.12" conf="test->default"/> 
     </dependencies>
 </ivy-module>
