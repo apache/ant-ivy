@@ -456,16 +456,6 @@
               message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)"/>
     </target>
 
-    <target name="x" depends="init,build-test">
-        <java classname="org.apache.ivy.plugins.resolver.FileSystemResolverTest">
-            <classpath>
-                <path refid="test.classpath"/>
-                <pathelement path="${ant.home}/lib/ant-nodeps.jar"/>
-                <pathelement path="${ant.home}/lib/ant-trax.jar"/>
-            </classpath>
-        </java>
-    </target>
-
     <!-- =================================================================
          REPORTS AND DOCUMENTATION
          ================================================================= -->
