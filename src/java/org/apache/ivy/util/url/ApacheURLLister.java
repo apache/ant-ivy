@@ -47,7 +47,7 @@ public class ApacheURLLister {
 
     /**
      * Returns a list of sub urls of the given url. The returned list is a list of URL.
-     * 
+     *
      * @param url
      *            The base URL from which to retrieve the listing.
      * @return a list of sub urls of the given url.
@@ -60,7 +60,7 @@ public class ApacheURLLister {
 
     /**
      * Returns a list of sub 'directories' of the given url. The returned list is a list of URL.
-     * 
+     *
      * @param url
      *            The base URL from which to retrieve the listing.
      * @return a list of sub 'directories' of the given url.
@@ -74,7 +74,7 @@ public class ApacheURLLister {
     /**
      * Returns a list of sub 'files' (in opposition to directories) of the given url. The returned
      * list is a list of URL.
-     * 
+     *
      * @param url
      *            The base URL from which to retrieve the listing.
      * @return a list of sub 'files' of the given url.
@@ -88,7 +88,7 @@ public class ApacheURLLister {
     /**
      * Retrieves a {@link List} of {@link URL}s corresponding to the files and/or directories found
      * at the supplied base URL.
-     * 
+     *
      * @param url
      *            The base URL from which to retrieve the listing.
      * @param includeFiles

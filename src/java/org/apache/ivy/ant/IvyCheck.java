@@ -52,7 +52,7 @@ public class IvyCheck extends IvyTask {
 
     /**
      * Adds a set of files to check.
-     * 
+     *
      * @param set
      *            a set of files to check
      */

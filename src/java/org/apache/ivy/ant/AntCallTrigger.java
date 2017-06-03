@@ -39,14 +39,14 @@ import org.apache.tools.ant.taskdefs.Property;
  * a failure.
  * <p>
  * Example of use in an ivysettings file:
- * 
+ *
  * <pre>
  * &lt;ant-call-trigger event=&quot;post-download-artifact&quot; filter=&quot;type=zip&quot;
  * target=&quot;unzip&quot;/&gt;
  * </pre>
- * 
+ *
  * Triggers a call to the target "unzip" for any downloaded artifact of type zip
- * 
+ *
  * @see AntBuildTrigger
  * @since 1.4
  */

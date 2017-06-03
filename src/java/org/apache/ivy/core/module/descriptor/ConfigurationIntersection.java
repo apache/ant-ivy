@@ -40,7 +40,7 @@ public class ConfigurationIntersection extends Configuration {
      * actually not been recognized in the module, they will be <code>null</code> when accessed from
      * {@link #getIntersectedConfiguration(String)}.
      * </p>
-     * 
+     *
      * @return the list of configurations' names this object is an intersection of.
      */
     public String[] getIntersectedConfigurationNames() {
@@ -51,7 +51,7 @@ public class ConfigurationIntersection extends Configuration {
      * Returns the intersected {@link Configuration} object for the given conf name, or
      * <code>null</code> if the given conf name is not part of this intersection or if this conf
      * name isn't defined in the module in which this intersection has been built.
-     * 
+     *
      * @param confName
      *            the name of the configuration to return.
      * @return the intersected {@link Configuration} object for the given conf name

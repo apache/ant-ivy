@@ -26,7 +26,7 @@ import org.apache.ivy.osgi.util.Version;
 
 /**
  * Bundle info extracted from the bundle manifest.
- * 
+ *
  */
 public class BundleInfo {
 

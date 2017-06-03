@@ -49,7 +49,7 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
 
     /**
      * Adds a the given parser to this registry.
-     * 
+     *
      * @param parser
      *            the parser to add
      */

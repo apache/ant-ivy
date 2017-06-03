@@ -33,7 +33,7 @@ import org.apache.ivy.osgi.util.VersionRange;
 
 /**
  * Provides an OSGi manifest parser.
- * 
+ *
  */
 public class ManifestParser {
 
@@ -269,7 +269,7 @@ public class ManifestParser {
     /**
      * Ensure that the lines are not longer than 72 characters, so it can be parsed by the
      * {@link Manifest} class
-     * 
+     *
      * @param manifest ditto
      * @return String
      */

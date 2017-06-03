@@ -28,7 +28,7 @@ public final class Checks {
 
     /**
      * Checks that an object is not null, and throw an exception if the object is null.
-     * 
+     *
      * @param o
      *            the object to check
      * @param objectName

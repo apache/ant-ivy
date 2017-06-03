@@ -716,7 +716,7 @@ public class PomModuleDescriptorBuilder {
 
         /**
          * Get PomDependencyData.
-         * 
+         *
          * @return PomDependencyData
          */
         public PomDependencyData getPomDependencyData() {

@@ -26,12 +26,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 public final class ConfigurationsExample {
-    
+
     public static void main(String[] args) {
         String jdbcPropToLoad = "prod.properties";
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
-        options.addOption("d", "dev", false, 
+        options.addOption("d", "dev", false,
             "Dev tag to launch app in dev mode. Means that app will launch embedded mckoi db.");
         try {
             CommandLine line = parser.parse(options, args);
@@ -56,9 +56,9 @@ public final class ConfigurationsExample {
             System.err.println("Jdbc Driver class loading failed.  Reason: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
     }
-    
+
     private ConfigurationsExample() {
     }
 }

@@ -51,7 +51,7 @@ public class OSGiFilterParser {
 
         /**
          * Default constructor
-         * 
+         *
          * @param text
          *            the header to parse
          */
@@ -62,9 +62,9 @@ public class OSGiFilterParser {
 
         /**
          * Do the parsing
-         * 
+         *
          * @return OSGiFilter
-         * 
+         *
          * @throws ParseException
          */
         OSGiFilter parse() throws ParseException {

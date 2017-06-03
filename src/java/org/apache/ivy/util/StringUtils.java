@@ -46,7 +46,7 @@ public final class StringUtils {
      * Returns the error message associated with the given Throwable. The error message returned
      * will try to be as precise as possible, handling cases where e.getMessage() is not meaningful,
      * like {@link NullPointerException} for instance.
-     * 
+     *
      * @param t the throwable to get the error message from
      * @return the error message of the given exception
      */
@@ -67,7 +67,7 @@ public final class StringUtils {
 
     /**
      * Returns the exception stack trace as a String.
-     * 
+     *
      * @param e
      *            the exception to get the stack trace from.
      * @return the exception stack trace
@@ -84,13 +84,13 @@ public final class StringUtils {
 
     /**
      * Joins the given object array in one string, each separated by the given separator.
-     * 
+     *
      * Example:
-     * 
+     *
      * <pre>
      * join(new String[] {"one", "two", "three"}, ", ") -&gt; "one, two, three"
      * </pre>
-     * 
+     *
      * @param objs
      *            The array of objects (<code>toString()</code> is used).
      * @param sep
@@ -132,7 +132,7 @@ public final class StringUtils {
      * easily decrypt. This is useful only to avoid clear string storage in a file for example, but
      * shouldn't be considered as a real mean of security. This only works with simple characters
      * (char &lt; 256).
-     * 
+     *
      * @param str
      *            the string to encrypt
      * @return the encrypted version of the string
@@ -156,7 +156,7 @@ public final class StringUtils {
 
     /**
      * Decrypts a string encrypted with encrypt.
-     * 
+     *
      * @param str
      *            the encrypted string to decrypt
      * @return The decrypted string.

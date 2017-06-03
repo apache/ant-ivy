@@ -40,7 +40,7 @@ public final class ConfigurationUtils {
     /**
      * Replace the wildcards in the given configuration array, by the name of the given
      * ModuleDescriptor
-     * 
+     *
      * The supported wildcards are:
      * <ul>
      * <li><b><tt>*</tt> :</b> all configurations</li>
@@ -49,7 +49,7 @@ public final class ConfigurationUtils {
      * </ul>
      * If the given array of configurations is <code>null</code>, all configurations from the given
      * module descriptor are returned, including if this array is empty.
-     * 
+     *
      * @param confs
      *            the configurations, can contain wildcards
      * @param md

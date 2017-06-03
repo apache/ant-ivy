@@ -45,7 +45,7 @@ public class SortEngine {
     /**
      * Same as {@link #sortModuleDescriptors(Collection, SortOptions)} but for <code>IvyNode</code>
      * s.
-     * 
+     *
      * @param nodes
      *            a Collection of nodes to sort
      * @param options
@@ -95,7 +95,7 @@ public class SortEngine {
      * Sorts the given ModuleDescriptors from the less dependent to the more dependent. This sort
      * ensures that a ModuleDescriptor is always found in the list before all ModuleDescriptors
      * depending directly on it.
-     * 
+     *
      * @param moduleDescriptors
      *            a Collection of ModuleDescriptor to sort
      * @param options

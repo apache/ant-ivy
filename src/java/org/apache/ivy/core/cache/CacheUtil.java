@@ -19,13 +19,13 @@ package org.apache.ivy.core.cache;
 
 /**
  * Utility class providing some cache related facilities.
- * 
+ *
  */
 public final class CacheUtil {
 
     /**
      * Checks that the given pattern is acceptable as a cache pattern
-     * 
+     *
      * @param cachePattern
      *            the pattern to check
      * @throws IllegalArgumentException

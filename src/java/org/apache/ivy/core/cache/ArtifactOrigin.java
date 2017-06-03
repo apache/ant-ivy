@@ -30,7 +30,9 @@ public class ArtifactOrigin {
     private static final String UNKNOWN = "UNKNOWN";
 
     /**
-     * Deprecated because of renaming due spell check.
+     * @param artifact ditto
+     * @return ArtifactOrigin
+     * @deprecated because of renaming due spell check.
      */
     @Deprecated
     public static final ArtifactOrigin unkwnown(Artifact artifact) {

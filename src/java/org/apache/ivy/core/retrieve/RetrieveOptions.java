@@ -23,7 +23,7 @@ import org.apache.ivy.util.filter.FilterHelper;
 
 /**
  * A set of options used during retrieve related tasks
- * 
+ *
  * @see RetrieveEngine
  */
 public class RetrieveOptions extends LogOptions {

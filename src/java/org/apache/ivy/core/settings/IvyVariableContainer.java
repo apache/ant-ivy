@@ -29,7 +29,7 @@ public interface IvyVariableContainer extends Cloneable {
     /**
      * Specifies the prefix used to indicate a variable is an environment variable. If the prefix
      * doesn't end with a '.', it will be added automatically.
-     * 
+     *
      * @param prefix
      *            the prefix to use for the environment variables
      */

@@ -22,7 +22,7 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * A pattern matcher matching input using regular expressions.
- * 
+ *
  * @see Pattern
  */
 public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMatcher {

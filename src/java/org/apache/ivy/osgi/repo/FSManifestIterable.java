@@ -70,7 +70,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
 
     /**
      * Default constructor
-     * 
+     *
      * @param root
      *            the root directory of the file system to lookup
      */

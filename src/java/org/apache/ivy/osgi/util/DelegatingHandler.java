@@ -300,10 +300,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     protected void doEndElement(String uri, String localName, String name) throws SAXException {
     }
 
-    public static abstract class ChildElementHandler<DH extends DelegatingHandler> {
+    public abstract static class ChildElementHandler<DH extends DelegatingHandler> {
 
         /**
-         * Deprecated because of renaming due spell check.
+         * @param child DH
+         * @throws SAXParseException on failure
+         * @deprecated because of renaming due spell check.
          */
         @Deprecated
         public void childHanlded(DH child) throws SAXParseException {

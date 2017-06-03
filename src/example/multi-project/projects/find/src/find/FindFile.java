@@ -30,19 +30,19 @@ public final class FindFile {
   static {
     Version.register("find");
   }
-  
+
   public static Collection find(File dir, String name) {
     return find(ListFile.list(dir), name);
   }
-  
-  private static Collection find(Collection files, final String name) {    
+
+  private static Collection find(Collection files, final String name) {
     return CollectionUtils.select(files, new Predicate() {
       public boolean evaluate(Object o) {
         return ((File) o).getName().indexOf(name) != -1;
       }
     });
   }
-  
+
   private FindFile() {
   }
 }

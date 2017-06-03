@@ -119,7 +119,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
     }
 
-    abstract protected void init();
+    protected abstract void init();
 
     public RepoDescriptor getRepoDescriptor() {
         ensureInit();

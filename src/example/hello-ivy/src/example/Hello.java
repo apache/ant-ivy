@@ -26,7 +26,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.lang.WordUtils;
 
 /**
- * Simple example to show how easy it is to retrieve transitive libs with ivy !!! 
+ * Simple example to show how easy it is to retrieve transitive libs with ivy !!!
  */
 public final class Hello {
     public static void main(String[] args) throws Exception {
@@ -36,16 +36,16 @@ public final class Hello {
             .create("message");
         Options options = new Options();
         options.addOption(msg);
-        
+
         CommandLineParser parser = new GnuParser();
         CommandLine line = parser.parse(options, args);
-        
+
         String  message = line.getOptionValue("message", "hello ivy !");
         System.out.println("standard message : " + message);
-        System.out.println("capitalized by " + WordUtils.class.getName() 
+        System.out.println("capitalized by " + WordUtils.class.getName()
             + " : " + WordUtils.capitalizeFully(message));
     }
-    
+
     private Hello() {
     }
 }

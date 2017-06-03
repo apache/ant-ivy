@@ -80,7 +80,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     /**
      * This method is similar to getResource, except that the returned resource is fully initialized
      * (resolved in the sftp repository), and that the given string is a full remote path
-     * 
+     *
      * @param path
      *            the full remote path in the repository of the resource
      * @return a fully initialized resource, able to answer to all its methods without needing any
@@ -237,7 +237,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
 
     /**
      * Checks the existence for a remote file
-     * 
+     *
      * @param file
      *            to check
      * @param channel
@@ -256,7 +256,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
      * Establish the connection to the server if not yet connected, and listen to ivy events for
      * closing connection when resolve is finished. Not meant to be used in multi threaded
      * environment.
-     * 
+     *
      * @return the ChannelSftp with which a connection is established
      * @throws IOException
      *             if any connection problem occurs

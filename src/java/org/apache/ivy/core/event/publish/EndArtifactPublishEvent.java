@@ -25,7 +25,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 /**
  * Event fired after artifact publication has finished (possibly in error). Triggers registered on
  * {@link #NAME} will be notified of these events.
- * 
+ *
  * @see DependencyResolver#publish(Artifact, File, boolean)
  */
 public class EndArtifactPublishEvent extends PublishEvent {

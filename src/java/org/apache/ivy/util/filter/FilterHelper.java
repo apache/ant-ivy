@@ -61,7 +61,7 @@ public final class FilterHelper {
      *            The filter to use.
      * @return a new collection instance containing the only the the items from the given
      *         collection, which are accepted by the filter.
-     * 
+     *
      * <p>
      * Comment: We could have used
      * <a href="http://jakarta.apache.org/commons/collections/">Commons Collections</a> facility for

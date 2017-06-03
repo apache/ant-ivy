@@ -40,7 +40,7 @@ import org.apache.ivy.core.IvyPatternHelper;
  * <p>
  * Example (based on <a href="http://ant.apache.org/manual/develop.html#writingowntask">Ant
  * Example</a>):
- * 
+ *
  * <pre>
  * Configurator conf = new Configurator();
  * conf.typeDef(&quot;buildpath&quot;, &quot;Sample$BuildPath&quot;);

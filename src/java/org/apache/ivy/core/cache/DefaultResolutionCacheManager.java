@@ -166,7 +166,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
 
     /**
      * Choose write module descriptor parser for a given moduleDescriptor
-     * 
+     *
      * @param moduleDescriptorFile
      *            a given module descriptor
      * @return ModuleDescriptorParser
@@ -286,7 +286,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         }
     }
 
-    private static class MapURLResolver extends RelativeUrlResolver {
+    private static final class MapURLResolver extends RelativeUrlResolver {
 
         private Map paths;
 

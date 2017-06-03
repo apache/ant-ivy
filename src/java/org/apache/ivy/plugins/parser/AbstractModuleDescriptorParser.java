@@ -191,7 +191,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
          * the condition evaluates to true, the configuration is returned, if the condition
          * evaluates to false, null is returned. If there are no conditions, the configuration
          * itself is returned.
-         * 
+         *
          * @param conf
          *            the configuration to evaluate
          * @param dd

@@ -85,7 +85,7 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
 
     /**
      * Add a configuration for this artifact.
-     * 
+     *
      * @param conf ditto
      */
     public void addConfiguration(String conf) {

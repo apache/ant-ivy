@@ -42,7 +42,7 @@ public final class ExtendableItemHelper {
 
     /**
      * Extract from the XML attribute the extra Ivy ones
-     * 
+     *
      * @param settings ParserSettings
      * @param attributes Attributes
      * @param ignoredAttNames

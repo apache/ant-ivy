@@ -39,14 +39,14 @@ public final class Main {
         Options options = new Options();
 
         options.addOption(dir);
-        
+
         return options;
     }
-    
+
     public static void main(String[] args) throws Exception {
       Options options = getOptions();
       try {
-        
+
         CommandLineParser parser = new GnuParser();
 
         CommandLine line = parser.parse(options, args);
@@ -59,13 +59,13 @@ public final class Main {
       } catch (ParseException exp) {
           // oops, something went wrong
           System.err.println("Parsing failed.  Reason: " + exp.getMessage());
-          
+
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("list", options);
-      }        
+      }
     }
-    
+
     private Main() {
     }
-            
+
 }

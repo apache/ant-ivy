@@ -28,7 +28,7 @@ public interface PublishingDependencyRevisionResolver {
     /**
      * Returns the revision of the dependency for the publishing of the 'published' module in
      * 'publishedStatus' status.
-     * 
+     *
      * @param published ModuleDescriptor
      * @param publishedStatus ditto
      * @param depMrid ModuleRevisionId

@@ -25,7 +25,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 /**
  * Event fired just before an artifact is published into a resolver. Triggers registered on
  * {@link #NAME} will be notified of these events.
- * 
+ *
  * @see DependencyResolver#publish(Artifact, File, boolean)
  */
 public class StartArtifactPublishEvent extends PublishEvent {

@@ -120,7 +120,7 @@ public abstract class AbstractMessageLogger implements MessageLogger {
 
     /**
      * Indicates the end of a long running task
-     * 
+     *
      * @param msg
      *            the message associated with long running task end.
      */

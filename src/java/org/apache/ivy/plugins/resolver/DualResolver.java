@@ -206,7 +206,7 @@ public class DualResolver extends AbstractResolver {
     /**
      * Sets the module descriptor presence rule. Should be one of {@link #DESCRIPTOR_REQUIRED} or
      * {@link #DESCRIPTOR_OPTIONAL}.
-     * 
+     *
      * @param descriptorRule
      *            the descriptor rule to use with this resolver.
      */

@@ -272,7 +272,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     /**
      * example of pattern : ~/Workspace/[module]/[module].ivy.xml
-     * 
+     *
      * @param pattern String
      */
     public void addIvyPattern(String pattern) {

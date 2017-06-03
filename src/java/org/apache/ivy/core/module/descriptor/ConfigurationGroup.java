@@ -39,7 +39,7 @@ public class ConfigurationGroup extends Configuration {
      * actually not been recognized in the module, they will be <code>null</code> when accessed from
      * {@link org.apache.ivy.core.module.descriptor.ConfigurationIntersection#getIntersectedConfiguration(String)}.
      * </p>
-     * 
+     *
      * @return the list of configurations' names this object is an intersection of.
      */
     public String[] getMembersConfigurationNames() {
@@ -50,7 +50,7 @@ public class ConfigurationGroup extends Configuration {
      * Returns the {@link Configuration} object for the given conf name, or <code>null</code> if the
      * given conf name is not part of this group or if this conf name isn't defined in the module in
      * which this group has been built.
-     * 
+     *
      * @param confName
      *            the name of the configuration to return.
      * @return the member {@link Configuration} object for the given conf name

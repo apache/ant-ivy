@@ -169,7 +169,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     /**
      * List all revisions as resolved resources for the given artifact in the given repository using
      * the given pattern, and using the given mrid except its revision.
-     * 
+     *
      * @param repository
      *            the repository in which revisions should be located
      * @param mrid

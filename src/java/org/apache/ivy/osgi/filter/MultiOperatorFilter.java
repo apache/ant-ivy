@@ -35,7 +35,7 @@ public abstract class MultiOperatorFilter extends OSGiFilter {
         }
     }
 
-    abstract protected char operator();
+    protected abstract char operator();
 
     @Override
     public void append(StringBuffer builder) {

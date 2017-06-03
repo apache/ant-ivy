@@ -29,16 +29,16 @@ import org.apache.ivy.util.Message;
 /**
  * A ConflictManager that can be used to resolve conflicts based on regular expressions of the
  * revision of the module. The conflict manager is added like this:
- * 
+ *
  * <pre>
  *    &lt;!-- Match all revisions, but ignore the last dot(.) and the character after it.
  *        Used to match api changes in out milestones. --&gt;
  *    &lt;conflict-managers&gt;
- *        &lt;regexp-cm name=&quot;regexp&quot; 
+ *        &lt;regexp-cm name=&quot;regexp&quot;
  *                   regexp=&quot;(.*)\..$&quot; ignoreNonMatching=&quot;true&quot;/&gt;
  *    &lt;/conflict-managers&gt;
  * </pre>
- * 
+ *
  * The regular expression must contain a capturing group. The group will be used to resolve the
  * conflicts by an String.equals() test. If ignoreNonMatching is false non matching modules will
  * result in an exception. If it is true they will be compared by their full revision.

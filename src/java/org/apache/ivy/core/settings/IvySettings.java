@@ -311,6 +311,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Call this method to ask ivy to configure some variables using either a remote or a local
      * properties file
+     *
+     * @param remote boolean
      */
     public synchronized void configureRepositories(boolean remote) {
         if (!repositoriesConfigured) {
@@ -1210,6 +1212,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Returns the file names of the files that should be ignored when creating a file listing.
+     *
+     * @return String[]
      */
     public synchronized String[] getIgnorableFilenames() {
         return listingIgnore.toArray(new String[listingIgnore.size()]);

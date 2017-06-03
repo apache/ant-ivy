@@ -27,9 +27,9 @@ public final class Version {
         versions = new HashMap();
         register("version");
     }
-  
+
     private static Map versions;
-  
+
     public static void register(String module) {
         try {
             InputStream moduleVersion = Version.class.getResourceAsStream("/" + module
@@ -45,7 +45,7 @@ public final class Version {
             ex.printStackTrace();
         }
     }
-    
+
     private Version() {
     }
 }

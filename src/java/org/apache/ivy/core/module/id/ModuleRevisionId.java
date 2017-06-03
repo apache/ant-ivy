@@ -32,7 +32,7 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 /**
  * Identifies a module in a particular version
- * 
+ *
  * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ModuleRevisionId extends UnmodifiableExtendableItem {
@@ -51,7 +51,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     /**
      * Pattern to use to matched mrid text representation.
-     * 
+     *
      * @see #parse(String)
      */
     public static final Pattern MRID_PATTERN = Pattern.compile("(" + STRICT_CHARS_PATTERN + "*)"
@@ -71,7 +71,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
      * <p>
      * The result is unspecified if the module doesn't respect strict name conventions.
      * </p>
-     * 
+     *
      * @param mrid
      *            the text representation of the module (as returned by {@link #toString()}). Must
      *            not be <code>null</code>.
@@ -142,7 +142,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
      * <p>
      * When using static newInstances methods, this method is already called.
      * </p>
-     * 
+     *
      * @param moduleRevisionId
      *            the module revision id to intern
      * @return an interned ModuleRevisionId

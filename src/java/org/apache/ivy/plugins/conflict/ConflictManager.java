@@ -31,7 +31,7 @@ public interface ConflictManager {
      * this conflict manager is not able to resolve conflicts with the current data found in the
      * IvyNodes and need them to be fully loaded, it will return null to indicate that no conflict
      * resolution has been done.
-     * 
+     *
      * @param parent
      *            the ivy node parent for which the conflict is to be resolved
      * @param conflicts
@@ -50,7 +50,7 @@ public interface ConflictManager {
      * This will never happen if the conflict manager doesn't blacklist any module, so providing an
      * empty implementation in this case is fine.
      * </p>
-     * 
+     *
      * @param dd
      *            the dependency descriptor for which all revisions are blacklisted.
      * @param foundBlacklisted

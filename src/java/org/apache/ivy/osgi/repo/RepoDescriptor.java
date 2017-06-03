@@ -22,12 +22,12 @@ import java.util.Set;
 
 public abstract class RepoDescriptor {
 
-    abstract public Iterator<ModuleDescriptorWrapper> getModules();
+    public abstract Iterator<ModuleDescriptorWrapper> getModules();
 
-    abstract public Set<String> getCapabilities();
+    public abstract Set<String> getCapabilities();
 
-    abstract public Set<ModuleDescriptorWrapper> findModules(String requirement, String value);
+    public abstract Set<ModuleDescriptorWrapper> findModules(String requirement, String value);
 
-    abstract public Set<String> getCapabilityValues(String capabilityName);
+    public abstract Set<String> getCapabilityValues(String capabilityName);
 
 }

@@ -254,6 +254,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * caller, the array returned is composed of the required configurations of the dependency
      * described by this descriptor.
      * </p>
+     *
+     * @param moduleConfiguration String
+     * @param requestedConfiguration String
+     * @return String[]
      */
     public String[] getDependencyConfigurations(String moduleConfiguration,
             String requestedConfiguration) {
@@ -598,7 +602,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     /**
      * only works when namespace is properly set. The behaviour is not specified if namespace is not
-     * set
+     * set.
+     *
+     * @param moduleConfigurations String[]
+     * @param artifactId ditto
+     * @return boolean
      */
     public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
         if (namespace != null) {
@@ -615,7 +623,6 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     /**
-     *
      * @return true if this descriptor contains any exclusion rule
      */
     public boolean canExclude() {

@@ -30,7 +30,7 @@ public final class MemoryUtil {
 
     /**
      * Returns the approximate size of a default instance of the given class.
-     * 
+     *
      * @param clazz
      *            the class to evaluate.
      * @return the estimated size of instance, in bytes.
@@ -57,7 +57,7 @@ public final class MemoryUtil {
      * Returns the currently used memory, after calling garbage collector and waiting enough to get
      * maximal chance it is actually called. But since {@link Runtime#gc()} is only advisory,
      * results returned by this method should be treated as rough approximation only.
-     * 
+     *
      * @return the currently used memory, in bytes.
      */
     public static long getUsedMemory() {

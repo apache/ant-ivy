@@ -42,7 +42,7 @@ public abstract class AbstractTestFilter {
     @Test
     public void testFilterNullPrefix() {
         getIFilter().filter(new String[]{"test"}, null);
-    } 
+    }
 
     @Test
     public void testFilter() {
@@ -50,7 +50,7 @@ public abstract class AbstractTestFilter {
                 "nogood", "mustbe filtered"}, "t");
         assertNotNull(result);
         assertEquals(result.length, 1);
-    }    
+    }
 
     @Test
     public void testFilterWithNullValues() {

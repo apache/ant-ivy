@@ -50,7 +50,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
 
     /**
      * Adds a {@link VersionMatcher} to the chain.
-     * 
+     *
      * @param matcher
      *            the version matcher to add. Must not be null
      */
@@ -65,7 +65,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     /**
      * Sets the settings this matcher will use, and set to the matcher in the chain which implements
      * {@link IvySettingsAware}.
-     * 
+     *
      * @param settings
      *            the settings to use in the whole chain. Must not be null.
      */
@@ -84,7 +84,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
      * <p>
      * The list is returned as an unmodifiable view on the actual list of matchers, and will thus
      * reflect further changes made in the chain.
-     * 
+     *
      * @return the list of matchers in the chain. Is never null.
      */
     public List getMatchers() {

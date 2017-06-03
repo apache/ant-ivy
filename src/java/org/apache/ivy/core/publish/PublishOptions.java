@@ -33,7 +33,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * artifacts array can be null (= no extra artifacts), and if non null only the name, type, ext url
  * and extra attributes of the artifacts are really used. Other methods (on the artifacts) can
  * return null safely.
- * 
+ *
  * @see PublishEngine
  */
 public class PublishOptions {
