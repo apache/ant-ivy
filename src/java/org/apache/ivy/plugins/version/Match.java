@@ -30,7 +30,7 @@ import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 
 /**
- * 
+ *
  */
 public class Match {
     private String revision;

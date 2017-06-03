@@ -30,7 +30,7 @@ public class OverrideDependencyDescriptorMediator implements DependencyDescripto
 
     /**
      * Constructs a new instance.
-     * 
+     *
      * @param branch
      *            the branch to give to mediated dependency descriptors, <code>null</code> to keep
      *            the original branch.
@@ -46,7 +46,7 @@ public class OverrideDependencyDescriptorMediator implements DependencyDescripto
     /**
      * Returns the version this mediator will give to mediated descriptors, or <code>null</code> if
      * this mediator does not override version.
-     * 
+     *
      * @return the version this mediator will give to mediated descriptors.
      */
     public String getVersion() {
@@ -56,7 +56,7 @@ public class OverrideDependencyDescriptorMediator implements DependencyDescripto
     /**
      * Returns the branch this mediator will give to mediated descriptors, or <code>null</code> if
      * this mediator does not override branch.
-     * 
+     *
      * @return the branch this mediator will give to mediated descriptors.
      */
     public String getBranch() {

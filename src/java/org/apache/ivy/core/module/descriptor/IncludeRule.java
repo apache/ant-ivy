@@ -29,21 +29,21 @@ public interface IncludeRule extends ExtendableItem {
 
     /**
      * Returns the id of the described artifact, without revision information
-     * 
+     *
      * @return ArtifactId
      */
     public ArtifactId getId();
 
     /**
      * Returns the configurations of the module in which the artifact is asked
-     * 
+     *
      * @return an array of configuration names in which the artifact is asked
      */
     public String[] getConfigurations();
 
     /**
      * Returns the matcher to use to know if an artifact match the current descriptor
-     * 
+     *
      * @return PatternMatcher
      */
     public PatternMatcher getMatcher();

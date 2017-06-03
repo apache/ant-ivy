@@ -59,6 +59,9 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     /**
      * create a new resource with lazy initializing
+	 *
+	 * @param source String
+	 * @return Resource
      */
     public Resource getResource(String source) {
         Message.debug("SShRepository:getResource called: " + source);
@@ -443,6 +446,8 @@ public class SshRepository extends AbstractSshBasedRepository {
     /**
      * return ssh as scheme use the Resolver type name here? would be nice if it would be static, so
      * we could use SshResolver.getTypeName()
+	 *
+	 * @return String
      */
     protected String getRepositoryScheme() {
         return "ssh";

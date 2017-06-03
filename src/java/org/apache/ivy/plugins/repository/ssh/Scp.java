@@ -350,7 +350,7 @@ public class Scp {
 
     /**
      * Receive a file via scp and store it in a stream
-     * 
+     *
      * @param channel
      *            ssh channel to use
      * @param file
@@ -463,7 +463,7 @@ public class Scp {
     /**
      * Copy a local file to a remote site, uses the specified mode when creating the file on the
      * remote side.
-     * 
+     *
      * @param localFile
      *            Path and name of local file. Must be absolute.
      * @param remoteTargetDir
@@ -522,7 +522,7 @@ public class Scp {
 
     /**
      * Download a file from the remote server to a local file.
-     * 
+     *
      * @param remoteFile
      *            Path and name of the remote file.
      * @param localTarget
@@ -540,7 +540,7 @@ public class Scp {
 
     /**
      * Download a file from the remote server into an OutputStream
-     * 
+     *
      * @param remoteFile
      *            Path and name of the remote file.
      * @param localTarget
@@ -577,7 +577,7 @@ public class Scp {
 
     /**
      * Initiates an SCP sequence but stops after getting fileinformation header
-     * 
+     *
      * @param remoteFile
      *            to get information for
      * @return the file information got

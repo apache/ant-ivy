@@ -61,7 +61,7 @@ public class Version implements Comparable<Version> {
 
     /**
      * Build a version from another one while appending an extra qualifier
-     * 
+     *
      * @param baseVersion
      *            Version
      * @param extraQualifier

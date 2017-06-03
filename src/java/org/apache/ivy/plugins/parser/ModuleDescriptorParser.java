@@ -38,7 +38,7 @@ public interface ModuleDescriptorParser {
     /**
      * Convert a module descriptor to an ivy file. This method MUST close the given input stream
      * when job is finished
-     * 
+     *
      * @param is input stream with opened on original module descriptor resource
      * @param res Resource
      * @param destFile File
@@ -53,7 +53,7 @@ public interface ModuleDescriptorParser {
 
     /**
      * Return the 'type' of module artifacts this parser is parsing
-     * 
+     *
      * @return the 'type' of module artifacts this parser is parsing
      */
     public String getType();
@@ -61,7 +61,7 @@ public interface ModuleDescriptorParser {
     /**
      * Returns the module metadata artifact corresponding to the given module revision id that this
      * parser parses
-     * 
+     *
      * @param res
      *            the resource for which the module artifact should be returned
      * @param mrid

@@ -30,7 +30,7 @@ public final class FileSize {
   public static long totalSize(File dir) {
     return totalSize(list.ListFile.list(dir));
   }
-  
+
   public static long totalSize(Collection files) {
     long total = 0;
     for (Iterator it = files.iterator(); it.hasNext();) {
@@ -38,8 +38,8 @@ public final class FileSize {
       total += f.length();
     }
     return total;
-  }  
-  
+  }
+
   private FileSize() {
   }
 }

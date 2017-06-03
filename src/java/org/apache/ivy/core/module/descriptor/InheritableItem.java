@@ -21,7 +21,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
  * Interface for elements that can be inherited from a parent descriptor by a child descriptor.
- * 
+ *
  * @see Configuration
  * @see DependencyDescriptor
  */

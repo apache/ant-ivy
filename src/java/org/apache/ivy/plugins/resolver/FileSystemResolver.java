@@ -46,7 +46,7 @@ public class FileSystemResolver extends RepositoryResolver {
 
     /**
      * Transactional mode.
-     * 
+     *
      * auto: use transaction if possible, only log verbose message if not true: always use
      * transaction, fail if not supported false: never use transactions
      */

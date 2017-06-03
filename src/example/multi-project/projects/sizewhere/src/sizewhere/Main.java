@@ -42,30 +42,30 @@ public final class Main {
 
         options.addOption(dir);
         options.addOption(name);
-        
+
         return options;
     }
-    
+
     public static void main(String[] args) throws Exception {
       Options options = getOptions();
       try {
-        
+
         CommandLineParser parser = new GnuParser();
 
         CommandLine line = parser.parse(options, args);
         File dir = new File(line.getOptionValue("dir", "."));
         String name = line.getOptionValue("name", "jar");
-        System.out.println("total size of files in " + dir 
+        System.out.println("total size of files in " + dir
             + " containing " + name + ": " + SizeWhere.totalSize(dir, name));
       } catch (ParseException exp) {
           // oops, something went wrong
           System.err.println("Parsing failed.  Reason: " + exp.getMessage());
-          
+
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("sizewhere", options);
-      }        
+      }
     }
-            
+
     private Main() {
     }
 }

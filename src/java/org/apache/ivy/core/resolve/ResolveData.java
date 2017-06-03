@@ -160,7 +160,7 @@ public class ResolveData {
     /**
      * Returns the VisitNode currently visited, or <code>null</code> if there is no node currently
      * visited in this context.
-     * 
+     *
      * @return the VisitNode currently visited
      */
     public VisitNode getCurrentVisitNode() {
@@ -170,7 +170,7 @@ public class ResolveData {
     /**
      * Sets the currently visited node. WARNING: This should only be called by Ivy core
      * ResolveEngine!
-     * 
+     *
      * @param currentVisitNode VisitNode
      */
     void setCurrentVisitNode(VisitNode currentVisitNode) {
@@ -196,7 +196,7 @@ public class ResolveData {
     /**
      * Updates the visit data currently associated with the given mrid with the given node and the
      * visit nodes of the old visitData for the given rootModuleConf
-     * 
+     *
      * @param mrid
      *            the module revision id for which the update should be done
      * @param node
@@ -327,7 +327,7 @@ public class ResolveData {
      * this decision, even when included in a chain. The chain responsibility is only to set this
      * current resolved module revision to enable the resolver to take the decision.
      * </p>
-     * 
+     *
      * @param mr
      *            the last {@link ResolvedModuleRevision} which has been currently resolved.
      */
@@ -340,7 +340,7 @@ public class ResolveData {
      * <p>
      * It can be <code>null</code>.
      * </p>
-     * 
+     *
      * @return the last {@link ResolvedModuleRevision} which has been currently resolved.
      */
     public ResolvedModuleRevision getCurrentResolvedModuleRevision() {

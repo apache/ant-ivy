@@ -47,7 +47,7 @@ public class EndRetrieveEvent extends RetrieveEvent {
 
     /**
      * Duration of the retrieve operation, in ms.
-     * 
+     *
      * @return Duration of the retrieve operation, in ms.
      */
     public long getDuration() {
@@ -56,7 +56,7 @@ public class EndRetrieveEvent extends RetrieveEvent {
 
     /**
      * Number of artifacts which were copied (or symlinked) during the retrieve
-     * 
+     *
      * @return Number of artifacts which were copied during the retrieve.
      */
     public int getNbCopied() {
@@ -65,7 +65,7 @@ public class EndRetrieveEvent extends RetrieveEvent {
 
     /**
      * Number of artifacts which were not copied since they were already present and up to date.
-     * 
+     *
      * @return Number of artifacts which were not copied since they were already present and up to
      *         date.
      */
@@ -75,7 +75,7 @@ public class EndRetrieveEvent extends RetrieveEvent {
 
     /**
      * Total size of all copied (or symlinked) artifacts, in bytes.
-     * 
+     *
      * @return Total size of all copied (or symlinked) artifacts, in bytes.
      */
     public long getTotalCopiedSize() {

@@ -25,7 +25,7 @@ public interface LatestStrategy {
      * Finds the latest artifact among the given artifacts info. The definition of 'latest' depends
      * on the strategy itself. Given artifacts info are all good candidate. If the given date is not
      * null, then found artifact should not be later than this date.
-     * 
+     *
      * @param infos ArtifactInfo[]
      * @param date Date
      * @return the latest artifact among the given ones.
@@ -35,7 +35,7 @@ public interface LatestStrategy {
     /**
      * Sorts the given artifacts info from the oldest one to the latest one. The definition of
      * 'latest' depends on the strategy itself. Given artifacts info are all good candidate.
-     * 
+     *
      * @param infos ArtifactInfo[]
      * @return List&lt;ArtifactInfo&gt;
      */

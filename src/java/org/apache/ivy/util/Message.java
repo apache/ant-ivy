@@ -55,7 +55,7 @@ public final class Message {
 
     /**
      * Returns the current default logger.
-     * 
+     *
      * @return the current default logger; is never <code>null</code>.
      */
     public static MessageLogger getDefaultLogger() {
@@ -64,7 +64,7 @@ public final class Message {
 
     /**
      * Change the default logger used when no other logger is currently configured
-     * 
+     *
      * @param logger
      *            the new default logger, must not be <code>null</code>
      */

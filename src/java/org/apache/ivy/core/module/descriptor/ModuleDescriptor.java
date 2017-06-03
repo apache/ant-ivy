@@ -63,7 +63,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
 
     /**
      * This method updates the resolved module revision id
-     * 
+     *
      * @param revId ModuleRevisionId
      */
     void setResolvedModuleRevisionId(ModuleRevisionId revId);
@@ -76,7 +76,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
 
     /**
      * This method update the resolved publication date
-     * 
+     *
      * @param publicationDate Date
      */
     void setResolvedPublicationDate(Date publicationDate);
@@ -158,7 +158,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Writes this module descriptor as an ivy file. If this descriptor was obtained through the
      * parsing of an ivy file, it should keep the layout of the file the most possible similar to
      * the original one.
-     * 
+     *
      * @param ivyFile
      *            the destination ivy file
      * @throws ParseException if something goes wrong
@@ -182,7 +182,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * the module descriptor itself, it is often useful to consider it as any other artifact of the
      * module. This method allows to access to the Artifact object representing this module
      * descriptor for this purpose.
-     * 
+     *
      * @return the Artifact representing this module descriptor itself.
      */
     Artifact getMetadataArtifact();
@@ -203,7 +203,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     /**
      * Module Descriptor exclude rules are used to exclude (usually transitive) dependencies for the
      * whole module.
-     * 
+     *
      * @return an array of all {@link ExcludeRule} this module descriptor currently holds.
      */
     public ExcludeRule[] getAllExcludeRules();

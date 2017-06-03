@@ -39,7 +39,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.core.settings.IvyVariableContainer#setVariable(java.lang.String,
      * java.lang.String, boolean)
      */
@@ -74,7 +74,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariable(java.lang.String)
      */
     public String getVariable(String name) {

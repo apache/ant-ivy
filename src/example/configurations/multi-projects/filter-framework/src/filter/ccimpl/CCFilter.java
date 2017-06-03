@@ -25,7 +25,7 @@ import org.apache.commons.collections.Predicate;
 import filter.IFilter;
 
 public class CCFilter implements IFilter {
-    
+
     public String[] filter(String[] values, final String prefix) {
         if (values == null) {
             return null;

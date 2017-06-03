@@ -39,7 +39,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
      * The created instance will automatically be unregistered from the Ivy instance when the task
      * finishes.
      * </p>
-     * 
+     *
      * @param task
      *            the task the logger should use for logging
      * @param ivy
@@ -107,7 +107,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
 
     /**
      * Constructs a new AntMessageImpl instance.
-     * 
+     *
      * @param task
      *            the ant project component this message implementation should use for logging. Must
      *            not be <code>null</code>.

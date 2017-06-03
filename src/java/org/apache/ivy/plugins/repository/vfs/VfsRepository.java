@@ -120,6 +120,7 @@ public class VfsRepository extends AbstractRepository {
      *
      * @param vfsURI
      *            a <code>String</code> identifying a VFS Resource
+     * @return Resource
      * @throws IOException on failure
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
      */
@@ -162,6 +163,7 @@ public class VfsRepository extends AbstractRepository {
      *
      * @param vfsURI
      *            providing identifying a VFS provided resource
+     * @return List
      * @throws IOException
      *             on failure.
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"

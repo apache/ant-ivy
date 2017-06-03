@@ -67,7 +67,7 @@ public class VersionRange {
 
         /**
          * Default constructor
-         * 
+         *
          * @param version
          *            the version to parse
          */
@@ -78,7 +78,7 @@ public class VersionRange {
 
         /**
          * Do the parsing
-         * 
+         *
          * @throws ParseException
          */
         void parse() throws ParseException {

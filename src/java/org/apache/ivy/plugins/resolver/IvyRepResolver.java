@@ -148,7 +148,7 @@ public class IvyRepResolver extends URLResolver {
     /**
      * Sets the root of the maven like repository. The maven like repository is necessarily an http
      * repository.
-     * 
+     *
      * @param root
      *            the root of the maven like repository
      * @throws IllegalArgumentException

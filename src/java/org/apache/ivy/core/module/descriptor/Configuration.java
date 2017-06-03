@@ -86,7 +86,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     /**
      * Creates a new configuration.
-     * 
+     *
      * @param name
      *            the name of the configuration
      */
@@ -102,7 +102,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     /**
      * Creates a new configuration.
-     * 
+     *
      * @param name
      *            the name of the configuration
      * @param visibility
@@ -150,7 +150,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     /**
      * Returns the deprecation message, or <tt>null</tt> if not specified.
-     * 
+     *
      * @return Returns the deprecation message.
      */
     public String getDeprecated() {

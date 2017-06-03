@@ -25,7 +25,7 @@ public interface NonMatchingVersionReporter {
     /**
      * Report to the user that ivy has detected that a module to sort has a dependency on an other
      * module to sort, but the revisions doesn't match.
-     * 
+     *
      * @param descriptor
      *            The non matching dependency descriptor.
      * @param md

@@ -638,7 +638,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     /**
      * When the resolver has many choices, this function helps choosing one
-     * 
+     *
      * @param rress
      *            the list of resolved resource which the resolver found to fit the requirement
      * @param rmdparser
@@ -749,7 +749,7 @@ public abstract class BasicResolver extends AbstractResolver {
      * <p>
      * Remember to call the super implementation when overriding this method.
      * </p>
-     * 
+     *
      * @param names
      *            the list to filter.
      * @return the filtered list
@@ -981,7 +981,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     /**
      * Checks the given resource checksum if a checksum resource exists.
-     * 
+     *
      * @param resource
      *            the resource to check
      * @param dest
@@ -1086,7 +1086,7 @@ public abstract class BasicResolver extends AbstractResolver {
     /**
      * Sets the module descriptor presence rule. Should be one of {@link #DESCRIPTOR_REQUIRED} or
      * {@link #DESCRIPTOR_OPTIONAL}.
-     * 
+     *
      * @param descriptorRule
      *            the descriptor rule to use with this resolver.
      */

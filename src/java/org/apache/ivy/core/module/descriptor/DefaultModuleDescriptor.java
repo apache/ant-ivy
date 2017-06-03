@@ -428,10 +428,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     /**
-     * Returns the configuration object with the given name in the current module descriptor, null
-     * if not found.
-     *
      * @param confName String
+     * @return the configuration object with the given name in the current module descriptor, null
+     * if not found.
      */
     public Configuration getConfiguration(String confName) {
         Configuration configuration = configurations.get(confName);

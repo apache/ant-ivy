@@ -29,7 +29,7 @@ import org.apache.ivy.util.filter.Filter;
  * the only method to implement in subclasses is {@link IvyListener#progress(IvyEvent)} which should
  * do whatever the trigger needs to do when the event occurs. This method will only be called when
  * an event matching the trigger filter occurs.
- * 
+ *
  * @since 1.4
  */
 public abstract class AbstractTrigger implements Trigger {

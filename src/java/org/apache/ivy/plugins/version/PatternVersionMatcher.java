@@ -27,7 +27,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.Matcher;
 
 /**
- * 
+ *
  */
 public class PatternVersionMatcher extends AbstractVersionMatcher {
 

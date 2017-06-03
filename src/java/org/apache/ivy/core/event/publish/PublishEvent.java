@@ -25,7 +25,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 /**
  * Base class for events fired during {@link DependencyResolver#publish(Artifact, File, boolean)}.
- * 
+ *
  * @see StartArtifactPublishEvent
  * @see EndArtifactPublishEvent
  */

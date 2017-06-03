@@ -93,7 +93,7 @@ public class IvyCacheFileset extends IvyCacheTask {
 
     /**
      * Returns the path of the file relative to the given base directory.
-     * 
+     *
      * @param base
      *            the parent directory to which the file must be evaluated.
      * @param file
@@ -119,7 +119,7 @@ public class IvyCacheFileset extends IvyCacheTask {
      * <p>
      * The returned base directory must be a parent of both the current base and the given file.
      * </p>
-     * 
+     *
      * @param base
      *            the current base directory, may be null.
      * @param file

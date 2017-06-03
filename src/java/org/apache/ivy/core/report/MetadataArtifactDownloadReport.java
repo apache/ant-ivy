@@ -33,7 +33,7 @@ public class MetadataArtifactDownloadReport extends ArtifactDownloadReport {
     /**
      * Returns <code>true</code> if the resolution of this metadata artifact required at least one
      * access to the repository, or <code>false</code> if only provisioned data was used.
-     * 
+     *
      * @return <code>true</code> if the resolution of this metadata artifact required at least one
      *         access to the repository
      */
@@ -48,7 +48,7 @@ public class MetadataArtifactDownloadReport extends ArtifactDownloadReport {
     /**
      * Returns the location on the local filesystem where the original metadata artifact is
      * provisioned, or <code>null</code> if the provisioning failed.
-     * 
+     *
      * @return the location on the local filesystem where the original metadata artifact is
      *         provisioned.
      */

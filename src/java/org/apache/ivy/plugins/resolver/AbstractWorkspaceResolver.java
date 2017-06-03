@@ -226,7 +226,7 @@ public abstract class AbstractWorkspaceResolver extends AbstractResolver {
         return newMd;
     }
 
-    abstract protected List<Artifact> createWorkspaceArtifacts(ModuleDescriptor md);
+    protected abstract List<Artifact> createWorkspaceArtifacts(ModuleDescriptor md);
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         throw new UnsupportedOperationException("publish not supported by " + getName());

@@ -22,7 +22,7 @@ import java.util.List;
 import filter.IFilter;
 
 public class HMFilter implements IFilter {
-    
+
     public String[] filter(String[] values, String prefix) {
         if (values == null) {
             return null;

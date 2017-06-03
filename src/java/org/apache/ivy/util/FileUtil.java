@@ -362,7 +362,7 @@ public final class FileUtil {
      * <p>
      * The BufferedReader is closed when this method returns.
      * </p>
-     * 
+     *
      * @param in
      *            the {@link BufferedReader} to read from
      * @return a String with the whole content read from the {@link BufferedReader}
@@ -386,7 +386,7 @@ public final class FileUtil {
 
     /**
      * Reads the entire content of the file and returns it as a String.
-     * 
+     *
      * @param f
      *            the file to read from
      * @return a String with the file content
@@ -402,7 +402,7 @@ public final class FileUtil {
      * <p>
      * The input stream is closed when this method returns.
      * </p>
-     * 
+     *
      * @param is
      *            the {@link InputStream} to read from
      * @return a String with the input stream content
@@ -430,7 +430,7 @@ public final class FileUtil {
 
     /**
      * Recursively delete file
-     * 
+     *
      * @param file
      *            the file to delete
      * @return true if the deletion completed successfully (ie if the file does not exist on the
@@ -523,7 +523,7 @@ public final class FileUtil {
 
     /**
      * &quot;Normalize&quot; the given absolute path.
-     * 
+     *
      * <p>
      * This includes:
      * <ul>
@@ -534,7 +534,7 @@ public final class FileUtil {
      * </ul>
      * Unlike {@link File#getCanonicalPath()} this method specifically does not resolve symbolic
      * links.
-     * 
+     *
      * @param path the path to be normalized.
      * @return the normalized version of the path.
      * @throws NullPointerException if path is null.
@@ -602,7 +602,7 @@ public final class FileUtil {
                             sbPath.append(currentChar);
                             continue;
                         }
-                        final char previousChar = rest.charAt(i -1);
+                        final char previousChar = rest.charAt(i - 1);
                         if (currentChar != sep || previousChar != sep) {
                             sbPath.append(currentChar);
                         }
@@ -625,7 +625,7 @@ public final class FileUtil {
 
     /**
      * Get the length of the file, or the sum of the children lengths if it is a directory
-     * 
+     *
      * @param file File
      * @return long
      */

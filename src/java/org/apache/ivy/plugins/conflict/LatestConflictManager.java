@@ -103,8 +103,9 @@ public class LatestConflictManager extends AbstractConflictManager {
 
         ArrayList<IvyNode> unevicted = new ArrayList<IvyNode>();
         for (IvyNode node : conflicts) {
-            if (!node.isCompletelyEvicted())
+            if (!node.isCompletelyEvicted()) {
                 unevicted.add(node);
+            }
         }
         if (unevicted.size() > 0) {
             conflicts = unevicted;
@@ -150,7 +151,7 @@ public class LatestConflictManager extends AbstractConflictManager {
 
     /**
      * To conform to configurator API
-     * 
+     *
      * @param strategyName ditto
      */
     public void setLatest(String strategyName) {

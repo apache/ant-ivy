@@ -173,7 +173,7 @@ public class RepositoryManagementEngine {
      * This method may take a long time to proceed. It should never be called from event dispatch
      * thread in a GUI.
      * </p>
-     * 
+     *
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
      * @see #load()
@@ -200,7 +200,7 @@ public class RepositoryManagementEngine {
 
     /**
      * Returns the number of Module Revision in the repository.
-     * 
+     *
      * @return the number of module revisions in the repository.
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
@@ -213,7 +213,7 @@ public class RepositoryManagementEngine {
 
     /**
      * Returns the number of ModuleId in the repository.
-     * 
+     *
      * @return the number of ModuleId in the repository.
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
@@ -226,7 +226,7 @@ public class RepositoryManagementEngine {
 
     /**
      * Returns Module Revisions which have no dependers.
-     * 
+     *
      * @return a Collection of the {@link ModuleRevisionId} of module revisions which have no
      *         dependers in the repository.
      * @throws IllegalStateException

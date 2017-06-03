@@ -19,7 +19,7 @@ package filter;
 
 
 public final class FilterProvider {
-    
+
     public static IFilter getFilter() {
         try {
             Class clazz = Class.forName("filter.ccimpl.CCFilter");
@@ -34,7 +34,7 @@ public final class FilterProvider {
             return null;
         }
     }
-    
+
     private FilterProvider() {
     }
 }

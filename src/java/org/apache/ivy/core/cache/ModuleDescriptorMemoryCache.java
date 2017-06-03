@@ -41,7 +41,7 @@ class ModuleDescriptorMemoryCache {
 
     /**
      * Create a cache of the given size
-     * 
+     *
      * @param size int
      */
     public ModuleDescriptorMemoryCache(int size) {

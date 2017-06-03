@@ -25,9 +25,9 @@ import java.lang.reflect.Method;
 
 
 public final class Main {
-    private static final Collection QUIT_COMMANDS = 
+    private static final Collection QUIT_COMMANDS =
         Arrays.asList(new String[] {"quit", "q", "exit"});
-    private static final Collection HELP_COMMANDS = 
+    private static final Collection HELP_COMMANDS =
         Arrays.asList(new String[] {"help", "h", "?"});
 
     public static void main(String[] a) throws Exception {
@@ -47,7 +47,7 @@ public final class Main {
           error(command);
           continue;
         }
-        
+
         try {
           String[] args = new String[split.length - 1];
           System.arraycopy(split, 1, args, 0, args.length);
@@ -60,7 +60,7 @@ public final class Main {
         }
       }
     }
-    
+
     private static void help() {
       System.out.println("available commands:");
       System.out.println("\tquit: quit the console");
@@ -71,7 +71,7 @@ public final class Main {
            + "compute total size of files with given name in given dir");
       System.out.println("\thelp: displays this message");
     }
-            
+
     private static void error(String command) {
       System.out.println("unknown command " + command);
       System.out.println("type ? for help");
