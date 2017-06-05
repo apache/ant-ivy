@@ -29,6 +29,7 @@ import java.util.Properties;
  * putAll puts given values without encrypting them. It this thus recommended to void using them,
  * use setProperty and getProperty instead.
  */
+@SuppressWarnings("serial")
 public class EncryptedProperties extends Properties {
 
     public EncryptedProperties() {

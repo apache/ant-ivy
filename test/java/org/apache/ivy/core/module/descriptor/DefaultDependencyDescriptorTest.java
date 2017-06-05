@@ -19,16 +19,11 @@
 package org.apache.ivy.core.module.descriptor;
 
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class DefaultDependencyDescriptorTest {
-
-    public static void main(String[] args) {
-        JUnitCore.runClasses(DefaultDependencyDescriptorTest.class);
-    }
 
     /*
      * Test method for

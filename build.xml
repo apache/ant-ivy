@@ -49,13 +49,13 @@
         <ivy:configure override="true"/>
     </target>
 
-    <target name="install" depends="init-ivy-home,jar"
+    <target name="install" depends="jar"
         description="build Ivy and install it in Ivy user home for builds using Ivy user home to load Ivy jar">
         <property name="ivy.jar.file" value="${ivy.home}/jars/ivy.jar"/>
         <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ivy.jar.file}"/>
     </target>
 
-    <target name="install-ant" depends="init-ivy-home,jar"
+    <target name="install-ant" depends="jar"
         description="build Ivy and install it in Ant home lib">
         <condition property="ant.home" value="${env.ANT_HOME}">
             <isset property="env.ANT_HOME"/>
@@ -262,7 +262,7 @@
                 todir="${ant.classes.build.dir}/fr/jayasoft/ivy/ant"/>
     </target>
 
-    <target name="compile-optional" depends="compile-ant,resolve">
+    <target name="compile-optional" depends="compile-ant">
         <javac  srcdir="${src.dir}"
                 destdir="${optional.classes.build.dir}"
                 sourcepath=""
@@ -456,6 +456,11 @@
               message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)"/>
     </target>
 
+    <target name="check-ibiblio" depends="build-test">
+        <java classname="org.apache.ivy.plugins.resolver.IBiblioHelper"
+              classpathref="test.classpath"/>
+    </target>
+
     <!-- =================================================================
          REPORTS AND DOCUMENTATION
          ================================================================= -->
@@ -550,7 +555,7 @@
         <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
                  resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
     </target>
-    
+
     <!-- Checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config  -->
     <target name="checkstyle-internal" depends="init-checkstyle">
         <mkdir dir="${checkstyle.report.dir}"/>

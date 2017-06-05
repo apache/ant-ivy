@@ -140,11 +140,4 @@ public class TestPerformance {
     private ResolveOptions getResolveOptions(String[] confs) {
         return new ResolveOptions().setConfs(confs);
     }
-
-    public static void main(String[] args) throws Exception {
-        TestPerformance t = new TestPerformance();
-        t.setUp();
-        t.testPerfs();
-        t.tearDown();
-    }
 }

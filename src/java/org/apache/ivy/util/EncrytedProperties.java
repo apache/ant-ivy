@@ -17,10 +17,10 @@
  */
 package org.apache.ivy.util;
 
-
 /**
  * Deprecated because of renaming due spell check.
  */
+@SuppressWarnings("serial")
 @Deprecated
 public class EncrytedProperties extends EncryptedProperties {
 }
