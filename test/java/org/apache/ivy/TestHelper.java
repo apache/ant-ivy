@@ -131,7 +131,7 @@ public class TestHelper {
     }
 
     /**
-     * Parses a string represenation of a module descriptor in micro ivy format.
+     * Parses a string representation of a module descriptor in micro ivy format.
      * <p>
      * Examples:
      * 

@@ -14,25 +14,25 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <project default="clean-all" xmlns:ivy="antlib:org.apache.ivy.ant">
-    
-    <!-- ================================= 
-          target: clean              
+
+    <!-- =================================
+          target: clean
          ================================= -->
     <target name="clean" description="--> clean directories">
-        <ant dir="chainedresolvers-project" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false" />
+        <ant dir="chainedresolvers-project" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false"/>
     </target>
-	
-    <!-- ================================= 
-          target: clean-cache              
+
+    <!-- =================================
+          target: clean-cache
          ================================= -->
-	<target name="clean-cache" description="--> clean the ivy cache">
-		<property name="ivy.settings.dir" value="settings" />
-		<ivy:settings file="${ivy.settings.dir}/ivysettings.xml" />
-		<ivy:cleancache />
-	</target>
-	
-	<target name="clean-all" depends="clean, clean-cache" description="--> clean directories and ivy cache"/>
+    <target name="clean-cache" description="--> clean the ivy cache">
+        <property name="ivy.settings.dir" value="settings"/>
+        <ivy:settings file="${ivy.settings.dir}/ivysettings.xml"/>
+        <ivy:cleancache/>
+    </target>
+
+    <target name="clean-all" depends="clean,clean-cache" description="--> clean directories and ivy cache"/>
 </project>

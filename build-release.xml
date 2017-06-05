@@ -17,10 +17,10 @@
    under the License.
 -->
 <project name="IvyRelease" default="snapshot"
-        xmlns:ivy="antlib:org.apache.ivy.ant"
-        xmlns:ivy2="antlib:org.apache.ivy.ant_2"
-        xmlns:xooki="antlib:xooki"
-        xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:ivy2="antlib:org.apache.ivy.ant_2"
+         xmlns:xooki="antlib:xooki"
+         xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
     <import file="build.xml"/>
 
     <macrodef name="run-tutorial">
@@ -63,7 +63,7 @@
         </sequential>
     </macrodef>
 
-    <target name="generate-tutorial-output" depends="jar, generate-doc-init">
+    <target name="generate-tutorial-output" depends="jar,generate-doc-init">
         <property name="output.dir" value="${build.dir}/output"/>
         <delete dir="${output.dir}"/>
         <mkdir dir="${output.dir}"/>
@@ -176,12 +176,12 @@
         <copy todir="${doc.tmp.dir}" preservelastmodified="true" overwrite="true">
             <fileset dir="${doc.src.dir}"/>
             <filterset>
-              <filter token="version" value="${build.version}"/>
+                <filter token="version" value="${build.version}"/>
             </filterset>
         </copy>
     </target>
 
-    <target name="generate-doc" depends="generate-doc-init, generate-tutorial-output">
+    <target name="generate-doc" depends="generate-doc-init,generate-tutorial-output">
         <copy todir="${doc.build.dir}">
             <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd"/>
             <fileset dir="${doc.tmp.dir}" includes="tutorial/log/multi-project-general-publishall.txt"/>
@@ -216,13 +216,13 @@
                      xookidir="${doc.src.dir}/xooki"/>
     </target>
 
-    <target name="all-doc" depends="javadoc, generate-doc"/>
+    <target name="all-doc" depends="javadoc,generate-doc"/>
 
     <target name="init-snapshot" depends="default-version">
         <property name="snapshot.full.name" value="apache-ivy-${build.version}"/>
     </target>
 
-    <target name="snapshot-metadata" depends="init-snapshot, resolve">
+    <target name="snapshot-metadata" depends="init-snapshot,resolve">
         <mkdir dir="${artifacts.build.dir}"/>
         <ivy:deliver
             deliverpattern="${artifacts.build.dir}/ivy.xml"
@@ -244,12 +244,12 @@
             <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.tar.gz"
-            compression="gzip" longfile="gnu">
+             compression="gzip" longfile="gnu">
             <zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip"/>
         </tar>
     </target>
 
-    <target name="snapshot-bin-without-dependencies" depends="snapshot-metadata, jar, all-doc">
+    <target name="snapshot-bin-without-dependencies" depends="snapshot-metadata,jar,all-doc">
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.zip">
             <zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
@@ -266,12 +266,12 @@
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.tar.gz"
-            compression="gzip" longfile="gnu">
+             compression="gzip" longfile="gnu">
             <zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.zip"/>
         </tar>
     </target>
 
-    <target name="snapshot-bin-with-dependencies" depends="snapshot-metadata, jar, all-doc">
+    <target name="snapshot-bin-with-dependencies" depends="snapshot-metadata,jar,all-doc">
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <delete dir="${build.dir}/lib"/>
         <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]"/>
@@ -297,15 +297,14 @@
     </target>
 
     <target name="snapshot-bin"
-            depends="snapshot-bin-with-dependencies, snapshot-bin-without-dependencies"/>
+            depends="snapshot-bin-with-dependencies,snapshot-bin-without-dependencies"/>
 
     <target name="release-xsd" depends="init-snapshot">
         <!-- copies current ivy xml schema to doc source, so that it will be available from web site -->
         <copy file="${src.dir}/org/apache/ivy/plugins/parser/xml/ivy.xsd" todir="${doc.src.dir}"/>
     </target>
 
-
-    <target name="snapshot-maven2" depends="init-snapshot, snapshot-metadata, jar, sources, javadoc">
+    <target name="snapshot-maven2" depends="init-snapshot,snapshot-metadata,jar,sources,javadoc">
         <property name="m2.distrib.dir" value="${distrib.dir}/maven2/${build.version}"/>
         <ivy:makepom ivyfile="${artifacts.build.dir}/ivy.xml"
                      pomfile="${m2.distrib.dir}/ivy-${build.version}.pom"
@@ -336,7 +335,6 @@
             </fileset>
         </checksum>
     </target>
-
 
     <target name="snapshot-checksums">
         <checksum algorithm="md5">
@@ -382,7 +380,7 @@
         <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]"/>
 
         <taskdef resource="org/apache/ivy/ant/antlib.xml"
-                uri="antlib:org.apache.ivy.ant_2">
+                 uri="antlib:org.apache.ivy.ant_2">
             <classpath>
                 <fileset dir="${artifacts.build.dir}/jars" includes="${final.name}"/>
                 <fileset dir="${build.dir}/lib" excludes="ant-*.jar"/>
@@ -473,11 +471,11 @@
         </fail>
     </target>
 
-    <target name="upload-nexus" depends="release-version, init-ivy, jar">
+    <target name="upload-nexus" depends="release-version,init-ivy,jar">
         <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]"/>
 
         <taskdef resource="org/apache/ivy/ant/antlib.xml"
-                uri="antlib:org.apache.ivy.ant_2">
+                 uri="antlib:org.apache.ivy.ant_2">
             <classpath>
                 <fileset dir="${artifacts.build.dir}/jars" includes="${final.name}"/>
                 <fileset dir="${build.dir}/lib" excludes="ant-*.jar"/>
@@ -494,14 +492,14 @@
         <ivy2:settings id="upload.settingsId" file="ivysettings-release.xml"/>
         <ivy2:resolve file="${basedir}/build/artifact/ivy.xml" transitive="false"/>
         <ivy2:publish organisation="org.apache.ivy"
-                     module="ivy"
-                     revision="${build.version}"
-                     srcivypattern="${basedir}/build/artifact/ivy.xml"
-                     artifactspattern="${basedir}/build/distrib/maven2/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-                     publishivy="false"
-                     conf="core"
-                     settingsRef="upload.settingsId"
-                     resolver="nexus">
+                      module="ivy"
+                      revision="${build.version}"
+                      srcivypattern="${basedir}/build/artifact/ivy.xml"
+                      artifactspattern="${basedir}/build/distrib/maven2/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+                      publishivy="false"
+                      conf="core"
+                      settingsRef="upload.settingsId"
+                      resolver="nexus">
             <!-- The standard maven2 artifacts -->
             <artifact name="ivy" ext="pom" type="ivy"/>
             <artifact name="ivy" ext="jar" type="sources" classifier="sources"/>
@@ -510,10 +508,10 @@
     </target>
 
     <target name="prepare-snapshot"
-            depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, test-report"/>
+            depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, test-report" />
     <target name="snapshot"
-            depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-maven2, snapshot-checksums"
+            depends="prepare-snapshot,snapshot-src,snapshot-bin,snapshot-maven2,snapshot-checksums"
             description="used for nightly and integration builds"/>
-    <target name="release" depends="release-version, /localivy, clean-ivy-home, clean, clean-lib, rat, snapshot" description="make a new release of Ivy"/>
+    <target name="release" depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot" description="make a new release of Ivy"/>
 
 </project>

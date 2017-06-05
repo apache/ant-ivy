@@ -14,22 +14,19 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
-<project name="retrieve-ivy-deps" default="retrieve-all" 
+<project name="retrieve-ivy-deps" default="retrieve-all"
 		xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<target name="init-ivy">
 		<taskdef resource="org/apache/ivy/ant/antlib.xml"
-				uri="antlib:org.apache.ivy.ant">
-			<classpath>
-				<pathelement location="ivy.jar" />
-			</classpath>
-		</taskdef>
+				uri="antlib:org.apache.ivy.ant"
+				classpath="ivy.jar"/>
 	</target>
-	
+
 	<target name="report">
-		<ivy:report graph="false" todir="report" />
+		<ivy:report graph="false" todir="report"/>
 		<echo>
 =======================================================================
 Dependencies retrieved in lib directory
@@ -37,22 +34,22 @@ Dependency report generated in report directory
 =======================================================================
 		</echo>
 	</target>
-	
+
 	<target name="retrieve-conf" depends="init-ivy"
 			description="--> Retrieves a set of configuration (get only dependencies needed).">
-		<ivy:info file="ivy.xml" />
+		<ivy:info file="ivy.xml"/>
 		<echo>
 =======================================================================
 Please enter configuration (or comma separated list of configurations).
 Available configurations are: ${ivy.configurations}</echo>
 		<input message="Configuration(s):" addproperty="ivy.confs"/>
 		<ivy:retrieve conf="${ivy.confs}"/>
-		<antcall target="report" inheritRefs="true" />
+		<antcall target="report" inheritRefs="true"/>
 	</target>
-	
+
 	<target name="retrieve-all" depends="init-ivy"
 			description="--> Retrieves all Ivy dependencies into the lib directory">
-		<ivy:retrieve />
-		<antcall target="report" inheritRefs="true" />
+		<ivy:retrieve/>
+		<antcall target="report" inheritRefs="true"/>
 	</target>
 </project>

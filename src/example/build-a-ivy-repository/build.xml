@@ -15,106 +15,108 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
-<!-- ====================================================================== 
+<!-- ======================================================================
      This is a sample project to build our own ivy repository.
      ====================================================================== -->
 <project name="ivy-repository" default="maven2" xmlns:ivy="antlib:org.apache.ivy.ant">
-	<property name="settings.dir" value="settings"/>
-	<property name="from.resolver" value="libraries"/>
-	<property name="to.resolver" value="my-repository"/>
-	
-	<property name="ivy.cache.dir" value="${basedir}/cache" />
-	<property name="dest.repo.dir" value="${basedir}/myrepository" />
+    <property name="settings.dir" value="settings"/>
+    <property name="from.resolver" value="libraries"/>
+    <property name="to.resolver" value="my-repository"/>
 
-	<property name="ivy.jar.dir" value="${user.home}/.ivy2/jars" />
-	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+    <property name="ivy.cache.dir" value="${basedir}/cache"/>
+    <property name="dest.repo.dir" value="${basedir}/myrepository"/>
 
-	<!-- ================================= 
-          target: load-ivy         
-            this target is not necessary if you put ivy.jar in your ant lib directory
-            if you already have ivy 1.4 in your ant lib, you can simply remove this
-            target
+    <property name="ivy.jar.dir" value="${user.home}/.ivy2/jars"/>
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+
+    <!-- =================================
+         target: load-ivy
+         this target is not necessary if you put ivy.jar in your ant lib directory
+         if you already have ivy 1.4 in your ant lib, you can simply remove this
+         target
          ================================= -->
     <target name="load-ivy">
-    	<!-- try to load ivy here from home ivy dir, in case the user has not already dropped
-    	      it into ant's lib dir (note that the latter copy will always take precedence).
-    	      We will not fail as long as ivy home lib dir exists (it may be empty) and
-    	      ivy is in at least one of ant's lib dir or the ivy home lib dir. -->
-    	<path id="ivy.lib.path">
-    		<pathelement location="${ivy.jar.file}"/>
-    	</path>
-    	<taskdef resource="org/apache/ivy/ant/antlib.xml"
-    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
-    </target>    
-
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: init-ivy                      
-         - - - - - - - - - - - - - - - - - -->
-    <target name="init-ivy" depends="load-ivy">
-       	<ivy:settings id="basic.settings"    file="${settings.dir}/ivysettings-basic.xml"/>
-       	<ivy:settings id="advanced.settings" file="${settings.dir}/ivysettings-advanced.xml"/>
+        <!-- try to load ivy here from home ivy dir, in case the user has not already dropped
+             it into ant's lib dir (note that the latter copy will always take precedence).
+             We will not fail as long as ivy home lib dir exists (it may be empty) and
+             ivy is in at least one of ant's lib dir or the ivy home lib dir. -->
+        <path id="ivy.lib.path">
+            <pathelement location="${ivy.jar.file}"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-	
-    <!-- ================================= 
+    <!-- - - - - - - - - - - - - - - - - -
+          target: init-ivy
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init-ivy" depends="load-ivy">
+        <ivy:settings id="basic.settings"    file="${settings.dir}/ivysettings-basic.xml"/>
+        <ivy:settings id="advanced.settings" file="${settings.dir}/ivysettings-advanced.xml"/>
+    </target>
+
+
+    <!-- =================================
           target: maven2
           maven 2 no namespace and no dependencies
          ================================= -->
     <target name="maven2" depends="init-ivy"
-    	description="--> install module from maven 2 repository">
-    	<ivy:install settingsRef="basic.settings" 
-    		organisation="commons-lang" module="commons-lang" revision="1.0" 
-    		from="${from.resolver}" to="${to.resolver}" />
+        description="--> install module from maven 2 repository">
+        <ivy:install settingsRef="basic.settings"
+                organisation="commons-lang" module="commons-lang" revision="1.0"
+                from="${from.resolver}" to="${to.resolver}"/>
     </target>
 
-    <!-- ================================= 
+    <!-- =================================
           target: maven2-deps
           maven 2 no namespace with dependencies
          ================================= -->
-    <target name="maven2-deps" depends="init-ivy" 
-    	description="--> install module from maven 2 repository with dependencies">
-    	<ivy:install settingsRef="basic.settings" 
-    		organisation="org.hibernate" module="hibernate" revision="3.2.5.ga" 
-    		from="${from.resolver}" to="${to.resolver}" transitive="true" />
+    <target name="maven2-deps" depends="init-ivy"
+        description="--> install module from maven 2 repository with dependencies">
+        <ivy:install settingsRef="basic.settings"
+                organisation="org.hibernate" module="hibernate" revision="3.2.5.ga"
+                from="${from.resolver}" to="${to.resolver}" transitive="true"/>
     </target>
 
-    <!-- ================================= 
+    <!-- =================================
           target: maven2-namespace
           maven 2 with namespace no dependencies
          ================================= -->
-    <target name="maven2-namespace" depends="init-ivy" 
-    	description="--> install module from maven 2 using namespaces">
-    	<ivy:install settingsRef="advanced.settings" 
-    		organisation="apache" module="commons-lang" revision="1.0" 
-    		from="${from.resolver}" to="${to.resolver}" />
+    <target name="maven2-namespace" depends="init-ivy"
+        description="--> install module from maven 2 using namespaces">
+        <ivy:install settingsRef="advanced.settings"
+                organisation="apache" module="commons-lang" revision="1.0"
+                from="${from.resolver}" to="${to.resolver}"/>
     </target>
 
-    <!-- ================================= 
+    <!-- =================================
           target: maven2-namespace-deps
           maven 2 with namespace and dependencies
          ================================= -->
     <target name="maven2-namespace-deps" depends="init-ivy"
-    	description="--> install module with dependencies from maven2 repo using namespaces">
-    	<ivy:install settingsRef="advanced.settings" 
-    		organisation="hibernate" module="hibernate" revision="3.2.5.ga" 
-    		from="${from.resolver}" to="${to.resolver}" transitive="true" />
+        description="--> install module with dependencies from maven2 repo using namespaces">
+        <ivy:install settingsRef="advanced.settings"
+                organisation="hibernate" module="hibernate" revision="3.2.5.ga"
+                from="${from.resolver}" to="${to.resolver}" transitive="true"/>
     </target>
 
-	<!-- ================================= 
+    <!-- =================================
           target: clean-cache
          ================================= -->
     <target name="clean-cache" depends="init-ivy" description="--> clean the cache">
-    	<ivy:cleancache settingsRef="basic.settings" />
-    	<ivy:cleancache settingsRef="advanced.settings" />
-    	<delete dir="${ivy.cache.dir}" failonerror="true"  />
+        <ivy:cleancache settingsRef="basic.settings"/>
+        <ivy:cleancache settingsRef="advanced.settings"/>
+        <delete dir="${ivy.cache.dir}" failonerror="true"/>
     </target>
 
-	<!-- ================================= 
+    <!-- =================================
           target: clean-repo
          ================================= -->
     <target name="clean-repo" description="--> clean the destination repository">
-    	<delete dir="${dest.repo.dir}" failonerror="true"  />
+        <delete dir="${dest.repo.dir}" failonerror="true"/>
     </target>
+
+    <target name="clean" depends="clean-repo"/>
 </project>
