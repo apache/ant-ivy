@@ -28,7 +28,7 @@ import org.apache.commons.lang.WordUtils;
 /**
  * Simple example to show how easy it is to retrieve transitive libs with ivy !!!
  */
-public final class Hello {
+public final class HelloConsole {
     public static void main(String[] args) throws Exception {
         Option msg = OptionBuilder.withArgName("msg")
             .hasArg()
@@ -46,6 +46,6 @@ public final class Hello {
             + " : " + WordUtils.capitalizeFully(message));
     }
 
-    private Hello() {
+    private HelloConsole() {
     }
 }

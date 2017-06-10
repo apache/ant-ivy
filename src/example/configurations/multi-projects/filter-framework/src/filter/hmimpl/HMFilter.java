@@ -31,8 +31,7 @@ public class HMFilter implements IFilter {
             return values;
         }
         List<String> result = new ArrayList<String>();
-        for (int i = 0; i < values.length; i++) {
-            String string = values[i];
+        for (String string : values) {
             if (string != null && string.startsWith(prefix)) {
                 result.add(string);
             }

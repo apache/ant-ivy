@@ -25,7 +25,7 @@ import org.apache.commons.lang.WordUtils;
  * Simple hello world example to show how easy it is to retrieve libs with ivy,
  * including transitive dependencies
  */
-public final class Hello {
+public final class HelloIvy {
     public static void main(String[] args) throws Exception {
         String  message = "hello ivy !";
         System.out.println("standard message : " + message);
@@ -46,6 +46,6 @@ public final class Hello {
         System.out.println("found logging class in classpath: " + clss);
     }
 
-    private Hello() {
+    private HelloIvy() {
     }
 }
