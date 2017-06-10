@@ -301,9 +301,8 @@ public class XmlModuleUpdaterTest {
         assertEquals("Number of published artifacts incorrect", 4, artifacts.length);
 
         // test that the correct configuration has been removed
-        for (int i = 0; i < artifacts.length; i++) {
-            Artifact current = artifacts[i];
-            List currentConfs = Arrays.asList(current.getConfigurations());
+        for (Artifact current : artifacts) {
+            List<String> currentConfs = Arrays.asList(current.getConfigurations());
             assertTrue("myconf2 hasn't been removed for artifact " + current.getName(),
                 !currentConfs.contains("myconf2"));
         }
@@ -327,13 +326,14 @@ public class XmlModuleUpdaterTest {
         assertEquals("Number of dependencies is incorrect", 8, deps.length);
 
         // check that none of the dependencies contains myconf2
-        for (int i = 0; i < deps.length; i++) {
-            String name = deps[i].getDependencyId().getName();
+        for (DependencyDescriptor dep : deps) {
+            String name = dep.getDependencyId().getName();
             assertFalse("Dependency " + name + " shouldn't have myconf2 as module configuration",
-                Arrays.asList(deps[i].getModuleConfigurations()).contains("myconf2"));
-            assertEquals("Dependency " + name
-                    + " shouldn't have a dependency artifact for configuration myconf2", 0,
-                deps[i].getDependencyArtifacts("myconf2").length);
+                Arrays.asList(dep.getModuleConfigurations()).contains("myconf2"));
+            assertEquals(
+                "Dependency " + name
+                        + " shouldn't have a dependency artifact for configuration myconf2",
+                0, dep.getDependencyArtifacts("myconf2").length);
         }
     }
 

@@ -385,7 +385,7 @@ public class IvyDeliverTest {
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        Map extraAtt = new HashMap();
+        Map<String, String> extraAtt = new HashMap<String, String>();
         extraAtt.put("myExtraAtt", "myValue");
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2", extraAtt),
             dds[0].getDependencyRevisionId());
@@ -423,8 +423,8 @@ public class IvyDeliverTest {
 
         File list = new File("build/test/retrieve");
         String[] files = list.list();
-        HashSet actualFileSet = new HashSet(Arrays.asList(files));
-        HashSet expectedFileSet = new HashSet();
+        HashSet<String> actualFileSet = new HashSet<String>(Arrays.asList(files));
+        HashSet<String> expectedFileSet = new HashSet<String>();
         for (DependencyDescriptor dd : dds) {
             String name = dd.getDependencyId().getName();
             String rev = dd.getDependencyRevisionId().getRevision();
@@ -470,8 +470,8 @@ public class IvyDeliverTest {
 
         File list = new File("build/test/retrieve");
         String[] files = list.list();
-        HashSet actualFileSet = new HashSet(Arrays.asList(files));
-        HashSet expectedFileSet = new HashSet();
+        HashSet<String> actualFileSet = new HashSet<String>(Arrays.asList(files));
+        HashSet<String> expectedFileSet = new HashSet<String>();
         for (DependencyDescriptor dd : dds) {
             String name = dd.getDependencyId().getName();
             String rev = dd.getDependencyRevisionId().getRevision();

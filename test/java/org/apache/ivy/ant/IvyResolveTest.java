@@ -101,7 +101,7 @@ public class IvyResolveTest {
         resolve.setKeep(true);
         resolve.execute();
 
-        ResolveReport report = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport report = project.getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
         assertEquals(1, report.getArtifacts().size());

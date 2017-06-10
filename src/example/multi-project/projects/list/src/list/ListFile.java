@@ -35,9 +35,8 @@ public final class ListFile {
 
   private static Collection list(File file, Collection files) {
     if (file.isDirectory()) {
-      File[] f = file.listFiles();
-      for (int i = 0; i < f.length; i++) {
-        list(f[i], files);
+      for (File f : file.listFiles()) {
+        list(f, files);
       }
     } else {
       files.add(file);

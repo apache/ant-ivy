@@ -30,13 +30,13 @@ public class HMFilter implements IFilter {
         if (prefix == null) {
             return values;
         }
-        List result = new ArrayList();
+        List<String> result = new ArrayList<String>();
         for (int i = 0; i < values.length; i++) {
             String string = values[i];
             if (string != null && string.startsWith(prefix)) {
                 result.add(string);
             }
         }
-        return (String[]) result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 }

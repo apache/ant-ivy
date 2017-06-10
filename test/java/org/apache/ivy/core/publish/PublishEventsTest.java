@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -247,8 +246,8 @@ public class PublishEventsTest {
         // set an error to be thrown during publication of the data file.
         this.publishError = new IOException("boom!");
         // we don't care which artifact is attempted; either will fail with an IOException.
-        for (Iterator it = expectedPublications.values().iterator(); it.hasNext();) {
-            ((PublishTestCase) it.next()).expectedSuccess = false;
+        for (Object o : expectedPublications.values()) {
+            ((PublishTestCase) o).expectedSuccess = false;
         }
 
         try {

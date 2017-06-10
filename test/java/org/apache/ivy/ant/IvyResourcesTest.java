@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
@@ -66,9 +65,7 @@ public class IvyResourcesTest {
 
     private List asList(IvyResources ivyResources) {
         List resources = new ArrayList();
-        Iterator it = ivyResources.iterator();
-        while (it.hasNext()) {
-            Object r = it.next();
+        for (Object r : ivyResources) {
             assertTrue(r instanceof FileResource);
             resources.add(((FileResource) r).getFile());
         }

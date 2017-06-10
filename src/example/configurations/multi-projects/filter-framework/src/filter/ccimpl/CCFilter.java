@@ -34,12 +34,12 @@ public class CCFilter implements IFilter {
             return values;
         }
 
-        List result = new ArrayList(Arrays.asList(values));
+        List<String> result = new ArrayList<String>(Arrays.asList(values));
         CollectionUtils.filter(result, new Predicate() {
             public boolean evaluate(Object o) {
                 return o != null && o.toString().startsWith(prefix);
             }
         });
-        return (String[]) result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 }

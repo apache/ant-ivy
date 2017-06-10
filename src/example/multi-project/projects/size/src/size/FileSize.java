@@ -33,9 +33,8 @@ public final class FileSize {
 
   public static long totalSize(Collection files) {
     long total = 0;
-    for (Iterator it = files.iterator(); it.hasNext();) {
-      File f = (File) it.next();
-      total += f.length();
+    for (Object file : files) {
+      total += ((File) file).length();
     }
     return total;
   }

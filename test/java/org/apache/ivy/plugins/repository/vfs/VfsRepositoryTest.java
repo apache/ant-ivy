@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.repository.vfs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.ivy.util.FileUtil;
 
@@ -80,9 +79,7 @@ public class VfsRepositoryTest {
         String destResource = VfsTestHelper.SCRATCH_DIR + "/" + testResource;
         String destFile = FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, destResource);
 
-        Iterator vfsURIs = helper.createVFSUriSet(destResource).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(destResource)) {
             if (scratchDir.exists()) {
                 FileUtil.forceDelete(scratchDir);
             }
@@ -110,10 +107,7 @@ public class VfsRepositoryTest {
         String destResource = VfsTestHelper.SCRATCH_DIR + "/" + testResource;
         File destFile = new File(FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, destResource));
 
-        Iterator vfsURIs = helper.createVFSUriSet(destResource).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
-
+        for (VfsURI vfsURI : helper.createVFSUriSet(destResource)) {
             // remove existing scratch dir and populate it with an empty file
             // that we can overwrite. We do this so that we can test file sizes.
             // seeded file has length 0, while put file will have a length > 0
@@ -150,9 +144,7 @@ public class VfsRepositoryTest {
         destFile.getParentFile().mkdirs();
         destFile.createNewFile();
 
-        Iterator vfsURIs = helper.createVFSUriSet(destResource).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(destResource)) {
             repo.put(new File(srcFile), vfsURI.toString(), false);
         }
     }
@@ -167,9 +159,7 @@ public class VfsRepositoryTest {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         String testFile = FileUtil.concat(scratchDir.getAbsolutePath(), testResource);
 
-        Iterator vfsURIs = helper.createVFSUriSet(testResource).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(testResource)) {
             if (scratchDir.exists()) {
                 FileUtil.forceDelete(scratchDir);
             }
@@ -195,10 +185,7 @@ public class VfsRepositoryTest {
         String testResource = VfsTestHelper.TEST_IVY_XML;
         File testFile = new File(FileUtil.concat(scratchDir.getAbsolutePath(), testResource));
 
-        Iterator vfsURIs = helper.createVFSUriSet(testResource).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
-
+        for (VfsURI vfsURI : helper.createVFSUriSet(testResource)) {
             // setup - remove existing scratch area and populate with a file to override
             if (scratchDir.exists()) {
                 FileUtil.forceDelete(scratchDir);
@@ -227,10 +214,7 @@ public class VfsRepositoryTest {
     public void testGetResourceValidExist() throws Exception {
         String testResource = VfsTestHelper.TEST_IVY_XML;
 
-        Iterator vfsURIs = helper.createVFSUriSet(testResource).iterator();
-
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(testResource)) {
             try {
                 assertNotNull(repo.getResource(vfsURI.toString()));
             } catch (IOException e) {
@@ -248,10 +232,7 @@ public class VfsRepositoryTest {
     public void testGetResourceValidNoExist() throws Exception {
         String testResource = VfsTestHelper.SCRATCH_DIR + "/nosuchfile.jar";
 
-        Iterator vfsURIs = helper.createVFSUriSet(testResource).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
-
+        for (VfsURI vfsURI : helper.createVFSUriSet(testResource)) {
             // make sure the declared resource does not exist
             if (scratchDir.exists()) {
                 FileUtil.forceDelete(scratchDir);

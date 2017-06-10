@@ -59,8 +59,8 @@ public final class Main {
             String name = line.getOptionValue("name", "jar");
             Collection files = FindFile.find(dir, name);
             System.out.println("listing files in " + dir + " containing " + name);
-            for (Iterator it = files.iterator(); it.hasNext();) {
-                System.out.println("\t" + it.next() + "\n");
+            for (Object file : files) {
+                System.out.println("\t" + file + "\n");
             }
         } catch (ParseException exp) {
             // oops, something went wrong

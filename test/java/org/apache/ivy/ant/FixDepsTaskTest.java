@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
@@ -215,10 +216,10 @@ public class FixDepsTaskTest {
             toString(Arrays.asList(md2.getDependencies())));
     }
 
-    private List/* <String> */toString(List list) {
-        List strings = new ArrayList(list.size());
-        for (int i = 0; i < list.size(); i++) {
-            strings.add(list.get(i).toString());
+    private List<String> toString(List<DependencyDescriptor> list) {
+        List<String> strings = new ArrayList<String>(list.size());
+        for (DependencyDescriptor dd : list) {
+            strings.add(dd.toString());
         }
         return strings;
     }

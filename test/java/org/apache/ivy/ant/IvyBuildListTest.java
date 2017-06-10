@@ -340,7 +340,7 @@ public class IvyBuildListTest {
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
 
         buildlist.addFileset(fs);
-        buildlist.setOnMissingDescriptor(new String("tail")); // IVY-805: new String instance
+        buildlist.setOnMissingDescriptor("tail"); // IVY-805: new String instance
 
         String[] files = getFiles(buildlist);
 
@@ -357,7 +357,7 @@ public class IvyBuildListTest {
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
 
         buildlist.addFileset(fs);
-        buildlist.setOnMissingDescriptor(new String("skip")); // IVY-805: new String instance
+        buildlist.setOnMissingDescriptor("skip"); // IVY-805: new String instance
 
         String[] files = getFiles(buildlist);
 

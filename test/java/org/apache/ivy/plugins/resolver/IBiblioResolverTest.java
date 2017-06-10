@@ -230,8 +230,8 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         Map[] valuesMaps = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY},
             otherTokenValues);
         Set vals = new HashSet();
-        for (int i = 0; i < valuesMaps.length; i++) {
-            vals.add(valuesMaps[i].get(IvyPatternHelper.MODULE_KEY));
+        for (Map valuesMap : valuesMaps) {
+            vals.add(valuesMap.get(IvyPatternHelper.MODULE_KEY));
         }
         values = (String[]) vals.toArray(new String[vals.size()]);
         assertEquals(1, values.length);

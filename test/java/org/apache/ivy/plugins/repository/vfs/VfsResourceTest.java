@@ -27,7 +27,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.After;
@@ -52,9 +51,7 @@ public class VfsResourceTest {
      */
     @Test
     public void testCreateResourceThatExists() throws Exception {
-        Iterator vfsURIs = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML)) {
             String resId = vfsURI.toString();
             VfsResource res = new VfsResource(resId, helper.fsManager);
             assertNotNull("Unexpected null value on VFS URI: " + resId, res);
@@ -93,9 +90,7 @@ public class VfsResourceTest {
      */
     @Test
     public void testCreateResourceThatDoesntExist() throws Exception {
-        Iterator vfsURIs = helper.createVFSUriSet("zzyyxx.zzyyxx").iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet("zzyyxx.zzyyxx")) {
             String resId = vfsURI.toString();
             VfsResource res = new VfsResource(resId, helper.fsManager);
             assertNotNull("Unexpected null value on VFS URI: " + resId, res);
@@ -141,24 +136,19 @@ public class VfsResourceTest {
     @Test
     public void testListFolderChildren() throws Exception {
         final String testFolder = "2/mod10.1";
-        final List expectedFiles = Arrays.asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml",
-                "ivy-1.2.xml", "ivy-1.3.xml"});
+        final List<String> expectedFiles = Arrays
+                .asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml", "ivy-1.2.xml", "ivy-1.3.xml"});
 
-        Iterator baseVfsURIs = helper.createVFSUriSet(testFolder).iterator();
-        while (baseVfsURIs.hasNext()) {
-            VfsURI baseVfsURI = (VfsURI) baseVfsURIs.next();
-
-            List expected = new ArrayList();
-            for (int i = 0; i < expectedFiles.size(); i++) {
-                String resId = baseVfsURI.toString() + "/" + expectedFiles.get(i);
+        for (VfsURI baseVfsURI : helper.createVFSUriSet(testFolder)) {
+            List<String> expected = new ArrayList<String>();
+            for (String expectedFile : expectedFiles) {
+                String resId = baseVfsURI.toString() + "/" + expectedFile;
                 expected.add(resId);
             }
 
-            List actual = new ArrayList();
+            List<String> actual = new ArrayList<String>();
             VfsResource res = new VfsResource(baseVfsURI.toString(), helper.fsManager);
-            Iterator children = res.getChildren().iterator();
-            while (children.hasNext()) {
-                String resId = (String) children.next();
+            for (String resId : res.getChildren()) {
                 // remove entries ending in .svn
                 if (!resId.endsWith(".svn")) {
                     actual.add(resId);
@@ -178,13 +168,11 @@ public class VfsResourceTest {
      */
     @Test
     public void testListFileChildren() throws Exception {
-        Iterator testSet = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
-        while (testSet.hasNext()) {
-            VfsURI vfsURI = (VfsURI) testSet.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML)) {
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
-            List results = res.getChildren();
-            assertEquals("getChildren query on file provided results when it shouldn't have",
-                    0, results.size());
+            List<String> results = res.getChildren();
+            assertEquals("getChildren query on file provided results when it shouldn't have", 0,
+                results.size());
         }
     }
 
@@ -194,13 +182,11 @@ public class VfsResourceTest {
      */
     @Test
     public void testListImaginary() throws Exception {
-        Iterator testSet = helper.createVFSUriSet("idontexistzzxx").iterator();
-        while (testSet.hasNext()) {
-            VfsURI vfsURI = (VfsURI) testSet.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet("idontexistzzxx")) {
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
-            List results = res.getChildren();
-            assertEquals("getChildren query on file provided results when it shouldn't have",
-                    0, results.size());
+            List<String> results = res.getChildren();
+            assertEquals("getChildren query on file provided results when it shouldn't have", 0,
+                results.size());
         }
     }
 }
