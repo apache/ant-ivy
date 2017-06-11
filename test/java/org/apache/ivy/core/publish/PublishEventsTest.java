@@ -33,6 +33,7 @@ import org.apache.ivy.core.event.publish.StartArtifactPublishEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
 public class PublishEventsTest {
 
     // maps ArtifactRevisionId to PublishTestCase instance.
-    private HashMap expectedPublications;
+    private HashMap<ArtifactRevisionId, PublishTestCase> expectedPublications;
 
     // expected values for the current artifact being published.
     private PublishTestCase currentTestCase;
@@ -123,7 +124,7 @@ public class PublishEventsTest {
         assertEquals("sanity check", "foo", dataArtifact.getName());
         ivyArtifact = MDArtifact.newIvyArtifact(publishModule);
 
-        expectedPublications = new HashMap();
+        expectedPublications = new HashMap<ArtifactRevisionId, PublishTestCase>();
         expectedPublications.put(dataArtifact.getId(), new PublishTestCase(dataArtifact, dataFile,
                 true));
         expectedPublications.put(ivyArtifact.getId(), new PublishTestCase(ivyArtifact, ivyFile,
@@ -221,8 +222,7 @@ public class PublishEventsTest {
         // delete the datafile. the publish should fail
         // and the ivy artifact should still publish successfully.
         assertTrue("datafile has been destroyed", dataFile.delete());
-        PublishTestCase dataPublish = (PublishTestCase) expectedPublications.get(dataArtifact
-                .getId());
+        PublishTestCase dataPublish = expectedPublications.get(dataArtifact.getId());
         dataPublish.expectedSuccess = false;
         Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
@@ -246,8 +246,8 @@ public class PublishEventsTest {
         // set an error to be thrown during publication of the data file.
         this.publishError = new IOException("boom!");
         // we don't care which artifact is attempted; either will fail with an IOException.
-        for (Object o : expectedPublications.values()) {
-            ((PublishTestCase) o).expectedSuccess = false;
+        for (PublishTestCase publishTestCase : expectedPublications.values()) {
+            publishTestCase.expectedSuccess = false;
         }
 
         try {
@@ -386,8 +386,7 @@ public class PublishEventsTest {
             Artifact artifact = startEvent.getArtifact();
             assertNotNull("event defines artifact", artifact);
 
-            PublishTestCase currentTestCase = (PublishTestCase) test.expectedPublications
-                    .remove(artifact.getId());
+            PublishTestCase currentTestCase = test.expectedPublications.remove(artifact.getId());
             assertNotNull("artifact " + artifact.getId() + " was expected for publication",
                 currentTestCase);
             assertFalse("current publication has not been visited yet",
