@@ -149,12 +149,9 @@ public class AntCallTriggerTest {
                 System.setErr(err);
                 System.setIn(in);
             }
-        } catch (RuntimeException exc) {
+        } catch (RuntimeException | Error exc) {
             error = exc;
             throw exc;
-        } catch (Error err) {
-            error = err;
-            throw err;
         } finally {
             project.fireBuildFinished(error);
         }

@@ -27,7 +27,7 @@ import org.apache.commons.lang.WordUtils;
  */
 public final class HelloIvy {
     public static void main(String[] args) throws Exception {
-        String  message = "hello ivy !";
+        String  message = "Hello Ivy!";
         System.out.println("standard message : " + message);
         System.out.println("capitalized by " + WordUtils.class.getName()
             + " : " + WordUtils.capitalizeFully(message));
@@ -42,7 +42,7 @@ public final class HelloIvy {
 
         System.out.println(
             "now check if httpclient dependency on commons-logging has been realized");
-        Class clss = Class.forName("org.apache.commons.logging.Log");
+        Class<?> clss = Class.forName("org.apache.commons.logging.Log");
         System.out.println("found logging class in classpath: " + clss);
     }
 

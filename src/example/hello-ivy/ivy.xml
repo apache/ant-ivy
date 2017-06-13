@@ -14,12 +14,12 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="2.0">
     <info organisation="org.apache" module="hello-ivy"/>
     <dependencies>
-        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
-        <dependency org="commons-cli" name="commons-cli" rev="1.0"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.6"/>
+        <dependency org="commons-cli" name="commons-cli" rev="1.4"/>
     </dependencies>
 </ivy-module>

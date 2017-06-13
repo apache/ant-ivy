@@ -14,10 +14,10 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.0">
-    <info 
+    <info
         organisation="org.apache.ivy.example"
         module="find"
         status="integration"/>
@@ -26,12 +26,12 @@
       <conf name="standalone" extends="core"/>
     </configurations>
     <publications>
-      <artifact name="find" type="jar" conf="core" />
+      <artifact name="find" type="jar" conf="core"/>
     </publications>
     <dependencies>
-      <dependency name="version" rev="latest.integration" conf="core->default" />
-      <dependency name="list" rev="latest.integration" conf="core" />
-      <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="core->default" />
-      <dependency org="commons-cli" name="commons-cli" rev="1.0" conf="standalone->default" />
+      <dependency name="version" rev="latest.integration" conf="core->default"/>
+      <dependency name="list" rev="latest.integration" conf="core"/>
+      <dependency org="org.apache.commons" name="commons-collections4" rev="4.1" conf="core->default"/>
+      <dependency org="commons-cli" name="commons-cli" rev="1.4" conf="standalone->default"/>
     </dependencies>
 </ivy-module>

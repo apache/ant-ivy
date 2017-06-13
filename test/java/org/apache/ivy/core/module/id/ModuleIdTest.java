@@ -70,6 +70,7 @@ public class ModuleIdTest {
         ModuleId moduleId2 = new ModuleId(null, name);
 
         assertNotNull(moduleId);
+        assertFalse(moduleId.equals(null));
         assertFalse(moduleId.equals(moduleId2));
         assertFalse(moduleId2.equals(moduleId));
     }

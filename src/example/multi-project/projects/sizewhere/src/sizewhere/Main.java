@@ -17,27 +17,28 @@
  */
 package sizewhere;
 
-import java.io.File;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.io.File;
+
 public final class Main {
     private static Options getOptions() {
-        Option dir = OptionBuilder.withArgName("dir")
+        Option dir = Option.builder("d")
+            .longOpt("dir")
             .hasArg()
-            .withDescription("give total size of files in given dir")
-            .create("dir");
-        Option name = OptionBuilder.withArgName("name")
+            .desc("give total size of files in given dir")
+            .build();
+        Option name = Option.builder("n")
+            .longOpt("name")
             .hasArg()
-            .withDescription("give total size of files with given name")
-            .create("name");
+            .desc("give total size of files with given name")
+            .build();
         Options options = new Options();
 
         options.addOption(dir);
@@ -49,17 +50,16 @@ public final class Main {
     public static void main(String[] args) throws Exception {
       Options options = getOptions();
       try {
-
-        CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = new DefaultParser();
 
         CommandLine line = parser.parse(options, args);
-        File dir = new File(line.getOptionValue("dir", "."));
-        String name = line.getOptionValue("name", "jar");
+        File dir = new File(line.getOptionValue("d", "."));
+        String name = line.getOptionValue("n", "jar");
         System.out.println("total size of files in " + dir
             + " containing " + name + ": " + SizeWhere.totalSize(dir, name));
       } catch (ParseException exp) {
-          // oops, something went wrong
-          System.err.println("Parsing failed.  Reason: " + exp.getMessage());
+        // oops, something went wrong
+        System.err.println("Parsing failed.  Reason: " + exp.getMessage());
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("sizewhere", options);

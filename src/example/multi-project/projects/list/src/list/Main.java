@@ -18,24 +18,22 @@
 package list;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 public final class Main {
     private static Options getOptions() {
-        Option dir = OptionBuilder.withArgName("dir")
+        Option dir = Option.builder("d")
+			.longOpt("dir")
             .hasArg()
-            .withDescription("list files in given dir")
-            .create("dir");
+            .desc("list files in given dir")
+            .build();
         Options options = new Options();
 
         options.addOption(dir);
@@ -47,12 +45,12 @@ public final class Main {
       Options options = getOptions();
       try {
 
-        CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = new DefaultParser();
 
         CommandLine line = parser.parse(options, args);
-        File dir = new File(line.getOptionValue("dir", "."));
+        File dir = new File(line.getOptionValue("d", "."));
           System.out.println("listing files in " + dir);
-          for (Object file : ListFile.list(dir)) {
+          for (File file : ListFile.list(dir)) {
               System.out.println("\t" + file + "\n");
           }
       } catch (ParseException exp) {

@@ -20,8 +20,8 @@ package filter.ccimpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import filter.IFilter;
 
 public class CCFilter implements IFilter {
@@ -34,10 +34,10 @@ public class CCFilter implements IFilter {
             return values;
         }
 
-        List<String> result = new ArrayList<String>(Arrays.asList(values));
-        CollectionUtils.filter(result, new Predicate() {
-            public boolean evaluate(Object o) {
-                return o != null && o.toString().startsWith(prefix);
+        List<String> result = new ArrayList<>(Arrays.asList(values));
+        CollectionUtils.filter(result, new Predicate<String>() {
+            public boolean evaluate(String string) {
+                return string != null && string.startsWith(prefix);
             }
         });
         return result.toArray(new String[result.size()]);

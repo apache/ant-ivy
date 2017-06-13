@@ -19,9 +19,8 @@ package example;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.WordUtils;
 
@@ -30,17 +29,18 @@ import org.apache.commons.lang.WordUtils;
  */
 public final class HelloConsole {
     public static void main(String[] args) throws Exception {
-        Option msg = OptionBuilder.withArgName("msg")
+        Option msg = Option.builder("m")
+			.longOpt("message")
             .hasArg()
-            .withDescription("the message to capitalize")
-            .create("message");
+            .desc("the message to capitalize")
+            .build();
         Options options = new Options();
         options.addOption(msg);
 
-        CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = new DefaultParser();
         CommandLine line = parser.parse(options, args);
 
-        String  message = line.getOptionValue("message", "hello ivy !");
+        String  message = line.getOptionValue("m", "Hello Ivy!");
         System.out.println("standard message : " + message);
         System.out.println("capitalized by " + WordUtils.class.getName()
             + " : " + WordUtils.capitalizeFully(message));

@@ -14,17 +14,17 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.0">
-    <info 
+    <info
         organisation="org.apache.ivy.example"
         module="console"
         status="integration"/>
     <dependencies>
-      <dependency name="version" rev="latest.integration" conf="default" />
-      <dependency name="list" rev="latest.integration" conf="default->standalone" />
-      <dependency name="find" rev="latest.integration" conf="default->standalone" />
-      <dependency name="sizewhere" rev="latest.integration" conf="default->standalone" />
+      <dependency name="version" rev="latest.integration" conf="default"/>
+      <dependency name="list" rev="latest.integration" conf="default->standalone"/>
+      <dependency name="find" rev="latest.integration" conf="default->standalone"/>
+      <dependency name="sizewhere" rev="latest.integration" conf="default->standalone"/>
     </dependencies>
 </ivy-module>

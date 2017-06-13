@@ -17,24 +17,26 @@
  */
 package size;
 
-import version.Version;
-import java.util.Collection;
-import java.util.Iterator;
 import java.io.File;
+import java.util.Collection;
+
+import static list.ListFile.list;
+import static version.Version.register;
 
 public final class FileSize {
   static {
-    Version.register("size");
+    register("size");
   }
 
+  @SuppressWarnings("unused")
   public static long totalSize(File dir) {
-    return totalSize(list.ListFile.list(dir));
+    return totalSize(list(dir));
   }
 
-  public static long totalSize(Collection files) {
+  public static long totalSize(Collection<File> files) {
     long total = 0;
-    for (Object file : files) {
-      total += ((File) file).length();
+    for (File file : files) {
+      total += file.length();
     }
     return total;
   }

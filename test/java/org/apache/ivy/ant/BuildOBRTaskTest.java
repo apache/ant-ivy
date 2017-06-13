@@ -63,11 +63,8 @@ public class BuildOBRTaskTest {
 
     private BundleRepoDescriptor readObr(File obrFile) throws IOException, SAXException {
         BundleRepoDescriptor obr;
-        FileInputStream in = new FileInputStream(obrFile);
-        try {
+        try (FileInputStream in = new FileInputStream(obrFile)) {
             obr = OBRXMLParser.parse(obrFile.toURI(), in);
-        } finally {
-            in.close();
         }
         return obr;
     }

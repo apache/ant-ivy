@@ -17,19 +17,20 @@
  */
 package sizewhere;
 
-import version.Version;
 import size.FileSize;
-import find.FindFile;
 
 import java.io.File;
 
+import static find.FindFile.find;
+import static version.Version.register;
+
 public final class SizeWhere {
   static {
-    Version.register("sizewhere");
+    register("sizewhere");
   }
 
   public static long totalSize(File dir, String name) {
-    return FileSize.totalSize(FindFile.find(dir, name));
+    return FileSize.totalSize(find(dir, name));
   }
 
   private SizeWhere() {
