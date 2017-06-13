@@ -140,13 +140,13 @@ public class VfsResourceTest {
                 .asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml", "ivy-1.2.xml", "ivy-1.3.xml"});
 
         for (VfsURI baseVfsURI : helper.createVFSUriSet(testFolder)) {
-            List<String> expected = new ArrayList<String>();
+            List<String> expected = new ArrayList<>();
             for (String expectedFile : expectedFiles) {
                 String resId = baseVfsURI.toString() + "/" + expectedFile;
                 expected.add(resId);
             }
 
-            List<String> actual = new ArrayList<String>();
+            List<String> actual = new ArrayList<>();
             VfsResource res = new VfsResource(baseVfsURI.toString(), helper.fsManager);
             for (String resId : res.getChildren()) {
                 // remove entries ending in .svn

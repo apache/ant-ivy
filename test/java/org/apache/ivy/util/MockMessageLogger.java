@@ -22,11 +22,11 @@ import java.util.List;
 
 public class MockMessageLogger extends AbstractMessageLogger {
 
-    private final List<String> _endProgress = new ArrayList<String>();
+    private final List<String> _endProgress = new ArrayList<>();
 
-    private final List<String> _logs = new ArrayList<String>();
+    private final List<String> _logs = new ArrayList<>();
 
-    private final List<String> _rawLogs = new ArrayList<String>();
+    private final List<String> _rawLogs = new ArrayList<>();
 
     private int _progressCalls;
 

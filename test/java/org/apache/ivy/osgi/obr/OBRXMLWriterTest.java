@@ -49,7 +49,7 @@ public class OBRXMLWriterTest {
 
     @Test
     public void testWriteWithSource() throws Exception {
-        List<BundleInfo> bundles = new ArrayList<BundleInfo>();
+        List<BundleInfo> bundles = new ArrayList<>();
 
         BundleInfo bundle = new BundleInfo(BUNDLE_1, BUNDLE_VERSION);
         bundle.addArtifact(new BundleArtifact(false, new URI("file:///test.jar"), null));

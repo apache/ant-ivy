@@ -65,7 +65,7 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  */
 public class TestFixture {
 
-    private final Collection<ModuleDescriptor> mds = new ArrayList<ModuleDescriptor>();
+    private final Collection<ModuleDescriptor> mds = new ArrayList<>();
 
     private Ivy ivy;
 

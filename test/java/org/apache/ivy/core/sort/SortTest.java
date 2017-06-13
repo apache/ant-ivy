@@ -346,7 +346,7 @@ public class SortTest {
     private Collection<List<ModuleDescriptor>> getAllLists(ModuleDescriptor a, ModuleDescriptor b,
             ModuleDescriptor c, ModuleDescriptor d) {
         final int nbOfList = 24;
-        Collection<List<ModuleDescriptor>> r = new ArrayList<List<ModuleDescriptor>>(nbOfList);
+        Collection<List<ModuleDescriptor>> r = new ArrayList<>(nbOfList);
         r.add(Arrays.asList(new ModuleDescriptor[] {a, b, c, d}));
         r.add(Arrays.asList(new ModuleDescriptor[] {a, b, d, c}));
         r.add(Arrays.asList(new ModuleDescriptor[] {a, c, b, d}));

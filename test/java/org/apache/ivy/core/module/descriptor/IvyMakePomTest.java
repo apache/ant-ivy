@@ -77,7 +77,7 @@ public class IvyMakePomTest {
         assertNotNull("Dependencies element wasn't found in the generated POM file", dependencies);
         assertEquals("Unexpected number of dependencies in the generated POM file", 2, dependencies.getLength());
 
-        final Set<String> expectedPomArtifactIds = new HashSet<String>();
+        final Set<String> expectedPomArtifactIds = new HashSet<>();
         expectedPomArtifactIds.add("foo");
         expectedPomArtifactIds.add("bar");
         for (int i = 0; i < dependencies.getLength(); i++) {

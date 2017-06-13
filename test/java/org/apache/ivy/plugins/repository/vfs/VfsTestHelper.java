@@ -76,7 +76,7 @@ public class VfsTestHelper {
      * @return <class>List</class> of well-formed VFS resource identifiers
      */
     public List<VfsURI> createVFSUriSet(String resource) {
-        List<VfsURI> set = new ArrayList<VfsURI>();
+        List<VfsURI> set = new ArrayList<>();
         for (String scheme : VfsURI.SUPPORTED_SCHEMES) {
             set.add(VfsURI.vfsURIFactory(scheme, resource, ivy));
         }

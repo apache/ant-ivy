@@ -86,8 +86,8 @@ public class ResolveReportTest {
             String rev, String conf, String[] targetConfs) {
         assertEquals(ModuleRevisionId.newInstance(org, mod, rev), dep.getDependencyRevisionId());
         assertTrue(Arrays.asList(dep.getModuleConfigurations()).contains(conf));
-        assertEquals(new HashSet<String>(Arrays.asList(targetConfs)),
-            new HashSet<String>(Arrays.asList(dep.getDependencyConfigurations(conf))));
+        assertEquals(new HashSet<>(Arrays.asList(targetConfs)),
+                new HashSet<>(Arrays.asList(dep.getDependencyConfigurations(conf))));
     }
 
     @Test

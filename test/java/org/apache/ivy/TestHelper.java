@@ -108,7 +108,7 @@ public class TestHelper {
      * @return a collection of {@link ModuleRevisionId}
      */
     public static Collection<ModuleRevisionId> parseMrids(String mrids) {
-        Collection<ModuleRevisionId> c = new LinkedHashSet<ModuleRevisionId>();
+        Collection<ModuleRevisionId> c = new LinkedHashSet<>();
         for (String s : mrids.split(",?\\s+")) {
             c.add(ModuleRevisionId.parse(s));
         }
@@ -201,7 +201,7 @@ public class TestHelper {
      * @return the collection of module descriptors parsed
      */
     public static Collection<ModuleDescriptor> parseMicroIvyDescriptors(String microIvy) {
-        Collection<ModuleDescriptor> r = new ArrayList<ModuleDescriptor>();
+        Collection<ModuleDescriptor> r = new ArrayList<>();
         for (String md : microIvy.split("\\s*;;\\s*")) {
             r.add(parseMicroIvyDescriptor(md));
         }

@@ -124,7 +124,7 @@ public class PublishEventsTest {
         assertEquals("sanity check", "foo", dataArtifact.getName());
         ivyArtifact = MDArtifact.newIvyArtifact(publishModule);
 
-        expectedPublications = new HashMap<ArtifactRevisionId, PublishTestCase>();
+        expectedPublications = new HashMap<>();
         expectedPublications.put(dataArtifact.getId(), new PublishTestCase(dataArtifact, dataFile,
                 true));
         expectedPublications.put(ivyArtifact.getId(), new PublishTestCase(ivyArtifact, ivyFile,
