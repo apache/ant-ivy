@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.License;
@@ -110,13 +111,13 @@ public class PomReader {
 
     private static final String PROFILE = "profile";
 
-    private HashMap<String, String> properties = new HashMap<String, String>();
+    private final Map<String, String> properties = new HashMap<String, String>();
 
     private final Element projectElement;
 
     private final Element parentElement;
 
-    public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
+    public PomReader(final URL descriptorURL, final Resource res) throws IOException, SAXException {
         InputStream stream = new AddDTDFilterInputStream(
                 URLHandlerRegistry.getDefault().openStream(descriptorURL));
         InputSource source = new InputSource(stream);
@@ -145,6 +146,18 @@ public class PomReader {
             } catch (IOException e) {
                 // ignore
             }
+        }
+        // Both environment and system properties take precedence over properties set in
+        // pom.xml. So we pre-populate our properties with the environment and system properties
+        // here
+        for (final Map.Entry<String, String> envEntry : System.getenv().entrySet()) {
+            // Maven let's users use "env." prefix for environment variables
+            this.setProperty("env." + envEntry.getKey(), envEntry.getValue());
+        }
+        // add system properties
+        final Properties sysProps = System.getProperties();
+        for (final String sysProp : sysProps.stringPropertyNames()) {
+            this.setProperty(sysProp, sysProps.getProperty(sysProp));
         }
     }
 

@@ -25,11 +25,18 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -54,6 +61,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
 
@@ -78,6 +86,9 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
     @Rule
     public ExpectedException expExc = ExpectedException.none();
+
+    @Rule
+    public TemporaryFolder workDir = new TemporaryFolder();
 
     @Before
     public void setUp() {
@@ -1041,6 +1052,76 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
+    }
+
+    /**
+     * Tests that a pom.xml which has references to properties that are either set via environment variables or system
+     * properties, has its properties evaluated correctly.
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1561">IVY-1561</a>
+     */
+    @Test
+    public void testSystemPropertyAndEnvReferences() throws Exception {
+        // the pom we are testing contains reference to a string called "env.THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR".
+        // this piece of code replaces it to "env.someenvname" where someenvname is a environment variable we
+        // choose in this test case (after randomly picking it from the ones that are set).
+        // finally we created the updated pom content in a separate file and test against that file
+        final String envName = chooseSomeEnvVar();
+        final URL originalPomFile = this.getClass().getResource("test-system-properties.pom");
+        assertNotNull("Pom file to test, is missing", originalPomFile);
+        final List<String> pomContent = Files.readAllLines(Paths.get(originalPomFile.toURI()), Charset.forName("UTF-8"));
+        final List<String> replacedContent = new ArrayList<>();
+        for (final String line : pomContent) {
+            replacedContent.add(line.replaceAll("THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR", envName));
+        }
+        // write the new pom contents into a separate file
+        final Path updatedPomFile = Paths.get(workDir.getRoot().toPath().toString(), "updated-test-system-properties.pom");
+        Files.write(updatedPomFile, replacedContent, Charset.forName("UTF-8"));
+
+        // now start testing
+        // we do 2 rounds of testing - one with a system property (referenced in the pom) set and once unset
+        boolean withSystemPropertiesSet = false;
+        try {
+            for (int i = 0; i < 2; i++) {
+                if (i == 1) {
+                    System.setProperty("version.test.system.property.b", "1.2.3");
+                    withSystemPropertiesSet = true;
+                }
+                final ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings, updatedPomFile.toUri().toURL(), false);
+                assertNotNull("Module descriptor created from POM reader was null", md);
+                assertEquals("Unexpected module descriptor created by POM reader",
+                        ModuleRevisionId.newInstance("foo.bar", "hello-world", "2.0.2"),
+                        md.getModuleRevisionId());
+
+                final DependencyDescriptor[] dds = md.getDependencies();
+                assertNotNull("No dependency descriptors found in module descriptor", dds);
+                assertEquals("Unexpected number of dependencies in module descriptor", 4, dds.length);
+                final Set<ModuleRevisionId> expectedDependencies = new HashSet<>();
+                expectedDependencies.add(ModuleRevisionId.newInstance("aopalliance", "aopalliance", "1.0"));
+                final String commonsLoggingDepVersion = envName == null ? "${env.THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR}" : System.getenv(envName);
+                expectedDependencies.add(ModuleRevisionId.newInstance("commons-logging", "commons-logging", commonsLoggingDepVersion));
+                expectedDependencies.add(ModuleRevisionId.newInstance("foo.bar", "hello-world-api", "2.0.2"));
+                expectedDependencies.add(ModuleRevisionId.newInstance("a", "b", withSystemPropertiesSet ? "1.2.3" : "2.3.4"));
+                for (final DependencyDescriptor dd : dds) {
+                    assertNotNull("Dependency was null in the dependencies", dd);
+                    assertTrue("Unexpected dependency " + dd.getDependencyRevisionId() + " in module descriptor", expectedDependencies.remove(dd.getDependencyRevisionId()));
+                }
+                assertTrue("Following dependencies were missing from module descriptor " + expectedDependencies, expectedDependencies.isEmpty());
+            }
+        } finally {
+            System.clearProperty("version.test.system.property.b");
+        }
+    }
+
+    private static String chooseSomeEnvVar() {
+        final Map<String, String> env = System.getenv();
+        for (final Map.Entry<String, String> entry : env.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     private IvySettings createIvySettingsForParentLicenseTesting(final String parentPomFileName, final String parentOrgName,
