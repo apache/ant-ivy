@@ -17,18 +17,18 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Creates an ant fileset consisting in all artifacts found during a resolve. Note that this task is
@@ -60,35 +60,68 @@ public class IvyCacheFileset extends IvyCacheTask {
             throw new BuildException("setid is required in ivy cachefileset");
         }
         try {
-            List paths = getArtifactReports();
-            File base = null;
-            for (Iterator iter = paths.iterator(); iter.hasNext();) {
-                ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
-                if (a.getLocalFile() != null) {
-                    base = getBaseDir(base, a.getLocalFile());
-                }
+            final List<ArtifactDownloadReport> artifactDownloadReports = getArtifactReports();
+            if (artifactDownloadReports.isEmpty()) {
+                // generate an empty fileset
+                final FileSet emptyFileSet = new EmptyFileSet();
+                emptyFileSet.setProject(getProject());
+                getProject().addReference(setid, emptyFileSet);
+                return;
             }
-
-            FileSet fileset;
-            if (base == null) {
-                fileset = new EmptyFileSet();
-            } else {
-                fileset = new FileSet();
-                fileset.setDir(base);
-                for (Iterator iter = paths.iterator(); iter.hasNext();) {
-                    ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
-                    if (a.getLocalFile() != null) {
-                        NameEntry ne = fileset.createInclude();
-                        ne.setName(getPath(base, a.getLocalFile()));
-                    }
-                }
-            }
-
+            // find a common base dir of the resolved artifacts
+            final File baseDir = this.requireCommonBaseDir(artifactDownloadReports);
+            final FileSet fileset = new FileSet();
+            fileset.setDir(baseDir);
             fileset.setProject(getProject());
+            // enroll each of the artifact files into the fileset
+            for (final ArtifactDownloadReport artifactDownloadReport : artifactDownloadReports) {
+                if (artifactDownloadReport.getLocalFile() == null) {
+                    continue;
+                }
+                final NameEntry ne = fileset.createInclude();
+                ne.setName(getPath(baseDir, artifactDownloadReport.getLocalFile()));
+            }
             getProject().addReference(setid, fileset);
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy cache fileset: " + ex, ex);
         }
+    }
+
+    /**
+     * Returns a common base directory, determined from the {@link ArtifactDownloadReport#getLocalFile() local files} of the
+     * passed <code>artifactDownloadReports</code>. If no common base directory can be determined, this method throws a
+     * {@link BuildException}
+     *
+     * @param artifactDownloadReports The artifact download reports for which the common base directory of the artifacts
+     *                                has to be determined
+     * @return
+     */
+    private File requireCommonBaseDir(final List<ArtifactDownloadReport> artifactDownloadReports) {
+        File base = null;
+        for (final ArtifactDownloadReport artifactDownloadReport : artifactDownloadReports) {
+            if (artifactDownloadReport.getLocalFile() == null) {
+                continue;
+            }
+            if (base == null) {
+                // use the parent dir of the artifact as the base
+                base = artifactDownloadReport.getLocalFile().getParentFile().getAbsoluteFile();
+            } else {
+                // try and find a common base directory between the current base
+                // directory and the artifact's file
+                base = FileUtil.getBaseDir(base, artifactDownloadReport.getLocalFile());
+                if (base == null) {
+                    // fail fast - we couldn't determine a common base directory, throw an error
+                    throw new BuildException("Cannot find a common base directory, from resolved artifacts, " +
+                            "for generating a cache fileset");
+                }
+            }
+        }
+        if (base == null) {
+            // finally, we couldn't determine a common base directory, throw an error
+            throw new BuildException("Cannot find a common base directory, from resolved artifacts, for generating " +
+                    "a cache fileset");
+        }
+        return base;
     }
 
     /**
@@ -114,48 +147,6 @@ public class IvyCacheFileset extends IvyCacheTask {
         return file.getAbsolutePath().substring(beginIndex);
     }
 
-    /**
-     * Returns the common base directory between a current base directory and a given file.
-     * <p>
-     * The returned base directory must be a parent of both the current base and the given file.
-     * </p>
-     *
-     * @param base
-     *            the current base directory, may be null.
-     * @param file
-     *            the file for which the new base directory should be returned.
-     * @return the common base directory between a current base directory and a given file.
-     */
-    File getBaseDir(File base, File file) {
-        if (base == null) {
-            return file.getParentFile().getAbsoluteFile();
-        } else {
-            Iterator bases = getParents(base).iterator();
-            Iterator fileParents = getParents(file.getAbsoluteFile()).iterator();
-            File result = null;
-            while (bases.hasNext() && fileParents.hasNext()) {
-                File next = (File) bases.next();
-                if (next.equals(fileParents.next())) {
-                    result = next;
-                } else {
-                    break;
-                }
-            }
-            return result;
-        }
-    }
-
-    /**
-     * @return a list of files, starting with the root and ending with the file itself
-     */
-    private LinkedList/* <File> */getParents(File file) {
-        LinkedList r = new LinkedList();
-        while (file != null) {
-            r.addFirst(file);
-            file = file.getParentFile();
-        }
-        return r;
-    }
 
     private static class EmptyFileSet extends FileSet {
 

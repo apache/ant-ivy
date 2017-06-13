@@ -25,6 +25,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -89,4 +90,51 @@ public class FileUtilTest {
         }
     }
 
+
+    /**
+     * Tests {@link FileUtil#getBaseDir(File, File)}
+     */
+    @Test
+    public void testGetBaseDir() {
+        File base = null;
+        base = FileUtil.getBaseDir(base, new File("x/aa/b/c"));
+        assertNull("Base directory was expected to be null", base);
+
+        base = new File("x/aa/b/c").getParentFile().getAbsoluteFile();
+
+        base = FileUtil.getBaseDir(base, new File("x/aa/b/d/e"));
+        assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
+
+        base = FileUtil.getBaseDir(base, new File("x/ab/b/d"));
+        assertEquals(new File("x").getAbsoluteFile(), base);
+
+        final File[] filesytemRoots = File.listRoots();
+        final File root1 = filesytemRoots[0];
+        final File file1 = new File(root1, "abcd/xyz");
+        final File file2 = new File(root1, "pqrs/xyz");
+        final File commonBase = FileUtil.getBaseDir(file1, file2);
+        assertEquals("Unexpected common base dir between '" + file1 + "' and '" + file2 + "'", root1.getAbsoluteFile(), commonBase.getAbsoluteFile());
+
+    }
+
+    /**
+     * Tests that the {@link FileUtil#getBaseDir(File, File)} returns null for files that don't have a common
+     * base directory
+     */
+    @Test
+    public void testNoCommonBaseDir() {
+        final File[] fileSystemRoots = File.listRoots();
+        if (fileSystemRoots.length == 1) {
+            // single file system root isn't what we are interested in, in this test method
+            return;
+        }
+        final File root1 = fileSystemRoots[0];
+        final File root2 = fileSystemRoots[1];
+        final File fileOnRoot1 = new File(root1, "abc/file1");
+        final File fileOnRoot2 = new File(root2, "abc/file2");
+        final File commonBase = FileUtil.getBaseDir(fileOnRoot1, fileOnRoot2);
+        assertNull("No common base directory was expected for files belonging to different" +
+                " filesystem roots, but got " + commonBase, commonBase);
+        ;
+    }
 }
