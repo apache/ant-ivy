@@ -62,20 +62,14 @@ public class OBRXMLWriterTest {
 
         new File("build/test-files").mkdirs();
         File obrFile = new File("build/test-files/obr-sources.xml");
-        FileOutputStream out = new FileOutputStream(obrFile);
-        try {
+        try (FileOutputStream out = new FileOutputStream(obrFile)) {
             ContentHandler handler = OBRXMLWriter.newHandler(out, "UTF-8", true);
             OBRXMLWriter.writeBundles(bundles, handler);
-        } finally {
-            out.close();
         }
 
-        FileInputStream in = new FileInputStream(obrFile);
         BundleRepoDescriptor repo;
-        try {
+        try (FileInputStream in = new FileInputStream(obrFile)) {
             repo = OBRXMLParser.parse(new URI("file:///test"), in);
-        } finally {
-            in.close();
         }
         assertEquals(2, CollectionUtils.toList(repo.getModules()).size());
 
