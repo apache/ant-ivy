@@ -96,7 +96,7 @@ public class IvyCacheFileset extends IvyCacheTask {
      *                                has to be determined
      * @return
      */
-    private File requireCommonBaseDir(final List<ArtifactDownloadReport> artifactDownloadReports) {
+    File requireCommonBaseDir(final List<ArtifactDownloadReport> artifactDownloadReports) {
         File base = null;
         for (final ArtifactDownloadReport artifactDownloadReport : artifactDownloadReports) {
             if (artifactDownloadReport.getLocalFile() == null) {
@@ -150,13 +150,14 @@ public class IvyCacheFileset extends IvyCacheTask {
     /**
      * Returns the common base directory between the passed <code>file1</code> and <code>file2</code>.
      * <p>
-     * The returned base directory must be a parent of both the <code>file1</code> and <code>file2</code>.
+     * The returned base directory will be a parent of both the <code>file1</code> and <code>file2</code> or
+     * it will be <code>null</code>.
      * </p>
      *
      * @param file1
      *            One of the files, for which the common base directory is being sought, may be null.
      * @param file2
-     *            The other file for which the common base directory should be returned.
+     *            The other file for which the common base directory should be returned, may be null.
      * @return the common base directory between a <code>file1</code> and <code>file2</code>. Returns null
      *          if no common base directory could be determined or if either <code>file1</code> or <code>file2</code>
      *          is null
@@ -165,12 +166,12 @@ public class IvyCacheFileset extends IvyCacheTask {
         if (file1 == null || file2 == null) {
             return null;
         }
-        final Iterator bases = getParents(file1).iterator();
-        final Iterator fileParents = getParents(file2.getAbsoluteFile()).iterator();
+        final Iterator file1Parents = getParents(file1).iterator();
+        final Iterator file2Parents = getParents(file2.getAbsoluteFile()).iterator();
         File result = null;
-        while (bases.hasNext() && fileParents.hasNext()) {
-            File next = (File) bases.next();
-            if (next.equals(fileParents.next())) {
+        while (file1Parents.hasNext() && file2Parents.hasNext()) {
+            File next = (File) file1Parents.next();
+            if (next.equals(file2Parents.next())) {
                 result = next;
             } else {
                 break;
@@ -182,8 +183,8 @@ public class IvyCacheFileset extends IvyCacheTask {
     /**
      * @return a list of files, starting with the root and ending with the file itself
      */
-    private LinkedList/* <File> */getParents(File file) {
-        LinkedList r = new LinkedList();
+    private LinkedList<File> getParents(File file) {
+        LinkedList<File> r = new LinkedList<>();
         while (file != null) {
             r.addFirst(file);
             file = file.getParentFile();

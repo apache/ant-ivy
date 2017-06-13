@@ -18,8 +18,11 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -170,26 +173,30 @@ public class IvyCacheFilesetTest {
     }
 
     @Test
-    public void testGetBaseDir() {
-        File base = null;
-        base = fileset.getBaseDir(base, new File("x/aa/b/c"));
-        assertNull("Base directory was expected to be null", base);
+    public void getBaseDirCommonBaseDir() {
+        final File file1 = new File("x/aa/b/c").getParentFile().getAbsoluteFile();
+        final File file2 = new File("x/aa/b/d/e");
+        final File file3 = new File("x/ab/b/d");
 
-        base = new File("x/aa/b/c").getParentFile().getAbsoluteFile();
-
-        base = fileset.getBaseDir(base, new File("x/aa/b/d/e"));
+        // A common base deep inside the tree
+        File base = fileset.getBaseDir(file1, file2);
         assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
 
-        base = fileset.getBaseDir(base, new File("x/ab/b/d"));
+        // A common base on top directory of the tree
+        base = fileset.getBaseDir(base, file3);
         assertEquals(new File("x").getAbsoluteFile(), base);
 
+        // A common base only on the fs-root.
         final File[] filesytemRoots = File.listRoots();
         final File root1 = filesytemRoots[0];
-        final File file1 = new File(root1, "abcd/xyz");
-        final File file2 = new File(root1, "pqrs/xyz");
-        final File commonBase = fileset.getBaseDir(file1, file2);
-        assertEquals("Unexpected common base dir between '" + file1 + "' and '" + file2 + "'", root1.getAbsoluteFile(), commonBase.getAbsoluteFile());
-
+        final File file4 = new File(root1, "abcd/xyz");
+        final File file5 = new File(root1, "pqrs/xyz");
+        final File commonBase = fileset.getBaseDir(file4, file5);
+        assertEquals(
+            "Unexpected common base dir between '" + file4 + "' and '" + file5 + "'",
+            root1.getAbsoluteFile(),
+            commonBase.getAbsoluteFile()
+        );
     }
 
     /**
@@ -199,7 +206,39 @@ public class IvyCacheFilesetTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1475">IVY-1475</a> for more details
      */
     @Test
-    public void testNoCommonBaseDir() {
+    public void getBaseDirNoCommonBaseDir() {
+        final File[] fileSystemRoots = File.listRoots();
+        if (fileSystemRoots.length == 1) {
+            // single file system root isn't what we are interested in, in this test method
+            return;
+        }
+
+        final File root1 = fileSystemRoots[0];
+        final File root2 = fileSystemRoots[1];
+        final File fileOnRoot1 = new File(root1, "abc/file1");
+        final File fileOnRoot2 = new File(root2, "abc/file2");
+        File base = fileset.getBaseDir(fileOnRoot1, fileOnRoot2);
+        assertNull(base);
+    }
+
+    @Test
+    public void getBaseDirNullValues() {
+        assertNull("Base directory was expected to be null", fileset.getBaseDir(null, new File("a")));
+        assertNull("Base directory was expected to be null", fileset.getBaseDir(new File("a"), null));
+    }
+
+    @Test
+    public void requireCommonBaseDirEmptyList() {
+        // we expect a BuildException when we try to find a (non-existent) common base dir
+        // across file system roots
+        expExc.expect(BuildException.class);
+        List<ArtifactDownloadReport> reports = Arrays.asList();
+        fileset.requireCommonBaseDir(reports);
+        fail("A BuildException was expected when trying to find a common base dir.");
+    }
+
+    @Test
+    public void requireCommonBaseDirNoCommon() {
         final File[] fileSystemRoots = File.listRoots();
         if (fileSystemRoots.length == 1) {
             // single file system root isn't what we are interested in, in this test method
@@ -208,12 +247,26 @@ public class IvyCacheFilesetTest {
         // we expect a BuildException when we try to find a (non-existent) common base dir
         // across file system roots
         expExc.expect(BuildException.class);
+        List<ArtifactDownloadReport> reports = Arrays.asList(
+            artifactDownloadReport(new File(fileSystemRoots[0], "a/b/c/d")),
+            artifactDownloadReport(new File(fileSystemRoots[1], "a/b/e/f"))
+        );
+        fileset.requireCommonBaseDir(reports);
+        fail("A BuildException was expected when trying to find a common base dir.");
+    }
 
-        final File root1 = fileSystemRoots[0];
-        final File root2 = fileSystemRoots[1];
-        final File fileOnRoot1 = new File(root1, "abc/file1");
-        final File fileOnRoot2 = new File(root2, "abc/file2");
-        fileset.getBaseDir(fileOnRoot1, fileOnRoot2);
-        fail("A BuildException was expected when trying to find a common base dir between '" + fileOnRoot1 + "' and '" + fileOnRoot2 + "'");
+    @Test
+    public void requireCommonBaseDirCommon() {
+        List<ArtifactDownloadReport> reports = Arrays.asList(
+            artifactDownloadReport(new File("a/b/c/d")),
+            artifactDownloadReport(new File("a/b/e/f"))
+        );
+        assertNotNull(fileset.requireCommonBaseDir(reports));
+    }
+    
+    private ArtifactDownloadReport artifactDownloadReport(File localFile) {
+        ArtifactDownloadReport report = new ArtifactDownloadReport(null);
+        report.setLocalFile(localFile);
+        return report;
     }
 }
