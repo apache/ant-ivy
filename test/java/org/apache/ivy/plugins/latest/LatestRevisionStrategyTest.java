@@ -35,7 +35,7 @@ public class LatestRevisionStrategyTest {
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
                 "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         Collections.sort(shuffled, new LatestRevisionStrategy().new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
@@ -47,12 +47,11 @@ public class LatestRevisionStrategyTest {
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
                 "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
-        List sorted = latestRevisionStrategy.sort(shuffledRevs);
+        List<ArtifactInfo> sorted = latestRevisionStrategy.sort(shuffledRevs);
         assertEquals(Arrays.asList(revs), sorted);
     }
 
@@ -62,9 +61,8 @@ public class LatestRevisionStrategyTest {
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
                 "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         ArtifactInfo latest = latestRevisionStrategy.findLatest(shuffledRevs, new Date());
@@ -77,7 +75,7 @@ public class LatestRevisionStrategyTest {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.1", "0.2-pre", "0.2-dev", "0.2-rc1",
                 "0.2-final", "0.2-QA", "1.0-dev1"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         LatestRevisionStrategy.SpecialMeaning specialMeaning = new LatestRevisionStrategy.SpecialMeaning();

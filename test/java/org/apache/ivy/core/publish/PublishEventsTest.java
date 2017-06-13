@@ -74,7 +74,7 @@ public class PublishEventsTest {
 
     private ModuleDescriptor publishModule;
 
-    private Collection publishSources;
+    private Collection<String> publishSources;
 
     private PublishOptions publishOptions;
 
@@ -180,7 +180,7 @@ public class PublishEventsTest {
         // no modifications to input required for this case -- call out to the resolver, and verify
         // that
         // all of our test counters have been incremented.
-        Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
+        Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("no missing artifacts", 0, missing.size());
 
@@ -203,7 +203,7 @@ public class PublishEventsTest {
         // set overwrite to true. InstrumentedResolver will verify that the correct argument value
         // was provided.
         publishOptions.setOverwrite(true);
-        Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
+        Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("no missing artifacts", 0, missing.size());
 
@@ -224,7 +224,7 @@ public class PublishEventsTest {
         assertTrue("datafile has been destroyed", dataFile.delete());
         PublishTestCase dataPublish = expectedPublications.get(dataArtifact.getId());
         dataPublish.expectedSuccess = false;
-        Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
+        Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("one missing artifact", 1, missing.size());
         assertSameArtifact("missing artifact was returned", dataArtifact, (Artifact) missing

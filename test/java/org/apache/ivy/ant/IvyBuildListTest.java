@@ -18,6 +18,7 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -383,7 +384,7 @@ public class IvyBuildListTest {
         assertListOfFiles("test/buildlist/", new String[] {"B", "C", "A", "D"}, files);
 
         // the order of E and E2 is undefined
-        List other = new ArrayList();
+        List<URI> other = new ArrayList<>();
         other.add(new File(files[4]).getAbsoluteFile().toURI());
         other.add(new File(files[5]).getAbsoluteFile().toURI());
         Collections.sort(other);

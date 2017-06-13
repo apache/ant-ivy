@@ -63,8 +63,8 @@ public class IvyResourcesTest {
         return resources.getIvyInstance();
     }
 
-    private List asList(IvyResources ivyResources) {
-        List resources = new ArrayList();
+    private List<File> asList(IvyResources ivyResources) {
+        List<File> resources = new ArrayList<>();
         for (Object r : ivyResources) {
             assertTrue(r instanceof FileResource);
             resources.add(((FileResource) r).getFile());
@@ -202,7 +202,7 @@ public class IvyResourcesTest {
         IvyDependencyExclude exclude = dependency.createExclude();
         exclude.setOrg("org1");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(3, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));

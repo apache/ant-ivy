@@ -61,12 +61,12 @@ public class AntCallTriggerTest {
     }
 
     private void runAnt(File buildFile, String target, int messageLevel) throws BuildException {
-        Vector targets = new Vector();
+        Vector<String> targets = new Vector<>();
         targets.add(target);
         runAnt(buildFile, targets, messageLevel);
     }
 
-    private void runAnt(File buildFile, Vector targets, int messageLevel) throws BuildException {
+    private void runAnt(File buildFile, Vector<String> targets, int messageLevel) throws BuildException {
         runBuild(buildFile, targets, messageLevel);
 
         // this exits the jvm at the end of the call
@@ -92,7 +92,7 @@ public class AntCallTriggerTest {
     // ////////////////////////////////////////////////////////////////////////////
     // miserable copy (updated to simple test cases) from ant Main class:
     // the only available way I found to easily run ant exits jvm at the end
-    private void runBuild(File buildFile, Vector targets, int messageLevel) throws BuildException {
+    private void runBuild(File buildFile, Vector<String> targets, int messageLevel) throws BuildException {
 
         final Project project = new Project();
         project.setCoreLoader(null);

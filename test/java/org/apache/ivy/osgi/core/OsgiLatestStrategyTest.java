@@ -37,7 +37,7 @@ public class OsgiLatestStrategyTest {
                 "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
                 "2.0.0.xyz"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         Collections.sort(shuffled, new OsgiLatestStrategy().new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
@@ -49,9 +49,8 @@ public class OsgiLatestStrategyTest {
                 "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
                 "2.0.0.xyz"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
         List sorted = latestRevisionStrategy.sort(shuffledRevs);
@@ -65,10 +64,9 @@ public class OsgiLatestStrategyTest {
                 "1.0.0.beta1", "1.0.0.beta2", "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0",
                 "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
         ArtifactInfo latest = latestRevisionStrategy.findLatest(shuffledRevs, new Date());
