@@ -30,7 +30,7 @@ import org.apache.commons.lang.WordUtils;
 public final class HelloConsole {
     public static void main(String[] args) throws Exception {
         Option msg = Option.builder("m")
-			.longOpt("message")
+            .longOpt("message")
             .hasArg()
             .desc("the message to capitalize")
             .build();

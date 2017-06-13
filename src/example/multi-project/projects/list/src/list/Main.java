@@ -30,7 +30,7 @@ import org.apache.commons.cli.ParseException;
 public final class Main {
     private static Options getOptions() {
         Option dir = Option.builder("d")
-			.longOpt("dir")
+            .longOpt("dir")
             .hasArg()
             .desc("list files in given dir")
             .build();

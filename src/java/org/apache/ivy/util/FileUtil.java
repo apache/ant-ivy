@@ -59,7 +59,7 @@ public final class FileUtil {
 
     // according to tests by users, 64kB seems to be a good value for the buffer used during copy;
     // further improvements could be obtained using NIO API
-	private static final int BUFFER_SIZE = 64 * 1024;
+    private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
