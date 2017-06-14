@@ -77,7 +77,7 @@ public class IvyMakePomTest {
         assertNotNull("Dependencies element wasn't found in the generated POM file", dependencies);
         assertEquals("Unexpected number of dependencies in the generated POM file", 2, dependencies.getLength());
 
-        final Set<String> expectedPomArtifactIds = new HashSet<String>();
+        final Set<String> expectedPomArtifactIds = new HashSet<>();
         expectedPomArtifactIds.add("foo");
         expectedPomArtifactIds.add("bar");
         for (int i = 0; i < dependencies.getLength(); i++) {
@@ -170,7 +170,7 @@ public class IvyMakePomTest {
                 // move to next sibling
                 nextChild = nextChild.getNextSibling();
             }
-            return new PomDependency(groupId, artifactId, version, scope, classifier, optional != null ? Boolean.parseBoolean(optional) : false);
+            return new PomDependency(groupId, artifactId, version, scope, classifier, optional != null && Boolean.parseBoolean(optional));
         }
 
         private static Node skipIfTextNode(final Node node) {
@@ -182,13 +182,8 @@ public class IvyMakePomTest {
 
         @Override
         public String toString() {
-            return "PomDependency{" +
-                    "groupId='" + groupId + '\'' +
-                    ", artifactId='" + artifactId + '\'' +
-                    ", version='" + version + '\'' +
-                    ", scope='" + scope + '\'' +
-                    ", classifier='" + classifier + '\'' +
-                    '}';
+            return String.format("PomDependency{groupId='%s', artifactId='%s', version='%s', scope='%s', classifier='%s'}",
+                    groupId, artifactId, version, scope, classifier);
         }
     }
 }

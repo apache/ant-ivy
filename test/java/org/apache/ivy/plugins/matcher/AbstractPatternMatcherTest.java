@@ -52,20 +52,20 @@ public abstract class AbstractPatternMatcherTest {
 
         // test some exact patterns for this matcher
         String[] expressions = getExactExpressions();
-        for (int i = 0; i < expressions.length; i++) {
-            matcher = patternMatcher.getMatcher(expressions[i]);
-            assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
+        for (String expression : expressions) {
+            matcher = patternMatcher.getMatcher(expression);
+            assertTrue("Expression '" + expression + "' should be exact", matcher.isExact());
             matcher.matches("The words aren't what they were.");
-            assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
+            assertTrue("Expression '" + expression + "' should be exact", matcher.isExact());
         }
 
         // test some inexact patterns for this matcher
         expressions = getInexactExpressions();
-        for (int i = 0; i < expressions.length; i++) {
-            matcher = patternMatcher.getMatcher(expressions[i]);
-            assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
+        for (String expression : expressions) {
+            matcher = patternMatcher.getMatcher(expression);
+            assertFalse("Expression '" + expression + "' should be inexact", matcher.isExact());
             matcher.matches("The words aren't what they were.");
-            assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
+            assertFalse("Expression '" + expression + "' should be inexact", matcher.isExact());
         }
 
     }

@@ -327,15 +327,15 @@ public class OBRResolverTest {
             new ResolveOptions().setConfs(new String[] {conf}).setOutputReport(false));
         assertFalse("resolve failed " + resolveReport.getAllProblemMessages(),
             resolveReport.hasError());
-        Set<ModuleRevisionId> actual = new HashSet<ModuleRevisionId>();
+        Set<ModuleRevisionId> actual = new HashSet<>();
         for (Artifact artifact : resolveReport.getArtifacts()) {
             actual.add(artifact.getModuleRevisionId());
         }
-        Set<ModuleRevisionId> expected = new HashSet<ModuleRevisionId>(Arrays.asList(expectedMrids));
+        Set<ModuleRevisionId> expected = new HashSet<>(Arrays.asList(expectedMrids));
         if (expected2Mrids != null) {
             // in this use case, we have two choices, let's try the second one
             try {
-                Set<ModuleRevisionId> expected2 = new HashSet<ModuleRevisionId>(
+                Set<ModuleRevisionId> expected2 = new HashSet<>(
                         Arrays.asList(expected2Mrids));
                 assertEquals(expected2, actual);
                 return; // test passed

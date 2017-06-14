@@ -334,8 +334,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("4.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"myconf1", "myconf2"})), new HashSet(
-                Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"myconf1", "myconf2"})),
+                new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Arrays.asList(new String[] {"yourconf1", "yourconf2"}),
             Arrays.asList(dd.getDependencyConfigurations("myconf1")));
         assertEquals(Arrays.asList(new String[] {"yourconf1", "yourconf2"}),
@@ -350,8 +350,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("5.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"myconf1", "myconf2"})), new HashSet(
-                Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"myconf1", "myconf2"})),
+                new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Arrays.asList(new String[] {"yourconf1"}),
             Arrays.asList(dd.getDependencyConfigurations("myconf1")));
         assertEquals(Arrays.asList(new String[] {"yourconf1", "yourconf2"}),
@@ -366,8 +366,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("11.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"*"})),
-            new HashSet(Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"*"})),
+            new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Arrays.asList(new String[] {"myconf1"}),
             Arrays.asList(dd.getDependencyConfigurations("myconf1")));
         assertEquals(Arrays.asList(new String[] {"myconf2"}),
@@ -381,8 +381,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("latest.integration", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"myconf1", "myconf2"})), new HashSet(
-                Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"myconf1", "myconf2"})),
+                new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Arrays.asList(new String[] {"yourconf1"}),
             Arrays.asList(dd.getDependencyConfigurations("myconf1")));
         assertEquals(Arrays.asList(new String[] {"yourconf1", "yourconf2"}),
@@ -396,8 +396,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("7.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"myconf1", "myconf2"})), new HashSet(
-                Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"myconf1", "myconf2"})),
+                new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Arrays.asList(new String[] {"yourconf1"}),
             Arrays.asList(dd.getDependencyConfigurations("myconf1")));
         assertEquals(Arrays.asList(new String[] {"yourconf1", "yourconf2"}),
@@ -411,8 +411,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("8.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"*"})),
-            new HashSet(Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"*"})),
+            new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertDependencyArtifacts(dd, new String[] {"myconf1"}, new String[] {"yourartifact8-1",
                 "yourartifact8-2"});
         assertDependencyArtifacts(dd, new String[] {"myconf2"}, new String[] {"yourartifact8-1",
@@ -426,8 +426,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("9.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"myconf1", "myconf2", "myconf3"})),
-            new HashSet(Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"myconf1", "myconf2", "myconf3"})),
+            new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertDependencyArtifacts(dd, new String[] {"myconf1"}, new String[] {"yourartifact9-1"});
         assertDependencyArtifacts(dd, new String[] {"myconf2"}, new String[] {"yourartifact9-1",
                 "yourartifact9-2"});
@@ -442,8 +442,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("10.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"*"})),
-            new HashSet(Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"*"})),
+            new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertDependencyArtifactIncludeRules(dd, new String[] {"myconf1"}, new String[] {"your.*",
                 PatternMatcher.ANY_EXPRESSION});
         assertDependencyArtifactIncludeRules(dd, new String[] {"myconf2"}, new String[] {"your.*",
@@ -884,8 +884,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         // confs def: conf2,conf3->*
         dd = getDependency(dependencies, "mymodule2");
-        assertEquals(new HashSet(Arrays.asList(new String[] {"conf2", "conf3"})), new HashSet(
-                Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(new HashSet<>(Arrays.asList(new String[] {"conf2", "conf3"})),
+                new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Arrays.asList(new String[] {"*"}),
             Arrays.asList(dd.getDependencyConfigurations("conf2")));
         assertEquals(Arrays.asList(new String[] {"*"}),

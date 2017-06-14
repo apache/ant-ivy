@@ -72,12 +72,12 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("default,compile");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("default");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
             reportAfter);
@@ -91,12 +91,12 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("default");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("default");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
             reportAfter);
@@ -110,12 +110,12 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("default");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
             reportAfter);
@@ -129,12 +129,12 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("*");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
             reportAfter);
@@ -148,14 +148,14 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("compile");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
         assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         task.setConf("*");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have",
             reportBefore, reportAfter);
@@ -170,7 +170,7 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("compile");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
         assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
@@ -178,7 +178,7 @@ public class IvyPostResolveTaskTest {
         task.setKeep(false); // don't keep the resolve results
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertSame("IvyPostResolveTask has kept the resolve report where it should have",
             reportBefore, reportAfter);
@@ -194,7 +194,7 @@ public class IvyPostResolveTaskTest {
         task.setConf("*"); // will trigger a resolve
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertNull("IvyPostResolveTask has kept the resolve report where it should have",
             reportAfter);
@@ -211,7 +211,7 @@ public class IvyPostResolveTaskTest {
         task.setConf("*"); // will trigger a resolve
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
 
         assertNotNull("IvyPostResolveTask has kept the resolve report where it should have",
             reportAfter);
@@ -227,8 +227,7 @@ public class IvyPostResolveTaskTest {
         resolve.setResolveId("testResolveId");
         resolve.execute();
 
-        ResolveReport report1 = (ResolveReport) project
-                .getReference("ivy.resolved.report.testResolveId");
+        ResolveReport report1 = project.getReference("ivy.resolved.report.testResolveId");
 
         // perform another resolve
         resolve = new IvyResolve();
@@ -237,14 +236,14 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("default");
         task.setResolveId("testResolveId");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
-        ResolveReport report2 = (ResolveReport) project
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
+        ResolveReport report2 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
@@ -262,7 +261,7 @@ public class IvyPostResolveTaskTest {
         resolve.setResolveId("testResolveId");
         resolve.execute();
 
-        ResolveReport report1 = (ResolveReport) project
+        ResolveReport report1 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         // perform another resolve
@@ -272,14 +271,14 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("default");
         task.setResolveId("testResolveId");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
-        ResolveReport report2 = (ResolveReport) project
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
+        ResolveReport report2 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
@@ -297,7 +296,7 @@ public class IvyPostResolveTaskTest {
         resolve.setResolveId("testResolveId");
         resolve.execute();
 
-        ResolveReport report1 = (ResolveReport) project
+        ResolveReport report1 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         // perform another resolve
@@ -307,14 +306,14 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("default");
         task.setResolveId("testResolveId");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
-        ResolveReport report2 = (ResolveReport) project
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
+        ResolveReport report2 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
@@ -332,7 +331,7 @@ public class IvyPostResolveTaskTest {
         resolve.setResolveId("testResolveId");
         resolve.execute();
 
-        ResolveReport report1 = (ResolveReport) project
+        ResolveReport report1 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         // perform another resolve
@@ -342,14 +341,14 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("*");
         task.setResolveId("testResolveId");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
-        ResolveReport report2 = (ResolveReport) project
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
+        ResolveReport report2 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
@@ -367,7 +366,7 @@ public class IvyPostResolveTaskTest {
         resolve.setResolveId("testResolveId");
         resolve.execute();
 
-        ResolveReport report1 = (ResolveReport) project
+        ResolveReport report1 = project
                 .getReference("ivy.resolved.report.testResolveId");
         assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
@@ -379,14 +378,14 @@ public class IvyPostResolveTaskTest {
         resolve.setConf("*");
         resolve.execute();
 
-        ResolveReport reportBefore = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport reportBefore = project.getReference("ivy.resolved.report");
 
         task.setConf("*");
         task.setResolveId("testResolveId");
         task.execute();
 
-        ResolveReport reportAfter = (ResolveReport) project.getReference("ivy.resolved.report");
-        ResolveReport report2 = (ResolveReport) project
+        ResolveReport reportAfter = project.getReference("ivy.resolved.report");
+        ResolveReport report2 = project
                 .getReference("ivy.resolved.report.testResolveId");
 
         assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have",

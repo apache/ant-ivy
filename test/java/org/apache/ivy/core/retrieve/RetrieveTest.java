@@ -137,7 +137,7 @@ public class RetrieveTest {
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
 
-        final List events = new ArrayList();
+        final List<IvyEvent> events = new ArrayList<>();
         ivy.getEventManager().addIvyListener(new IvyListener() {
             public void progress(IvyEvent event) {
                 events.add(event);

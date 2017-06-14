@@ -49,7 +49,7 @@ public class OBRXMLWriterTest {
 
     @Test
     public void testWriteWithSource() throws Exception {
-        List<BundleInfo> bundles = new ArrayList<BundleInfo>();
+        List<BundleInfo> bundles = new ArrayList<>();
 
         BundleInfo bundle = new BundleInfo(BUNDLE_1, BUNDLE_VERSION);
         bundle.addArtifact(new BundleArtifact(false, new URI("file:///test.jar"), null));
@@ -62,20 +62,14 @@ public class OBRXMLWriterTest {
 
         new File("build/test-files").mkdirs();
         File obrFile = new File("build/test-files/obr-sources.xml");
-        FileOutputStream out = new FileOutputStream(obrFile);
-        try {
+        try (FileOutputStream out = new FileOutputStream(obrFile)) {
             ContentHandler handler = OBRXMLWriter.newHandler(out, "UTF-8", true);
             OBRXMLWriter.writeBundles(bundles, handler);
-        } finally {
-            out.close();
         }
 
-        FileInputStream in = new FileInputStream(obrFile);
         BundleRepoDescriptor repo;
-        try {
+        try (FileInputStream in = new FileInputStream(obrFile)) {
             repo = OBRXMLParser.parse(new URI("file:///test"), in);
-        } finally {
-            in.close();
         }
         assertEquals(2, CollectionUtils.toList(repo.getModules()).size());
 

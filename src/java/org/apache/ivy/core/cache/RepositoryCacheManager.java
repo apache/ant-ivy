@@ -114,8 +114,8 @@ public interface RepositoryCacheManager {
      */
     ArtifactDownloadReport downloadRepositoryResource(Resource resource, String name,
                                                       String type, String extension,
-													  CacheResourceOptions options,
-													  Repository repository);
+                                                      CacheResourceOptions options,
+                                                      Repository repository);
 
     /**
      * Caches an original module descriptor.
@@ -140,27 +140,27 @@ public interface RepositoryCacheManager {
      */
     ResolvedModuleRevision cacheModuleDescriptor(DependencyResolver resolver,
                                                  ResolvedResource originalMetadataRef,
-												 DependencyDescriptor dd,
+                                                 DependencyDescriptor dd,
                                                  Artifact requestedMetadataArtifact,
-												 ResourceDownloader downloader,
+                                                 ResourceDownloader downloader,
                                                  CacheMetadataOptions options) throws ParseException;
 
     /**
      * Stores a standardized version of an original module descriptor in the cache for later use.
      *
      * @param resolver                  the dependency resolver from which the cache request comes
-	 *                                  from
+     *                                  from
      * @param originalMetadataRef       a resolved resource pointing to the remote original module
-	 *                                  descriptor
+     *                                  descriptor
      * @param requestedMetadataArtifact the module descriptor artifact as requested originally
      * @param rmr                       the {@link ResolvedModuleRevision} representing the local
-	 *                                  cached module descriptor
+     *                                  cached module descriptor
      * @param writer                    a {@link ModuleDescriptorWriter} able to write the module
-	 *                                  descriptor to a stream.
+     *                                  descriptor to a stream.
      */
     void originalToCachedModuleDescriptor(DependencyResolver resolver,
                                           ResolvedResource originalMetadataRef,
-										  Artifact requestedMetadataArtifact,
+                                          Artifact requestedMetadataArtifact,
                                           ResolvedModuleRevision rmr, ModuleDescriptorWriter writer);
 
     /**

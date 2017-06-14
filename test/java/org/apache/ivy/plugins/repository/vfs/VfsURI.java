@@ -60,24 +60,29 @@ public class VfsURI {
      */
     public static VfsURI vfsURIFactory(String scheme, String resource, Ivy ivy) {
         VfsURI vfsURI = null;
-        if (scheme.equals(SCHEME_CIFS)) {
-            vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_SAMBA_REPO) + "/" + resource);
-        } else if (scheme.equals(SCHEME_FILE)) {
-            vfsURI = new VfsURI(SCHEME_FILE, null, null, null, VfsTestHelper.CWD + "/"
-                    + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
-        } else if (scheme.equals(SCHEME_FTP)) {
-            vfsURI = new VfsURI(SCHEME_FTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
-                            + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
-        } else if (scheme.equals(SCHEME_SFTP)) {
-            vfsURI = new VfsURI(SCHEME_SFTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
-                            + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+        switch (scheme) {
+            case SCHEME_CIFS:
+                vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_HOST),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_SAMBA_REPO) + "/" + resource);
+                break;
+            case SCHEME_FILE:
+                vfsURI = new VfsURI(SCHEME_FILE, null, null, null, VfsTestHelper.CWD + "/"
+                        + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+                break;
+            case SCHEME_FTP:
+                vfsURI = new VfsURI(SCHEME_FTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
+                        + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+                break;
+            case SCHEME_SFTP:
+                vfsURI = new VfsURI(SCHEME_SFTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
+                        + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+                break;
         }
         return vfsURI;
     }

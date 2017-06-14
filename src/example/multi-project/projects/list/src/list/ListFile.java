@@ -17,27 +17,27 @@
  */
 package list;
 
-import version.Version;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.io.File;
 
+import static version.Version.register;
+
 public final class ListFile {
   static {
-    Version.register("list");
+    register("list");
   }
 
-  public static Collection list(File dir) {
-    Collection files = new ArrayList();
+  public static Collection<File> list(File dir) {
+    Collection<File> files = new ArrayList<File>();
 
     return list(dir, files);
   }
 
-  private static Collection list(File file, Collection files) {
+  private static Collection<File> list(File file, Collection<File> files) {
     if (file.isDirectory()) {
-      File[] f = file.listFiles();
-      for (int i = 0; i < f.length; i++) {
-        list(f[i], files);
+      for (File f : file.listFiles()) {
+        list(f, files);
       }
     } else {
       files.add(file);

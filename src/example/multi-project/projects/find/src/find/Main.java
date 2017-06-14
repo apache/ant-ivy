@@ -17,29 +17,29 @@
  */
 package find;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.io.File;
+import java.util.Collection;
+
 public final class Main {
     private static Options getOptions() {
-        Option dir = OptionBuilder.withArgName("dir")
+        Option dir = Option.builder("d")
+            .longOpt("dir")
             .hasArg()
-            .withDescription("list files in given dir")
-            .create("dir");
-        Option name = OptionBuilder.withArgName("name")
+            .desc("list files in given dir")
+            .build();
+        Option name = Option.builder("n")
+            .longOpt("name")
             .hasArg()
-            .withDescription("list files with given name")
-            .create("name");
+            .desc("list files with given name")
+            .build();
         Options options = new Options();
 
         options.addOption(dir);
@@ -52,15 +52,15 @@ public final class Main {
         Options options = getOptions();
         try {
 
-            CommandLineParser parser = new GnuParser();
+            CommandLineParser parser = new DefaultParser();
 
             CommandLine line = parser.parse(options, args);
-            File dir = new File(line.getOptionValue("dir", "."));
-            String name = line.getOptionValue("name", "jar");
-            Collection files = FindFile.find(dir, name);
+            File dir = new File(line.getOptionValue("d", "."));
+            String name = line.getOptionValue("n", "jar");
+            Collection<File> files = FindFile.find(dir, name);
             System.out.println("listing files in " + dir + " containing " + name);
-            for (Iterator it = files.iterator(); it.hasNext();) {
-                System.out.println("\t" + it.next() + "\n");
+            for (File file : files) {
+                System.out.println("\t" + file + "\n");
             }
         } catch (ParseException exp) {
             // oops, something went wrong

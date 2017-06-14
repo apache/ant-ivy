@@ -46,9 +46,9 @@ public class ConfiguratorTest {
     }
 
     public static class City {
-        private final List<Housing> _housings = new ArrayList<Housing>();
+        private final List<Housing> _housings = new ArrayList<>();
 
-        private final List<Street> _streets = new ArrayList<Street>();
+        private final List<Street> _streets = new ArrayList<>();
 
         private String _name;
 
@@ -80,9 +80,9 @@ public class ConfiguratorTest {
     public static class Street {
         private Class<?> _clazz;
 
-        private final List<Tree> _trees = new ArrayList<Tree>();
+        private final List<Tree> _trees = new ArrayList<>();
 
-        private final List<Person> _walkers = new ArrayList<Person>();
+        private final List<Person> _walkers = new ArrayList<>();
 
         public List<Tree> getTrees() {
             return _trees;
@@ -110,7 +110,7 @@ public class ConfiguratorTest {
     }
 
     public static abstract class Housing {
-        private final List<Room> _rooms = new ArrayList<Room>();
+        private final List<Room> _rooms = new ArrayList<>();
 
         private boolean _isEmpty;
 

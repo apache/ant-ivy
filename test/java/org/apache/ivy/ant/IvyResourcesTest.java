@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
@@ -64,11 +63,9 @@ public class IvyResourcesTest {
         return resources.getIvyInstance();
     }
 
-    private List asList(IvyResources ivyResources) {
-        List resources = new ArrayList();
-        Iterator it = ivyResources.iterator();
-        while (it.hasNext()) {
-            Object r = it.next();
+    private List<File> asList(IvyResources ivyResources) {
+        List<File> resources = new ArrayList<>();
+        for (Object r : ivyResources) {
             assertTrue(r instanceof FileResource);
             resources.add(((FileResource) r).getFile());
         }
@@ -205,7 +202,7 @@ public class IvyResourcesTest {
         IvyDependencyExclude exclude = dependency.createExclude();
         exclude.setOrg("org1");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(3, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));

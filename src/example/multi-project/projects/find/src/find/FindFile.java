@@ -17,28 +17,28 @@
  */
 package find;
 
-import version.Version;
-import list.ListFile;
-
 import java.util.Collection;
 import java.io.File;
 
-import  org.apache.commons.collections.CollectionUtils;
-import  org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
+import static list.ListFile.list;
+import static version.Version.register;
 
 public final class FindFile {
   static {
-    Version.register("find");
+    register("find");
   }
 
-  public static Collection find(File dir, String name) {
-    return find(ListFile.list(dir), name);
+  public static Collection<File> find(File dir, String name) {
+    return find(list(dir), name);
   }
 
-  private static Collection find(Collection files, final String name) {
-    return CollectionUtils.select(files, new Predicate() {
-      public boolean evaluate(Object o) {
-        return ((File) o).getName().indexOf(name) != -1;
+  private static Collection<File> find(Collection<File> files, final String name) {
+    return CollectionUtils.select(files, new Predicate<File>() {
+      public boolean evaluate(File file) {
+        return file.getName().contains(name);
       }
     });
   }

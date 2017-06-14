@@ -65,8 +65,7 @@ public class LatestConflictManagerTest {
         String[] confs = report.getConfigurations();
         while (dependencies.hasNext()) {
             IvyNode node = (IvyNode) dependencies.next();
-            for (int i = 0; i < confs.length; i++) {
-                String conf = confs[i];
+            for (String conf : confs) {
                 if (!node.isEvicted(conf)) {
                     boolean flag1 = report.getConfigurationReport(conf).getDependency(
                         node.getResolvedId()) != null;
@@ -85,9 +84,7 @@ public class LatestConflictManagerTest {
         ResolveReport report = ivy.resolve(
             LatestConflictManagerTest.class.getResource("ivy-383.xml"), getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
-        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
-        while (iter.hasNext()) {
-            ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
+        for (ModuleRevisionId mrid : defaultReport.getModuleRevisionIds()) {
             if (mrid.getName().equals("mod1.1")) {
                 assertEquals("1.0", mrid.getRevision());
             } else if (mrid.getName().equals("mod1.2")) {
@@ -114,9 +111,7 @@ public class LatestConflictManagerTest {
             LatestConflictManagerTest.class.getResource("ivy-latest-time-1.xml"),
             getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
-        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
-        while (iter.hasNext()) {
-            ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
+        for (ModuleRevisionId mrid : defaultReport.getModuleRevisionIds()) {
             if (mrid.getName().equals("mod1.1")) {
                 assertEquals("1.0", mrid.getRevision());
             } else if (mrid.getName().equals("mod1.2")) {
@@ -142,9 +137,7 @@ public class LatestConflictManagerTest {
             LatestConflictManagerTest.class.getResource("ivy-latest-time-2.xml"),
             getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
-        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
-        while (iter.hasNext()) {
-            ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
+        for (ModuleRevisionId mrid : defaultReport.getModuleRevisionIds()) {
             if (mrid.getName().equals("mod1.1")) {
                 assertEquals("1.0", mrid.getRevision());
             } else if (mrid.getName().equals("mod1.2")) {
@@ -180,10 +173,7 @@ public class LatestConflictManagerTest {
             LatestConflictManagerTest.class.getResource("ivy-latest-time-transitivity.xml"),
             getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
-        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
-        while (iter.hasNext()) {
-            ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
-
+        for (ModuleRevisionId mrid : defaultReport.getModuleRevisionIds()) {
             if (mrid.getName().equals("A")) {
                 assertEquals("A revision should be 1.0.0", "1.0.0", mrid.getRevision());
             } else if (mrid.getName().equals("D")) {

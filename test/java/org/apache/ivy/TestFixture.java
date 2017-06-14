@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
@@ -64,7 +65,7 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  */
 public class TestFixture {
 
-    private Collection mds = new ArrayList();
+    private final Collection<ModuleDescriptor> mds = new ArrayList<>();
 
     private Ivy ivy;
 

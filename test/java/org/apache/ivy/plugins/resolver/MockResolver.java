@@ -64,7 +64,7 @@ public class MockResolver extends AbstractResolver {
         return r;
     }
 
-    List askedDeps = new ArrayList();
+    List<DependencyDescriptor> askedDeps = new ArrayList<>();
 
     ResolvedModuleRevision rmr;
 

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -83,9 +82,8 @@ public class SortTest {
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {
                 {md1, md2, md3, md4}};
 
-        Collection permutations = getAllLists(md1, md3, md2, md4);
-        for (Iterator it = permutations.iterator(); it.hasNext();) {
-            List toSort = (List) it.next();
+        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
+        for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -106,9 +104,8 @@ public class SortTest {
                 {md2, md3, md4, md1}, {md3, md4, md1, md2}, {md4, md1, md2, md3},
                 {md1, md2, md3, md4}};
 
-        Collection permutations = getAllLists(md1, md3, md2, md4);
-        for (Iterator it = permutations.iterator(); it.hasNext();) {
-            List toSort = (List) it.next();
+        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
+        for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -124,9 +121,8 @@ public class SortTest {
                 // {md3, md1, md2, md4}
                 // we don't have this solution. The loops appear has one contiguous element.
         };
-        Collection permutations = getAllLists(md1, md3, md2, md4);
-        for (Iterator it = permutations.iterator(); it.hasNext();) {
-            List toSort = (List) it.next();
+        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
+        for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -140,7 +136,7 @@ public class SortTest {
         addDependency(md3, "md4", "rev4");
         addDependency(md4, "md1", "rev1");
         addDependency(md4, "md2", "rev2");
-        List toSort = Arrays.asList(new Object[] {md1, md2, md3, md4});
+        List<ModuleDescriptor> toSort = Arrays.asList(new ModuleDescriptor[] {md1, md2, md3, md4});
         sortModuleDescriptors(toSort, nonMatchReporter);
         // If it ends, it's ok.
     }
@@ -188,7 +184,7 @@ public class SortTest {
         CircularDependencyReporterMock circularDepReportMock = new CircularDependencyReporterMock();
         settings.setCircularDependencyStrategy(circularDepReportMock);
 
-        List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
+        List<ModuleDescriptor> toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
         sortModuleDescriptors(toSort, nonMatchReporter);
 
         circularDepReportMock.validate();
@@ -210,9 +206,8 @@ public class SortTest {
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {
                 {md1, md2, md3, md4}};
 
-        Collection permutations = getAllLists(md1, md3, md2, md4);
-        for (Iterator it = permutations.iterator(); it.hasNext();) {
-            List toSort = (List) it.next();
+        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
+        for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
 
@@ -237,9 +232,8 @@ public class SortTest {
         DefaultModuleDescriptor[][] possibleOrder = new DefaultModuleDescriptor[][] {
                 {md1, md2, md3, md4}};
 
-        Collection permutations = getAllLists(md1, md3, md2, md4);
-        for (Iterator it = permutations.iterator(); it.hasNext();) {
-            List toSort = (List) it.next();
+        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
+        for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
 
@@ -273,12 +267,12 @@ public class SortTest {
             }
         }
         NonMatchingVersionReporterMock nonMatchingVersionReporterMock = new NonMatchingVersionReporterMock();
-        List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
+        List<ModuleDescriptor> toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
         sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
         nonMatchingVersionReporterMock.validate();
     }
 
-    private List sortModuleDescriptors(List toSort,
+    private List<ModuleDescriptor> sortModuleDescriptors(List<ModuleDescriptor> toSort,
             NonMatchingVersionReporter nonMatchingVersionReporter) {
         return sortEngine.sortModuleDescriptors(toSort,
             new SortOptions().setNonMatchingVersionReporter(nonMatchingVersionReporter));
@@ -299,16 +293,16 @@ public class SortTest {
     }
 
     /**
-     * Verifies that sorted in one of the list of listOfPossibleSort.
+     * Verifies that sorted is one of the lists of listOfPossibleSort.
      *
      * @param listOfPossibleSort
      *            array of possible sort result
      * @param sorted
      *            actual sortedList to compare
      */
-    private void assertSorted(DefaultModuleDescriptor[][] listOfPossibleSort, List sorted) {
-        for (int i = 0; i < listOfPossibleSort.length; i++) {
-            DefaultModuleDescriptor[] expectedList = listOfPossibleSort[i];
+    private void assertSorted(DefaultModuleDescriptor[][] listOfPossibleSort,
+            List<ModuleDescriptor> sorted) {
+        for (DefaultModuleDescriptor[] expectedList : listOfPossibleSort) {
             assertEquals(expectedList.length, sorted.size());
             boolean isExpected = true;
             for (int j = 0; j < expectedList.length; j++) {
@@ -328,7 +322,7 @@ public class SortTest {
             if (i > 0) {
                 errorMessage.append(" , ");
             }
-            errorMessage.append(((DefaultModuleDescriptor) sorted.get(i)).getModuleRevisionId());
+            errorMessage.append(sorted.get(i).getModuleRevisionId());
         }
         errorMessage.append("}\nExpected : \n");
         for (int i = 0; i < listOfPossibleSort.length; i++) {
@@ -349,33 +343,34 @@ public class SortTest {
     }
 
     /** Returns a collection of lists that contains the elements a,b,c and d */
-    private Collection getAllLists(Object a, Object b, Object c, Object d) {
+    private Collection<List<ModuleDescriptor>> getAllLists(ModuleDescriptor a, ModuleDescriptor b,
+            ModuleDescriptor c, ModuleDescriptor d) {
         final int nbOfList = 24;
-        ArrayList r = new ArrayList(nbOfList);
-        r.add(Arrays.asList(new Object[] {a, b, c, d}));
-        r.add(Arrays.asList(new Object[] {a, b, d, c}));
-        r.add(Arrays.asList(new Object[] {a, c, b, d}));
-        r.add(Arrays.asList(new Object[] {a, c, d, b}));
-        r.add(Arrays.asList(new Object[] {a, d, b, c}));
-        r.add(Arrays.asList(new Object[] {a, d, c, b}));
-        r.add(Arrays.asList(new Object[] {b, a, c, d}));
-        r.add(Arrays.asList(new Object[] {b, a, d, c}));
-        r.add(Arrays.asList(new Object[] {b, c, a, d}));
-        r.add(Arrays.asList(new Object[] {b, c, d, a}));
-        r.add(Arrays.asList(new Object[] {b, d, a, c}));
-        r.add(Arrays.asList(new Object[] {b, d, c, a}));
-        r.add(Arrays.asList(new Object[] {c, b, a, d}));
-        r.add(Arrays.asList(new Object[] {c, b, d, a}));
-        r.add(Arrays.asList(new Object[] {c, a, b, d}));
-        r.add(Arrays.asList(new Object[] {c, a, d, b}));
-        r.add(Arrays.asList(new Object[] {c, d, b, a}));
-        r.add(Arrays.asList(new Object[] {c, d, a, b}));
-        r.add(Arrays.asList(new Object[] {d, b, c, a}));
-        r.add(Arrays.asList(new Object[] {d, b, a, c}));
-        r.add(Arrays.asList(new Object[] {d, c, b, a}));
-        r.add(Arrays.asList(new Object[] {d, c, a, b}));
-        r.add(Arrays.asList(new Object[] {d, a, b, c}));
-        r.add(Arrays.asList(new Object[] {d, a, c, b}));
+        Collection<List<ModuleDescriptor>> r = new ArrayList<>(nbOfList);
+        r.add(Arrays.asList(new ModuleDescriptor[] {a, b, c, d}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {a, b, d, c}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {a, c, b, d}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {a, c, d, b}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {a, d, b, c}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {a, d, c, b}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {b, a, c, d}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {b, a, d, c}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {b, c, a, d}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {b, c, d, a}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {b, d, a, c}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {b, d, c, a}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {c, b, a, d}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {c, b, d, a}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {c, a, b, d}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {c, a, d, b}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {c, d, b, a}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {c, d, a, b}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {d, b, c, a}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {d, b, a, c}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {d, c, b, a}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {d, c, a, b}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {d, a, b, c}));
+        r.add(Arrays.asList(new ModuleDescriptor[] {d, a, c, b}));
         return r;
     }
 

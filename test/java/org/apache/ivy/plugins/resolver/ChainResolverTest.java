@@ -158,8 +158,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         assertEquals("3", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
-        for (int i = 0; i < resolvers.length; i++) {
-            assertEquals(ddAsList, resolvers[i].askedDeps);
+        for (MockResolver resolver : resolvers) {
+            assertEquals(ddAsList, resolver.askedDeps);
         }
     }
 
@@ -198,8 +198,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
-        for (int i = 0; i < resolvers.length; i++) {
-            assertEquals(ddAsList, resolvers[i].askedDeps);
+        for (MockResolver resolver : resolvers) {
+            assertEquals(ddAsList, resolver.askedDeps);
         }
     }
 
@@ -282,8 +282,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
-        for (int i = 0; i < resolvers.length; i++) {
-            assertEquals(ddAsList, resolvers[i].askedDeps);
+        for (MockResolver resolver : resolvers) {
+            assertEquals(ddAsList, resolver.askedDeps);
         }
     }
 
@@ -375,8 +375,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setSettings(settings);
         MockResolver[] resolvers = new MockResolver[] {MockResolver.buildMockResolver(settings,
             "1", true, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         chain.getDependency(dd, data);
         // should not have asked any dependency, should have hit the cache

@@ -189,11 +189,7 @@ public class ArtifactLockStrategyTest {
                     }
                 } catch (ParseException e) {
                     Message.info("parse exception " + e);
-                } catch (RuntimeException e) {
-                    Message.info("exception " + e);
-                    e.printStackTrace();
-                    throw e;
-                } catch (Error e) {
+                } catch (RuntimeException | Error e) {
                     Message.info("exception " + e);
                     e.printStackTrace();
                     throw e;

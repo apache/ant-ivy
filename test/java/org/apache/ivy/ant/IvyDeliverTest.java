@@ -133,28 +133,23 @@ public class IvyDeliverTest {
         // we could do a better job of this with xmlunit
         int lineNo = 1;
 
-        BufferedReader merged = new BufferedReader(new FileReader(delivered));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-merged.xml")));
-        try {
-            for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                    && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                    .readLine()) {
+       try (BufferedReader merged = new BufferedReader(new FileReader(delivered));
+            BufferedReader expected = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("ivy-extends-merged.xml")))) {
+           for (String mergeLine = merged.readLine(), expectedLine = expected.readLine();
+                mergeLine != null && expectedLine != null;
+                mergeLine = merged.readLine(), expectedLine = expected.readLine()) {
 
-                mergeLine = mergeLine.trim();
-                expectedLine = expectedLine.trim();
+               mergeLine = mergeLine.trim();
+               expectedLine = expectedLine.trim();
 
-                if (!mergeLine.startsWith("<info")) {
-                    assertEquals("published descriptor matches at line[" + lineNo + "]",
-                        expectedLine.trim(), mergeLine.trim());
-                }
+               if (!mergeLine.startsWith("<info")) {
+                   assertEquals("published descriptor matches at line[" + lineNo + "]",
+                           expectedLine.trim(), mergeLine.trim());
+               }
 
-                ++lineNo;
-            }
-        } finally {
-            merged.close();
-            expected.close();
-        }
+               ++lineNo;
+           }
+       }
     }
 
     @Test
@@ -385,7 +380,7 @@ public class IvyDeliverTest {
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        Map extraAtt = new HashMap();
+        Map<String, String> extraAtt = new HashMap<>();
         extraAtt.put("myExtraAtt", "myValue");
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2", extraAtt),
             dds[0].getDependencyRevisionId());
@@ -423,8 +418,8 @@ public class IvyDeliverTest {
 
         File list = new File("build/test/retrieve");
         String[] files = list.list();
-        HashSet actualFileSet = new HashSet(Arrays.asList(files));
-        HashSet expectedFileSet = new HashSet();
+        HashSet<String> actualFileSet = new HashSet<>(Arrays.asList(files));
+        HashSet<String> expectedFileSet = new HashSet<>();
         for (DependencyDescriptor dd : dds) {
             String name = dd.getDependencyId().getName();
             String rev = dd.getDependencyRevisionId().getRevision();
@@ -470,8 +465,8 @@ public class IvyDeliverTest {
 
         File list = new File("build/test/retrieve");
         String[] files = list.list();
-        HashSet actualFileSet = new HashSet(Arrays.asList(files));
-        HashSet expectedFileSet = new HashSet();
+        HashSet<String> actualFileSet = new HashSet<>(Arrays.asList(files));
+        HashSet<String> expectedFileSet = new HashSet<>();
         for (DependencyDescriptor dd : dds) {
             String name = dd.getDependencyId().getName();
             String rev = dd.getDependencyRevisionId().getRevision();

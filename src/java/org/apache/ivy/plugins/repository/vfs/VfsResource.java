@@ -86,15 +86,13 @@ public class VfsResource implements Resource {
      *
      * @return A <code>ArrayList</code> of VFSResources
      */
-    public List getChildren() {
+    public List<String> getChildren() {
         init();
-        ArrayList list = new ArrayList();
+        ArrayList<String> list = new ArrayList<String>();
         try {
             if ((resourceImpl != null) && resourceImpl.exists()
                     && (resourceImpl.getType() == FileType.FOLDER)) {
-                FileObject[] children = resourceImpl.getChildren();
-                for (int i = 0; i < children.length; i++) {
-                    FileObject child = children[i];
+                for (FileObject child : resourceImpl.getChildren()) {
                     list.add(normalize(child.getName().getURI()));
                 }
             }

@@ -85,7 +85,7 @@ public class AntBuildResolverTest {
         resolve.setKeep(true);
         resolve.execute();
 
-        ResolveReport report = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport report = project.getReference("ivy.resolved.report");
         assertEquals(1, report.getDependencies().size());
         assertEquals(MRID_MODULE1, report.getDependencies().get(0).getResolvedId());
     }
@@ -98,7 +98,7 @@ public class AntBuildResolverTest {
         resolve.setKeep(true);
         resolve.execute();
 
-        ResolveReport report = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport report = project.getReference("ivy.resolved.report");
         assertEquals(2, report.getDependencies().size());
         assertEquals(MRID_PROJECT1, report.getDependencies().get(0).getResolvedId());
         assertEquals(MRID_MODULE1, report.getDependencies().get(1).getResolvedId());
@@ -122,7 +122,7 @@ public class AntBuildResolverTest {
         resolve.setKeep(true);
         resolve.execute();
 
-        ResolveReport report = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport report = project.getReference("ivy.resolved.report");
         assertEquals(2, report.getDependencies().size());
         assertEquals(MRID_PROJECT1, report.getDependencies().get(0).getResolvedId());
         assertEquals(MRID_MODULE1, report.getDependencies().get(1).getResolvedId());
@@ -143,7 +143,7 @@ public class AntBuildResolverTest {
         resolve.setKeep(true);
         resolve.execute();
 
-        ResolveReport report = (ResolveReport) project.getReference("ivy.resolved.report");
+        ResolveReport report = project.getReference("ivy.resolved.report");
         assertEquals(2, report.getDependencies().size());
         assertEquals(MRID_PROJECT1, report.getDependencies().get(0).getResolvedId());
         assertEquals(MRID_MODULE1, report.getDependencies().get(1).getResolvedId());
@@ -170,7 +170,7 @@ public class AntBuildResolverTest {
         cachePath.setPathid("test.cachepath.id");
         cachePath.execute();
 
-        Path path = (Path) project.getReference("test.cachepath.id");
+        Path path = project.getReference("test.cachepath.id");
         assertEquals(2, path.size());
         assertEquals(
             new File("test/workspace/project1/target/dist/jars/project1.jar").getAbsolutePath(),
@@ -194,7 +194,7 @@ public class AntBuildResolverTest {
         cachePath.setPathid("test.cachepath.id");
         cachePath.execute();
 
-        Path path = (Path) project.getReference("test.cachepath.id");
+        Path path = project.getReference("test.cachepath.id");
         assertEquals(2, path.size());
         assertEquals(new File("test/workspace/project1/target/classes").getAbsolutePath(),
             path.list()[0]);
