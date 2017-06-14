@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,16 +68,17 @@ public final class FileUtil {
             throws IOException {
         // This pattern could be more forgiving if somebody wanted it to be... but this should
         // satisfy 99+% of all needs, without letting unsafe operations be done.
-        // If you paths is not supported, you then skip this mass option.
+        // If a path is not allowed, then skip this mass option.
         // NOTE: A space inside the path is allowed (I can't control other programmers who like them
         // in their working directory names)... but trailing spaces on file names will be checked
         // otherwise and refused.
         try {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            Iterator<Entry<File, File>> keyItr = destToSrcMap.entrySet().iterator();
-            while (keyItr.hasNext()) {
-                Entry<File, File> entry = keyItr.next();
+            for (Entry<File, File> entry : destToSrcMap.entrySet()) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
                 File destFile = entry.getKey();
                 File srcFile = entry.getValue();
                 if (!ALLOWED_PATH_PATTERN.matcher(srcFile.getAbsolutePath()).matches()) {
@@ -91,10 +91,8 @@ public final class FileUtil {
                 }
 
                 // Add to our buffer of commands
-                sb.append("ln -s -f \"").append(srcFile.getAbsolutePath()).append("\"  \"").append(destFile.getAbsolutePath()).append("\";");
-                if (keyItr.hasNext()) {
-                    sb.append("\n");
-                }
+                sb.append(String.format("ln -s -f \"%s\"  \"%s\";",
+                        srcFile.getAbsolutePath(), destFile.getAbsolutePath()));
             }
 
             String commands = sb.toString();
@@ -112,7 +110,7 @@ public final class FileUtil {
                 InputStreamReader isr = new InputStreamReader(errorStream);
                 BufferedReader br = new BufferedReader(isr);
 
-                StringBuffer error = new StringBuffer();
+                StringBuilder error = new StringBuilder();
                 String line;
                 while ((line = br.readLine()) != null) {
                     error.append(line);
@@ -143,7 +141,7 @@ public final class FileUtil {
                 InputStreamReader isr = new InputStreamReader(errorStream);
                 BufferedReader br = new BufferedReader(isr);
 
-                StringBuffer error = new StringBuffer();
+                StringBuilder error = new StringBuilder();
                 String line;
                 while ((line = br.readLine()) != null) {
                     error.append(line);
@@ -254,21 +252,21 @@ public final class FileUtil {
         // copy files one by one
         File[] toCopy = src.listFiles();
         if (toCopy != null) {
-            for (int i = 0; i < toCopy.length; i++) {
+            for (File cf : toCopy) {
                 // compute the destination file
-                File childDest = new File(dest, toCopy[i].getName());
+                File childDest = new File(dest, cf.getName());
                 // if file existing, 'mark' it as taken care of
                 existingChild.remove(childDest);
-                if (toCopy[i].isDirectory()) {
-                    deepCopy(toCopy[i], childDest, l, overwrite);
+                if (cf.isDirectory()) {
+                    deepCopy(cf, childDest, l, overwrite);
                 } else {
-                    copy(toCopy[i], childDest, l, overwrite);
+                    copy(cf, childDest, l, overwrite);
                 }
             }
         }
         // some file exist in the destination but not in the source: delete them
-        for (int i = 0; i < existingChild.size(); i++) {
-            forceDelete(existingChild.get(i));
+        for (File child : existingChild) {
+            forceDelete(child);
         }
         return true;
     }
@@ -371,7 +369,7 @@ public final class FileUtil {
      */
     public static String readEntirely(BufferedReader in) throws IOException {
         try {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
 
             String line = in.readLine();
             while (line != null) {
@@ -411,7 +409,7 @@ public final class FileUtil {
      */
     public static String readEntirely(InputStream is) throws IOException {
         try {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             byte[] buffer = new byte[BUFFER_SIZE];
             int c;
 
@@ -443,8 +441,8 @@ public final class FileUtil {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-                    if (!forceDelete(files[i])) {
+                for (File df : files) {
+                    if (!forceDelete(df)) {
                         return false;
                     }
                 }
@@ -465,7 +463,7 @@ public final class FileUtil {
      * @return List&lt;File&gt;
      */
     public static List<File> getPathFiles(File root, File file) {
-        List<File> ret = new ArrayList<File>();
+        List<File> ret = new ArrayList<>();
         while (file != null && !file.getAbsolutePath().equals(root.getAbsolutePath())) {
             ret.add(file);
             file = file.getParentFile();
@@ -501,8 +499,8 @@ public final class FileUtil {
         }
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                listAll(files[i], list, ignore);
+            for (File lf : files) {
+                listAll(lf, list, ignore);
             }
         }
         return list;
@@ -540,7 +538,7 @@ public final class FileUtil {
      * @throws NullPointerException if path is null.
      */
     public static File normalize(final String path) {
-        final Stack<String> s = new Stack<String>();
+        final Stack<String> s = new Stack<>();
         final DissectedPath dissectedPath = dissect(path);
         s.push(dissectedPath.root);
 
@@ -560,7 +558,7 @@ public final class FileUtil {
                 s.push(thisToken);
             }
         }
-        final StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.size(); i++) {
             if (i > 1) {
                 // not before the filesystem root and not after it, since root
@@ -594,7 +592,7 @@ public final class FileUtil {
                     // filesystem root is the root and the rest of the path is the "remaining path"
                     final String root = filesystemRoot.getPath();
                     final String rest = pathToDissect.substring(root.length());
-                    final StringBuffer sbPath = new StringBuffer();
+                    final StringBuilder sbPath = new StringBuilder();
                     // Eliminate consecutive slashes after the drive spec:
                     for (int i = 0; i < rest.length(); i++) {
                         final char currentChar = rest.charAt(i);
@@ -634,8 +632,8 @@ public final class FileUtil {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-                    l += getFileLength(files[i]);
+                for (File gf : files) {
+                    l += getFileLength(gf);
                 }
             }
         } else {
@@ -751,8 +749,8 @@ public final class FileUtil {
 
         @Override
         public String toString() {
-            return new StringBuilder("Dissected Path [root=").append(root).append(", remainingPath=")
-                    .append(remainingPath).append("]").toString();
+            return "Dissected Path [root=" + root + ", remainingPath=" +
+                    remainingPath + "]";
         }
     }
 }

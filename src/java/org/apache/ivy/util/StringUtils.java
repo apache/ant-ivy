@@ -98,9 +98,9 @@ public final class StringUtils {
      * @return The concatenated string.
      */
     public static String join(Object[] objs, String sep) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < objs.length; i++) {
-            buf.append(objs[i]).append(sep);
+        StringBuilder buf = new StringBuilder();
+        for (Object obj : objs) {
+            buf.append(obj).append(sep);
         }
         if (objs.length > 0) {
             buf.setLength(buf.length() - sep.length()); // delete sep
@@ -141,7 +141,7 @@ public final class StringUtils {
         if (str == null) {
             return null;
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (c >= SHIFTS.length) {
@@ -165,7 +165,7 @@ public final class StringUtils {
         if (str == null) {
             return null;
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             buf.append(decrypt(str.charAt(i)));
         }
@@ -183,7 +183,7 @@ public final class StringUtils {
     }
 
     public static String repeat(String str, int count) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < count; i++) {
             sb.append(str);
         }

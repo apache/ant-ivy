@@ -136,8 +136,8 @@ public class VfsResourceTest {
     @Test
     public void testListFolderChildren() throws Exception {
         final String testFolder = "2/mod10.1";
-        final List<String> expectedFiles = Arrays
-                .asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml", "ivy-1.2.xml", "ivy-1.3.xml"});
+        final List<String> expectedFiles =
+                Arrays.asList("ivy-1.0.xml", "ivy-1.1.xml", "ivy-1.2.xml", "ivy-1.3.xml");
 
         for (VfsURI baseVfsURI : helper.createVFSUriSet(testFolder)) {
             List<String> expected = new ArrayList<>();

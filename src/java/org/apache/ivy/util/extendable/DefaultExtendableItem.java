@@ -27,7 +27,7 @@ public class DefaultExtendableItem extends UnmodifiableExtendableItem {
         this(null, null);
     }
 
-    public DefaultExtendableItem(Map stdAttributes, Map extraAttributes) {
+    public DefaultExtendableItem(Map<String, String> stdAttributes, Map<String, String> extraAttributes) {
         super(stdAttributes, extraAttributes);
     }
 

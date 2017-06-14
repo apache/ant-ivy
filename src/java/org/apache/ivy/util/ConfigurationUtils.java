@@ -18,7 +18,6 @@
 package org.apache.ivy.util;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -61,36 +60,36 @@ public final class ConfigurationUtils {
             return md.getConfigurationsNames();
         }
 
-        Set result = new LinkedHashSet();
-        Set excluded = new LinkedHashSet();
-        for (int i = 0; i < confs.length; i++) {
-            if ("*".equals(confs[i])) {
+        Set<String> result = new LinkedHashSet<>();
+        Set<String> excluded = new LinkedHashSet<>();
+        for (String conf : confs) {
+            if ("*".equals(conf)) {
                 result.addAll(Arrays.asList(md.getConfigurationsNames()));
-            } else if ("*(public)".equals(confs[i])) {
+            } else if ("*(public)".equals(conf)) {
                 Configuration[] all = md.getConfigurations();
-                for (int j = 0; j < all.length; j++) {
-                    if (all[j].getVisibility().equals(Visibility.PUBLIC)) {
-                        result.add(all[j].getName());
+                for (Configuration cf : all) {
+                    if (cf.getVisibility().equals(Visibility.PUBLIC)) {
+                        result.add(cf.getName());
                     }
                 }
-            } else if ("*(private)".equals(confs[i])) {
+            } else if ("*(private)".equals(conf)) {
                 Configuration[] all = md.getConfigurations();
-                for (int j = 0; j < all.length; j++) {
-                    if (all[j].getVisibility().equals(Visibility.PRIVATE)) {
-                        result.add(all[j].getName());
+                for (Configuration cf : all) {
+                    if (cf.getVisibility().equals(Visibility.PRIVATE)) {
+                        result.add(cf.getName());
                     }
                 }
-            } else if (confs[i].startsWith("!")) {
-                excluded.add(confs[i].substring(1));
+            } else if (conf.startsWith("!")) {
+                excluded.add(conf.substring(1));
             } else {
-                result.add(confs[i]);
+                result.add(conf);
             }
         }
-        for (Iterator iter = excluded.iterator(); iter.hasNext();) {
-            result.remove(iter.next());
+        for (String ex : excluded) {
+            result.remove(ex);
         }
 
-        return (String[]) result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 
 }

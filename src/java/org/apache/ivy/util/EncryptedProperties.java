@@ -17,8 +17,8 @@
  */
 package org.apache.ivy.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -56,10 +56,10 @@ public class EncryptedProperties extends Properties {
         return super.contains(StringUtils.encrypt((String) value));
     }
 
-    public Collection values() {
-        List ret = new ArrayList(super.values());
-        for (int i = 0; i < ret.size(); i++) {
-            ret.set(i, StringUtils.decrypt((String) ret.get(i)));
+    public Collection<Object> values() {
+        List<Object> ret = new LinkedList<>(super.values());
+        for (Object value : ret) {
+            ret.set(ret.indexOf(value), StringUtils.decrypt((String) value));
         }
         return ret;
     }

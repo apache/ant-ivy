@@ -31,7 +31,7 @@ public final class ExtendableItemHelper {
     }
 
     public static Map<String, String> getExtraAttributes(Attributes attributes, String prefix) {
-        Map<String, String> ret = new HashMap<String, String>();
+        Map<String, String> ret = new HashMap<>();
         for (int i = 0; i < attributes.getLength(); i++) {
             if (attributes.getQName(i).startsWith(prefix)) {
                 ret.put(attributes.getQName(i).substring(prefix.length()), attributes.getValue(i));
@@ -51,7 +51,7 @@ public final class ExtendableItemHelper {
      */
     public static Map<String, String> getExtraAttributes(ParserSettings settings,
             Attributes attributes, String[] ignoredAttNames) {
-        Map<String, String> ret = new HashMap<String, String>();
+        Map<String, String> ret = new HashMap<>();
         Collection<String> ignored = Arrays.asList(ignoredAttNames);
         for (int i = 0; i < attributes.getLength(); i++) {
             if (!ignored.contains(attributes.getQName(i))) {

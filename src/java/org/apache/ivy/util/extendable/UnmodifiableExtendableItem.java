@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class UnmodifiableExtendableItem implements ExtendableItem {
-    private final Map<String, String> attributes = new HashMap<String, String>();
+    private final Map<String, String> attributes = new HashMap<>();
 
     private final Map<String, String> unmodifiableAttributesView = Collections
             .unmodifiableMap(attributes);
 
-    private final Map<String, String> extraAttributes = new HashMap<String, String>();
+    private final Map<String, String> extraAttributes = new HashMap<>();
 
     private final Map<String, String> unmodifiableExtraAttributesView = Collections
             .unmodifiableMap(extraAttributes);
@@ -37,7 +37,7 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
      * this is the only place where extra attributes are stored in qualified form. In all other maps
      * they are stored unqualified.
      */
-    private final Map<String, String> qualifiedExtraAttributes = new HashMap<String, String>();
+    private final Map<String, String> qualifiedExtraAttributes = new HashMap<>();
 
     private final Map<String, String> unmodifiableQualifiedExtraAttributesView = Collections
             .unmodifiableMap(qualifiedExtraAttributes);

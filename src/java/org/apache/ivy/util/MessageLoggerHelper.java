@@ -17,15 +17,14 @@
  */
 package org.apache.ivy.util;
 
-import java.util.Iterator;
 import java.util.List;
 
 public final class MessageLoggerHelper {
     public static void sumupProblems(MessageLogger logger) {
         List myProblems = logger.getProblems();
         if (myProblems.size() > 0) {
-            List myWarns = logger.getWarns();
-            List myErrors = logger.getErrors();
+            List<String> myWarns = logger.getWarns();
+            List<String> myErrors = logger.getErrors();
             logger.info(""); // new line on info to isolate error summary
             if (!myErrors.isEmpty()) {
                 logger.log(":: problems summary ::", Message.MSG_ERR);
@@ -34,15 +33,13 @@ public final class MessageLoggerHelper {
             }
             if (myWarns.size() > 0) {
                 logger.log(":::: WARNINGS", Message.MSG_WARN);
-                for (Iterator iter = myWarns.iterator(); iter.hasNext();) {
-                    String msg = (String) iter.next();
+                for (String msg : myWarns) {
                     logger.log("\t" + msg + "\n", Message.MSG_WARN);
                 }
             }
             if (myErrors.size() > 0) {
                 logger.log(":::: ERRORS", Message.MSG_ERR);
-                for (Iterator iter = myErrors.iterator(); iter.hasNext();) {
-                    String msg = (String) iter.next();
+                for (String msg : myErrors) {
                     logger.log("\t" + msg + "\n", Message.MSG_ERR);
                 }
             }

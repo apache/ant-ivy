@@ -157,7 +157,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("3", rmr.getResolver().getName());
-        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
         for (MockResolver resolver : resolvers) {
             assertEquals(ddAsList, resolver.askedDeps);
         }
@@ -197,7 +197,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
-        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
         for (MockResolver resolver : resolvers) {
             assertEquals(ddAsList, resolver.askedDeps);
         }
@@ -233,7 +233,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
-        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
         for (int i = 0; i < 5; i++) {
             assertEquals(ddAsList, resolvers[i].askedDeps);
         }
@@ -281,7 +281,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
-        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
         for (MockResolver resolver : resolvers) {
             assertEquals(ddAsList, resolver.askedDeps);
         }
@@ -315,7 +315,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("4", rmr.getResolver().getName());
-        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
         for (int i = 0; i < 4; i++) {
             assertEquals("invalid asked dependencies for " + resolvers[i], ddAsList,
                 resolvers[i].askedDeps);

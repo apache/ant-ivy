@@ -42,9 +42,9 @@ public final class FilterHelper {
         if (types == null || types.length == 0) {
             return NO_FILTER;
         }
-        List<String> acceptedTypes = new ArrayList<String>(types.length);
-        for (int i = 0; i < types.length; i++) {
-            String current = types[i].trim();
+        List<String> acceptedTypes = new ArrayList<>(types.length);
+        for (String type : types) {
+            String current = type.trim();
             if ("*".equals(current)) {
                 return NO_FILTER;
             }
@@ -72,7 +72,7 @@ public final class FilterHelper {
         if (filter == null) {
             return col;
         }
-        Collection<T> ret = new ArrayList<T>(col);
+        Collection<T> ret = new ArrayList<>(col);
         for (Iterator<T> iter = ret.iterator(); iter.hasNext();) {
             T element = iter.next();
             if (!filter.accept(element)) {

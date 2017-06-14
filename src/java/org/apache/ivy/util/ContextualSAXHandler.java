@@ -25,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ContextualSAXHandler extends DefaultHandler {
 
-    private Stack<String> contextStack = new Stack<String>();
+    private Stack<String> contextStack = new Stack<>();
 
     private StringBuffer buffer = new StringBuffer();
 
@@ -48,7 +48,7 @@ public class ContextualSAXHandler extends DefaultHandler {
     }
 
     protected String getContext() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (String ctx : contextStack) {
             buf.append(ctx).append("/");
         }

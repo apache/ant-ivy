@@ -227,8 +227,7 @@ public class PublishEventsTest {
         Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("one missing artifact", 1, missing.size());
-        assertSameArtifact("missing artifact was returned", dataArtifact, (Artifact) missing
-                .iterator().next());
+        assertSameArtifact("missing artifact was returned", dataArtifact, missing.iterator().next());
 
         // if all tests passed, all of our counter variables should have been updated.
         assertEquals("pre-publish trigger fired and passed all tests", 1, preTriggers);

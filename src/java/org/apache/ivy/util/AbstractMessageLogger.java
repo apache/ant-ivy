@@ -24,11 +24,11 @@ import java.util.List;
  * An abstract base class to ease {@link MessageLogger} implementation.
  */
 public abstract class AbstractMessageLogger implements MessageLogger {
-    private List<String> problems = new ArrayList<String>();
+    private List<String> problems = new ArrayList<>();
 
-    private List<String> warns = new ArrayList<String>();
+    private List<String> warns = new ArrayList<>();
 
-    private List<String> errors = new ArrayList<String>();
+    private List<String> errors = new ArrayList<>();
 
     private boolean showProgress = true;
 

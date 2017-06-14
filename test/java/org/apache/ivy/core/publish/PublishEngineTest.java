@@ -93,10 +93,8 @@ public class PublishEngineTest {
         new Thread() {
             public void run() {
                 try {
-                    engine.publish(md, Arrays
-                            .asList(new String[] {"build/test/publish/module/[artifact].[ext]"}),
-                        resolver, new PublishOptions()
-                                .setSrcIvyPattern("build/test/publish/module/[artifact].[ext]"));
+                    engine.publish(md, Arrays.asList("build/test/publish/module/[artifact].[ext]"),
+                        resolver, new PublishOptions().setSrcIvyPattern("build/test/publish/module/[artifact].[ext]"));
                     synchronized (PublishEngineTest.this) {
                         counter[0]++;
                     }

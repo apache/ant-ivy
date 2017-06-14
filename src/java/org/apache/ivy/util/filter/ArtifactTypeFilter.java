@@ -26,7 +26,7 @@ public class ArtifactTypeFilter implements Filter<Artifact> {
     private Collection<String> acceptedTypes;
 
     public ArtifactTypeFilter(Collection<String> acceptedTypes) {
-        this.acceptedTypes = new ArrayList<String>(acceptedTypes);
+        this.acceptedTypes = new ArrayList<>(acceptedTypes);
     }
 
     public boolean accept(Artifact art) {

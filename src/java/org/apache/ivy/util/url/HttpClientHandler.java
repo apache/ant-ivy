@@ -223,7 +223,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         if (httpClientHelper == null) {
             // use commons httpclient 3.0 if available
             try {
-                HttpMethodBase.class.getMethod("getResponseContentLength", new Class[0]);
+                HttpMethodBase.class.getMethod("getResponseContentLength");
                 httpClientHelper = new HttpClientHelper3x();
                 Message.verbose("using commons httpclient 3.x helper");
             } catch (SecurityException e) {
@@ -280,7 +280,7 @@ public class HttpClientHandler extends AbstractURLHandler {
                 }
             }));
 
-            List authPrefs = new ArrayList(3);
+            List<String> authPrefs = new ArrayList<>(3);
             authPrefs.add(AuthPolicy.DIGEST);
             authPrefs.add(AuthPolicy.BASIC);
             authPrefs.add(AuthPolicy.NTLM); // put it at the end to give less priority (IVY-213)
@@ -421,11 +421,8 @@ public class HttpClientHandler extends AbstractURLHandler {
         }
 
         public void writeRequest(OutputStream out) throws IOException {
-            InputStream instream = new FileInputStream(file);
-            try {
+            try (InputStream instream = new FileInputStream(file)) {
                 FileUtil.copy(instream, out, null, false);
-            } finally {
-                instream.close();
             }
         }
     }

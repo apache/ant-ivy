@@ -110,9 +110,8 @@ public class BasicURLHandler extends AbstractURLHandler {
         String charSet = null;
 
         if (contentType != null) {
-            String[] elements = contentType.split(";");
-            for (int i = 0; i < elements.length; i++) {
-                String element = elements[i].trim();
+            for (String el : contentType.split(";")) {
+                String element = el.trim();
                 if (element.toLowerCase().startsWith("charset=")) {
                     charSet = element.substring("charset=".length());
                 }

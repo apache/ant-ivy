@@ -101,7 +101,7 @@ public class ApacheURLLister {
      */
     public List<URL> retrieveListing(URL url, boolean includeFiles, boolean includeDirectories)
             throws IOException {
-        List<URL> urlList = new ArrayList<URL>();
+        List<URL> urlList = new ArrayList<>();
 
         // add trailing slash for relative urls
         if (!url.getPath().endsWith("/") && !url.getPath().endsWith(".html")) {

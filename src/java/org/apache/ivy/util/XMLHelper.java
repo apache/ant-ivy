@@ -195,11 +195,11 @@ public abstract class XMLHelper {
             return null;
         }
 
-        StringBuffer result = new StringBuffer(text.length());
+        StringBuilder result = new StringBuilder(text.length());
 
         char[] chars = text.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            switch (chars[i]) {
+        for (char ch : chars) {
+            switch (ch) {
                 case '&':
                     result.append("&amp;");
                     break;
@@ -213,7 +213,7 @@ public abstract class XMLHelper {
                     result.append("&quot;");
                     break;
                 default:
-                    result.append(chars[i]);
+                    result.append(ch);
             }
         }
 

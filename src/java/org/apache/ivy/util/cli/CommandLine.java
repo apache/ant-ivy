@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandLine {
-    private Map/* <String, String[]> */optionValues = new HashMap();
+    private final Map<String, String[]> optionValues = new HashMap<>();
 
     private String[] leftOverArgs;
 
@@ -48,7 +48,7 @@ public class CommandLine {
     }
 
     public String[] getOptionValues(String option) {
-        return (String[]) optionValues.get(option);
+        return optionValues.get(option);
     }
 
     public String[] getLeftOverArgs() {

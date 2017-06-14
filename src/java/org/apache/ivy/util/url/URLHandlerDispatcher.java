@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.util.CopyProgressListener;
@@ -31,7 +30,7 @@ import org.apache.ivy.util.CopyProgressListener;
  * This class is used to dispatch downloading requests
  */
 public class URLHandlerDispatcher implements URLHandler {
-    private Map handlers = new HashMap();
+    private final Map<String, URLHandler> handlers = new HashMap<>();
 
     private URLHandler defaultHandler = new BasicURLHandler();
 
@@ -84,8 +83,7 @@ public class URLHandlerDispatcher implements URLHandler {
 
     public void setRequestMethod(int requestMethod) {
         defaultHandler.setRequestMethod(requestMethod);
-        for (Iterator it = handlers.values().iterator(); it.hasNext();) {
-            URLHandler handler = (URLHandler) it.next();
+        for (URLHandler handler : handlers.values()) {
             handler.setRequestMethod(requestMethod);
         }
     }
@@ -95,7 +93,7 @@ public class URLHandlerDispatcher implements URLHandler {
     }
 
     public URLHandler getHandler(String protocol) {
-        URLHandler downloader = (URLHandler) handlers.get(protocol);
+        URLHandler downloader = handlers.get(protocol);
         return downloader == null ? defaultHandler : downloader;
     }
 
