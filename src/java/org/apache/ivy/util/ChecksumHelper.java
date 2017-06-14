@@ -33,7 +33,7 @@ public final class ChecksumHelper {
 
     private static final int BUFFER_SIZE = 2048;
 
-    private static Map algorithms = new HashMap();
+    private static final Map<String, String> algorithms = new HashMap<>();
     static {
         algorithms.put("md5", "MD5");
         algorithms.put("sha1", "SHA-1");
@@ -94,11 +94,11 @@ public final class ChecksumHelper {
                 // IVY-1155: support some strange formats like this one:
                 // https://repo1.maven.org/maven2/org/apache/pdfbox/fontbox/0.8.0-incubator/fontbox-0.8.0-incubator.jar.md5
                 if (expected.endsWith(":")) {
-                    StringBuffer result = new StringBuffer();
+                    StringBuilder result = new StringBuilder();
                     char[] chars = csFileContent.substring(spaceIndex + 1).toCharArray();
-                    for (int i = 0; i < chars.length; i++) {
-                        if (!Character.isWhitespace(chars[i])) {
-                            result.append(chars[i]);
+                    for (char ch : chars) {
+                        if (!Character.isWhitespace(ch)) {
+                            result.append(ch);
                         }
                     }
                     expected = result.toString();
@@ -120,9 +120,8 @@ public final class ChecksumHelper {
     }
 
     private static byte[] compute(File f, String algorithm) throws IOException {
-        InputStream is = new FileInputStream(f);
 
-        try {
+        try (InputStream is = new FileInputStream(f)) {
             MessageDigest md = getMessageDigest(algorithm);
             md.reset();
 
@@ -132,8 +131,6 @@ public final class ChecksumHelper {
                 md.update(buf, 0, len);
             }
             return md.digest();
-        } finally {
-            is.close();
         }
     }
 
@@ -142,7 +139,7 @@ public final class ChecksumHelper {
     }
 
     private static MessageDigest getMessageDigest(String algorithm) {
-        String mdAlgorithm = (String) algorithms.get(algorithm);
+        String mdAlgorithm = algorithms.get(algorithm);
         if (mdAlgorithm == null) {
             throw new IllegalArgumentException("unknown algorithm " + algorithm);
         }
@@ -171,16 +168,16 @@ public final class ChecksumHelper {
             return null;
         }
 
-        StringBuffer out = new StringBuffer(in.length * 2);
+        StringBuilder out = new StringBuilder(in.length * 2);
 
         // CheckStyle:MagicNumber OFF
-        for (int i = 0; i < in.length; i++) {
-            ch = (byte) (in[i] & 0xF0); // Strip off high nibble
+        for (byte bt : in) {
+            ch = (byte) (bt & 0xF0); // Strip off high nibble
             ch = (byte) (ch >>> 4); // shift the bits down
             ch = (byte) (ch & 0x0F); // must do this is high order bit is on!
 
             out.append(CHARS[ch]); // convert the nibble to a String Character
-            ch = (byte) (in[i] & 0x0F); // Strip off low nibble
+            ch = (byte) (bt & 0x0F); // Strip off low nibble
             out.append(CHARS[ch]); // convert the nibble to a String Character
         }
         // CheckStyle:MagicNumber ON

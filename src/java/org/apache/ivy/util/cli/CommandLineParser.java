@@ -33,9 +33,9 @@ public class CommandLineParser {
 
     private static final int MAX_SPEC_WIDTH = 30;
 
-    private Map<String, Option> options = new LinkedHashMap<String, Option>();
+    private Map<String, Option> options = new LinkedHashMap<>();
 
-    private Map<String, List<Option>> categories = new LinkedHashMap<String, List<Option>>();
+    private Map<String, List<Option>> categories = new LinkedHashMap<>();
 
     public CommandLineParser() {
     }
@@ -115,7 +115,7 @@ public class CommandLineParser {
                 pw.print(StringUtils.repeat(" ", specWidth - specLength));
 
                 // print description
-                StringBuffer desc = new StringBuffer((option.isDeprecated() ? "DEPRECATED: " : "")
+                StringBuilder desc = new StringBuilder((option.isDeprecated() ? "DEPRECATED: " : "")
                         + option.getDescription());
                 int count = Math.min(desc.length(), width - Math.max(specLength, specWidth));
                 // see if we have enough space to start on the same line as the spec

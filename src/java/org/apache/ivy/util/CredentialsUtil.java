@@ -104,7 +104,7 @@ public final class CredentialsUtil {
         CredentialPanel credentialPanel = new CredentialPanel(c, passfile);
         if (JOptionPane.showOptionDialog(null, credentialPanel, c.getHost() + " credentials",
             JOptionPane.OK_CANCEL_OPTION, 0, new ImageIcon(Ivy.class.getResource("logo.png")),
-            null, new Integer(JOptionPane.OK_OPTION)) == JOptionPane.OK_OPTION) {
+            null, JOptionPane.OK_OPTION) == JOptionPane.OK_OPTION) {
             String username = credentialPanel.userNameField.getText();
             String passwd = credentialPanel.passwordField.getText();
             if (credentialPanel.rememberDataCB.isSelected()) {

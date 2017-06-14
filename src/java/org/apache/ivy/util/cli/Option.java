@@ -71,30 +71,30 @@ public class Option {
         return deprecated;
     }
 
-    String[] parse(ListIterator iterator) throws ParseException {
+    String[] parse(ListIterator<String> iterator) throws ParseException {
         if (isCountArgs()) {
             String[] values = new String[args.length];
             for (int i = 0; i < values.length; i++) {
                 if (!iterator.hasNext()) {
                     missingArgument(i);
                 }
-                values[i] = (String) iterator.next();
+                values[i] = iterator.next();
                 if (values[i].startsWith("-")) {
                     missingArgument(i);
                 }
             }
             return values;
         } else {
-            List values = new ArrayList();
+            List<String> values = new ArrayList<>();
             while (iterator.hasNext()) {
-                String value = (String) iterator.next();
+                String value = iterator.next();
                 if (value.startsWith("-")) {
                     iterator.previous();
                     break;
                 }
                 values.add(value);
             }
-            return (String[]) values.toArray(new String[values.size()]);
+            return values.toArray(new String[values.size()]);
         }
     }
 
@@ -115,9 +115,9 @@ public class Option {
         if (args.length == 0) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < args.length; i++) {
-            sb.append("<").append(args[i]).append("> ");
+        StringBuilder sb = new StringBuilder();
+        for (String arg : args) {
+            sb.append("<").append(arg).append("> ");
         }
         return sb.toString();
     }

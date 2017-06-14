@@ -74,7 +74,7 @@ public class Credentials {
         if (passwd == null) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = passwd.length(); i > 0; i--) {
             sb.append('*');
         }

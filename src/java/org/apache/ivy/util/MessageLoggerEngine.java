@@ -33,20 +33,20 @@ import java.util.Stack;
  * </p>
  */
 public class MessageLoggerEngine implements MessageLogger {
-    private final ThreadLocal<Stack<MessageLogger>> loggerStacks = new ThreadLocal<Stack<MessageLogger>>();
+    private final ThreadLocal<Stack<MessageLogger>> loggerStacks = new ThreadLocal<>();
 
     private MessageLogger defaultLogger = null;
 
-    private List<String> problems = new ArrayList<String>();
+    private List<String> problems = new ArrayList<>();
 
-    private List<String> warns = new ArrayList<String>();
+    private List<String> warns = new ArrayList<>();
 
-    private List<String> errors = new ArrayList<String>();
+    private List<String> errors = new ArrayList<>();
 
     private Stack<MessageLogger> getLoggerStack() {
         Stack<MessageLogger> stack = loggerStacks.get();
         if (stack == null) {
-            stack = new Stack<MessageLogger>();
+            stack = new Stack<>();
             loggerStacks.set(stack);
         }
         return stack;

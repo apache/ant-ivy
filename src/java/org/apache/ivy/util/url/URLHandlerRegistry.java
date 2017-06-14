@@ -61,10 +61,7 @@ public final class URLHandlerRegistry {
                     + e.getMessage());
             Message.verbose("Using jdk url handling instead.");
             return new BasicURLHandler();
-        } catch (InstantiationException e) {
-            Message.verbose("couldn't instantiate HttpClientHandler: using jdk url handling");
-            return new BasicURLHandler();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             Message.verbose("couldn't instantiate HttpClientHandler: using jdk url handling");
             return new BasicURLHandler();
         }

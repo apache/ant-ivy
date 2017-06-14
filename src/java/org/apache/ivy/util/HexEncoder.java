@@ -26,10 +26,10 @@ public class HexEncoder {
             'b', 'c', 'd', 'e', 'f'};
 
     public static String encode(byte[] packet) {
-        StringBuffer chars = new StringBuffer(16);
-        for (int i = 0; i < packet.length; i++) {
-            int highBits = (packet[i] & 0xF0) >> 4;
-            int lowBits = packet[i] & 0x0F;
+        StringBuilder chars = new StringBuilder(16);
+        for (byte bt : packet) {
+            int highBits = (bt & 0xF0) >> 4;
+            int lowBits = bt & 0x0F;
             chars.append(ALPHABET[highBits]);
             chars.append(ALPHABET[lowBits]);
         }

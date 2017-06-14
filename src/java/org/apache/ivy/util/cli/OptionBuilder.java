@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptionBuilder {
-    private String name;
+    private final String name;
 
-    private List/* <String> */args = new ArrayList();
+    private final List<String> args = new ArrayList<>();
 
     private String description = "";
 
@@ -63,7 +63,7 @@ public class OptionBuilder {
     }
 
     public Option create() {
-        return new Option(name, (String[]) args.toArray(new String[args.size()]), description,
+        return new Option(name, args.toArray(new String[args.size()]), description,
                 required, countArgs, deprecated);
     }
 }
