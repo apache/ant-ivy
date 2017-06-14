@@ -196,7 +196,6 @@ public class SortTest {
      */
     @Test
     public void testLatestIntegration() {
-
         addDependency(md2, "md1", "latest.integration");
         addDependency(md3, "md2", "latest.integration");
         addDependency(md4, "md3", "latest.integration");
@@ -210,7 +209,6 @@ public class SortTest {
         for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
-
     }
 
     /**
@@ -236,7 +234,6 @@ public class SortTest {
         for (List<ModuleDescriptor> toSort : permutations) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
-
     }
 
     /**
