@@ -18,14 +18,13 @@
 package org.apache.ivy.ant;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 
 public class IvyDependencyConf {
 
-    private List/* <IvyDependencyConfMapped> */mappeds = new ArrayList();
+    private final List<IvyDependencyConfMapped> mappeds = new ArrayList<>();
 
     public static class IvyDependencyConfMapped {
         private String name;
@@ -50,14 +49,11 @@ public class IvyDependencyConf {
 
     void addConf(DefaultDependencyDescriptor dd, String masterConf) {
         if (mapped != null) {
-            String[] mappeds = mapped.split(",");
-            for (int i = 0; i < mappeds.length; i++) {
-                dd.addDependencyConfiguration(masterConf, mappeds[i].trim());
+            for (String map : mapped.split(",")) {
+                dd.addDependencyConfiguration(masterConf, map.trim());
             }
         }
-        Iterator itMappeds = mappeds.iterator();
-        while (itMappeds.hasNext()) {
-            IvyDependencyConfMapped m = (IvyDependencyConfMapped) itMappeds.next();
+        for (IvyDependencyConfMapped m : mappeds) {
             dd.addDependencyConfiguration(masterConf, m.name);
         }
     }

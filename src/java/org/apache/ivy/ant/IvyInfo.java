@@ -21,10 +21,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -162,50 +161,44 @@ public class IvyInfo extends IvyTask {
                 Long.toString(md.getPublicationDate().getTime()));
         }
 
-        Map extra = mrid.getExtraAttributes();
-        for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
-            Entry entry = (Entry) iter.next();
+        Map<String, String> extra = mrid.getExtraAttributes();
+        for (Map.Entry<String, String> entry : extra.entrySet()) {
             getProject().setProperty(property + ".extra." + entry.getKey(),
-                (String) entry.getValue());
+                    entry.getValue());
         }
 
         getProject().setProperty(property + ".configurations",
             mergeConfs(md.getConfigurationsNames()));
 
         // store the public configurations in a separate property
-        Configuration[] configs = md.getConfigurations();
-        List publicConfigsList = new ArrayList();
-        for (int i = 0; i < configs.length; i++) {
-            String name = configs[i].getName();
-            if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
+        List<String> publicConfigsList = new ArrayList<>();
+        for (Configuration config : md.getConfigurations()) {
+            String name = config.getName();
+            if (Visibility.PUBLIC.equals(config.getVisibility())) {
                 publicConfigsList.add(name);
             }
 
-            if (configs[i].getDescription() != null) {
+            if (config.getDescription() != null) {
                 getProject().setProperty(property + ".configuration." + name + ".desc",
-                    configs[i].getDescription());
+                    config.getDescription());
             }
         }
-        String[] publicConfigs = (String[]) publicConfigsList.toArray(new String[publicConfigsList
-                .size()]);
+        String[] publicConfigs = publicConfigsList.toArray(new String[publicConfigsList.size()]);
         getProject().setProperty(property + ".public.configurations", mergeConfs(publicConfigs));
 
-        Artifact[] artifacts = md.getAllArtifacts();
-        for (int i = 0; i < artifacts.length; i++) {
-            int id = i + 1;
-            getProject()
-                    .setProperty(property + ".artifact." + id + ".name", artifacts[i].getName());
-            getProject()
-                    .setProperty(property + ".artifact." + id + ".type", artifacts[i].getType());
-            getProject().setProperty(property + ".artifact." + id + ".ext", artifacts[i].getExt());
+        List<Artifact> artifacts = Arrays.asList(md.getAllArtifacts());
+        for (Artifact artifact : artifacts) {
+            int id = artifacts.indexOf(artifact) + 1;
+            getProject().setProperty(property + ".artifact." + id + ".name", artifact.getName());
+            getProject().setProperty(property + ".artifact." + id + ".type", artifact.getType());
+            getProject().setProperty(property + ".artifact." + id + ".ext", artifact.getExt());
             getProject().setProperty(property + ".artifact." + id + ".conf",
-                mergeConfs(artifacts[i].getConfigurations()));
+                mergeConfs(artifact.getConfigurations()));
 
-            Map artiExtra = artifacts[i].getExtraAttributes();
-            for (Iterator iter = artiExtra.entrySet().iterator(); iter.hasNext();) {
-                Entry entry = (Entry) iter.next();
+            Map<String, String> artiExtra = artifact.getExtraAttributes();
+            for (Map.Entry<String, String> entry : artiExtra.entrySet()) {
                 getProject().setProperty(property + ".artifact." + id + ".extra." + entry.getKey(),
-                    (String) entry.getValue());
+                    entry.getValue());
             }
         }
     }

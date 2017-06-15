@@ -48,8 +48,8 @@ public class IvyConfigure extends Task {
      */
     public static final String OVERRIDE_NOT_ALLOWED = "notallowed";
 
-    private static final Collection OVERRIDE_VALUES = Arrays.asList(new String[] {OVERRIDE_TRUE,
-            OVERRIDE_FALSE, OVERRIDE_NOT_ALLOWED});
+    private static final Collection OVERRIDE_VALUES = Arrays.asList(OVERRIDE_TRUE,
+            OVERRIDE_FALSE, OVERRIDE_NOT_ALLOWED);
 
     private String override = OVERRIDE_NOT_ALLOWED;
 

@@ -20,7 +20,6 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -62,7 +61,7 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
 
     private String target = null;
 
-    private Collection builds = new ArrayList();
+    private Collection<String> builds = new ArrayList<>();
 
     private String buildFilePattern;
 
@@ -91,14 +90,12 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                 if (target != null) {
                     ant.setTarget(target);
                 }
-                Map atts = event.getAttributes();
-                for (Iterator iter = atts.keySet().iterator(); iter.hasNext();) {
-                    String key = (String) iter.next();
-                    String value = (String) atts.get(key);
-                    if (value != null) {
+                Map<String, String> atts = event.getAttributes();
+                for (Map.Entry<String, String> entry : atts.entrySet()) {
+                    if (entry.getValue() != null) {
                         Property p = ant.createProperty();
-                        p.setName(prefix == null ? key : prefix + key);
-                        p.setValue(value);
+                        p.setName(prefix == null ? entry.getKey() : prefix + entry.getKey());
+                        p.setValue(entry.getValue());
                     }
                 }
 

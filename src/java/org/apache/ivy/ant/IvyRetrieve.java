@@ -137,8 +137,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
     }
 
     protected Collection<String> getAllowedLogOptions() {
-        return Arrays.asList(new String[] {LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
-                LogOptions.LOG_QUIET});
+        return Arrays.asList(LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY,
+                LogOptions.LOG_QUIET);
     }
 
     public String getIvypattern() {

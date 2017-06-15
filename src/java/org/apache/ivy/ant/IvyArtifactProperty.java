@@ -62,23 +62,20 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
 
         try {
             ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
-            String[] confs = splitConfs(getConf());
             String resolveId = getResolveId();
             if (resolveId == null) {
                 resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
             }
             XmlReportParser parser = new XmlReportParser();
-            for (int i = 0; i < confs.length; i++) {
-                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+            for (String conf : splitConfs(getConf())) {
+                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, conf);
                 parser.parse(report);
 
-                Artifact[] artifacts = parser.getArtifacts();
-                for (int j = 0; j < artifacts.length; j++) {
-                    Artifact artifact = artifacts[j];
+                for (Artifact artifact : parser.getArtifacts()) {
                     String name = IvyPatternHelper.substitute(getSettings().substitute(getName()),
-                        artifact, confs[i]);
+                            artifact, conf);
                     String value = IvyPatternHelper.substitute(
-                        getSettings().substitute(getValue()), artifact, confs[i]);
+                            getSettings().substitute(getValue()), artifact, conf);
                     setProperty(name, value);
                 }
             }

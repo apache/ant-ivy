@@ -27,6 +27,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
+import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.BaseResourceCollectionWrapper;
 import org.apache.tools.ant.types.resources.FileResource;
@@ -38,7 +39,7 @@ public class IvyResources extends IvyCacheTask implements ResourceCollection {
      */
     private class IvyBaseResourceCollectionWrapper extends BaseResourceCollectionWrapper {
 
-        protected Collection getCollection() {
+        protected Collection<Resource> getCollection() {
             return resolveResources(null);
         }
 
@@ -81,7 +82,7 @@ public class IvyResources extends IvyCacheTask implements ResourceCollection {
         return true;
     }
 
-    public Iterator iterator() {
+    public Iterator<Resource> iterator() {
         return wrapper.iterator();
     }
 
@@ -91,16 +92,15 @@ public class IvyResources extends IvyCacheTask implements ResourceCollection {
 
     // convert the ivy reports into an Ant Resource collection
 
-    private Collection resolveResources(String id) throws BuildException {
+    private Collection<Resource> resolveResources(String id) throws BuildException {
         prepareAndCheck();
         try {
-            List/* <FileResource> */resources = new ArrayList();
+            List<Resource> resources = new ArrayList<>();
             if (id != null) {
                 getProject().addReference(id, this);
             }
-            for (Iterator iter = getArtifactReports().iterator(); iter.hasNext();) {
-                ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
-                resources.add(new FileResource(a.getLocalFile()));
+            for (ArtifactDownloadReport adr : getArtifactReports()) {
+                resources.add(new FileResource(adr.getLocalFile()));
             }
             return resources;
         } catch (Exception ex) {

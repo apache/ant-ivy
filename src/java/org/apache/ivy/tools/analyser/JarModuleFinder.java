@@ -39,24 +39,20 @@ public class JarModuleFinder {
     }
 
     public JarModule[] findJarModules() {
-        List ret = new ArrayList();
+        List<JarModule> ret = new ArrayList<>();
         URLLister lister = new FileURLLister();
         try {
-            String[] orgs = ResolverHelper.listTokenValues(lister, pattern, "organisation");
-            for (int i = 0; i < orgs.length; i++) {
+            for (String org : ResolverHelper.listTokenValues(lister, pattern, "organisation")) {
                 String orgPattern = IvyPatternHelper.substituteToken(pattern,
-                    IvyPatternHelper.ORGANISATION_KEY, orgs[i]);
-                String[] modules = ResolverHelper.listTokenValues(lister, orgPattern, "module");
-                for (int j = 0; j < modules.length; j++) {
+                        IvyPatternHelper.ORGANISATION_KEY, org);
+                for (String module : ResolverHelper.listTokenValues(lister, orgPattern, "module")) {
                     String modPattern = IvyPatternHelper.substituteToken(orgPattern,
-                        IvyPatternHelper.MODULE_KEY, modules[j]);
-                    String[] revs = ResolverHelper.listTokenValues(lister, modPattern, "revision");
-                    for (int k = 0; k < revs.length; k++) {
-                        File jar = new File(IvyPatternHelper.substitute(filePattern, orgs[i],
-                            modules[j], revs[k], modules[j], "jar", "jar"));
+                            IvyPatternHelper.MODULE_KEY, module);
+                    for (String rev : ResolverHelper.listTokenValues(lister, modPattern, "revision")) {
+                        File jar = new File(IvyPatternHelper.substitute(filePattern, org,
+                                module, rev, module, "jar", "jar"));
                         if (jar.exists()) {
-                            ret.add(new JarModule(ModuleRevisionId.newInstance(orgs[i], modules[j],
-                                revs[k]), jar));
+                            ret.add(new JarModule(ModuleRevisionId.newInstance(org, module, rev), jar));
                         }
                     }
                 }
@@ -66,15 +62,15 @@ public class JarModuleFinder {
             Message.debug(e);
             // TODO: handle exception
         }
-        return (JarModule[]) ret.toArray(new JarModule[ret.size()]);
+        return ret.toArray(new JarModule[ret.size()]);
     }
 
     public static void main(String[] args) {
         JarModule[] mods = new JarModuleFinder(
                 "D:/temp/test2/ivyrep/[organisation]/[module]/[revision]/[artifact].[ext]")
                 .findJarModules();
-        for (int i = 0; i < mods.length; i++) {
-            System.out.println(mods[i]);
+        for (JarModule mod : mods) {
+            System.out.println(mod);
         }
     }
 }

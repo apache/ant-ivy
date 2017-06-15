@@ -149,9 +149,9 @@ public class IvyListModules extends IvyTask {
                 patternMatcher);
         }
 
-        for (int i = 0; i < mrids.length; i++) {
-            String name = IvyPatternHelper.substitute(settings.substitute(property), mrids[i]);
-            String value = IvyPatternHelper.substitute(settings.substitute(this.value), mrids[i]);
+        for (ModuleRevisionId mrid : mrids) {
+            String name = IvyPatternHelper.substitute(settings.substitute(property), mrid);
+            String value = IvyPatternHelper.substitute(settings.substitute(this.value), mrid);
             getProject().setProperty(name, value);
         }
     }

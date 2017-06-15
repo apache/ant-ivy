@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +70,7 @@ public class IvyRepositoryReport extends IvyTask {
 
     private String xslext = "html";
 
-    private List params = new ArrayList();
+    private final List<XSLTProcess.Param> params = new ArrayList<>();
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -86,27 +85,22 @@ public class IvyRepositoryReport extends IvyTask {
         } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
             module = PatternMatcher.ANY_EXPRESSION;
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
+        ModuleRevisionId moduleRevisionId = ModuleRevisionId.newInstance(organisation, module, revision);
 
         try {
-            ModuleRevisionId criteria = null;
-
-            if ((revision == null) || settings.getVersionMatcher().isDynamic(mrid)) {
-                criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch, "*");
-            } else {
-                criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch,
-                        revision);
-            }
+            ModuleRevisionId criteria = (revision == null) || settings.getVersionMatcher().isDynamic(moduleRevisionId)
+                    ? new ModuleRevisionId(new ModuleId(organisation, module), branch, "*")
+                    : new ModuleRevisionId(new ModuleId(organisation, module), branch, revision);
 
             ModuleRevisionId[] mrids = ivy.listModules(criteria, settings.getMatcher(matcher));
 
             // replace all found revisions with the original requested revision
-            Set modules = new HashSet();
-            for (int i = 0; i < mrids.length; i++) {
-                modules.add(ModuleRevisionId.newInstance(mrids[i], revision));
+            Set<ModuleRevisionId> modules = new HashSet<>();
+            for (ModuleRevisionId mrid : mrids) {
+                modules.add(ModuleRevisionId.newInstance(mrid, revision));
             }
 
-            mrids = (ModuleRevisionId[]) modules.toArray(new ModuleRevisionId[modules.size()]);
+            mrids = modules.toArray(new ModuleRevisionId[modules.size()]);
             ModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true, false);
             String resolveId = ResolveOptions.getDefaultResolveId(md);
             ResolveReport report = ivy.resolve(md, new ResolveOptions().setResolveId(resolveId)
@@ -115,24 +109,23 @@ public class IvyRepositoryReport extends IvyTask {
             ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
             new XmlReportOutputter().output(report, cacheMgr, new ResolveOptions());
             if (graph) {
-                gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
-                        .getModuleRevisionId().getName());
+                gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(),
+                        md.getModuleRevisionId().getName());
             }
             if (dot) {
-                gendot(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
-                        .getModuleRevisionId().getName());
+                gendot(cacheMgr, md.getModuleRevisionId().getOrganisation(),
+                        md.getModuleRevisionId().getName());
             }
             if (xml) {
-
                 FileUtil.copy(cacheMgr.getConfigurationResolveReportInCache(resolveId, "default"),
                     new File(getTodir(), outputname + ".xml"), null);
             }
             if (xsl) {
-                genreport(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
-                        .getModuleRevisionId().getName());
+                genreport(cacheMgr, md.getModuleRevisionId().getOrganisation(),
+                        md.getModuleRevisionId().getName());
             }
         } catch (Exception e) {
-            throw new BuildException("impossible to generate graph for " + mrid + ": " + e, e);
+            throw new BuildException("impossible to generate graph for " + moduleRevisionId + ": " + e, e);
         }
     }
 
@@ -150,13 +143,12 @@ public class IvyRepositoryReport extends IvyTask {
 
         xslt.setStyle(xslFile);
 
-        XSLTProcess.Param param = xslt.createParam();
-        param.setName("extension");
-        param.setExpression(xslext);
+        XSLTProcess.Param xslExt = xslt.createParam();
+        xslExt.setName("extension");
+        xslExt.setExpression(xslext);
 
         // add the provided XSLT parameters
-        for (Iterator it = params.iterator(); it.hasNext();) {
-            param = (XSLTProcess.Param) it.next();
+        for (XSLTProcess.Param param : params) {
             XSLTProcess.Param realParam = xslt.createParam();
             realParam.setName(param.getName());
             realParam.setExpression(param.getExpression());

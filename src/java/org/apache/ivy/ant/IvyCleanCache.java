@@ -70,8 +70,8 @@ public class IvyCleanCache extends IvyTask {
         }
         if (ALL.equals(getCache())) {
             RepositoryCacheManager[] caches = settings.getRepositoryCacheManagers();
-            for (int i = 0; i < caches.length; i++) {
-                caches[i].clean();
+            for (RepositoryCacheManager cache : caches) {
+                cache.clean();
             }
         } else if (!NONE.equals(getCache())) {
             RepositoryCacheManager cache = settings.getRepositoryCacheManager(getCache());

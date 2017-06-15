@@ -20,7 +20,6 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -212,12 +211,9 @@ public abstract class IvyPostResolveTask extends IvyTask {
     protected void ensureResolved(IvySettings settings) {
         String requestedConfigs = getProperty(getConf(), settings, "ivy.resolved.configurations");
 
-        String[] confs = null;
-        if (getResolveId() != null) {
-            confs = getConfsToResolve(getResolveId(), requestedConfigs);
-        } else {
-            confs = getConfsToResolve(getOrganisation(), getModule(), requestedConfigs, false);
-        }
+        String[] confs = (getResolveId() == null)
+                ? getConfsToResolve(getOrganisation(), getModule(), requestedConfigs, false)
+                : getConfsToResolve(getResolveId(), requestedConfigs);
 
         if (confs.length > 0) {
             IvyResolve resolve = setupResolve(isHaltonfailure(), isUseOrigin());
@@ -230,13 +226,13 @@ public abstract class IvyPostResolveTask extends IvyTask {
     }
 
     protected String[] getConfsToResolve(String org, String module, String conf, boolean strict) {
-        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(org, module, strict);
+        ModuleDescriptor reference = getResolvedDescriptor(org, module, strict);
         String[] rconfs = getResolvedConfigurations(org, module, strict);
         return getConfsToResolve(reference, conf, rconfs);
     }
 
     protected String[] getConfsToResolve(String resolveId, String conf) {
-        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(resolveId, false);
+        ModuleDescriptor reference = getResolvedDescriptor(resolveId, false);
         if (reference == null) {
             // assume the module has been resolved outside this build, resolve the required
             // configurations again
@@ -247,8 +243,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 return splitConfs(conf);
             }
         }
-        String[] rconfs = (String[]) getProject().getReference(
-            "ivy.resolved.configurations.ref." + resolveId);
+        String[] rconfs = getProject().getReference("ivy.resolved.configurations.ref." + resolveId);
         return getConfsToResolve(reference, conf, rconfs);
     }
 
@@ -270,29 +265,28 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 confs = splitConfs(conf);
             }
 
-            HashSet rconfsSet = new HashSet(Arrays.asList(rconfs));
+            HashSet<String> rconfsSet = new HashSet<>();
 
             // for each resolved configuration, check if the report still exists
             ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
-            for (Iterator it = rconfsSet.iterator(); it.hasNext();) {
-                String resolvedConf = (String) it.next();
+            for (String resolvedConf : rconfs) {
                 String resolveId = getResolveId();
                 if (resolveId == null) {
                     resolveId = ResolveOptions.getDefaultResolveId(reference);
                 }
                 File report = cache.getConfigurationResolveReportInCache(resolveId, resolvedConf);
-                if (!report.exists()) {
-                    // the report doesn't exist any longer, we have to recreate it...
-                    it.remove();
+                // if the report does not exist any longer, we have to recreate it...
+                if (report.exists()) {
+                    rconfsSet.add(resolvedConf);
                 }
             }
 
-            HashSet confsSet = new HashSet(Arrays.asList(confs));
+            HashSet<String> confsSet = new HashSet<>(Arrays.asList(confs));
             Message.debug("resolved configurations:   " + rconfsSet);
             Message.debug("asked configurations:      " + confsSet);
             confsSet.removeAll(rconfsSet);
             Message.debug("to resolve configurations: " + confsSet);
-            return (String[]) confsSet.toArray(new String[confsSet.size()]);
+            return confsSet.toArray(new String[confsSet.size()]);
         } else {
             Message.debug("module already resolved, no configuration to resolve");
             return new String[0];

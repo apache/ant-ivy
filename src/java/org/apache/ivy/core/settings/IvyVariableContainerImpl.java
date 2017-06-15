@@ -25,15 +25,15 @@ import org.apache.ivy.util.Message;
 
 public class IvyVariableContainerImpl implements IvyVariableContainer {
 
-    private Map variables;
+    private Map<String, String> variables;
 
     private String envPrefix;
 
     public IvyVariableContainerImpl() {
-        this.variables = new HashMap();
+        this.variables = new HashMap<>();
     }
 
-    public IvyVariableContainerImpl(Map variables) {
+    public IvyVariableContainerImpl(Map<String, String> variables) {
         this.variables = variables;
     }
 
@@ -64,7 +64,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         return IvyPatternHelper.substituteVariables(value, this);
     }
 
-    protected Map getVariables() {
+    protected Map<String, String> getVariables() {
         return variables;
     }
 
@@ -82,7 +82,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         if ((envPrefix != null) && name.startsWith(envPrefix)) {
             val = System.getenv(name.substring(envPrefix.length()));
         } else {
-            val = (String) variables.get(name);
+            val = variables.get(name);
         }
 
         return val;
@@ -95,7 +95,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("unable to clone a " + this.getClass());
         }
-        clone.variables = new HashMap(this.variables);
+        clone.variables = new HashMap<>(this.variables);
         return clone;
     }
 }

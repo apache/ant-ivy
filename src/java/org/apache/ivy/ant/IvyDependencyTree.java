@@ -20,7 +20,6 @@ package org.apache.ivy.ant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,21 +57,21 @@ public class IvyDependencyTree extends IvyPostResolveTask {
 
     private void printDependencies(final ModuleRevisionId mrid, final List<IvyNode> dependencyList, final int indent,
                                    final Set<ModuleRevisionId> ancestors) {
-        for (final Iterator iterator = dependencyList.iterator(); iterator.hasNext();) {
+        for (IvyNode dependency : dependencyList) {
             final Set<ModuleRevisionId> ancestorsForCurrentDep = new HashSet<>(ancestors);
             // previous ancestors plus the module to whom these dependencies belong to
             ancestorsForCurrentDep.add(mrid);
-            final IvyNode dependency = (IvyNode) iterator.next();
             final boolean evicted = dependency.isEvicted(getConf());
             if (evicted && !showEvicted) {
                 continue;
             }
+            final boolean isLastDependency = dependencyList.indexOf(dependency) == dependencyList.size() - 1;
             final StringBuilder sb = new StringBuilder();
             final ModuleRevisionId dependencyMrid = dependency.getId();
             final boolean circular = ancestorsForCurrentDep.contains(dependencyMrid);
             if (indent > 0) {
                 for (int i = 0; i < indent; i++) {
-                    if (i == indent - 1 && !iterator.hasNext() && !hasDependencies(dependency)) {
+                    if (i == indent - 1 && isLastDependency && !hasDependencies(dependency)) {
                         sb.append("   ");
                     } else {
                         sb.append("|  ");
@@ -80,11 +79,7 @@ public class IvyDependencyTree extends IvyPostResolveTask {
 
                 }
             }
-            if (iterator.hasNext()) {
-                sb.append("+- ");
-            } else {
-                sb.append("\\- ");
-            }
+            sb.append(isLastDependency ? "\\- " : "+- ");
             if (!evicted && circular) {
                 // log and skip processing the (transitive) dependencies of this dependency
                 sb.append("(circularly depends on) ").append(dependencyMrid);

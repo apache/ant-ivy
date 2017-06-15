@@ -151,9 +151,9 @@ public class IvyMakePom extends IvyTask {
 
     private String description;
 
-    private List<Mapping> mappings = new ArrayList<Mapping>();
+    private List<Mapping> mappings = new ArrayList<>();
 
-    private List<Dependency> dependencies = new ArrayList<Dependency>();
+    private List<Dependency> dependencies = new ArrayList<>();
 
     public File getPomFile() {
         return pomFile;
@@ -282,12 +282,11 @@ public class IvyMakePom extends IvyTask {
     }
 
     private Map<String, String> getMappingsMap() {
-        Map<String, String> mappingsMap = new LinkedHashMap<String, String>();
+        Map<String, String> mappingsMap = new LinkedHashMap<>();
         for (Mapping mapping : mappings) {
-            String[] mappingConfs = splitConfs(mapping.getConf());
-            for (int i = 0; i < mappingConfs.length; i++) {
-                if (!mappingsMap.containsKey(mappingConfs[i])) {
-                    mappingsMap.put(mappingConfs[i], mapping.getScope());
+            for (String mappingConf : splitConfs(mapping.getConf())) {
+                if (!mappingsMap.containsKey(mappingConf)) {
+                    mappingsMap.put(mappingConf, mapping.getScope());
                 }
             }
         }
@@ -295,7 +294,7 @@ public class IvyMakePom extends IvyTask {
     }
 
     private List<ExtraDependency> getDependencies() {
-        List<ExtraDependency> result = new ArrayList<ExtraDependency>();
+        List<ExtraDependency> result = new ArrayList<>();
         for (Dependency dependency : dependencies) {
             result.add(new ExtraDependency(dependency.getGroup(), dependency.getArtifact(),
                     dependency.getVersion(), dependency.getScope(), dependency.getType(),

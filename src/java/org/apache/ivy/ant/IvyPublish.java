@@ -61,7 +61,7 @@ public class IvyPublish extends IvyTask {
 
     private String publishResolverName = null;
 
-    private List<String> artifactspattern = new ArrayList<String>();
+    private List<String> artifactspattern = new ArrayList<>();
 
     private File deliveryList;
 
@@ -81,7 +81,7 @@ public class IvyPublish extends IvyTask {
 
     private boolean forcedeliver;
 
-    private Collection<Artifact> artifacts = new ArrayList<Artifact>();
+    private Collection<Artifact> artifacts = new ArrayList<>();
 
     private String pubBranch;
 
@@ -391,7 +391,7 @@ public class IvyPublish extends IvyTask {
 
         private String type;
 
-        private Map<String, String> extra = new HashMap<String, String>();
+        private Map<String, String> extra = new HashMap<>();
 
         public String[] getConfigurations() {
             return null;

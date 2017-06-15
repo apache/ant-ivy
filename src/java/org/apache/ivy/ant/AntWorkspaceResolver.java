@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,6 +44,7 @@ import org.apache.ivy.plugins.resolver.AbstractWorkspaceResolver;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.DataType;
+import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
 
@@ -77,7 +77,7 @@ public class AntWorkspaceResolver extends DataType {
         }
     }
 
-    private List<ResourceCollection> allResources = new ArrayList<ResourceCollection>();
+    private List<ResourceCollection> allResources = new ArrayList<>();
 
     private boolean haltOnError = true;
 
@@ -85,7 +85,7 @@ public class AntWorkspaceResolver extends DataType {
 
     private String name;
 
-    private List<WorkspaceArtifact> artifacts = new ArrayList<WorkspaceArtifact>();
+    private List<WorkspaceArtifact> artifacts = new ArrayList<>();
 
     public void setName(String name) {
         this.name = name;
@@ -129,10 +129,10 @@ public class AntWorkspaceResolver extends DataType {
 
         private synchronized Map<ModuleDescriptor, File> getModuleDescriptors() {
             if (md2IvyFile == null) {
-                md2IvyFile = new HashMap<ModuleDescriptor, File>();
+                md2IvyFile = new HashMap<>();
                 for (ResourceCollection resources : allResources) {
-                    for (Iterator it = resources.iterator(); it.hasNext();) {
-                        File ivyFile = ((FileResource) it.next()).getFile();
+                    for (Resource resource : resources) {
+                        File ivyFile = ((FileResource) resource).getFile();
                         try {
                             ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
                                     .parseDescriptor(getParserSettings(), ivyFile.toURI().toURL(),
@@ -156,8 +156,7 @@ public class AntWorkspaceResolver extends DataType {
 
         public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
                 throws ParseException {
-            Map<ModuleDescriptor, File> mds = getModuleDescriptors();
-            for (Entry<ModuleDescriptor, File> md : mds.entrySet()) {
+            for (Entry<ModuleDescriptor, File> md : getModuleDescriptors().entrySet()) {
                 ResolvedModuleRevision rmr = checkCandidate(dd, md.getKey(),
                     getProjectName(md.getValue()));
                 if (rmr != null) {
@@ -169,7 +168,7 @@ public class AntWorkspaceResolver extends DataType {
 
         @Override
         protected List<Artifact> createWorkspaceArtifacts(ModuleDescriptor md) {
-            List<Artifact> res = new ArrayList<Artifact>();
+            List<Artifact> res = new ArrayList<>();
 
             for (WorkspaceArtifact wa : artifacts) {
                 String name = wa.name;
@@ -209,10 +208,10 @@ public class AntWorkspaceResolver extends DataType {
         public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
             // Not much to do here - downloads are not required for workspace projects.
             DownloadReport dr = new DownloadReport();
-            for (int i = 0; i < artifacts.length; i++) {
-                ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
+            for (Artifact artifact : artifacts) {
+                ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
                 dr.addArtifactReport(adr);
-                URL url = artifacts[i].getUrl();
+                URL url = artifact.getUrl();
                 if (url == null || !url.getProtocol().equals("file")) {
                     // this is not an artifact managed by this resolver
                     adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -227,7 +226,7 @@ public class AntWorkspaceResolver extends DataType {
                 adr.setLocalFile(f);
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(0);
-                Message.verbose("\t[IN WORKSPACE] " + artifacts[i]);
+                Message.verbose("\t[IN WORKSPACE] " + artifact);
             }
             return dr;
         }

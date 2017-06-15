@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
@@ -110,10 +110,8 @@ public class IvyVar extends IvyTask {
                     }
                 }
             }
-            for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
-                String name = (String) iter.next();
-                String value = (String) props.get(name);
-                settings.setVariable(getVarName(name), value);
+            for (Map.Entry<Object, Object> entry : props.entrySet()) {
+                settings.setVariable(getVarName((String) entry.getKey()), (String) entry.getValue());
             }
         }
     }

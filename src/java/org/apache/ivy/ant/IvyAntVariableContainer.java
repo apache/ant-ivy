@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,7 +29,7 @@ import org.apache.tools.ant.taskdefs.Property;
 
 class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVariableContainer {
 
-    private Map overwrittenProperties = new HashMap();
+    private Map<String, String> overwrittenProperties = new HashMap<>();
 
     private Project project;
 
@@ -39,7 +38,7 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
     }
 
     public String getVariable(String name) {
-        String r = (String) overwrittenProperties.get(name);
+        String r = overwrittenProperties.get(name);
         if (r == null) {
             r = project.getProperty(name);
         }
@@ -73,14 +72,12 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
      *            be used as property names suffix
      */
     public void updateProject(String id) {
-        Map r = new HashMap(super.getVariables());
+        Map<String, String> r = new HashMap<>(super.getVariables());
         r.putAll(overwrittenProperties);
-        for (Iterator it = r.entrySet().iterator(); it.hasNext();) {
-            Entry entry = (Entry) it.next();
-
-            setPropertyIfNotSet((String) entry.getKey(), (String) entry.getValue());
+        for (Entry<String, String> entry : r.entrySet()) {
+            setPropertyIfNotSet(entry.getKey(), entry.getValue());
             if (id != null) {
-                setPropertyIfNotSet((String) entry.getKey() + "." + id, (String) entry.getValue());
+                setPropertyIfNotSet(entry.getKey() + "." + id, entry.getValue());
             }
         }
 
@@ -102,7 +99,8 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
     @SuppressWarnings("unchecked")
     public Object clone() {
         IvyAntVariableContainer result = (IvyAntVariableContainer) super.clone();
-        result.overwrittenProperties = (HashMap) ((HashMap) this.overwrittenProperties).clone();
+        result.overwrittenProperties = (HashMap<String, String>) ((HashMap<String, String>) this.overwrittenProperties)
+                .clone();
         return result;
     }
 }
