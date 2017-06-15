@@ -82,30 +82,26 @@ This table gives some statistics about the dependency resolution. Each line corr
 
 
 * modules +
-<ul>
 
-* number +
-This is the total number of dependency modules resolved in this configuration, including transitive ones
+	** number +
+	This is the total number of dependency modules resolved in this configuration, including transitive ones
 
-* search +
-This is the number of dependency modules that required a repository access. The repository access is needed if the module is not yet in cache, or if a latest version is required, or in some other cases (depending on checkModified, for instance)
+	** search +
+	This is the number of dependency modules that required a repository access. The repository access is needed if the module is not yet in cache, or if a latest version is required, or in some other cases (depending on checkModified, for instance)
 
-* dwnlded +
-This is the number of dependency ivy files downloaded from the repository. This number can be less than the total number of modules even with a clean cache, if no ivy file is provided for some dependencies.
+	** dwnlded +
+	This is the number of dependency ivy files downloaded from the repository. This number can be less than the total number of modules even with a clean cache, if no ivy file is provided for some dependencies.
 
-* evicted +
-This is the number of dependency module evicted by conflict managers.
+	** evicted +
+	This is the number of dependency module evicted by conflict managers.
 
-<li>artifacts</li>
+* artifacts +
 
+	** number +
+	This is the total number of artifacts resolved in the given configuration.
 
-* number +
-This is the total number of artifacts resolved in the given configuration.
-
-* dwnlded +
-This is the number of artifacts actually downloaded from the repository.
-
-</ul>
+	** dwnlded +
+	This is the number of artifacts actually downloaded from the repository.
 
 
 == Inline mode

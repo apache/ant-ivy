@@ -2,7 +2,7 @@
 Buildfile: /ivy/dual/project/build.xml
 
 resolve:
-[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615193455 :: http://ant.apache.org/ivy/ ::
 [ivy:retrieve] :: loading settings :: file = /ivy/dual/settings/ivysettings.xml
 [ivy:retrieve] :: resolving dependencies :: org.apache#hello-ivy;working@apache
 [ivy:retrieve] 	confs: [default]
@@ -10,19 +10,18 @@ resolve:
 [ivy:retrieve] 	found commons-logging#commons-logging;1.0.4 in ibiblio
 [ivy:retrieve] 	found commons-lang#commons-lang;2.6 in ibiblio
 [ivy:retrieve] downloading https://repo1.maven.org/maven2/commons-httpclient/commons-httpclient/2.0.2/commons-httpclient-2.0.2.jar ...
-[ivy:retrieve] .......................
-[ivy:retrieve] .. (220kB)
+[ivy:retrieve] ......................... (220kB)
 [ivy:retrieve] .. (0kB)
-[ivy:retrieve] 	[SUCCESSFUL ] commons-httpclient#commons-httpclient;2.0.2!commons-httpclient.jar (3081ms)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-httpclient#commons-httpclient;2.0.2!commons-httpclient.jar (2849ms)
 [ivy:retrieve] downloading https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar ...
 [ivy:retrieve] ............................. (277kB)
 [ivy:retrieve] .. (0kB)
-[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.6!commons-lang.jar (2464ms)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.6!commons-lang.jar (2240ms)
 [ivy:retrieve] downloading https://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar ...
 [ivy:retrieve] ................ (37kB)
 [ivy:retrieve] .. (0kB)
-[ivy:retrieve] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.4!commons-logging.jar (1290ms)
-[ivy:retrieve] :: resolution report :: resolve 2211ms :: artifacts dl 6841ms
+[ivy:retrieve] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.4!commons-logging.jar (1350ms)
+[ivy:retrieve] :: resolution report :: resolve 1927ms :: artifacts dl 6443ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -31,18 +30,18 @@ resolve:
 	---------------------------------------------------------------------
 [ivy:retrieve] :: retrieving :: org.apache#hello-ivy
 [ivy:retrieve] 	confs: [default]
-[ivy:retrieve] 	3 artifacts copied, 0 already retrieved (534kB/14ms)
+[ivy:retrieve] 	3 artifacts copied, 0 already retrieved (534kB/7ms)
 
 run:
     [mkdir] Created dir: /ivy/dual/project/build
     [javac] Compiling 1 source file to /ivy/dual/project/build
      [java] standard message : Hello Ivy!
      [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy!
-     [java] Jun 15, 2017 4:46:21 PM org.apache.commons.httpclient.HttpMethodBase processRedirectResponse
+     [java] Jun 15, 2017 7:36:24 PM org.apache.commons.httpclient.HttpMethodBase processRedirectResponse
      [java] WARNING: Redirect from protocol http to https is not supported
      [java] head status code with httpclient: 301
      [java] now check if httpclient dependency on commons-logging has been realized
      [java] found logging class in classpath: interface org.apache.commons.logging.Log
 
 BUILD SUCCESSFUL
-Total time: 13 seconds
+Total time: 12 seconds

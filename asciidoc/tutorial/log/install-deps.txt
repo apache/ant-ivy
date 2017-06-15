@@ -6,7 +6,7 @@ load-ivy:
 init-ivy:
 
 maven2-deps:
-[ivy:install] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:install] :: Apache Ivy 2.5.0 - 20170615193455 :: http://ant.apache.org/ivy/ ::
 [ivy:install] :: loading settings :: file = /ivy/build-a-ivy-repository/settings/ivysettings-basic.xml
 [ivy:install] :: installing org.hibernate#hibernate;3.2.5.ga ::
 [ivy:install] :: resolving dependencies ::
@@ -39,43 +39,36 @@ maven2-deps:
 [ivy:install] 	found opensymphony#oscache;2.1 in libraries
 [ivy:install] 	found proxool#proxool;0.8.3 in libraries
 [ivy:install] :: downloading artifacts to cache ::
-[ivy:install] downloading https://repo1.maven.org/maven2/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga-sources.jar ...
-[ivy:install] ...........................
-[ivy:install] ......................
-[ivy:install] ...........................
-[ivy:install] .......................
-[ivy:install] ..... (1470kB)
-[ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] org.hibernate#hibernate;3.2.5.ga!hibernate.jar(source) (7476ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga.jar ...
-[ivy:install] ..........................................
-[ivy:install] ..............................
-[ivy:install] ................................
-[ivy:install] ..................................
-[ivy:install] ............ (2202kB)
+[ivy:install] ......................
+[ivy:install] ................
+[ivy:install] ...................
+[ivy:install] .................................
+[ivy:install] ............................................................ (2202kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] org.hibernate#hibernate;3.2.5.ga!hibernate.jar (7618ms)
+[ivy:install] 	[SUCCESSFUL ] org.hibernate#hibernate;3.2.5.ga!hibernate.jar (9026ms)
+[ivy:install] downloading https://repo1.maven.org/maven2/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga-sources.jar ...
+[ivy:install] ....................................................................................................... (1470kB)
+[ivy:install] .. (0kB)
+[ivy:install] 	[SUCCESSFUL ] org.hibernate#hibernate;3.2.5.ga!hibernate.jar(source) (2658ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga-javadoc.jar ...
-[ivy:install] .....................................................................................................................................................
-[ivy:install] ...........................................................................
-[ivy:install] ..................................................................................................................
-[ivy:install] ................................................................................................
-[ivy:install] .............................................................................................................................
-[ivy:install] ... (7352kB)
+[ivy:install] ......................................................................................................................................................................................
+[ivy:install] ..............................................................................................................................................................................................................................
+[ivy:install] ............................................................................. (7352kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] org.hibernate#hibernate;3.2.5.ga!hibernate.jar(javadoc) (8997ms)
+[ivy:install] 	[SUCCESSFUL ] org.hibernate#hibernate;3.2.5.ga!hibernate.jar(javadoc) (4739ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar ...
 [ivy:install] ........................ (203kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] net.sf.ehcache#ehcache;1.2.3!ehcache.jar (1500ms)
+[ivy:install] 	[SUCCESSFUL ] net.sf.ehcache#ehcache;1.2.3!ehcache.jar (1293ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar ...
 [ivy:install] ................ (37kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.4!commons-logging.jar (1320ms)
+[ivy:install] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.4!commons-logging.jar (1226ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar ...
 [ivy:install] ........ (16kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] asm#asm-attrs;1.5.3!asm-attrs.jar (1339ms)
+[ivy:install] 	[SUCCESSFUL ] asm#asm-attrs;1.5.3!asm-attrs.jar (1330ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar ...
 [ivy:install] ............................... (306kB)
 [ivy:install] .. (0kB)
@@ -83,90 +76,90 @@ maven2-deps:
 [ivy:install] downloading https://repo1.maven.org/maven2/antlr/antlr/2.7.6/antlr-2.7.6.jar ...
 [ivy:install] ....................................... (433kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] antlr#antlr;2.7.6!antlr.jar (1640ms)
+[ivy:install] 	[SUCCESSFUL ] antlr#antlr;2.7.6!antlr.jar (1331ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/cglib/cglib/2.1_3/cglib-2.1_3.jar ...
 [ivy:install] ............................. (275kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] cglib#cglib;2.1_3!cglib.jar (1534ms)
+[ivy:install] 	[SUCCESSFUL ] cglib#cglib;2.1_3!cglib.jar (1299ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/asm/asm/1.5.3/asm-1.5.3.jar ...
 [ivy:install] ........... (25kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] asm#asm;1.5.3!asm.jar (1226ms)
+[ivy:install] 	[SUCCESSFUL ] asm#asm;1.5.3!asm.jar (1257ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1.jar ...
-[ivy:install] ....................... (171kB)
+[ivy:install] ...................... (171kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] commons-collections#commons-collections;2.1.1!commons-collections.jar (1313ms)
+[ivy:install] 	[SUCCESSFUL ] commons-collections#commons-collections;2.1.1!commons-collections.jar (1434ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/commons-collections/commons-collections/2.1/commons-collections-2.1.jar ...
 [ivy:install] ...................... (161kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] commons-collections#commons-collections;2.1!commons-collections.jar (1348ms)
+[ivy:install] 	[SUCCESSFUL ] commons-collections#commons-collections;2.1!commons-collections.jar (1228ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/ant/ant/1.6.5/ant-1.6.5.jar ...
-[ivy:install] ............................................................................ (1009kB)
+[ivy:install] ........................................................................... (1009kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] ant#ant;1.6.5!ant.jar (2154ms)
+[ivy:install] 	[SUCCESSFUL ] ant#ant;1.6.5!ant.jar (1541ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/swarmcache/swarmcache/1.0RC2/swarmcache-1.0RC2.jar ...
 [ivy:install] ............. (29kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] swarmcache#swarmcache;1.0RC2!swarmcache.jar (1223ms)
+[ivy:install] 	[SUCCESSFUL ] swarmcache#swarmcache;1.0RC2!swarmcache.jar (2615ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jboss/jboss-cache/1.2.2/jboss-cache-1.2.2.jar ...
 [ivy:install] .................................. (365kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jboss#jboss-cache;1.2.2!jboss-cache.jar (1413ms)
+[ivy:install] 	[SUCCESSFUL ] jboss#jboss-cache;1.2.2!jboss-cache.jar (1476ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jgroups/jgroups-all/2.2.8/jgroups-all-2.2.8.jar ...
 [ivy:install] .............................................................................................................. (1573kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jgroups#jgroups-all;2.2.8!jgroups-all.jar (2277ms)
+[ivy:install] 	[SUCCESSFUL ] jgroups#jgroups-all;2.2.8!jgroups-all.jar (2002ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/c3p0/c3p0/0.9.1/c3p0-0.9.1.jar ...
 [ivy:install] ................................................. (594kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] c3p0#c3p0;0.9.1!c3p0.jar (1637ms)
+[ivy:install] 	[SUCCESSFUL ] c3p0#c3p0;0.9.1!c3p0.jar (1481ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/opensymphony/oscache/2.1/oscache-2.1.jar ...
 [ivy:install] ................... (111kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] opensymphony#oscache;2.1!oscache.jar (1303ms)
+[ivy:install] 	[SUCCESSFUL ] opensymphony#oscache;2.1!oscache.jar (1327ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/proxool/proxool/0.8.3/proxool-0.8.3.jar ...
 [ivy:install] ......................................... (464kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] proxool#proxool;0.8.3!proxool.jar (1562ms)
+[ivy:install] 	[SUCCESSFUL ] proxool#proxool;0.8.3!proxool.jar (1538ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.2/commons-logging-1.0.2.jar ...
 [ivy:install] ........... (25kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.2!commons-logging.jar (1223ms)
+[ivy:install] 	[SUCCESSFUL ] commons-logging#commons-logging;1.0.2!commons-logging.jar (1224ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jboss/jboss-system/4.0.2/jboss-system-4.0.2.jar ...
 [ivy:install] .......................... (227kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jboss#jboss-system;4.0.2!jboss-system.jar (1438ms)
+[ivy:install] 	[SUCCESSFUL ] jboss#jboss-system;4.0.2!jboss-system.jar (1332ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jboss/jboss-common/4.0.2/jboss-common-4.0.2.jar ...
 [ivy:install] ........................................ (457kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jboss#jboss-common;4.0.2!jboss-common.jar (1537ms)
+[ivy:install] 	[SUCCESSFUL ] jboss#jboss-common;4.0.2!jboss-common.jar (1332ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jboss/jboss-minimal/4.0.2/jboss-minimal-4.0.2.jar ...
 [ivy:install] ...................... (163kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jboss#jboss-minimal;4.0.2!jboss-minimal.jar (1533ms)
+[ivy:install] 	[SUCCESSFUL ] jboss#jboss-minimal;4.0.2!jboss-minimal.jar (1329ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jboss/jboss-j2se/200504122039/jboss-j2se-200504122039.jar ...
-[ivy:install] .................................. (350kB)
+[ivy:install] ................................. (350kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jboss#jboss-j2se;200504122039!jboss-j2se.jar (1435ms)
+[ivy:install] 	[SUCCESSFUL ] jboss#jboss-j2se;200504122039!jboss-j2se.jar (1434ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/concurrent/concurrent/1.3.4/concurrent-1.3.4.jar ...
 [ivy:install] ....................... (184kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] concurrent#concurrent;1.3.4!concurrent.jar (1310ms)
+[ivy:install] 	[SUCCESSFUL ] concurrent#concurrent;1.3.4!concurrent.jar (1330ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/jgroups/jgroups-all/2.2.7/jgroups-all-2.2.7.jar ...
-[ivy:install] .................................................................................................................. (1613kB)
+[ivy:install] ................................................................................................................. (1613kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] jgroups#jgroups-all;2.2.7!jgroups-all.jar (2689ms)
+[ivy:install] 	[SUCCESSFUL ] jgroups#jgroups-all;2.2.7!jgroups-all.jar (1749ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/slide/webdavlib/2.0/webdavlib-2.0.jar ...
 [ivy:install] .................... (128kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] slide#webdavlib;2.0!webdavlib.jar (1321ms)
+[ivy:install] 	[SUCCESSFUL ] slide#webdavlib;2.0!webdavlib.jar (1322ms)
 [ivy:install] downloading https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar ...
 [ivy:install] ......................................................................... (986kB)
 [ivy:install] .. (0kB)
-[ivy:install] 	[SUCCESSFUL ] xerces#xercesImpl;2.6.2!xercesImpl.jar (1914ms)
+[ivy:install] 	[SUCCESSFUL ] xerces#xercesImpl;2.6.2!xercesImpl.jar (1540ms)
 [ivy:install] :: installing in my-repository ::
-[ivy:install] 	published hibernate to /ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/sources/hibernate-3.2.5.ga.jar
 [ivy:install] 	published hibernate to /ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/jars/hibernate-3.2.5.ga.jar
+[ivy:install] 	published hibernate to /ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/sources/hibernate-3.2.5.ga.jar
 [ivy:install] 	published hibernate to /ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/javadocs/hibernate-3.2.5.ga.jar
 [ivy:install] 	published ivy to /ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/ivys/ivy-3.2.5.ga.xml
 [ivy:install] 	published ehcache to /ivy/build-a-ivy-repository/myrepository/no-namespace/net.sf.ehcache/ehcache/jars/ehcache-1.2.3.jar
@@ -222,7 +215,7 @@ maven2-deps:
 [ivy:install] 	published xercesImpl to /ivy/build-a-ivy-repository/myrepository/no-namespace/xerces/xercesImpl/jars/xercesImpl-2.6.2.jar
 [ivy:install] 	published ivy to /ivy/build-a-ivy-repository/myrepository/no-namespace/xerces/xercesImpl/ivys/ivy-2.6.2.xml
 [ivy:install] :: install resolution report ::
-[ivy:install] :: resolution report :: resolve 0ms :: artifacts dl 62734ms
+[ivy:install] :: resolution report :: resolve 0ms :: artifacts dl 52845ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|

@@ -4,7 +4,7 @@ Buildfile: /ivy/dependence/depender/build.xml
 clean:
 
 resolve:
-[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615193455 :: http://ant.apache.org/ivy/ ::
 [ivy:retrieve] :: loading settings :: file = /ivy/dependence/settings/ivysettings.xml
 [ivy:retrieve] :: resolving dependencies :: org.apache#depender;working@apache
 [ivy:retrieve] 	confs: [default]
@@ -15,7 +15,7 @@ resolve:
 [ivy:retrieve] .. (1kB)
 [ivy:retrieve] .. (0kB)
 [ivy:retrieve] 	[SUCCESSFUL ] org.apache#dependee;1!dependee.jar (3ms)
-[ivy:retrieve] :: resolution report :: resolve 75ms :: artifacts dl 6ms
+[ivy:retrieve] :: resolution report :: resolve 73ms :: artifacts dl 5ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -24,7 +24,7 @@ resolve:
 	---------------------------------------------------------------------
 [ivy:retrieve] :: retrieving :: org.apache#depender
 [ivy:retrieve] 	confs: [default]
-[ivy:retrieve] 	2 artifacts copied, 0 already retrieved (279kB/7ms)
+[ivy:retrieve] 	2 artifacts copied, 0 already retrieved (279kB/6ms)
 
 compile:
     [mkdir] Created dir: /ivy/dependence/depender/build/classes

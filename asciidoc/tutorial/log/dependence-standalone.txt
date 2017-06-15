@@ -2,17 +2,17 @@
 Buildfile: /ivy/dependence/dependee/build.xml
 
 resolve:
-[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615193455 :: http://ant.apache.org/ivy/ ::
 [ivy:retrieve] :: loading settings :: file = /ivy/dependence/settings/ivysettings.xml
 [ivy:retrieve] :: resolving dependencies :: org.apache#dependee;working@apache
 [ivy:retrieve] 	confs: [default]
 [ivy:retrieve] 	found commons-lang#commons-lang;2.6 in libraries
 [ivy:retrieve] downloading https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar ...
-[ivy:retrieve] ......................
-[ivy:retrieve] ....... (277kB)
+[ivy:retrieve] .........................
+[ivy:retrieve] .... (277kB)
 [ivy:retrieve] .. (0kB)
-[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.6!commons-lang.jar (3127ms)
-[ivy:retrieve] :: resolution report :: resolve 1426ms :: artifacts dl 3129ms
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.6!commons-lang.jar (2899ms)
+[ivy:retrieve] :: resolution report :: resolve 2967ms :: artifacts dl 2900ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -32,7 +32,7 @@ jar:
       [jar] Building jar: /ivy/dependence/dependee/build/dependee.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache#dependee;working@apache :: 1 :: release :: Thu Jun 15 16:46:27 IST 2017
+[ivy:publish] :: delivering :: org.apache#dependee;working@apache :: 1 :: release :: Thu Jun 15 19:36:31 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/dependence/dependee/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache#dependee
 [ivy:publish] 	published dependee to /ivy/dependence/settings/repository/dependee-1.jar
@@ -40,4 +40,4 @@ publish:
      [echo] project dependee released with version 1
 
 BUILD SUCCESSFUL
-Total time: 5 seconds
+Total time: 6 seconds

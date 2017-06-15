@@ -4,7 +4,7 @@ Buildfile: /ivy/multi-project/build.xml
 load-ivy:
 
 buildlist:
-[ivy:buildlist] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:buildlist] :: Apache Ivy 2.5.0 - 20170615193455 :: http://ant.apache.org/ivy/ ::
 [ivy:buildlist] :: loading settings :: url = jar:file://home/ivy/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
 
 publish-all:
@@ -43,7 +43,7 @@ jar:
       [jar] Building jar: /ivy/multi-project/projects/version/build/version.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache.ivy.example#version;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 16:49:36 IST 2017
+[ivy:publish] :: delivering :: org.apache.ivy.example#version;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 19:39:37 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/multi-project/projects/version/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache.ivy.example#version
 [ivy:publish] 	published version to /ivy/multi-project/repository/shared/org.apache.ivy.example/version/1.0-dev-b1.part/jars/version.jar
@@ -78,8 +78,8 @@ resolve:
 [ivy:resolve] downloading https://repo1.maven.org/maven2/commons-cli/commons-cli/1.4/commons-cli-1.4.jar ...
 [ivy:resolve] ............... (52kB)
 [ivy:resolve] .. (0kB)
-[ivy:resolve] 	[SUCCESSFUL ] commons-cli#commons-cli;1.4!commons-cli.jar (1826ms)
-[ivy:resolve] :: resolution report :: resolve 9015ms :: artifacts dl 1830ms
+[ivy:resolve] 	[SUCCESSFUL ] commons-cli#commons-cli;1.4!commons-cli.jar (1709ms)
+[ivy:resolve] :: resolution report :: resolve 7905ms :: artifacts dl 1714ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -98,7 +98,7 @@ jar:
       [jar] Building jar: /ivy/multi-project/projects/list/build/list.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache.ivy.example#list;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 16:49:48 IST 2017
+[ivy:publish] :: delivering :: org.apache.ivy.example#list;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 19:39:48 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/multi-project/projects/list/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache.ivy.example#list
 [ivy:publish] 	published list to /ivy/multi-project/repository/shared/org.apache.ivy.example/list/1.0-dev-b1.part/jars/list.jar
@@ -134,12 +134,13 @@ resolve:
 [ivy:resolve] .. (0kB)
 [ivy:resolve] 	[SUCCESSFUL ] org.apache.ivy.example#list;1.0-dev-b1!list.jar (2ms)
 [ivy:resolve] downloading https://repo1.maven.org/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar ...
-[ivy:resolve] ............................
 [ivy:resolve] ......................
-[ivy:resolve] ........ (733kB)
+[ivy:resolve] .............
+[ivy:resolve] .................
+[ivy:resolve] ..... (733kB)
 [ivy:resolve] .. (0kB)
-[ivy:resolve] 	[SUCCESSFUL ] org.apache.commons#commons-collections4;4.1!commons-collections4.jar (4794ms)
-[ivy:resolve] :: resolution report :: resolve 9842ms :: artifacts dl 4799ms
+[ivy:resolve] 	[SUCCESSFUL ] org.apache.commons#commons-collections4;4.1!commons-collections4.jar (6019ms)
+[ivy:resolve] :: resolution report :: resolve 8617ms :: artifacts dl 6024ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -158,7 +159,7 @@ jar:
       [jar] Building jar: /ivy/multi-project/projects/find/build/find.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache.ivy.example#find;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 16:50:04 IST 2017
+[ivy:publish] :: delivering :: org.apache.ivy.example#find;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 19:40:04 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/multi-project/projects/find/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache.ivy.example#find
 [ivy:publish] 	published find to /ivy/multi-project/repository/shared/org.apache.ivy.example/find/1.0-dev-b1.part/jars/find.jar
@@ -187,7 +188,7 @@ resolve:
 [ivy:resolve] 	[1.0-dev-b1] org.apache.ivy.example#version;latest.integration
 [ivy:resolve] 	found org.apache.ivy.example#list;1.0-dev-b1 in shared
 [ivy:resolve] 	[1.0-dev-b1] org.apache.ivy.example#list;latest.integration
-[ivy:resolve] :: resolution report :: resolve 2045ms :: artifacts dl 1ms
+[ivy:resolve] :: resolution report :: resolve 1837ms :: artifacts dl 1ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -205,7 +206,7 @@ jar:
       [jar] Building jar: /ivy/multi-project/projects/size/build/size.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache.ivy.example#size;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 16:50:08 IST 2017
+[ivy:publish] :: delivering :: org.apache.ivy.example#size;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 19:40:07 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/multi-project/projects/size/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache.ivy.example#size
 [ivy:publish] 	published size to /ivy/multi-project/repository/shared/org.apache.ivy.example/size/1.0-dev-b1.part/jars/size.jar
@@ -242,12 +243,12 @@ resolve:
 [ivy:resolve] downloading /ivy/multi-project/repository/shared/org.apache.ivy.example/size/1.0-dev-b1/jars/size.jar ...
 [ivy:resolve] .. (1kB)
 [ivy:resolve] .. (0kB)
-[ivy:resolve] 	[SUCCESSFUL ] org.apache.ivy.example#size;1.0-dev-b1!size.jar (2ms)
+[ivy:resolve] 	[SUCCESSFUL ] org.apache.ivy.example#size;1.0-dev-b1!size.jar (1ms)
 [ivy:resolve] downloading /ivy/multi-project/repository/shared/org.apache.ivy.example/find/1.0-dev-b1/jars/find.jar ...
 [ivy:resolve] .. (3kB)
 [ivy:resolve] .. (0kB)
 [ivy:resolve] 	[SUCCESSFUL ] org.apache.ivy.example#find;1.0-dev-b1!find.jar (2ms)
-[ivy:resolve] :: resolution report :: resolve 3198ms :: artifacts dl 5ms
+[ivy:resolve] :: resolution report :: resolve 2480ms :: artifacts dl 6ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -257,7 +258,7 @@ resolve:
 	---------------------------------------------------------------------
 [ivy:retrieve] :: retrieving :: org.apache.ivy.example#sizewhere
 [ivy:retrieve] 	confs: [core, standalone]
-[ivy:retrieve] 	6 artifacts copied, 0 already retrieved (795kB/6ms)
+[ivy:retrieve] 	6 artifacts copied, 0 already retrieved (795kB/5ms)
 
 compile:
     [javac] Compiling 2 source files to /ivy/multi-project/projects/sizewhere/build/classes
@@ -266,7 +267,7 @@ jar:
       [jar] Building jar: /ivy/multi-project/projects/sizewhere/build/sizewhere.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache.ivy.example#sizewhere;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 16:50:12 IST 2017
+[ivy:publish] :: delivering :: org.apache.ivy.example#sizewhere;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 19:40:11 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/multi-project/projects/sizewhere/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache.ivy.example#sizewhere
 [ivy:publish] 	published sizewhere to /ivy/multi-project/repository/shared/org.apache.ivy.example/sizewhere/1.0-dev-b1.part/jars/sizewhere.jar
@@ -305,8 +306,8 @@ resolve:
 [ivy:resolve] downloading /ivy/multi-project/repository/shared/org.apache.ivy.example/sizewhere/1.0-dev-b1/jars/sizewhere.jar ...
 [ivy:resolve] .. (2kB)
 [ivy:resolve] .. (0kB)
-[ivy:resolve] 	[SUCCESSFUL ] org.apache.ivy.example#sizewhere;1.0-dev-b1!sizewhere.jar (2ms)
-[ivy:resolve] :: resolution report :: resolve 4611ms :: artifacts dl 7ms
+[ivy:resolve] 	[SUCCESSFUL ] org.apache.ivy.example#sizewhere;1.0-dev-b1!sizewhere.jar (3ms)
+[ivy:resolve] :: resolution report :: resolve 3486ms :: artifacts dl 6ms
 	---------------------------------------------------------------------
 	|                  |            modules            ||   artifacts   |
 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
@@ -315,7 +316,7 @@ resolve:
 	---------------------------------------------------------------------
 [ivy:retrieve] :: retrieving :: org.apache.ivy.example#console
 [ivy:retrieve] 	confs: [default]
-[ivy:retrieve] 	7 artifacts copied, 0 already retrieved (798kB/5ms)
+[ivy:retrieve] 	7 artifacts copied, 0 already retrieved (798kB/4ms)
 
 compile:
     [javac] Compiling 1 source file to /ivy/multi-project/projects/console/build/classes
@@ -324,7 +325,7 @@ jar:
       [jar] Building jar: /ivy/multi-project/projects/console/build/console.jar
 
 publish:
-[ivy:publish] :: delivering :: org.apache.ivy.example#console;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 16:50:19 IST 2017
+[ivy:publish] :: delivering :: org.apache.ivy.example#console;working@apache :: 1.0-dev-b1 :: release :: Thu Jun 15 19:40:15 IST 2017
 [ivy:publish] 	delivering ivy file to /ivy/multi-project/projects/console/build/ivy.xml
 [ivy:publish] :: publishing :: org.apache.ivy.example#console
 [ivy:publish] 	published console to /ivy/multi-project/repository/shared/org.apache.ivy.example/console/1.0-dev-b1.part/jars/console.jar
@@ -334,4 +335,4 @@ publish:
      [echo] project console released with version 1.0-dev-b1
 
 BUILD SUCCESSFUL
-Total time: 46 seconds
+Total time: 42 seconds
