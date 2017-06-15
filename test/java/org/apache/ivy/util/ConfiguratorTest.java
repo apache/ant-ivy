@@ -17,17 +17,21 @@
  */
 package org.apache.ivy.util;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  */
-public class ConfiguratorTest extends TestCase {
+public class ConfiguratorTest {
 
     public static class FileTester {
         private File file;
@@ -42,9 +46,9 @@ public class ConfiguratorTest extends TestCase {
     }
 
     public static class City {
-        private List _housings = new ArrayList();
+        private final List<Housing> _housings = new ArrayList<>();
 
-        private List _streets = new ArrayList();
+        private final List<Street> _streets = new ArrayList<>();
 
         private String _name;
 
@@ -56,11 +60,11 @@ public class ConfiguratorTest extends TestCase {
             _name = name;
         }
 
-        public List getHousings() {
+        public List<Housing> getHousings() {
             return _housings;
         }
 
-        public List getStreets() {
+        public List<Street> getStreets() {
             return _streets;
         }
 
@@ -74,13 +78,13 @@ public class ConfiguratorTest extends TestCase {
     }
 
     public static class Street {
-        private Class _clazz;
+        private Class<?> _clazz;
 
-        private List _trees = new ArrayList();
+        private final List<Tree> _trees = new ArrayList<>();
 
-        private List _walkers = new ArrayList();
+        private final List<Person> _walkers = new ArrayList<>();
 
-        public List getTrees() {
+        public List<Tree> getTrees() {
             return _trees;
         }
 
@@ -88,31 +92,31 @@ public class ConfiguratorTest extends TestCase {
             _trees.add(tree);
         }
 
-        public List getWalkers() {
+        public List<Person> getWalkers() {
             return _walkers;
         }
 
-        public void addConfiguredWalker(Map walkerAttributes) {
-            _walkers.add(new Person((String) walkerAttributes.get("name")));
+        public void addConfiguredWalker(Map<String, String> walkerAttributes) {
+            _walkers.add(new Person(walkerAttributes.get("name")));
         }
 
-        public Class getClazz() {
+        public Class<?> getClazz() {
             return _clazz;
         }
 
-        public void setClazz(Class clazz) {
+        public void setClazz(Class<?> clazz) {
             _clazz = clazz;
         }
     }
 
     public static abstract class Housing {
-        private List _rooms = new ArrayList();
+        private final List<Room> _rooms = new ArrayList<>();
 
         private boolean _isEmpty;
 
         private Person _proprietary;
 
-        public List getRooms() {
+        public List<Room> getRooms() {
             return _rooms;
         }
 
@@ -177,7 +181,7 @@ public class ConfiguratorTest extends TestCase {
     }
 
     public static class Person {
-        private String _name;
+        private final String _name;
 
         public Person(String name) {
             _name = name;
@@ -190,16 +194,19 @@ public class ConfiguratorTest extends TestCase {
 
     private Configurator _conf;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         _conf = new Configurator();
     }
 
+    @Test
     public void testSetRoot() {
         City city = new City();
         _conf.setRoot(city);
         assertEquals(city, _conf.getCurrent());
     }
 
+    @Test
     public void testStringAttribute() {
         City city = new City();
         _conf.setRoot(city);
@@ -207,6 +214,7 @@ public class ConfiguratorTest extends TestCase {
         assertEquals("bordeaux", city.getName());
     }
 
+    @Test
     public void testIntAttribute() {
         Flat flat = new Flat();
         _conf.setRoot(flat);
@@ -214,6 +222,7 @@ public class ConfiguratorTest extends TestCase {
         assertEquals(4, flat.getStage());
     }
 
+    @Test
     public void testBooleanAttribute() {
         Housing housing = new House();
         _conf.setRoot(housing);
@@ -231,6 +240,7 @@ public class ConfiguratorTest extends TestCase {
         assertEquals(false, housing.isEmpty());
     }
 
+    @Test
     public void testClassAttribute() {
         Street street = new Street();
         _conf.setRoot(street);
@@ -238,6 +248,7 @@ public class ConfiguratorTest extends TestCase {
         assertEquals(getClass(), street.getClazz());
     }
 
+    @Test
     public void testPersonAttribute() {
         Housing housing = new House();
         _conf.setRoot(housing);
@@ -245,17 +256,19 @@ public class ConfiguratorTest extends TestCase {
         assertEquals("jean", housing.getProprietary().getName());
     }
 
+    @Test
     public void testAddRoom() {
         Housing housing = new House();
         _conf.setRoot(housing);
         _conf.startCreateChild("room");
         assertEquals(1, housing.getRooms().size());
         _conf.setAttribute("surface", "24");
-        assertEquals(24, ((Room) housing.getRooms().get(0)).getSurface());
+        assertEquals(24, housing.getRooms().get(0).getSurface());
         _conf.endCreateChild();
         assertEquals(housing, _conf.getCurrent());
     }
 
+    @Test
     public void testAddConfiguredTree() {
         Street street = new Street();
         _conf.setRoot(street);
@@ -264,10 +277,11 @@ public class ConfiguratorTest extends TestCase {
         _conf.setAttribute("age", "400");
         _conf.endCreateChild();
         assertEquals(1, street.getTrees().size());
-        assertEquals(400, ((Tree) street.getTrees().get(0)).getAge());
+        assertEquals(400, street.getTrees().get(0).getAge());
         assertEquals(street, _conf.getCurrent());
     }
 
+    @Test
     public void testAddConfiguredWalker() {
         Street street = new Street();
         _conf.setRoot(street);
@@ -276,10 +290,11 @@ public class ConfiguratorTest extends TestCase {
         _conf.setAttribute("name", "xavier");
         _conf.endCreateChild();
         assertEquals(1, street.getWalkers().size());
-        assertEquals("xavier", ((Person) street.getWalkers().get(0)).getName());
+        assertEquals("xavier", street.getWalkers().get(0).getName());
         assertEquals(street, _conf.getCurrent());
     }
 
+    @Test
     public void testAddWithTypeDef() throws Exception {
         City city = new City();
         _conf.typeDef("house", House.class.getName());
@@ -300,6 +315,7 @@ public class ConfiguratorTest extends TestCase {
         assertEquals(city, _conf.getCurrent());
     }
 
+    @Test
     public void testNested() throws Exception {
         City city = new City();
         _conf.typeDef("house", House.class.getName());
@@ -313,13 +329,12 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         _conf.endCreateChild();
         assertEquals(city, _conf.getCurrent());
-        assertEquals(2, ((Housing) city.getHousings().get(0)).getRooms().size());
-        assertEquals(20,
-            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0)).getSurface());
-        assertEquals(25,
-            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1)).getSurface());
+        assertEquals(2, city.getHousings().get(0).getRooms().size());
+        assertEquals(20, city.getHousings().get(0).getRooms().get(0).getSurface());
+        assertEquals(25, city.getHousings().get(0).getRooms().get(1).getSurface());
     }
 
+    @Test
     public void testMacro() throws Exception {
         City city = new City();
         _conf.typeDef("house", House.class.getName());
@@ -356,22 +371,18 @@ public class ConfiguratorTest extends TestCase {
         assertEquals(2, city.getHousings().size());
 
         // first castle : 2 default rooms of 10 of surface
-        assertEquals(2, ((Housing) city.getHousings().get(0)).getRooms().size());
-        assertEquals(10,
-            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0)).getSurface());
-        assertEquals(10,
-            ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1)).getSurface());
+        assertEquals(2, city.getHousings().get(0).getRooms().size());
+        assertEquals(10, city.getHousings().get(0).getRooms().get(0).getSurface());
+        assertEquals(10, city.getHousings().get(0).getRooms().get(1).getSurface());
 
         // second castle : 2 default rooms of default surface 40, + one addroom of surface 20
-        assertEquals(3, ((Housing) city.getHousings().get(1)).getRooms().size());
-        assertEquals(40,
-            ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(0)).getSurface());
-        assertEquals(40,
-            ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(1)).getSurface());
-        assertEquals(20,
-            ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(2)).getSurface());
+        assertEquals(3, city.getHousings().get(1).getRooms().size());
+        assertEquals(40, city.getHousings().get(1).getRooms().get(0).getSurface());
+        assertEquals(40, city.getHousings().get(1).getRooms().get(1).getSurface());
+        assertEquals(20, city.getHousings().get(1).getRooms().get(2).getSurface());
     }
 
+    @Test
     public void testFileAttribute() {
         FileTester root = new FileTester();
         _conf.setRoot(root);

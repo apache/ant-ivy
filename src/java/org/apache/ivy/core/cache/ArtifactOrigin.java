@@ -22,7 +22,7 @@ import org.apache.ivy.util.Checks;
 
 /**
  * This class contains information about the origin of an artifact.
- * 
+ *
  * @see org.apache.ivy.plugins.resolver.BasicResolver
  * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
@@ -30,9 +30,22 @@ public class ArtifactOrigin {
     private static final String UNKNOWN = "UNKNOWN";
 
     /**
-     * ArtifactOrigin instance used when the origin is unknown.
+     * @param artifact ditto
+     * @return ArtifactOrigin
+     * @deprecated because of renaming due spell check.
      */
+    @Deprecated
     public static final ArtifactOrigin unkwnown(Artifact artifact) {
+        return unknown(artifact);
+    }
+
+    /**
+     * ArtifactOrigin instance used when the origin is unknown.
+     *
+     * @param artifact ditto
+     * @return ArtifactOrigin
+     */
+    public static final ArtifactOrigin unknown(Artifact artifact) {
         return new ArtifactOrigin(artifact, false, UNKNOWN);
     }
 
@@ -58,7 +71,7 @@ public class ArtifactOrigin {
 
     /**
      * Create a new instance
-     * 
+     *
      * @param artifact
      *            the artifact pointed by this location. Must not be <code>null</code>.
      * @param isLocal
@@ -77,7 +90,7 @@ public class ArtifactOrigin {
 
     /**
      * Is this resource local to this host, i.e. is it on the file system?
-     * 
+     *
      * @return <code>boolean</code> value indicating if the resource is local.
      */
     public boolean isLocal() {
@@ -86,7 +99,7 @@ public class ArtifactOrigin {
 
     /**
      * Return the location of the resource (normally a url)
-     * 
+     *
      * @return the location of the resource
      */
     public String getLocation() {
@@ -99,7 +112,7 @@ public class ArtifactOrigin {
 
     /**
      * Return the artifact that this location is pointing at.
-     * 
+     *
      * @return the artifact that this location is pointing at.
      */
     public Artifact getArtifact() {
@@ -109,8 +122,8 @@ public class ArtifactOrigin {
     /**
      * The last time the resource was checked to be up to date. Maybe <code>null</code> if this
      * information is not actually used by in some case.
-     * 
-     * @return
+     *
+     * @return Long timestamp
      */
     public Long getLastChecked() {
         return lastChecked;
@@ -143,10 +156,7 @@ public class ArtifactOrigin {
 
         ArtifactOrigin that = (ArtifactOrigin) o;
 
-        if (isLocal != that.isLocal) {
-            return false;
-        }
-        if (!location.equals(that.location)) {
+        if (isLocal != that.isLocal || !location.equals(that.location)) {
             return false;
         }
         if (lastChecked == null) {
@@ -156,11 +166,8 @@ public class ArtifactOrigin {
         } else if (!lastChecked.equals(that.lastChecked)) {
             return false;
         }
-        if (exists != that.exists) {
-            return false;
-        }
 
-        return true;
+        return exists == that.exists;
     }
 
     public int hashCode() {

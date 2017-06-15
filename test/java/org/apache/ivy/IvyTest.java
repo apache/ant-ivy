@@ -25,13 +25,18 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-public class IvyTest extends TestCase {
+public class IvyTest {
     private File cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         createCache();
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
@@ -41,10 +46,12 @@ public class IvyTest extends TestCase {
         cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Test
     public void testMultipleInstances() throws Exception {
         // this test checks that IvyContext is properly set and unset when using multiple instances
         // of Ivy. We also check logging, because it heavily relies on IvyContext.

@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
 /**
- * Convenient class used only for uncapitalization Usually use commons lang but here we do not want
+ * Convenient class used only for uncapitalization. Usually use commons lang but here we do not want
  * to have such a dependency for only one feature
  */
 public final class StringUtils {
@@ -46,9 +46,8 @@ public final class StringUtils {
      * Returns the error message associated with the given Throwable. The error message returned
      * will try to be as precise as possible, handling cases where e.getMessage() is not meaningful,
      * like {@link NullPointerException} for instance.
-     * 
-     * @param t
-     *            the throwable to get the error message from
+     *
+     * @param t the throwable to get the error message from
      * @return the error message of the given exception
      */
     public static String getErrorMessage(Throwable t) {
@@ -68,7 +67,7 @@ public final class StringUtils {
 
     /**
      * Returns the exception stack trace as a String.
-     * 
+     *
      * @param e
      *            the exception to get the stack trace from.
      * @return the exception stack trace
@@ -85,18 +84,18 @@ public final class StringUtils {
 
     /**
      * Joins the given object array in one string, each separated by the given separator.
-     * 
+     *
      * Example:
-     * 
+     *
      * <pre>
-     * join(new String[] {"one", "two", "three"}, ", ") -> "one, two, three"
+     * join(new String[] {"one", "two", "three"}, ", ") -&gt; "one, two, three"
      * </pre>
-     * 
+     *
      * @param objs
      *            The array of objects (<code>toString()</code> is used).
      * @param sep
      *            The separator to use.
-     * @return The concatinated string.
+     * @return The concatenated string.
      */
     public static String join(Object[] objs, String sep) {
         StringBuffer buf = new StringBuffer();
@@ -110,7 +109,9 @@ public final class StringUtils {
     }
 
     // basic string codec (same algo as CVS passfile, inspired by ant CVSPass class
-    /** Array contain char conversion data */
+    /**
+     * Array containing char conversion data
+     */
     private static final char[] SHIFTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
             17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 114, 120, 53, 79, 96, 109,
             72, 108, 70, 64, 76, 67, 116, 74, 68, 87, 111, 52, 75, 119, 49, 34, 82, 81, 95, 65,
@@ -130,8 +131,8 @@ public final class StringUtils {
      * Encrypt the given string in a way which anybody having access to this method algorithm can
      * easily decrypt. This is useful only to avoid clear string storage in a file for example, but
      * shouldn't be considered as a real mean of security. This only works with simple characters
-     * (char < 256).
-     * 
+     * (char &lt; 256).
+     *
      * @param str
      *            the string to encrypt
      * @return the encrypted version of the string
@@ -155,7 +156,7 @@ public final class StringUtils {
 
     /**
      * Decrypts a string encrypted with encrypt.
-     * 
+     *
      * @param str
      *            the encrypted string to decrypt
      * @return The decrypted string.

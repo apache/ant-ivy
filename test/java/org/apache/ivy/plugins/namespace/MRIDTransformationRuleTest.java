@@ -18,11 +18,13 @@
 package org.apache.ivy.plugins.namespace;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class MRIDTransformationRuleTest extends TestCase {
+public class MRIDTransformationRuleTest {
 
+    @Test
     public void testTransformation() {
         MRIDTransformationRule r = new MRIDTransformationRule();
         r.addSrc(new MRIDRule("apache", "commons.+", null));

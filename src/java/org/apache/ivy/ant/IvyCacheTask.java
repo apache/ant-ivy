@@ -38,7 +38,7 @@ import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 
 /**
- * Base class for the cache path related classes: cachepath and cachefileset. Most of the behviour
+ * Base class for the cache path related classes: cachepath and cachefileset. Most of the behaviour
  * is common to the two, since only the produced element differs.
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {

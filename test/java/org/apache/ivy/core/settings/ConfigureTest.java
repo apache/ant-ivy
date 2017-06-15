@@ -26,9 +26,14 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ConfigureTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class ConfigureTest {
+    @Test
     public void testDefault() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault();
@@ -43,6 +48,7 @@ public class ConfigureTest extends TestCase {
         assertTrue(ibiblio.isM2compatible());
     }
 
+    @Test
     public void testDefault14() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault14();
@@ -54,6 +60,7 @@ public class ConfigureTest extends TestCase {
         assertTrue(publicResolver instanceof IvyRepResolver);
     }
 
+    @Test
     public void testTypedefWithCustomClasspath() throws Exception {
         Ivy ivy = new Ivy();
         ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings")
@@ -65,6 +72,7 @@ public class ConfigureTest extends TestCase {
         assertEquals("org.apache.ivy.plugins.resolver.CustomResolver", custom.getClass().getName());
     }
 
+    @Test
     public void testTypedefWithCustomClasspathWithFile() throws Exception {
         Ivy ivy = new Ivy();
         ivy.setVariable("ivy.custom.test.dir",

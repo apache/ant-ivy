@@ -17,6 +17,10 @@
  */
 package org.apache.ivy.osgi.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -30,12 +34,15 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
+import org.junit.Before;
+import org.junit.Test;
 
 public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester {
 
     private IvySettings settings;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_WARN));
 
         settings = new IvySettings();
@@ -43,6 +50,7 @@ public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester
         settings.setDefaultCache(new File("build/cache"));
     }
 
+    @Test
     public void testSimple() throws Exception {
         ModuleDescriptor md = OSGiManifestParser.getInstance().parseDescriptor(settings,
             getClass().getResource("MANIFEST_classpath.MF"), true);
@@ -69,6 +77,7 @@ public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester
      *
      * @throws Exception
      */
+    @Test
     public void testFileResource() throws Exception {
         final File manifestFile = new File("test/repositories/osgi/module1/META-INF/MANIFEST.MF");
         assertTrue("Manifest file is either missing or not a file at " + manifestFile.getAbsolutePath(), manifestFile.isFile());

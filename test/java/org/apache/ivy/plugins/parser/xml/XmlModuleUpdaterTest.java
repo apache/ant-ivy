@@ -17,6 +17,12 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -41,18 +47,17 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
-import org.xml.sax.SAXParseException;
+import org.junit.After;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class XmlModuleUpdaterTest {
 
-public class XmlModuleUpdaterTest extends TestCase {
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
+    @After
+    public void tearDown() {
         XmlModuleDescriptorUpdater.LINE_SEPARATOR = System.getProperty("line.separator");
     }
 
+    @Test
     public void testUpdate() throws Exception {
         /*
          * For updated file to be equals to updated.xml, we have to fix the line separator to the
@@ -93,6 +98,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertEquals(expected, updated);
     }
 
+    @Test
     public void testUpdateWithComments() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/"
@@ -110,6 +116,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertEquals(3, dependencies.length);
     }
 
+    @Test
     public void testVariableReplacement() throws Exception {
         /*
          * For updated file to be equals to updated.xml, we have to fix the line separator to the
@@ -191,6 +198,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertEquals(expected, updated);
     }
 
+    @Test
     public void testUpdateWithImportedMappingOverride() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/"
@@ -202,9 +210,10 @@ public class XmlModuleUpdaterTest extends TestCase {
 
         // just make sure that 'confmappingoverride="true"' is declared somewhere in the XML.
         assertTrue("Updated XML doesn't define the confmappingoverride attribute",
-            updatedXml.indexOf("confmappingoverride=\"true\"") != -1);
+            updatedXml.contains("confmappingoverride=\"true\""));
     }
 
+    @Test
     public void testUpdateWithExcludeConfigurations1() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/"
@@ -231,22 +240,16 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertNotNull("myconf4 has been removed", updatedMd.getConfiguration("myconf4"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
     public void testUpdateWithExcludeConfigurations2() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingFile = new File("test/java/org/apache/ivy/plugins/parser/xml/"
                 + "test-update-excludedconfs2.xml").toURI().toURL();
-        try {
-            XmlModuleDescriptorUpdater
-                    .update(settingFile, buffer, getUpdateOptions("release", "mynewrev")
-                            .setConfsToExclude(new String[] {"myconf2"}));
-            fail("IllegalArgumentException hasn't been thrown");
-        } catch (IllegalArgumentException e) {
-            // this is ok
-        } catch (SAXParseException e) {
-            // this is ok too
-        }
+        XmlModuleDescriptorUpdater.update(settingFile, buffer, getUpdateOptions("release", "mynewrev")
+                .setConfsToExclude(new String[] {"myconf2"}));
     }
 
+    @Test
     public void testUpdateWithExcludeConfigurations3() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/"
@@ -279,6 +282,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertNotNull("myconf4 has been removed", updatedMd.getConfiguration("myconf4"));
     }
 
+    @Test
     public void testUpdateWithExcludeConfigurations4() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/"
@@ -297,14 +301,14 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertEquals("Number of published artifacts incorrect", 4, artifacts.length);
 
         // test that the correct configuration has been removed
-        for (int i = 0; i < artifacts.length; i++) {
-            Artifact current = artifacts[i];
-            List currentConfs = Arrays.asList(current.getConfigurations());
+        for (Artifact current : artifacts) {
+            List<String> currentConfs = Arrays.asList(current.getConfigurations());
             assertTrue("myconf2 hasn't been removed for artifact " + current.getName(),
                 !currentConfs.contains("myconf2"));
         }
     }
 
+    @Test
     public void testUpdateWithExcludeConfigurations5() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/"
@@ -322,17 +326,19 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertEquals("Number of dependencies is incorrect", 8, deps.length);
 
         // check that none of the dependencies contains myconf2
-        for (int i = 0; i < deps.length; i++) {
-            String name = deps[i].getDependencyId().getName();
+        for (DependencyDescriptor dep : deps) {
+            String name = dep.getDependencyId().getName();
             assertFalse("Dependency " + name + " shouldn't have myconf2 as module configuration",
-                Arrays.asList(deps[i].getModuleConfigurations()).contains("myconf2"));
-            assertEquals("Dependency " + name
-                    + " shouldn't have a dependency artifact for configuration myconf2", 0,
-                deps[i].getDependencyArtifacts("myconf2").length);
+                Arrays.asList(dep.getModuleConfigurations()).contains("myconf2"));
+            assertEquals(
+                "Dependency " + name
+                        + " shouldn't have a dependency artifact for configuration myconf2",
+                0, dep.getDependencyArtifacts("myconf2").length);
         }
     }
 
     // IVY-1356
+    @Test
     public void testMergedUpdateWithExtendsAndExcludes() throws Exception {
         URL url = XmlModuleUpdaterTest.class.getResource("test-extends-dependencies-exclude.xml");
 
@@ -354,10 +360,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         // test indentation
         String updatedXml = buffer.toString();
         System.out.println(updatedXml);
-        assertTrue(updatedXml
-                .indexOf(XmlModuleDescriptorUpdater.LINE_SEPARATOR
-                        + "\t\t<dependency org=\"myorg\" name=\"mymodule1\" rev=\"1.0\" conf=\"default->default\"/>"
-                        + XmlModuleDescriptorUpdater.LINE_SEPARATOR) != -1);
+        assertTrue(updatedXml.contains(XmlModuleDescriptorUpdater.LINE_SEPARATOR
+                + "\t\t<dependency org=\"myorg\" name=\"mymodule1\" rev=\"1.0\" conf=\"default->default\"/>"
+                + XmlModuleDescriptorUpdater.LINE_SEPARATOR));
     }
 
     private UpdateOptions getUpdateOptions(String status, String revision) {

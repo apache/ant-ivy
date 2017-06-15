@@ -19,12 +19,12 @@ package org.apache.ivy;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
@@ -36,20 +36,23 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  * Fixture easing the development of tests requiring to set up a simple repository with some
  * modules, using micro ivy format to describe the repository. <br/>
  * Example of use:
- * 
+ *
  * <pre>
- * public class MyTest extends TestCase {
+ * public class MyTest {
  *     private TestFixture fixture;
- * 
- *     protected void setUp() throws Exception {
+ *
+ *     @Before
+ *     public void setUp() throws Exception {
  *         fixture = new TestFixture();
  *         // additional setup here
  *     }
- * 
- *     protected void tearDown() throws Exception {
+ *
+ *     @After
+ *     public void tearDown() throws Exception {
  *         fixture.clean();
  *     }
- * 
+ *
+ *     @Test
  *     public void testXXX() throws Exception {
  *         fixture.addMD(&quot;#A;1-&gt; { #B;[1.5,1.6] #C;2.5 }&quot;).addMD(&quot;#B;1.5-&gt;#D;2.0&quot;)
  *                 .addMD(&quot;#B;1.6-&gt;#D;2.0&quot;).addMD(&quot;#C;2.5-&gt;#D;[1.0,1.6]&quot;).addMD(&quot;#D;1.5&quot;)
@@ -62,7 +65,7 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  */
 public class TestFixture {
 
-    private Collection mds = new ArrayList();
+    private final Collection<ModuleDescriptor> mds = new ArrayList<>();
 
     private Ivy ivy;
 
@@ -115,7 +118,7 @@ public class TestFixture {
         return ((FileResource) r.getResource()).getFile();
     }
 
-    public ResolveReport resolve(String mrid) throws MalformedURLException, ParseException,
+    public ResolveReport resolve(String mrid) throws ParseException,
             IOException {
         return ivy.resolve(getIvyFile(mrid), TestHelper.newResolveOptions(getSettings()));
     }

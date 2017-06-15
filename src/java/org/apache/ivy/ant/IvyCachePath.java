@@ -53,7 +53,7 @@ public class IvyCachePath extends IvyCacheTask {
 
     /**
      * @deprecated use setPathid instead
-     * @param id
+     * @param id String
      */
     @Deprecated
     public void setId(String id) {

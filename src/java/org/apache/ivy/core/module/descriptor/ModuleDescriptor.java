@@ -46,51 +46,45 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     public static final String CALLER_ALL_CONFIGURATION = "all";
 
     /**
-     * Returns true if this descriptor is a default one, i.e. one generated for a module not
-     * actually having one.
-     * 
-     * @return
+     * @return true if this descriptor is a default one, i.e. one generated for a module not
+     *         actually having one.
      */
     boolean isDefault();
 
     ModuleRevisionId getModuleRevisionId();
 
     /**
-     * The module revision id returned here is the resolved one, i.e. it is never a latest one. If
-     * the revision has not been resolved, a null revision should be returned by getRevision() of
-     * the returned ModuleRevisionId. This revision must be the same as the module descriptor
-     * resolved revision id unless no module descriptor is defined
-     * 
-     * @return
+     * @return the resolved module revision id; it is never the latest one. If the revision has not
+     *         been resolved, a null revision should be returned by getRevision() of the returned
+     *         ModuleRevisionId. This revision must be the same as the module descriptor resolved
+     *         revision id unless no module descriptor is defined
      */
     ModuleRevisionId getResolvedModuleRevisionId();
 
     /**
-     * This method update the resolved module revision id
-     * 
-     * @param revId
+     * This method updates the resolved module revision id
+     *
+     * @param revId ModuleRevisionId
      */
     void setResolvedModuleRevisionId(ModuleRevisionId revId);
 
     /**
-     * Get the list of parent descriptors imported via an &lt;extends&gt; element. Only directly
-     * imported descriptors are included; the parent's parents are not included.
+     * @return the list of parent descriptors imported via an &lt;extends&gt; element. Only directly
+     *         imported descriptors are included; the parent's parents are not included.
      */
     ExtendsDescriptor[] getInheritedDescriptors();
 
     /**
      * This method update the resolved publication date
-     * 
-     * @param publicationDate
+     *
+     * @param publicationDate Date
      */
     void setResolvedPublicationDate(Date publicationDate);
 
     String getStatus();
 
     /**
-     * May be <code>null</code> if unknown in the descriptor itself.
-     * 
-     * @return The publication date or <code>null</code> when not knwon.
+     * @return the publication date or null when not known in the descriptor itself.
      */
     Date getPublicationDate();
 
@@ -98,14 +92,14 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * The publication date of the module revision should be the date at which it has been
      * published, i.e. in general the date of any of its published artifacts, since all published
      * artifact of a module should follow the same publishing cycle.
+     *
+     * @return Date
      */
     Date getResolvedPublicationDate();
 
     /**
-     * Returns all the configurations declared by this module as an array. This array is never empty
-     * (a 'default' conf is assumed when none is declared in the ivy file)
-     * 
-     * @return all the configurations declared by this module as an array.
+     * @return all the configurations declared by this module as an array. This array is never empty
+     *         (a 'default' conf is assumed when none is declared in the ivy file).
      */
     Configuration[] getConfigurations();
 
@@ -116,48 +110,41 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     Artifact[] getArtifacts(String conf);
 
     /**
-     * Returns all artifacts of this module, excluding the artifact corresponding to the module
-     * descriptor.
-     * 
-     * @return all published artifacts of this module
+     * @return all published artifacts of this module, excluding the artifact corresponding to the
+     *         module descriptor.
      * @see #getMetadataArtifact()
      */
     Artifact[] getAllArtifacts();
 
     /**
-     * @retun The dependencies of the module. If there is no dependencies return an empty array (non
-     *        null)
+     * @return The dependencies of the module. If there are no dependencies return an empty array
+     *         (non null)
      */
     DependencyDescriptor[] getDependencies();
 
     /**
-     * Returns true if the module described by this descriptor dependes directly upon the given
-     * module descriptor
-     * 
-     * @param md
-     * @return
+     * @param matcher VersionMatcher
+     * @param md ModuleDescriptor
+     * @return true if the module described by this descriptor depends directly upon the given
+     *         module descriptor
      */
     boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md);
 
     /**
-     * @param confName
-     * @return
+     * @param confName ditto
+     * @return Configuration
      */
     Configuration getConfiguration(String confName);
 
     /**
-     * Returns the conflict manager to use for the given ModuleId, or <code>null</code> if no
-     * specific conflict manager is associated with the given module id in this module descriptor.
-     * 
-     * @param id
-     * @return
+     * @param id ModuleId
+     * @return the conflict manager to use for the given ModuleId, or null if no specific conflict
+     *         manager is associated with the given module id in this module descriptor.
      */
     ConflictManager getConflictManager(ModuleId id);
 
     /**
-     * Returns the licenses of the module described by this descriptor
-     * 
-     * @return
+     * @return the licenses of the module described by this descriptor
      */
     License[] getLicenses();
 
@@ -171,95 +158,72 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * Writes this module descriptor as an ivy file. If this descriptor was obtained through the
      * parsing of an ivy file, it should keep the layout of the file the most possible similar to
      * the original one.
-     * 
+     *
      * @param ivyFile
      *            the destination ivy file
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     void toIvyFile(File ivyFile) throws ParseException, IOException;
 
     /**
-     * The ModuleDescriptorParser used to parse this module descriptor, null is no parser was used.
-     * 
-     * @return
+     * @return the ModuleDescriptorParser used to parse this module descriptor, null is no parser was used.
      */
     ModuleDescriptorParser getParser();
 
     /**
-     * The resource being the source of this module descriptor, null if no resource corresponds to
-     * this module descriptor
-     * 
-     * @return
+     * @return the resource being the source of this module descriptor, null if no resource
+     *         corresponds to this module descriptor.
      */
     Resource getResource();
 
     /**
-     * Returns the Artifact representing this module descriptor itself.
-     * <p>
      * Even though the module descriptor is never described as a published artifact of a module in
      * the module descriptor itself, it is often useful to consider it as any other artifact of the
      * module. This method allows to access to the Artifact object representing this module
      * descriptor for this purpose.
-     * </p>
-     * 
+     *
      * @return the Artifact representing this module descriptor itself.
      */
     Artifact getMetadataArtifact();
 
     /**
-     * Returns true if this descriptor contains any exclusion rule
-     * 
-     * @return true if this descriptor contains any exclusion rule
+     * @return true if this descriptor contains any exclusion rule.
      */
     boolean canExclude();
 
     /**
-     * Returns true if an exclude rule of this module attached to any of the given configurations
-     * matches the given artifact id, and thus exclude it
-     * 
-     * @param moduleConfs
-     * @param artifactId
-     * @return
+     * @param moduleConfs String[]
+     * @param artifactId ditto
+     * @return true if an exclude rule of this module attached to any of the given configurations
+     *         matches the given artifact id, and thus exclude it
      */
     boolean doesExclude(String[] moduleConfs, ArtifactId artifactId);
 
     /**
-     * Returns an array of all the exclude rules this module descriptor currently holds. Module
-     * Descriptor exclude rules are used to exclude (usually transitive) dependencies for the whole
-     * module.
-     * 
-     * @return an array of {@link ExcludeRule} this module descriptor holds
+     * Module Descriptor exclude rules are used to exclude (usually transitive) dependencies for the
+     * whole module.
+     *
+     * @return an array of all {@link ExcludeRule} this module descriptor currently holds.
      */
     public ExcludeRule[] getAllExcludeRules();
 
     /**
-     * Returns all the dependency descriptor mediators used by this {@link ModuleDescriptor}, as an
-     * instance of {@link ModuleRules}.
-     * <p>
-     * All rules in the {@link ModuleRules} object returned are {@link DependencyDescriptorMediator}
-     * .
-     * </p>
-     * 
-     * @return all the dependency descriptor mediators used by this {@link ModuleDescriptor}.
+     * @return all the {@link DependencyDescriptorMediator}s used by this
+     * {@link ModuleDescriptor}, as an instance of {@link ModuleRules}.
      */
     public ModuleRules/* <DependencyDescriptorMediator> */getAllDependencyDescriptorMediators();
 
     /**
-     * Returns the list of xml namespaces used by extra attributes, as Map from prefix to namespace
-     * URIs.
-     * <p>
-     * The returned list is never <code>null</code>, it is empty when no extra attribute is used or
-     * if extra attributes are used without xml namespaces
-     * </p>
-     * 
      * @return the list of xml namespaces used by extra attributes, as Map from prefix to namespace
-     *         URIs.
+     *         URIs. The returned list is never null, it is empty when no extra attribute is used or
+     *         if extra attributes are used without xml namespaces
      */
     Map<String, String> getExtraAttributesNamespaces();
 
     /**
-     * Returns the custom info provided in the info tag. All the tags except the description are
-     * given. The key is the name of the tag, the value is its content. <br />
-     * 
+     * @return the custom info provided in the info tag. All the tags except the description are
+     *         given. The key is the name of the tag, the value is its content.
      * @deprecated this method is not returning the full content of the extra info: to get the full
      *             structure of the extra infos, use getExtraInfos()
      */
@@ -267,27 +231,23 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
     Map<String, String> getExtraInfo();
 
     /**
-     * Returns a list of extras infos (tag name, attributes and content). All the tags except the
-     * description are given.
-     * 
      * @since 2.4.0
-     * @return
+     * @return a list of extras infos (tag name, attributes and content). All the tags except the
+     *         description are given.
      */
     List<ExtraInfoHolder> getExtraInfos();
 
     /**
-     * Returns content from first extrainfo matching with given tag name
-     * 
      * @since 2.4.0
-     * @return
+     * @param tagName String
+     * @return content from first extrainfo matching with given tag name.
      */
     String getExtraInfoContentByTagName(String tagName);
 
     /**
-     * Returns first extrainfo matching with given tag name
-     * 
      * @since 2.4.0
-     * @return
+     * @param tagName String
+     * @return first extrainfo matching with given tag name.
      */
     ExtraInfoHolder getExtraInfoByTagName(String tagName);
 }

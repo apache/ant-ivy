@@ -21,7 +21,7 @@ public class DefaultMessageLogger extends AbstractMessageLogger {
     private int level = Message.MSG_INFO;
 
     /**
-     * @param level
+     * @param level ditto
      */
     public DefaultMessageLogger(int level) {
         this.level = level;

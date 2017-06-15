@@ -17,12 +17,16 @@
  */
 package org.apache.ivy.osgi.core;
 
+import org.junit.Test;
+
 import java.text.ParseException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public class ManifestHeaderTest extends TestCase {
+public class ManifestHeaderTest {
 
+    @Test
     public void testNormal() throws Exception {
         ManifestHeaderElement simpleValue = new ManifestHeaderElement();
         simpleValue.addValue("value");
@@ -76,6 +80,7 @@ public class ManifestHeaderTest extends TestCase {
         assertEquals(new ManifestHeaderValue(v1), new ManifestHeaderValue(v2));
     }
 
+    @Test
     public void testSpaceAndQuote() throws Exception {
         genericTestEquals("value1;att=value2;att2=other", "value1;att='value2';att2=other");
         genericTestEquals("value1;att=value2;att2=other", "value1;att=  'value2'  ;att2=other");
@@ -84,6 +89,7 @@ public class ManifestHeaderTest extends TestCase {
         genericTestEquals("value1;att=value2;att2=other", "value1;att=\"value2\";att2=other");
     }
 
+    @Test
     public void testReflexivity() throws Exception {
         genericTestEquals("value1;value2", "value2;value1");
         genericTestEquals("value1,value2", "value2,value1");
@@ -93,6 +99,7 @@ public class ManifestHeaderTest extends TestCase {
         genericTestEquals("value1;version=1.2.3;color:=red", "value1;color:=red;version=1.2.3");
     }
 
+    @Test
     public void testSyntaxError() throws Exception {
         genericTestSyntaxError("value1=");
         genericTestSyntaxError("value1;version=1;value2");
@@ -113,6 +120,7 @@ public class ManifestHeaderTest extends TestCase {
         }
     }
 
+    @Test
     public void testSpaceInValue() throws Exception {
         ManifestHeaderValue value = new ManifestHeaderValue("glassfish javax.servlet.3.1.0.b33");
         assertEquals("glassfish javax.servlet.3.1.0.b33", value.getSingleValue());

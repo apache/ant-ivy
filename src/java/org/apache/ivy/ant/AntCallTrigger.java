@@ -33,20 +33,20 @@ import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Property;
 
 /**
- * Triggers an call to an ant target on an event occurence.
+ * Triggers an call to an ant target on an event occurrence.
  * <p>
  * This trigger only works when ivy is called from an ant build file, otherwise the trigger only log
  * a failure.
  * <p>
  * Example of use in an ivysettings file:
- * 
+ *
  * <pre>
  * &lt;ant-call-trigger event=&quot;post-download-artifact&quot; filter=&quot;type=zip&quot;
  * target=&quot;unzip&quot;/&gt;
  * </pre>
- * 
+ *
  * Triggers a call to the target "unzip" for any downloaded artifact of type zip
- * 
+ *
  * @see AntBuildTrigger
  * @since 1.4
  */

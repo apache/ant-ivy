@@ -36,15 +36,8 @@ public class OsgiLatestStrategy extends ComparatorLatestStrategy {
     final class MridComparator implements Comparator<ModuleRevisionId> {
 
         public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
-            Version v1;
-            Version v2;
-            try {
-                v1 = new Version(o1.getRevision());
-                v2 = new Version(o2.getRevision());
-            } catch (ParseException e) {
-                throw new RuntimeException("Uncomparable versions:" + o1.getRevision() + " and "
-                        + o2.getRevision() + " (" + e.getMessage() + ")");
-            }
+            Version v1 = new Version(o1.getRevision());
+            Version v2 = new Version(o2.getRevision());
             try {
                 return v1.compareTo(v2);
             } catch (RuntimeException e) {

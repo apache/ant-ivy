@@ -17,35 +17,35 @@
  */
 package example;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang.WordUtils;
 
 /**
- * Simple hello world example to show how easy it is to retrieve libs with ivy, 
- * including transitive dependencies 
+ * Simple example to show how easy it is to retrieve transitive libs with ivy !!!
  */
-public final class Hello {
+public final class HelloConsole {
     public static void main(String[] args) throws Exception {
-        String  message = "hello ivy !";
+        Option msg = Option.builder("m")
+            .longOpt("message")
+            .hasArg()
+            .desc("the message to capitalize")
+            .build();
+        Options options = new Options();
+        options.addOption(msg);
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine line = parser.parse(options, args);
+
+        String  message = line.getOptionValue("m", "Hello Ivy!");
         System.out.println("standard message : " + message);
-        System.out.println("capitalized by " + WordUtils.class.getName() 
+        System.out.println("capitalized by " + WordUtils.class.getName()
             + " : " + WordUtils.capitalizeFully(message));
-        
-        HttpClient client = new HttpClient();
-        HeadMethod head = new HeadMethod("http://www.ibiblio.org/");
-        client.executeMethod(head);
-        
-        int status = head.getStatusCode();
-        System.out.println("head status code with httpclient: " + status);
-        head.releaseConnection();
-        
-        System.out.println(
-            "now check if httpclient dependency on commons-logging has been realized");
-        Class clss = Class.forName("org.apache.commons.logging.Log");
-        System.out.println("found logging class in classpath: " + clss);
     }
-    
-    private Hello() {
+
+    private HelloConsole() {
     }
 }

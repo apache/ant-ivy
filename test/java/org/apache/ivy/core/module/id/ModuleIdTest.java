@@ -17,10 +17,13 @@
  */
 package org.apache.ivy.core.module.id;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ModuleIdTest extends TestCase {
+import static org.junit.Assert.*;
 
+public class ModuleIdTest {
+
+    @Test
     public void testModuleId() {
         String org = "apache";
         String name = "some-new-module";
@@ -30,8 +33,8 @@ public class ModuleIdTest extends TestCase {
         assertEquals(name, moduleId.getName());
     }
 
-    public void testModuleIdIllegalArgumentException() {
-        String org = "apache";
+    @Test
+    public void testModuleIdIllegalArgumentException1() {
         String name = "some-new-module";
 
         try {
@@ -39,15 +42,15 @@ public class ModuleIdTest extends TestCase {
         } catch (IllegalArgumentException iae) {
             fail("A null should be allowed for argument 'org'.");
         }
-
-        try {
-            new ModuleId(org, null);
-            fail("A IllegalArgumentException should have been thrown for the argument 'name'.");
-        } catch (IllegalArgumentException iae) {
-            // success
-        }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testModuleIdIllegalArgumentException2() {
+        String org = "apache";
+        new ModuleId(org, null);
+    }
+
+    @Test
     public void testEqualsObjectTrue() {
         String org = "apache";
         String name = "some-new-module";
@@ -59,17 +62,20 @@ public class ModuleIdTest extends TestCase {
         assertTrue(moduleId2.equals(moduleId));
     }
 
+    @Test
     public void testEqualsObjectFalse() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
         ModuleId moduleId2 = new ModuleId(null, name);
 
+        assertNotNull(moduleId);
         assertFalse(moduleId.equals(null));
         assertFalse(moduleId.equals(moduleId2));
         assertFalse(moduleId2.equals(moduleId));
     }
 
+    @Test
     public void testEncodeToString() {
         String org = "apache";
         String name = "some-new-module";
@@ -78,6 +84,7 @@ public class ModuleIdTest extends TestCase {
         assertEquals(org + ModuleId.ENCODE_SEPARATOR + name, moduleId.encodeToString());
     }
 
+    @Test
     public void testDecode() {
         String org = "apache";
         String name = "some-new-module";
@@ -87,19 +94,15 @@ public class ModuleIdTest extends TestCase {
         assertEquals(moduleId, moduleId2);
     }
 
+    @Test(expected = NullPointerException.class)
     public void testCompareToNullObject() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
-
-        try {
-            moduleId.compareTo(null);
-            fail("A NullPointerException was expected.");
-        } catch (NullPointerException npe) {
-            // success
-        }
+        moduleId.compareTo(null);
     }
 
+    @Test
     public void testCompareToEqual() {
         String org = "apache";
         String name = "some-new-module";
@@ -108,6 +111,7 @@ public class ModuleIdTest extends TestCase {
         assertTrue(moduleId.compareTo(new ModuleId(org, name)) == 0);
     }
 
+    @Test
     public void testCompareToLessThan() {
         String org = "apache";
         String name = "some-new-module";
@@ -119,7 +123,8 @@ public class ModuleIdTest extends TestCase {
         assertTrue(moduleId.compareTo(moduleId2) < 0);
     }
 
-    public void testCompareToGreatherThan() {
+    @Test
+    public void testCompareToGreaterThan() {
         String org = "apache";
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);

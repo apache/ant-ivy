@@ -28,7 +28,7 @@ import org.apache.ivy.core.IvyPatternHelper;
 
 /**
  * Identifies a module, without revision information
- * 
+ *
  * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ModuleId implements Comparable<ModuleId> {
@@ -39,7 +39,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Returns a ModuleId for the given organization and module name.
-     * 
+     *
      * @param org
      *            the module's organization, can be <code>null</code>
      * @param name
@@ -57,7 +57,7 @@ public class ModuleId implements Comparable<ModuleId> {
      * This is useful to reduce the number of instances of ModuleId kept in memory, and thus reduce
      * memory footprint.
      * </p>
-     * 
+     *
      * @param moduleId
      *            the module id to return
      * @return a unit instance of the given module id.
@@ -89,7 +89,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Constructor.
-     * 
+     *
      * @param organisation
      *            The organisation which creates the module.
      * @param name
@@ -107,7 +107,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Returns the name of the module.
-     * 
+     *
      * @return The name of the module.
      */
     public String getName() {
@@ -116,7 +116,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Returns the name of the organisation.
-     * 
+     *
      * @return The name of the organisation.
      */
     public String getOrganisation() {
@@ -163,7 +163,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Returns the encoded String representing this ModuleId.
-     * 
+     *
      * @return The ModuleId encoded as String.
      */
     public String encodeToString() {
@@ -173,7 +173,7 @@ public class ModuleId implements Comparable<ModuleId> {
     /**
      * Returns a Map of all attributes of this module id. The Map keys are attribute names as
      * Strings, and values are corresponding attribute values (as String too).
-     * 
+     *
      * @return A Map instance containing all the attributes and their values.
      */
     public Map<String, String> getAttributes() {
@@ -182,8 +182,8 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Returns a ModuleId
-     * 
-     * @param encoded
+     *
+     * @param encoded String
      * @return The new ModuleId.
      * @throws IllegalArgumentException
      *             If the given String could not be decoded.
@@ -198,7 +198,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Pattern to use to matched mid text representation.
-     * 
+     *
      * @see #parse(String)
      */
     public static final Pattern MID_PATTERN = Pattern.compile("("
@@ -207,7 +207,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     /**
      * Parses the module id text representation and returns it as a {@link ModuleId} instance.
-     * 
+     *
      * @param mid
      *            the module id text representation to parse
      * @return the ModuleId instance corresponding to the representation

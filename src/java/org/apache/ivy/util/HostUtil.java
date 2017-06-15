@@ -22,7 +22,7 @@ import java.net.UnknownHostException;
 
 /**
  * This class contains basic helper methods for the Host.
- * 
+ *
  */
 public final class HostUtil {
 
@@ -37,7 +37,7 @@ public final class HostUtil {
     /**
      * This method returns the name of the current Host, if this name cannot be determined,
      * localhost will be returned.
-     * 
+     *
      * @return The name of the current "local" Host.
      */
     public static String getLocalHostName() {

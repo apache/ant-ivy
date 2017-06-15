@@ -76,7 +76,7 @@ public class ArtifactDownloadReport {
     }
 
     /**
-     * 
+     *
      * @return the type of the downloaded artifact
      */
     public String getType() {
@@ -143,7 +143,7 @@ public class ArtifactDownloadReport {
     /**
      * Returns the File where the artifact is available on the local filesystem, or
      * <code>null</code> if and only if the artifact caching failed.
-     * 
+     *
      * @return the file where the artifact is now available on the local filesystem.
      */
     public File getLocalFile() {

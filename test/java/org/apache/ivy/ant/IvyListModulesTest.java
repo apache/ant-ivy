@@ -18,15 +18,21 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyListModulesTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class IvyListModulesTest {
 
     private IvyListModules findModules;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -35,10 +41,12 @@ public class IvyListModulesTest extends TestCase {
         findModules.setProject(project);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testExact() throws Exception {
         findModules.setOrganisation("org1");
         findModules.setModule("mod1.1");
@@ -49,6 +57,7 @@ public class IvyListModulesTest extends TestCase {
         assertEquals("org1/mod1.1/1.0", findModules.getProject().getProperty("found"));
     }
 
+    @Test
     public void testAllRevs() throws Exception {
         findModules.setOrganisation("org1");
         findModules.setModule("mod1.1");

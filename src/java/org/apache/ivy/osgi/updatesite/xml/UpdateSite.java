@@ -25,8 +25,10 @@ public class UpdateSite {
 
     private URI uri;
 
+    @SuppressWarnings("unused")
     private String mirrorsURL;
 
+    @SuppressWarnings("unused")
     private boolean pack200;
 
     private URI digestUri;

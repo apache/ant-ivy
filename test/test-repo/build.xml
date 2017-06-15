@@ -38,6 +38,7 @@
         <propertyregex property="module.name.dotted" input="${bundle.name}" regexp="org\.apache\.ivy\.osgi\.(.*)" select="\1" casesensitive="false" />
         <propertyregex property="module.name" input="${module.name.dotted}" regexp="\." replace="-" global="true" defaultValue="${module.name.dotted}" />
         <propertyregex property="bundle.version" input="${manifest}" regexp="MANIFEST_(.*)_(.*).MF" select="\2" casesensitive="false" />
+        <echo message="bundle.name=${bundle.name} bundle.version=${bundle.version} module.name=${module.name}"/>
         <jar destfile="bundlerepo/${bundle.name}_${bundle.version}.jar" manifest="${manifest}" />
         <mkdir dir="ivyrepo/org.apache.ivy.osgi/${module.name}/${bundle.version}/jars/" />
         <copy file="bundlerepo/${bundle.name}_${bundle.version}.jar" tofile="ivyrepo/org.apache.ivy.osgi/${module.name}/${bundle.version}/jars/${module.name}-${bundle.version}.jar" />

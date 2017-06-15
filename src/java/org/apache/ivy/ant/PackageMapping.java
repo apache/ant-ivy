@@ -20,7 +20,7 @@ package org.apache.ivy.ant;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
- * Describes a mapping between a package name and an org name revision uple
+ * Describes a mapping between a package name and an org name revision tuple
  */
 public class PackageMapping {
     private String pkg;
@@ -59,8 +59,8 @@ public class PackageMapping {
         return pkg;
     }
 
-    public void setPackage(String package1) {
-        pkg = package1;
+    public void setPackage(String packageName) {
+        pkg = packageName;
     }
 
     public ModuleRevisionId getModuleRevisionId() {

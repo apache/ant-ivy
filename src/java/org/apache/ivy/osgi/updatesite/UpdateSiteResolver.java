@@ -70,7 +70,7 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
             options.setTtl(metadataTtl.longValue());
         }
         if (forceMetadataUpdate != null) {
-            options.setForce(forceMetadataUpdate.booleanValue());
+            options.setForce(forceMetadataUpdate);
         }
         final int log;
         if (logLevel != null) {
@@ -127,9 +127,9 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
         } catch (ParseException e) {
             throw new RuntimeException("Failed to parse the updatesite (" + e.getMessage() + ")", e);
         } catch (SAXException e) {
-            throw new RuntimeException("Illformed updatesite (" + e.getMessage() + ")", e);
+            throw new RuntimeException("Ill-formed updatesite (" + e.getMessage() + ")", e);
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Illformed url (" + e.getMessage() + ")", e);
+            throw new RuntimeException("Ill-formed url (" + e.getMessage() + ")", e);
         }
         if (repoDescriptor == null) {
             setRepoDescriptor(FAILING_REPO_DESCRIPTOR);

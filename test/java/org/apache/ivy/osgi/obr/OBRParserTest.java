@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.osgi.obr;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
@@ -26,13 +29,13 @@ import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.util.CollectionUtils;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class OBRParserTest {
 
-public class OBRParserTest extends TestCase {
+    private final File testObr = new File("test/test-obr");
 
-    private File testObr = new File("test/test-obr");
-
+    @Test
     public void testParse() throws Exception {
         BundleRepoDescriptor repo = OBRXMLParser.parse(testObr.toURI(), new FileInputStream(
                 new File(testObr, "obr.xml")));
@@ -41,6 +44,7 @@ public class OBRParserTest extends TestCase {
         assertEquals("1253581430652", repo.getLastModified());
     }
 
+    @Test
     public void testParseSource() throws Exception {
         BundleRepoDescriptor repo = OBRXMLParser.parse(testObr.toURI(), new FileInputStream(
                 new File(testObr, "sources.xml")));

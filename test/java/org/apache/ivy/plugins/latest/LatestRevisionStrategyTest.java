@@ -17,48 +17,52 @@
  */
 package org.apache.ivy.plugins.latest;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class LatestRevisionStrategyTest extends TestCase {
+public class LatestRevisionStrategyTest {
+    @Test
     public void testComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
                 "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         Collections.sort(shuffled, new LatestRevisionStrategy().new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
     }
 
+    @Test
     public void testSort() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
                 "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
-        List sorted = latestRevisionStrategy.sort(shuffledRevs);
+        List<ArtifactInfo> sorted = latestRevisionStrategy.sort(shuffledRevs);
         assertEquals(Arrays.asList(revs), sorted);
     }
 
+    @Test
     public void testFindLatest() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2a", "0.2_b", "0.2rc1", "0.2-final",
                 "1.0-dev1", "1.0-dev2", "1.0-alpha1", "1.0-alpha2", "1.0-beta1", "1.0-beta2",
                 "1.0-gamma", "1.0-rc1", "1.0-rc2", "1.0", "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         ArtifactInfo latest = latestRevisionStrategy.findLatest(shuffledRevs, new Date());
@@ -66,11 +70,12 @@ public class LatestRevisionStrategyTest extends TestCase {
         assertEquals("2.0", latest.getRevision());
     }
 
+    @Test
     public void testSpecialMeaningComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.1", "0.2-pre", "0.2-dev", "0.2-rc1",
                 "0.2-final", "0.2-QA", "1.0-dev1"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         LatestRevisionStrategy.SpecialMeaning specialMeaning = new LatestRevisionStrategy.SpecialMeaning();

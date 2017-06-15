@@ -17,31 +17,37 @@
  */
 package org.apache.ivy.core;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class NormalRelativeUrlResolverTest extends TestCase {
+public class NormalRelativeUrlResolverTest {
 
     private NormalRelativeUrlResolver t = new NormalRelativeUrlResolver();
 
+    @Test
     public void testRelativeHttpURL() throws MalformedURLException {
         URL base = new URL("http://xxx/file.txt");
         assertEquals(new URL("http://xxx/file2.txt"), t.getURL(base, "file2.txt"));
     }
 
+    @Test
     public void testRelativeFileURL() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base, "file2.txt"));
     }
 
+    @Test
     public void testRelativeMixedURL() throws MalformedURLException {
         URL base = new URL("http://xxx/file.txt");
         assertEquals(new URL("file://file2.txt"), t.getURL(base, "file://file2.txt"));
     }
 
+    @Test
     public void testFileAndUrlWithAbsoluteFile() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         File absFile = new File(".").getAbsoluteFile();
@@ -50,6 +56,7 @@ public class NormalRelativeUrlResolverTest extends TestCase {
         assertEquals(absFile.toURI().toURL(), t.getURL(base, absFile.toString(), "somthing.txt"));
     }
 
+    @Test
     public void testFileAndUrlWithRelativeFile() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         assertEquals(new URL("file://xxx/file2.txt"), t.getURL(base, "file2.txt", null));
@@ -58,6 +65,7 @@ public class NormalRelativeUrlResolverTest extends TestCase {
             t.getURL(base, "sub/file2.txt", "something"));
     }
 
+    @Test
     public void testFileAndUrlWithAbsoluteUrl() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         URL otherBase = new URL("http://localhost:80/otherfile.txt");
@@ -66,6 +74,7 @@ public class NormalRelativeUrlResolverTest extends TestCase {
         assertEquals(new URL(absUrl), t.getURL(otherBase, null, absUrl));
     }
 
+    @Test
     public void testFileAndUrlWithRelativeUrl() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         URL otherBase = new URL("http://localhost:80/otherfile.txt");

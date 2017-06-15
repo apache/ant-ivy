@@ -18,10 +18,12 @@
 package org.apache.ivy.plugins.version;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class PatternVersionMatcherTest extends TestCase {
+public class PatternVersionMatcherTest {
+    @Test
     public void testSingleMatch() {
         PatternVersionMatcher pvm = new PatternVersionMatcher();
         pvm.addMatch(generateRegexpMatch1());
@@ -33,6 +35,7 @@ public class PatternVersionMatcherTest extends TestCase {
         assertAccept(pvm, "foo(1,3)", "1.3.1", true);
     }
 
+    @Test
     public void testMultipleMatchEqualRevisions() {
         PatternVersionMatcher pvm = new PatternVersionMatcher();
         pvm.addMatch(generateRegexpMatch1());
@@ -42,6 +45,7 @@ public class PatternVersionMatcherTest extends TestCase {
         assertAccept(pvm, "foo(1,3)", "1.3.1", true);
     }
 
+    @Test
     public void testMultipleMatchNonEqualRevisions() {
         PatternVersionMatcher pvm = new PatternVersionMatcher();
         pvm.addMatch(generateRegexpMatch1());
@@ -55,8 +59,8 @@ public class PatternVersionMatcherTest extends TestCase {
     /**
      * Generates a Match instance that has the following xml representation: <match revision="foo"
      * pattern="${major}\.${minor}\.\d+" args="major, minor" matcher="regexp" />
-     * 
-     * @return
+     *
+     * @return Match
      */
     private Match generateRegexpMatch1() {
         Match match = new Match();
@@ -71,8 +75,8 @@ public class PatternVersionMatcherTest extends TestCase {
     /**
      * Generates a Match instance that has the following xml representation: <match revision="foo"
      * pattern="${major}\.${minor}" args="major, minor" matcher="regexp" />
-     * 
-     * @return
+     *
+     * @return Match
      */
     private Match generateRegexpMatch2() {
         Match match = new Match();

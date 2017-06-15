@@ -65,7 +65,7 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
      * dependency management. It's basically the time elapsed since the corresponding
      * {@link StartResolveDependencyEvent}
      * </p>
-     * 
+     *
      * @return the time elapsed to resolve the dependency.
      */
     public long getDuration() {

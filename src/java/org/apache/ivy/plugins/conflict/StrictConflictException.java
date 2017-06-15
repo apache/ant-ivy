@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveProcessException;
 
+@SuppressWarnings("serial")
 public class StrictConflictException extends ResolveProcessException {
 
     public StrictConflictException() {

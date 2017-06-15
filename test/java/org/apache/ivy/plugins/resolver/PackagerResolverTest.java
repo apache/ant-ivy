@@ -41,6 +41,12 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 /**
  * Tests PackagerResolver.
  */
@@ -58,7 +64,8 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
 
     private File cachedir;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Message.setDefaultLogger(new DefaultMessageLogger(99));
 
         settings = new IvySettings();
@@ -79,7 +86,8 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         FileUtil.forceDelete(cache);
         cleanupTempDirs();
     }
@@ -88,6 +96,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         FileUtil.forceDelete(workdir);
     }
 
+    @Test
     public void testFile() throws Exception {
         Locale oldLocale = Locale.getDefault();
 
@@ -132,7 +141,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             assertEquals(1, report.getArtifactsReports().length);
 
             ArtifactDownloadReport ar = report.getArtifactReport(artifact);
-            System.out.println("downloaddetails: " + ar.getDownloadDetails());
+            System.out.println("download details: " + ar.getDownloadDetails());
             assertNotNull(ar);
 
             assertEquals(artifact, ar.getArtifact());
@@ -170,6 +179,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testZipResourceInclusion() throws Exception {
         Locale oldLocale = Locale.getDefault();
 
@@ -217,6 +227,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testTarResourceInclusion() throws Exception {
         Locale oldLocale = Locale.getDefault();
 

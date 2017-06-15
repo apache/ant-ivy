@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * Parse a header of a manifest. The manifest header is composed with the following rules:
- * 
+ *
  * <pre>
  * header ::= header-element (',' header-element)*
  * header-element ::= values (';' (attribute | directive) )*
@@ -131,7 +131,7 @@ public class ManifestHeaderValue {
 
         /**
          * Default constructor
-         * 
+         *
          * @param header
          *            the header to parse
          */
@@ -142,7 +142,7 @@ public class ManifestHeaderValue {
 
         /**
          * Do the parsing
-         * 
+         *
          * @throws ParseException
          */
         void parse() throws ParseException {

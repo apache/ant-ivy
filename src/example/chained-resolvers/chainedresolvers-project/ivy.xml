@@ -14,12 +14,12 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.0">
     <info organisation="org.apache" module="chained-resolvers"/>
     <dependencies>
-        <dependency org="commons-lang" name="commons-lang" rev="2.0" conf="default"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.6" conf="default"/>
         <dependency name="test" rev="1.0"/>
     </dependencies>
 </ivy-module>

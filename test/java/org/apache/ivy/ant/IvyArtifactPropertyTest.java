@@ -17,21 +17,26 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class IvyArtifactPropertyTest extends TestCase {
+public class IvyArtifactPropertyTest {
 
     private IvyArtifactProperty prop;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -41,10 +46,12 @@ public class IvyArtifactPropertyTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         prop.setName("[module].[artifact]-[revision]");
@@ -56,6 +63,7 @@ public class IvyArtifactPropertyTest extends TestCase {
             new File(val).getCanonicalPath());
     }
 
+    @Test
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -80,15 +88,16 @@ public class IvyArtifactPropertyTest extends TestCase {
             new File(val).getCanonicalPath());
     }
 
+    /**
+     * Test must fail because no resolve was performed
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testWithResolveIdWithoutResolve() throws Exception {
-        try {
-            prop.setName("[module].[artifact]-[revision]");
-            prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
-            prop.setResolveId("abc");
-            prop.execute();
-            fail("Task should have failed because no resolve was performed!");
-        } catch (BuildException e) {
-            // this is expected!
-        }
+        prop.setName("[module].[artifact]-[revision]");
+        prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+        prop.setResolveId("abc");
+        prop.execute();
     }
 }

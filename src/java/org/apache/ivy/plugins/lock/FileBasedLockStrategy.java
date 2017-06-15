@@ -139,12 +139,12 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
     /**
      * Determine the state of the lockfile.
-     * 
+     *
      * Must be called from within a synchronized block.
-     * 
+     *
      * Three possibilities exist: - The lock is held by the current thread (>0) - The lock is held
      * by one or more different threads (-1) - The lock is not held at all (0).
-     * 
+     *
      * @param file
      *            file to lock
      * @param forThread
@@ -169,10 +169,10 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
     /**
      * Record that this thread holds the lock.
-     * 
+     *
      * Asserts that the lock has been previously grabbed by this thread. Must be called from a
      * synchronized block in which the lock was grabbed.
-     * 
+     *
      * @param file
      *            file which has been locked
      * @param forThread
@@ -193,11 +193,11 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
     /**
      * Decrease depth of this thread's lock.
-     * 
+     *
      * Must be called within a synchronized block.
-     * 
+     *
      * If this returns 0, the caller is responsible for releasing the lock within that same block.
-     * 
+     *
      * @param file
      *            file for which lock depth is being decreased
      * @param forThread
@@ -225,6 +225,9 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
     /**
      * Return a string naming the threads which currently hold this lock.
+     *
+     * @param file File
+     * @return String
      */
     protected String getCurrentLockHolderNames(File file) {
         StringBuilder sb = new StringBuilder();
@@ -310,6 +313,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
             }
         }
 
+        @SuppressWarnings("resource")
         public boolean tryLock(File file) {
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {

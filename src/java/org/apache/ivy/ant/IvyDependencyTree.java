@@ -19,9 +19,11 @@ package org.apache.ivy.ant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
@@ -32,37 +34,42 @@ import org.apache.tools.ant.BuildException;
 
 public class IvyDependencyTree extends IvyPostResolveTask {
 
-    private Map/* <ModuleRevisionId, List<IvyNode>> */dependencies = new HashMap/*
-                                                                                 * <ModuleRevisionId,
-                                                                                 * List<IvyNode>>
-                                                                                 */();
+    private final Map<ModuleRevisionId, List<IvyNode>> dependencies = new HashMap<>();
 
     private boolean showEvicted = false;
 
     public void doExecute() throws BuildException {
         prepareAndCheck();
         ResolveReport report = getResolvedReport();
+        if (report == null) {
+            throw new BuildException("No resolution report was available to run the post-resolve task. Make sure resolve was done before this task");
+        }
         log("Dependency tree for " + report.getResolveId());
         ModuleRevisionId mrid = report.getModuleDescriptor().getModuleRevisionId();
-        // make dependency tree easier to fetch informations
-        for (Iterator iterator = report.getDependencies().iterator(); iterator.hasNext();) {
-            IvyNode dependency = (IvyNode) iterator.next();
-            populateDependencyTree(dependency, mrid, report);
+        // make dependency tree easier to fetch information
+        for (IvyNode dependency : report.getDependencies()) {
+            populateDependencyTree(dependency);
         }
-        List dependencyList = (List) dependencies.get(mrid);
+        final List<IvyNode> dependencyList = dependencies.get(mrid);
         if (dependencyList != null) {
-            printDependencies(dependencyList, 0);
+            printDependencies(mrid, dependencyList, 0, new HashSet<ModuleRevisionId>());
         }
     }
 
-    private void printDependencies(List/* <IvyNode> */dependencyList, int indent) {
-        for (Iterator iterator = dependencyList.iterator(); iterator.hasNext();) {
-            IvyNode dependency = (IvyNode) iterator.next();
-            boolean evicted = dependency.isEvicted(getConf());
+    private void printDependencies(final ModuleRevisionId mrid, final List<IvyNode> dependencyList, final int indent,
+                                   final Set<ModuleRevisionId> ancestors) {
+        for (final Iterator iterator = dependencyList.iterator(); iterator.hasNext();) {
+            final Set<ModuleRevisionId> ancestorsForCurrentDep = new HashSet<>(ancestors);
+            // previous ancestors plus the module to whom these dependencies belong to
+            ancestorsForCurrentDep.add(mrid);
+            final IvyNode dependency = (IvyNode) iterator.next();
+            final boolean evicted = dependency.isEvicted(getConf());
             if (evicted && !showEvicted) {
                 continue;
             }
-            StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
+            final ModuleRevisionId dependencyMrid = dependency.getId();
+            final boolean circular = ancestorsForCurrentDep.contains(dependencyMrid);
             if (indent > 0) {
                 for (int i = 0; i < indent; i++) {
                     if (i == indent - 1 && !iterator.hasNext() && !hasDependencies(dependency)) {
@@ -78,7 +85,14 @@ public class IvyDependencyTree extends IvyPostResolveTask {
             } else {
                 sb.append("\\- ");
             }
-            sb.append(dependency.getId().toString());
+            if (!evicted && circular) {
+                // log and skip processing the (transitive) dependencies of this dependency
+                sb.append("(circularly depends on) ").append(dependencyMrid);
+                log(sb.toString());
+                continue;
+            } else {
+                sb.append(dependencyMrid.toString());
+            }
             if (evicted && showEvicted) {
                 EvictionData evictedData = dependency.getEvictedData(getConf());
                 if (evictedData.isTransitivelyEvicted()) {
@@ -94,17 +108,19 @@ public class IvyDependencyTree extends IvyPostResolveTask {
             }
             log(sb.toString());
 
-            printDependencies((List) dependencies.get(dependency.getId()), indent + 1);
+            printDependencies(dependencyMrid, dependencies.get(dependencyMrid), indent + 1, ancestorsForCurrentDep);
         }
     }
 
-    private boolean hasDependencies(IvyNode dependency) {
-        List dependencyList = (List) dependencies.get(dependency.getId());
-        return dependencyList.size() > 0;
+    private boolean hasDependencies(final IvyNode module) {
+        if (module == null) {
+            return false;
+        }
+        final List<IvyNode> dependenciesForModule = dependencies.get(module.getId());
+        return dependenciesForModule != null && !dependenciesForModule.isEmpty();
     }
 
-    private void populateDependencyTree(IvyNode dependency, ModuleRevisionId currentMrid,
-            ResolveReport report) {
+    private void populateDependencyTree(IvyNode dependency) {
         registerNodeIfNecessary(dependency.getId());
         for (int i = 0; i < dependency.getAllCallers().length; i++) {
             Caller caller = dependency.getAllCallers()[i];
@@ -112,16 +128,16 @@ public class IvyDependencyTree extends IvyPostResolveTask {
         }
     }
 
-    private void registerNodeIfNecessary(ModuleRevisionId moduleRevisionId) {
+    private void registerNodeIfNecessary(final ModuleRevisionId moduleRevisionId) {
         if (!dependencies.containsKey(moduleRevisionId)) {
-            dependencies.put(moduleRevisionId, new ArrayList/* <IvyNode> */());
+            dependencies.put(moduleRevisionId, new ArrayList<IvyNode>());
         }
     }
 
-    private void addDependency(ModuleRevisionId moduleRevisionId, IvyNode dependency) {
+    private void addDependency(final ModuleRevisionId moduleRevisionId, final IvyNode dependency) {
         registerNodeIfNecessary(moduleRevisionId);
-        List/* <IvyNode> */list = (List) dependencies.get(moduleRevisionId);
-        list.add(dependency);
+        final List<IvyNode> dependencyList = dependencies.get(moduleRevisionId);
+        dependencyList.add(dependency);
     }
 
     public boolean isShowEvicted() {

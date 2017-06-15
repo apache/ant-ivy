@@ -24,11 +24,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.ivy.osgi.util.VersionRange;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
-public class ManifestParserTest extends TestCase {
+public class ManifestParserTest {
 
+    @Test
     public void testParseManifest() throws Exception {
         BundleInfo bundleInfo;
 
@@ -38,7 +40,7 @@ public class ManifestParserTest extends TestCase {
         assertEquals("20080101", bundleInfo.getVersion().qualifier());
         assertEquals("1.0.0.20080101", bundleInfo.getVersion().toString());
         assertEquals(2, bundleInfo.getRequires().size());
-        Set<BundleRequirement> expectedRequires = new HashSet<BundleRequirement>();
+        Set<BundleRequirement> expectedRequires = new HashSet<>();
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.bravo",
                 new VersionRange("2.0.0"), null));
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.delta",
@@ -49,8 +51,8 @@ public class ManifestParserTest extends TestCase {
         assertNull(bundleInfo.getClasspath());
 
         final String importsList = bundleInfo.getImports().toString();
-        assertTrue(importsList.indexOf("com.acme.bravo") != -1);
-        assertTrue(importsList.indexOf("com.acme.delta") != -1);
+        assertTrue(importsList.contains("com.acme.bravo"));
+        assertTrue(importsList.contains("com.acme.delta"));
 
         bundleInfo = ManifestParser.parseJarManifest(getClass().getResourceAsStream(
             "com.acme.bravo-2.0.0.20080202.jar"));
@@ -59,15 +61,16 @@ public class ManifestParserTest extends TestCase {
         assertEquals("20080202", bundleInfo.getVersion().qualifier());
         assertEquals("2.0.0.20080202", bundleInfo.getVersion().toString());
         assertEquals(1, bundleInfo.getRequires().size());
-        expectedRequires = new HashSet<BundleRequirement>();
+        expectedRequires = new HashSet<>();
         expectedRequires.add(new BundleRequirement(BundleInfo.BUNDLE_TYPE, "com.acme.charlie",
                 new VersionRange("3.0.0"), null));
         assertEquals(1, bundleInfo.getExports().size());
-        assertTrue(bundleInfo.getExports().toString().indexOf("com.acme.bravo") != -1);
+        assertTrue(bundleInfo.getExports().toString().contains("com.acme.bravo"));
         assertEquals(1, bundleInfo.getImports().size());
-        assertTrue(bundleInfo.getImports().toString().indexOf("com.acme.charlie") != -1);
+        assertTrue(bundleInfo.getImports().toString().contains("com.acme.charlie"));
     }
 
+    @Test
     public void testClasspath() throws Exception {
         InputStream in = this.getClass().getResourceAsStream(
             "/org/apache/ivy/osgi/core/MANIFEST_classpath.MF");
@@ -97,6 +100,7 @@ public class ManifestParserTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {"."}), cp);
     }
 
+    @Test
     public void testFormatLines() throws Exception {
         assertEquals("foo bar\n", ManifestParser.formatLines("foo bar"));
         assertEquals(

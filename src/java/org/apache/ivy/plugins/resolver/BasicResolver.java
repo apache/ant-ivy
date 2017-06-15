@@ -95,6 +95,7 @@ public abstract class BasicResolver extends AbstractResolver {
      * converted in a message (either error or verbose) and returning null
      * </p>
      */
+    @SuppressWarnings("serial")
     private static class UnresolvedDependencyException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
@@ -214,7 +215,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 } else if (isForce() && rmr.getResolver() != this) {
                     Message.verbose("\t" + getName() + ": found revision in cache: " + systemMrid
                             + " (resolved by " + rmr.getResolver().getName()
-                            + "): but we are in force mode, let's try to find one ourself");
+                            + "): but we are in force mode, let's try to find one ourselves");
                 } else {
                     Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
                     return checkLatest(systemDd, checkForcedResolvedModuleRevision(rmr), data);
@@ -583,16 +584,14 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.error("\t" + getName() + ": bad organisation found in " + ivyRef.getResource()
                     + ": expected='" + mrid.getOrganisation() + "' found='"
                     + md.getModuleRevisionId().getOrganisation() + "'");
-            errors.append("bad organisation: expected='" + mrid.getOrganisation() + "' found='"
-                    + md.getModuleRevisionId().getOrganisation() + "'; ");
+            errors.append("bad organisation: expected='").append(mrid.getOrganisation()).append("' found='").append(md.getModuleRevisionId().getOrganisation()).append("'; ");
             ok = false;
         }
         if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
             Message.error("\t" + getName() + ": bad module name found in " + ivyRef.getResource()
                     + ": expected='" + mrid.getName() + " found='"
                     + md.getModuleRevisionId().getName() + "'");
-            errors.append("bad module name: expected='" + mrid.getName() + "' found='"
-                    + md.getModuleRevisionId().getName() + "'; ");
+            errors.append("bad module name: expected='").append(mrid.getName()).append("' found='").append(md.getModuleRevisionId().getName()).append("'; ");
             ok = false;
         }
         if (mrid.getBranch() != null
@@ -600,8 +599,7 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.error("\t" + getName() + ": bad branch name found in " + ivyRef.getResource()
                     + ": expected='" + mrid.getBranch() + " found='"
                     + md.getModuleRevisionId().getBranch() + "'");
-            errors.append("bad branch name: expected='" + mrid.getBranch() + "' found='"
-                    + md.getModuleRevisionId().getBranch() + "'; ");
+            errors.append("bad branch name: expected='").append(mrid.getBranch()).append("' found='").append(md.getModuleRevisionId().getBranch()).append("'; ");
             ok = false;
         }
         if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")
@@ -611,15 +609,14 @@ public abstract class BasicResolver extends AbstractResolver {
                 Message.error("\t" + getName() + ": bad revision found in " + ivyRef.getResource()
                         + ": expected='" + ivyRef.getRevision() + " found='"
                         + md.getModuleRevisionId().getRevision() + "'");
-                errors.append("bad revision: expected='" + ivyRef.getRevision() + "' found='"
-                        + md.getModuleRevisionId().getRevision() + "'; ");
+                errors.append("bad revision: expected='").append(ivyRef.getRevision()).append("' found='").append(md.getModuleRevisionId().getRevision()).append("'; ");
                 ok = false;
             }
         }
         if (!getSettings().getStatusManager().isStatus(md.getStatus())) {
             Message.error("\t" + getName() + ": bad status found in " + ivyRef.getResource()
                     + ": '" + md.getStatus() + "'");
-            errors.append("bad status: '" + md.getStatus() + "'; ");
+            errors.append("bad status: '").append(md.getStatus()).append("'; ");
             ok = false;
         }
         for (Map.Entry<String, String> extra : mrid.getExtraAttributes().entrySet()) {
@@ -629,7 +626,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         + ": expected='" + extra.getValue() + "' found='"
                         + md.getExtraAttribute(extra.getKey()) + "'";
                 Message.error("\t" + getName() + ": " + errorMsg);
-                errors.append(errorMsg + ";");
+                errors.append(errorMsg).append(";");
                 ok = false;
             }
         }
@@ -641,7 +638,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     /**
      * When the resolver has many choices, this function helps choosing one
-     * 
+     *
      * @param rress
      *            the list of resolved resource which the resolver found to fit the requirement
      * @param rmdparser
@@ -752,7 +749,7 @@ public abstract class BasicResolver extends AbstractResolver {
      * <p>
      * Remember to call the super implementation when overriding this method.
      * </p>
-     * 
+     *
      * @param names
      *            the list to filter.
      * @return the filtered list
@@ -878,10 +875,7 @@ public abstract class BasicResolver extends AbstractResolver {
     @Override
     public boolean exists(Artifact artifact) {
         ResolvedResource artifactRef = getArtifactRef(artifact, null);
-        if (artifactRef != null) {
-            return artifactRef.getResource().exists();
-        }
-        return false;
+        return artifactRef != null && artifactRef.getResource().exists();
     }
 
     @Override
@@ -987,7 +981,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     /**
      * Checks the given resource checksum if a checksum resource exists.
-     * 
+     *
      * @param resource
      *            the resource to check
      * @param dest
@@ -1067,8 +1061,8 @@ public abstract class BasicResolver extends AbstractResolver {
         return checkconsistency;
     }
 
-    public void setCheckconsistency(boolean checkConsitency) {
-        checkconsistency = checkConsitency;
+    public void setCheckconsistency(boolean checkConsistency) {
+        checkconsistency = checkConsistency;
     }
 
     public void setForce(boolean force) {
@@ -1092,7 +1086,7 @@ public abstract class BasicResolver extends AbstractResolver {
     /**
      * Sets the module descriptor presence rule. Should be one of {@link #DESCRIPTOR_REQUIRED} or
      * {@link #DESCRIPTOR_OPTIONAL}.
-     * 
+     *
      * @param descriptorRule
      *            the descriptor rule to use with this resolver.
      */

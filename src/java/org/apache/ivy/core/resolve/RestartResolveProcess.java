@@ -25,6 +25,7 @@ package org.apache.ivy.core.resolve;
  * since the resolve engine itself won't check the same exception is not thrown ad libitum
  * </p>
  */
+@SuppressWarnings("serial")
 public class RestartResolveProcess extends ResolveProcessException {
 
     public RestartResolveProcess(String message) {

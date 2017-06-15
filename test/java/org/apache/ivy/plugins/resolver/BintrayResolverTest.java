@@ -37,6 +37,13 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
@@ -46,25 +53,27 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData _data;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _data = new ResolveData(_engine, new ResolveOptions());
         _settings.setDefaultCache(TestHelper.cache);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testDefaults() {
         BintrayResolver resolver = new BintrayResolver();
         assertEquals("https://jcenter.bintray.com/", resolver.getRoot());
         assertEquals("bintray/jcenter", resolver.getName());
     }
 
+    @Test
     public void testDefaultsWithName() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setName("TestName");
@@ -72,6 +81,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("TestName", resolver.getName());
     }
 
+    @Test
     public void testSubjectOnly() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSubject("jfrog");
@@ -79,6 +89,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("bintray/jcenter", resolver.getName());
     }
 
+    @Test
     public void testRepoOnly() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setRepo("jfrog-jars");
@@ -86,6 +97,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("bintray/jcenter", resolver.getName());
     }
 
+    @Test
     public void testSubjectOnlyWithName() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSubject("jfrog");
@@ -94,6 +106,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("TestName", resolver.getName());
     }
 
+    @Test
     public void testRepoOnlyWithName() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setRepo("jfrog-jars");
@@ -102,6 +115,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("TestName", resolver.getName());
     }
 
+    @Test
     public void testSubjectAndRepo() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSubject("jfrog");
@@ -110,6 +124,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("bintray/jfrog/jfrog-jars", resolver.getName());
     }
 
+    @Test
     public void testSubjectAndRepoWithName() {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSubject("jfrog");
@@ -119,8 +134,8 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals("TestName", resolver.getName());
     }
 
+    @Test
     public void testBintray() throws Exception {
-
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSettings(_settings);
         ModuleRevisionId mrid = ModuleRevisionId
@@ -156,6 +171,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testErrorReport() throws Exception {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSubject("unknown");
@@ -180,6 +196,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
                 .assertLogContains("tried https://dl.bintray.com/unknown/unknown/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
     }
 
+    @Test
     public void testBintrayArtifacts() throws Exception {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setName("test");
@@ -238,6 +255,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testUnknown() throws Exception {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setName("test");

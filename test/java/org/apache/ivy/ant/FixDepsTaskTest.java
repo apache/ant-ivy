@@ -23,20 +23,28 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class FixDepsTaskTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class FixDepsTaskTest {
 
     private FixDepsTask fixDeps;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -46,10 +54,12 @@ public class FixDepsTaskTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
 
@@ -78,6 +88,7 @@ public class FixDepsTaskTest extends TestCase {
         assertEquals("2.0", md.getDependencies()[0].getDependencyRevisionId().getRevision());
     }
 
+    @Test
     public void testMulticonf() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
 
@@ -124,6 +135,7 @@ public class FixDepsTaskTest extends TestCase {
         assertEquals("default", md.getDependencies()[1].getDependencyConfigurations("compile")[0]);
     }
 
+    @Test
     public void testTransitivity() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-transitive.xml");
 
@@ -181,6 +193,7 @@ public class FixDepsTaskTest extends TestCase {
         assertEquals("*", md.getDependencies()[2].getDependencyConfigurations("compile")[0]);
     }
 
+    @Test
     public void testFixedResolve() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-transitive.xml");
 
@@ -203,10 +216,10 @@ public class FixDepsTaskTest extends TestCase {
             toString(Arrays.asList(md2.getDependencies())));
     }
 
-    private List/* <String> */toString(List list) {
-        List strings = new ArrayList(list.size());
-        for (int i = 0; i < list.size(); i++) {
-            strings.add(list.get(i).toString());
+    private List<String> toString(List<DependencyDescriptor> list) {
+        List<String> strings = new ArrayList<>(list.size());
+        for (DependencyDescriptor dd : list) {
+            strings.add(dd.toString());
         }
         return strings;
     }

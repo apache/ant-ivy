@@ -40,7 +40,7 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         List<Status> statuses = StatusManager.getCurrent().getStatuses();
-        Status lowest = (Status) statuses.get(statuses.size() - 1);
+        Status lowest = statuses.get(statuses.size() - 1);
         String latestLowest = "latest." + lowest.getName();
         return !latestLowest.equals(askedMrid.getRevision());
     }
@@ -61,6 +61,11 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
     /**
      * If we don't need a module descriptor we can consider the dynamic revision to be greater. If
      * we need a module descriptor then we can't know which one is greater and return 0.
+     *
+     * @param askedMrid ModuleRevisionId
+     * @param foundMrid ModuleRevisionId
+     * @param staticComparator Comparator
+     * @return int
      */
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
             Comparator staticComparator) {

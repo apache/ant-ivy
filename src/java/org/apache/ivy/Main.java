@@ -240,7 +240,7 @@ public final class Main {
             return;
         }
 
-        boolean validate = line.hasOption("novalidate") ? false : true;
+        boolean validate = !line.hasOption("novalidate");
 
         Ivy ivy = Ivy.newInstance();
         initMessage(line, ivy);
@@ -393,9 +393,9 @@ public final class Main {
      * All the files contained in the returned List exist, non existing files are simply skipped
      * with a warning.
      * </p>
-     * 
+     *
      * @param line
-     *            the command line in which the cp option shold be parsed
+     *            the command line in which the cp option should be parsed
      * @return a List of files to include as extra classpath entries, or <code>null</code> if no cp
      *         option was provided.
      */
@@ -503,6 +503,7 @@ public final class Main {
         }
     }
 
+    @SuppressWarnings("resource")
     private static void invoke(Ivy ivy, File cache, ModuleDescriptor md, String[] confs,
             List fileList, String mainclass, String[] args) {
         List urls = new ArrayList();

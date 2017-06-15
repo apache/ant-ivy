@@ -100,7 +100,7 @@ public class RequirementAdapter {
                 || BundleInfo.SERVICE_TYPE.equals(att)) {
             if (not) {
                 throw new UnsupportedFilterException(
-                        "Not filter on requirement comparaison is not supported");
+                        "Not filter on requirement comparison is not supported");
             }
             if (type != null) {
                 throw new UnsupportedFilterException("Multiple requirement type are not supported");
@@ -117,17 +117,12 @@ public class RequirementAdapter {
             name = compareFilter.getRightValue();
         } else if ("version".equals(att)) {
             String v = compareFilter.getRightValue();
-            Version version;
-            try {
-                version = new Version(v);
-            } catch (ParseException e) {
-                throw new ParseException("Ill formed version: " + v, 0);
-            }
+            Version version = new Version(v);
             Operator operator = compareFilter.getOperator();
             if (not) {
                 if (operator == Operator.EQUALS) {
                     throw new UnsupportedFilterException(
-                            "Not filter on equals comparaison is not supported");
+                            "Not filter on equals comparison is not supported");
                 } else if (operator == Operator.GREATER_OR_EQUAL) {
                     operator = Operator.LOWER_THAN;
                 } else if (operator == Operator.GREATER_THAN) {

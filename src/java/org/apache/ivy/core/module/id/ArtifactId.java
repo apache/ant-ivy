@@ -19,7 +19,7 @@ package org.apache.ivy.core.module.id;
 
 /**
  * Identifies an artifact in a module, without revision information
- * 
+ *
  * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ArtifactId {
@@ -38,6 +38,8 @@ public class ArtifactId {
      *            The name of the artifact.
      * @param type
      *            The type of the artifact.
+     * @param ext
+     *            The name extension of the artifact.
      */
     public ArtifactId(ModuleId mid, String name, String type, String ext) {
         this.mid = mid;

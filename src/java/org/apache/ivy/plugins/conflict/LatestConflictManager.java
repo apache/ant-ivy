@@ -30,6 +30,7 @@ import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.util.Message;
 
 public class LatestConflictManager extends AbstractConflictManager {
+    @SuppressWarnings("serial")
     public static class NoConflictResolvedYetException extends RuntimeException {
     }
 
@@ -44,7 +45,7 @@ public class LatestConflictManager extends AbstractConflictManager {
             long lastModified = node.getLastModified();
             if (lastModified == 0) {
                 // if the last modified timestamp is unknown, we can't resolve
-                // the conflicts now, and trigger an exception which will be catched
+                // the conflicts now, and trigger an exception which will be caught
                 // in the main resolveConflicts method
                 throw new NoConflictResolvedYetException();
             } else {
@@ -102,8 +103,9 @@ public class LatestConflictManager extends AbstractConflictManager {
 
         ArrayList<IvyNode> unevicted = new ArrayList<IvyNode>();
         for (IvyNode node : conflicts) {
-            if (!node.isCompletelyEvicted())
+            if (!node.isCompletelyEvicted()) {
                 unevicted.add(node);
+            }
         }
         if (unevicted.size() > 0) {
             conflicts = unevicted;
@@ -118,7 +120,7 @@ public class LatestConflictManager extends AbstractConflictManager {
                 return conflicts;
             }
         } catch (NoConflictResolvedYetException ex) {
-            // we have not enough informations in the nodes to resolve conflict
+            // we have not enough information in the nodes to resolve conflict
             // according to the resolveConflicts contract, we must return null
             return null;
         }
@@ -149,8 +151,8 @@ public class LatestConflictManager extends AbstractConflictManager {
 
     /**
      * To conform to configurator API
-     * 
-     * @param latestStrategy
+     *
+     * @param strategyName ditto
      */
     public void setLatest(String strategyName) {
         this.strategyName = strategyName;

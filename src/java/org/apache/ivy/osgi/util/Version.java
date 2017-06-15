@@ -36,17 +36,17 @@ public class Version implements Comparable<Version> {
 
     private String input;
 
-    private boolean splitted = false;
+    private volatile boolean split = false;
 
-    private boolean toString = false;
+    private volatile boolean toString = false;
 
-    public Version(String versionStr, String qualifier) throws ParseException {
+    public Version(String versionStr, String qualifier) {
         this(qualifier == null ? versionStr : (versionStr + "." + qualifier));
     }
 
-    public Version(String versionStr) throws ParseException {
+    public Version(String versionStr) {
         this.input = versionStr;
-        splitted = false;
+        split = false;
         toString = false;
     }
 
@@ -55,15 +55,17 @@ public class Version implements Comparable<Version> {
         this.minor = minor;
         this.patch = patch;
         this.qualifier = qualifier;
-        splitted = true;
+        split = true;
         toString = false;
     }
 
     /**
      * Build a version from another one while appending an extra qualifier
-     * 
+     *
      * @param baseVersion
-     * @param qualifier
+     *            Version
+     * @param extraQualifier
+     *            String
      */
     public Version(Version baseVersion, String extraQualifier) {
         this.major = baseVersion.major;
@@ -71,19 +73,19 @@ public class Version implements Comparable<Version> {
         this.patch = baseVersion.patch;
         this.qualifier = baseVersion.qualifier == null ? extraQualifier
                 : (baseVersion.qualifier + extraQualifier);
-        splitted = true;
+        split = true;
         toString = false;
     }
 
-    private void ensureSplitted() {
-        if (!splitted) {
+    private void ensureSplit() {
+        if (!split) {
             synchronized (this) {
-                if (splitted) {
+                if (split) {
                     return;
                 }
                 String[] splits = input.split("\\.");
                 if (splits == null || splits.length == 0 || splits.length > 4) {
-                    throw new RuntimeException(new ParseException("Ill formed OSGi version", 0));
+                    throw new RuntimeException(new ParseException("Ill-formed OSGi version", 0));
                 }
                 try {
                     major = Integer.parseInt(splits[0]);
@@ -104,7 +106,7 @@ public class Version implements Comparable<Version> {
                             "Patch part of an OSGi version should be an integer", 0));
                 }
                 qualifier = splits.length == 4 ? splits[3] : null;
-                splitted = true;
+                split = true;
             }
         }
     }
@@ -115,7 +117,7 @@ public class Version implements Comparable<Version> {
                 if (toString) {
                     return;
                 }
-                ensureSplitted();
+                ensureSplit();
                 version = major + "." + minor + "." + patch
                         + (qualifier == null ? "" : "." + qualifier);
                 toString = true;
@@ -129,7 +131,7 @@ public class Version implements Comparable<Version> {
     }
 
     public int hashCode() {
-        ensureSplitted();
+        ensureSplit();
         final int prime = 31;
         int result = 1;
         result = prime * result + major;
@@ -150,8 +152,8 @@ public class Version implements Comparable<Version> {
             return false;
         }
         Version other = (Version) obj;
-        ensureSplitted();
-        other.ensureSplitted();
+        ensureSplit();
+        other.ensureSplit();
         if (major != other.major) {
             return false;
         }
@@ -172,23 +174,23 @@ public class Version implements Comparable<Version> {
     }
 
     public Version withNudgedPatch() {
-        ensureSplitted();
+        ensureSplit();
         return new Version(major, minor, patch + 1, null);
     }
 
     public Version withoutQualifier() {
-        ensureSplitted();
+        ensureSplit();
         return new Version(major, minor, patch, null);
     }
 
     public String qualifier() {
-        ensureSplitted();
+        ensureSplit();
         return qualifier == null ? "" : qualifier;
     }
 
     public int compareUnqualified(Version other) {
-        ensureSplitted();
-        other.ensureSplitted();
+        ensureSplit();
+        other.ensureSplit();
         int diff = major - other.major;
         if (diff != 0) {
             return diff;
@@ -205,8 +207,8 @@ public class Version implements Comparable<Version> {
     }
 
     public int compareTo(Version other) {
-        ensureSplitted();
-        other.ensureSplitted();
+        ensureSplit();
+        other.ensureSplit();
         int diff = compareUnqualified(other);
         if (diff != 0) {
             return diff;

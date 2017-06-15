@@ -17,6 +17,11 @@
  */
 package org.apache.ivy.core.settings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -46,13 +51,18 @@ import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
-
-import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * TODO write javadoc
  */
-public class XmlSettingsParserTest extends TestCase {
+public class XmlSettingsParserTest {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
+    @Test
     public void test() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -121,6 +131,7 @@ public class XmlSettingsParserTest extends TestCase {
             settings.getResolver(ModuleRevisionId.newInstance("apache", "ivyde", "1.0")).getName());
     }
 
+    @Test
     public void testTypedef() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -144,6 +155,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(subresolvers.get(1) instanceof MockResolver);
     }
 
+    @Test
     public void testStatuses() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -158,6 +170,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(true, settings.getStatusManager().isIntegration("bronze"));
     }
 
+    @Test
     public void testConflictManager() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -168,6 +181,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("all", settings.getConflictManager(new ModuleId("apache", "ant")).getName());
     }
 
+    @Test
     public void testResolveMode() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -179,6 +193,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ant")));
     }
 
+    @Test
     public void testExtraModuleAttribute() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -188,6 +203,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ivy")));
     }
 
+    @Test
     public void testCache() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -240,18 +256,23 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());
     }
 
+    /**
+     * Test of resolver referencing a non existent cache.
+     *
+     * @throws Exception
+     */
+    @Test
     public void testInvalidCache() throws Exception {
+        expExc.expect(ParseException.class);
+        expExc.expectMessage("mycache");
+
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
 
-        try {
-            parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
-            fail("resolver referencing a non existent cache should raise an exception");
-        } catch (ParseException e) {
-            assertTrue(e.getMessage().indexOf("mycache") != -1);
-        }
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
     }
 
+    @Test
     public void testVersionMatchers1() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -270,6 +291,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(chain.getMatchers().contains(settings.getVersionMatcher("latest")));
     }
 
+    @Test
     public void testVersionMatchers2() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -286,6 +308,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(chain.getMatchers().contains(mock));
     }
 
+    @Test
     public void testRef() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -324,6 +347,7 @@ public class XmlSettingsParserTest extends TestCase {
             ivyPatterns.get(0));
     }
 
+    @Test
     public void testMacro() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -374,6 +398,7 @@ public class XmlSettingsParserTest extends TestCase {
             ivyPatterns.get(0));
     }
 
+    @Test
     public void testMacroAndRef() throws Exception {
         // test case for IVY-319
         IvySettings settings = new IvySettings();
@@ -396,6 +421,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(shared instanceof FileSystemResolver);
     }
 
+    @Test
     public void testMacroAndRef2() throws Exception {
         // test case for IVY-860
         IvySettings settings = new IvySettings();
@@ -417,6 +443,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(testResolver, subresolvers.get(0));
     }
 
+    @Test
     public void testPropertiesMissingFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -429,6 +456,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("libraries", defaultResolver.getName());
     }
 
+    @Test
     public void testInclude() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -473,6 +501,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
     }
 
+    @Test
     public void testIncludeAbsoluteFile() throws Exception {
         // WARNING : this test will only work if the test are launched from the project root
         // directory
@@ -486,18 +515,15 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(inc instanceof ChainResolver);
     }
 
+    @Test(expected = Exception.class)
     public void testIncludeMissingFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        try {
-            parser.parse(XmlSettingsParserTest.class
-                    .getResource("ivysettings-include-missing-file.xml"));
-            fail("An exception must be throwed");
-        } catch (Exception e) {
-            // An exception must be throwed
-        }
+        parser.parse(XmlSettingsParserTest.class
+                .getResource("ivysettings-include-missing-file.xml"));
     }
 
+   @Test
     public void testIncludeSpecialCharInName() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -542,6 +568,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
     }
 
+    @Test
     public void testRelativePropertiesFile() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -551,6 +578,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertLocationEquals("lib", settings.getVariable("libraries.dir"));
     }
 
+    @Test
     public void testParser() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -559,6 +587,7 @@ public class XmlSettingsParserTest extends TestCase {
             ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
 
+    @Test
     public void testOutputter() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -571,6 +600,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(testOutputter instanceof MyOutputter);
     }
 
+    @Test
     public void testLockingStrategies() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -581,6 +611,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(lockStrategy instanceof MyLockStrategy);
     }
 
+    @Test
     public void testFileAttribute() throws Exception {
         IvySettings settings = new IvySettings();
         File basedir = new File("test").getAbsoluteFile();
@@ -596,6 +627,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(new File(basedir, "packager/cache"), packager.getResourceCache());
     }
 
+    @Test
     public void testBaseDirVariables() throws Exception {
         IvySettings settings = new IvySettings();
         settings.setBaseDir(new File("test/base/dir"));
@@ -609,6 +641,31 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(new File("other/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
         assertEquals(new File("test/base/dir").getAbsolutePath(),
             settings.getVariable("ivy.basedir"));
+    }
+
+    /**
+     * Tests that a <code>&lt;ttl&gt;</code> containing the <code>matcher</code> attribute, in a ivy settings file,
+     * works as expected.
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1495">IVY-1495</a>
+     */
+    @Test
+    public void testCacheTTLMatcherAttribute() throws Exception {
+        final IvySettings settings = new IvySettings();
+        settings.setBaseDir(new File("test/base/dir"));
+        final XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-ttl-matcher.xml"));
+        // verify ttl
+        final DefaultRepositoryCacheManager cacheManager = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("foo");
+        assertNotNull("Missing cache manager 'foo'", cacheManager);
+        assertEquals("Unexpected default ttl on cache manager", 30000, cacheManager.getDefaultTTL());
+        final ModuleRevisionId module1 = new ModuleRevisionId(new ModuleId("foo", "bar"), "*");
+        final long module1SpecificTTL = cacheManager.getTTL(module1);
+        assertEquals("Unexpected ttl for module " + module1 + " on cache manager", 60000, module1SpecificTTL);
+        final ModuleRevisionId module2 = new ModuleRevisionId(new ModuleId("food", "*"), "1.2.4");
+        final long module2SpecificTTL = cacheManager.getTTL(module2);
+        assertEquals("Unexpected ttl for module " + module2 + " on cache manager", 60000, module2SpecificTTL);
     }
 
     public static class MyOutputter implements ReportOutputter {

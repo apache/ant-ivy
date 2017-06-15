@@ -37,17 +37,14 @@ import org.apache.ivy.util.Checks;
 /**
  * A visit node is an object used to represent one visit from one parent on an {@link IvyNode} of
  * the dependency graph. During dependency resolution, the {@link ResolveEngine} visits nodes of the
- * depency graph following the dependencies, thus the same node can be visited several times, if it
- * is requested from several module. In this case you will have one VisitNode per parent and per
+ * dependency graph following the dependencies, thus the same node can be visited several times, if
+ * it is requested from several module. In this case you will have one VisitNode per parent and per
  * root module configuration. Thus VisitNode stores data specific to the visit:
- * <ul>
- * <li>parent</li>
- * the node from which the visit is occuring
- * <li>parentConf</li>
- * the configuration of the parent in which this node is visited
- * <li>rootModuleConf</li>
- * the configuration of the root module which is currently resolved
- * </ul>
+ * <dl>
+ * <dd>parent</dd><dt>the node from which the visit is occurring</dt>
+ * <dd>parentConf</dd><dt>the configuration of the parent in which this node is visited</dt>
+ * <dd>rootModuleConf</dd><dt>the configuration of the root module which is currently resolved</dt>
+ * </dl>
  */
 public class VisitNode {
     /**
@@ -66,7 +63,7 @@ public class VisitNode {
     private VisitNode root = null;
 
     /**
-     * Direct path from root to this node. Note that the colleciton is ordered but is not a list
+     * Direct path from root to this node. Note that the collection is ordered but is not a list
      * implementation This collection is null until it is required, see getPath
      */
     private Collection<VisitNode> path = null;
@@ -155,8 +152,8 @@ public class VisitNode {
 
     /**
      * Get an ordered collection with the nodes from the root to this node
-     * 
-     * @return
+     *
+     * @return Collection&lt;VisitNode&gt;
      */
     public Collection<VisitNode> getPath() {
         if (path == null) {
@@ -214,7 +211,7 @@ public class VisitNode {
     /**
      * Returns true if the current dependency descriptor is transitive and the parent configuration
      * is transitive. Otherwise returns false.
-     * 
+     *
      * @return true if current node is transitive and the parent configuration is transitive.
      */
     public boolean isTransitive() {
@@ -232,18 +229,14 @@ public class VisitNode {
         }
 
         DependencyDescriptor dd = node.getDependencyDescriptor(getParentNode());
-        if ((dd != null) && dd.isTransitive()) {
-            return true;
-        }
+        return (dd != null) && dd.isTransitive()
+                || node.hasAnyMergedUsageWithTransitiveDependency(rootModuleConf);
 
-        return node.hasAnyMergedUsageWithTransitiveDependency(rootModuleConf);
     }
 
     /**
      * Checks if the current node's parent configuration is transitive.
-     * 
-     * @param node
-     *            current node
+     *
      * @return true if the node's parent configuration is transitive
      */
     protected boolean isParentConfTransitive() {
@@ -262,7 +255,7 @@ public class VisitNode {
      * resolved to an existing node in the graph, we will return the existing node, and not the one
      * originally used which is about to be discarded, since it's not possible to have in the graph
      * two nodes for the same ModuleRevisionId
-     * 
+     *
      * @return the 'real' node currently visited.
      */
     public IvyNode getRealNode() {
@@ -320,7 +313,7 @@ public class VisitNode {
     /**
      * Returns a VisitNode for the given node. The given node must be a representation of the same
      * module (usually in another revision) as the one visited by this node.
-     * 
+     *
      * @param node
      *            the node to visit
      * @return a VisitNode for the given node
@@ -420,13 +413,13 @@ public class VisitNode {
 
     /**
      * Returns true if this node can already be found in the path
-     * 
-     * @return
+     *
+     * @return boolean
      */
     public boolean isCircular() {
         if (isCircular == null) {
             if (parent != null) {
-                isCircular = Boolean.FALSE; // asumme it's false, and see if it isn't by checking
+                isCircular = Boolean.FALSE; // assume it's false, and see if it isn't by checking
                 // the parent path
                 for (VisitNode ancestor : parent.getPath()) {
                     if (getId().getModuleId().equals(ancestor.getId().getModuleId())) {
@@ -438,7 +431,7 @@ public class VisitNode {
                 isCircular = Boolean.FALSE;
             }
         }
-        return isCircular.booleanValue();
+        return isCircular;
     }
 
     public String[] getConfsToFetch() {
@@ -468,7 +461,7 @@ public class VisitNode {
     /**
      * Marks the current node as evicted by the the given selected IvyNodes, in the given parent and
      * root module configuration, with the given {@link ConflictManager}
-     * 
+     *
      * @param parent
      *            the VisitNode in which eviction has been made
      * @param conflictMgr

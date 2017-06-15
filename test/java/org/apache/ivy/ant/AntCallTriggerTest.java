@@ -17,12 +17,16 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Vector;
 
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
@@ -34,9 +38,11 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Test;
 
-public class AntCallTriggerTest extends TestCase {
+public class AntCallTriggerTest {
+    @Test
     public void test() throws Exception {
         assertFalse(new File("test/triggers/ant-call/A/out/foo.txt").exists());
         runAnt(new File("test/triggers/ant-call/A/build.xml"), "resolve");
@@ -44,7 +50,8 @@ public class AntCallTriggerTest extends TestCase {
         assertTrue(new File("test/triggers/ant-call/A/out/foo.txt").exists());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(new File("test/triggers/ant-call/A/out"));
         FileUtil.forceDelete(new File("test/triggers/ant-call/cache"));
     }
@@ -54,12 +61,12 @@ public class AntCallTriggerTest extends TestCase {
     }
 
     private void runAnt(File buildFile, String target, int messageLevel) throws BuildException {
-        Vector targets = new Vector();
+        Vector<String> targets = new Vector<>();
         targets.add(target);
         runAnt(buildFile, targets, messageLevel);
     }
 
-    private void runAnt(File buildFile, Vector targets, int messageLevel) throws BuildException {
+    private void runAnt(File buildFile, Vector<String> targets, int messageLevel) throws BuildException {
         runBuild(buildFile, targets, messageLevel);
 
         // this exits the jvm at the end of the call
@@ -85,7 +92,7 @@ public class AntCallTriggerTest extends TestCase {
     // ////////////////////////////////////////////////////////////////////////////
     // miserable copy (updated to simple test cases) from ant Main class:
     // the only available way I found to easily run ant exits jvm at the end
-    private void runBuild(File buildFile, Vector targets, int messageLevel) throws BuildException {
+    private void runBuild(File buildFile, Vector<String> targets, int messageLevel) throws BuildException {
 
         final Project project = new Project();
         project.setCoreLoader(null);
@@ -142,12 +149,9 @@ public class AntCallTriggerTest extends TestCase {
                 System.setErr(err);
                 System.setIn(in);
             }
-        } catch (RuntimeException exc) {
+        } catch (RuntimeException | Error exc) {
             error = exc;
             throw exc;
-        } catch (Error err) {
-            error = err;
-            throw err;
         } finally {
             project.fireBuildFinished(error);
         }
@@ -156,7 +160,7 @@ public class AntCallTriggerTest extends TestCase {
     /**
      * Adds the listeners specified in the command line arguments, along with the default listener,
      * to the specified project.
-     * 
+     *
      * @param project
      *            The project to add listeners to. Must not be <code>null</code>.
      */
@@ -169,10 +173,11 @@ public class AntCallTriggerTest extends TestCase {
 
     /**
      * Creates the InputHandler and adds it to the project.
-     * 
+     *
      * @param project
      *            the project instance.
      * @param inputHandlerClassname
+     *            String
      * @exception BuildException
      *                if a specified InputHandler implementation could not be loaded.
      */
@@ -183,7 +188,7 @@ public class AntCallTriggerTest extends TestCase {
             handler = new DefaultInputHandler();
         } else {
             try {
-                handler = (InputHandler) (Class.forName(inputHandlerClassname).newInstance());
+                handler = (InputHandler) Class.forName(inputHandlerClassname).newInstance();
                 if (project != null) {
                     project.setProjectReference(handler);
                 }
@@ -206,7 +211,7 @@ public class AntCallTriggerTest extends TestCase {
     // loggers could have failed to be created due to this failure)?
     /**
      * Creates the default build logger for sending build events to the ant log.
-     * 
+     *
      * @return the logger instance for this build.
      */
     private BuildLogger createLogger(int level) {

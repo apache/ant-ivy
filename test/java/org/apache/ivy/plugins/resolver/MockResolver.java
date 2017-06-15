@@ -64,7 +64,7 @@ public class MockResolver extends AbstractResolver {
         return r;
     }
 
-    List askedDeps = new ArrayList();
+    List<DependencyDescriptor> askedDeps = new ArrayList<>();
 
     ResolvedModuleRevision rmr;
 
@@ -94,8 +94,8 @@ public class MockResolver extends AbstractResolver {
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         DownloadReport dr = new DownloadReport();
-        for (int i = 0; i < artifacts.length; i++) {
-            dr.addArtifactReport(new ArtifactDownloadReport(artifacts[i]));
+        for (Artifact artifact : artifacts) {
+            dr.addArtifactReport(new ArtifactDownloadReport(artifact));
         }
         return dr;
     }

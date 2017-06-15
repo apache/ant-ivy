@@ -38,6 +38,7 @@ import org.apache.ivy.Ivy;
 
 public final class CredentialsUtil {
 
+    @SuppressWarnings("serial")
     private static final class CredentialPanel extends JPanel {
         private static final int FIELD_LENGTH = 20;
 
@@ -107,7 +108,7 @@ public final class CredentialsUtil {
             String username = credentialPanel.userNameField.getText();
             String passwd = credentialPanel.passwordField.getText();
             if (credentialPanel.rememberDataCB.isSelected()) {
-                Properties props = new EncrytedProperties();
+                Properties props = new EncryptedProperties();
                 props.setProperty("username", username);
                 props.setProperty("passwd", passwd);
                 FileOutputStream fos = null;
@@ -133,7 +134,7 @@ public final class CredentialsUtil {
 
     public static Credentials loadPassfile(Credentials c, File passfile) {
         if (passfile != null && passfile.exists()) {
-            Properties props = new EncrytedProperties();
+            Properties props = new EncryptedProperties();
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(passfile);

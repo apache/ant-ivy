@@ -54,7 +54,7 @@ public class IvyNodeEviction {
 
         /**
          * Creates a new object containing the eviction data of an {@link IvyNode}.
-         * 
+         *
          * @param rootModuleConf
          *            the root module configuration
          * @param parent
@@ -73,7 +73,7 @@ public class IvyNodeEviction {
 
         /**
          * Creates a new object containing the eviction data of an {@link IvyNode}.
-         * 
+         *
          * @param rootModuleConf
          *            the root module configuration
          * @param parent
@@ -157,11 +157,7 @@ public class IvyNodeEviction {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof ModuleIdConf)) {
-                return false;
-            }
-            return getModuleId().equals(((ModuleIdConf) obj).getModuleId())
-                    && getConf().equals(((ModuleIdConf) obj).getConf());
+            return obj instanceof ModuleIdConf && getModuleId().equals(((ModuleIdConf) obj).getModuleId()) && getConf().equals(((ModuleIdConf) obj).getConf());
         }
 
         @Override
@@ -201,6 +197,8 @@ public class IvyNodeEviction {
     }
 
     /**
+     * @param mid ModuleId
+     * @param rootModuleConf String
      * @return A copy of the set of resolved nodes (real nodes)
      */
     public Set<IvyNode> getResolvedNodes(ModuleId mid, String rootModuleConf) {
@@ -341,8 +339,8 @@ public class IvyNodeEviction {
     /**
      * Returns null if this node has only be evicted transitively, or the the collection of selected
      * nodes if it has been evicted by other selected nodes
-     * 
-     * @return
+     *
+     * @return Collection&lt;IvyNode&gt;
      */
     public Collection<IvyNode> getAllEvictingNodes() {
         Collection<IvyNode> allEvictingNodes = null;
@@ -389,10 +387,10 @@ public class IvyNodeEviction {
      * Returns the eviction data for this node if it has been previously evicted in the root, null
      * otherwise (if it hasn't been evicted in root) for the given rootModuleConf. Note that this
      * method only works if conflict resolution has already be done in all the ancestors.
-     * 
-     * @param rootModuleConf
-     * @param ancestor
-     * @return
+     *
+     * @param rootModuleConf ditto
+     * @param ancestor IvyNode
+     * @return EvictionData
      */
     public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode ancestor) {
         Collection<IvyNode> selectedNodes = node.getRoot().getResolvedNodes(node.getModuleId(),

@@ -54,7 +54,7 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * Logs the given message.
-     * 
+     *
      * @param message
      *            the message to log
      */
@@ -92,7 +92,7 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * Message to write.
-     * 
+     *
      * @param msg
      *            Sets the value for the message variable.
      */
@@ -102,7 +102,7 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * File to write to.
-     * 
+     *
      * @param file
      *            the file to write to, if not set, echo to standard Ivy logging
      */
@@ -112,7 +112,7 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * If true, append to existing file.
-     * 
+     *
      * @param append
      *            if true, append to existing file, default is false.
      */
@@ -123,7 +123,7 @@ public class LogTrigger extends AbstractTrigger {
     /**
      * Declare the encoding to use when outputting to a file; Use "" for the platform's default
      * encoding.
-     * 
+     *
      * @param encoding
      *            the character encoding to use.
      */

@@ -48,6 +48,8 @@ import org.apache.ivy.util.filter.NoFilter;
  * Rules themselves can be represented by any object, depending on the purpose of the rule (define
  * which resolver to use, which TTL in cache, ...)
  * </p>
+ *
+ * @param <T> a type parameter
  */
 public class ModuleRules<T> {
 
@@ -70,7 +72,7 @@ public class ModuleRules<T> {
 
     /**
      * Defines a new rule for the given condition.
-     * 
+     *
      * @param condition
      *            the condition for which the rule should be applied. Must not be <code>null</code>.
      * @param rule
@@ -87,7 +89,7 @@ public class ModuleRules<T> {
     /**
      * Returns the rule object matching the given {@link ModuleId}, or <code>null</code> if no rule
      * applies.
-     * 
+     *
      * @param mid
      *            the {@link ModuleId} to search the rule for. Must not be <code>null</code>.
      * @return the rule object matching the given {@link ModuleId}, or <code>null</code> if no rule
@@ -101,7 +103,7 @@ public class ModuleRules<T> {
     /**
      * Returns the rules objects matching the given {@link ModuleId}, or an empty array if no rule
      * applies.
-     * 
+     *
      * @param mid
      *            the {@link ModuleId} to search the rule for. Must not be <code>null</code>.
      * @return an array of rule objects matching the given {@link ModuleId}.
@@ -113,7 +115,7 @@ public class ModuleRules<T> {
     /**
      * Returns the rule object matching the given {@link ModuleRevisionId}, or <code>null</code> if
      * no rule applies.
-     * 
+     *
      * @param mrid
      *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
      *            .
@@ -128,7 +130,7 @@ public class ModuleRules<T> {
     /**
      * Returns the rule object matching the given {@link ModuleId} and accepted by the given
      * {@link Filter}, or <code>null</code> if no rule applies.
-     * 
+     *
      * @param mid
      *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
      *            .
@@ -149,7 +151,7 @@ public class ModuleRules<T> {
     /**
      * Returns the rule object matching the given {@link ModuleRevisionId} and accepted by the given
      * {@link Filter}, or <code>null</code> if no rule applies.
-     * 
+     *
      * @param mrid
      *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
      *            .
@@ -183,7 +185,7 @@ public class ModuleRules<T> {
     /**
      * Returns the rules object matching the given {@link ModuleRevisionId} and accepted by the
      * given {@link Filter}, or an empty array if no rule applies.
-     * 
+     *
      * @param mrid
      *            the {@link ModuleRevisionId} to search the rule for. Must not be <code>null</code>
      *            .
@@ -214,7 +216,7 @@ public class ModuleRules<T> {
 
     /**
      * Dump the list of rules to {@link Message#debug(String)}
-     * 
+     *
      * @param prefix
      *            the prefix to use for each line dumped
      */
@@ -236,7 +238,7 @@ public class ModuleRules<T> {
      * The rules are returned in a Map where they keys are the MapMatchers matching the rules
      * object, and the values are the rules object themselves.
      * </p>
-     * 
+     *
      * @return an unmodifiable view of all the rules defined on this ModuleRules.
      */
     public Map<MapMatcher, T> getAllRules() {

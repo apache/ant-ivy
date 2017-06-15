@@ -23,14 +23,19 @@ import java.net.MalformedURLException;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.settings.IvySettings;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class IvyTaskTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+public class IvyTaskTest {
+
+    @Test
     public void testDefaultSettings() throws MalformedURLException {
         Project p = TestHelper.newProject();
         p.setBasedir("test/repositories");
@@ -60,6 +65,8 @@ public class IvyTaskTest extends TestCase {
         assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
     public void testReferencedSettings() throws MalformedURLException {
         Project p = TestHelper.newProject();
         p.setProperty("myproperty", "myvalue");
@@ -92,6 +99,7 @@ public class IvyTaskTest extends TestCase {
         assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
     }
 
+    @Test
     public void testIvyVersionAsAntProperty() {
         Project p = TestHelper.newProject();
         p.setBasedir("test/repositories");

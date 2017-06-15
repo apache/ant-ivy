@@ -18,15 +18,21 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyBuildNumberTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class IvyBuildNumberTest {
 
     private IvyBuildNumber buildNumber;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -35,10 +41,12 @@ public class IvyBuildNumberTest extends TestCase {
         buildNumber.setProject(project);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testDefault() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
@@ -49,6 +57,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("0", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testDefault2() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
@@ -60,6 +69,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testDefault3() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
@@ -71,6 +81,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals(null, buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testLatest() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
@@ -81,6 +92,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testLatest2() throws Exception {
         buildNumber.setOrganisation("orgbn");
         buildNumber.setModule("buildnumber");
@@ -91,6 +103,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testPrefix() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
@@ -102,6 +115,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("test.new.build.number"));
     }
 
+    @Test
     public void testBuildNumber() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
@@ -113,6 +127,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("2", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testBuildNumber2() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.5");
@@ -124,6 +139,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testBuildNumber3() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
@@ -135,6 +151,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testBuildNumber4() throws Exception {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
@@ -146,6 +163,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("0", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testWithBadChecksum() throws Exception {
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-checksums.xml");
@@ -162,6 +180,7 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    @Test
     public void testChainResolver() throws Exception {
         // IVY-1037
         Project project = TestHelper.newProject();

@@ -38,6 +38,8 @@ public class RetrieveReport {
 
     /**
      * Returns the root directory to where the artifacts are retrieved.
+     *
+     * @return File
      */
     public File getRetrieveRoot() {
         return retrieveRoot;
@@ -68,6 +70,8 @@ public class RetrieveReport {
     /**
      * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve
      * process.
+     *
+     * @return Collection&lt;File&gt;
      */
     public Collection<File> getCopiedFiles() {
         return new ArrayList<File>(copiedFiles);
@@ -76,6 +80,8 @@ public class RetrieveReport {
     /**
      * Returns a collection of <tt>File</tt> objects who were actually copied during the retrieve
      * process.
+     *
+     * @return Collection&lt;File&gt;
      */
     public Collection<File> getUpToDateFiles() {
         return new ArrayList<File>(upToDateFiles);
@@ -84,6 +90,8 @@ public class RetrieveReport {
     /**
      * Returns a collection of <tt>File</tt> objects who were retrieved during the retrieve process.
      * This is the union of the files being copied and the files that were up-to-date.
+     *
+     * @return Collection&lt;File&gt;
      */
     public Collection<File> getRetrievedFiles() {
         Collection<File> result = new ArrayList<File>(upToDateFiles.size() + copiedFiles.size());
@@ -94,6 +102,8 @@ public class RetrieveReport {
 
     /**
      * Get the mapping between the copied files and their corresponding download report
+     *
+     * @return Map&lt;File,ArtifactDownloadReport&gt;
      */
     public Map<File, ArtifactDownloadReport> getDownloadReport() {
         return downloadReport;

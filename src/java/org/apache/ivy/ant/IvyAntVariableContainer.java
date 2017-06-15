@@ -60,13 +60,14 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
 
     /**
      * Updates the Ant Project used in this container with variables set in Ivy.
-     * 
+     *
      * All variables defined in Ivy will be set in the Ant project under two names:
      * <ul>
      * <li>the name of the variable</li>
-     * <li>the name of the variable suffxied with a dot + the given id, if the given id is not null</li>
+     * <li>the name of the variable suffixed with a dot + the given id, if the given id is not null
+     * </li>
      * </ul>
-     * 
+     *
      * @param id
      *            The identifier of the settings in which the variables have been set, which should
      *            be used as property names suffix
@@ -98,6 +99,7 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Object clone() {
         IvyAntVariableContainer result = (IvyAntVariableContainer) super.clone();
         result.overwrittenProperties = (HashMap) ((HashMap) this.overwrittenProperties).clone();

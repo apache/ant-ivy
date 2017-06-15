@@ -26,14 +26,18 @@ import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * split from XmlIvyConfigurationParserTest due to dependency on network resource
  */
-public class OnlineXmlSettingsParserTest extends TestCase {
+public class OnlineXmlSettingsParserTest {
     // remote.test
 
+    @Test
     public void testIncludeHttpUrl() throws Exception {
         configureURLHandler();
         IvySettings settings = new IvySettings();
@@ -45,6 +49,7 @@ public class OnlineXmlSettingsParserTest extends TestCase {
         assertTrue(resolver instanceof IvyRepResolver);
     }
 
+    @Test
     public void testIncludeHttpRelativeUrl() throws Exception {
         // Use a settings file via http that use an include with relative url
         configureURLHandler();
@@ -58,6 +63,7 @@ public class OnlineXmlSettingsParserTest extends TestCase {
         assertTrue(resolver instanceof IvyRepResolver);
     }
 
+    @Test
     public void testIncludeHttpRelativeFile() throws Exception {
         // Use a settings file via http that use an include with relative file
         configureURLHandler();
@@ -71,6 +77,7 @@ public class OnlineXmlSettingsParserTest extends TestCase {
         assertTrue(resolver instanceof IvyRepResolver);
     }
 
+    @Test
     public void testIncludeHttpAbsoluteFile() throws Exception {
         // Use a settings file via http that use an include with absolute file
         // WARNING : this test will only work if the test are launched from the project root

@@ -14,68 +14,68 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <project name="dual-ivy" default="run" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- some variables used -->
-    <property name="lib.dir" value="${basedir}/lib" />
-    <property name="build.dir" value="${basedir}/build" />
-    <property name="src.dir" value="${basedir}/src" />
-    
-    <!-- ivy properties used -->
-    <property name="ivy.settings.dir" value="../settings" />
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="src.dir" value="${basedir}/src"/>
 
-	<!-- paths used for compilation and run  -->
+    <!-- ivy properties used -->
+    <property name="ivy.settings.dir" value="../settings"/>
+
+        <!-- paths used for compilation and run  -->
     <path id="lib.path.id">
-        <fileset dir="${lib.dir}" />
-	</path>
-    <path id="run.path.id">
-        <path refid="lib.path.id" />
-        <path location="${build.dir}" />
+        <fileset dir="${lib.dir}"/>
     </path>
-    
-    <ivy:settings file="${ivy.settings.dir}/ivysettings.xml" />
-    
-    <!-- ================================= 
-          target: resolve              
+    <path id="run.path.id">
+        <path refid="lib.path.id"/>
+        <path location="${build.dir}"/>
+    </path>
+
+    <ivy:settings file="${ivy.settings.dir}/ivysettings.xml"/>
+
+    <!-- =================================
+          target: resolve
          ================================= -->
     <target name="resolve" description="--> resolve and retrieve dependencies with ivy">
-        <ivy:retrieve />
+        <ivy:retrieve/>
     </target>
-    
-    <!-- ================================= 
-          target: report              
+
+    <!-- =================================
+          target: report
          ================================= -->
     <target name="report" depends="resolve" description="--> generates a report of dependencies">
         <ivy:report todir="${build.dir}"/>
     </target>
-    
-    <!-- ================================= 
+
+    <!-- =================================
           target: run
          ================================= -->
     <target name="run" depends="resolve" description="--> compile and run the project">
-        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
         <java classpathref="run.path.id" classname="example.Hello"/>
     </target>
-    
-    <!-- ================================= 
-          target: clean              
+
+    <!-- =================================
+          target: clean
          ================================= -->
     <target name="clean" description="--> clean the project">
         <delete includeemptydirs="true">
             <fileset dir="${basedir}">
-            	<exclude name="src/**" />
-            	<exclude name="build.xml" />
-		    	<exclude name="ivy.xml" />
-        	</fileset>
-    	</delete>
+                <exclude name="src/**"/>
+                <exclude name="build.xml"/>
+                <exclude name="ivy.xml"/>
+            </fileset>
+        </delete>
     </target>
-	
-    <!-- ================================= 
-          target: clean-cache              
+
+    <!-- =================================
+          target: clean-cache
          ================================= -->
-	<target name="clean-cache" description="--> clean the ivy cache">
-		<ivy:cleancache />
-	</target>
+    <target name="clean-cache" description="--> clean the ivy cache">
+        <ivy:cleancache/>
+    </target>
 </project>

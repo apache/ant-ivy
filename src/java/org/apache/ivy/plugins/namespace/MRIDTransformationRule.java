@@ -52,11 +52,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
                 }
             }
             matchers[3] = Pattern.compile(getPattern(src.getRev())).matcher(mrid.getRevision());
-            if (!matchers[3].matches()) {
-                return false;
-            }
-
-            return true;
+            return matchers[3].matches();
             // CheckStyle:MagicNumber| ON
         }
 

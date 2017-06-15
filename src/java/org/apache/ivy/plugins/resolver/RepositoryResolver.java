@@ -169,7 +169,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     /**
      * List all revisions as resolved resources for the given artifact in the given repository using
      * the given pattern, and using the given mrid except its revision.
-     * 
+     *
      * @param repository
      *            the repository in which revisions should be located
      * @param mrid
@@ -347,11 +347,11 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
     }
 
     public boolean isAlwaysCheckExactRevision() {
-        return alwaysCheckExactRevision == null ? true : alwaysCheckExactRevision.booleanValue();
+        return alwaysCheckExactRevision == null || alwaysCheckExactRevision;
     }
 
     public void setAlwaysCheckExactRevision(boolean alwaysCheckExactRevision) {
-        this.alwaysCheckExactRevision = Boolean.valueOf(alwaysCheckExactRevision);
+        this.alwaysCheckExactRevision = alwaysCheckExactRevision;
     }
 
 }

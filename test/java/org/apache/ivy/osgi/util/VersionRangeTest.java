@@ -17,10 +17,15 @@
  */
 package org.apache.ivy.osgi.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class VersionRangeTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+public class VersionRangeTest {
+
+    @Test
     public void testParse() throws Exception {
         assertEquals(new VersionRange(false, new Version("1.0.0"), false, null), new VersionRange(
                 "1.0.0"));
@@ -40,6 +45,7 @@ public class VersionRangeTest extends TestCase {
             new VersionRange("1.0.0.A"));
     }
 
+    @Test
     public void testContains() throws Exception {
         assertFalse(new VersionRange("1").contains("0.9"));
         assertTrue(new VersionRange("1").contains("1"));

@@ -63,7 +63,6 @@ public class VfsResource implements Resource {
             try {
                 resourceImpl = fsManager.resolveFile(vfsURI);
                 content = resourceImpl.getContent();
-
                 exists = resourceImpl.exists();
                 lastModified = content.getLastModifiedTime();
                 contentLength = content.getSize();
@@ -74,27 +73,24 @@ public class VfsResource implements Resource {
                 lastModified = 0;
                 contentLength = 0;
             }
-
             init = true;
         }
     }
 
     /**
-     * Get a list of direct descendents of the given resource. Note that attempts to get a list of
-     * children does <emphasize>not</emphasize> result in an error. Instead an error message is
+     * Get a list of direct descendants of the given resource. Note that attempts to get a list of
+     * children does <em>not</em> result in an error. Instead an error message is
      * logged and an empty ArrayList returned.
-     * 
+     *
      * @return A <code>ArrayList</code> of VFSResources
      */
-    public List getChildren() {
+    public List<String> getChildren() {
         init();
-        ArrayList list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         try {
             if ((resourceImpl != null) && resourceImpl.exists()
                     && (resourceImpl.getType() == FileType.FOLDER)) {
-                FileObject[] children = resourceImpl.getChildren();
-                for (int i = 0; i < children.length; i++) {
-                    FileObject child = children[i];
+                for (FileObject child : resourceImpl.getChildren()) {
                     list.add(normalize(child.getName().getURI()));
                 }
             }
@@ -112,7 +108,7 @@ public class VfsResource implements Resource {
 
     /**
      * Get the name of the resource.
-     * 
+     *
      * @return a <code>String</code> representing the Resource URL.
      */
     public String getName() {
@@ -126,9 +122,9 @@ public class VfsResource implements Resource {
     /**
      * The VFS FileName getURI method seems to have a bug in it where file: URIs will have 4 forward
      * slashes instead of 3.
-     * 
-     * @param vfsURI
-     * @return a normalized <class>String</class> representing the VFS URI
+     *
+     * @param vfsURI ditto
+     * @return a normalized String representing the VFS URI
      */
     public static String normalize(String vfsURI) {
         if (vfsURI == null) {
@@ -143,7 +139,7 @@ public class VfsResource implements Resource {
 
     /**
      * Get the last modification time of the resource.
-     * 
+     *
      * @return a <code>long</code> indicating last modified time.
      */
     public long getLastModified() {
@@ -153,7 +149,7 @@ public class VfsResource implements Resource {
 
     /**
      * Get the size of the resource
-     * 
+     *
      * @return a <code>long</code> representing the size of the resource (in bytes).
      */
     public long getContentLength() {
@@ -163,7 +159,7 @@ public class VfsResource implements Resource {
 
     /**
      * Flag indicating whether a resource is available for querying
-     * 
+     *
      * @return <code>true</code> if the resource is available for querying, <code>false</code>
      *         otherwise.
      */
@@ -174,7 +170,7 @@ public class VfsResource implements Resource {
 
     /**
      * Return a flag indicating whether a provided VFS resource physically exists
-     * 
+     *
      * @return <code>true</code> if the resource physically exists, <code>false</code> otherwise.
      */
     public boolean physicallyExists() {
@@ -185,9 +181,9 @@ public class VfsResource implements Resource {
             return resourceImpl.exists();
             // originally I only checked for a FileSystemException. I expanded it to
             // include all exceptions when I found it would throw a NPE exception when the query was
-            // run on non-wellformed VFS URI.
+            // run on ill-formed VFS URI.
         } catch (Exception e) {
-            Message.verbose("Fail to check the existance of the resource " + getName(), e);
+            Message.verbose("Fail to check the existence of the resource " + getName(), e);
             return false;
         }
     }

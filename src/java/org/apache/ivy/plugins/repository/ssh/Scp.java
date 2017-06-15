@@ -275,6 +275,7 @@ public class Scp {
         fileInfo.setLastModified(modtime);
     }
 
+    @SuppressWarnings("resource")
     private void sendFile(Channel channel, String localFile, String remoteName, String mode)
             throws IOException, RemoteScpException {
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -349,12 +350,12 @@ public class Scp {
 
     /**
      * Receive a file via scp and store it in a stream
-     * 
+     *
      * @param channel
      *            ssh channel to use
      * @param file
      *            to receive from remote
-     * @param target
+     * @param targetStream
      *            to store file into (if null, get only file info)
      * @return file information of the file we received
      * @throws IOException
@@ -450,7 +451,7 @@ public class Scp {
     }
 
     /**
-     * @return
+     * @return ChannelExec
      * @throws JSchException
      */
     private ChannelExec getExecChannel() throws JSchException {
@@ -462,7 +463,7 @@ public class Scp {
     /**
      * Copy a local file to a remote site, uses the specified mode when creating the file on the
      * remote side.
-     * 
+     *
      * @param localFile
      *            Path and name of local file. Must be absolute.
      * @param remoteTargetDir
@@ -476,6 +477,7 @@ public class Scp {
      * @throws RemoteScpException
      *             in case of problems on the target system (connection ok)
      */
+    @SuppressWarnings("unused")
     public void put(String localFile, String remoteTargetDir, String remoteTargetName, String mode)
             throws IOException, RemoteScpException {
         ChannelExec channel = null;
@@ -520,7 +522,7 @@ public class Scp {
 
     /**
      * Download a file from the remote server to a local file.
-     * 
+     *
      * @param remoteFile
      *            Path and name of the remote file.
      * @param localTarget
@@ -538,7 +540,7 @@ public class Scp {
 
     /**
      * Download a file from the remote server into an OutputStream
-     * 
+     *
      * @param remoteFile
      *            Path and name of the remote file.
      * @param localTarget
@@ -550,6 +552,7 @@ public class Scp {
      */
     public void get(String remoteFile, OutputStream localTarget) throws IOException,
             RemoteScpException {
+    @SuppressWarnings("unused")
         ChannelExec channel = null;
 
         if ((remoteFile == null) || (localTarget == null)) {
@@ -574,7 +577,7 @@ public class Scp {
 
     /**
      * Initiates an SCP sequence but stops after getting fileinformation header
-     * 
+     *
      * @param remoteFile
      *            to get information for
      * @return the file information got

@@ -107,8 +107,8 @@ public class IvyAntSettings extends DataType {
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
      * created using the given project to back the VariableContainer.
-     * 
-     * @param project
+     *
+     * @param task
      *            TODO add text.
      * @return An IvySetting instance.
      */
@@ -192,7 +192,7 @@ public class IvyAntSettings extends DataType {
         super.setProject(p);
 
         if ("ivy.instance".equals(id) && !getProject().getReferences().containsKey(id)) {
-            // register ourselfs as default settings, just in case the id attribute is not set
+            // register ourselves as default settings, just in case the id attribute is not set
             getProject().addReference("ivy.instance", this);
             autoRegistered = true;
         }
@@ -241,7 +241,8 @@ public class IvyAntSettings extends DataType {
 
     /**
      * Return the configured Ivy instance.
-     * 
+     *
+     * @param task ProjectComponent
      * @return Returns the configured Ivy instance.
      */
     public Ivy getConfiguredIvyInstance(ProjectComponent task) {
@@ -336,8 +337,8 @@ public class IvyAntSettings extends DataType {
 
     /**
      * Set file or url to its default value
-     * 
-     * @param variableContainer
+     *
+     * @param variableContainer IvyVariableContainer
      */
     private void defineDefaultSettingFile(IvyVariableContainer variableContainer,
             ProjectComponent task) {
@@ -362,7 +363,7 @@ public class IvyAntSettings extends DataType {
         }
         if (!file.exists()) {
             file = null;
-            if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible")).booleanValue()) {
+            if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible"))) {
                 task.log("no settings file found, using Ivy 1.4 default...", Project.MSG_VERBOSE);
                 url = IvySettings.getDefault14SettingsURL();
             } else {

@@ -98,6 +98,7 @@ public class IvyPublish extends IvyTask {
     }
 
     /**
+     * @return String
      * @deprecated use {@link #getSrcivypattern()} instead.
      */
     @Deprecated
@@ -106,6 +107,7 @@ public class IvyPublish extends IvyTask {
     }
 
     /**
+     * @param destivypattern String
      * @deprecated use {@link #setSrcivypattern(String)} instead.
      */
     @Deprecated
@@ -244,17 +246,17 @@ public class IvyPublish extends IvyTask {
         status = getProperty(status, settings, "ivy.status");
         if (organisation == null) {
             throw new BuildException("no organisation provided for ivy publish task: "
-                    + "It can either be set explicitely via the attribute 'organisation' "
+                    + "It can either be set explicitly via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (module == null) {
             throw new BuildException("no module name provided for ivy publish task: "
-                    + "It can either be set explicitely via the attribute 'module' "
+                    + "It can either be set explicitly via the attribute 'module' "
                     + "or via 'ivy.module' property or a prior call to <resolve/>");
         }
         if (revision == null) {
             throw new BuildException("no module revision provided for ivy publish task: "
-                    + "It can either be set explicitely via the attribute 'revision' "
+                    + "It can either be set explicitly via the attribute 'revision' "
                     + "or via 'ivy.revision' property or a prior call to <resolve/>");
         }
         if (artifactspattern.isEmpty()) {

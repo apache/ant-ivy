@@ -80,12 +80,13 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     /**
      * This method is similar to getResource, except that the returned resource is fully initialized
      * (resolved in the sftp repository), and that the given string is a full remote path
-     * 
+     *
      * @param path
      *            the full remote path in the repository of the resource
      * @return a fully initialized resource, able to answer to all its methods without needing any
      *         further connection
      */
+    @SuppressWarnings("unchecked")
     public Resource resolveResource(String path) {
         try {
             ChannelSftp c = getSftpChannel(path);
@@ -105,7 +106,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             }
         } catch (Exception e) {
             Message.debug("Error while resolving resource " + path, e);
-            // silent fail, return unexisting resource
+            // silent fail, return nonexistent resource
         }
 
         return new BasicResource(path, false, 0, 0, false);
@@ -199,6 +200,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public List list(String parent) throws IOException {
         try {
             ChannelSftp c = getSftpChannel(parent);
@@ -235,17 +237,14 @@ public class SFTPRepository extends AbstractSshBasedRepository {
 
     /**
      * Checks the existence for a remote file
-     * 
+     *
      * @param file
      *            to check
      * @param channel
      *            to use
-     * @returns true if file exists, false otherwise
-     * @throws IOException
-     * @throws SftpException
+     * @return true if file exists, false otherwise
      */
-    private boolean checkExistence(String file, ChannelSftp channel) throws IOException,
-            SftpException {
+    private boolean checkExistence(String file, ChannelSftp channel) {
         try {
             return channel.stat(file) != null;
         } catch (SftpException ex) {
@@ -257,7 +256,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
      * Establish the connection to the server if not yet connected, and listen to ivy events for
      * closing connection when resolve is finished. Not meant to be used in multi threaded
      * environment.
-     * 
+     *
      * @return the ChannelSftp with which a connection is established
      * @throws IOException
      *             if any connection problem occurs

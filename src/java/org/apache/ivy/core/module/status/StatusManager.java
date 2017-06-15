@@ -119,7 +119,7 @@ public class StatusManager {
             Message.debug("unknown status " + status + ": assuming integration");
             return true;
         }
-        return isIntegration.booleanValue();
+        return isIntegration;
     }
 
     public String getDeliveryStatusListString() {

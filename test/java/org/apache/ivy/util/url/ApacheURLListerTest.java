@@ -18,72 +18,77 @@
 package org.apache.ivy.util.url;
 
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link ApacheURLLister}.
  */
-public class ApacheURLListerTest extends TestCase {
-
+public class ApacheURLListerTest {
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
-     * 
+     *
      * @throws Exception
      */
+    @Test
     public void testRetrieveListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List files = lister.retrieveListing(
+        List<URL> files = lister.retrieveListing(
             ApacheURLListerTest.class.getResource("apache-file-listing.html"), true, false);
         assertNotNull(files);
         assertTrue(files.size() > 0);
-        for (Iterator iter = files.iterator(); iter.hasNext();) {
-            URL file = (URL) iter.next();
+        for (URL file : files) {
             assertTrue("found a non matching file: " + file,
                 file.getPath().matches(".*/[^/]+\\.(jar|md5|sha1)"));
         }
 
         // try a directory listing
-        List dirs = lister.retrieveListing(
+        List<URL> dirs = lister.retrieveListing(
             ApacheURLListerTest.class.getResource("apache-dir-listing.html"), false, true);
         assertNotNull(dirs);
         assertEquals(4, dirs.size());
 
-        List empty = lister.retrieveListing(
+        List<URL> empty = lister.retrieveListing(
             ApacheURLListerTest.class.getResource("apache-dir-listing.html"), true, false);
         assertTrue(empty.isEmpty());
     }
 
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
-     * 
+     *
      * @throws Exception
      */
+    @Test
     public void testRetrieveListingWithSpaces() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List files = lister.retrieveListing(
+        List<URL> files = lister.retrieveListing(
             ApacheURLListerTest.class.getResource("listing-with-spaces.html"), true, false);
         assertNotNull(files);
         assertTrue(files.size() > 0);
     }
 
+    @Test
     public void testRetrieveArtifactoryListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List files = lister.retrieveListing(
+        List<URL> files = lister.retrieveListing(
             ApacheURLListerTest.class.getResource("artifactory-dir-listing.html"), true, true);
         assertNotNull(files);
         assertEquals(1, files.size());
     }
 
+   @Test
     public void testRetrieveArchivaListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List d = lister.listDirectories(ApacheURLListerTest.class
+        List<URL> d = lister.listDirectories(ApacheURLListerTest.class
                 .getResource("archiva-listing.html"));
         assertNotNull(d);
         // archiva listing is not valid html at all currently (1.0, unclosed a tags),
@@ -91,19 +96,21 @@ public class ApacheURLListerTest extends TestCase {
         // assertEquals(3, d.size());
     }
 
+    @Test
     public void testRetrieveFixedArchivaListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List d = lister.listDirectories(ApacheURLListerTest.class
+        List<URL> d = lister.listDirectories(ApacheURLListerTest.class
                 .getResource("fixed-archiva-listing.html"));
         assertNotNull(d);
         assertEquals(3, d.size());
     }
 
+    @Test
     public void testRetrieveMavenProxyListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List d = lister.listDirectories(ApacheURLListerTest.class
+        List<URL> d = lister.listDirectories(ApacheURLListerTest.class
                 .getResource("maven-proxy-listing.html"));
         assertNotNull(d);
         assertEquals(3, d.size());

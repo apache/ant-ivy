@@ -45,6 +45,7 @@ public class CommandLineParser {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public CommandLineParser addOption(Option option) {
         options.put(option.getName(), option);
         if (!categories.isEmpty()) {

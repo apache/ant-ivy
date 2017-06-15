@@ -17,15 +17,20 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import junit.framework.TestCase;
-
-public class IvyCleanCacheTest extends TestCase {
+public class IvyCleanCacheTest {
     private IvyCleanCache cleanCache;
 
     private File cacheDir;
@@ -36,7 +41,11 @@ public class IvyCleanCacheTest extends TestCase {
 
     private File resolutionCache;
 
-    protected void setUp() throws Exception {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
+    @Before
+    public void setUp() throws Exception {
         Project p = TestHelper.newProject();
         cacheDir = new File("build/cache");
         p.setProperty("cache", cacheDir.getAbsolutePath());
@@ -56,6 +65,7 @@ public class IvyCleanCacheTest extends TestCase {
         repoCache2.mkdirs();
     }
 
+    @Test
     public void testCleanAll() throws Exception {
         cleanCache.perform();
         assertFalse(resolutionCache.exists());
@@ -63,6 +73,7 @@ public class IvyCleanCacheTest extends TestCase {
         assertFalse(repoCache2.exists());
     }
 
+    @Test
     public void testResolutionOnly() throws Exception {
         cleanCache.setCache(IvyCleanCache.NONE);
         cleanCache.perform();
@@ -71,6 +82,7 @@ public class IvyCleanCacheTest extends TestCase {
         assertTrue(repoCache2.exists());
     }
 
+    @Test
     public void testRepositoryOnly() throws Exception {
         cleanCache.setResolution(false);
         cleanCache.perform();
@@ -79,6 +91,7 @@ public class IvyCleanCacheTest extends TestCase {
         assertFalse(repoCache2.exists());
     }
 
+    @Test
     public void testOneRepositoryOnly() throws Exception {
         cleanCache.setResolution(false);
         cleanCache.setCache("mycache");
@@ -88,14 +101,17 @@ public class IvyCleanCacheTest extends TestCase {
         assertTrue(repoCache2.exists());
     }
 
+    /**
+     * clean cache must fail with unknown cache
+     *
+     * @throws Exception
+     */
+    @Test
     public void testUnknownCache() throws Exception {
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("unknown cache 'yourcache'");
         cleanCache.setResolution(false);
         cleanCache.setCache("yourcache");
-        try {
-            cleanCache.perform();
-            fail("clean cache should have raised an exception with unkown cache");
-        } catch (BuildException e) {
-            assertTrue(e.getMessage().indexOf("yourcache") != -1);
-        }
+        cleanCache.perform();
     }
 }

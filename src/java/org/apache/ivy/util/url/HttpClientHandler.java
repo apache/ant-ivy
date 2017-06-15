@@ -48,7 +48,6 @@ import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.HostUtil;
@@ -145,6 +144,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return getURLInfo(url, 0);
     }
 
+    @SuppressWarnings("deprecation")
     public URLInfo getURLInfo(URL url, int timeout) {
         HttpMethodBase method = null;
         try {
@@ -246,6 +246,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return helper.getHttpClientMajorVersion();
     }
 
+    @SuppressWarnings("deprecation")
     private GetMethod doGet(URL url, int timeout) throws IOException {
         HttpClient client = getClient();
         client.setTimeout(timeout);
@@ -257,6 +258,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return get;
     }
 
+    @SuppressWarnings("deprecation")
     private HeadMethod doHead(URL url, int timeout) throws IOException {
         HttpClient client = getClient();
         client.setTimeout(timeout);

@@ -107,7 +107,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     /**
      * Return an sort of identifier of the current element being parsed. It will only be used for
      * logging purpose.
-     * 
+     *
      * @return an empty string by default
      */
     protected String getCurrentElementIdentifier() {
@@ -125,7 +125,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         parent.delegate = null;
         skip = false;
         started = false;
-        for (DelegatingHandler/* <?> */subHandler : saxHandlerMapping.values()) {
+        for (DelegatingHandler subHandler : saxHandlerMapping.values()) {
             subHandler.stopDelegating();
         }
     }
@@ -160,10 +160,11 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @throws SAXException API told me so
      */
     protected void doStartDocument() throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -179,10 +180,11 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @throws SAXException API told me so
      */
     protected void doEndDocument() throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -231,23 +233,27 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * Called when the expected node is achieved
-     * 
+     * Called when the expected node is achieved; nothing to do by default.
+     *
      * @param atts
      *            the xml attributes attached to the expected node
      * @exception SAXException
      *                in case the parsing should be completely stopped
      */
     protected void handleAttributes(Attributes atts) throws SAXException {
-        // nothing to do by default
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param uri String
+     * @param localName String
+     * @param name String
+     * @param atts Attributes
+     * @throws SAXException API told me so
      */
     protected void doStartElement(String uri, String localName, String name, Attributes atts)
             throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -267,7 +273,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
                 if (childHandler != null) {
                     skipOnError(new SkipOnErrorCallback() {
                         public void call() throws SAXException {
-                            childHandler._childHanlded(savedDelegate);
+                            childHandler._childHandled(savedDelegate);
                         }
                     });
                 }
@@ -284,20 +290,34 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param uri String
+     * @param localName String
+     * @param name String
+     * @throws SAXException API told me so
      */
     protected void doEndElement(String uri, String localName, String name) throws SAXException {
-        // by default do nothing
     }
 
-    public static abstract class ChildElementHandler<DH extends DelegatingHandler> {
+    public abstract static class ChildElementHandler<DH extends DelegatingHandler> {
 
-        public abstract void childHanlded(DH child) throws SAXParseException;
+        /**
+         * @param child DH
+         * @throws SAXParseException on failure
+         * @deprecated because of renaming due spell check.
+         */
+        @Deprecated
+        public void childHanlded(DH child) throws SAXParseException {
+            childHandled(child);
+        }
+
+        public abstract void childHandled(DH child) throws SAXParseException;
 
         // because we know what we're doing
         @SuppressWarnings("unchecked")
-        private void _childHanlded(DelegatingHandler delegate) throws SAXParseException {
-            childHanlded((DH) delegate);
+        private void _childHandled(DelegatingHandler delegate) throws SAXParseException {
+            childHandled((DH) delegate);
         }
 
     }
@@ -315,7 +335,10 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * @param ch char[]
+     * @param start int
+     * @param length int
+     * @throws SAXException if something goes wrong
      */
     protected void doCharacters(char[] ch, int start, int length) throws SAXException {
         if (bufferingChar) {
@@ -336,10 +359,13 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param prefix String
+     * @param uri String
+     * @throws SAXException API told me so
      */
     protected void doStartPrefixMapping(String prefix, String uri) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -355,10 +381,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param prefix String
+     * @throws SAXException API told me so
      */
     protected void doEndPrefixMapping(String prefix) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -374,10 +402,14 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing
+     *
+     * @param ch char[]
+     * @param start int
+     * @param length int
+     * @throws SAXException API told me so
      */
     protected void doIgnorableWhitespace(char[] ch, int start, int length) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -394,11 +426,15 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param name String
+     * @param publicId String
+     * @param systemId String
+     * @throws SAXException API told me so
      */
     protected void doNotationDecl(String name, String publicId, String systemId)
             throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -414,10 +450,13 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing
+     *
+     * @param target String
+     * @param data String
+     * @throws SAXException API told me so
      */
     protected void doProcessingInstruction(String target, String data) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -433,10 +472,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param name String
+     * @throws SAXException API told me so
      */
     protected void doSkippedEntity(String name) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -453,11 +494,16 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param name String
+     * @param publicId String
+     * @param systemId String
+     * @param notationName String
+     * @throws SAXException API told me so
      */
     protected void doUnparsedEntityDecl(String name, String publicId, String systemId,
             String notationName) throws SAXException {
-        // by default do nothing
     }
 
     // ERROR HANDLING
@@ -475,10 +521,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param exception SAXParseException
+     * @throws SAXException API told me so
      */
     protected void doWarning(SAXParseException exception) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -494,10 +542,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param exception SAXParseException
+     * @throws SAXException API told me so
      */
     protected void doError(SAXParseException exception) throws SAXException {
-        // by default do nothing
     }
 
     @Override
@@ -513,10 +563,12 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     /**
-     * @throws SAXException
+     * By default do nothing.
+     *
+     * @param exception SAXParseException
+     * @throws SAXException API told me so
      */
     protected void doFatalError(SAXParseException exception) throws SAXException {
-        // by default do nothing
     }
 
     // //////////////////////
@@ -539,6 +591,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         return "[line " + locator.getLineNumber() + " col. " + locator.getColumnNumber() + "] ";
     }
 
+    @SuppressWarnings("unused")
     private void skipOnError(DelegatingHandler currentHandler,
             Class<? extends DelegatingHandler> handlerClassToSkip, String message) {
         DelegatingHandler handlerToSkip = currentHandler;
@@ -628,7 +681,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         if (value == null) {
             return defaultValue;
         }
-        return Boolean.valueOf(parseBoolean(name, value));
+        return parseBoolean(name, value);
     }
 
     static final String TRUE = Boolean.TRUE.toString().toLowerCase(Locale.US);

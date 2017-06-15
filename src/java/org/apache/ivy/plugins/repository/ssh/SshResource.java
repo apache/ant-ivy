@@ -62,7 +62,7 @@ public class SshResource implements Resource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Resource#exists()
      */
     public boolean exists() {
@@ -74,7 +74,7 @@ public class SshResource implements Resource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Resource#getContentLength()
      */
     public long getContentLength() {
@@ -86,7 +86,7 @@ public class SshResource implements Resource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Resource#getLastModified()
      */
     public long getLastModified() {
@@ -108,7 +108,7 @@ public class SshResource implements Resource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.ivy.repository.Resource#getName()
      */
     public String getName() {
@@ -116,13 +116,7 @@ public class SshResource implements Resource {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("SshResource:");
-        buffer.append(uri);
-        buffer.append(" (");
-        buffer.append(len);
-        buffer.append(")]");
-        return buffer.toString();
+        return "SshResource:" + uri + " (" + len + ")]";
     }
 
     public boolean isLocal() {

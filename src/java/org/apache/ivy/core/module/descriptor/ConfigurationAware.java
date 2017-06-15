@@ -24,14 +24,14 @@ package org.apache.ivy.core.module.descriptor;
 public interface ConfigurationAware {
     /**
      * Returns the configurations of the module to which the object is attached
-     * 
+     *
      * @return an array of configuration names to which the object is attached
      */
     public String[] getConfigurations();
 
     /**
      * Tells this object that it will now be part of the given configuration
-     * 
+     *
      * @param confName
      *            the name of the configuration to which the object is now attached
      */

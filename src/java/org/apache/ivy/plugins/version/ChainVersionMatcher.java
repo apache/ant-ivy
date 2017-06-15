@@ -30,7 +30,7 @@ import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.util.Checks;
 
 /**
- * An implementation of {@link VersionMatcher} chaining several version matchers, and implemeting
+ * An implementation of {@link VersionMatcher} chaining several version matchers, and implementing
  * the {@link VersionMatcher} interface by returning results from the first matcher in the chain
  * accepting the version.
  */
@@ -50,7 +50,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
 
     /**
      * Adds a {@link VersionMatcher} to the chain.
-     * 
+     *
      * @param matcher
      *            the version matcher to add. Must not be null
      */
@@ -65,7 +65,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     /**
      * Sets the settings this matcher will use, and set to the matcher in the chain which implements
      * {@link IvySettingsAware}.
-     * 
+     *
      * @param settings
      *            the settings to use in the whole chain. Must not be null.
      */
@@ -83,8 +83,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
      * Returns the list of matchers in the chain.
      * <p>
      * The list is returned as an unmodifiable view on the actual list of matchers, and will thus
-     * reflect futher changes made in the chain.
-     * 
+     * reflect further changes made in the chain.
+     *
      * @return the list of matchers in the chain. Is never null.
      */
     public List getMatchers() {

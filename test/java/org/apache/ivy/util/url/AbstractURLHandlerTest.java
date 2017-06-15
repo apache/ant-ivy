@@ -24,13 +24,16 @@ import java.net.URL;
 
 import org.apache.ivy.util.CopyProgressListener;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class AbstractURLHandlerTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class AbstractURLHandlerTest {
 
     /**
      * JUnit test for IVY-923.
      */
+    @Test
     public void testNormalizeToStringWithSpaceURL() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
         String normalizedUrl = handler.normalizeToString(new URL(
@@ -41,6 +44,7 @@ public class AbstractURLHandlerTest extends TestCase {
     /**
      * JUnit test for IVY-923.
      */
+    @Test
     public void testNormalizeToStringWithPlusCharacter() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
         String normalizedUrl = handler.normalizeToString(new URL(
@@ -48,6 +52,7 @@ public class AbstractURLHandlerTest extends TestCase {
         assertEquals("http://ant.apache.org/ivy/ivy-1.%2B.xml", normalizedUrl);
     }
 
+    @Test
     public void testNormalizeToStringWithUnderscoreInHostname() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
         String normalizedUrl = handler.normalizeToString(new URL(
@@ -55,6 +60,7 @@ public class AbstractURLHandlerTest extends TestCase {
         assertEquals("http://peat_hal.users.sourceforge.net/m2repository", normalizedUrl);
     }
 
+    @Test
     public void testNormalizeToStringWithUnderscoreInHostnameAndSpaceInPath() throws Exception {
         AbstractURLHandler handler = new TestURLHandler();
         String normalizedUrl = handler.normalizeToString(new URL(

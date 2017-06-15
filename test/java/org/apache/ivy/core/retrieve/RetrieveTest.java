@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -44,21 +43,26 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
-public class RetrieveTest extends TestCase {
+public class RetrieveTest {
 
     private Ivy ivy;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
         TestHelper.createCache();
         Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_INFO));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
         Delete del = new Delete();
         del.setProject(new Project());
@@ -66,10 +70,11 @@ public class RetrieveTest extends TestCase {
         del.execute();
     }
 
+    @Test
     public void testRetrieveSimple() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -86,10 +91,11 @@ public class RetrieveTest extends TestCase {
             "jar", "jar", "default")).exists());
     }
 
+    @Test
     public void testRetrieveSameFileConflict() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml").toURL(),
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -104,9 +110,10 @@ public class RetrieveTest extends TestCase {
         mockLogger.assertLogDoesntContain("conflict on");
     }
 
+    @Test
     public void testRetrieveDifferentArtifactsOfSameModuleToSameFile() throws Exception {
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml").toURL(),
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -117,19 +124,20 @@ public class RetrieveTest extends TestCase {
         Message.setDefaultLogger(mockLogger);
         try {
             ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
-            fail("Exeption should have been thrown!");
+            fail("Exception should have been thrown!");
         } catch (RuntimeException e) {
             // expected!
         }
         mockLogger.assertLogDoesntContain("multiple artifacts");
     }
 
+    @Test
     public void testEvent() throws Exception {
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
 
-        final List events = new ArrayList();
+        final List<IvyEvent> events = new ArrayList<>();
         ivy.getEventManager().addIvyListener(new IvyListener() {
             public void progress(IvyEvent event) {
                 events.add(event);
@@ -157,10 +165,11 @@ public class RetrieveTest extends TestCase {
         assertEquals(1, ev.getNbUpToDate());
     }
 
+    @Test
     public void testRetrieveOverwrite() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -180,10 +189,11 @@ public class RetrieveTest extends TestCase {
             file.lastModified());
     }
 
+    @Test
     public void testRetrieveWithSymlinks() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -202,8 +212,9 @@ public class RetrieveTest extends TestCase {
             "jar", "default"));
     }
 
+    @Test
     public void testRetrieveWithSymlinksMass() throws Exception {
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (System.getProperty("os.name").startsWith("Windows")) {
             return;
         }
 
@@ -238,7 +249,7 @@ public class RetrieveTest extends TestCase {
         String os = System.getProperty("os.name");
         if (os.equals("Linux") || os.equals("Solaris") || os.equals("FreeBSD")
                 || os.equals("Mac OS X")) {
-            // these OS should support symnlink, so check that the file is actually a symlink.
+            // these OS should support symlink, so check that the file is actually a symlink.
             // this is done be checking that the canonical path is different from the absolute
             // path.
             File absFile = file.getAbsoluteFile();
@@ -247,11 +258,12 @@ public class RetrieveTest extends TestCase {
         }
     }
 
+    @Test
     public void testRetrieveWithVariable() throws Exception {
         // mod1.1 depends on mod1.2
         ivy.setVariable("retrieve.dir", "retrieve");
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -270,10 +282,11 @@ public class RetrieveTest extends TestCase {
             "jar", "jar", "default")).exists());
     }
 
+    @Test
     public void testRetrieveReport() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
-                "test/repositories/1/org20/mod20.1/ivys/ivy-1.2.xml").toURL(),
+                "test/repositories/1/org20/mod20.1/ivys/ivy-1.2.xml").toURI().toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -297,6 +310,7 @@ public class RetrieveTest extends TestCase {
         assertEquals(3, artifactsToCopy.size());
     }
 
+    @Test
     public void testUnpack() throws Exception {
         ResolveOptions roptions = getResolveOptions(new String[] {"*"});
 
@@ -324,6 +338,7 @@ public class RetrieveTest extends TestCase {
         assertEquals(new File(dest, "META-INF/MANIFEST.MF"), jarContents[0].listFiles()[0]);
     }
 
+    @Test
     public void testUnpackSync() throws Exception {
         ResolveOptions roptions = getResolveOptions(new String[] {"*"});
 
@@ -358,6 +373,7 @@ public class RetrieveTest extends TestCase {
      * @throws Exception
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1478">IVY-1478</a>
      */
+    @Test
     public void testUnpackExt() throws Exception {
         final ResolveOptions roptions = getResolveOptions(new String[] {"*"});
 

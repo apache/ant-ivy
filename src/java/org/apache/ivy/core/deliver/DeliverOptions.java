@@ -55,7 +55,7 @@ public class DeliverOptions {
     /**
      * Returns an instance of DeliverOptions with options corresponding to default values taken from
      * the given settings.
-     * 
+     *
      * @param settings
      *            The settings to use to get default option values
      * @return a DeliverOptions instance ready to be used or customized
@@ -74,6 +74,12 @@ public class DeliverOptions {
 
     /**
      * Creates an instance of DeliverOptions with all options explicitly set.
+     * @param status String
+     * @param pubDate Date
+     * @param pdrResolver PublishingDependencyRevisionResolver
+     * @param validate boolean
+     * @param resolveDynamicRevisions boolean
+     * @param confs String[]
      */
     public DeliverOptions(String status, Date pubDate,
             PublishingDependencyRevisionResolver pdrResolver, boolean validate,
@@ -93,7 +99,7 @@ public class DeliverOptions {
      * PublishingDependencyRevisionResolver can then do the delivering work for the dependency and
      * return the new (delivered) dependency info (with the delivered revision). Note that
      * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
-     * 
+     *
      * @return the pdrResolver that will be used during deliver
      */
     public PublishingDependencyRevisionResolver getPdrResolver() {
@@ -107,7 +113,8 @@ public class DeliverOptions {
      * PublishingDependencyRevisionResolver can then do the delivering work for the dependency and
      * return the new (delivered) dependency info (with the delivered revision). Note that
      * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
-     * 
+     *
+     * @param pdrResolver PublishingDependencyRevisionResolver
      * @return the instance of DeliverOptions on which the method has been called, for easy method
      *         chaining
      */
@@ -155,7 +162,7 @@ public class DeliverOptions {
     /**
      * Returns the status to which the module should be delivered, or null if the current status
      * should be kept.
-     * 
+     *
      * @return the status to which the module should be delivered
      */
     public String getStatus() {
@@ -165,7 +172,8 @@ public class DeliverOptions {
     /**
      * Sets the status to which the module should be delivered, use null if the current status
      * should be kept.
-     * 
+     *
+     * @param status String
      * @return the instance of DeliverOptions on which the method has been called, for easy method
      *         chaining
      */
@@ -176,7 +184,7 @@ public class DeliverOptions {
 
     /**
      * Returns the id of a previous resolve to use for delivering.
-     * 
+     *
      * @return the id of a previous resolve
      */
     public String getResolveId() {
@@ -185,7 +193,7 @@ public class DeliverOptions {
 
     /**
      * Sets the id of a previous resolve to use for delivering.
-     * 
+     *
      * @param resolveId
      *            the id of a previous resolve
      * @return the instance of DeliverOptions on which the method has been called, for easy method
@@ -197,9 +205,9 @@ public class DeliverOptions {
     }
 
     /**
-     * Return the configurations which must be deliverd. Returns <tt>null</tt> if all configurations
-     * has to be deliverd. Attention: the returned array can contain wildcards!
-     * 
+     * Return the configurations which must be delivered. Returns <tt>null</tt> if all configurations
+     * has to be delivered. Attention: the returned array can contain wildcards!
+     *
      * @return the configurations to deliver
      */
     public String[] getConfs() {
@@ -208,7 +216,7 @@ public class DeliverOptions {
 
     /**
      * Sets the configurations to deliver.
-     * 
+     *
      * @param confs
      *            the configurations to deliver
      * @return the instance of DeliverOptions on which the method has been called, for easy method
@@ -222,7 +230,7 @@ public class DeliverOptions {
     /**
      * Returns the branch with which the Ivy file should be delivered, or <code>null</code> if
      * branch info shouldn't be changed.
-     * 
+     *
      * @return the branch with which the Ivy file should be delivered
      */
     public String getPubBranch() {
@@ -231,7 +239,7 @@ public class DeliverOptions {
 
     /**
      * Sets the branch with which the Ivy file should be delivered.
-     * 
+     *
      * @param pubBranch
      *            the branch with which the Ivy file should be delivered
      * @return the instance of DeliverOptions on which the method has been called, for easy method
@@ -264,7 +272,6 @@ public class DeliverOptions {
         return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
                 + " resolveDynamicRevisions=" + resolveDynamicRevisions + " merge=" + merge
                 + " resolveId=" + resolveId + " pubBranch=" + pubBranch;
-
     }
 
 }

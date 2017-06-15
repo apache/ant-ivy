@@ -67,7 +67,7 @@ public final class ChecksumHelper {
     /**
      * Checks the checksum of the given file against the given checksumFile, and throws an
      * IOException if the checksum is not compliant
-     * 
+     *
      * @param dest
      *            the file to test
      * @param checksumFile
@@ -75,7 +75,7 @@ public final class ChecksumHelper {
      * @param algorithm
      *            the checksum algorithm to use
      * @throws IOException
-     *             if an IO problem occur whle reading files or if the checksum is not compliant
+     *             if an IO problem occur while reading files or if the checksum is not compliant
      */
     public static void check(File dest, File checksumFile, String algorithm) throws IOException {
         String csFileContent = FileUtil
@@ -159,7 +159,7 @@ public final class ChecksumHelper {
 
     /**
      * Convert a byte[] array to readable string format. This makes the "hex" readable!
-     * 
+     *
      * @return result String buffer in String format
      * @param in
      *            byte[] buffer to convert to string format

@@ -62,7 +62,7 @@ import org.apache.ivy.util.Message;
  * </p>
  * <p>
  * This engine is not intended to be used concurrently with publish, the order of repository loaded
- * being undeterministic and long, it could end up in having an inconsistent in memory state.
+ * being nondeterministic and long, it could end up in having an inconsistent in memory state.
  * </p>
  * <p>
  * For better performance, we strongly suggest using this engine with cache in useOrigin mode.
@@ -173,7 +173,7 @@ public class RepositoryManagementEngine {
      * This method may take a long time to proceed. It should never be called from event dispatch
      * thread in a GUI.
      * </p>
-     * 
+     *
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
      * @see #load()
@@ -200,7 +200,7 @@ public class RepositoryManagementEngine {
 
     /**
      * Returns the number of Module Revision in the repository.
-     * 
+     *
      * @return the number of module revisions in the repository.
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
@@ -213,7 +213,7 @@ public class RepositoryManagementEngine {
 
     /**
      * Returns the number of ModuleId in the repository.
-     * 
+     *
      * @return the number of ModuleId in the repository.
      * @throws IllegalStateException
      *             if the repository has not been loaded yet
@@ -226,7 +226,7 @@ public class RepositoryManagementEngine {
 
     /**
      * Returns Module Revisions which have no dependers.
-     * 
+     *
      * @return a Collection of the {@link ModuleRevisionId} of module revisions which have no
      *         dependers in the repository.
      * @throws IllegalStateException

@@ -54,8 +54,13 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvySetti
     }
 
     /**
-     * This method should be overriden in most cases, because it uses the default contract to return
-     * 1 when it's not possible to know which revision is greater.
+     * This method should be overridden in most cases, because it uses the default contract to
+     * return 1 when it's not possible to know which revision is greater.
+     *
+     * @param askedMrid ModuleRevisionId
+     * @param foundMrid ModuleRevisionId
+     * @param staticComparator Comparator
+     * @return int
      */
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
             Comparator staticComparator) {

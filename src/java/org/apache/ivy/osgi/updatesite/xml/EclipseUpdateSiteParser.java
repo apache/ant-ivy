@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -63,23 +62,23 @@ public class EclipseUpdateSiteParser {
         public SiteHandler() {
             super(SITE);
             // addChild(new DescriptionHandler(), new ChildElementHandler() {
-            // public void childHanlded(DelegetingHandler child) {
+            // public void childHandled(DelegatingHandler child) {
             // updateSite.setDescription(child.getBufferedChars().trim());
             // }
             // });
             addChild(new FeatureHandler(), new ChildElementHandler<FeatureHandler>() {
                 @Override
-                public void childHanlded(FeatureHandler child) {
+                public void childHandled(FeatureHandler child) {
                     updatesite.addFeature(child.feature);
                 }
             });
             // addChild(new ArchiveHandler(), new ChildElementHandler() {
-            // public void childHanlded(DelegetingHandler child) {
+            // public void childHandled(DelegatingHandler child) {
             // updateSite.addArchive(((ArchiveHandler) child).archive);
             // }
             // });
             // addChild(new CategoryDefHandler(), new ChildElementHandler() {
-            // public void childHanlded(DelegetingHandler child) {
+            // public void childHandled(DelegatingHandler child) {
             // updateSite.addCategoryDef(((CategoryDefHandler) child).categoryDef);
             // }
             // });
@@ -107,7 +106,7 @@ public class EclipseUpdateSiteParser {
             }
 
             String pack200 = atts.getValue(PACK200);
-            if (pack200 != null && new Boolean(pack200).booleanValue()) {
+            if (pack200 != null && Boolean.parseBoolean(pack200)) {
                 updatesite.setPack200(true);
             }
 
@@ -127,7 +126,7 @@ public class EclipseUpdateSiteParser {
         }
     }
 
-    // private static class DescriptionHandler extends DelegetingHandler {
+    // private static class DescriptionHandler extends DelegatingHandler {
     //
     // private static final String DESCRIPTION = "description";
     //
@@ -173,7 +172,7 @@ public class EclipseUpdateSiteParser {
             super(FEATURE);
             addChild(new CategoryHandler(), new ChildElementHandler<CategoryHandler>() {
                 @Override
-                public void childHanlded(CategoryHandler child) {
+                public void childHandled(CategoryHandler child) {
                     feature.addCategory(child.name);
                 }
             });
@@ -183,12 +182,7 @@ public class EclipseUpdateSiteParser {
         protected void handleAttributes(Attributes atts) throws SAXException {
             String id = atts.getValue(ID);
             String version = atts.getValue(VERSION);
-            try {
-                feature = new EclipseFeature(id, new Version(version));
-            } catch (ParseException e) {
-                throw new SAXException("Incorrect version on the feature '" + id + "': " + version
-                        + " (" + e.getMessage() + ")");
-            }
+            feature = new EclipseFeature(id, new Version(version));
 
             String url = atts.getValue(URL);
             if (url != null) {
@@ -223,7 +217,7 @@ public class EclipseUpdateSiteParser {
         }
     }
 
-    // private static class ArchiveHandler extends DelegetingHandler {
+    // private static class ArchiveHandler extends DelegatingHandler {
     //
     // private static final String ARCHIVE = "archive";
     //
@@ -249,7 +243,7 @@ public class EclipseUpdateSiteParser {
     // }
     // }
 
-    // private static class CategoryDefHandler extends DelegetingHandler {
+    // private static class CategoryDefHandler extends DelegatingHandler {
     //
     // private static final String CATEGORY_DEF = "category-def";
     //
@@ -262,7 +256,7 @@ public class EclipseUpdateSiteParser {
     // public CategoryDefHandler() {
     // super(CATEGORY_DEF);
     // addChild(new DescriptionHandler(), new ChildElementHandler<DescriptionHandler>() {
-    // public void childHanlded(DescriptionHandler child) {
+    // public void childHandled(DescriptionHandler child) {
     // categoryDef.setDescription(child.getBufferedChars().trim());
     // }
     // });

@@ -24,23 +24,30 @@ import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class XmlReportParserTest extends TestCase {
+public class XmlReportParserTest {
 
     private Ivy ivy;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
         TestHelper.createCache();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testGetResolvedModule() throws Exception {
         ResolveReport report = ivy.resolve(
             new File("test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),

@@ -14,80 +14,81 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <project name="myapp" default="run-cc" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- some variables used -->
-    <property name="lib.dir" value="lib" />
-    <property name="build.dir" value="build" />
-    <property name="src.dir" value="src" />
-    
+    <property name="lib.dir" value="lib"/>
+    <property name="build.dir" value="build"/>
+    <property name="src.dir" value="src"/>
+
     <!-- paths used for compilation and run  -->
     <path id="lib.path.id">
-        <fileset dir="${lib.dir}/build" />
-	</path>
+        <fileset dir="${lib.dir}/build"/>
+    </path>
     <path id="run.hm.path.id">
-        <path location="${build.dir}" />
-    	<fileset dir="${lib.dir}/noexternaljar" />
+        <path location="${build.dir}"/>
+        <fileset dir="${lib.dir}/noexternaljar"/>
     </path>
     <path id="run.cc.path.id">
-        <path location="${build.dir}" />
-    	<fileset dir="${lib.dir}/withexternaljar" />
+        <path location="${build.dir}"/>
+        <fileset dir="${lib.dir}/withexternaljar"/>
     </path>
-    <!-- ================================= 
-          target: resolve              
+
+    <!-- =================================
+          target: resolve
          ================================= -->
-    <target name="resolve" description="--> retreive dependencies with ivy">
-    	<ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact].[ext]"/>
-    </target>    
-    
-    <!-- ================================= 
-          target: report              
+    <target name="resolve" description="--> retrieve dependencies with ivy">
+        <ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact].[ext]"/>
+    </target>
+
+    <!-- =================================
+          target: report
          ================================= -->
     <target name="report" depends="resolve" description="--> generates a report of dependencies">
         <ivy:report todir="${build.dir}"/>
     </target>
-	
-	<!-- ================================= 
-          target: build
+
+    <!-- =================================
+         target: build
          ================================= -->
     <target name="build" depends="resolve" description="--> compile the project">
-        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
     </target>
-	
-	<!-- ================================= 
-          target: run with home made implementation
+
+    <!-- =================================
+         target: run with home made implementation
          ================================= -->
     <target name="run-hm" depends="build" description="--> run the project with ome made implementation">
         <java classpathref="run.hm.path.id" classname="myapp.Main" fork="true"/>
     </target>
 
-	<!-- ================================= 
-          target: run with ext lib implementation
+    <!-- =================================
+         target: run with ext lib implementation
          ================================= -->
     <target name="run-cc" depends="build" description="--> run the project with ext lib implementation">
         <java classpathref="run.cc.path.id" classname="myapp.Main" fork="true"/>
     </target>
-	
-    <!-- ================================= 
-          target: clean              
+
+    <!-- =================================
+         target: clean
          ================================= -->
     <target name="clean" description="--> clean the project">
         <delete includeemptydirs="true">
             <fileset dir="${basedir}">
-            	<exclude name="src/**" />
-            	<exclude name="build.xml" />
-            	<exclude name="ivy.xml" />
-            	<exclude name=".*" />
-        	</fileset>
-    	</delete>
+                <exclude name="src/**"/>
+                <exclude name="build.xml"/>
+                <exclude name="ivy.xml"/>
+                <exclude name=".*"/>
+            </fileset>
+        </delete>
     </target>
-	
-    <!-- ================================= 
-          target: clean-cache              
+
+    <!-- =================================
+          target: clean-cache
          ================================= -->
-	<target name="clean-cache" description="--> clean the ivy cache">
-		<ivy:cleancache />
-	</target>
+    <target name="clean-cache" description="--> clean the ivy cache">
+        <ivy:cleancache/>
+    </target>
 </project>

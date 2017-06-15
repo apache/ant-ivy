@@ -24,46 +24,49 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.ivy.plugins.latest.ArtifactInfo;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class OsgiLatestStrategyTest extends TestCase {
+public class OsgiLatestStrategyTest {
 
+    @Test
     public void testComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.final", "1.0",
                 "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
                 "2.0.0.xyz"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
         Collections.sort(shuffled, new OsgiLatestStrategy().new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
     }
 
+    @Test
     public void testSort() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.final", "1.0",
                 "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0.1", "2", "2.0.0.b006", "2.0.0.b012",
                 "2.0.0.xyz"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
         List sorted = latestRevisionStrategy.sort(shuffledRevs);
         assertEquals(Arrays.asList(revs), sorted);
     }
 
+    @Test
     public void testFindLatest() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.2.0.a", "0.2.0.b", "0.2.0.rc1",
                 "0.2.0.final", "1.0.0.dev1", "1.0.0.dev2", "1.0.0.alpha1", "1.0.0.alpha2",
                 "1.0.0.beta1", "1.0.0.beta2", "1.0.0.gamma", "1.0.0.rc1", "1.0.0.rc2", "1.0",
                 "1.0.1", "2.0"});
 
-        List shuffled = new ArrayList(Arrays.asList(revs));
+        List<ArtifactInfo> shuffled = new ArrayList<>(Arrays.asList(revs));
         Collections.shuffle(shuffled);
-        ArtifactInfo[] shuffledRevs = (ArtifactInfo[]) shuffled
-                .toArray(new ArtifactInfo[revs.length]);
+        ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
         ArtifactInfo latest = latestRevisionStrategy.findLatest(shuffledRevs, new Date());

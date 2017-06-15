@@ -27,10 +27,14 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.FileUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class PomModuleDescriptorWriterTest extends TestCase {
+public class PomModuleDescriptorWriterTest {
     private static String LICENSE;
     static {
         try {
@@ -43,6 +47,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
 
     private File _dest = new File("build/test/test-write.xml");
 
+    @Test
     public void testSimple() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-simple.pom"), false);
@@ -56,6 +61,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testSimpleDependencies() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies.pom"), false);
@@ -69,6 +75,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testDependenciesWithScope() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
@@ -82,6 +89,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testDependenciesWithType() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-type.pom"), false);
@@ -95,6 +103,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testDependenciesWithClassifier() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-classifier.pom"),
@@ -109,6 +118,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-optional.pom"), false);
@@ -122,6 +132,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testTransitive() throws Exception {
         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-transitive.xml"), false);
@@ -136,6 +147,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testPackaging() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-packaging.pom"), false);
@@ -149,6 +161,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testWriteCompileConfigurationOnly() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
@@ -163,6 +176,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testWriteRuntimeConfigurationOnly() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
@@ -177,6 +191,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testWriteAllConfiguration() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
@@ -190,6 +205,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testWriteAllExceptRuntimeConfiguration() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
@@ -213,6 +229,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         return (new PomWriterOptions()).setLicenseHeader(LICENSE).setPrintIvyInfo(false);
     }
 
+    @Before
     public void setUp() {
         if (_dest.exists()) {
             _dest.delete();
@@ -222,7 +239,8 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         }
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         if (_dest.exists()) {
             _dest.delete();
         }

@@ -46,7 +46,7 @@ public class FileSystemResolver extends RepositoryResolver {
 
     /**
      * Transactional mode.
-     * 
+     *
      * auto: use transaction if possible, only log verbose message if not true: always use
      * transaction, fail if not supported false: never use transactions
      */
@@ -152,7 +152,7 @@ public class FileSystemResolver extends RepositoryResolver {
             try {
                 getFileRepository().move(transactionTempDir, transactionDestDir);
 
-                Message.info("\tpublish commited: moved " + transactionTempDir + " \n\t\tto "
+                Message.info("\tpublish committed: moved " + transactionTempDir + " \n\t\tto "
                         + transactionDestDir);
             } catch (IOException ex) {
                 IOException commitEx;
@@ -220,7 +220,7 @@ public class FileSystemResolver extends RepositoryResolver {
             return false;
         }
         checkSupportTransaction();
-        return supportTransaction.booleanValue();
+        return supportTransaction;
     }
 
     private void closeTransaction() {

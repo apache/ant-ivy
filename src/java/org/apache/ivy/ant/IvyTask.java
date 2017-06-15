@@ -44,17 +44,17 @@ public abstract class IvyTask extends Task {
 
     protected boolean doValidate(IvySettings ivy) {
         if (validate != null) {
-            return validate.booleanValue();
+            return validate;
         }
         return ivy.doValidate();
     }
 
     public boolean isValidate() {
-        return validate == null ? true : validate.booleanValue();
+        return validate == null || validate;
     }
 
     public void setValidate(boolean validate) {
-        this.validate = Boolean.valueOf(validate);
+        this.validate = validate;
     }
 
     public void setSettingsRef(Reference ref) {
@@ -257,13 +257,13 @@ public abstract class IvyTask extends Task {
      */
     protected void finalizeTask() {
         if (!IvyContext.getContext().pop(ANT_PROJECT_CONTEXT_KEY, getProject())) {
-            Message.error("ANT project poped from stack not equals current !. Ignoring");
+            Message.error("ANT project popped from stack not equals current! Ignoring");
         }
         IvyContext.popContext();
     }
 
     /**
-     * Ant task execute. Calls prepareTask, doExecute, finalzeTask
+     * Ant task execute. Calls prepareTask, doExecute, finalizeTask
      */
     @Override
     public final void execute() throws BuildException {
@@ -278,8 +278,8 @@ public abstract class IvyTask extends Task {
     /**
      * The real logic of task execution after project has been set in the context. MUST be
      * implemented by subclasses
-     * 
-     * @throws BuildException
+     *
+     * @throws BuildException if something goes wrong
      */
     public abstract void doExecute() throws BuildException;
 

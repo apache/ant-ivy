@@ -17,21 +17,22 @@
  */
 package example;
 
-import java.io.IOException;
-import java.util.Properties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public final class ConfigurationsExample {
-    
+
     public static void main(String[] args) {
         String jdbcPropToLoad = "prod.properties";
-        CommandLineParser parser = new PosixParser();
+        CommandLineParser parser = new DefaultParser();
         Options options = new Options();
-        options.addOption("d", "dev", false, 
+        options.addOption("d", "dev", false,
             "Dev tag to launch app in dev mode. Means that app will launch embedded mckoi db.");
         try {
             CommandLine line = parser.parse(options, args);
@@ -56,9 +57,9 @@ public final class ConfigurationsExample {
             System.err.println("Jdbc Driver class loading failed.  Reason: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
     }
-    
+
     private ConfigurationsExample() {
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.ivy.core.module.descriptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -42,9 +43,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
         this.location = location;
         this.local = local;
         this.extendsTypes = new ArrayList(types.length);
-        for (int i = 0; i < types.length; ++i) {
-            extendsTypes.add(types[i]);
-        }
+        extendsTypes.addAll(Arrays.asList(types));
     }
 
     public ModuleRevisionId getParentRevisionId() {

@@ -17,35 +17,37 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.osgi.obr.xml.OBRXMLParser;
 import org.apache.ivy.osgi.repo.BundleRepoDescriptor;
 import org.apache.ivy.util.CollectionUtils;
+
 import org.apache.tools.ant.Project;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
-
-public class BuildOBRTaskTest extends TestCase {
+public class BuildOBRTaskTest {
 
     private File cache;
 
     private BuildOBRTask buildObr;
 
-    private Project project;
-
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         createCache();
-        project = TestHelper.newProject();
 
         buildObr = new BuildOBRTask();
-        buildObr.setProject(project);
+        buildObr.setProject(TestHelper.newProject());
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
@@ -54,22 +56,20 @@ public class BuildOBRTaskTest extends TestCase {
         cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
-    private BundleRepoDescriptor readObr(File obrFile) throws FileNotFoundException,
-            ParseException, IOException, SAXException {
+    private BundleRepoDescriptor readObr(File obrFile) throws IOException, SAXException {
         BundleRepoDescriptor obr;
-        FileInputStream in = new FileInputStream(obrFile);
-        try {
+        try (FileInputStream in = new FileInputStream(obrFile)) {
             obr = OBRXMLParser.parse(obrFile.toURI(), in);
-        } finally {
-            in.close();
         }
         return obr;
     }
 
+    @Test
     public void testDir() throws Exception {
         buildObr.setBaseDir(new File("test/test-repo/bundlerepo"));
         File obrFile = new File("build/cache/obr.xml");
@@ -81,6 +81,7 @@ public class BuildOBRTaskTest extends TestCase {
         assertEquals(14, CollectionUtils.toList(obr.getModules()).size());
     }
 
+    @Test
     public void testEmptyDir() throws Exception {
         buildObr.setBaseDir(new File("test/test-p2/composite"));
         File obrFile = new File("build/cache/obr.xml");
@@ -92,6 +93,7 @@ public class BuildOBRTaskTest extends TestCase {
         assertEquals(0, CollectionUtils.toList(obr.getModules()).size());
     }
 
+    @Test
     public void testResolve() throws Exception {
         Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/test-repo/bundlerepo/ivysettings.xml");

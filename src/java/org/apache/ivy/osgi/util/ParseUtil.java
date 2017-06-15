@@ -26,7 +26,7 @@ public class ParseUtil {
      * Parses delimited string and returns an array containing the tokens. This parser obeys quotes,
      * so the delimiter character will be ignored if it is inside of a quote. This method assumes
      * that the quote character is not included in the set of delimiter characters.
-     * 
+     *
      * @param value
      *            the delimited string to parse.
      * @param delim

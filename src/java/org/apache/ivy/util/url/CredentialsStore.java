@@ -26,7 +26,7 @@ import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.Message;
 
 /**
- * 
+ *
  */
 public final class CredentialsStore {
     /**

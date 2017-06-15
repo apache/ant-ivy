@@ -26,6 +26,7 @@ import java.util.Properties;
 /**
  * A simple Properties extension easing the loading and saving of data
  */
+@SuppressWarnings("serial")
 public class PropertiesFile extends Properties {
     private File file;
 

@@ -350,12 +350,12 @@ public class IvyBuildList extends IvyTask {
     }
 
     /**
-     * Returns a collection of ModuleDescriptors that are conatined in the input collection of
+     * Returns a collection of ModuleDescriptors that are contained in the input collection of
      * ModuleDescriptors and upon which the root module depends
-     * 
+     *
      * @param mds
      *            input collection of ModuleDescriptors
-     * @param rootmd
+     * @param rootmds
      *            root module
      * @return filtered list of modules
      */
@@ -393,7 +393,7 @@ public class IvyBuildList extends IvyTask {
      * Adds the current node to the toKeep collection and then processes the each of the direct
      * dependencies of this node that appear in the moduleIdMap (indicating that the dependency is
      * part of this BuildList)
-     * 
+     *
      * @param node
      *            the node to be processed
      * @param toKeep
@@ -421,12 +421,12 @@ public class IvyBuildList extends IvyTask {
     }
 
     /**
-     * Returns a collection of ModuleDescriptors that are conatined in the input collection of
+     * Returns a collection of ModuleDescriptors that are contained in the input collection of
      * ModuleDescriptors which depends on the leaf module
-     * 
+     *
      * @param mds
      *            input collection of ModuleDescriptors
-     * @param leafmd
+     * @param leafmds
      *            leaf module
      * @return filtered list of modules
      */
@@ -461,7 +461,7 @@ public class IvyBuildList extends IvyTask {
     /**
      * Search in the moduleIdMap modules depending on node, add them to the toKeep set and process
      * them recursively.
-     * 
+     *
      * @param node
      *            the node to be processed
      * @param toKeep
@@ -520,6 +520,7 @@ public class IvyBuildList extends IvyTask {
     }
 
     /**
+     * @return boolean
      * @deprecated use {@link #getOnMissingDescriptor()} instead.
      */
     @Deprecated
@@ -528,6 +529,7 @@ public class IvyBuildList extends IvyTask {
     }
 
     /**
+     * @param skipBuildFilesWithoutIvy boolean
      * @deprecated use {@link #setOnMissingDescriptor(String)} instead.
      */
     @Deprecated

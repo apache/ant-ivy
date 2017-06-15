@@ -76,6 +76,7 @@ import org.apache.ivy.util.MessageLoggerEngine;
  * <a href="http://ant.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
  * <p>
  * This class is the main class of Ivy, which acts as a Facade to all services offered by Ivy:
+ * </p>
  * <ul>
  * <li>resolve dependencies</li>
  * <li>retrieve artifacts to a local location</li>
@@ -83,22 +84,21 @@ import org.apache.ivy.util.MessageLoggerEngine;
  * <li>repository search and listing</li>
  * </ul>
  * Here is one typical usage:
- * 
  * <pre>
  * Ivy ivy = Ivy.newInstance();
  * ivy.configure(new URL(&quot;ivysettings.xml&quot;));
  * ivy.resolve(new URL(&quot;ivy.xml&quot;));
  * </pre>
- * 
- * </p>
  * <h2>Using Ivy engines directly</h2>
  * <p>
  * If the methods offered by the {@link Ivy} class are not flexible enough and you want to use Ivy
  * engines directly, you need to call the methods within a single {@link IvyContext} associated to
- * the {@link Ivy} instance you use.<br/>
+ * the {@link Ivy} instance you use.
+ * </p>
+ * <p>
  * To do so, it is recommended to use the {@link #execute(org.apache.ivy.Ivy.IvyCallback)} method
  * like this:
- * 
+ * </p>
  * <pre>
  * Ivy ivy = Ivy.newInstance();
  * ivy.execute(new IvyCallback() {
@@ -111,19 +111,17 @@ import org.apache.ivy.util.MessageLoggerEngine;
  *     }
  * });
  * </pre>
- * 
- * </p>
  */
 public class Ivy {
     /**
      * Callback used to execute a set of Ivy related methods within an {@link IvyContext}.
-     * 
+     *
      * @see Ivy#execute(org.apache.ivy.Ivy.IvyCallback)
      */
     public static interface IvyCallback {
         /**
          * Executes Ivy related job within an {@link IvyContext}
-         * 
+         *
          * @param ivy
          *            the {@link Ivy} instance to which this callback is related
          * @param context
@@ -171,7 +169,7 @@ public class Ivy {
 
     /**
      * Returns the current version of Ivy, as displayed on the console when Ivy is initialized.
-     * 
+     *
      * @return the current version of Ivy
      */
     public static String getIvyVersion() {
@@ -180,9 +178,8 @@ public class Ivy {
 
     /**
      * Returns the date at which this version of Ivy has been built.
-     * <p>
-     * May be empty if unknown.
-     * 
+     * <p>May be empty if unknown.</p>
+     *
      * @return the date at which this version of Ivy has been built
      */
     public static String getIvyDate() {
@@ -191,7 +188,7 @@ public class Ivy {
 
     /**
      * Returns the URL at which Ivy web site can be found.
-     * 
+     *
      * @return the URL at which Ivy web site can be found
      */
     public static String getIvyHomeURL() {
@@ -218,8 +215,8 @@ public class Ivy {
 
     /**
      * True if this instance of Ivy has already been bound to its dependencies, false otherwise.
-     * 
-     * @see bind()
+     *
+     * @see #bind()
      */
     private boolean bound;
 
@@ -344,7 +341,7 @@ public class Ivy {
      * <p>
      * Alternatively you can use the {@link #pushContext()} and {@link #popContext()} methods, but
      * this is not recommended:
-     * 
+     * </p>
      * <pre>
      * Object result = null;
      * pushContext();
@@ -355,11 +352,9 @@ public class Ivy {
      * }
      * doSomethingWithResult(result);
      * </pre>
-     * 
-     * </p>
-     * 
-     * @param callback
-     * @return
+     *
+     * @param callback IvyCallback
+     * @return Object
      */
     public Object execute(IvyCallback callback) {
         pushContext();
@@ -446,6 +441,9 @@ public class Ivy {
 
     /**
      * Configures Ivy with 1.4 compatible default settings
+     *
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public void configureDefault14() throws ParseException, IOException {
         pushContext();
@@ -545,6 +543,7 @@ public class Ivy {
     // RETRIEVE
     // ///////////////////////////////////////////////////////////////////////
 
+    @SuppressWarnings("deprecation")
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
         pushContext();
@@ -593,13 +592,13 @@ public class Ivy {
     /**
      * Example of use: deliver(mrid, "1.5", "target/ivy/ivy-[revision].xml",
      * DeliverOptions.newInstance(settings).setStatus("release").setValidate(false));
-     * 
-     * @param mrid
-     * @param revision
-     * @param destIvyPattern
-     * @param options
-     * @throws IOException
-     * @throws ParseException
+     *
+     * @param mrid ModuleRevisionId
+     * @param revision String
+     * @param destIvyPattern String
+     * @param options DeliverOptions
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
      */
     public void deliver(ModuleRevisionId mrid, String revision, String destIvyPattern,
             DeliverOptions options) throws IOException, ParseException {
@@ -632,6 +631,10 @@ public class Ivy {
 
     /**
      * Sorts the collection of IvyNode from the less dependent to the more dependent
+     *
+     * @param nodes Collection&lt;IvyNode&gt;
+     * @param options SortOptions
+     * @return List&lt;IvyNode&gt;
      */
     public List<IvyNode> sortNodes(Collection<IvyNode> nodes, SortOptions options) {
         pushContext();
@@ -646,7 +649,7 @@ public class Ivy {
      * Sorts the given ModuleDescriptors from the less dependent to the more dependent. This sort
      * ensures that a ModuleDescriptor is always found in the list before all ModuleDescriptors
      * depending directly on it.
-     * 
+     *
      * @param moduleDescriptors
      *            a Collection of ModuleDescriptor to sort
      * @param options
@@ -778,7 +781,10 @@ public class Ivy {
     /**
      * Interrupts the current running operation in the given operating thread, no later than
      * interruptTimeout milliseconds after the call
+     *
+     * @param operatingThread Thread
      */
+    @SuppressWarnings("deprecation")
     public void interrupt(Thread operatingThread) {
         if (operatingThread != null && operatingThread.isAlive()) {
             if (operatingThread == Thread.currentThread()) {

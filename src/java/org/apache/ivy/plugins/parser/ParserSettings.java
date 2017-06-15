@@ -55,7 +55,7 @@ public interface ParserSettings {
     String getDefaultBranch(ModuleId moduleId);
 
     /**
-     * Returns the namespace context in which the current descriptor is parsed.
+     * @return the namespace context in which the current descriptor is parsed.
      */
     Namespace getContextNamespace();
 

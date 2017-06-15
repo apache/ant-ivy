@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.core.cache;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,26 +48,32 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @see DefaultResolutionCacheManager
  */
-public class DefaultRepositoryCacheManagerTest extends TestCase {
-    
+public class DefaultRepositoryCacheManagerTest {
+
     private DefaultRepositoryCacheManager cacheManager;
+
     private Artifact artifact;
+
     private ArtifactOrigin origin;
+
     private Ivy ivy;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         File f = File.createTempFile("ivycache", ".dir");
         ivy = new Ivy();
         ivy.configureDefault();
         ivy.getLoggerEngine().setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         IvyContext.pushNewContext().setIvy(ivy);
-        
+
         IvySettings settings = ivy.getSettings();
         f.delete(); // we want to use the file as a directory, so we delete the file itself
         cacheManager = new DefaultRepositoryCacheManager();
@@ -81,7 +90,8 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         cacheManager.saveArtifactOrigin(artifact, origin);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         IvyContext.popContext();
         Delete del = new Delete();
         del.setProject(new Project());
@@ -89,6 +99,7 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         del.execute();
     }
 
+    @Test
     public void testArtifactOrigin() {
         ArtifactOrigin found = cacheManager.getSavedArtifactOrigin(artifact);
         assertEquals(origin, found);
@@ -99,6 +110,7 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         assertTrue(ArtifactOrigin.isUnknown(found));
     }
 
+    @Test
     public void testUniqueness() {
         cacheManager.saveArtifactOrigin(artifact, origin);
 
@@ -127,23 +139,24 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         assertTrue(ArtifactOrigin.isUnknown(found));
     }
 
-    //TODO
-    public void disableTestLatestIntegrationIsCachedPerResolver() throws Exception {
+    @Test
+    @Ignore
+    public void testLatestIntegrationIsCachedPerResolver() throws Exception {
         // given a module org#module
         ModuleId mi = new ModuleId("org", "module");
 
         // and a latest.integration mrid/dd
         ModuleRevisionId mridLatest = new ModuleRevisionId(mi, "trunk", "latest.integration");
-        DependencyDescriptor ddLatest = new DefaultDependencyDescriptor(mridLatest,  false);
+        DependencyDescriptor ddLatest = new DefaultDependencyDescriptor(mridLatest, false);
 
         // and some random options
         CacheMetadataOptions options = new CacheMetadataOptions().setCheckTTL(false);
 
         // setup resolver1 to download the static content so we can call cacheModuleDescriptor
-        MockResolver resolver1 = new MockResolver();
-        resolver1.setName("resolver1");
-        resolver1.setSettings(ivy.getSettings());
-        ivy.getSettings().addResolver(resolver1);
+        MockResolver resolver = new MockResolver();
+        resolver.setName("resolver1");
+        resolver.setSettings(ivy.getSettings());
+        ivy.getSettings().addResolver(resolver);
         ResourceDownloader downloader = new ResourceDownloader() {
             public void download(Artifact artifact, Resource resource, File dest)
                     throws IOException {
@@ -164,14 +177,14 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
 
         // latest.integration will resolve to 1.1 in resolver1
         ModuleRevisionId mrid11 = new ModuleRevisionId(mi, "trunk", "1.1");
-        DependencyDescriptor dd11 = new DefaultDependencyDescriptor(mrid11,  false);
         DefaultArtifact artifact11 = new DefaultArtifact(mrid11, new Date(), "module-1.1.ivy", "ivy", "ivy", true);
+        DependencyDescriptor dd11 = new DefaultDependencyDescriptor(mrid11, false);
         BasicResource resource11 = new BasicResource("/module-1-1.ivy", true, 1, 0, true);
         ResolvedResource mdRef11 = new ResolvedResource(resource11, "1.1");
 
         // tell the cache about 1.1
-        ResolvedModuleRevision rmr11 = cacheManager.cacheModuleDescriptor(resolver1, mdRef11, dd11, artifact11, downloader, options);
-        cacheManager.originalToCachedModuleDescriptor(resolver1, mdRef11, artifact11, rmr11, writer);
+        ResolvedModuleRevision rmr11 = cacheManager.cacheModuleDescriptor(resolver, mdRef11, dd11, artifact11, downloader, options);
+        cacheManager.originalToCachedModuleDescriptor(resolver, mdRef11, artifact11, rmr11, writer);
         // and use the new overload that passes in resolver name
         cacheManager.saveResolvedRevision("resolver1", mridLatest, "1.1");
 

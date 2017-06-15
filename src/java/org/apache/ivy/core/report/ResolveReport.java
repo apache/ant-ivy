@@ -128,7 +128,7 @@ public class ResolveReport {
 
     /**
      * Get every report on the download requests.
-     * 
+     *
      * @return the list of reports, never <code>null</code>
      */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
@@ -138,7 +138,7 @@ public class ResolveReport {
 
     /**
      * Get every report on the download requests.
-     * 
+     *
      * @return the list of reports, never <code>null</code>
      */
     public ArtifactDownloadReport[] getAllArtifactsReports() {
@@ -148,9 +148,9 @@ public class ResolveReport {
     /**
      * Get the report on the download requests. The list of download report can be restricted to a
      * specific download status, and also remove the download report for the evicted modules.
-     * 
+     *
      * @param downloadStatus
-     *            the status of download to retreive. Set it to <code>null</code> for no restriction
+     *            the status of download to retrieve. Set it to <code>null</code> for no restriction
      *            on the download status
      * @param withEvicted
      *            set it to <code>true</code> if the report for the evicted modules have to be
@@ -184,7 +184,11 @@ public class ResolveReport {
         }
     }
 
-    /** Can only be called if checkIfChanged has been called */
+    /**
+     * Can only be called if checkIfChanged has been called
+     *
+     * @return boolean
+     */
     public boolean hasChanged() {
         for (ConfigurationResolveReport report : confReports.values()) {
             if (report.hasChanged()) {
@@ -245,7 +249,7 @@ public class ResolveReport {
     /**
      * Returns the list of all dependencies concerned by this report as a List of IvyNode ordered
      * from the more dependent to the least one
-     * 
+     *
      * @return The list of all dependencies.
      */
     public List<IvyNode> getDependencies() {
@@ -255,7 +259,7 @@ public class ResolveReport {
     /**
      * Returns the list of all artifacts which should be downloaded per this resolve To know if the
      * artifact have actually been downloaded use information found in ConfigurationResolveReport.
-     * 
+     *
      * @return The list of all artifacts.
      */
     public List<Artifact> getArtifacts() {
@@ -264,7 +268,7 @@ public class ResolveReport {
 
     /**
      * gives all the modules ids concerned by this report, from the most dependent to the least one
-     * 
+     *
      * @return a list of ModuleId
      */
     public List<ModuleId> getModuleIds() {
@@ -305,7 +309,7 @@ public class ResolveReport {
      * This only includes artifacts actually downloaded to cache (DownloadStatus.SUCCESSFUL), and
      * not artifacts already in cache or used at their original location.
      * </p>
-     * 
+     *
      * @return The total size of downloaded artifacts, in bytes.
      */
     public long getDownloadSize() {
@@ -319,10 +323,11 @@ public class ResolveReport {
     /**
      * Get every configuration which extends the specified one. The returned list also includes the
      * specified one.
-     * 
-     * @param extended
-     * @return
+     *
+     * @param extended String
+     * @return String[]
      */
+    @SuppressWarnings("unused")
     private String[] getExtendingConfs(String extended) {
         String[] allConfs = md.getConfigurationsNames();
         Set<String> extendingConfs = new HashSet<String>();

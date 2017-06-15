@@ -26,7 +26,7 @@ public abstract class AbstractPatternMatcher implements PatternMatcher {
 
     /**
      * Create a new instance of a pattern matcher
-     * 
+     *
      * @param name
      *            the name of the pattern matcher. Never null.
      */
@@ -50,7 +50,7 @@ public abstract class AbstractPatternMatcher implements PatternMatcher {
 
     /**
      * Returns an instance of the implementation specific matcher.
-     * 
+     *
      * @param expression
      *            the string to be matched.
      * @return the instance of the related matcher. Never null.

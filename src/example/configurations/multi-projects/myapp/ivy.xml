@@ -14,17 +14,17 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.0">
     <info organisation="org.apache" module="myapp"/>
-    
+
     <configurations>
-       	<conf name="build" visibility="private" description="compilation only need api jar" />
-    	<conf name="noexternaljar" description="use only company jar" />
-    	<conf name="withexternaljar" description="use company jar and third party jars" />    
+        <conf name="build" visibility="private" description="compilation only need api jar"/>
+        <conf name="noexternaljar" description="use only company jar"/>
+        <conf name="withexternaljar" description="use company jar and third party jars"/>
     </configurations>
-    
+
     <dependencies>
         <dependency org="org.apache" name="filter-framework" rev="latest.integration" conf="build->api; noexternaljar->homemade-impl; withexternaljar->cc-impl"/>
     </dependencies>

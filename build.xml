@@ -16,52 +16,52 @@
    specific language governing permissions and limitations
    under the License.
 -->
-<project name="ivy" default="coverage-report" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="ivy" default="test-report" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <property environment="env" />
-    <property file="version.properties" />
-    <property file="build.properties" />
+    <property environment="env"/>
+    <property file="version.properties"/>
+    <property file="build.properties"/>
 
-    <property name="final.name" value="ivy.jar" />
+    <property name="final.name" value="ivy.jar"/>
 
     <target name="init-ivy-user-home" unless="ivy.use.local.home">
         <condition property="ivy.home" value="${env.IVY_HOME}">
-            <isset property="env.IVY_HOME" />
+            <isset property="env.IVY_HOME"/>
         </condition>
-        <property name="ivy.home" value="${user.home}/.ivy2" />
+        <property name="ivy.home" value="${user.home}/.ivy2"/>
     </target>
 
     <target name="init-ivy-local-home" if="ivy.use.local.home">
-        <property name="ivy.home" value="${basedir}/.ivy2" />
+        <property name="ivy.home" value="${basedir}/.ivy2"/>
     </target>
 
-    <target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home" />
+    <target name="init-ivy-home" depends="init-ivy-user-home,init-ivy-local-home"/>
 
-    <target name="init-ivy" depends="compile-bootstrap, init-ivy-home">
+    <target name="init-ivy" depends="compile-bootstrap,init-ivy-home">
         <taskdef resource="org/apache/ivy/ant/antlib.xml"
                 uri="antlib:org.apache.ivy.ant">
             <classpath>
-                <pathelement location="${core.classes.build.dir}" />
-                <pathelement location="${bootstrap.classes.build.dir}" />
+                <pathelement location="${core.classes.build.dir}"/>
+                <pathelement location="${bootstrap.classes.build.dir}"/>
             </classpath>
         </taskdef>
 
-        <ivy:configure override="true" />
+        <ivy:configure override="true"/>
     </target>
 
-    <target name="install" depends="init-ivy-home, jar"
+    <target name="install" depends="jar"
         description="build Ivy and install it in Ivy user home for builds using Ivy user home to load Ivy jar">
-        <property name="ivy.jar.file" value="${ivy.home}/jars/ivy.jar" />
-        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ivy.jar.file}" />
+        <property name="ivy.jar.file" value="${ivy.home}/jars/ivy.jar"/>
+        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ivy.jar.file}"/>
     </target>
 
-    <target name="install-ant" depends="init-ivy-home, jar"
+    <target name="install-ant" depends="jar"
         description="build Ivy and install it in Ant home lib">
         <condition property="ant.home" value="${env.ANT_HOME}">
-          <isset property="env.ANT_HOME" />
+            <isset property="env.ANT_HOME"/>
         </condition>
-        <fail unless="ant.home" message="ANT_HOME environment variable or ant.home property required" />
-        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ant.home}/lib/ivy.jar" />
+        <fail unless="ant.home" message="ANT_HOME environment variable or ant.home property required"/>
+        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ant.home}/lib/ivy.jar"/>
     </target>
 
     <!-- =================================================================
@@ -70,111 +70,111 @@
     <target name="init">
         <path id="lib.classpath">
             <fileset dir="${lib.dir}">
-                <include name="*.jar" />
+                <include name="*.jar"/>
             </fileset>
         </path>
         <path id="build.bootstrap.classpath">
-            <pathelement location="${core.classes.build.dir}" />
+            <pathelement location="${core.classes.build.dir}"/>
         </path>
         <path id="build.ant.classpath">
-            <pathelement location="${core.classes.build.dir}" />
-            <path refid="lib.classpath" />
+            <pathelement location="${core.classes.build.dir}"/>
+            <path refid="lib.classpath"/>
         </path>
         <path id="build.optional.classpath">
-            <path refid="build.ant.classpath" />
+            <path refid="build.ant.classpath"/>
         </path>
         <path id="run.classpath">
-            <pathelement location="${core.classes.build.dir}" />
-            <pathelement location="${ant.classes.build.dir}" />
-            <pathelement location="${optional.classes.build.dir}" />
-            <path refid="lib.classpath" />
+            <pathelement location="${core.classes.build.dir}"/>
+            <pathelement location="${ant.classes.build.dir}"/>
+            <pathelement location="${optional.classes.build.dir}"/>
+            <path refid="lib.classpath"/>
         </path>
         <path id="test.classpath">
-            <pathelement location="${coverage.classes.dir}" />
+            <pathelement location="${coverage.classes.dir}"/>
             <fileset dir="${lib.dir}">
-                <include name="*.jar" />
-                <exclude name="ant.jar" />
-                <exclude name="ant-launcher.jar" />
+                <include name="*.jar"/>
+                <exclude name="ant.jar"/>
+                <exclude name="ant-launcher.jar"/>
                 <exclude name="ant-nodeps.jar"/>
                 <exclude name="ant-trax.jar"/>
             </fileset>
-            <pathelement location="${core.classes.build.dir}" />
-            <pathelement location="${ant.classes.build.dir}" />
-            <pathelement location="${optional.classes.build.dir}" />
-            <pathelement path="${test.build.dir}" />
+            <pathelement location="${core.classes.build.dir}"/>
+            <pathelement location="${ant.classes.build.dir}"/>
+            <pathelement location="${optional.classes.build.dir}"/>
+            <pathelement path="${test.build.dir}"/>
         </path>
     </target>
 
     <target name="prepare" depends="init">
-        <mkdir dir="${classes.build.dir}" />
-        <mkdir dir="${core.classes.build.dir}" />
-        <mkdir dir="${bootstrap.classes.build.dir}" />
-        <mkdir dir="${ant.classes.build.dir}" />
-        <mkdir dir="${optional.classes.build.dir}" />
-        <mkdir dir="${all.classes.build.dir}" />
-        <mkdir dir="${test.build.dir}" />
-        <mkdir dir="${artifacts.build.dir}" />
-        <mkdir dir="${test.report.dir}" />
-        <mkdir dir="${ivy.report.dir}" />
+        <mkdir dir="${classes.build.dir}"/>
+        <mkdir dir="${core.classes.build.dir}"/>
+        <mkdir dir="${bootstrap.classes.build.dir}"/>
+        <mkdir dir="${ant.classes.build.dir}"/>
+        <mkdir dir="${optional.classes.build.dir}"/>
+        <mkdir dir="${all.classes.build.dir}"/>
+        <mkdir dir="${test.build.dir}"/>
+        <mkdir dir="${artifacts.build.dir}"/>
+        <mkdir dir="${test.report.dir}"/>
     </target>
 
     <target name="clean" description="delete all generated files keeping sources only">
-        <delete dir="${classes.build.dir}" />
-        <delete dir="${test.build.dir}" />
-        <delete dir="${artifacts.build.dir}" />
-        <delete dir="${test.report.dir}" />
-        <delete dir="${javadoc.build.dir}" />
-        <delete dir="${doc.build.dir}" />
-        <delete dir="${build.dir}" />
+        <delete dir="${classes.build.dir}"/>
+        <delete dir="${test.build.dir}"/>
+        <delete dir="${artifacts.build.dir}"/>
+        <delete dir="${ivy.report.dir}"/>
+        <delete dir="${test.report.dir}"/>
+        <delete dir="${javadoc.build.dir}"/>
+        <delete dir="${doc.build.dir}"/>
+        <delete dir="${build.dir}"/>
     </target>
 
     <target name="clean-lib">
-        <delete dir="${lib.dir}" />
+        <delete dir="${lib.dir}"/>
     </target>
 
     <target name="clean-ivy-cache" depends="init-ivy-home">
-        <delete dir="${ivy.home}/cache" />
+        <delete dir="${ivy.home}/cache"/>
     </target>
 
     <target name="clean-ivy-home" depends="init-ivy-home">
-        <delete dir="${ivy.home}" />
+        <delete dir="${ivy.home}"/>
     </target>
 
     <target name="clean-examples" description="clean all examples">
         <subant target="clean" failonerror="false">
-            <fileset dir="${example.dir}" includes="**/build.xml" />
+            <fileset dir="${example.dir}" includes="**/build.xml"/>
         </subant>
     </target>
 
-    <target name="clean-all" depends="clean, clean-lib, clean-examples" />
+    <target name="clean-all" depends="clean-examples,clean,clean-lib"/>
 
     <target name="/noresolve" description="use to skip dependency resolution">
-        <property name="no.resolve" value="true" />
+        <property name="no.resolve" value="true"/>
     </target>
 
     <target name="/notest" description="use to skip tests">
-        <property name="skip.test" value="true" />
+        <property name="skip.test" value="true"/>
     </target>
 
     <target name="/nojavadoc" description="use to skip javadoc">
-        <property name="skip.javadoc" value="true" />
+        <property name="skip.javadoc" value="true"/>
     </target>
 
     <target name="/localivy" description="use a local ivy home">
-        <property name="ivy.use.local.home" value="true" />
+        <property name="ivy.use.local.home" value="true"/>
     </target>
 
     <target name="/offline" depends="/noresolve" description="use to indicate no internet connection is available">
-        <property name="offline" value="true" />
+        <property name="offline" value="true"/>
     </target>
 
     <target name="default-version">
         <tstamp>
-            <format property="pubdate" pattern="yyyyMMddHHmmss" />
+            <format property="pubdate" pattern="yyyyMMddHHmmss"/>
         </tstamp>
-        <property name="version.prefix" value="${target.ivy.version}-local-" />
-        <property name="build.version" value="${version.prefix}${pubdate}" />
-        <property name="bundle.version" value="${target.ivy.bundle.version}.${target.ivy.bundle.version.qualifier}${pubdate}" />
+        <property name="version.prefix" value="${target.ivy.version}-local-"/>
+        <property name="build.version" value="${version.prefix}${pubdate}"/>
+        <property name="bundle.version" value="${target.ivy.bundle.version}.${target.ivy.bundle.version.qualifier}${pubdate}"/>
     </target>
 
     <!-- =================================================================
@@ -192,30 +192,30 @@
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="no">
-            <excludesfile name="ant.patterns" />
-            <excludesfile name="optional.patterns" />
+            <excludesfile name="ant.patterns"/>
+            <excludesfile name="optional.patterns"/>
         </javac>
         <copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
-                <exclude name="**/*.java" />
-                <excludesfile name="ant.patterns" />
-                <excludesfile name="optional.patterns" />
+                <exclude name="**/*.java"/>
+                <excludesfile name="ant.patterns"/>
+                <excludesfile name="optional.patterns"/>
             </fileset>
         </copy>
 
         <!-- copy settings files for backward compatibility with ivyconf naming -->
         <copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-local.xml"
-            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-local.xml" />
+            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-local.xml"/>
         <copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-default-chain.xml"
-            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-default-chain.xml" />
+            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-default-chain.xml"/>
         <copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-main-chain.xml"
-            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-main-chain.xml" />
+            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-main-chain.xml"/>
         <copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-public.xml"
-            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-public.xml" />
+            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-public.xml"/>
         <copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-shared.xml"
-            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-shared.xml" />
+            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-shared.xml"/>
         <copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings.xml"
-            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf.xml" />
+            tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf.xml"/>
     </target>
 
     <!-- Build the Ant tasks with the current Ant runtime -->
@@ -228,18 +228,18 @@
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="yes">
-            <includesfile name="ant.patterns" />
+            <includesfile name="ant.patterns"/>
         </javac>
         <copy todir="${bootstrap.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
-                <includesfile name="ant.patterns" />
-                <exclude name="**/*.java" />
+                <includesfile name="ant.patterns"/>
+                <exclude name="**/*.java"/>
             </fileset>
         </copy>
     </target>
 
     <!-- Build the Ant tasks with the minimal Ant runtime -->
-    <target name="compile-ant" depends="compile-core, resolve">
+    <target name="compile-ant" depends="compile-core,resolve">
         <javac  srcdir="${src.dir}"
                 destdir="${ant.classes.build.dir}"
                 sourcepath=""
@@ -248,21 +248,21 @@
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="no">
-            <includesfile name="ant.patterns" />
+            <includesfile name="ant.patterns"/>
         </javac>
         <copy todir="${ant.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
-                <includesfile name="ant.patterns" />
-                <exclude name="**/*.java" />
+                <includesfile name="ant.patterns"/>
+                <exclude name="**/*.java"/>
             </fileset>
         </copy>
 
         <!-- copy antlib for backward compatibility with fr.jayasoft.ivy package -->
         <copy file="${ant.classes.build.dir}/org/apache/ivy/ant/antlib.xml"
-                todir="${ant.classes.build.dir}/fr/jayasoft/ivy/ant" />
+                todir="${ant.classes.build.dir}/fr/jayasoft/ivy/ant"/>
     </target>
 
-    <target name="compile-optional" depends="compile-ant, resolve">
+    <target name="compile-optional" depends="compile-ant">
         <javac  srcdir="${src.dir}"
                 destdir="${optional.classes.build.dir}"
                 sourcepath=""
@@ -271,13 +271,13 @@
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="no">
-            <includesfile name="optional.patterns" />
-            <includesfile name="ant.patterns" />
+            <includesfile name="optional.patterns"/>
+            <includesfile name="ant.patterns"/>
         </javac>
         <copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
-                <includesfile name="optional.patterns" />
-                <exclude name="**/*.java" />
+                <includesfile name="optional.patterns"/>
+                <exclude name="**/*.java"/>
             </fileset>
         </copy>
     </target>
@@ -285,10 +285,10 @@
     <!-- =================================================================
          Create the two jar files (Ivy core and Ivy core + Ant tasks)
          ================================================================= -->
-    <target name="jar" depends="compile-optional, default-version" description="Create Jar files">
+    <target name="jar" depends="compile-optional,default-version" description="Create Jar files">
         <!-- identify compiled ivy version -->
-        <echo message="version=${build.version}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
-        <echo message="date=${pubdate}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
+        <echo message="version=${build.version}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true"/>
+        <echo message="date=${pubdate}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true"/>
 
         <mkdir dir="${artifacts.build.dir}/jars/"/>
 
@@ -299,38 +299,38 @@
         -->
         <copy file="${basedir}/META-INF/MANIFEST.MF" tofile="${artifacts.build.dir}/MANIFEST.MF">
             <filterchain>
-                <replaceregex pattern="Bundle-Version:.*" replace="Bundle-Version: ${bundle.version}" byline="true" />
+                <replaceregex pattern="Bundle-Version:.*" replace="Bundle-Version: ${bundle.version}" byline="true"/>
             </filterchain>
         </copy>
 
         <copy todir="${all.classes.build.dir}">
-            <fileset dir="${core.classes.build.dir}" />
-            <fileset dir="${ant.classes.build.dir}" />
-            <fileset dir="${optional.classes.build.dir}" />
+            <fileset dir="${core.classes.build.dir}"/>
+            <fileset dir="${ant.classes.build.dir}"/>
+            <fileset dir="${optional.classes.build.dir}"/>
         </copy>
 
         <jar destfile="${artifacts.build.dir}/jars/${final.name}"
                 manifest="${artifacts.build.dir}/MANIFEST.MF">
-            <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
             <manifest>
-                <attribute name="Specification-Title" value="Apache Ivy with Ant tasks" />
-                <attribute name="Specification-Version" value="${build.version}" />
-                <attribute name="Specification-Vendor" value="Apache Software Foundation" />
-                <attribute name="Implementation-Title" value="org.apache.ivy" />
-                <attribute name="Implementation-Version" value="${build.version}" />
-                <attribute name="Implementation-Vendor" value="Apache Software Foundation" />
-                <attribute name="Implementation-Vendor-Id" value="org.apache" />
-                <attribute name="Extension-name" value="org.apache.ivy" />
-                <attribute name="Build-Version" value="${build.version}" />
+                <attribute name="Specification-Title" value="Apache Ivy with Ant tasks"/>
+                <attribute name="Specification-Version" value="${build.version}"/>
+                <attribute name="Specification-Vendor" value="Apache Software Foundation"/>
+                <attribute name="Implementation-Title" value="org.apache.ivy"/>
+                <attribute name="Implementation-Version" value="${build.version}"/>
+                <attribute name="Implementation-Vendor" value="Apache Software Foundation"/>
+                <attribute name="Implementation-Vendor-Id" value="org.apache"/>
+                <attribute name="Extension-name" value="org.apache.ivy"/>
+                <attribute name="Build-Version" value="${build.version}"/>
             </manifest>
-            <fileset dir="${all.classes.build.dir}" />
+            <fileset dir="${all.classes.build.dir}"/>
         </jar>
         <!-- copy main jar to ease its use as an OSGi bundle -->
         <copy file="${artifacts.build.dir}/jars/${final.name}"
-              tofile="${artifacts.build.dir}/org.apache.ivy_${bundle.version}.jar" />
+              tofile="${artifacts.build.dir}/org.apache.ivy_${bundle.version}.jar"/>
 
         <!-- clean generated module properties file -->
-        <delete file="${core.classes.build.dir}/module.properties" />
+        <delete file="${core.classes.build.dir}/module.properties"/>
     </target>
 
     <!-- =================================================================
@@ -339,78 +339,12 @@
     <target name="publish-local" depends="jar,sources" description="publishes Ivy to Ivy local repository">
         <ivy:publish resolver="local" pubrevision="${build.version}"
             artifactsPattern="${artifacts.build.dir}/[type]s/[artifact].[ext]"
-            forcedeliver="true" />
+            forcedeliver="true"/>
     </target>
 
     <!-- =================================================================
          TESTS
          ================================================================= -->
-    <target name="build-custom-resolver-jar" depends="jar">
-        <mkdir dir="${build.dir}/custom-classpath" />
-        <javac  srcdir="${basedir}/test/custom-classpath"
-                destdir="${build.dir}/custom-classpath"
-                classpathref="run.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                includeantruntime="no" />
-        <jar    destfile="${test.dir}/org/apache/ivy/core/settings/custom-resolver.jar"
-                basedir="${build.dir}/custom-classpath" />
-    </target>
-
-    <target name="init-tests-offline" if="offline">
-            <fileset id="test.fileset" dir="${test.dir}">
-                <include name="**/${test.class.pattern}.java" />
-                <exclude name="**/Abstract*Test.java" />
-                <not><contains text="remote.test" /></not>
-            </fileset>
-    </target>
-
-    <target name="init-tests-online" unless="offline">
-            <fileset id="test.fileset" dir="${test.dir}">
-                <include name="**/${test.class.pattern}.java" />
-                <exclude name="**/Abstract*Test.java" />
-            </fileset>
-    </target>
-
-    <target name="init-tests" depends="init-tests-offline, init-tests-online" />
-
-    <target name="emma" depends="jar" unless="skip.test">
-        <ivy:cachepath organisation="emma" module="emma" revision="2.0.5312"
-                       inline="true" conf="default" pathid="emma.classpath"
-                       log="download-only" />
-        <ivy:cachepath organisation="emma" module="emma_ant" revision="2.0.5312"
-                       inline="true" conf="default" pathid="emma.ant.classpath" transitive="false"
-                       log="download-only" />
-        <taskdef resource="emma_ant.properties">
-            <classpath refid="emma.classpath" />
-            <classpath refid="emma.ant.classpath" />
-        </taskdef>
-        <property name="emma.enabled" value="true" />
-        <property name="coverage.dir" value="${build.dir}/coverage" />
-        <property name="coverage.classes.dir" value="${coverage.dir}/classes" />
-        <mkdir dir="${coverage.dir}" />
-        <mkdir dir="${coverage.classes.dir}" />
-        <emma enabled="${emma.enabled}">
-          <instr mode="copy"
-                 destdir="${coverage.dir}/classes"
-                 metadatafile="${coverage.dir}/metadata.emma">
-            <instrpath>
-                <pathelement location="${core.classes.build.dir}" />
-                <pathelement location="${ant.classes.build.dir}" />
-                <pathelement location="${optional.classes.build.dir}" />
-            </instrpath>
-          </instr>
-        </emma>
-        <delete file="${coverage.dir}/coverage.emma" />
-        <!-- add emma path to test path, because emma jars need to be available when running
-             instrumented classes -->
-        <ivy:addpath topath="test.classpath" first="true">
-          <pathelement location="${coverage.dir}/classes" />
-          <path refid="emma.classpath" />
-        </ivy:addpath>
-    </target>
-
     <target name="build-test" depends="jar">
         <javac  srcdir="${test.dir}"
                 destdir="${test.build.dir}"
@@ -418,196 +352,249 @@
                 source="${ivy.minimum.javaversion}"
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
-                encoding="ISO-8859-1"
-                includeantruntime="no" />
+                encoding="UTF-8"
+                includeantruntime="no"/>
         <copy todir="${test.build.dir}">
             <fileset dir="${test.dir}">
-                <exclude name="**/*.java" />
+                <exclude name="**/*.java"/>
             </fileset>
         </copy>
     </target>
 
+    <target name="build-custom-resolver-jar" depends="jar">
+        <mkdir dir="${build.dir}/custom-classpath"/>
+        <javac  srcdir="${basedir}/test/custom-classpath"
+                destdir="${build.dir}/custom-classpath"
+                classpathref="run.classpath"
+                source="${ivy.minimum.javaversion}"
+                target="${ivy.minimum.javaversion}"
+                debug="${debug.mode}"
+                includeantruntime="no"/>
+        <jar    destfile="${test.dir}/org/apache/ivy/core/settings/custom-resolver.jar"
+                basedir="${build.dir}/custom-classpath"/>
+    </target>
+
+    <target name="init-tests-offline" if="offline">
+            <fileset id="test.fileset" dir="${test.dir}">
+                <include name="**/${test.class.pattern}.java"/>
+                <exclude name="**/Abstract*Test.java"/>
+                <not><contains text="remote.test"/></not>
+            </fileset>
+    </target>
+
+    <target name="init-tests-online" unless="offline">
+            <fileset id="test.fileset" dir="${test.dir}">
+                <include name="**/${test.class.pattern}.java"/>
+                <exclude name="**/Abstract*Test.java"/>
+            </fileset>
+    </target>
+
+    <target name="init-tests" depends="init-tests-offline,init-tests-online"/>
+
     <target name="prepare-osgi-tests" depends="resolve" unless="skip.test">
-        <ant dir="${basedir}/test/test-repo" target="generate-bundles" />
+        <ant dir="${basedir}/test/test-repo" target="generate-bundles"/>
     </target>
 
     <target name="prepare-test-jar-repositories" unless="skip.test">
-        <mkdir dir="${basedir}/test/jar-repos" />
+        <mkdir dir="${basedir}/test/jar-repos"/>
         <jar destfile="${basedir}/test/jar-repos/jarrepo1.jar" >
-            <fileset dir="${basedir}/test/repositories/1" />
+            <fileset dir="${basedir}/test/repositories/1"/>
         </jar>
         <jar destfile="${basedir}/test/jar-repos/jarrepo1_subdir.jar">
-            <fileset dir="${basedir}/test/repositories" includes="1/**/*" />
+            <fileset dir="${basedir}/test/repositories" includes="1/**/*"/>
         </jar>
     </target>
 
-    <target name="test-internal" depends="build-test, init-tests, prepare-osgi-tests, prepare-test-jar-repositories" unless="skip.test">
-        <mkdir dir="${test.xml.dir}" />
-
-        <junit
-           haltonfailure="off"
-           haltonerror="off"
-           errorproperty="test.failed"
-           failureproperty="test.failed"
-           showoutput="no"
-           printsummary="yes"
-           includeantruntime="yes"
-           dir="${basedir}"
-           fork="true">
-            <classpath>
-                <path refid="test.classpath" />
-                <pathelement path="${ant.home}/lib/ant-nodeps.jar"/>
-                <pathelement path="${ant.home}/lib/ant-trax.jar"/>
-            </classpath>
-
-            <!-- pass the proxy properties to the forked junit process to use correct proxy -->
-            <syspropertyset>
-                <propertyref prefix="http" />
-               </syspropertyset>
-            <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />
-            <jvmarg value="-Demma.coverage.out.merge=true" />
-
-            <!-- Added this to test IVY-65 -->
-            <jvmarg value="-Duser.region=TR" />
-            <jvmarg value="-Duser.language=tr" />
-
-            <formatter type="xml"/>
-            <batchtest todir="${test.xml.dir}">
-                <fileset refid="test.fileset" />
-            </batchtest>
-        </junit>
+    <target name="init-jacoco" depends="jar" unless="skip.test">
+        <ivy:cachepath organisation="org.jacoco" module="org.jacoco.ant" revision="0.7.9"
+                       inline="true" conf="default" pathid="jacoco.classpath" log="download-only"/>
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"
+                 classpathref="jacoco.classpath"/>
     </target>
-    
-    <target name="x" depends="init,build-test">
-        <java classname="org.apache.ivy.plugins.resolver.FileSystemResolverTest">
-            <classpath>
-                <path refid="test.classpath" />
-                <pathelement path="${ant.home}/lib/ant-nodeps.jar"/>
-                <pathelement path="${ant.home}/lib/ant-trax.jar"/>
-            </classpath>
-        </java>
+
+    <target name="test-internal" depends="build-test,init-tests,prepare-osgi-tests,prepare-test-jar-repositories,init-jacoco" unless="skip.test">
+        <mkdir dir="${test.xml.dir}"/>
+
+        <!-- multiple runs into the same logfile let the later report generation fail -->
+        <delete file="${jacoco.log}"/>
+        <jacoco:coverage xmlns:jacoco="antlib:org.jacoco.ant" destfile="${jacoco.log}"
+                         exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader">
+            <junit
+                haltonfailure="off"
+                haltonerror="off"
+                errorproperty="test.failed"
+                failureproperty="test.failed"
+                showoutput="no"
+                printsummary="yes"
+                includeantruntime="yes"
+                dir="${basedir}"
+                tempdir="${build.dir}"
+                fork="true">
+                <classpath>
+                    <path refid="test.classpath"/>
+                </classpath>
+
+                <!-- pass the proxy properties to the forked junit process to use correct proxy -->
+                <syspropertyset>
+                    <propertyref prefix="http"/>
+                </syspropertyset>
+
+                <!-- Added this to test IVY-65 -->
+                <jvmarg value="-Duser.region=TR"/>
+                <jvmarg value="-Duser.language=tr"/>
+
+                <formatter type="xml"/>
+                <batchtest todir="${test.xml.dir}">
+                    <fileset refid="test.fileset"/>
+                </batchtest>
+            </junit>
+        </jacoco:coverage>
     </target>
 
     <target name="test" depends="test-internal" description="Run the test">
         <fail if="test.failed"
-              message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)" />
+              message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)"/>
+    </target>
+
+    <target name="check-ibiblio" depends="build-test">
+        <java classname="org.apache.ivy.plugins.resolver.IBiblioHelper"
+              classpathref="test.classpath"/>
     </target>
 
     <!-- =================================================================
          REPORTS AND DOCUMENTATION
          ================================================================= -->
-    <target name="test-report" depends="test-internal" unless="skip.test">
+    <target name="test-report" depends="test-internal" unless="skip.test"
+            description="run tests with instrumentation and generate coverage report">
         <junitreport todir="${test.xml.dir}">
             <fileset dir="${test.xml.dir}">
-                <include name="TEST-*.xml" />
+                <include name="TEST-*.xml"/>
             </fileset>
-            <report format="frames" todir="${test.report.dir}" />
+            <report format="frames" todir="${test.report.dir}"/>
         </junitreport>
+
+        <mkdir dir="${coverage.report.dir}"/>
+        <jacoco:report xmlns:jacoco="antlib:org.jacoco.ant">
+            <executiondata>
+                <file file="${jacoco.log}"/>
+            </executiondata>
+
+            <structure name="Ivy">
+                <classfiles>
+                    <fileset dir="${classes.build.dir}"/>
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${src.dir}"/>
+                </sourcefiles>
+            </structure>
+
+            <html destdir="${coverage.report.dir}"/>
+        </jacoco:report>
+
         <fail if="test.failed"
-              message="At least one test has failed. See logs (in ${test.xml.dir}) or report (in ${test.report.dir})" />
+              message="At least one test has failed. See logs (in ${test.xml.dir}) or report (in ${test.report.dir})"/>
     </target>
 
-    <target name="coverage-report" depends="emma, test-report"  unless="skip.test"
-            description="run tests with instrumentation and generate coverage report">
-        <mkdir dir="${coverage.report.dir}" />
-        <emma>
-            <report sourcepath="${src.dir}">
-                <fileset dir="${coverage.dir}">
-                    <include name="*.emma" />
-                </fileset>
-
-                <txt outfile="${coverage.report.dir}/coverage.txt" />
-                <html outfile="${coverage.report.dir}/coverage.html" />
-             </report>
-         </emma>
-    </target>
+    <target name="coverage-report" depends="test-report"/>
 
     <target name="ivy-report" depends="resolve">
+        <mkdir dir="${ivy.report.dir}"/>
         <ivy:report todir="${ivy.report.dir}"/>
     </target>
 
-    <target name="javadoc" unless="skip.javadoc">
-        <javadoc destdir="${javadoc.build.dir}" useexternalfile="true">
-            <fileset dir="${src.dir}" includes="**/*.java" />
+    <target name="javadoc" depends="init" unless="skip.javadoc">
+        <tstamp>
+            <format pattern="2007-yyyy" property="years"/>
+        </tstamp>
+        <property name="copyright" value="Copyright &amp;copy;${years} The Apache Software Foundation, Licensed under &lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0.txt&quot;&gt;Apache License, Version 2.0&lt;/a&gt;."/>
+        <property name="title" value="Apache Ivy&amp;trade; dependency manager ${target.ivy.version} API"/>
+        <javadoc destdir="${javadoc.build.dir}"
+                 useexternalfile="true"
+                 windowtitle="Apache Ivy&amp;trade;"
+                 doctitle="${title}"
+                 bottom="${copyright}"
+                 classpathref="lib.classpath">
+            <fileset dir="${src.dir}" includes="**/*.java"/>
+            <arg value="-tag"/>
+            <arg value="pre:a:Precondition:"/>
         </javadoc>
     </target>
 
     <target name="sources" depends="default-version" description="Create source archive files">
         <mkdir dir="${artifacts.build.dir}/sources/"/>
         <jar destfile="${artifacts.build.dir}/sources/${final.name}">
-            <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
             <manifest>
-                <attribute name="Specification-Title" value="Apache Ivy Sources" />
-                <attribute name="Specification-Version" value="${build.version}" />
-                <attribute name="Specification-Vendor" value="Apache Software Foundation" />
+                <attribute name="Specification-Title" value="Apache Ivy Sources"/>
+                <attribute name="Specification-Version" value="${build.version}"/>
+                <attribute name="Specification-Vendor" value="Apache Software Foundation"/>
             </manifest>
-            <fileset dir="${src.dir}" />
+            <fileset dir="${src.dir}"/>
         </jar>
     </target>
 
     <target name="fixcrlf">
         <property name="eol.native.includes"
-            value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css" />
+            value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css"/>
         <property name="eol.native.excludes"
-            value="build/**,bin/**,lib/**" />
+            value="build/**,bin/**,lib/**"/>
 
         <fileset id="eol.native.fileset"
             dir="${basedir}"
             includes="${eol.native.includes}"
-            excludes="${eol.native.excludes}" />
+            excludes="${eol.native.excludes}"/>
 
         <fixcrlf srcdir="${basedir}"
             includes="${eol.native.includes}"
-            excludes="${eol.native.excludes}" />
-        <apply executable="svn">
-            <fileset refid="eol.native.fileset" />
-            <arg value="propset" />
-            <arg value="svn:eol-style" />
-            <arg value='"native"' />
-        </apply>
+            excludes="${eol.native.excludes}"/>
+    </target>
+
+    <target name="init-checkstyle" depends="jar">
+        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8.1"
+                inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
+        <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
+                 resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
     </target>
 
     <!-- Checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config  -->
-    <target name="checkstyle-internal" depends="jar">
-        <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="5.0"
-                inline="true" conf="default" pathid="checkstyle.classpath" transitive="true"
-                log="download-only"/>
-        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
-
-        <mkdir dir="${checkstyle.report.dir}" />
-        <checkstyle config="${checkstyle.src.dir}/checkstyle-config"
-            failOnViolation="false" failureProperty="checkstyle.failed">
+    <target name="checkstyle-internal" depends="init-checkstyle">
+        <mkdir dir="${checkstyle.report.dir}"/>
+        <cs:checkstyle xmlns:cs="antlib:com.puppycrawl.tools.checkstyle.ant"
+		       config="${checkstyle.src.dir}/checkstyle-config"
+		       failOnViolation="false" failureProperty="checkstyle.failed">
             <classpath>
-                <path refid="run.classpath" />
+                <path refid="run.classpath"/>
             </classpath>
-            <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml" />
+            <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml"/>
             <fileset dir="${src.dir}">
-                <include name="**/*.java" />
+                <include name="**/*.java"/>
             </fileset>
             <fileset dir="${example.dir}">
-                <include name="**/*.java" />
+                <include name="**/*.java"/>
             </fileset>
-        </checkstyle>
-      </target>
+        </cs:checkstyle>
+    </target>
 
-    <target name="checkstyle" depends="checkstyle-internal" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
+    <target name="checkstyle" depends="checkstyle-internal"
+	    description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
         <fail if="checkstyle.failed"
-            message="Checkstyle has errors. See report in ${checkstyle.report.dir}" />
+            message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
     </target>
 
     <target name="checkstyle-report" depends="checkstyle-internal">
-        <property name="checkstyle.basedir" location="${src.dir}" />
+        <property name="checkstyle.basedir" location="${src.dir}"/>
         <xslt in="${checkstyle.report.dir}/checkstyle.xml"
                 style="${checkstyle.src.dir}/checkstyle-frames.xsl"
                 out="${checkstyle.report.dir}/output.txt">
-            <param name="basedir" expression="${checkstyle.basedir}" />
+            <param name="basedir" expression="${checkstyle.basedir}"/>
+            <param name="output.dir" expression="${checkstyle.report.dir}"/>
         </xslt>
     </target>
 
     <target name="init-findbugs" unless="findbugs.home">
-        <!-- Findbugs: Getting Findbugs -->
+        <!-- Findbugs: Getting Findbugs requires unlimited strength crypto policy -->
         <property name="findbugs.version"
-                  value="1.3.5"
+                  value="3.0.1"
                   description="Version of Findbugs to use"/>
         <property name="findbugs.download.name"
                   value="findbugs-${findbugs.version}"
@@ -616,7 +603,7 @@
                   value="${findbugs.download.name}.zip"
                   description="The filename of the ZIP."/>
         <property name="findbugs.download.url"
-                  value="https://jaist.dl.sourceforge.net/project/findbugs/findbugs/${findbugs.version}/${findbugs.download.file}"
+                  value="https://sourceforge.net/projects/findbugs/files/findbugs/${findbugs.version}/${findbugs.download.file}/download"
                   description="The download adress at a mirror of Sourceforge."/>
         <property name="findbugs.download.to"
                   value="${build.dir}/.downloads"
@@ -625,8 +612,7 @@
           property="findbugs.home"
           value="${findbugs.download.to}/${findbugs.download.name}"
           file="${findbugs.download.to}/${findbugs.download.name}/lib/findbugs.jar"
-          description="Check if Findbugs is already installed."
-        />
+          description="Check if Findbugs is already installed."/>
 
         <!-- Findbugs: Running Findbugs -->
         <property name="findbugs.reportdir"
@@ -634,28 +620,27 @@
                   description="Where to store Findbugs results"/>
         <property name="findbugs.raw"
                   value="raw.xml"
-                  description="Findbugs Output xml-file"/>
+                  description="Findbugs output xml file"/>
         <property name="findbugs.xsl"
                   value="fancy.xsl"
-                  description="Which XSL to use for generating Output: default, fancy, plain, summary"/>
+                  description="Which XSL to use for generating output: default, fancy, plain, summary"/>
         <property name="findbugs.jvmargs"
                   value="-Xms128m -Xmx512m"
                   description="JVMArgs for invoking Findbugs"/>
 
         <mkdir dir="${findbugs.download.to}"/>
-        <get src="${findbugs.download.url}" dest="${findbugs.download.to}/${findbugs.download.file}"/>
+        <get src="${findbugs.download.url}" dest="${findbugs.download.to}/${findbugs.download.file}"
+            usetimestamp="true" skipexisting="true"/>
         <unzip src="${findbugs.download.to}/${findbugs.download.file}" dest="${findbugs.download.to}"/>
         <property name="findbugs.home" location="${findbugs.download.to}/${findbugs.download.name}"/>
-        <mkdir dir="${findbugs.home}/plugin"/>
     </target>
 
     <target name="findbugs" description="checks Ivy codebase with Findbugs" depends="init-findbugs,compile-core" xmlns:fb="http://findbugs.sourceforge.net/">
-        <path id="findbugs.real.classpath">
-           <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
-        </path>
-
         <!-- Load the Findbugs AntTasks -->
-        <taskdef uri="http://findbugs.sourceforge.net/" resource="edu/umd/cs/findbugs/anttask/tasks.properties" classpathref="findbugs.real.classpath" />
+        <path id="findbugs.real.classpath">
+            <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
+        </path>
+        <taskdef uri="http://findbugs.sourceforge.net/" resource="edu/umd/cs/findbugs/anttask/tasks.properties" classpathref="findbugs.real.classpath"/>
 
         <!-- Start Findbugs -->
         <mkdir dir="${findbugs.reportdir}"/>
@@ -664,9 +649,9 @@
                      output="xml:withMessages"
                      outputFile="${findbugs.reportdir}/${findbugs.raw}"
                      jvmargs="${findbugs.jvmargs}"
-                     projectName="${Name} ${project.version}">
-            <class location="${core.classes.build.dir}" />
-            <sourcePath path="${src.dir}" />
+                     projectName="${ant.project.name} ${target.ivy.version}">
+            <class location="${core.classes.build.dir}"/>
+            <sourcePath path="${src.dir}"/>
         </fb:findbugs>
 
         <!-- Generate (human) readable output -->
@@ -677,27 +662,29 @@
         </xslt>
     </target>
 
+    <target name="docs" depends="test-report,checkstyle-report,findbugs,ivy-report,javadoc"/>
+
     <!-- =================================================================
          IDE SPECIFIC
          ================================================================= -->
-    <available file="${basedir}/.classpath" property="eclipse.classpath.exists" />
+    <available file="${basedir}/.classpath" property="eclipse.classpath.exists"/>
     <target name="check-eclipse-classpath-overwrite" if="eclipse.classpath.exists">
         <input message=".classpath file already exists.${line.separator}Are you sure you want to overwrite it and loose your original file?"
-               validargs="Y,N,y,n" addproperty="eclipse.classpath.confirm" />
+               validargs="Y,N,y,n" addproperty="eclipse.classpath.confirm"/>
         <condition property="eclipse.classpath.abort">
-            <equals arg1="${eclipse.classpath.confirm}" arg2="N" casesensitive="false" />
+            <equals arg1="${eclipse.classpath.confirm}" arg2="N" casesensitive="false"/>
         </condition>
     </target>
 
-    <target name="eclipse-default" depends="resolve, check-eclipse-classpath-overwrite"
+    <target name="eclipse-default" depends="resolve,check-eclipse-classpath-overwrite"
             unless="eclipse.classpath.abort"
             description="creates a default .classpath for eclipse, using jars resolved by this ant build">
-        <copy file="${basedir}/.classpath.default" tofile="${basedir}/.classpath" overwrite="true" />
+        <copy file="${basedir}/.classpath.default" tofile="${basedir}/.classpath" overwrite="true"/>
     </target>
 
     <target name="eclipse-ivyde" depends="check-eclipse-classpath-overwrite"
             unless="eclipse.classpath.abort"
             description="creates a .classpath for eclipse using Apache IvyDE version">
-        <copy file="${basedir}/.classpath.ivyde" tofile="${basedir}/.classpath" overwrite="true" />
+        <copy file="${basedir}/.classpath.ivyde" tofile="${basedir}/.classpath" overwrite="true"/>
     </target>
 </project>

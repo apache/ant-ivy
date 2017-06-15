@@ -33,7 +33,7 @@ public interface DependencyDescriptorMediator {
      * information of any of its transitive dependencies, since it is called by dependency resolvers
      * before actually resolving a dependency.
      * </p>
-     * 
+     *
      * @param dd
      *            the dependency descriptor which should be mediated.
      * @return the mediated {@link DependencyDescriptor}, or the original

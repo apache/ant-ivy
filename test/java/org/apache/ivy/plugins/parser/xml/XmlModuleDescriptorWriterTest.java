@@ -35,9 +35,17 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParserTest;
 import org.apache.ivy.util.FileUtil;
-import org.custommonkey.xmlunit.XMLTestCase;
 
-public class XmlModuleDescriptorWriterTest extends XMLTestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class XmlModuleDescriptorWriterTest {
     private static String LICENSE;
     static {
         try {
@@ -50,6 +58,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
 
     private File dest = new File("build/test/test-write.xml");
 
+    @Test
     public void testSimple() throws Exception {
         DefaultModuleDescriptor md = (DefaultModuleDescriptor) XmlModuleDescriptorParser
                 .getInstance().parseDescriptor(new IvySettings(),
@@ -67,6 +76,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testInfo() throws Exception {
         DefaultModuleDescriptor md = (DefaultModuleDescriptor) XmlModuleDescriptorParser
                 .getInstance().parseDescriptor(new IvySettings(),
@@ -84,6 +94,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testDependencies() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
@@ -98,6 +109,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), false);
@@ -111,6 +123,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testExtraInfos() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
@@ -125,6 +138,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testExtraInfosWithNestedElement() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
@@ -139,6 +153,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertEquals(expected, wrote);
     }
 
+    @Test
     public void testExtraInfosFromMaven() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
@@ -157,6 +172,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         assertXMLEqual(expected, wrote);
     }
 
+    @Test
     public void testExtends() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),
@@ -172,12 +188,13 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
 
     /**
      * Test that the transitive attribute is written for non-transitive configurations.
-     * 
+     *
      * <code><conf ... transitive="false" ... /></code>
-     * 
+     *
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1207">IVY-1207</a>
      * @throws Exception
      */
+    @Test
     public void testTransitiveAttributeForNonTransitiveConfs() throws Exception {
         // Given a ModuleDescriptor with a non-transitive configuration
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(
@@ -193,18 +210,19 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         String writtenConf = output.substring(output.indexOf("<configurations>") + 16,
             output.indexOf("</configurations>")).trim();
         assertTrue("Transitive attribute not set to false: " + writtenConf,
-            writtenConf.indexOf("transitive=\"false\"") >= 0);
+                writtenConf.contains("transitive=\"false\""));
     }
 
     /**
      * Test that the transitive attribute is not written when the configuration IS transitive.
-     * 
+     *
      * This is the default and writing it will only add noise and cause a deviation from the known
      * behavior (before fixing IVY-1207).
-     * 
+     *
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1207">IVY-1207</a>
      * @throws Exception
      */
+    @Test
     public void testTransitiveAttributeNotWrittenForTransitiveConfs() throws Exception {
         // Given a ModuleDescriptor with a transitive configuration
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(
@@ -220,7 +238,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         String writtenConf = output.substring(output.indexOf("<configurations>") + 16,
             output.indexOf("</configurations>")).trim();
         assertFalse("Transitive attribute set: " + writtenConf,
-            writtenConf.indexOf("transitive=") >= 0);
+                writtenConf.contains("transitive="));
     }
 
     private String readEntirely(String resource) throws IOException {
@@ -228,6 +246,7 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
                 XmlModuleDescriptorWriterTest.class.getResource(resource).openStream())));
     }
 
+    @Before
     public void setUp() {
         if (dest.exists()) {
             dest.delete();
@@ -237,7 +256,8 @@ public class XmlModuleDescriptorWriterTest extends XMLTestCase {
         }
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         if (dest.exists()) {
             dest.delete();
         }

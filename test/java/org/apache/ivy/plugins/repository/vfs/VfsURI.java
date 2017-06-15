@@ -51,40 +51,47 @@ public class VfsURI {
 
     /**
      * Create a set of valid VFS URIs for the file access protocol
-     * 
-     * @param resourcePath
+     *
+     * @param scheme String
+     * @param resource
      *            relative path (from the base repo) to the resource to be accessed
-     * @return
+     * @param ivy Ivy
+     * @return VfsURI
      */
     public static VfsURI vfsURIFactory(String scheme, String resource, Ivy ivy) {
         VfsURI vfsURI = null;
-        if (scheme.equals(SCHEME_CIFS)) {
-            vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_SAMBA_REPO) + "/" + resource);
-        } else if (scheme.equals(SCHEME_FILE)) {
-            vfsURI = new VfsURI(SCHEME_FILE, null, null, null, VfsTestHelper.CWD + "/"
-                    + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
-        } else if (scheme.equals(SCHEME_FTP)) {
-            vfsURI = new VfsURI(SCHEME_FTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
-                            + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
-        } else if (scheme.equals(SCHEME_SFTP)) {
-            vfsURI = new VfsURI(SCHEME_SFTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
-                    ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
-                            + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+        switch (scheme) {
+            case SCHEME_CIFS:
+                vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_HOST),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_SAMBA_REPO) + "/" + resource);
+                break;
+            case SCHEME_FILE:
+                vfsURI = new VfsURI(SCHEME_FILE, null, null, null, VfsTestHelper.CWD + "/"
+                        + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+                break;
+            case SCHEME_FTP:
+                vfsURI = new VfsURI(SCHEME_FTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
+                        + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+                break;
+            case SCHEME_SFTP:
+                vfsURI = new VfsURI(SCHEME_SFTP, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_USER_PASSWD),
+                        ivy.getVariable(VfsTestHelper.PROP_VFS_HOST), VfsTestHelper.CWD + "/"
+                        + VfsTestHelper.TEST_REPO_DIR + "/" + resource);
+                break;
         }
         return vfsURI;
     }
 
     /**
      * Create a wellformed VFS resource identifier
-     * 
+     *
      * @param scheme
-     *            the name of the scheme used to acces the resource
+     *            the name of the scheme used to access the resource
      * @param user
      *            a user name. May be <code>null</code>
      * @param passwd
@@ -92,7 +99,7 @@ public class VfsURI {
      * @param host
      *            a host identifier. May be <code>null</code>
      * @param path
-     *            a scheme spacific path to a resource
+     *            a scheme specific path to a resource
      */
     public VfsURI(String scheme, String user, String passwd, String host, String path) {
         this.scheme = scheme.trim();
@@ -120,23 +127,23 @@ public class VfsURI {
 
     /**
      * Return a well-formed VFS Resource identifier
-     * 
+     *
      * @return <code>String<code> representing a well formed VFS resource identifier
      */
     public String getVfsURI() {
-        StringBuffer uri = new StringBuffer();
-        uri.append(this.scheme + "://");
+        StringBuilder uri = new StringBuilder();
+        uri.append(this.scheme).append("://");
 
         // not all resource identifiers include user/passwd specifiers
         if (user != null && user.trim().length() > 0) {
-            uri.append(this.user + ":");
+            uri.append(this.user).append(":");
 
             if (passwd != null && passwd.trim().length() > 0) {
                 this.passwd = passwd.trim();
             } else {
                 this.passwd = "";
             }
-            uri.append(this.passwd + "@");
+            uri.append(this.passwd).append("@");
         }
 
         // not all resource identifiers include a host specifier
@@ -151,7 +158,7 @@ public class VfsURI {
 
     /**
      * Convert a resource path to the format required for a VFS resource identifier
-     * 
+     *
      * @param path
      *            <code>String</code> path to the resource
      * @return <code>String</code> representing a normalized resource path

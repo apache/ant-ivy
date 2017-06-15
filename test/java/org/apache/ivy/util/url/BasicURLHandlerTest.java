@@ -22,28 +22,36 @@ import java.net.URL;
 
 import org.apache.ivy.util.FileUtil;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test BasicURLHandler
  */
-public class BasicURLHandlerTest extends TestCase {
+public class BasicURLHandlerTest {
     // remote.test
     private File testDir;
 
     private BasicURLHandler handler;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         testDir = new File("build/BasicURLHandlerTest");
         testDir.mkdirs();
 
         handler = new BasicURLHandler();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(testDir);
     }
 
+   @Test
     public void testIsReachable() throws Exception {
         final int connectionTimeoutInMillis = 15000; // 15 seconds
         assertTrue(handler.isReachable(new URL("http://www.google.fr/"), connectionTimeoutInMillis));
@@ -57,6 +65,7 @@ public class BasicURLHandlerTest extends TestCase {
         assertFalse(handler.isReachable(new URL("ftp://ftp.mozilla.org/unknown.file"), connectionTimeoutInMillis));
     }
 
+    @Test
     public void testContentEncoding() throws Exception {
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html"), new File(
                 testDir, "gzip.txt"));

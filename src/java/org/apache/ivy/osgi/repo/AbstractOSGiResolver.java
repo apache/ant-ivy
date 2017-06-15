@@ -20,7 +20,6 @@ package org.apache.ivy.osgi.repo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -120,7 +119,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
     }
 
-    abstract protected void init();
+    protected abstract void init();
 
     public RepoDescriptor getRepoDescriptor() {
         ensureInit();
@@ -372,8 +371,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (found == null) {
                 return Collections.emptyList();
             }
-            List<String> confs = Arrays.asList(found.getConfigurationsNames());
-            return confs;
+            return Arrays.asList(found.getConfigurationsNames());
         }
         return Collections.emptyList();
     }
@@ -382,14 +380,15 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
      * Populate capabilityValues with capability values for which at least one module match the
      * expected revision
      */
+    @SuppressWarnings("unused")
     private void filterCapabilityValues(Set<String> capabilityValues,
-            Map<String, Set<ModuleDescriptor>> moduleByCapbilityValue,
+            Map<String, Set<ModuleDescriptor>> moduleByCapabilityValue,
             Map<String, String> tokenValues, String rev) {
         if (rev == null) {
             // no revision, all match then
-            capabilityValues.addAll(moduleByCapbilityValue.keySet());
+            capabilityValues.addAll(moduleByCapabilityValue.keySet());
         } else {
-            for (Entry<String, Set<ModuleDescriptor>> entry : moduleByCapbilityValue.entrySet()) {
+            for (Entry<String, Set<ModuleDescriptor>> entry : moduleByCapabilityValue.entrySet()) {
                 Iterator<ModuleDescriptor> itModules = entry.getValue().iterator();
                 boolean moduleMatchRev = false;
                 while (!moduleMatchRev && itModules.hasNext()) {
@@ -498,12 +497,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (bundles == null) {
                 return Collections.emptySet();
             }
-            Version v;
-            try {
-                v = new Version(rev);
-            } catch (ParseException e) {
-                return Collections.emptySet();
-            }
+            Version v = new Version(rev);
             ModuleDescriptorWrapper found = null;
             for (ModuleDescriptorWrapper bundle : bundles) {
                 if (bundle.getBundleInfo().getVersion().equals(v)) {

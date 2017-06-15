@@ -22,17 +22,23 @@ import java.util.Locale;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyReportTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class IvyReportTest {
 
     private IvyReport report;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -43,10 +49,12 @@ public class IvyReportTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         Locale oldLocale = Locale.getDefault();
 
@@ -70,6 +78,7 @@ public class IvyReportTest extends TestCase {
         }
     }
 
+    @Test
     public void testWithLatest() throws Exception {
         Locale oldLocale = Locale.getDefault();
 
@@ -99,6 +108,7 @@ public class IvyReportTest extends TestCase {
         }
     }
 
+    @Test
     public void testCopyCssIfTodirNotSet() {
         Locale oldLocale = Locale.getDefault();
 
@@ -123,6 +133,7 @@ public class IvyReportTest extends TestCase {
         }
     }
 
+    @Test
     public void testNoRevisionInOutputPattern() throws Exception {
         Locale oldLocale = Locale.getDefault();
 
@@ -147,6 +158,7 @@ public class IvyReportTest extends TestCase {
         }
     }
 
+    @Test
     public void testMultipleConfigurations() throws Exception {
         Locale oldLocale = Locale.getDefault();
 
@@ -171,6 +183,7 @@ public class IvyReportTest extends TestCase {
         }
     }
 
+    @Test
     public void testRegularCircular() throws Exception {
         Locale oldLocale = Locale.getDefault();
 

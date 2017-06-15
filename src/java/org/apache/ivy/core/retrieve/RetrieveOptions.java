@@ -23,7 +23,7 @@ import org.apache.ivy.util.filter.FilterHelper;
 
 /**
  * A set of options used during retrieve related tasks
- * 
+ *
  * @see RetrieveEngine
  */
 public class RetrieveOptions extends LogOptions {
@@ -67,7 +67,7 @@ public class RetrieveOptions extends LogOptions {
     private String overwriteMode = OVERWRITEMODE_NEWER;
 
     /**
-     * True if the original files should be used insteaad of their cache copy.
+     * True if the original files should be used instead of their cache copy.
      */
     private boolean useOrigin = false;
 

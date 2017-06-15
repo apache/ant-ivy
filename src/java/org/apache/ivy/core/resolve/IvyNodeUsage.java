@@ -66,11 +66,7 @@ public class IvyNodeUsage {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof NodeConf)) {
-                return false;
-            }
-            return getNode().equals(((NodeConf) obj).getNode())
-                    && getConf().equals(((NodeConf) obj).getConf());
+            return obj instanceof NodeConf && getNode().equals(((NodeConf) obj).getNode()) && getConf().equals(((NodeConf) obj).getConf());
         }
 
         @Override
@@ -151,8 +147,8 @@ public class IvyNodeUsage {
     /**
      * Returns the configurations of the dependency required in a given root module configuration.
      * 
-     * @param rootModuleConf
-     * @return
+     * @param rootModuleConf ditto
+     * @return Set&lt;String&gt;
      */
     protected Set<String> getConfigurations(String rootModuleConf) {
         return rootModuleConfs.get(rootModuleConf);
@@ -273,7 +269,7 @@ public class IvyNodeUsage {
      *            the root module conf for which we'd like to know if the node is blacklisted
      * 
      * @return true if this node is blacklisted int he given root module conf, false otherwise
-     * @see #blacklist(String)
+     * @see #blacklist(IvyNodeBlacklist)
      */
     protected boolean isBlacklisted(String rootModuleConf) {
         return blacklisted.containsKey(rootModuleConf);

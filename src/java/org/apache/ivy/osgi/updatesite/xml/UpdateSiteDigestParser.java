@@ -54,7 +54,7 @@ public class UpdateSiteDigestParser {
                     ExecutionEnvironmentProfileProvider.getInstance());
             addChild(new FeatureHandler(), new ChildElementHandler<FeatureHandler>() {
                 @Override
-                public void childHanlded(FeatureHandler child) {
+                public void childHandled(FeatureHandler child) {
                     repoDescriptor.addFeature(child.feature);
                 }
             });

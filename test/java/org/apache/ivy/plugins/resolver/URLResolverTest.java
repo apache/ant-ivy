@@ -41,6 +41,13 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests URLResolver. Http tests are based upon ibiblio site.
@@ -53,7 +60,8 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData data;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         data = new ResolveData(engine, new ResolveOptions());
@@ -61,10 +69,12 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         settings.setDefaultCache(TestHelper.cache);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testFile() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);
@@ -110,6 +120,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testLatestFile() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);
@@ -130,6 +141,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testLatestFileWithOpaqueURL() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);
@@ -151,6 +163,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
+    @Test
     public void testIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -195,6 +208,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testIBiblioArtifacts() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -258,6 +272,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testLatestIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -277,6 +292,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals("1.4.3", rmr.getId().getRevision());
     }
 
+    @Test
     public void testVersionRangeIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -298,6 +314,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertEquals("1.4.4", rmr.getId().getRevision());
     }
 
+    @Test
     public void testUnknown() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
         if (ibiblioRoot == null) {
@@ -316,6 +333,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
                 "1.0"), false), data));
     }
 
+    @Test
     public void testDownloadWithUseOriginIsTrue() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(settings);

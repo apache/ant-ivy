@@ -17,14 +17,26 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -44,9 +56,14 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
-    // junit test -- DO NOT REMOVE used by ant to know it's a junit test
 
     private IvySettings settings = new IvySettings();
 
@@ -55,8 +72,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 throws ParseException {
             // TODO make it a real mock and check that dd and data are the one that are expected
             final ModuleDescriptor moduleDesc = getModuleDescriptor(dd);
-            ResolvedModuleRevision r = new ResolvedModuleRevision(this, this, moduleDesc, null);
-            return r;
+            return new ResolvedModuleRevision(this, this, moduleDesc, null);
         }
 
         protected ModuleDescriptor getModuleDescriptor(final DependencyDescriptor dependencyDescriptor) {
@@ -68,9 +84,15 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
     private MockResolver mockedResolver = new MockedDependencyResolver();
 
-    protected void setUp() throws Exception {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
+    @Rule
+    public TemporaryFolder workDir = new TemporaryFolder();
+
+    @Before
+    public void setUp() {
         settings.setDictatorResolver(mockedResolver);
-        super.setUp();
         if (dest.exists()) {
             dest.delete();
         }
@@ -79,12 +101,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         }
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         if (dest.exists()) {
             dest.delete();
         }
     }
 
+    @Test
     public void testAccept() throws Exception {
         assertTrue(PomModuleDescriptorParser.getInstance().accept(
             new URLResource(getClass().getResource("test-simple.pom"))));
@@ -92,6 +116,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             new URLResource(XmlModuleDescriptorParserTest.class.getResource("test.xml"))));
     }
 
+    @Test
     public void testSimple() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-simple.pom"), false);
@@ -112,6 +137,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifact[0].getType());
     }
 
+    @Test
     public void testLargePom() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-large-pom.pom"), false);
@@ -121,6 +147,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(mrid, md.getModuleRevisionId());
     }
 
+    @Test
     public void testPackaging() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-packaging.pom"), false);
@@ -137,6 +164,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("war", artifact[0].getType());
     }
 
+    @Test
     public void testEjbPackaging() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-ejb-packaging.pom"), false);
@@ -153,6 +181,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("ejb", artifact[0].getType());
     }
 
+    @Test
     public void testEjbType() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-ejb-type.pom"), false);
@@ -173,6 +202,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("ejb", artifacts[0].getType());
     }
 
+    @Test
     public void testParent() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-parent.pom"), false);
@@ -187,16 +217,16 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
 
+    @Test
     public void testParentNotFound() throws Exception {
-        try {
-            PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(),
+        expExc.expect(IOException.class);
+        expExc.expectMessage("Impossible to load parent");
+
+        PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(),
                 getClass().getResource("test-parent-not-found.pom"), false);
-            fail("IOException should have been thrown!");
-        } catch (IOException e) {
-            assertTrue(e.getMessage().indexOf("Impossible to load parent") != -1);
-        }
     }
 
+    @Test
     public void testParent2() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-parent2.pom"), false);
@@ -211,6 +241,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
 
+    @Test
     public void testParentVersion() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-parent.version.pom"), false);
@@ -225,6 +256,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
 
+    @Test
     public void testParentGroupId() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-parent.groupid.pom"), false);
@@ -239,6 +271,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
 
+    @Test
     public void testProjectParentVersion() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-project.parent.version.pom"), false);
@@ -253,6 +286,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
 
+    @Test
     public void testDependencies() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencies.pom"), false);
@@ -270,6 +304,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getAllDependencyArtifacts().length);
     }
 
+    @Test
     public void testDependenciesWithClassifier() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencies-with-classifier.pom"), true);
@@ -307,6 +342,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
     }
 
+    @Test
     public void testDependenciesWithType() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencies-with-type.pom"), true);
@@ -325,6 +361,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getType());
     }
 
+    @Test
     public void testWithVersionPropertyAndPropertiesTag() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-version.pom"), false);
@@ -340,6 +377,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     // IVY-392
+    @Test
     public void testDependenciesWithInactiveProfile() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencies-with-profile.pom"), false);
@@ -355,6 +393,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testWithoutVersion() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-without-version.pom"), false);
@@ -369,6 +408,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testProperties() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-properties.pom"), false);
@@ -384,6 +424,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testReal() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("commons-lang-1.0.pom"), false);
@@ -399,6 +440,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testReal2() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("wicket-1.3-incubating-SNAPSHOT.pom"), false);
@@ -409,6 +451,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             md.getModuleRevisionId());
     }
 
+    @Test
     public void testVariables() throws Exception {
         // test case for IVY-425
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -426,6 +469,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[10].getDependencyRevisionId());
     }
 
+    @Test
     public void testDependenciesInProfile() throws Exception {
         // test case for IVY-423
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -437,6 +481,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             md.getModuleRevisionId());
     }
 
+    @Test
     public void testIVY424() throws Exception {
         // test case for IVY-424
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -448,6 +493,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             md.getModuleRevisionId());
     }
 
+    @Test
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-optional.pom"), false);
@@ -488,6 +534,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
     }
 
+    @Test
     public void testDependenciesWithScope() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencies-with-scope.pom"), false);
@@ -526,6 +573,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
     }
 
+    @Test
     public void testExclusion() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-exclusion.pom"), false);
@@ -582,6 +630,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertFalse("Dependency  " + excludeAllTransitiveDepsDescriptor + " was expected to have transitive=false", excludeAllTransitiveDepsDescriptor.isTransitive());
     }
 
+    @Test
     public void testWithPlugins() throws Exception {
         // test case for IVY-417
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -596,6 +645,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, dds.length);
     }
 
+    @Test
     public void testHomeAndDescription() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("mule-1.3.3.pom"), false);
@@ -613,6 +663,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                     .replaceAll("\r\n", "\n").replace('\r', '\n'));
     }
 
+    @Test
     public void testLicense() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("spring-hibernate3-2.0.2.pom"), false);
@@ -625,11 +676,12 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     /**
-     * Tests that if a module doesn't have a license specified, then parent pom's license (if any) is used for the child
-     * module
+     * Tests that if a module doesn't have a license specified, then parent pom's license (if any)
+     * is used for the child module
      *
      * @throws Exception
      */
+    @Test
     public void testLicenseFromParent() throws Exception {
         final IvySettings customIvySettings = createIvySettingsForParentLicenseTesting("test-parent-with-licenses.pom",
                 "org.apache", "test-ivy-license-parent");
@@ -645,11 +697,12 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     /**
-     * Tests that if a project explicitly specifies the licenses, then the licenses (if any) from its parent pom
-     * aren't applied to the child project
+     * Tests that if a project explicitly specifies the licenses, then the licenses (if any) from
+     * its parent pom aren't applied to the child project
      *
      * @throws Exception
      */
+    @Test
     public void testOverriddenLicense() throws Exception {
         final IvySettings customIvySettings = createIvySettingsForParentLicenseTesting("test-parent-with-licenses.pom",
                 "org.apache", "test-ivy-license-parent");
@@ -664,8 +717,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("Unexpected license URL", "http://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
     }
 
-
-    public void testDependencyManagment() throws ParseException, IOException {
+    @Test
+    public void testDependencyManagement() throws ParseException, IOException {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencyMgt.pom"), false);
         assertNotNull(md);
@@ -682,7 +735,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(4, md.getExtraInfos().size());
     }
 
-    public void testDependencyManagmentWithScope() throws ParseException, IOException {
+    @Test
+    public void testDependencyManagementWithScope() throws ParseException, IOException {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-dependencyMgt-with-scope.pom"), false);
         assertNotNull(md);
@@ -701,6 +755,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("The configuration must be test", "test", dds[0].getModuleConfigurations()[0]);
     }
 
+    @Test
     public void testParentDependencyMgt() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -740,7 +795,9 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jms", excludes[1].getId().getModuleId().getName());
     }
 
-    public void testOverrideParentVersionPropertyDependencyMgt() throws ParseException, IOException {
+    @Test
+    public void testOverrideParentVersionPropertyDependencyMgt()
+            throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
                     throws ParseException {
@@ -780,6 +837,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jms", excludes[1].getId().getModuleId().getName());
     }
 
+    @Test
     public void testParentProperties() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -810,6 +868,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                                               // parent
     }
 
+    @Test
     public void testOverrideParentProperties() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -838,6 +897,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[1].getDependencyRevisionId());
     }
 
+    @Test
     public void testOverrideGrandparentProperties() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -873,12 +933,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[2].getDependencyRevisionId());
     }
 
+    @Test
     public void testPomWithEntity() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-entity.pom"), true);
         assertNotNull(md);
     }
 
+    @Test
     public void testModel() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-model.pom"), false);
@@ -899,6 +961,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifact[0].getType());
     }
 
+    @Test
     public void testParentBomImport() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -928,6 +991,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
     }
 
+    @Test
     public void testGrandparentBomImport() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -960,6 +1024,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[1].getDependencyRevisionId());
     }
 
+    @Test
     public void testParentProfileBomImport() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -987,6 +1052,76 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
+    }
+
+    /**
+     * Tests that a pom.xml which has references to properties that are either set via environment variables or system
+     * properties, has its properties evaluated correctly.
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1561">IVY-1561</a>
+     */
+    @Test
+    public void testSystemPropertyAndEnvReferences() throws Exception {
+        // the pom we are testing contains reference to a string called "env.THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR".
+        // this piece of code replaces it to "env.someenvname" where someenvname is a environment variable we
+        // choose in this test case (after randomly picking it from the ones that are set).
+        // finally we created the updated pom content in a separate file and test against that file
+        final String envName = chooseSomeEnvVar();
+        final URL originalPomFile = this.getClass().getResource("test-system-properties.pom");
+        assertNotNull("Pom file to test, is missing", originalPomFile);
+        final List<String> pomContent = Files.readAllLines(Paths.get(originalPomFile.toURI()), Charset.forName("UTF-8"));
+        final List<String> replacedContent = new ArrayList<>();
+        for (final String line : pomContent) {
+            replacedContent.add(line.replaceAll("THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR", envName));
+        }
+        // write the new pom contents into a separate file
+        final Path updatedPomFile = Paths.get(workDir.getRoot().toPath().toString(), "updated-test-system-properties.pom");
+        Files.write(updatedPomFile, replacedContent, Charset.forName("UTF-8"));
+
+        // now start testing
+        // we do 2 rounds of testing - one with a system property (referenced in the pom) set and once unset
+        boolean withSystemPropertiesSet = false;
+        try {
+            for (int i = 0; i < 2; i++) {
+                if (i == 1) {
+                    System.setProperty("version.test.system.property.b", "1.2.3");
+                    withSystemPropertiesSet = true;
+                }
+                final ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings, updatedPomFile.toUri().toURL(), false);
+                assertNotNull("Module descriptor created from POM reader was null", md);
+                assertEquals("Unexpected module descriptor created by POM reader",
+                        ModuleRevisionId.newInstance("foo.bar", "hello-world", "2.0.2"),
+                        md.getModuleRevisionId());
+
+                final DependencyDescriptor[] dds = md.getDependencies();
+                assertNotNull("No dependency descriptors found in module descriptor", dds);
+                assertEquals("Unexpected number of dependencies in module descriptor", 4, dds.length);
+                final Set<ModuleRevisionId> expectedDependencies = new HashSet<>();
+                expectedDependencies.add(ModuleRevisionId.newInstance("aopalliance", "aopalliance", "1.0"));
+                final String commonsLoggingDepVersion = envName == null ? "${env.THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR}" : System.getenv(envName);
+                expectedDependencies.add(ModuleRevisionId.newInstance("commons-logging", "commons-logging", commonsLoggingDepVersion));
+                expectedDependencies.add(ModuleRevisionId.newInstance("foo.bar", "hello-world-api", "2.0.2"));
+                expectedDependencies.add(ModuleRevisionId.newInstance("a", "b", withSystemPropertiesSet ? "1.2.3" : "2.3.4"));
+                for (final DependencyDescriptor dd : dds) {
+                    assertNotNull("Dependency was null in the dependencies", dd);
+                    assertTrue("Unexpected dependency " + dd.getDependencyRevisionId() + " in module descriptor", expectedDependencies.remove(dd.getDependencyRevisionId()));
+                }
+                assertTrue("Following dependencies were missing from module descriptor " + expectedDependencies, expectedDependencies.isEmpty());
+            }
+        } finally {
+            System.clearProperty("version.test.system.property.b");
+        }
+    }
+
+    private static String chooseSomeEnvVar() {
+        final Map<String, String> env = System.getenv();
+        for (final Map.Entry<String, String> entry : env.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     private IvySettings createIvySettingsForParentLicenseTesting(final String parentPomFileName, final String parentOrgName,

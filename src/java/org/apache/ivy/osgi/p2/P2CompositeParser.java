@@ -67,7 +67,7 @@ public class P2CompositeParser implements XMLInputParser {
             super(REPOSITORY);
             addChild(new ChildrenHandler(), new ChildElementHandler<ChildrenHandler>() {
                 @Override
-                public void childHanlded(ChildrenHandler child) {
+                public void childHandled(ChildrenHandler child) {
                     childLocations = child.childLocations;
                 }
             });
@@ -91,7 +91,7 @@ public class P2CompositeParser implements XMLInputParser {
             super(CHILDREN);
             addChild(new ChildHandler(), new ChildElementHandler<ChildHandler>() {
                 @Override
-                public void childHanlded(ChildHandler child) {
+                public void childHandled(ChildHandler child) {
                     childLocations.add(child.location);
                 }
             });

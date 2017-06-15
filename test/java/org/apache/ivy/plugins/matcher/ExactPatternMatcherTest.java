@@ -17,12 +17,19 @@
  */
 package org.apache.ivy.plugins.matcher;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @see ExactPatternMatcher
  */
 public class ExactPatternMatcherTest extends AbstractPatternMatcherTest {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         setUp(new ExactPatternMatcher());
     }
 
@@ -34,6 +41,7 @@ public class ExactPatternMatcherTest extends AbstractPatternMatcherTest {
         return new String[0]; // there are no inexact expressions possible
     }
 
+    @Test
     public void testImplementation() {
         Matcher matcher = patternMatcher.getMatcher(".");
         assertFalse(matcher.matches(""));

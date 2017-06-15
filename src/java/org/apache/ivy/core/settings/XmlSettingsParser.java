@@ -302,7 +302,7 @@ public class XmlSettingsParser extends DefaultHandler {
             Message.deprecated("'checkUpToDate' is deprecated, "
                     + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings
                     + ")");
-            ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+            ivy.setCheckUpToDate(Boolean.valueOf(up2d));
         }
         String resolutionDir = (String) attributes.get("resolutionCacheDir");
         if (resolutionDir != null) {
@@ -310,7 +310,7 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         String useOrigin = (String) attributes.get("useOrigin");
         if (useOrigin != null) {
-            ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin).booleanValue());
+            ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin));
         }
         String cacheIvyPattern = (String) attributes.get("ivyPattern");
         if (cacheIvyPattern != null) {
@@ -346,18 +346,18 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         String validate = (String) attributes.get("validate");
         if (validate != null) {
-            ivy.setValidate(Boolean.valueOf(validate).booleanValue());
+            ivy.setValidate(Boolean.valueOf(validate));
         }
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
             Message.deprecated("'checkUpToDate' is deprecated, "
                     + "use the 'overwriteMode' on the 'ivy:retrieve' task instead (" + settings
                     + ")");
-            ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+            ivy.setCheckUpToDate(Boolean.valueOf(up2d));
         }
         String useRemoteConfig = (String) attributes.get("useRemoteConfig");
         if (useRemoteConfig != null) {
-            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig).booleanValue());
+            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig));
         }
         String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
         if (cacheIvyPattern != null) {
@@ -392,6 +392,7 @@ public class XmlSettingsParser extends DefaultHandler {
     private void includeStarted(Map attributes) throws IOException, ParseException {
         final IvyVariableContainer variables = ivy.getVariableContainer();
         ivy.setVariableContainer(new IvyVariableContainerWrapper(variables));
+        final boolean optionalInclude = "true".equals(attributes.get("optional"));
         try {
             String propFilePath = (String) attributes.get("file");
             URL settingsURL = null;
@@ -402,38 +403,60 @@ public class XmlSettingsParser extends DefaultHandler {
                             "bad include tag: specify file or url to include");
                 } else {
                     try {
-                        // First asume that it is an absolute URL
-                        settingsURL = new URL(propFilePath);
-                    } catch (MalformedURLException e) {
-                        // If that fail, it may be because it is a relative one.
-                        settingsURL = new URL(this.settings, propFilePath);
+                        try {
+                            // First assume that it is an absolute URL
+                            settingsURL = new URL(propFilePath);
+                        } catch (MalformedURLException e) {
+                            // If that fail, it may be because it is a relative one.
+                            settingsURL = new URL(this.settings, propFilePath);
+                        }
+                    } catch (IOException ioe) {
+                        if (!optionalInclude) {
+                            throw ioe;
+                        }
+                        Message.verbose("Skipping inclusion of optional URL " + propFilePath + " due to IOException - " + ioe.getMessage());
+                        return;
                     }
                     Message.verbose("including url: " + settingsURL.toString());
                     ivy.setSettingsVariables(settingsURL);
                 }
             } else {
-                settingsURL = urlFromFileAttribute(propFilePath);
-                Message.verbose("including file: " + settingsURL);
-                if ("file".equals(settingsURL.getProtocol())) {
-                    try {
-                        File settingsFile = new File(new URI(settingsURL.toExternalForm()));
-                        String optional = (String) attributes.get("optional");
-                        if ("true".equals(optional) && !settingsFile.exists()) {
-                            return;
+                try {
+                    settingsURL = urlFromFileAttribute(propFilePath);
+                    Message.verbose("including file: " + settingsURL);
+                    if ("file".equals(settingsURL.getProtocol())) {
+                        try {
+                            File settingsFile = new File(new URI(settingsURL.toExternalForm()));
+                            if (optionalInclude && !settingsFile.exists()) {
+                                return;
+                            }
+                            ivy.setSettingsVariables(Checks.checkAbsolute(settingsFile,
+                                    "settings include path"));
+                        } catch (URISyntaxException e) {
+                            // try to make the best of it...
+                            ivy.setSettingsVariables(Checks.checkAbsolute(settingsURL.getPath(),
+                                    "settings include path"));
                         }
-
-                        ivy.setSettingsVariables(Checks.checkAbsolute(settingsFile,
-                            "settings include path"));
-                    } catch (URISyntaxException e) {
-                        // try to make the best of it...
-                        ivy.setSettingsVariables(Checks.checkAbsolute(settingsURL.getPath(),
-                            "settings include path"));
+                    } else {
+                        ivy.setSettingsVariables(settingsURL);
                     }
-                } else {
-                    ivy.setSettingsVariables(settingsURL);
+                } catch (IOException ioe) {
+                    if (!optionalInclude) {
+                        throw ioe;
+                    }
+                    Message.verbose("Skipping inclusion of optional file " + propFilePath + " due to IOException - " + ioe.getMessage());
+                    return;
                 }
             }
-            new XmlSettingsParser(ivy).parse(configurator, settingsURL);
+            try {
+                new XmlSettingsParser(ivy).parse(configurator, settingsURL);
+            } catch (IOException ioe) {
+                if (!optionalInclude) {
+                    throw ioe;
+                }
+                Message.verbose("Skipping inclusion of optional settings URL " + settingsURL + " due to IOException - " + ioe.getMessage());
+                return;
+            }
         } finally {
             ivy.setVariableContainer(variables);
         }
@@ -477,8 +500,7 @@ public class XmlSettingsParser extends DefaultHandler {
         String environmentPrefix = (String) attributes.get("environment");
         if (propFilePath != null) {
             String overrideStr = (String) attributes.get("override");
-            boolean override = overrideStr == null ? true : Boolean.valueOf(overrideStr)
-                    .booleanValue();
+            boolean override = (overrideStr == null) || Boolean.valueOf(overrideStr);
             Message.verbose("loading properties: " + propFilePath);
             try {
                 URL fileUrl = urlFromFileAttribute(propFilePath);
@@ -506,8 +528,8 @@ public class XmlSettingsParser extends DefaultHandler {
         if (value == null) {
             throw new IllegalArgumentException("missing attribute value on property tag");
         }
-        ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override)
-                .booleanValue(), isSetVar, unlessSetVar);
+        ivy.setVariable(name, value, (override == null) || Boolean.valueOf(override), isSetVar,
+            unlessSetVar);
     }
 
     private void typedefStarted(Map attributes) {

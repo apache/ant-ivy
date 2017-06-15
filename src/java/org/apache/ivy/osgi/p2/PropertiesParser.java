@@ -40,7 +40,7 @@ public class PropertiesParser {
             final List<String> propList = Arrays.asList(props);
             addChild(new PropertyHandler(), new ChildElementHandler<PropertyHandler>() {
                 @Override
-                public void childHanlded(PropertyHandler child) {
+                public void childHandled(PropertyHandler child) {
                     if (propList.isEmpty() || propList.contains(child.name)) {
                         properties.put(child.name, child.value);
                     }

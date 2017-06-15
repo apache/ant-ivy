@@ -28,17 +28,21 @@ import org.apache.ivy.ant.IvyDeliver;
 import org.apache.ivy.ant.IvyResolve;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
-public class DeliverTest extends TestCase {
+public class DeliverTest {
     private File cache;
 
     private File deliverDir;
 
     private IvyDeliver ivyDeliver;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         cache = new File("build/cache");
         System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
         createCache();
@@ -55,7 +59,8 @@ public class DeliverTest extends TestCase {
                 + "/[type]s/[artifact]-[revision](-[classifier]).[ext]");
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         FileUtil.forceDelete(cache);
         FileUtil.forceDelete(deliverDir);
     }
@@ -64,6 +69,7 @@ public class DeliverTest extends TestCase {
         cache.mkdirs();
     }
 
+    @Test
     public void testIVY1111() throws Exception {
         Project project = ivyDeliver.getProject();
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1111/ivysettings.xml");
@@ -75,8 +81,8 @@ public class DeliverTest extends TestCase {
         ivyDeliver.doExecute();
 
         String deliverContent = readFile(deliverDir.getAbsolutePath() + "/ivys/ivy-1.0.xml");
-        assertTrue(deliverContent.indexOf("rev=\"latest.integration\"") == -1);
-        assertTrue(deliverContent.indexOf("name=\"b\" rev=\"1.5\"") >= 0);
+        assertTrue(!deliverContent.contains("rev=\"latest.integration\""));
+        assertTrue(deliverContent.contains("name=\"b\" rev=\"1.5\""));
     }
 
     private void resolve(File ivyFile) {
@@ -87,14 +93,14 @@ public class DeliverTest extends TestCase {
     }
 
     private String readFile(String fileName) throws IOException {
-        StringBuffer retval = new StringBuffer();
+        StringBuilder retval = new StringBuilder();
 
         File ivyFile = new File(fileName);
         BufferedReader reader = new BufferedReader(new FileReader(ivyFile));
 
         String line = null;
         while ((line = reader.readLine()) != null) {
-            retval.append(line + "\n");
+            retval.append(line).append("\n");
         }
 
         reader.close();

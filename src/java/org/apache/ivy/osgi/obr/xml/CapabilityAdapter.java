@@ -97,7 +97,6 @@ public class CapabilityAdapter {
         if (name == null) {
             throw new ParseException("No service name for the capability", 0);
         }
-        BundleCapability service = new BundleCapability(BundleInfo.SERVICE_TYPE, name, version);
-        return service;
+        return new BundleCapability(BundleInfo.SERVICE_TYPE, name, version);
     }
 }

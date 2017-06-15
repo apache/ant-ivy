@@ -57,7 +57,7 @@ public class MessageLoggerEngine implements MessageLogger {
 
     /**
      * Sets the logger used when the stack is empty.
-     * 
+     *
      * @param defaultLogger
      *            the logger to use when the stack is empty.
      */
@@ -67,7 +67,7 @@ public class MessageLoggerEngine implements MessageLogger {
 
     /**
      * Push a logger on the stack.
-     * 
+     *
      * @param logger
      *            the logger to push. Must not be <code>null</code>.
      */
@@ -90,7 +90,7 @@ public class MessageLoggerEngine implements MessageLogger {
 
     /**
      * Returns the current logger, or the default one if there is no logger in the stack
-     * 
+     *
      * @return the current logger, or the default one if there is no logger in the stack
      */
     public MessageLogger peekLogger() {

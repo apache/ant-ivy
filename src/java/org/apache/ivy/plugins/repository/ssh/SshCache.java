@@ -53,7 +53,7 @@ public final class SshCache {
     private static final int SSH_DEFAULT_PORT = 22;
 
     private SshCache() {
-    };
+    }
 
     private static SshCache instance = new SshCache();
 
@@ -108,7 +108,7 @@ public final class SshCache {
 
         /**
          * attach an sftp channel to this cache entry
-         * 
+         *
          * @param newChannel
          *            to attach
          */
@@ -150,8 +150,8 @@ public final class SshCache {
 
     /**
      * key is username / host / port
-     * 
-     * @see SshCache.createCacheKey() for details
+     *
+     * @see #createCacheKey(String, String, int) for details
      */
     private Map uriCacheMap = new HashMap();
 
@@ -162,9 +162,13 @@ public final class SshCache {
 
     /**
      * retrieves a session entry for a given hostname from the cache
-     * 
-     * @param hostname
+     *
+     * @param user
      *            to retrieve session for
+     * @param host
+     *            ditto
+     * @param port
+     *            ditto
      * @return null or the existing entry
      */
     private Entry getCacheEntry(String user, String host, int port) {
@@ -172,8 +176,8 @@ public final class SshCache {
     }
 
     /**
-     * Creates a cobined cache key from the given key parts
-     * 
+     * Creates a combined cache key from the given key parts
+     *
      * @param user
      *            name of the user
      * @param host
@@ -193,7 +197,7 @@ public final class SshCache {
 
     /**
      * retrieves a session entry for a given session from the cache
-     * 
+     *
      * @param session
      *            to retrieve cache entry for
      * @return null or the existing entry
@@ -205,7 +209,7 @@ public final class SshCache {
     /**
      * Sets a session to a given combined key into the cache If an old session object already
      * exists, close and remove it
-     * 
+     *
      * @param user
      *            of the session
      * @param host
@@ -241,8 +245,8 @@ public final class SshCache {
     }
 
     /**
-     * discardes session entries from the cache
-     * 
+     * discards session entries from the cache
+     *
      * @param session
      *            to clear
      */
@@ -255,10 +259,11 @@ public final class SshCache {
 
     /**
      * retrieves an sftp channel from the cache
-     * 
+     *
      * @param session
      *            to connect to
      * @return channelSftp or null if not successful (channel not existent or dead)
+     * @throws IOException if something goes wrong
      */
     public ChannelSftp getChannelSftp(Session session) throws IOException {
         ChannelSftp channel = null;
@@ -275,7 +280,7 @@ public final class SshCache {
 
     /**
      * attaches a channelSftp to an existing session cache entry
-     * 
+     *
      * @param session
      *            to attach the channel to
      * @param channel
@@ -291,7 +296,7 @@ public final class SshCache {
 
     /**
      * Attempts to connect to a local SSH agent (using either UNIX sockets or PuTTY's Pageant)
-     * 
+     *
      * @param jsch
      *            Connection to be attached to an available local agent
      * @return true if connected to agent, false otherwise
@@ -309,7 +314,7 @@ public final class SshCache {
 
     /**
      * Gets a session from the cache or establishes a new session if necessary
-     * 
+     *
      * @param host
      *            to connect to
      * @param port
@@ -327,6 +332,7 @@ public final class SshCache {
      * @param allowedAgentUse
      *            Whether to communicate with an agent for authentication
      * @return session or null if not successful
+     * @throws IOException if something goes wrong
      */
     public Session getSession(String host, int port, String username, String userPassword,
             File pemFile, String pemPassword, File passFile, boolean allowedAgentUse)

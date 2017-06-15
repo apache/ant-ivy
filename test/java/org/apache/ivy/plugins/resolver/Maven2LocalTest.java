@@ -30,10 +30,14 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.util.CacheCleaner;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class Maven2LocalTest extends TestCase {
+public class Maven2LocalTest {
     private IvySettings settings;
 
     private ResolveEngine engine;
@@ -42,7 +46,8 @@ public class Maven2LocalTest extends TestCase {
 
     private File cache;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         cache = new File("build/cache");
@@ -51,10 +56,12 @@ public class Maven2LocalTest extends TestCase {
         settings.setDefaultCache(cache);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Test
     public void testUseMetadataForListing() throws Exception {
         IBiblioResolver resolver = maven2Resolver();
 
@@ -67,6 +74,7 @@ public class Maven2LocalTest extends TestCase {
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-metadata", "1.1"), m.getId());
     }
 
+    @Test
     public void testNotUseMetadataForListing() throws Exception {
         IBiblioResolver resolver = maven2Resolver();
         resolver.setUseMavenMetadata(false);

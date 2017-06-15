@@ -57,7 +57,7 @@ public final class FileUtil {
         // Utility class
     }
 
-    // according to tests by users, 64kB seems to be a good value for the buffer used during copy
+    // according to tests by users, 64kB seems to be a good value for the buffer used during copy;
     // further improvements could be obtained using NIO API
     private static final int BUFFER_SIZE = 64 * 1024;
 
@@ -67,13 +67,12 @@ public final class FileUtil {
 
     public static void symlinkInMass(Map<File, File> destToSrcMap, boolean overwrite)
             throws IOException {
-
-        // This pattern could be more forgiving if somebody wanted it to be...
-        // ...but this should satisfy 99+% of all needs, without letting unsafe operations be done.
+        // This pattern could be more forgiving if somebody wanted it to be... but this should
+        // satisfy 99+% of all needs, without letting unsafe operations be done.
         // If you paths is not supported, you then skip this mass option.
         // NOTE: A space inside the path is allowed (I can't control other programmers who like them
-        // in their working directory names)...
-        // but trailing spaces on file names will be checked otherwise and refused.
+        // in their working directory names)... but trailing spaces on file names will be checked
+        // otherwise and refused.
         try {
             StringBuffer sb = new StringBuffer();
 
@@ -92,8 +91,7 @@ public final class FileUtil {
                 }
 
                 // Add to our buffer of commands
-                sb.append("ln -s -f \"" + srcFile.getAbsolutePath() + "\"  \""
-                        + destFile.getAbsolutePath() + "\";");
+                sb.append("ln -s -f \"").append(srcFile.getAbsolutePath()).append("\"  \"").append(destFile.getAbsolutePath()).append("\";");
                 if (keyItr.hasNext()) {
                     sb.append("\n");
                 }
@@ -364,7 +362,7 @@ public final class FileUtil {
      * <p>
      * The BufferedReader is closed when this method returns.
      * </p>
-     * 
+     *
      * @param in
      *            the {@link BufferedReader} to read from
      * @return a String with the whole content read from the {@link BufferedReader}
@@ -377,7 +375,7 @@ public final class FileUtil {
 
             String line = in.readLine();
             while (line != null) {
-                buf.append(line + "\n");
+                buf.append(line).append("\n");
                 line = in.readLine();
             }
             return buf.toString();
@@ -388,7 +386,7 @@ public final class FileUtil {
 
     /**
      * Reads the entire content of the file and returns it as a String.
-     * 
+     *
      * @param f
      *            the file to read from
      * @return a String with the file content
@@ -404,7 +402,7 @@ public final class FileUtil {
      * <p>
      * The input stream is closed when this method returns.
      * </p>
-     * 
+     *
      * @param is
      *            the {@link InputStream} to read from
      * @return a String with the input stream content
@@ -432,7 +430,7 @@ public final class FileUtil {
 
     /**
      * Recursively delete file
-     * 
+     *
      * @param file
      *            the file to delete
      * @return true if the deletion completed successfully (ie if the file does not exist on the
@@ -457,10 +455,14 @@ public final class FileUtil {
 
     /**
      * Returns a list of Files composed of all directories being parent of file and child of root +
-     * file and root themselves. Example: getPathFiles(new File("test"), new
-     * File("test/dir1/dir2/file.txt")) => {new File("test/dir1"), new File("test/dir1/dir2"), new
-     * File("test/dir1/dir2/file.txt") } Note that if root is not an ancester of file, or if root is
-     * null, all directories from the file system root will be returned.
+     * file and root themselves. Example: <code>getPathFiles(new File("test"), new
+     * File("test/dir1/dir2/file.txt")) =&gt; {new File("test/dir1"), new File("test/dir1/dir2"),
+     * new File("test/dir1/dir2/file.txt") }</code> Note that if root is not an ancestor of file, or
+     * if root is null, all directories from the file system root will be returned.
+     *
+     * @param root File
+     * @param file File
+     * @return List&lt;File&gt;
      */
     public static List<File> getPathFiles(File root, File file) {
         List<File> ret = new ArrayList<File>();
@@ -476,15 +478,13 @@ public final class FileUtil {
     }
 
     /**
-     * Returns a collection of all Files being contained in the given directory, recursively,
-     * including directories.
-     * 
      * @param dir
      *            The directory from which all files, including files in subdirectory) are
      *            extracted.
      * @param ignore
      *            a Collection of filenames which must be excluded from listing
-     * @return A collectoin containing all the files of the given directory and it's subdirectories.
+     * @return a collection containing all the files of the given directory and it's subdirectories,
+     *         recursively.
      */
     public static Collection<File> listAll(File dir, Collection<String> ignore) {
         return listAll(dir, new ArrayList<File>(), ignore);
@@ -523,7 +523,7 @@ public final class FileUtil {
 
     /**
      * &quot;Normalize&quot; the given absolute path.
-     * 
+     *
      * <p>
      * This includes:
      * <ul>
@@ -534,20 +534,17 @@ public final class FileUtil {
      * </ul>
      * Unlike {@link File#getCanonicalPath()} this method specifically does not resolve symbolic
      * links.
-     * 
-     * @param path
-     *            the path to be normalized.
+     *
+     * @param path the path to be normalized.
      * @return the normalized version of the path.
-     * 
-     * @throws java.lang.NullPointerException
-     *             if path is null.
+     * @throws NullPointerException if path is null.
      */
     public static File normalize(final String path) {
-        Stack<String> s = new Stack<String>();
-        String[] dissect = dissect(path);
-        s.push(dissect[0]);
+        final Stack<String> s = new Stack<String>();
+        final DissectedPath dissectedPath = dissect(path);
+        s.push(dissectedPath.root);
 
-        StringTokenizer tok = new StringTokenizer(dissect[1], File.separator);
+        final StringTokenizer tok = new StringTokenizer(dissectedPath.remainingPath, File.separator);
         while (tok.hasMoreTokens()) {
             String thisToken = tok.nextToken();
             if (".".equals(thisToken)) {
@@ -563,7 +560,7 @@ public final class FileUtil {
                 s.push(thisToken);
             }
         }
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < s.size(); i++) {
             if (i > 1) {
                 // not before the filesystem root and not after it, since root
@@ -577,59 +574,60 @@ public final class FileUtil {
 
     /**
      * Dissect the specified absolute path.
-     * 
+     *
      * @param path
      *            the path to dissect.
-     * @return String[] {root, remaining path}.
+     * @return {@link DissectedPath}
      * @throws java.lang.NullPointerException
      *             if path is null.
      * @since Ant 1.7
      */
-    private static String[] dissect(String path) {
-        char sep = File.separatorChar;
-        path = path.replace('/', sep).replace('\\', sep);
+    private static DissectedPath dissect(final String path) {
+        final char sep = File.separatorChar;
+        final String pathToDissect = path.replace('/', sep).replace('\\', sep).trim();
 
-        // // make sure we are dealing with an absolute path
-        // if (!isAbsolutePath(path)) {
-        // throw new BuildException(path + " is not an absolute path");
-        // }
-        String root = null;
-        int colon = path.indexOf(':');
-        if (colon > 0) { // && (ON_DOS || ON_NETWARE)) {
-
-            int next = colon + 1;
-            root = path.substring(0, next);
-            char[] ca = path.toCharArray();
-            root += sep;
-            // remove the initial separator; the root has it.
-            next = (ca[next] == sep) ? next + 1 : next;
-
-            StringBuffer sbPath = new StringBuffer();
-            // Eliminate consecutive slashes after the drive spec:
-            for (int i = next; i < ca.length; i++) {
-                if (ca[i] != sep || ca[i - 1] != sep) {
-                    sbPath.append(ca[i]);
+        // check if the path starts with a filesystem root
+        final File[] filesystemRoots = File.listRoots();
+        if (filesystemRoots != null) {
+            for (final File filesystemRoot : filesystemRoots) {
+                if (pathToDissect.startsWith(filesystemRoot.getPath())) {
+                    // filesystem root is the root and the rest of the path is the "remaining path"
+                    final String root = filesystemRoot.getPath();
+                    final String rest = pathToDissect.substring(root.length());
+                    final StringBuffer sbPath = new StringBuffer();
+                    // Eliminate consecutive slashes after the drive spec:
+                    for (int i = 0; i < rest.length(); i++) {
+                        final char currentChar = rest.charAt(i);
+                        if (i == 0) {
+                            sbPath.append(currentChar);
+                            continue;
+                        }
+                        final char previousChar = rest.charAt(i - 1);
+                        if (currentChar != sep || previousChar != sep) {
+                            sbPath.append(currentChar);
+                        }
+                    }
+                    return new DissectedPath(root, sbPath.toString());
                 }
             }
-            path = sbPath.toString();
-        } else if (path.length() > 1 && path.charAt(1) == sep) {
-            // UNC drive
-            int nextsep = path.indexOf(sep, 2);
-            nextsep = path.indexOf(sep, nextsep + 1);
-            root = (nextsep > 2) ? path.substring(0, nextsep + 1) : path;
-            path = path.substring(root.length());
-        } else {
-            root = File.separator;
-            path = path.substring(1);
         }
-        return new String[] {root, path};
+        // UNC drive
+        if (pathToDissect.length() > 1 && pathToDissect.charAt(1) == sep) {
+            int nextsep = pathToDissect.indexOf(sep, 2);
+            nextsep = pathToDissect.indexOf(sep, nextsep + 1);
+            final String root = (nextsep > 2) ? pathToDissect.substring(0, nextsep + 1) : pathToDissect;
+            final String rest = pathToDissect.substring(root.length());
+            return new DissectedPath(root, rest);
+        }
+
+        return new DissectedPath(File.separator, pathToDissect.substring(1));
     }
 
     /**
      * Get the length of the file, or the sum of the children lengths if it is a directory
-     * 
-     * @param file
-     * @return
+     *
+     * @param file File
+     * @return long
      */
     public static long getFileLength(File file) {
         long l = 0;
@@ -740,5 +738,21 @@ public final class FileUtil {
             return wrapped.markSupported();
         }
 
+    }
+
+    private static final class DissectedPath {
+        private final String root;
+        private final String remainingPath;
+
+        private DissectedPath(final String root, final String remainingPath) {
+            this.root = root;
+            this.remainingPath = remainingPath;
+        }
+
+        @Override
+        public String toString() {
+            return new StringBuilder("Dissected Path [root=").append(root).append(", remainingPath=")
+                    .append(remainingPath).append("]").toString();
+        }
     }
 }

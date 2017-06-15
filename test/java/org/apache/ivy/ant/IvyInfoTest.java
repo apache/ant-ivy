@@ -20,20 +20,28 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyInfoTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+public class IvyInfoTest {
     private IvyInfo info;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         Project project = TestHelper.newProject();
 
         info = new IvyInfo();
         info.setProject(project);
     }
 
+    @Test
     public void testSimple() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         info.execute();
@@ -45,6 +53,7 @@ public class IvyInfoTest extends TestCase {
         assertEquals("default", info.getProject().getProperty("ivy.public.configurations"));
     }
 
+    @Test
     public void testAll() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
@@ -66,6 +75,7 @@ public class IvyInfoTest extends TestCase {
         assertNull(info.getProject().getProperty("ivy.configuration.private.desc"));
     }
 
+    @Test
     public void testIVY726() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
@@ -73,6 +83,7 @@ public class IvyInfoTest extends TestCase {
         assertTrue(info.getProject().getProperty("ivy.extra.branch") == null);
     }
 
+    @Test
     public void testIVY395() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-artifact-info.xml"));
         info.execute();

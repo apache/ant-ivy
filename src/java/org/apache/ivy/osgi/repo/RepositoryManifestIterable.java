@@ -36,8 +36,8 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable<Strin
 
     /**
      * Default constructor
-     * 
-     * @param root
+     *
+     * @param repo
      *            the root directory of the file system to lookup
      */
     public RepositoryManifestIterable(Repository repo) {
@@ -68,6 +68,6 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable<Strin
     }
 
     private List<String> asList(String[] array) {
-        return array == null ? Collections.<String> emptyList() : Arrays.<String> asList(array);
+        return (array == null) ? Collections.<String> emptyList() : Arrays.asList(array);
     }
 }

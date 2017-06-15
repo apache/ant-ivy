@@ -18,15 +18,21 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyInfoRepositoryTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class IvyInfoRepositoryTest {
 
     private IvyInfo info;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -35,10 +41,12 @@ public class IvyInfoRepositoryTest extends TestCase {
         info.setProject(project);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testProperty() throws Exception {
         info.setOrganisation("org1");
         info.setModule("mod1.1");
@@ -52,6 +60,7 @@ public class IvyInfoRepositoryTest extends TestCase {
         assertEquals("default", info.getProject().getProperty("test.configurations"));
     }
 
+    @Test
     public void testLatest() throws Exception {
         info.setOrganisation("org1");
         info.setModule("mod1.1");
@@ -64,6 +73,7 @@ public class IvyInfoRepositoryTest extends TestCase {
         assertEquals("default", info.getProject().getProperty("ivy.configurations"));
     }
 
+    @Test
     public void testLatestSubversion() throws Exception {
         info.setOrganisation("org1");
         info.setModule("mod1.1");

@@ -210,7 +210,7 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
         }
         int c = staticComparator.compare(ModuleRevisionId.newInstance(askedMrid, upper), foundMrid);
         // if the comparison consider them equal, we must return -1, because we can't consider the
-        // dynamic revision to be greater. Otherwise we can safeely return the result of the static
+        // dynamic revision to be greater. Otherwise we can safely return the result of the static
         // comparison
         return c == 0 ? -1 : c;
     }

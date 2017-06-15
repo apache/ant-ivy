@@ -17,12 +17,15 @@
  */
 package org.apache.ivy.osgi.core;
 
+import org.junit.Test;
+
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class ExecutionEnvironmentProfileLoaderTest extends TestCase {
+public class ExecutionEnvironmentProfileLoaderTest {
 
+    @Test
     public void testLoad() throws Exception {
         Map<String, ExecutionEnvironmentProfile> profiles = ExecutionEnvironmentProfileProvider
                 .loadDefaultProfileList();

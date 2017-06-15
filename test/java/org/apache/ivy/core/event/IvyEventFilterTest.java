@@ -25,10 +25,13 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class IvyEventFilterTest extends TestCase {
+public class IvyEventFilterTest {
 
     private ModuleDescriptor md = null;
 
@@ -38,6 +41,7 @@ public class IvyEventFilterTest extends TestCase {
 
     private ModuleDescriptor md4 = null;
 
+    @Before
     public void setUp() throws Exception {
         md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "bar", "1.0"),
                 "integration", new Date());
@@ -49,6 +53,7 @@ public class IvyEventFilterTest extends TestCase {
                 "integration", new Date());
     }
 
+    @Test
     public void testSimple() {
         IvyEventFilter f = new IvyEventFilter("pre-resolve", null, null);
 
@@ -57,6 +62,7 @@ public class IvyEventFilterTest extends TestCase {
                 new ResolveReport(md))));
     }
 
+    @Test
     public void testSimpleExpression() {
         IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo", null);
 
@@ -79,6 +85,7 @@ public class IvyEventFilterTest extends TestCase {
         assertTrue(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
     }
 
+    @Test
     public void testAndExpression() {
         IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo AND module = bar",
                 null);
@@ -95,6 +102,7 @@ public class IvyEventFilterTest extends TestCase {
         assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
     }
 
+    @Test
     public void testOrExpression() {
         IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo3 OR module = bar",
                 null);
@@ -105,6 +113,7 @@ public class IvyEventFilterTest extends TestCase {
         assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
     }
 
+    @Test
     public void testNotExpression() {
         IvyEventFilter f = new IvyEventFilter("pre-resolve", "NOT organisation = foo", null);
 

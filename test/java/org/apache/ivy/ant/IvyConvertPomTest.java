@@ -21,9 +21,10 @@ import java.io.File;
 
 import org.apache.ivy.TestHelper;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class IvyConvertPomTest extends TestCase {
+public class IvyConvertPomTest {
+    @Test
     public void testSimple() throws Exception {
         IvyConvertPom task = new IvyConvertPom();
         task.setProject(TestHelper.newProject());

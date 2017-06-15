@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +47,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 public class TestHelper {
 
@@ -88,31 +87,30 @@ public class TestHelper {
      * <p>
      * Expected mrids is given as a String of comma separated string representations of
      * {@link ModuleRevisionId}.
-     * 
+     *
      * @param expectedMrids
      *            the expected set of mrids
      * @param mrids
      *            the3 mrids to test
      */
     public static void assertModuleRevisionIds(String expectedMrids,
-            Collection/* <ModuleRevisionId> */mrids) {
-        Collection expected = parseMrids(expectedMrids);
-        Assert.assertEquals(expected, mrids);
+            Collection<ModuleRevisionId> mrids) {
+        Collection<ModuleRevisionId> expected = parseMrids(expectedMrids);
+        assertEquals(expected, mrids);
     }
 
     /**
      * Returns a Set of {@link ModuleRevisionId} corresponding to the given comma separated list of
      * their text representation.
-     * 
+     *
      * @param mrids
      *            the text representation of the {@link ModuleRevisionId}
      * @return a collection of {@link ModuleRevisionId}
      */
-    public static Collection parseMrids(String mrids) {
-        String[] m = mrids.split(",?\\s+");
-        Collection c = new LinkedHashSet();
-        for (int i = 0; i < m.length; i++) {
-            c.add(ModuleRevisionId.parse(m[i]));
+    public static Collection<ModuleRevisionId> parseMrids(String mrids) {
+        Collection<ModuleRevisionId> c = new LinkedHashSet<>();
+        for (String s : mrids.split(",?\\s+")) {
+            c.add(ModuleRevisionId.parse(s));
         }
         return c;
     }
@@ -126,12 +124,12 @@ public class TestHelper {
      * @return an array of {@link ModuleRevisionId}
      */
     public static ModuleRevisionId[] parseMridsToArray(String mrids) {
-        Collection parsedMrids = parseMrids(mrids);
-        return (ModuleRevisionId[]) parsedMrids.toArray(new ModuleRevisionId[parsedMrids.size()]);
+        Collection<ModuleRevisionId> parsedMrids = parseMrids(mrids);
+        return parsedMrids.toArray(new ModuleRevisionId[parsedMrids.size()]);
     }
 
     /**
-     * Parses a string represenation of a module descriptor in micro ivy format.
+     * Parses a string representation of a module descriptor in micro ivy format.
      * <p>
      * Examples:
      * 
@@ -185,9 +183,7 @@ public class TestHelper {
                 ModuleRevisionId.parse(m.group(1)), new Date());
             String mrids = m.group(2);
             if (mrids != null) {
-                Collection depMrids = parseMrids(mrids);
-                for (Iterator iter = depMrids.iterator(); iter.hasNext();) {
-                    ModuleRevisionId dep = (ModuleRevisionId) iter.next();
+                for (ModuleRevisionId dep : parseMrids(mrids)) {
                     md.addDependency(new DefaultDependencyDescriptor(dep, false));
                 }
             }
@@ -204,11 +200,10 @@ public class TestHelper {
      *            the text representation of the collection of module descriptors
      * @return the collection of module descriptors parsed
      */
-    public static Collection/* <ModuleDescriptor> */parseMicroIvyDescriptors(String microIvy) {
-        String[] mds = microIvy.split("\\s*;;\\s*");
-        Collection r = new ArrayList();
-        for (int i = 0; i < mds.length; i++) {
-            r.add(parseMicroIvyDescriptor(mds[i]));
+    public static Collection<ModuleDescriptor> parseMicroIvyDescriptors(String microIvy) {
+        Collection<ModuleDescriptor> r = new ArrayList<>();
+        for (String md : microIvy.split("\\s*;;\\s*")) {
+            r.add(parseMicroIvyDescriptor(md));
         }
         return r;
     }
@@ -223,13 +218,12 @@ public class TestHelper {
      * @throws IOException
      *             if an IO problem occurs while filling the repository
      */
-    public static void fillRepository(DependencyResolver resolver,
-            Collection/* <ModuleDescriptor> */mds) throws IOException {
+    public static void fillRepository(DependencyResolver resolver, Collection<ModuleDescriptor> mds)
+            throws IOException {
         File tmp = File.createTempFile("ivy", "tmp");
         try {
-            for (Iterator iter = mds.iterator(); iter.hasNext();) {
+            for (ModuleDescriptor md : mds) {
                 boolean overwrite = false;
-                ModuleDescriptor md = (ModuleDescriptor) iter.next();
                 resolver.beginPublishTransaction(md.getModuleRevisionId(), overwrite);
                 boolean published = false;
                 try {
@@ -237,9 +231,8 @@ public class TestHelper {
                     resolver.publish(md.getMetadataArtifact(), tmp, overwrite);
                     tmp.delete();
                     tmp.createNewFile();
-                    Artifact[] artifacts = md.getAllArtifacts();
-                    for (int i = 0; i < artifacts.length; i++) {
-                        resolver.publish(artifacts[i], tmp, overwrite);
+                    for (Artifact artifact : md.getAllArtifacts()) {
+                        resolver.publish(artifact, tmp, overwrite);
                     }
                     resolver.commitPublishTransaction();
                     published = true;
@@ -285,7 +278,7 @@ public class TestHelper {
     /**
      * Cleans up the test repository and cache.
      * 
-     * @see #newTestSettings()
+     * @see #newTestRepository()
      */
     public static void cleanTest() {
         cleanTestRepository();

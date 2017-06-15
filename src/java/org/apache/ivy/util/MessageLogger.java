@@ -32,7 +32,7 @@ import java.util.List;
  * message at a lower level (usually {@link Message#MSG_VERBOSE}) and log the message at the actual
  * level only when {@link #sumupProblems()} is called.
  * </p>
- * 
+ *
  * @see Message
  */
 public interface MessageLogger {
@@ -41,7 +41,7 @@ public interface MessageLogger {
      * <p>
      * <code>level</code> constants are defined in the {@link Message} class.
      * </p>
-     * 
+     *
      * @param msg
      *            the message to log
      * @param level
@@ -50,14 +50,14 @@ public interface MessageLogger {
      * @see Message#MSG_VERBOSE
      * @see Message#MSG_INFO
      * @see Message#MSG_WARN
-     * @see Message#MSG_ERROR
+     * @see Message#MSG_ERR
      */
     public abstract void log(String msg, int level);
 
     /**
      * Same as {@link #log(String, int)}, but without adding any contextual information to the
      * message.
-     * 
+     *
      * @param msg
      *            the message to log
      * @param level

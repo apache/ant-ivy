@@ -69,8 +69,8 @@ public abstract class AbstractIncludeExcludeRule extends UnmodifiableExtendableI
 
     /**
      * Add a configuration for this rule
-     * 
-     * @param conf
+     *
+     * @param conf String
      */
     public void addConfiguration(String conf) {
         confs.add(conf);

@@ -35,17 +35,17 @@ import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 
 /**
- * Triggers an ant build on an event occurence.
+ * Triggers an ant build on an event occurrence.
  * <p>
  * Example of use:
- * 
+ * </p>
  * <pre>
- * &lt;ant-build-trigger event=&quot;pre-resolve-dependency&quot; 
+ * &lt;ant-build-trigger event=&quot;pre-resolve-dependency&quot;
  *                    filter=&quot;revision=latest.integration&quot;
- *                    antfile=&quot;/path/to/[module]/build.xml&quot; 
+ *                    antfile=&quot;/path/to/[module]/build.xml&quot;
  *                    target=&quot;compile&quot;/&gt;
  * </pre>
- * 
+ * <p>
  * Triggers an ant build for any dependency in asked in latest.integration, just before resolving
  * the dependency.
  * </p>
@@ -53,7 +53,7 @@ import org.apache.tools.ant.taskdefs.Property;
  * The onlyonce property is used to tell if the ant build should be triggered only once, or several
  * times in the same build.
  * </p>
- * 
+ *
  * @see AntCallTrigger
  * @since 1.4
  */
@@ -128,11 +128,8 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
     }
 
     private File getBuildFile(IvyEvent event) {
-        return IvyContext
-                .getContext()
-                .getSettings()
-                .resolveFile(
-                    IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
+        return IvyContext.getContext().getSettings().resolveFile(
+            IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
     }
 
     public String getBuildFilePattern() {

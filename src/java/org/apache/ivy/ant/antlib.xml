@@ -18,8 +18,8 @@
    under the License.    
 -->
 <antlib xmlns:current="ant:current">
-    <typedef name="settings" classname="org.apache.ivy.ant.IvyAntSettings"/>
-    <typedef name="resources" classname="org.apache.ivy.ant.IvyResources" onerror="report"/>
+	<typedef name="settings" classname="org.apache.ivy.ant.IvyAntSettings"/>
+	<typedef name="resources" classname="org.apache.ivy.ant.IvyResources" onerror="report"/>
 	<taskdef name="configure" classname="org.apache.ivy.ant.IvyConfigure"/>
 	<taskdef name="resolve" classname="org.apache.ivy.ant.IvyResolve"/>
 	<taskdef name="retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>
@@ -44,10 +44,10 @@
 	<taskdef name="findrevision" classname="org.apache.ivy.ant.IvyFindRevision"/>
 	<taskdef name="buildnumber" classname="org.apache.ivy.ant.IvyBuildNumber"/>
 	<taskdef name="cleancache" classname="org.apache.ivy.ant.IvyCleanCache"/>
-    <taskdef name="buildobr" classname="org.apache.ivy.ant.BuildOBRTask" />
-    <taskdef name="convertmanifest" classname="org.apache.ivy.ant.ConvertManifestTask" />
-    <taskdef name="fixdeps" classname="org.apache.ivy.ant.FixDepsTask" />
-    <taskdef name="dependencytree" classname="org.apache.ivy.ant.IvyDependencyTree"/>
-    <taskdef name="checkdepsupdate" classname="org.apache.ivy.ant.IvyDependencyUpdateChecker"/>
-    <typedef name="workspaceresolver" classname="org.apache.ivy.ant.AntWorkspaceResolver" />
+	<taskdef name="buildobr" classname="org.apache.ivy.ant.BuildOBRTask"/>
+	<taskdef name="convertmanifest" classname="org.apache.ivy.ant.ConvertManifestTask"/>
+	<taskdef name="fixdeps" classname="org.apache.ivy.ant.FixDepsTask"/>
+	<taskdef name="dependencytree" classname="org.apache.ivy.ant.IvyDependencyTree"/>
+	<taskdef name="checkdepsupdate" classname="org.apache.ivy.ant.IvyDependencyUpdateChecker"/>
+	<typedef name="workspaceresolver" classname="org.apache.ivy.ant.AntWorkspaceResolver"/>
 </antlib>

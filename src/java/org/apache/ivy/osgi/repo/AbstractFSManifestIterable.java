@@ -44,13 +44,13 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
         return new FSManifestIterator();
     }
 
-    abstract protected List<T> listBundleFiles(T dir) throws IOException;
+    protected abstract List<T> listBundleFiles(T dir) throws IOException;
 
-    abstract protected List<T> listDirs(T dir) throws IOException;
+    protected abstract List<T> listDirs(T dir) throws IOException;
 
-    abstract protected InputStream getInputStream(T f) throws IOException;
+    protected abstract InputStream getInputStream(T f) throws IOException;
 
-    abstract protected URI buildBundleURI(T location) throws IOException;
+    protected abstract URI buildBundleURI(T location) throws IOException;
 
     class FSManifestIterator implements Iterator<ManifestAndLocation> {
 
@@ -72,7 +72,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
         private T currentDir = null;
 
         FSManifestIterator() {
-            dirs.add(Collections.<T> singleton(root).iterator());
+            dirs.add(Collections.singleton(root).iterator());
         }
 
         /**

@@ -73,6 +73,13 @@ public class PublishEngine {
      * reports. The extra artifacts array can be null (= no extra artifacts), and if non null only
      * the name, type, ext url and extra attributes of the artifacts are really used. Other methods
      * can return null safely.
+     *
+     * @param mrid ModuleRevisionId
+     * @param srcArtifactPattern a Collection of String
+     * @param resolverName String
+     * @param options PublishOptions
+     * @return Collection&lt;Artifact&gt;
+     * @throws IOException if something goes wrong
      */
     public Collection<Artifact> publish(ModuleRevisionId mrid,
             Collection<String> srcArtifactPattern, String resolverName, PublishOptions options)
@@ -182,9 +189,7 @@ public class PublishEngine {
 
         for (int i = 0; i < confs.length; i++) {
             Artifact[] artifacts = md.getArtifacts(confs[i]);
-            for (int j = 0; j < artifacts.length; j++) {
-                artifactsSet.add(artifacts[j]);
-            }
+            artifactsSet.addAll(Arrays.asList(artifacts));
         }
         Artifact[] extraArtifacts = options.getExtraArtifacts();
         if (extraArtifacts != null) {
@@ -207,11 +212,9 @@ public class PublishEngine {
             }
             if (!artifactsFiles.containsKey(artifact)) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("missing artifact " + artifact + ":\n");
+                sb.append("missing artifact ").append(artifact).append(":\n");
                 for (String pattern : srcArtifactPattern) {
-                    sb.append("\t"
-                            + settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))
-                            + " file does not exist\n");
+                    sb.append("\t").append(settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))).append(" file does not exist\n");
                 }
                 if (options.isWarnOnMissing() || options.isHaltOnMissing()) {
                     Message.warn(sb.toString());

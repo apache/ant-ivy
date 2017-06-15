@@ -20,9 +20,9 @@ package org.apache.ivy.plugins.resolver;
 import org.apache.ivy.core.settings.IvySettings;
 
 /**
- * Resolver which decorate normal resolver so that the workspace resolver can hijack the resolve
- * process <br />
- * NB : it is for internal usage of Ivy only!
+ * Resolver which decorate normal resolver so that the workspace resolver can
+ * hijack the resolveprocess
+ * <p>NB : it is for internal usage of Ivy only!</p>
  */
 public class WorkspaceChainResolver extends ChainResolver {
 

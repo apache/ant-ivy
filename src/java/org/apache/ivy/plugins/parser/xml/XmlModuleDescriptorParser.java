@@ -100,15 +100,15 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     /**
-     * @param settings
+     * @param ivySettings ParserSettings
      * @param xmlURL
      *            the url pointing to the file to parse
      * @param res
      *            the real resource to parse, used for log only
-     * @param validate
-     * @return
-     * @throws ParseException
-     * @throws IOException
+     * @param validate boolean
+     * @return ModuleDescriptor
+     * @throws ParseException if something goes wrong
+     * @throws IOException if something goes wrong
      */
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL xmlURL, Resource res,
             boolean validate) throws ParseException, IOException {
@@ -136,7 +136,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
      * <p>
      * Override this method if you want to use a custom Parser.
      * </p>
-     * 
+     *
      * @param ivySettings
      *            the settings to use during parsing
      * @return the Parser instance used for parsing Ivy files
@@ -312,7 +312,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         getBuffer().append("\"");
                     }
                     getBuffer().append(">");
-                    return;
                 } else if ("ivy-module".equals(qName)) {
                     ivyModuleStarted(attributes);
                 } else if ("info".equals(qName)) {
@@ -396,7 +395,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Default parent location to check (for dev ONLY)
-         * 
+         *
          * @return a relative path to a parent module descriptor
          */
         protected String getDefaultParentLocation() {
@@ -411,9 +410,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * <li>cache to find a resolved parent descriptor</li>
          * <li>ask repositories to retrieve the parent module descriptor</li>
          * </ul>
-         * 
-         * @param attributes
-         * @throws ParseException
+         *
+         * @param attributes Attributes
+         * @throws ParseException if something goes wrong
          */
         protected void extendsStarted(Attributes attributes) throws ParseException {
             String parentOrganisation = settings.substitute(attributes.getValue("organisation"));
@@ -482,7 +481,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         /**
          * Merge current module with a given module descriptor and specify what should be inherited
          * through extendTypes argument
-         * 
+         *
          * @param extendTypes
          *            specify what should be inherited
          * @param parent
@@ -521,9 +520,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Merge everything from a given parent
-         * 
+         *
          * @param parent
-         *            a given parent module desciptor
+         *            a given parent module descriptor
          */
         protected void mergeAll(ModuleDescriptor parent) {
             mergeInfo(parent);
@@ -535,10 +534,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         /**
-         * Explain how to inherit metadatas related to info element
-         * 
+         * Explain how to inherit metadata related to info element
+         *
          * @param parent
-         *            a given parent module decriptor
+         *            a given parent module descriptor
          */
         protected void mergeInfo(ModuleDescriptor parent) {
             ModuleRevisionId parentMrid = parent.getModuleRevisionId();
@@ -589,11 +588,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge configurations elements
-         * 
-         * @param sourceMrid
-         *            the source module revision id
-         * @param configurations
-         *            array of configurations to be inherited
+         *
+         * @param parent
+         *            the module descriptor
          */
         protected void mergeConfigurations(ModuleDescriptor parent) {
             ModuleRevisionId sourceMrid = parent.getModuleRevisionId();
@@ -614,7 +611,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how dependencies should be inherited
-         * 
+         *
          * @param dependencies
          *            array of dependencies to inherit
          */
@@ -630,7 +627,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge description
-         * 
+         *
          * @param description
          *            description going to be inherited
          */
@@ -643,7 +640,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge licenses
-         * 
+         *
          * @param licenses
          *            licenses going to be inherited
          */
@@ -655,7 +652,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describes how to merge exclude rules
-         * 
+         *
          * @param excludeRules
          *            exclude rules going to be inherited
          */
@@ -667,11 +664,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Returns the parent module using the location attribute (for dev purpose).
-         * 
+         *
          * @param location
          *            a given location
-         * @throws IOException
-         * @throws ParseException
+         * @throws IOException if something goes wrong
+         * @throws ParseException if something goes wrong
          */
         private ModuleDescriptor parseParentModuleOnFilesystem(String location) throws IOException,
                 ParseException {
@@ -704,12 +701,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         /**
          * Describe how to parse a {@link ModuleDescriptor} by asking repositories
-         * 
+         *
          * @param parentMrid
          *            a given {@link ModuleRevisionId} to find
          * @return a {@link ModuleDescriptor} if found. Return null if no {@link ModuleDescriptor}
          *         was found
-         * @throws ParseException
+         * @throws ParseException if something goes wrong
          */
         protected ModuleDescriptor parseOtherIvyFile(ModuleRevisionId parentMrid)
                 throws ParseException {
@@ -849,14 +846,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     String visibility = settings.substitute(attributes.getValue("visibility"));
                     String ext = settings.substitute(attributes.getValue("extends"));
                     String transitiveValue = attributes.getValue("transitive");
-                    boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(
-                        attributes.getValue("transitive")).booleanValue();
+                    boolean transitive = (transitiveValue == null)
+                            || Boolean.valueOf(attributes.getValue("transitive"));
                     String deprecated = attributes.getValue("deprecated");
                     Configuration configuration = new Configuration(conf,
-                            Configuration.Visibility.getVisibility(visibility == null ? "public"
-                                    : visibility), settings.substitute(attributes
-                                    .getValue("description")), ext == null ? null : ext.split(","),
-                            transitive, deprecated);
+                            Configuration.Visibility.getVisibility((visibility == null) ? "public"
+                                    : visibility), settings.substitute(attributes.getValue("description")),
+                                    (ext == null) ? null : ext.split(","), transitive, deprecated);
                     ExtendableItemHelper.fillExtraAttributes(settings, configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive", "description",
                                 "deprecated"});
@@ -903,24 +899,23 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             if (org == null) {
                 org = getMd().getModuleRevisionId().getOrganisation();
             }
-            boolean force = Boolean.valueOf(settings.substitute(attributes.getValue("force")))
-                    .booleanValue();
-            boolean changing = Boolean
-                    .valueOf(settings.substitute(attributes.getValue("changing"))).booleanValue();
+            boolean force = Boolean.valueOf(settings.substitute(attributes.getValue("force")));
+            boolean changing = Boolean.valueOf(settings.substitute(attributes.getValue("changing")));
 
             String transitiveValue = settings.substitute(attributes.getValue("transitive"));
-            boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(
-                attributes.getValue("transitive")).booleanValue();
+            boolean transitive = (transitiveValue == null)
+                    || Boolean.valueOf(attributes.getValue("transitive"));
 
             String name = settings.substitute(attributes.getValue("name"));
             String branch = settings.substitute(attributes.getValue("branch"));
             String branchConstraint = settings.substitute(attributes.getValue("branchConstraint"));
 
-            // if (branchConstraint == null) {
-            // // there was no branch constraint before, so we should
-            // // set the branchConstraint to the current default branch
-            // branchConstraint = settings.getDefaultBranch(ModuleId.newInstance(org, name));
-            // }
+            /* if (branchConstraint == null) {
+             * // there was no branch constraint before, so we should
+             * // set the branchConstraint to the current default branch
+             * branchConstraint = settings.getDefaultBranch(ModuleId.newInstance(org, name));
+             * }
+             */
 
             String rev = settings.substitute(attributes.getValue("rev"));
             String revConstraint = settings.substitute(attributes.getValue("revConstraint"));
@@ -1008,7 +1003,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             String confMappingOverride = settings.substitute(attributes
                     .getValue("confmappingoverride"));
             if (confMappingOverride != null) {
-                getMd().setMappingOverride(Boolean.valueOf(confMappingOverride).booleanValue());
+                getMd().setMappingOverride(Boolean.valueOf(confMappingOverride));
             }
             checkConfigurations();
         }
@@ -1018,8 +1013,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             setDefaultConfMapping(settings.substitute(attributes.getValue("defaultconfmapping")));
             setDefaultConf(settings.substitute(attributes.getValue("defaultconf")));
             getMd().setMappingOverride(
-                Boolean.valueOf(settings.substitute(attributes.getValue("confmappingoverride")))
-                        .booleanValue());
+                    Boolean.valueOf(settings.substitute(attributes.getValue("confmappingoverride"))));
         }
 
         protected void infoStarted(Attributes attributes) {
@@ -1053,7 +1047,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             getMd().setStatus(
                 status == null ? settings.getStatusManager().getDefaultStatus() : status);
             getMd().setDefault(
-                Boolean.valueOf(settings.substitute(attributes.getValue("default"))).booleanValue());
+                    Boolean.valueOf(settings.substitute(attributes.getValue("default"))));
             String pubDate = settings.substitute(attributes.getValue("publication"));
             if (pubDate != null && pubDate.length() > 0) {
                 try {
@@ -1173,15 +1167,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         protected void addConfiguration(String c) {
             confAware.addConfiguration(c);
             if (state == State.EXCLUDE) {
-                // we are adding a configuration to a module wide exclude rule
-                // we have nothing special to do here, the rule has already been added to the module
-                // descriptor
+                // we are adding a configuration to a module wide exclude rule we have nothing
+                // special to do here, the rule has already been added to the module descriptor
             } else {
                 // we are currently adding a configuration to either an include, exclude or artifact
-                // element
-                // of a dependency. This means that we have to add this element to the corresponding
-                // conf
-                // of the current dependency descriptor
+                // element of a dependency. This means that we have to add this element to the
+                // corresponding conf of the current dependency descriptor
                 if (confAware instanceof DependencyArtifactDescriptor) {
                     dd.addDependencyArtifact(c, (DependencyArtifactDescriptor) confAware);
                 } else if (confAware instanceof IncludeRule) {
@@ -1271,7 +1262,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     buffer.deleteCharAt(buffer.length() - 1);
                     buffer.append("/>");
                 } else {
-                    buffer.append("</" + qName + ">");
+                    buffer.append("</").append(qName).append(">");
                 }
             }
         }

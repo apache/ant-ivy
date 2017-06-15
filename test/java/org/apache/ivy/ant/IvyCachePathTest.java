@@ -20,19 +20,25 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyCachePathTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class IvyCachePathTest {
 
     private IvyCachePath path;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -42,10 +48,12 @@ public class IvyCachePathTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         path.setPathid("simple-pathid");
@@ -59,6 +67,7 @@ public class IvyCachePathTest extends TestCase {
                 .getAbsolutePath(), new File(p.list()[0]).getAbsolutePath());
     }
 
+    @Test
     public void testInline1() throws Exception {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
@@ -84,6 +93,7 @@ public class IvyCachePathTest extends TestCase {
                 .getAbsolutePath(), new File(p.list()[0]).getAbsolutePath());
     }
 
+    @Test
     public void testInline2() throws Exception {
         // we first resolve a dependency directly
         path.setOrganisation("org1");
@@ -109,6 +119,7 @@ public class IvyCachePathTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
 
+    @Test
     public void testEmptyConf() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         path.setPathid("emptyconf-pathid");
@@ -121,17 +132,19 @@ public class IvyCachePathTest extends TestCase {
         assertEquals(0, p.size());
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            path.setPathid("failure-pathid");
-            path.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raised an exception
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        path.setPathid("failure-pathid");
+        path.execute();
     }
 
+    @Test
     public void testHaltOnFailure() throws Exception {
         try {
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
@@ -143,6 +156,7 @@ public class IvyCachePathTest extends TestCase {
         }
     }
 
+    @Test
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -169,6 +183,7 @@ public class IvyCachePathTest extends TestCase {
                 .getAbsolutePath(), new File(p.list()[0]).getAbsolutePath());
     }
 
+    @Test
     public void testWithResolveIdWithoutResolve() throws Exception {
         Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -199,6 +214,7 @@ public class IvyCachePathTest extends TestCase {
                 .getAbsolutePath(), new File(p.list()[0]).getAbsolutePath());
     }
 
+    @Test
     public void testWithResolveIdAndMissingConfs() throws Exception {
         Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -225,6 +241,7 @@ public class IvyCachePathTest extends TestCase {
         path.execute();
     }
 
+    @Test
     public void testUnpack() throws Exception {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module1/ivys/ivy-1.0.xml");
@@ -238,6 +255,7 @@ public class IvyCachePathTest extends TestCase {
         assertTrue(new File(p.list()[0]).isDirectory());
     }
 
+    @Test
     public void testOSGi() throws Exception {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module5/ivys/ivy-1.0.xml");
@@ -257,6 +275,7 @@ public class IvyCachePathTest extends TestCase {
         assertEquals(new File(unpacked, "lib/ant-apache-log4j.jar"), new File(p.list()[3]));
     }
 
+    @Test
     public void testOSGi2() throws Exception {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module6/ivys/ivy-1.0.xml");
@@ -273,6 +292,7 @@ public class IvyCachePathTest extends TestCase {
         assertEquals(unpacked, new File(p.list()[0]));
     }
 
+    @Test
     public void testPackedOSGi() throws Exception {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module8/ivys/ivy-1.0.xml");

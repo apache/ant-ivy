@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.License;
@@ -110,13 +111,13 @@ public class PomReader {
 
     private static final String PROFILE = "profile";
 
-    private HashMap<String, String> properties = new HashMap<String, String>();
+    private final Map<String, String> properties = new HashMap<String, String>();
 
     private final Element projectElement;
 
     private final Element parentElement;
 
-    public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
+    public PomReader(final URL descriptorURL, final Resource res) throws IOException, SAXException {
         InputStream stream = new AddDTDFilterInputStream(
                 URLHandlerRegistry.getDefault().openStream(descriptorURL));
         InputSource source = new InputSource(stream);
@@ -146,6 +147,18 @@ public class PomReader {
                 // ignore
             }
         }
+        // Both environment and system properties take precedence over properties set in
+        // pom.xml. So we pre-populate our properties with the environment and system properties
+        // here
+        for (final Map.Entry<String, String> envEntry : System.getenv().entrySet()) {
+            // Maven let's users use "env." prefix for environment variables
+            this.setProperty("env." + envEntry.getKey(), envEntry.getValue());
+        }
+        // add system properties
+        final Properties sysProps = System.getProperties();
+        for (final String sysProp : sysProps.stringPropertyNames()) {
+            this.setProperty(sysProp, sysProps.getProperty(sysProp));
+        }
     }
 
     public boolean hasParent() {
@@ -153,8 +166,12 @@ public class PomReader {
     }
 
     /**
-     * Add a property if not yet set and value is not null. This garantee that property keep the
-     * first value that is put on it and that the properties are never null.
+     * Add a property if not yet set and value is not null. This guarantees
+     * that property keeps the first value that is put on it and that the
+     * properties are never null.
+     *
+     * @param prop String
+     * @param val String
      */
     public void setProperty(String prop, String val) {
         if (!properties.containsKey(prop) && val != null) {
@@ -535,7 +552,7 @@ public class PomReader {
                 return false;
             }
             String propertyValue = getFirstChildText(propertyActivation, VALUE);
-            
+
             Map<String, String> pomProperties = PomReader.this.getPomProperties();
             boolean matched;
             if (propertyValue == null || "".equals(propertyValue)) {
@@ -695,8 +712,7 @@ public class PomReader {
                 return prefix[count++];
             }
 
-            int result = super.read();
-            return result;
+            return super.read();
         }
 
         @Override

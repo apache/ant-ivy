@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.util.cli;
 
+@SuppressWarnings("serial")
 public class ParseException extends Exception {
     public ParseException(String reason) {
         super(reason);

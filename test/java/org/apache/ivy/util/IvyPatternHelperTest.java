@@ -17,35 +17,33 @@
  */
 package org.apache.ivy.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class IvyPatternHelperTest extends TestCase {
+public class IvyPatternHelperTest {
+    @Test
     public void testSubstitute() {
         String pattern = "[organisation]/[module]/build/archives/[type]s/[artifact]-[revision].[ext]";
         assertEquals("apache/Test/build/archives/jars/test-1.0.jar",
             IvyPatternHelper.substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
+    @Test(expected = Exception.class)
     public void testCyclicSubstitute() {
         String pattern = "${var}";
         Map variables = new HashMap();
         variables.put("var", "${othervar}");
         variables.put("othervar", "${var}");
-        try {
-            IvyPatternHelper.substituteVariables(pattern, variables);
-            fail("cyclic var should raise an exception");
-        } catch (Exception ex) {
-            // ok
-        } catch (Error er) {
-            fail("cyclic var shouldn't raise an error: " + er);
-        }
+
+        IvyPatternHelper.substituteVariables(pattern, variables);
     }
 
+    @Test
     public void testOptionalSubstitute() {
         Map tokens = new HashMap();
         tokens.put("token", "");
@@ -57,23 +55,27 @@ public class IvyPatternHelperTest extends TestCase {
             IvyPatternHelper.substituteTokens("test(-[token])(-[othertoken])", tokens));
     }
 
+    @Test
     public void testOrganization() {
         String pattern = "[organization]/[module]/build/archives/[type]s/[artifact]-[revision].[ext]";
         assertEquals("apache/Test/build/archives/jars/test-1.0.jar",
             IvyPatternHelper.substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
+    @Test
     public void testSpecialCharsInsidePattern() {
         String pattern = "[organization]/[module]/build/archives (x86)/[type]s/[artifact]-[revision].[ext]";
         assertEquals("apache/Test/build/archives (x86)/jars/test-1.0.jar",
             IvyPatternHelper.substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
+    @Test
     public void testTokenRoot() {
         String pattern = "lib/[type]/[artifact].[ext]";
         assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
     }
 
+    @Test
     public void testTokenRootWithOptionalFirstToken() {
         String pattern = "lib/([type]/)[artifact].[ext]";
         assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));

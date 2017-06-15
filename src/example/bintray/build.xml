@@ -18,6 +18,10 @@
 -->
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="ivy-bintray-example" default="retrieve">
     <target name="retrieve">
-        <ivy:retrieve />
+        <ivy:retrieve/>
+    </target>
+
+    <target name="clean">
+        <echo>Nothing to clean here.</echo>
     </target>
 </project>

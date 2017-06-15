@@ -17,32 +17,31 @@
  */
 package org.apache.ivy.plugins.repository.vfs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class VfsResourceTest extends TestCase {
+public class VfsResourceTest {
     private VfsTestHelper helper = null;
 
-    public VfsResourceTest() {
-        super();
-    }
-
-    public VfsResourceTest(String arg0) {
-        super(arg0);
-    }
-
+    @Before
     public void setUp() throws Exception {
         helper = new VfsTestHelper();
     }
 
+    @After
     public void tearDown() {
         helper = null;
     }
@@ -50,157 +49,106 @@ public class VfsResourceTest extends TestCase {
     /**
      * Validate VFSResource creation for a valid VFS URI pointing to an physically existing file
      */
+    @Test
     public void testCreateResourceThatExists() throws Exception {
-        Iterator vfsURIs = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML)) {
             String resId = vfsURI.toString();
             VfsResource res = new VfsResource(resId, helper.fsManager);
-            if (res == null) {
-                fail("Unexpected null value on VFS URI: " + resId);
-            }
-
-            if (!res.exists()) {
-                fail("Resource does not exist and it should: " + resId);
-            }
+            assertNotNull("Unexpected null value on VFS URI: " + resId, res);
+            assertTrue("Resource does not exist and it should: " + resId, res.exists());
 
             // VFS apparently does some weird normalization so that resource id used to create
             // the VFS resource is not necessarily identical to the id returned from the getName
             // method <sigh>. We try to work around this by transforming things into java URIs.
-            if (!new URI(escapeUrl(resId)).equals(new URI(escapeUrl(res.getName())).normalize())) {
-                fail("Failed on getName. Expected: " + resId + ". Actual: " + res.getName());
-            }
-
-            if (res.getLastModified() == 0) {
-                fail("Expected non-null file modification date for URI: " + resId);
-            }
-
-            if (res.getContentLength() == 0) {
-                fail("Expected non-zero file length for URI: " + resId);
-            }
-
-            if (!res.physicallyExists()) {
-                fail("Physical existence check returned false for existing resource: " + resId);
-            }
+            assertEquals("Failed on getName. Expected: " + resId + ". Actual: " + res.getName(),
+                    new URI(escapeUrl(resId)), new URI(escapeUrl(res.getName())).normalize());
+            assertNotEquals("Expected non-null file modification date for URI: " + resId,
+                    0, res.getLastModified());
+            assertNotEquals("Expected non-zero file length for URI: " + resId,
+                    0, res.getContentLength());
+            assertTrue("Physical existence check returned false for existing resource: " + resId,
+                    res.physicallyExists());
         }
     }
 
     /**
      * Escape invalid URL characters (Copied from Wicket, just use StringUtils instead of Strings)
-     * 
+     *
      * @param queryString
-     *            The orginal querystring
+     *            The original querystring
      * @return url The querystring with invalid characters escaped
      */
     private String escapeUrl(String queryString) {
-        queryString = StringUtils.replace(queryString, " ", "%20");
-        queryString = StringUtils.replace(queryString, "\"", "%22");
-        queryString = StringUtils.replace(queryString, "%", "%26");
-        queryString = StringUtils.replace(queryString, "=", "%3D");
-        queryString = StringUtils.replace(queryString, "/", "%2F");
-        queryString = StringUtils.replace(queryString, "+", "%2B");
-        queryString = StringUtils.replace(queryString, "&", "%26");
-        queryString = StringUtils.replace(queryString, "~", "%7E");
-        queryString = StringUtils.replace(queryString, "?", "%3F");
-        return queryString;
+        return queryString.replaceAll(" ", "%20").replaceAll("\"", "%22").replaceAll("%", "%26")
+                .replaceAll("=", "%3D").replaceAll("/", "%2F").replaceAll("\\+", "%2B")
+                .replaceAll("&", "%26").replaceAll("~", "%7E").replaceAll("\\?", "%3F");
     }
 
     /**
      * Validating that resource can be created for files which don't physically exists - e.g.
      * resources that are going to created.
      */
+    @Test
     public void testCreateResourceThatDoesntExist() throws Exception {
-        Iterator vfsURIs = helper.createVFSUriSet("zzyyxx.zzyyxx").iterator();
-        while (vfsURIs.hasNext()) {
-            VfsURI vfsURI = (VfsURI) vfsURIs.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet("zzyyxx.zzyyxx")) {
             String resId = vfsURI.toString();
             VfsResource res = new VfsResource(resId, helper.fsManager);
-            if (res == null) {
-                fail("Unexpected null value on VFS URI: " + resId);
-            }
-
-            if (res.exists()) {
-                fail("Resource does not exist and it shouldn't: " + resId);
-            }
+            assertNotNull("Unexpected null value on VFS URI: " + resId, res);
+            assertFalse("Resource does exist and it should not: " + resId, res.exists());
 
             // VFS apparently does some weird normalization so that resource id used to create
             // the VFS resource is not necessarily identical to the id returned from the getName
             // method <sigh>. We try to work around this by transforming things into java URIs.
-            if (!new URI(escapeUrl(resId)).equals(new URI(escapeUrl(res.getName())).normalize())) {
-                fail("Failed on getName. Expected: " + resId + ". Actual: " + res.getName());
-            }
-
-            if (res.getLastModified() != 0) {
-                fail("Expected null file modification date for URI: " + resId + ": "
-                        + res.getLastModified());
-            }
-
-            if (res.getContentLength() != 0) {
-                fail("Expected non-zero file length for URI: " + resId);
-            }
-
-            if (res.physicallyExists()) {
-                fail("Physical existence check returned true for non-existent resource: " + resId);
-            }
-        }
+            assertEquals("Failed on getName. Expected: " + resId + ". Actual: " + res.getName(),
+                    new URI(escapeUrl(resId)), new URI(escapeUrl(res.getName())).normalize());
+            assertEquals("Expected null file modification date for URI: " + resId,
+                    0, res.getLastModified());
+            assertEquals("Expected zero file length for URI: " + resId,
+                    0, res.getContentLength());
+            assertFalse("Physical existence check returned true for non-existent resource: " + resId,
+                    res.physicallyExists());
+       }
     }
 
     /**
      * Validate VFSResource creation when given a poorly formed VFS identifier
      */
+    @Test
     public void testBadURI() throws Exception {
         String vfsURI = "smb1:/goobeldygook";
         VfsResource res = new VfsResource(vfsURI, helper.fsManager);
 
-        if (res == null) {
-            fail("Unexpected null value on VFS URI: " + vfsURI);
-        }
-
-        if (res.exists()) {
-            fail("Resource is marked as existing and it should not: " + vfsURI);
-        }
-
-        if (!res.getName().equals("smb1:/goobeldygook")) {
-            fail("Failed on getName. Expected: " + vfsURI + ". Actual: " + res.getName());
-        }
-
-        if (res.getLastModified() != 0) {
-            fail("Expected null file modification date for URI: " + vfsURI + ": "
-                    + res.getLastModified());
-        }
-
-        if (res.getContentLength() != 0) {
-            fail("Expected zero file length for URI: " + vfsURI);
-        }
-
-        if (res.physicallyExists()) {
-            fail("Physical existence check returned false for existing resource: " + vfsURI);
-        }
+        assertNotNull("Unexpected null value on VFS URI: " + vfsURI, res);
+        assertFalse("Resource is marked as existing and it should not: " + vfsURI, res.exists());
+        assertEquals("Failed on getName. Expected: " + vfsURI + ". Actual: " + res.getName(),
+                res.getName(), "smb1:/goobeldygook");
+        assertEquals("Expected null file modification date for URI: " + vfsURI + ": "
+                        + res.getLastModified(), 0, res.getLastModified());
+        assertEquals("Expected zero file length for URI: " + vfsURI,
+                0, res.getContentLength());
+        assertFalse("Physical existence check returned true for non-existent resource: " + vfsURI,
+                res.physicallyExists());
     }
 
     /**
      * Validate getChildren when given a VFS URI for a directory
      */
+    @Test
     public void testListFolderChildren() throws Exception {
         final String testFolder = "2/mod10.1";
-        final List expectedFiles = Arrays.asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml",
-                "ivy-1.2.xml", "ivy-1.3.xml"});
+        final List<String> expectedFiles = Arrays
+                .asList(new String[] {"ivy-1.0.xml", "ivy-1.1.xml", "ivy-1.2.xml", "ivy-1.3.xml"});
 
-        Iterator baseVfsURIs = helper.createVFSUriSet(testFolder).iterator();
-        while (baseVfsURIs.hasNext()) {
-            VfsURI baseVfsURI = (VfsURI) baseVfsURIs.next();
-
-            List expected = new ArrayList();
-            for (int i = 0; i < expectedFiles.size(); i++) {
-                String resId = baseVfsURI.toString() + "/" + expectedFiles.get(i);
+        for (VfsURI baseVfsURI : helper.createVFSUriSet(testFolder)) {
+            List<String> expected = new ArrayList<>();
+            for (String expectedFile : expectedFiles) {
+                String resId = baseVfsURI.toString() + "/" + expectedFile;
                 expected.add(resId);
             }
 
-            List actual = new ArrayList();
+            List<String> actual = new ArrayList<>();
             VfsResource res = new VfsResource(baseVfsURI.toString(), helper.fsManager);
-            Iterator children = res.getChildren().iterator();
-            while (children.hasNext()) {
-                String resId = (String) children.next();
+            for (String resId : res.getChildren()) {
                 // remove entries ending in .svn
                 if (!resId.endsWith(".svn")) {
                     actual.add(resId);
@@ -209,9 +157,8 @@ public class VfsResourceTest extends TestCase {
 
             Collections.sort(actual);
             Collections.sort(expected);
-            if (!actual.equals(expected)) {
-                fail("\nExpected: " + expected.toString() + "\n.Actual: " + actual.toString());
-            }
+            assertTrue("\nExpected: " + expected.toString() + "\nActual: " + actual.toString(),
+                    actual.equals(expected));
         }
     }
 
@@ -219,15 +166,13 @@ public class VfsResourceTest extends TestCase {
      * Validate that we don't get any results when we query a VFSResource file object for its
      * children
      */
+    @Test
     public void testListFileChildren() throws Exception {
-        Iterator testSet = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
-        while (testSet.hasNext()) {
-            VfsURI vfsURI = (VfsURI) testSet.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML)) {
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
-            List results = res.getChildren();
-            if (results.size() > 0) {
-                fail("getChildren query on file provided results when it shouldn't have");
-            }
+            List<String> results = res.getChildren();
+            assertEquals("getChildren query on file provided results when it shouldn't have", 0,
+                results.size());
         }
     }
 
@@ -235,15 +180,13 @@ public class VfsResourceTest extends TestCase {
      * Validate that we don't get any results if we ask an IMAGINARY VFSResource - a nonexistent
      * file - for a list of its children
      */
+    @Test
     public void testListImaginary() throws Exception {
-        Iterator testSet = helper.createVFSUriSet("idontexistzzxx").iterator();
-        while (testSet.hasNext()) {
-            VfsURI vfsURI = (VfsURI) testSet.next();
+        for (VfsURI vfsURI : helper.createVFSUriSet("idontexistzzxx")) {
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
-            List results = res.getChildren();
-            if (results.size() > 0) {
-                fail("getChildren query on file provided results when it shouldn't have");
-            }
+            List<String> results = res.getChildren();
+            assertEquals("getChildren query on file provided results when it shouldn't have", 0,
+                results.size());
         }
     }
 }

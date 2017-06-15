@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-class DeleteOnExitHook {
+final class DeleteOnExitHook {
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread() {

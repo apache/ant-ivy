@@ -35,6 +35,13 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -46,7 +53,11 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData _data;
 
-    protected void setUp() throws Exception {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
+    @Before
+    public void setUp() {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _data = new ResolveData(_engine, new ResolveOptions());
@@ -54,10 +65,12 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
         _settings.setDefaultCache(TestHelper.cache);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testDefaults() {
         IvyRepResolver resolver = new IvyRepResolver();
         _settings.setVariable("ivy.ivyrep.default.ivy.root", "http://www.jayasoft.fr/myivyrep/");
@@ -81,23 +94,26 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
             l.get(0));
     }
 
+    /**
+     * IVY-625: should fail if no ivyroot specified.
+     *
+     * @throws Exception
+     */
+    @Test
     public void testMandatoryRoot() throws Exception {
-        // IVY-625: should fail if no ivyroot specified
+        expExc.expect(IllegalStateException.class);
+        expExc.expectMessage("ivyroot");
+
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
         resolver.setSettings(_settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-cli", "1.0");
-        try {
-            resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
-            fail("using ivyrep resolver without ivyroot should raise an exception");
-        } catch (IllegalStateException ex) {
-            assertTrue(
-                "exception thrown when using ivyrep with no ivyroot should talk about the root", ex
-                        .getMessage().indexOf("ivyroot") != -1);
-        }
+
+        resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
     }
 
+    @Test
     public void testIvyRepWithLocalURL() throws Exception {
         IvyRepResolver resolver = new IvyRepResolver();
         String rootpath = new File("test/repositories/1").getAbsolutePath();

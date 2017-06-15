@@ -52,7 +52,7 @@ public class RelativeURLRepository extends URLRepository {
             try {
                 uri = new URI(source);
             } catch (URISyntaxException e) {
-                // very wierd URL, let's assume it is absolute
+                // very weird URL, let's assume it is absolute
                 uri = null;
             }
             if (uri == null || uri.isAbsolute()) {

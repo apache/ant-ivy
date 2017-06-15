@@ -44,6 +44,13 @@ import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests ChainResolver
@@ -56,7 +63,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
 
     private ResolveData data;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         TestHelper.createCache();
@@ -64,10 +72,12 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         settings.setDefaultCache(TestHelper.cache);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testOrderFromConf() throws Exception {
         new XmlSettingsParser(settings).parse(ChainResolverTest.class
                 .getResource("chainresolverconf.xml"));
@@ -87,6 +97,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testName() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setSettings(settings);
@@ -94,6 +105,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertEquals("chain", chain.getName());
     }
 
+    @Test
     public void testResolveOrder() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -102,8 +114,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "1", false, null),
                 MockResolver.buildMockResolver(settings, "2", true, null),
                 MockResolver.buildMockResolver(settings, "3", true, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -117,24 +129,26 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertTrue(resolvers[2].askedDeps.isEmpty());
     }
 
+    @Test
     public void testLatestTimeResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);
         settings.setDefaultLatestStrategy(new LatestTimeStrategy());
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, new GregorianCalendar(2005, 1,
-                        20).getTime()),
+                MockResolver.buildMockResolver(settings, "1", true,
+                    new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
-                MockResolver.buildMockResolver(settings, "3", true, new GregorianCalendar(2005, 1,
-                        25).getTime()), // younger -> should the one kept
+                MockResolver.buildMockResolver(settings, "3", true,
+                    new GregorianCalendar(2005, 1, 25).getTime()), // younger -> should the one kept
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, new GregorianCalendar(2005, 1,
-                        22).getTime()),
-                MockResolver.buildMockResolver(settings, "6", true, new GregorianCalendar(2005, 1,
-                        18).getTime()), MockResolver.buildMockResolver(settings, "7", false, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+                MockResolver.buildMockResolver(settings, "5", true,
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true,
+                    new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver(settings, "7", false, null)};
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -144,32 +158,37 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         assertEquals("3", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
-        for (int i = 0; i < resolvers.length; i++) {
-            assertEquals(ddAsList, resolvers[i].askedDeps);
+        for (MockResolver resolver : resolvers) {
+            assertEquals(ddAsList, resolver.askedDeps);
         }
     }
 
+    @Test
     public void testLatestRevisionResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()),
+                MockResolver.buildMockResolver(settings, "1", true,
+                    ModuleRevisionId.newInstance("org", "mod", "1"),
+                    new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
-                MockResolver.buildMockResolver(settings, "3", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
+                MockResolver.buildMockResolver(settings, "3", true,
+                    ModuleRevisionId.newInstance("org", "mod", "2"),
+                    new GregorianCalendar(2005, 1, 25).getTime()),
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
+                MockResolver.buildMockResolver(settings, "5", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
                 // should the
                 // one kept
-                MockResolver.buildMockResolver(settings, "6", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true,
+                    ModuleRevisionId.newInstance("org", "mod", "3"),
+                    new GregorianCalendar(2005, 1, 18).getTime()),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -179,11 +198,12 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
-        for (int i = 0; i < resolvers.length; i++) {
-            assertEquals(ddAsList, resolvers[i].askedDeps);
+        for (MockResolver resolver : resolvers) {
+            assertEquals(ddAsList, resolver.askedDeps);
         }
     }
 
+    @Test
     public void testWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -191,21 +211,20 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver(settings, "1", false, null),
-                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
-                // ->
-                // but
-                // default
+                MockResolver.buildMockResolver(settings, "2", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime(), true),
+                    // latest -> but default
                 MockResolver.buildMockResolver(settings, "3", false, null),
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
-                // should the
-                // one kept
+                MockResolver.buildMockResolver(settings, "5", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                    // latest -> should be the one kept
                 MockResolver.buildMockResolver(settings, "6", false, null),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -223,31 +242,37 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testLatestWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()),
-                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
+                MockResolver.buildMockResolver(settings, "1", true,
+                    ModuleRevisionId.newInstance("org", "mod", "1"),
+                    new GregorianCalendar(2005, 1, 20).getTime()),
+                MockResolver.buildMockResolver(settings, "2", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
                 // ->
                 // but
                 // default
-                MockResolver.buildMockResolver(settings, "3", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
+                MockResolver.buildMockResolver(settings, "3", true,
+                    ModuleRevisionId.newInstance("org", "mod", "2"),
+                    new GregorianCalendar(2005, 1, 25).getTime()),
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
+                MockResolver.buildMockResolver(settings, "5", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
                 // should the
                 // one kept
-                MockResolver.buildMockResolver(settings, "6", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true,
+                    ModuleRevisionId.newInstance("org", "mod", "3"),
+                    new GregorianCalendar(2005, 1, 18).getTime()),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -257,11 +282,12 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
-        for (int i = 0; i < resolvers.length; i++) {
-            assertEquals(ddAsList, resolvers[i].askedDeps);
+        for (MockResolver resolver : resolvers) {
+            assertEquals(ddAsList, resolver.askedDeps);
         }
     }
 
+    @Test
     public void testFixedWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -269,17 +295,18 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver(settings, "1", false, null),
-                MockResolver.buildMockResolver(settings, "2", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // default
+                MockResolver.buildMockResolver(settings, "2", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime(), true),
+                    // default
                 MockResolver.buildMockResolver(settings, "3", false, null),
-                MockResolver.buildMockResolver(settings, "4", true, ModuleRevisionId.newInstance(
-                    "org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // not
-                                                                                       // default
-                // -> should the
-                // one kept
+                MockResolver.buildMockResolver(settings, "4", true,
+                    ModuleRevisionId.newInstance("org", "mod", "4"),
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                    // not default -> should be the one kept
                 MockResolver.buildMockResolver(settings, "5", false, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -299,6 +326,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testFixedWithDefaultAndRealResolver() throws Exception {
         // test case for IVY-206
         ChainResolver chain = new ChainResolver();
@@ -335,6 +363,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertEquals("2", rmr.getResolver().getName());
     }
 
+    @Test
     public void testUseCache() throws Exception {
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
                 ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
@@ -346,8 +375,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setSettings(settings);
         MockResolver[] resolvers = new MockResolver[] {MockResolver.buildMockResolver(settings,
             "1", true, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         chain.getDependency(dd, data);
         // should not have asked any dependency, should have hit the cache
@@ -361,18 +390,19 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         chain.setReturnFirst(true);
 
         MockResolver[] resolvers = new MockResolver[] {
-                MockResolver.buildMockResolver(settings, "1", true, new GregorianCalendar(2005, 1,
-                        20).getTime()),
+                MockResolver.buildMockResolver(settings, "1", true,
+                    new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
-                MockResolver.buildMockResolver(settings, "3", true, new GregorianCalendar(2005, 1,
-                        25).getTime()), // younger -> should the one kept
+                MockResolver.buildMockResolver(settings, "3", true,
+                    new GregorianCalendar(2005, 1, 25).getTime()), // younger -> should the one kept
                 MockResolver.buildMockResolver(settings, "4", false, null),
-                MockResolver.buildMockResolver(settings, "5", true, new GregorianCalendar(2005, 1,
-                        22).getTime()),
-                MockResolver.buildMockResolver(settings, "6", true, new GregorianCalendar(2005, 1,
-                        18).getTime()), MockResolver.buildMockResolver(settings, "7", false, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+                MockResolver.buildMockResolver(settings, "5", true,
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                MockResolver.buildMockResolver(settings, "6", true,
+                    new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver(settings, "7", false, null)};
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -386,6 +416,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    @Test
     public void testReturnFirstWithDefaultAndCacheAndRealResolver() throws Exception {
         // test case for IVY-389
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
@@ -473,6 +504,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         return chain;
     }
 
+    @Test
     public void testDual() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -482,8 +514,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "1", false, null),
                 MockResolver.buildMockResolver(settings, "2", true, null),
                 MockResolver.buildMockResolver(settings, "3", true, null)};
-        for (int i = 0; i < resolvers.length; i++) {
-            chain.add(resolvers[i]);
+        for (MockResolver resolver : resolvers) {
+            chain.add(resolver);
         }
         assertResolversSizeAndNames(chain, resolvers.length);
 
@@ -495,6 +527,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertEquals("chain", rmr.getArtifactResolver().getName());
     }
 
+    @Test
     public void testDownloadWithDual() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");

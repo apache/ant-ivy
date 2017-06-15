@@ -23,12 +23,19 @@ import java.io.IOException;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.CacheCleaner;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyRetrieveTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class IvyRetrieveTest {
     private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
 
     private static final String RETRIEVE_PATTERN = "build/test/lib/[conf]/[artifact]-[revision].[type]";
@@ -39,7 +46,8 @@ public class IvyRetrieveTest extends TestCase {
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         createCache();
         CacheCleaner.deleteDir(new File("build/test/lib"));
         project = TestHelper.newProject();
@@ -56,11 +64,13 @@ public class IvyRetrieveTest extends TestCase {
         cache.mkdirs();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         CacheCleaner.deleteDir(cache);
         CacheCleaner.deleteDir(new File("build/test/lib"));
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         retrieve.execute();
@@ -68,6 +78,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    @Test
     public void testRetrievePrivateWithWildcard() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-381.xml");
         retrieve.setConf("*");
@@ -78,6 +89,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod3.2", "jar", "jar", "private")).exists());
     }
 
+    @Test
     public void testValidateInIvySettings() throws Exception {
         // cfr IVY-992
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
@@ -88,6 +100,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar", "default")).exists());
     }
 
+    @Test
     public void testInline() throws Exception {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
@@ -107,6 +120,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    @Test
     public void testWithConf() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
         retrieve.execute();
@@ -119,6 +133,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar", "extension")).exists());
     }
 
+    @Test
     public void testSync() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
         retrieve.setSync(true);
@@ -133,8 +148,8 @@ public class IvyRetrieveTest extends TestCase {
                 new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org6", "mod6.1", "unknown",
                     "mod6.1", "jar", "jar", "default")), // unknown revision
         };
-        for (int i = 0; i < old.length; i++) {
-            touch(old[i]);
+        for (File of : old) {
+            touch(of);
         }
         retrieve.execute();
 
@@ -144,13 +159,14 @@ public class IvyRetrieveTest extends TestCase {
             "mod6.1", "jar", "jar", "extension")).exists());
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.1",
             "mod1.2", "jar", "jar", "extension")).exists());
-        for (int i = 0; i < old.length; i++) {
-            assertFalse(old[i] + " should have been deleted by sync", old[i].exists());
+        for (File of : old) {
+            assertFalse(of + " should have been deleted by sync", of.exists());
         }
         assertFalse(new File("build/test/lib/unknown").exists()); // even conf directory should
         // have been deleted
     }
 
+    @Test
     public void testSyncWithIgnoreList() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
         retrieve.setSync(true);
@@ -164,6 +180,7 @@ public class IvyRetrieveTest extends TestCase {
         assertTrue(new File("build/test/lib/.svn/test.txt").exists());
     }
 
+    @Test
     public void testWithAPreviousResolve() throws Exception {
         // first we do a resolve in another project
         Project project = TestHelper.newProject();
@@ -183,6 +200,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    @Test
     public void testWithAPreviousResolveAndResolveId() throws Exception {
         // first we do a resolve in another project
         Project project = TestHelper.newProject();
@@ -204,6 +222,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    @Test
     public void testUseOrigin() throws Exception {
         // test case for IVY-304
         // first we do a resolve with useOrigin=true in another project
@@ -227,6 +246,7 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    @Test
     public void testUseOriginWithIvyPattern() throws Exception {
         // mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which
         // depends on mod1.2
@@ -248,6 +268,7 @@ public class IvyRetrieveTest extends TestCase {
             "ivy", "ivy", "xml")).exists());
     }
 
+    @Test
     public void testRetrieveWithOriginalNamePattern() throws Exception {
         retrieve.setFile(new File("test/java/org/apache/ivy/ant/ivy-631.xml"));
         retrieve.setConf("default");
@@ -258,40 +279,42 @@ public class IvyRetrieveTest extends TestCase {
         assertTrue(new File("build/test/lib/default/mod1.2-2.2.jar").exists());
     }
 
+    /**
+     * Retrieve without previous resolve must fail.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testFailureWithoutAPreviousResolve() throws Exception {
-        // we do a retrieve with the module information whereas no resolve has been previously done
-        try {
-            retrieve.setOrganisation("apache");
-            retrieve.setModule("resolve-simple");
-            retrieve.setConf("default");
-            retrieve.execute();
-            fail("retrieve without previous resolve should have thrown an exception");
-        } catch (Exception ex) {
-            // OK
-        }
+        retrieve.setOrganisation("apache");
+        retrieve.setModule("resolve-simple");
+        retrieve.setConf("default");
+        retrieve.execute();
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            retrieve.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raised an exception
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        retrieve.execute();
     }
 
+    @Test
     public void testHaltOnFailure() throws Exception {
         try {
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
             retrieve.setHaltonfailure(false);
             retrieve.execute();
-
         } catch (BuildException ex) {
             fail("failure raised an exception with haltonfailure set to false");
         }
     }
 
+    @Test
     public void testCustomIvyPattern() throws Exception {
         // mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which
         // depends on mod1.2
@@ -312,6 +335,7 @@ public class IvyRetrieveTest extends TestCase {
             "ivy", "ivy", "xml")).exists());
     }
 
+    @Test
     public void testCustomIvyPatternWithConf() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
 
@@ -328,6 +352,7 @@ public class IvyRetrieveTest extends TestCase {
             "ivy", "ivy", "xml", "extension")).exists());
     }
 
+    @Test
     public void testSyncWithIvyPattern() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
 
@@ -347,8 +372,8 @@ public class IvyRetrieveTest extends TestCase {
                 new File(IvyPatternHelper.substitute(ivyPattern, "unknown", "mod6.1", "0.4", "ivy",
                     "ivy", "xml", "default")), // unknown organisation for ivy
         };
-        for (int i = 0; i < old.length; i++) {
-            touch(old[i]);
+        for (File of : old) {
+            touch(of);
         }
 
         retrieve.execute();
@@ -359,14 +384,15 @@ public class IvyRetrieveTest extends TestCase {
             "ivy", "xml", "extension")).exists());
         assertFalse(new File(IvyPatternHelper.substitute(ivyPattern, "org1", "mod1.2", "2.1",
             "ivy", "ivy", "xml", "extension")).exists());
-        for (int i = 0; i < old.length; i++) {
-            assertFalse(old[i] + " should have been deleted by sync", old[i].exists());
+        for (File of : old) {
+            assertFalse(of + " should have been deleted by sync", of.exists());
         }
         assertFalse(new File("build/test/lib/unknown").exists());
         assertFalse(new File("build/test/lib/unk").exists());
         assertFalse(new File("build/test/lib/default/unknown").exists());
     }
 
+    @Test
     public void testDoubleRetrieveWithDifferentConfigurations() {
         // IVY-315
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-doubleretrieve.xml");

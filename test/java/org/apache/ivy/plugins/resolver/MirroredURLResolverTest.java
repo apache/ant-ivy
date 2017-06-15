@@ -28,10 +28,15 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-public class MirroredURLResolverTest extends TestCase {
+public class MirroredURLResolverTest {
 
     private IvySettings settings;
 
@@ -39,7 +44,8 @@ public class MirroredURLResolverTest extends TestCase {
 
     private ResolveData data;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         data = new ResolveData(engine, new ResolveOptions());
@@ -55,10 +61,12 @@ public class MirroredURLResolverTest extends TestCase {
                 .getResource("mirror-resolver-settings.xml"));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSolo() throws Exception {
         DependencyResolver resolver = settings.getResolver("solo");
         assertNotNull(resolver);
@@ -71,6 +79,7 @@ public class MirroredURLResolverTest extends TestCase {
         assertNotNull(rmr);
     }
 
+    @Test
     public void testFailover() throws Exception {
         DependencyResolver resolver = settings.getResolver("failover");
         assertNotNull(resolver);
@@ -83,6 +92,7 @@ public class MirroredURLResolverTest extends TestCase {
         assertNotNull(rmr);
     }
 
+    @Test
     public void testFail() throws Exception {
         DependencyResolver resolver = settings.getResolver("fail");
         assertNotNull(resolver);

@@ -24,12 +24,12 @@ import java.util.HashMap;
 
 public final class Version {
     static {
-        versions = new HashMap();
+        versions = new HashMap<>();
         register("version");
     }
-  
-    private static Map versions;
-  
+
+    private static Map<String, String> versions;
+
     public static void register(String module) {
         try {
             InputStream moduleVersion = Version.class.getResourceAsStream("/" + module
@@ -45,7 +45,7 @@ public final class Version {
             ex.printStackTrace();
         }
     }
-    
+
     private Version() {
     }
 }

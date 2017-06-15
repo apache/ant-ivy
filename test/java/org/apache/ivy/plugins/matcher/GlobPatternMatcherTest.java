@@ -17,14 +17,21 @@
  */
 package org.apache.ivy.plugins.matcher;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.regex.PatternSyntaxException;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @see GlobPatternMatcher
  */
 public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         setUp(new GlobPatternMatcher());
     }
 
@@ -36,6 +43,7 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
         return new String[] {"abc*", "12?3", "abc[123]"};
     }
 
+    @Test
     public void testValidRegexpSyntaxAsNormalCharacter() {
         Matcher matcher = patternMatcher.getMatcher(".");
         assertTrue(matcher.isExact());
@@ -45,6 +53,7 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
         assertFalse(matcher.matches("aa"));
     }
 
+    @Test
     public void testRegexpSyntaxAndGlob() {
         Matcher matcher = patternMatcher.getMatcher(".*");
         assertFalse(matcher.isExact());
@@ -56,11 +65,13 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
         assertTrue(matcher.matches(".abcdef"));
     }
 
+    @Test
     public void testImplementation() {
         Matcher matcher = patternMatcher.getMatcher("abc-123_ABC");
         assertTrue(matcher.isExact());
     }
 
+    @Test
     public void testQuoteMeta() {
         Matcher matcher = patternMatcher.getMatcher("\\*");
         assertTrue(matcher.matches("*"));
@@ -68,11 +79,13 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
         assertFalse(matcher.matches("Xsfsdfsd"));
     }
 
+    @Test
     public void testInvalidRegexpSyntaxAsNormalCharacter() {
         Matcher matcher = patternMatcher.getMatcher("(");
         assertTrue(matcher.matches("("));
     }
 
+    @Test
     public void testGlob() {
         Matcher matcher = patternMatcher.getMatcher("*ivy*");
         assertTrue(matcher.matches("ivy"));
@@ -81,12 +94,8 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
         assertTrue(matcher.matches("abcdefivy"));
     }
 
+    @Test(expected = PatternSyntaxException.class)
     public void testInvalidSyntax() {
-        try {
-            patternMatcher.getMatcher("[");
-            fail("Should fail on invalid regexp syntax");
-        } catch (PatternSyntaxException e) {
-
-        }
+        patternMatcher.getMatcher("[");
     }
 }

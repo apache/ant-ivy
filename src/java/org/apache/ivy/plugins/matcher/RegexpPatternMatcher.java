@@ -22,7 +22,7 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * A pattern matcher matching input using regular expressions.
- * 
+ *
  * @see Pattern
  */
 public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMatcher {
@@ -69,7 +69,7 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
             if (exact == null) {
                 exact = calculateExact();
             }
-            return exact.booleanValue();
+            return exact;
         }
 
         private Boolean calculateExact() {

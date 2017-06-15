@@ -17,20 +17,24 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
  * Base test classes for PatternMatcher testcase implementation
  */
-public abstract class AbstractPatternMatcherTest extends TestCase {
+public abstract class AbstractPatternMatcherTest {
     protected PatternMatcher patternMatcher;
 
-    protected abstract void setUp() throws Exception;
-
+    // used by setUp() in subclasses
     protected void setUp(PatternMatcher matcher) {
         this.patternMatcher = matcher;
     }
 
+    @Test
     public void testAnyExpression() {
         Matcher matcher = patternMatcher.getMatcher("*");
         assertTrue(matcher.matches(""));
@@ -38,6 +42,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
         assertTrue(matcher.matches("        "));
     }
 
+    @Test
     public void testIsExact() {
         // '*' is a special matcher
         Matcher matcher = patternMatcher.getMatcher("*");
@@ -47,20 +52,20 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
 
         // test some exact patterns for this matcher
         String[] expressions = getExactExpressions();
-        for (int i = 0; i < expressions.length; i++) {
-            matcher = patternMatcher.getMatcher(expressions[i]);
-            assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
+        for (String expression : expressions) {
+            matcher = patternMatcher.getMatcher(expression);
+            assertTrue("Expression '" + expression + "' should be exact", matcher.isExact());
             matcher.matches("The words aren't what they were.");
-            assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
+            assertTrue("Expression '" + expression + "' should be exact", matcher.isExact());
         }
 
         // test some inexact patterns for this matcher
         expressions = getInexactExpressions();
-        for (int i = 0; i < expressions.length; i++) {
-            matcher = patternMatcher.getMatcher(expressions[i]);
-            assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
+        for (String expression : expressions) {
+            matcher = patternMatcher.getMatcher(expression);
+            assertFalse("Expression '" + expression + "' should be inexact", matcher.isExact());
             matcher.matches("The words aren't what they were.");
-            assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
+            assertFalse("Expression '" + expression + "' should be inexact", matcher.isExact());
         }
 
     }
@@ -69,27 +74,20 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
 
     protected abstract String[] getInexactExpressions();
 
+    @Test(expected = NullPointerException.class)
     public void testNullInput() {
         Matcher matcher = patternMatcher.getMatcher("some expression");
-        try {
-            matcher.matches(null);
-            fail("Should fail for null input");
-        } catch (NullPointerException expected) {
-
-        }
+        matcher.matches(null);
     }
 
+    @Test(expected = NullPointerException.class)
     public void testNullExpression() {
-        try {
-            patternMatcher.getMatcher(null);
-            fail("Should fail for null expression");
-        } catch (NullPointerException expected) {
-
-        }
+        patternMatcher.getMatcher(null);
     }
 
     public abstract void testImplementation();
 
+    @Test
     public void testLoadTestMatches() {
         Matcher matcher = patternMatcher.getMatcher("this.is.an.expression");
         String[] inputs = {"this.is.an.expression", "this:is:an:expression",
@@ -100,6 +98,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoadTestGetMatcher() {
         String[] inputs = {"this.is.an.expression", "this:is:an:expression",
                 "this is an expression", "whatever this is", "maybe, maybe not"};

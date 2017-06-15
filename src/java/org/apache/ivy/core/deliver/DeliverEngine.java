@@ -53,13 +53,15 @@ public class DeliverEngine {
      * Delivers a resolved ivy file based upon last resolve call status. If resolve report file
      * cannot be found in cache, then it throws an IllegalStateException (maybe resolve has not been
      * called before ?).
-     * 
+     *
      * @param revision
      *            the revision to which the module should be delivered
      * @param destIvyPattern
      *            the pattern to which the delivered ivy file should be written
      * @param options
      *            the options with which deliver should be done
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
      */
     public void deliver(String revision, String destIvyPattern, DeliverOptions options)
             throws IOException, ParseException {
@@ -86,7 +88,7 @@ public class DeliverEngine {
      * Delivers a resolved ivy file based upon last resolve call status. If resolve report file
      * cannot be found in cache, then it throws an IllegalStateException (maybe resolve has not been
      * called before ?).
-     * 
+     *
      * @param mrid
      *            the module revision id of the module to deliver
      * @param revision
@@ -95,6 +97,8 @@ public class DeliverEngine {
      *            the pattern to which the delivered ivy file should be written
      * @param options
      *            the options with which deliver should be done
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
      */
     public void deliver(ModuleRevisionId mrid, String revision, String destIvyPattern,
             DeliverOptions options) throws IOException, ParseException {

@@ -18,7 +18,6 @@
 package org.apache.ivy.util.url;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
@@ -26,7 +25,7 @@ import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.Message;
 
 /**
- * 
+ *
  */
 public final class IvyAuthenticator extends Authenticator {
 
@@ -84,7 +83,7 @@ public final class IvyAuthenticator extends Authenticator {
             String proxyUser = System.getProperty("http.proxyUser");
             if ((proxyUser != null) && (proxyUser.trim().length() > 0)) {
                 String proxyPass = System.getProperty("http.proxyPassword", "");
-                Message.debug("authenicating to proxy server with username [" + proxyUser + "]");
+                Message.debug("authenticating to proxy server with username [" + proxyUser + "]");
                 result = new PasswordAuthentication(proxyUser, proxyPass.toCharArray());
             }
         } else {

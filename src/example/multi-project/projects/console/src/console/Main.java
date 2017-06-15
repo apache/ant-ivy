@@ -25,10 +25,10 @@ import java.lang.reflect.Method;
 
 
 public final class Main {
-    private static final Collection QUIT_COMMANDS = 
-        Arrays.asList(new String[] {"quit", "q", "exit"});
-    private static final Collection HELP_COMMANDS = 
-        Arrays.asList(new String[] {"help", "h", "?"});
+    private static final Collection<String> QUIT_COMMANDS =
+        Arrays.asList("quit", "q", "exit");
+    private static final Collection<String> HELP_COMMANDS =
+        Arrays.asList("help", "h", "?");
 
     public static void main(String[] a) throws Exception {
       BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -47,11 +47,11 @@ public final class Main {
           error(command);
           continue;
         }
-        
+
         try {
           String[] args = new String[split.length - 1];
           System.arraycopy(split, 1, args, 0, args.length);
-          Class cl = Class.forName(split[0] + ".Main");
+          Class<?> cl = Class.forName(split[0] + ".Main");
           Method m = cl.getMethod("main", new Class[] {String[].class});
           m.invoke(null, new Object[] {args});
         } catch (Exception ex) {
@@ -60,7 +60,7 @@ public final class Main {
         }
       }
     }
-    
+
     private static void help() {
       System.out.println("available commands:");
       System.out.println("\tquit: quit the console");
@@ -71,7 +71,7 @@ public final class Main {
            + "compute total size of files with given name in given dir");
       System.out.println("\thelp: displays this message");
     }
-            
+
     private static void error(String command) {
       System.out.println("unknown command " + command);
       System.out.println("type ? for help");

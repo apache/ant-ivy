@@ -18,23 +18,37 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.FileSet;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-public class IvyCacheFilesetTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class IvyCacheFilesetTest {
 
     private IvyCacheFileset fileset;
 
     private Project project;
 
-    protected void setUp() throws Exception {
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
+
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -44,10 +58,12 @@ public class IvyCacheFilesetTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         fileset.setSetid("simple-setid");
@@ -76,6 +92,7 @@ public class IvyCacheFilesetTest extends TestCase {
             revision, artifact, type, ext);
     }
 
+    @Test
     public void testEmptyConf() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         fileset.setSetid("emptyconf-setid");
@@ -90,30 +107,32 @@ public class IvyCacheFilesetTest extends TestCase {
         assertEquals(0, directoryScanner.getIncludedFiles().length);
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            fileset.setSetid("failure-setid");
-            fileset.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raised an exception
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        fileset.setSetid("failure-setid");
+        fileset.execute();
     }
 
+    /**
+     * Test must fail with default haltonfailure setting.
+     *
+     * @throws Exception
+     */
+    @Test(expected = BuildException.class)
     public void testInvalidPattern() throws Exception {
-        try {
-            project.setProperty("ivy.settings.file",
-                "test/repositories/ivysettings-invalidcachepattern.xml");
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
-            fileset.setSetid("simple-setid");
-            fileset.execute();
-            fail("failure didn't raised an exception with default haltonfailure setting");
-        } catch (BuildException ex) {
-            // ok => should raise an exception
-        }
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-invalidcachepattern.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        fileset.setSetid("simple-setid");
+        fileset.execute();
     }
 
+    @Test
     public void testHaltOnFailure() throws Exception {
         try {
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
@@ -125,6 +144,7 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
+    @Test
     public void testWithoutPreviousResolveAndNonDefaultCache() throws Exception {
         File cache2 = new File("build/cache2");
         cache2.mkdirs();
@@ -152,15 +172,101 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
-    public void testGetBaseDir() {
-        File base = null;
-        base = fileset.getBaseDir(base, new File("x/aa/b/c"));
+    @Test
+    public void getBaseDirCommonBaseDir() {
+        final File file1 = new File("x/aa/b/c").getParentFile().getAbsoluteFile();
+        final File file2 = new File("x/aa/b/d/e");
+        final File file3 = new File("x/ab/b/d");
+
+        // A common base deep inside the tree
+        File base = fileset.getBaseDir(file1, file2);
         assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
 
-        base = fileset.getBaseDir(base, new File("x/aa/b/d/e"));
-        assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
-
-        base = fileset.getBaseDir(base, new File("x/ab/b/d"));
+        // A common base on top directory of the tree
+        base = fileset.getBaseDir(base, file3);
         assertEquals(new File("x").getAbsoluteFile(), base);
+
+        // A common base only on the fs-root.
+        final File[] filesytemRoots = File.listRoots();
+        final File root1 = filesytemRoots[0];
+        final File file4 = new File(root1, "abcd/xyz");
+        final File file5 = new File(root1, "pqrs/xyz");
+        final File commonBase = fileset.getBaseDir(file4, file5);
+        assertEquals(
+            "Unexpected common base dir between '" + file4 + "' and '" + file5 + "'",
+            root1.getAbsoluteFile(),
+            commonBase.getAbsoluteFile()
+        );
+    }
+
+    /**
+     * Tests that the {@link IvyCacheFileset} fails with an exception if it can't determine a common base directory
+     * while dealing with cached artifacts
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1475">IVY-1475</a> for more details
+     */
+    @Test
+    public void getBaseDirNoCommonBaseDir() {
+        final File[] fileSystemRoots = File.listRoots();
+        if (fileSystemRoots.length == 1) {
+            // single file system root isn't what we are interested in, in this test method
+            return;
+        }
+
+        final File root1 = fileSystemRoots[0];
+        final File root2 = fileSystemRoots[1];
+        final File fileOnRoot1 = new File(root1, "abc/file1");
+        final File fileOnRoot2 = new File(root2, "abc/file2");
+        File base = fileset.getBaseDir(fileOnRoot1, fileOnRoot2);
+        assertNull(base);
+    }
+
+    @Test
+    public void getBaseDirNullValues() {
+        assertNull("Base directory was expected to be null", fileset.getBaseDir(null, new File("a")));
+        assertNull("Base directory was expected to be null", fileset.getBaseDir(new File("a"), null));
+    }
+
+    @Test
+    public void requireCommonBaseDirEmptyList() {
+        // we expect a BuildException when we try to find a (non-existent) common base dir
+        // across file system roots
+        expExc.expect(BuildException.class);
+        List<ArtifactDownloadReport> reports = Arrays.asList();
+        fileset.requireCommonBaseDir(reports);
+        fail("A BuildException was expected when trying to find a common base dir.");
+    }
+
+    @Test
+    public void requireCommonBaseDirNoCommon() {
+        final File[] fileSystemRoots = File.listRoots();
+        if (fileSystemRoots.length == 1) {
+            // single file system root isn't what we are interested in, in this test method
+            return;
+        }
+        // we expect a BuildException when we try to find a (non-existent) common base dir
+        // across file system roots
+        expExc.expect(BuildException.class);
+        List<ArtifactDownloadReport> reports = Arrays.asList(
+            artifactDownloadReport(new File(fileSystemRoots[0], "a/b/c/d")),
+            artifactDownloadReport(new File(fileSystemRoots[1], "a/b/e/f"))
+        );
+        fileset.requireCommonBaseDir(reports);
+        fail("A BuildException was expected when trying to find a common base dir.");
+    }
+
+    @Test
+    public void requireCommonBaseDirCommon() {
+        List<ArtifactDownloadReport> reports = Arrays.asList(
+            artifactDownloadReport(new File("a/b/c/d")),
+            artifactDownloadReport(new File("a/b/e/f"))
+        );
+        assertNotNull(fileset.requireCommonBaseDir(reports));
+    }
+    
+    private ArtifactDownloadReport artifactDownloadReport(File localFile) {
+        ArtifactDownloadReport report = new ArtifactDownloadReport(null);
+        report.setLocalFile(localFile);
+        return report;
     }
 }

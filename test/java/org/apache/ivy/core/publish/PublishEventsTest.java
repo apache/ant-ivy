@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -34,16 +33,21 @@ import org.apache.ivy.core.event.publish.StartArtifactPublishEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PublishEventsTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class PublishEventsTest {
 
     // maps ArtifactRevisionId to PublishTestCase instance.
-    private HashMap expectedPublications;
+    private HashMap<ArtifactRevisionId, PublishTestCase> expectedPublications;
 
     // expected values for the current artifact being published.
     private PublishTestCase currentTestCase;
@@ -70,7 +74,7 @@ public class PublishEventsTest extends TestCase {
 
     private ModuleDescriptor publishModule;
 
-    private Collection publishSources;
+    private Collection<String> publishSources;
 
     private PublishOptions publishOptions;
 
@@ -82,9 +86,8 @@ public class PublishEventsTest extends TestCase {
 
     private PublishEngine publishEngine;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         // reset test case state.
         resetCounters();
 
@@ -121,7 +124,7 @@ public class PublishEventsTest extends TestCase {
         assertEquals("sanity check", "foo", dataArtifact.getName());
         ivyArtifact = MDArtifact.newIvyArtifact(publishModule);
 
-        expectedPublications = new HashMap();
+        expectedPublications = new HashMap<>();
         expectedPublications.put(dataArtifact.getId(), new PublishTestCase(dataArtifact, dataFile,
                 true));
         expectedPublications.put(ivyArtifact.getId(), new PublishTestCase(ivyArtifact, ivyFile,
@@ -134,9 +137,8 @@ public class PublishEventsTest extends TestCase {
         IvyContext.getContext().push(PublishEventsTest.class.getName(), this);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
+    @After
+    public void tearDown() {
         // reset test state.
         resetCounters();
 
@@ -173,11 +175,12 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test a simple artifact publish, without errors or overwrite settings.
      */
+    @Test
     public void testPublishNoOverwrite() throws IOException {
         // no modifications to input required for this case -- call out to the resolver, and verify
         // that
         // all of our test counters have been incremented.
-        Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
+        Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("no missing artifacts", 0, missing.size());
 
@@ -191,6 +194,7 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test a simple artifact publish, with overwrite set to true.
      */
+    @Test
     public void testPublishWithOverwrite() throws IOException {
         // we expect the overwrite settings to be passed through the event listeners and into the
         // publisher.
@@ -199,7 +203,7 @@ public class PublishEventsTest extends TestCase {
         // set overwrite to true. InstrumentedResolver will verify that the correct argument value
         // was provided.
         publishOptions.setOverwrite(true);
-        Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
+        Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("no missing artifacts", 0, missing.size());
 
@@ -213,14 +217,14 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test an attempted publish with an invalid data file path.
      */
+    @Test
     public void testPublishMissingFile() throws IOException {
         // delete the datafile. the publish should fail
         // and the ivy artifact should still publish successfully.
         assertTrue("datafile has been destroyed", dataFile.delete());
-        PublishTestCase dataPublish = (PublishTestCase) expectedPublications.get(dataArtifact
-                .getId());
+        PublishTestCase dataPublish = expectedPublications.get(dataArtifact.getId());
         dataPublish.expectedSuccess = false;
-        Collection missing = publishEngine.publish(publishModule.getModuleRevisionId(),
+        Collection<Artifact> missing = publishEngine.publish(publishModule.getModuleRevisionId(),
             publishSources, "default", publishOptions);
         assertEquals("one missing artifact", 1, missing.size());
         assertSameArtifact("missing artifact was returned", dataArtifact, (Artifact) missing
@@ -237,12 +241,13 @@ public class PublishEventsTest extends TestCase {
     /**
      * Test an attempted publish in which the target resolver throws an IOException.
      */
+    @Test
     public void testPublishWithException() {
         // set an error to be thrown during publication of the data file.
         this.publishError = new IOException("boom!");
         // we don't care which artifact is attempted; either will fail with an IOException.
-        for (Iterator it = expectedPublications.values().iterator(); it.hasNext();) {
-            ((PublishTestCase) it.next()).expectedSuccess = false;
+        for (PublishTestCase publishTestCase : expectedPublications.values()) {
+            publishTestCase.expectedSuccess = false;
         }
 
         try {
@@ -347,9 +352,8 @@ public class PublishEventsTest extends TestCase {
                     assertEquals("event declares correct value for " + attributes[i], values[i],
                         event.getAttributes().get(attributes[i]));
                 }
-                // we test file separately, since it is hard to guaranteean exact path match, but we
-                // want
-                // to make sure that both paths point to the same canonical location on the
+                // we test file separately, since it is hard to guarantee an exact path match, but we
+                // want to make sure that both paths point to the same canonical location on the
                 // filesystem
                 String filePath = event.getAttributes().get("file").toString();
                 assertEquals("event declares correct value for file",
@@ -382,8 +386,7 @@ public class PublishEventsTest extends TestCase {
             Artifact artifact = startEvent.getArtifact();
             assertNotNull("event defines artifact", artifact);
 
-            PublishTestCase currentTestCase = (PublishTestCase) test.expectedPublications
-                    .remove(artifact.getId());
+            PublishTestCase currentTestCase = test.expectedPublications.remove(artifact.getId());
             assertNotNull("artifact " + artifact.getId() + " was expected for publication",
                 currentTestCase);
             assertFalse("current publication has not been visited yet",

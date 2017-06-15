@@ -18,7 +18,6 @@
 package org.apache.ivy.core.pack;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -37,7 +36,7 @@ public class OsgiBundlePacking extends ZipPacking {
     }
 
     @Override
-    protected void writeFile(InputStream zip, File f) throws FileNotFoundException, IOException {
+    protected void writeFile(InputStream zip, File f) throws IOException {
         // XXX maybe we should only unpack file listed by the 'Bundle-ClassPath' MANIFEST header ?
         if (f.getName().endsWith(".jar.pack.gz")) {
             zip = FileUtil.unwrapPack200(zip);

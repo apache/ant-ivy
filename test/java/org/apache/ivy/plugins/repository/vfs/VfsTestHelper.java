@@ -57,7 +57,7 @@ public class VfsTestHelper {
         // setup and initialize VFS
         fsManager = new StandardFileSystemManager() {
             protected void configurePlugins() throws FileSystemException {
-                // disable automatic loading potential unsupported extensions
+                // disable automatic loading of potentially unsupported extensions
             }
         };
         fsManager.setConfiguration(getClass().getResource(VFS_CONF).toString());
@@ -70,15 +70,15 @@ public class VfsTestHelper {
 
     /**
      * Generate a set of well-formed VFS resource identifiers
-     * 
+     *
      * @param resource
      *            name of the resource
-     * @return <class>List</class> of well-formed VFS reosurce identifiers
+     * @return <class>List</class> of well-formed VFS resource identifiers
      */
-    public List createVFSUriSet(String resource) {
-        List set = new ArrayList();
-        for (int i = 0; i < VfsURI.SUPPORTED_SCHEMES.length; i++) {
-            set.add(VfsURI.vfsURIFactory(VfsURI.SUPPORTED_SCHEMES[i], resource, ivy));
+    public List<VfsURI> createVFSUriSet(String resource) {
+        List<VfsURI> set = new ArrayList<>();
+        for (String scheme : VfsURI.SUPPORTED_SCHEMES) {
+            set.add(VfsURI.vfsURIFactory(scheme, resource, ivy));
         }
         return set;
     }

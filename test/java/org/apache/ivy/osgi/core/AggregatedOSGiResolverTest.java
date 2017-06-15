@@ -38,10 +38,13 @@ import org.apache.ivy.osgi.repo.AbstractOSGiResolver.RequirementStrategy;
 import org.apache.ivy.osgi.repo.AggregatedOSGiResolver;
 import org.apache.ivy.osgi.updatesite.UpdateSiteResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class AggregatedOSGiResolverTest extends TestCase {
+public class AggregatedOSGiResolverTest {
 
     private IvySettings settings;
 
@@ -53,6 +56,7 @@ public class AggregatedOSGiResolverTest extends TestCase {
 
     private AggregatedOSGiResolver resolver;
 
+    @Before
     public void setUp() throws Exception {
         settings = new IvySettings();
 
@@ -104,8 +108,8 @@ public class AggregatedOSGiResolverTest extends TestCase {
 
         ivy.getResolutionCacheManager().clean();
         RepositoryCacheManager[] caches = settings.getRepositoryCacheManagers();
-        for (int i = 0; i < caches.length; i++) {
-            caches[i].clean();
+        for (RepositoryCacheManager cache : caches) {
+            cache.clean();
         }
 
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
@@ -143,18 +147,21 @@ public class AggregatedOSGiResolverTest extends TestCase {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @Test
     public void testResolveInUpdatesite() throws Exception {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy", "2.0.0.final_20090108225011");
         genericTestResolveDownload(resolver, mrid);
     }
 
+    @Test
     public void testResolveInObr() throws Exception {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy.osgi.testbundle", "1.2.3");
         genericTestResolveDownload(resolver, mrid);
     }
 
+    @Test
     public void testCrossResolve() throws Exception {
         ModuleRevisionId mrid1 = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
             "org.apache.ivy.osgi.testbundle1", "1.2.3");

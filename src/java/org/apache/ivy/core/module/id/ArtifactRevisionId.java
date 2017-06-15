@@ -24,7 +24,7 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 /**
  * Identifies an artifact in a particular module revision
- * 
+ *
  * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ArtifactRevisionId extends UnmodifiableExtendableItem {

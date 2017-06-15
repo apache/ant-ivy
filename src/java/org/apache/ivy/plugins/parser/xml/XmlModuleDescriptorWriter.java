@@ -339,7 +339,7 @@ public final class XmlModuleDescriptorWriter {
     /**
      * Writes the extra attributes of the given {@link ExtendableItem} to the given
      * <tt>PrintWriter</tt>.
-     * 
+     *
      * @param item
      *            the {@link ExtendableItem}, cannot be <tt>null</tt>
      * @param out
@@ -354,7 +354,7 @@ public final class XmlModuleDescriptorWriter {
     /**
      * Writes the specified <tt>Map</tt> containing the extra attributes to the given
      * <tt>PrintWriter</tt>.
-     * 
+     *
      * @param extra
      *            the extra attributes, can be <tt>null</tt>
      * @param out
@@ -552,6 +552,7 @@ public final class XmlModuleDescriptorWriter {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static boolean requireInnerInfoElement(ModuleDescriptor md) {
         return md.getExtraInfo().size() > 0 || md.getExtraInfos().size() > 0
                 || md.getHomePage() != null

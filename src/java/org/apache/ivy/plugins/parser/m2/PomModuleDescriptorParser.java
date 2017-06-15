@@ -59,11 +59,13 @@ import org.xml.sax.SAXException;
 /**
  * A parser for Maven 2 POM.
  * <p>
- * The configurations used in the generated module descriptor mimics the behavior defined by maven 2
- * scopes, as documented here:<br/>
- * http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html The
- * PomModuleDescriptorParser use a PomDomReader to read the pom, and the PomModuleDescriptorBuilder
- * to write the ivy module descriptor using the info read by the PomDomReader.
+ * The configurations used in the generated module descriptor mimics the behavior defined by Maven 2
+ * scopes, as documented
+ * <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">here</a>.
+ * The PomModuleDescriptorParser use a PomDomReader to read the pom, and the
+ * PomModuleDescriptorBuilder to write the ivy module descriptor using the info read by the
+ * PomDomReader.
+ * </p>
  */
 public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
@@ -176,7 +178,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             + " relocated to " + relocation
                             + ". Please update your dependency to directly use the right version.");
                     Message.warn("Resolution will only pick dependencies of the relocated element."
-                            + "  Artefact and other metadata will be ignored.");
+                            + "  Artifact and other metadata will be ignored.");
                     ResolvedModuleRevision relocatedModule = parseOtherPom(ivySettings, relocation);
                     if (relocatedModule == null) {
                         throw new ParseException(
@@ -233,7 +235,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     // add plugins from parent
                     for (PomDependencyMgt pomDependencyMgt : PomModuleDescriptorBuilder
                             .getPlugins(parentDescr)) {
-                        mdBuilder.addPlugin((PomDependencyMgt) pomDependencyMgt);
+                        mdBuilder.addPlugin(pomDependencyMgt);
                     }
                 }
 
@@ -399,8 +401,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             return null;
         } else {
             dd = NameSpaceHelper.toSystem(dd, ivySettings.getContextNamespace());
-            ResolvedModuleRevision otherModule = resolver.getDependency(dd, data);
-            return otherModule;
+            return resolver.getDependency(dd, data);
         }
     }
 

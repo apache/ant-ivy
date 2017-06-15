@@ -23,15 +23,21 @@ import java.io.FileReader;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.util.FileUtil;
+
 import org.apache.tools.ant.Project;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IvyRepositoryReportTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class IvyRepositoryReportTest {
 
     private IvyRepositoryReport report;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
@@ -41,10 +47,12 @@ public class IvyRepositoryReportTest extends TestCase {
         System.setProperty("ivy.cache.dir", TestHelper.cache.getAbsolutePath());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
+    @Test
     public void testSimple() throws Exception {
         report.setOrganisation("org1");
         report.setOutputname("testsimple");
@@ -56,14 +64,15 @@ public class IvyRepositoryReportTest extends TestCase {
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
 
         // check presence of the modules
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.1\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.2\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.3\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.4\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.5\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.6\"") != -1);
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.1\""));
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.2\""));
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.3\""));
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.4\""));
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.5\""));
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.6\""));
     }
 
+    @Test
     public void testBranchBeforeModule() throws Exception {
         report.getProject().setProperty("ivy.settings.file",
             "test/repositories/IVY-716/ivysettings.xml");
@@ -76,13 +85,14 @@ public class IvyRepositoryReportTest extends TestCase {
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
 
         // check presence of the modules
-        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.1\"") != -1);
+        assertTrue(g.contains("<module organisation=\"org1\" name=\"mod1.1\""));
 
         // check presence of the branches
-        assertTrue(g.indexOf("<revision name=\"1.0\" branch=\"branch1\"") != -1);
-        assertTrue(g.indexOf("<revision name=\"1.0\" branch=\"branch2\"") != -1);
+        assertTrue(g.contains("<revision name=\"1.0\" branch=\"branch1\""));
+        assertTrue(g.contains("<revision name=\"1.0\" branch=\"branch2\""));
     }
 
+    @Test
     public void testPatternWithoutOrganisation() throws Exception {
         report.getProject().setProperty("ivy.settings.file",
             "test/repositories/IVY-729/ivysettings.xml");
@@ -95,8 +105,8 @@ public class IvyRepositoryReportTest extends TestCase {
         String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
 
         // check presence of the modules
-        assertTrue(g.indexOf("<module organisation=\"null\" name=\"a\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"null\" name=\"b\"") != -1);
-        assertTrue(g.indexOf("<module organisation=\"null\" name=\"c\"") != -1);
+        assertTrue(g.contains("<module organisation=\"null\" name=\"a\""));
+        assertTrue(g.contains("<module organisation=\"null\" name=\"b\""));
+        assertTrue(g.contains("<module organisation=\"null\" name=\"c\""));
     }
 }

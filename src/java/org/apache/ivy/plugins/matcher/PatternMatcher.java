@@ -19,9 +19,10 @@ package org.apache.ivy.plugins.matcher;
 
 /**
  * Interface for a pattern matcher.
- * <p/>
+ * <p>
  * The pattern matcher is the main abstraction regarding the matching of an expression.
  * Implementation may vary depending on the expression syntax handling that is desired.
+ * </p>
  */
 public interface PatternMatcher {
 
@@ -52,7 +53,7 @@ public interface PatternMatcher {
 
     /**
      * Return the matcher for the given expression.
-     * 
+     *
      * @param expression
      *            the expression to be matched. Cannot be null ?
      * @return the matcher instance for the given expression. Never null.
@@ -61,7 +62,7 @@ public interface PatternMatcher {
 
     /**
      * return the name of this pattern matcher
-     * 
+     *
      * @return the name of this pattern matcher. Never null.
      * @see #EXACT
      * @see #REGEXP

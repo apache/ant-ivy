@@ -160,7 +160,7 @@ public class ResolveData {
     /**
      * Returns the VisitNode currently visited, or <code>null</code> if there is no node currently
      * visited in this context.
-     * 
+     *
      * @return the VisitNode currently visited
      */
     public VisitNode getCurrentVisitNode() {
@@ -170,8 +170,8 @@ public class ResolveData {
     /**
      * Sets the currently visited node. WARNING: This should only be called by Ivy core
      * ResolveEngine!
-     * 
-     * @param currentVisitNode
+     *
+     * @param currentVisitNode VisitNode
      */
     void setCurrentVisitNode(VisitNode currentVisitNode) {
         this.currentVisitNode = currentVisitNode;
@@ -196,7 +196,7 @@ public class ResolveData {
     /**
      * Updates the visit data currently associated with the given mrid with the given node and the
      * visit nodes of the old visitData for the given rootModuleConf
-     * 
+     *
      * @param mrid
      *            the module revision id for which the update should be done
      * @param node
@@ -217,7 +217,7 @@ public class ResolveData {
         }
         // replace visit data in Map (discards old one)
         this.visitData.put(mrid, keptVisitData);
-        // update visit data with discarde visit nodes
+        // update visit data with discarded visit nodes
         keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
 
         report.updateDependency(mrid, node);
@@ -299,7 +299,7 @@ public class ResolveData {
             // mediating dd through dependers stack
             List<VisitNode> dependers = new ArrayList<VisitNode>(current.getPath());
             // the returned path contains the currently visited node, we are only interested in
-            // the dependers, so we remove the currently visted node from the end
+            // the dependers, so we remove the currently visited node from the end
             dependers.remove(dependers.size() - 1);
             // we want to apply mediation going up in the dependers stack, not the opposite
             Collections.reverse(dependers);
@@ -327,7 +327,7 @@ public class ResolveData {
      * this decision, even when included in a chain. The chain responsibility is only to set this
      * current resolved module revision to enable the resolver to take the decision.
      * </p>
-     * 
+     *
      * @param mr
      *            the last {@link ResolvedModuleRevision} which has been currently resolved.
      */
@@ -340,7 +340,7 @@ public class ResolveData {
      * <p>
      * It can be <code>null</code>.
      * </p>
-     * 
+     *
      * @return the last {@link ResolvedModuleRevision} which has been currently resolved.
      */
     public ResolvedModuleRevision getCurrentResolvedModuleRevision() {

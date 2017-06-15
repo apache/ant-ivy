@@ -69,7 +69,7 @@ public class OBRXMLParser {
             this.baseUri = baseUri;
             addChild(new ResourceHandler(), new ChildElementHandler<ResourceHandler>() {
                 @Override
-                public void childHanlded(ResourceHandler child) {
+                public void childHandled(ResourceHandler child) {
                     repo.addBundle(child.bundleInfo);
                 }
             });
@@ -112,7 +112,7 @@ public class OBRXMLParser {
 
             addChild(new ResourceSourceHandler(), new ChildElementHandler<ResourceSourceHandler>() {
                 @Override
-                public void childHanlded(ResourceSourceHandler child) {
+                public void childHandled(ResourceSourceHandler child) {
                     String uri = child.getBufferedChars().trim();
                     if (!uri.endsWith(".jar")) {
                         // the maven plugin is putting some useless source url sometimes...
@@ -133,27 +133,27 @@ public class OBRXMLParser {
             addChild(new ResourceDescriptionHandler(),
                 new ChildElementHandler<ResourceDescriptionHandler>() {
                     @Override
-                    public void childHanlded(ResourceDescriptionHandler child) {
+                    public void childHandled(ResourceDescriptionHandler child) {
                         bundleInfo.setDescription(child.getBufferedChars().trim());
                     }
                 });
             addChild(new ResourceDocumentationHandler(),
                 new ChildElementHandler<ResourceDocumentationHandler>() {
                     @Override
-                    public void childHanlded(ResourceDocumentationHandler child) {
+                    public void childHandled(ResourceDocumentationHandler child) {
                         bundleInfo.setDocumentation(child.getBufferedChars().trim());
                     }
                 });
             addChild(new ResourceLicenseHandler(),
                 new ChildElementHandler<ResourceLicenseHandler>() {
                     @Override
-                    public void childHanlded(ResourceLicenseHandler child) {
+                    public void childHandled(ResourceLicenseHandler child) {
                         bundleInfo.setLicense(child.getBufferedChars().trim());
                     }
                 });
             addChild(new ResourceSizeHandler(), new ChildElementHandler<ResourceSizeHandler>() {
                 @Override
-                public void childHanlded(ResourceSizeHandler child) {
+                public void childHandled(ResourceSizeHandler child) {
                     String size = child.getBufferedChars().trim();
                     try {
                         bundleInfo.setSize(Integer.valueOf(size));
@@ -166,7 +166,7 @@ public class OBRXMLParser {
             });
             addChild(new CapabilityHandler(), new ChildElementHandler<CapabilityHandler>() {
                 @Override
-                public void childHanlded(CapabilityHandler child) throws SAXParseException {
+                public void childHandled(CapabilityHandler child) throws SAXParseException {
 
                     try {
                         CapabilityAdapter.adapt(bundleInfo, child.capability);
@@ -178,7 +178,7 @@ public class OBRXMLParser {
             });
             addChild(new RequireHandler(), new ChildElementHandler<RequireHandler>() {
                 @Override
-                public void childHanlded(RequireHandler child) throws SAXParseException {
+                public void childHandled(RequireHandler child) throws SAXParseException {
                     try {
                         RequirementAdapter.adapt(bundleInfo, child.requirement);
                     } catch (UnsupportedFilterException e) {
@@ -193,7 +193,7 @@ public class OBRXMLParser {
             });
             addChild(new ExtendHandler(), new ChildElementHandler<ExtendHandler>() {
                 @Override
-                public void childHanlded(ExtendHandler child) throws SAXParseException {
+                public void childHandled(ExtendHandler child) throws SAXParseException {
                     // TODO handle fragment host
                 }
             });
@@ -203,22 +203,13 @@ public class OBRXMLParser {
         protected void handleAttributes(Attributes atts) throws SAXException {
             String symbolicname = atts.getValue(SYMBOLIC_NAME);
             if (symbolicname == null) {
-                log(Message.MSG_ERR, "Resource with no symobilc name, skipping it.");
+                log(Message.MSG_ERR, "Resource with no symbolic name, skipping it.");
                 skip();
                 return;
             }
 
             String v = getOptionalAttribute(atts, VERSION, DEFAULT_VERSION);
-            Version version;
-            try {
-                version = new Version(v);
-            } catch (ParseException e) {
-                log(Message.MSG_ERR, "Incorrect resource version: " + v + ". The resource "
-                        + symbolicname + " is then ignored.");
-                skip();
-                return;
-            }
-
+            Version version = new Version(v);
             bundleInfo = new BundleInfo(symbolicname, version);
             bundleInfo.setPresentationName(atts.getValue(PRESENTATION_NAME));
             String uri = atts.getValue(URI);
@@ -308,7 +299,7 @@ public class OBRXMLParser {
             addChild(new CapabilityPropertyHandler(),
                 new ChildElementHandler<CapabilityPropertyHandler>() {
                     @Override
-                    public void childHanlded(CapabilityPropertyHandler child) {
+                    public void childHandled(CapabilityPropertyHandler child) {
                         String name = child.name;
                         String value = child.value;
                         String type = child.type;
@@ -382,7 +373,7 @@ public class OBRXMLParser {
                 try {
                     filter = OSGiFilterParser.parse(filterText);
                 } catch (ParseException e) {
-                    throw new SAXParseException("Requirement with illformed filter: " + filterText,
+                    throw new SAXParseException("Requirement with ill-formed filter: " + filterText,
                             getLocator());
                 }
             }
@@ -392,10 +383,10 @@ public class OBRXMLParser {
 
             requirement = new Requirement(name, filter);
             if (optional != null) {
-                requirement.setOptional(optional.booleanValue());
+                requirement.setOptional(optional);
             }
             if (multiple != null) {
-                requirement.setMultiple(multiple.booleanValue());
+                requirement.setMultiple(multiple);
             }
         }
 

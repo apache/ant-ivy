@@ -116,7 +116,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, ResolverSettings,
         ResolveEngineSettings, RetrieveEngineSettings, RepositoryManagementEngineSettings {
-    private static final long INTERUPT_TIMEOUT = 2000;
+    private static final long INTERRUPT_TIMEOUT = 2000;
 
     private Map<String, Class<?>> typeDefs = new HashMap<String, Class<?>>();
 
@@ -311,6 +311,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Call this method to ask ivy to configure some variables using either a remote or a local
      * properties file
+     *
+     * @param remote boolean
      */
     public synchronized void configureRepositories(boolean remote) {
         if (!repositoriesConfigured) {
@@ -420,8 +422,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * Default initialization of settings, useful when you don't want to load your settings from a
      * settings file or URL, but prefer to set them manually. By calling this method you will still
      * have the basic initialization done when loading settings.
-     * 
-     * @throws IOException
+     *
+     * @throws IOException if something goes wrong
      */
     public synchronized void defaultInit() throws IOException {
         if (getVariable("ivy.default.ivy.user.dir") != null) {
@@ -491,7 +493,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Sets a deprecated variable with the value of the new variable
-     * 
+     *
      * @param deprecatedKey
      *            the deprecated variable name
      * @param newKey
@@ -611,7 +613,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Substitute variables in the given string by their value found in the current set of variables
-     * 
+     *
      * @param str
      *            the string in which substitution should be made
      * @return the string where all current ivy variables have been substituted by their value If
@@ -624,7 +626,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Substitute variables in the given map values by their value found in the current set of
      * variables
-     * 
+     *
      * @param strings
      *            the map of strings in which substitution should be made
      * @return a new map of strings in which all current ivy variables in values have been
@@ -641,8 +643,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Returns the variables loaded in configuration file. Those variables may better be seen as ant
      * properties
-     * 
-     * @return
+     *
+     * @return IvyVariableContainer
      */
     public synchronized IvyVariableContainer getVariables() {
         return variableContainer;
@@ -775,6 +777,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * regular expressions as explained in Pattern class may be used in attributes
+     *
+     * @param attributes Map
+     * @param matcher PatternMatcher
+     * @param resolverName String
+     * @param branch String
+     * @param conflictManager String
+     * @param resolveMode String
      */
     public synchronized void addModuleConfiguration(Map<String, String> attributes,
             PatternMatcher matcher, String resolverName, String branch, String conflictManager,
@@ -789,12 +798,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * <p>
      * If the specified file name is relative it is resolved with respect to the settings's base
      * directory.
-     * 
+     *
      * @param fileName
      *            The name of the file to resolve. Must not be <code>null</code>.
-     * 
+     *
      * @return the resolved File.
-     * 
+     *
      */
     public synchronized File resolveFile(String fileName) {
         return FileUtil.resolveFile(baseDir, fileName);
@@ -1203,6 +1212,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Returns the file names of the files that should be ignored when creating a file listing.
+     *
+     * @return String[]
      */
     public synchronized String[] getIgnorableFilenames() {
         return listingIgnore.toArray(new String[listingIgnore.size()]);
@@ -1211,8 +1222,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Filters the names list by removing all names that should be ignored as defined by the listing
      * ignore list
-     * 
-     * @param names
+     *
+     * @param names ditto
      */
     public synchronized void filterIgnore(Collection<String> names) {
         names.removeAll(listingIgnore);
@@ -1236,6 +1247,18 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public synchronized String getVariable(String name) {
         return variableContainer.getVariable(name);
+    }
+
+    /**
+     * Returns a variable as boolean value.
+     * @param name name of the variable
+     * @param valueIfUnset value if the variable is unset
+     * @return <tt>true</tt> if the variable is <tt>'true'</tt> (ignoring case)
+     *     or the value of <i>valueIfUnset</i> if the variable is <tt>null</tt>
+     */
+    public synchronized boolean getVariableAsBoolean(String name, boolean valueIfUnset) {
+        String var = getVariable(name);
+        return var == null ? valueIfUnset : Boolean.valueOf(var);
     }
 
     public synchronized ConflictManager getDefaultConflictManager() {
@@ -1324,43 +1347,36 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized boolean logModulesInUse() {
-        String var = getVariable("ivy.log.modules.in.use");
-        return var == null || Boolean.valueOf(var).booleanValue();
+        return getVariableAsBoolean("ivy.log.modules.in.use", true);
     }
 
     public synchronized boolean logModuleWhenFound() {
-        String var = getVariable("ivy.log.module.when.found");
-        return var == null || Boolean.valueOf(var).booleanValue();
+        return getVariableAsBoolean("ivy.log.module.when.found", true);
     }
 
     public synchronized boolean logResolvedRevision() {
-        String var = getVariable("ivy.log.resolved.revision");
-        return var == null || Boolean.valueOf(var).booleanValue();
+        return getVariableAsBoolean("ivy.log.resolved.revision", true);
     }
 
     public synchronized boolean debugConflictResolution() {
         if (debugConflictResolution == null) {
-            String var = getVariable("ivy.log.conflict.resolution");
-            debugConflictResolution = Boolean.valueOf(var != null
-                    && Boolean.valueOf(var).booleanValue());
+            debugConflictResolution = getVariableAsBoolean("ivy.log.conflict.resolution", false);
         }
-        return debugConflictResolution.booleanValue();
+        return debugConflictResolution;
     }
 
     public synchronized boolean debugLocking() {
         if (debugLocking == null) {
-            String var = getVariable("ivy.log.locking");
-            debugLocking = Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
+            debugLocking = getVariableAsBoolean("ivy.log.locking", false);
         }
-        return debugLocking.booleanValue();
+        return debugLocking;
     }
 
     public synchronized boolean dumpMemoryUsage() {
         if (dumpMemoryUsage == null) {
-            String var = getVariable("ivy.log.memory");
-            dumpMemoryUsage = Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
+            dumpMemoryUsage = getVariableAsBoolean("ivy.log.memory", false);
         }
-        return dumpMemoryUsage.booleanValue();
+        return dumpMemoryUsage;
     }
 
     public synchronized boolean logNotConvertedExclusionRule() {
@@ -1422,7 +1438,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public final long getInterruptTimeout() {
-        return INTERUPT_TIMEOUT;
+        return INTERRUPT_TIMEOUT;
     }
 
     public synchronized Collection<DependencyResolver> getResolvers() {
@@ -1443,8 +1459,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Use a different variable container.
-     * 
-     * @param variables
+     *
+     * @param variables IvyVariableContainer
      */
     public synchronized void setVariableContainer(IvyVariableContainer variables) {
         variableContainer = variables;
@@ -1490,7 +1506,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * Validates the settings, throwing an {@link IllegalStateException} if the current state is not
      * valid.
-     * 
+     *
      * @throws IllegalStateException
      *             if the settings is not valid.
      */
@@ -1508,8 +1524,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     /**
      * Validates all {@link Validatable} objects in the collection.
-     * 
-     * @param objects
+     *
+     * @param values
      *            the collection of objects to validate.
      * @throws IllegalStateException
      *             if any of the objects is not valid.

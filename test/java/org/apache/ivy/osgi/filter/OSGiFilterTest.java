@@ -17,19 +17,32 @@
  */
 package org.apache.ivy.osgi.filter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.ParseException;
 
 import org.apache.ivy.osgi.filter.CompareFilter.Operator;
+import org.junit.Test;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+public class OSGiFilterTest {
 
-public class OSGiFilterTest extends TestCase {
+    @Test(expected = ParseException.class)
+    public void testParserFailureNoParens() throws ParseException {
+        OSGiFilterParser.parse("c>2");
+    }
 
+    @Test(expected = ParseException.class)
+    public void testParserFailureEmpty() throws ParseException {
+        OSGiFilterParser.parse("");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testParserFailureSingleParens() throws ParseException {
+        OSGiFilterParser.parse(")");
+    }
+
+    @Test
     public void testParser() throws Exception {
-        assertParseFail("c>2");
-        assertParseFail("");
-        assertParseFail(")");
         OSGiFilter cgt2 = new CompareFilter("c", Operator.GREATER_THAN, "2");
         checkParse(cgt2, "(c>2)");
         OSGiFilter twoeqd = new CompareFilter("2", Operator.EQUALS, "d");
@@ -53,17 +66,8 @@ public class OSGiFilterTest extends TestCase {
             "(&     (version>=3.5.0)     (!(version>=4.0.0))     (bundle=org.eclipse.core.runtime)    )");
     }
 
-    private void assertParseFail(String toParse) {
-        try {
-            OSGiFilterParser.parse(toParse);
-            Assert.fail("Expecting a ParseException");
-        } catch (ParseException e) {
-            // OK
-        }
-    }
-
     private void checkParse(OSGiFilter expected, String toParse) throws ParseException {
         OSGiFilter parsed = OSGiFilterParser.parse(toParse);
-        Assert.assertEquals(expected, parsed);
+        assertEquals(expected, parsed);
     }
 }

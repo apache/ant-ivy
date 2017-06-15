@@ -25,8 +25,14 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
@@ -121,6 +127,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private PackagingManager packagingManager = new PackagingManager();
 
+    private final List<ConfiguredTTL> configuredTTLs = new ArrayList<ConfiguredTTL>();
+
     public DefaultRepositoryCacheManager() {
     }
 
@@ -134,9 +142,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return settings;
     }
 
-    public void setSettings(IvySettings settings) {
+    public void setSettings(final IvySettings settings) {
         this.settings = settings;
         packagingManager.setSettings(settings);
+        // process and setup the configured TTLs (which weren't yet processed since they needed a settings instance to be present)
+        for (final ConfiguredTTL configuredTTL : configuredTTLs) {
+            this.addTTL(configuredTTL.attributes,
+                    configuredTTL.matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(configuredTTL.matcher), configuredTTL.duration);
+        }
+        // clear off the configured TTLs since we have now processed them and created TTL rules out of them
+        this.configuredTTLs.clear();
     }
 
     public File getIvyFileInCache(ModuleRevisionId mrid) {
@@ -242,15 +257,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         ttlRules.defineRule(new MapMatcher(attributes, matcher), new Long(duration));
     }
 
-    public void addConfiguredTtl(Map<String, String> attributes) {
-        String duration = attributes.remove("duration");
-        if (duration == null) {
+    public void addConfiguredTtl(final Map<String, String> attributes) {
+        final String durationValue = attributes.get("duration");
+        if (durationValue == null) {
             throw new IllegalArgumentException("'duration' attribute is mandatory for ttl");
         }
-        String matcher = attributes.remove("matcher");
-        addTTL(attributes,
-            matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(matcher),
-            parseDuration(duration));
+        final long duration = parseDuration(durationValue);
+        final ConfiguredTTL configuredTTL = new ConfiguredTTL(duration, attributes.get("matcher"), attributes);
+        // Processing TTLs requires access to an initialized/usable IvySettings instance.
+        // we keep track of these configured TTLs and process them when the IvySettings instance becomes usable
+        this.configuredTTLs.add(configuredTTL);
     }
 
     public void setMemorySize(int size) {
@@ -306,7 +322,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * True if this cache should check lastmodified date to know if ivy files are up to date.
-     * 
+     *
      * @return boolean
      */
     public boolean isCheckmodified() {
@@ -318,28 +334,33 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void setCheckmodified(boolean check) {
-        checkmodified = Boolean.valueOf(check);
+        checkmodified = check;
     }
 
     /**
      * True if this cache should use artifacts original location when possible, false if they should
      * be copied to cache.
+     *
+     * @return boolean
      */
     public boolean isUseOrigin() {
         if (useOrigin == null) {
             return getSettings() != null && getSettings().isDefaultUseOrigin();
         }
-        return useOrigin.booleanValue();
+        return useOrigin;
     }
 
     public void setUseOrigin(boolean b) {
-        useOrigin = Boolean.valueOf(b);
+        useOrigin = b;
     }
 
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system.
      * This is usually in the cache, but it can be directly in the repository if it is local and if
      * the resolve has been done with useOrigin = true
+     *
+     * @param artifact Artifact
+     * @return File
      */
     public File getArchiveFileInCache(Artifact artifact) {
         ArtifactOrigin origin = getSavedArtifactOrigin(artifact);
@@ -350,6 +371,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * Returns a File object pointing to where the artifact can be found on the local file system.
      * This is usually in the cache, but it can be directly in the repository if it is local and if
      * the resolve has been done with useOrigin = true
+     *
+     * @param artifact Artifact
+     * @param origin ArtifactOrigin
+     * @return File
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
@@ -368,6 +393,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * using or not the original location depending on the availability of origin information
      * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
      * always return the file in the cache.
+     *
+     * @param artifact Artifact
+     * @param origin ArtifactOrigin
+     * @param useOrigin boolean
+     * @return File
      */
     private File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
         if (useOrigin && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
@@ -390,7 +420,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * Saves the information of which resolver was used to resolve a md, so that this info can be
      * retrieve later (even after a jvm restart) by getSavedResolverName(ModuleDescriptor md)
-     * 
+     *
      * @param md
      *            the module descriptor resolved
      * @param name
@@ -406,9 +436,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * Saves the information of which resolver was used to resolve a md, so that this info can be
      * retrieve later (even after a jvm restart) by getSavedArtResolverName(ModuleDescriptor md)
-     * 
+     *
      * @param md
      *            the module descriptor resolved
+     * @param metadataResolverName
+     *            metadata resolver name
      * @param artifactResolverName
      *            artifact resolver name
      */
@@ -471,7 +503,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
-            return ArtifactOrigin.unkwnown(artifact);
+            return ArtifactOrigin.unknown(artifact);
         }
         try {
             PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
@@ -481,11 +513,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             String exists = cdf.getProperty(getExistsKey(artifact));
             String original = cdf.getProperty(getOriginalKey(artifact));
 
-            boolean isLocal = Boolean.valueOf(local).booleanValue();
+            boolean isLocal = Boolean.valueOf(local);
 
             if (location == null) {
                 // origin has not been specified, return null
-                return ArtifactOrigin.unkwnown(artifact);
+                return ArtifactOrigin.unknown(artifact);
             }
 
             if (original != null) {
@@ -560,7 +592,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 origin.setLastChecked(Long.valueOf(lastChecked));
             }
             if (exists != null) {
-                origin.setExist(Boolean.parseBoolean(exists));
+                origin.setExist(Boolean.valueOf(exists));
             }
 
             return origin;
@@ -571,7 +603,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Creates the unique prefix key that will reference the artifact within the properties.
-     * 
+     *
      * @param artifact
      *            the artifact to create the unique key from. Cannot be null.
      * @return the unique prefix key as a string.
@@ -586,7 +618,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the location of the artifact.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact location.
@@ -598,7 +630,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify if the artifact is local.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact locality.
@@ -610,7 +642,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the last time the artifact was checked to be up to date.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact's last check date.
@@ -622,7 +654,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the existence of the remote artifact.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the existence of the artifact.
@@ -634,7 +666,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Returns the key used to identify the original artifact.
-     * 
+     *
      * @param artifact
      *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the original artifact.
@@ -667,16 +699,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public ResolvedModuleRevision findModuleInCache(DependencyDescriptor dd,
             ModuleRevisionId requestedRevisionId, CacheMetadataOptions options,
             String expectedResolver) {
-        ModuleRevisionId mrid = requestedRevisionId;
         if (isCheckmodified(dd, requestedRevisionId, options)) {
-            Message.verbose("don't use cache for " + mrid + ": checkModified=true");
+            Message.verbose("don't use cache for " + requestedRevisionId + ": checkModified=true");
             return null;
         }
         if (!options.isUseCacheOnly() && isChanging(dd, requestedRevisionId, options)) {
-            Message.verbose("don't use cache for " + mrid + ": changing=true");
+            Message.verbose("don't use cache for " + requestedRevisionId + ": changing=true");
             return null;
         }
-        return doFindModuleInCache(mrid, options, expectedResolver);
+        return doFindModuleInCache(requestedRevisionId, options, expectedResolver);
     }
 
     private ResolvedModuleRevision doFindModuleInCache(ModuleRevisionId mrid,
@@ -785,10 +816,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Choose write module descriptor parser for a given moduleDescriptor
-     * 
+     *
      * @param moduleDescriptorFile
      *            a given module descriptor
-     * @return
+     * @return ModuleDescriptorParser
      */
     protected ModuleDescriptorParser getModuleDescriptorParser(File moduleDescriptorFile) {
         return XmlModuleDescriptorParser.getInstance();
@@ -1152,7 +1183,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Compute a SHA1 of the resource name, encoded in base64, so we can use it as a file name.
-     * 
+     *
      * @param resource
      *            the resource which name will be hashed
      * @return the hash
@@ -1168,7 +1199,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     /**
      * Check that a cached file can be considered up to date and thus not downloaded
-     * 
+     *
      * @param archiveFile
      *            the file in the cache
      * @param resource
@@ -1199,8 +1230,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void originalToCachedModuleDescriptor(DependencyResolver resolver,
-            ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
-            ResolvedModuleRevision rmr, ModuleDescriptorWriter writer) {
+                                                 ResolvedResource originalMetadataRef, Artifact requestedMetadataArtifact,
+                                                 ResolvedModuleRevision rmr, ModuleDescriptorWriter writer) {
         ModuleDescriptor md = rmr.getDescriptor();
         Artifact originalMetadataArtifact = getOriginalMetadataArtifact(requestedMetadataArtifact);
         File mdFileInCache = getIvyFileInCache(md.getResolvedModuleRevisionId());
@@ -1212,7 +1243,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
         try {
             File originalFileInCache = getArchiveFileInCache(originalMetadataArtifact);
-            writer.write(orginalMetadataRef, md, originalFileInCache, mdFileInCache);
+            writer.write(originalMetadataRef, md, originalFileInCache, mdFileInCache);
 
             getMemoryCache().putInCache(mdFileInCache, new ParserSettingsMonitor(settings), true,
                 md);
@@ -1226,10 +1257,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             throw e;
         } catch (Exception e) {
             String metadataRef;
-            if (orginalMetadataRef == null) {
+            if (originalMetadataRef == null) {
                 metadataRef = String.valueOf(md.getResolvedModuleRevisionId());
             } else {
-                metadataRef = String.valueOf(orginalMetadataRef);
+                metadataRef = String.valueOf(originalMetadataRef);
             }
             Message.warn("impossible to put metadata file in cache: " + metadataRef, e);
         } finally {
@@ -1486,7 +1517,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private boolean isCheckmodified(DependencyDescriptor dd, ModuleRevisionId requestedRevisionId,
             CacheMetadataOptions options) {
         if (options.isCheckmodified() != null) {
-            return options.isCheckmodified().booleanValue();
+            return options.isCheckmodified();
         }
         return isCheckmodified();
     }
@@ -1507,7 +1538,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     /**
      * Resource downloader which makes a copy of the previously existing file before overriding it.
      * <p>
-     * The backup file can be restored or cleanuped later
+     * The backup file can be restored or cleaned up later
      */
     private final class BackupResourceDownloader implements ResourceDownloader {
 
@@ -1547,4 +1578,31 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     }
 
+    private static final class ConfiguredTTL {
+        // attributes on the TTL, that don't contribute to module matching
+        private static final Set<String> attributesNotContributingToMatching = new HashSet<String>();
+        static {
+            attributesNotContributingToMatching.add("duration");
+            attributesNotContributingToMatching.add("matcher");
+        }
+
+        private final String matcher;
+        private final long duration;
+        private final Map<String, String> attributes;
+
+        private ConfiguredTTL(final long duration, final String matcher, final Map<String, String> attributes) {
+            this.matcher = matcher;
+            this.duration = duration;
+            if (attributes == null) {
+                this.attributes = Collections.emptyMap();
+            } else {
+                final Map<String, String> attrs = new HashMap<String, String>(attributes);
+                for (final String removable : attributesNotContributingToMatching) {
+                    attrs.remove(removable);
+                }
+                this.attributes = Collections.unmodifiableMap(attrs);
+            }
+        }
+
+    }
 }

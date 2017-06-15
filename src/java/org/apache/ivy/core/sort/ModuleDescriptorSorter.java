@@ -29,10 +29,12 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 
 /**
- * Inner helper class for sorting ModuleDescriptors.<br>
+ * Inner helper class for sorting ModuleDescriptors.
+ * <p>
  * ModuleDescriptorSorter use CollectionOfModulesToSort to find the dependencies of the modules, and
  * use ModuleInSort to store some temporary values attached to the modules to sort.
- * 
+ * </p>
+ *
  * @see ModuleInSort
  * @see CollectionOfModulesToSort
  */
@@ -54,9 +56,9 @@ public class ModuleDescriptorSorter {
 
     /**
      * Iterates over all modules calling sortModuleDescriptorsHelp.
-     * 
+     *
      * @return sorted module
-     * @throws CircularDependencyException
+     * @throws CircularDependencyException somehow
      */
     public List<ModuleDescriptor> sortModuleDescriptors() throws CircularDependencyException {
         Message.debug("Nbr of module to sort : " + moduleDescriptors.size());
@@ -73,10 +75,10 @@ public class ModuleDescriptorSorter {
      * When a loop is detected by a recursive call, the moduleDescriptors are not added immediately
      * added to the sorted list. They are added as loop dependencies of the root, and will be added
      * to the sorted list only when the root itself will be added.
-     * 
+     *
      * @param current
      *            Current module to add to sorted list.
-     * @throws CircularDependencyException
+     * @throws CircularDependencyException somehow
      */
     private void sortModuleDescriptorsHelp(ModuleInSort current, ModuleInSort caller)
             throws CircularDependencyException {

@@ -78,7 +78,7 @@ public class XmlReportParser {
                     revisionArtifacts = new ArrayList<ArtifactDownloadReport>();
                     branch = attributes.getValue("branch");
                     revision = attributes.getValue("name");
-                    isDefault = Boolean.valueOf(attributes.getValue("default")).booleanValue();
+                    isDefault = Boolean.valueOf(attributes.getValue("default"));
                     // retrieve position from file. If no position is found, it may be an old
                     // report generated with a previous version,
                     // in which case, we put it at the last position
@@ -137,7 +137,7 @@ public class XmlReportParser {
                         }
                         if (attributes.getValue("origin-location") != null) {
                             if (ArtifactOrigin.isUnknown(attributes.getValue("origin-location"))) {
-                                madr.setArtifactOrigin(ArtifactOrigin.unkwnown(madr.getArtifact()));
+                                madr.setArtifactOrigin(ArtifactOrigin.unknown(madr.getArtifact()));
                             } else {
                                 madr.setArtifactOrigin(new ArtifactOrigin(madr.getArtifact(),
                                         parseBoolean(attributes.getValue("origin-is-local")),
@@ -175,7 +175,7 @@ public class XmlReportParser {
                             .get(revisionArtifacts.size() - 1);
 
                     if (ArtifactOrigin.isUnknown(attributes.getValue("location"))) {
-                        aReport.setArtifactOrigin(ArtifactOrigin.unkwnown(aReport.getArtifact()));
+                        aReport.setArtifactOrigin(ArtifactOrigin.unknown(aReport.getArtifact()));
                     } else {
                         aReport.setArtifactOrigin(new ArtifactOrigin(aReport.getArtifact(),
                                 parseBoolean(attributes.getValue("is-local")), attributes
@@ -322,6 +322,8 @@ public class XmlReportParser {
 
     /**
      * Returns the <tt>ModuleRevisionId</tt> of the resolved module.
+     *
+     * @return ModuleRevisionId
      */
     public ModuleRevisionId getResolvedModule() {
         return parser.getResolvedModule();

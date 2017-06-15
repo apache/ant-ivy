@@ -17,9 +17,11 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
@@ -27,14 +29,16 @@ import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.resources.FileResource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class IvyResourcesTest extends TestCase {
+public class IvyResourcesTest {
 
     private IvyResources resources;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         TestHelper.createCache();
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -44,7 +48,8 @@ public class IvyResourcesTest extends TestCase {
         resources.setProject(project);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
@@ -58,17 +63,16 @@ public class IvyResourcesTest extends TestCase {
         return resources.getIvyInstance();
     }
 
-    private List asList(IvyResources ivyResources) {
-        List resources = new ArrayList();
-        Iterator it = ivyResources.iterator();
-        while (it.hasNext()) {
-            Object r = it.next();
+    private List<File> asList(IvyResources ivyResources) {
+        List<File> resources = new ArrayList<>();
+        for (Object r : ivyResources) {
             assertTrue(r instanceof FileResource);
             resources.add(((FileResource) r).getFile());
         }
         return resources;
     }
 
+    @Test
     public void testSimple() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -81,6 +85,7 @@ public class IvyResourcesTest extends TestCase {
             files.get(0));
     }
 
+    @Test
     public void testMultiple() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -106,6 +111,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testMultipleWithConf() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -128,6 +134,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testMultipleWithConf2() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -152,6 +159,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testExclude() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -178,6 +186,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testDependencyExclude() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -193,7 +202,7 @@ public class IvyResourcesTest extends TestCase {
         IvyDependencyExclude exclude = dependency.createExclude();
         exclude.setOrg("org1");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(3, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));
@@ -203,6 +212,7 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test
     public void testDependencyInclude() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
@@ -225,18 +235,13 @@ public class IvyResourcesTest extends TestCase {
             "jar")));
     }
 
+    @Test(expected = BuildException.class)
     public void testFail() throws Exception {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("noexisting");
         dependency.setRev("2.0");
-
-        try {
-            resources.iterator();
-            fail("A fail resolved should have raised a build exception");
-        } catch (BuildException e) {
-            // ok
-        }
+        resources.iterator();
     }
 
 }

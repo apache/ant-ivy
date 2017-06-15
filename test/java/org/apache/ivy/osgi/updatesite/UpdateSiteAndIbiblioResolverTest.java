@@ -32,10 +32,12 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
-public class UpdateSiteAndIbiblioResolverTest extends TestCase {
+public class UpdateSiteAndIbiblioResolverTest {
 
     private IvySettings settings;
 
@@ -51,6 +53,7 @@ public class UpdateSiteAndIbiblioResolverTest extends TestCase {
 
     ChainResolver chain;
 
+    @Before
     public void setUp() throws Exception {
         settings = new IvySettings();
 
@@ -87,13 +90,14 @@ public class UpdateSiteAndIbiblioResolverTest extends TestCase {
 
         ivy.getResolutionCacheManager().clean();
         RepositoryCacheManager[] caches = settings.getRepositoryCacheManagers();
-        for (int i = 0; i < caches.length; i++) {
-            caches[i].clean();
+        for (RepositoryCacheManager cache : caches) {
+            cache.clean();
         }
 
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
     }
 
+   @Test
     public void testArtifactRef() throws ParseException {
 
         // Simple Dependency for ibiblio

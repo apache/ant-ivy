@@ -24,10 +24,12 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class NameSpaceHelperTest extends TestCase {
+public class NameSpaceHelperTest {
+    @Test
     public void testTransformArtifactWithExtraAttributes() throws Exception {
         Artifact artifact = new DefaultArtifact(ArtifactRevisionId.newInstance(
             ModuleRevisionId.parse("org.apache#test;1.0"), "test", "jar", "jar",

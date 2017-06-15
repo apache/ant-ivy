@@ -29,13 +29,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 /**
- * 
+ *
  */
 public class BasicURLHandler extends AbstractURLHandler {
 
@@ -101,7 +100,7 @@ public class BasicURLHandler extends AbstractURLHandler {
     /**
      * Extract the charset from the Content-Type header string, or default to ISO-8859-1 as per
      * rfc2616-sec3.html#sec3.7.1 .
-     * 
+     *
      * @param contentType
      *            the Content-Type header string
      * @return the charset as specified in the content type, or ISO-8859-1 if unspecified.

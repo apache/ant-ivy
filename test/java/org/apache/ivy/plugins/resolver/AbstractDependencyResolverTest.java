@@ -19,9 +19,7 @@ package org.apache.ivy.plugins.resolver;
 
 import org.apache.ivy.core.resolve.DownloadOptions;
 
-import junit.framework.TestCase;
-
-public class AbstractDependencyResolverTest extends TestCase {
+public class AbstractDependencyResolverTest {
 
     protected DownloadOptions downloadOptions() {
         return new DownloadOptions();

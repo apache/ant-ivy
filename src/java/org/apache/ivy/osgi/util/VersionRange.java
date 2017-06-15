@@ -67,9 +67,9 @@ public class VersionRange {
 
         /**
          * Default constructor
-         * 
-         * @param header
-         *            the header to parse
+         *
+         * @param version
+         *            the version to parse
          */
         VersionRangeParser(String version) {
             this.version = version;
@@ -78,7 +78,7 @@ public class VersionRange {
 
         /**
          * Do the parsing
-         * 
+         *
          * @throws ParseException
          */
         void parse() throws ParseException {
@@ -149,7 +149,7 @@ public class VersionRange {
             }
             Integer minor = new Integer(0);
             Integer patch = new Integer(0);
-            String qualififer = null;
+            String qualifier = null;
             if (parseNumberSeparator()) {
                 minor = parseNumber();
                 if (minor == null) {
@@ -159,11 +159,11 @@ public class VersionRange {
                     if (patch == null) {
                         patch = new Integer(0);
                     } else if (parseNumberSeparator()) {
-                        qualififer = parseQualifier();
+                        qualifier = parseQualifier();
                     }
                 }
             }
-            return new Version(major.intValue(), minor.intValue(), patch.intValue(), qualififer);
+            return new Version(major.intValue(), minor.intValue(), patch.intValue(), qualifier);
         }
 
         private Integer parseNumber() {
@@ -243,7 +243,7 @@ public class VersionRange {
                     break;
                 default:
                     unread();
-                    throw new ParseException("Expexting ] or )", pos);
+                    throw new ParseException("Expecting ] or )", pos);
             }
         }
     }
@@ -311,18 +311,8 @@ public class VersionRange {
     }
 
     public boolean contains(Version version) {
-        if (startExclusive ? version.compareUnqualified(startVersion) <= 0 : version
-                .compareUnqualified(startVersion) < 0) {
-            return false;
-        }
-        if (endVersion == null) {
-            return true;
-        }
-        if (endExclusive ? version.compareUnqualified(endVersion) >= 0 : version
-                .compareUnqualified(endVersion) > 0) {
-            return false;
-        }
-        return true;
+        return (startExclusive ? version.compareUnqualified(startVersion) > 0 : version.compareUnqualified(startVersion) >= 0)
+                && (endVersion == null || (endExclusive ? version.compareUnqualified(endVersion) < 0 : version.compareUnqualified(endVersion) <= 0));
     }
 
     public int hashCode() {

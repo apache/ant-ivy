@@ -58,7 +58,7 @@ public class ResolvedModuleRevision {
 
     /**
      * Returns the identifier of the resolved module.
-     * 
+     *
      * @return the identifier of the resolved module.
      */
     public ModuleRevisionId getId() {
@@ -67,7 +67,7 @@ public class ResolvedModuleRevision {
 
     /**
      * Returns the date of publication of the resolved module.
-     * 
+     *
      * @return the date of publication of the resolved module.
      */
     public Date getPublicationDate() {
@@ -76,7 +76,7 @@ public class ResolvedModuleRevision {
 
     /**
      * Returns the descriptor of the resolved module.
-     * 
+     *
      * @return the descriptor of the resolved module.
      */
     public ModuleDescriptor getDescriptor() {
@@ -85,7 +85,7 @@ public class ResolvedModuleRevision {
 
     /**
      * The resolver which resolved this ResolvedModuleRevision
-     * 
+     *
      * @return The resolver which resolved this ResolvedModuleRevision
      */
     public DependencyResolver getResolver() {
@@ -94,7 +94,7 @@ public class ResolvedModuleRevision {
 
     /**
      * The resolver to use to download artifacts
-     * 
+     *
      * @return The resolver to use to download artifacts
      */
     public DependencyResolver getArtifactResolver() {
@@ -103,7 +103,7 @@ public class ResolvedModuleRevision {
 
     /**
      * Returns a report of the resolved module metadata artifact provisioning.
-     * 
+     *
      * @return a report of the resolved module metadata artifact provisioning.
      */
     public MetadataArtifactDownloadReport getReport() {
@@ -117,7 +117,7 @@ public class ResolvedModuleRevision {
      * This is used as an indication for CompositeResolver, to know if they should continue to look
      * for a better ResolvedModuleRevision if possible, or stop with this instance.
      * </p>
-     * 
+     *
      * @return <code>true</code> if this resolved module revision should be forced as the one being
      *         returned.
      */
@@ -126,10 +126,7 @@ public class ResolvedModuleRevision {
     }
 
     public boolean equals(Object obj) {
-        if (!(obj instanceof ResolvedModuleRevision)) {
-            return false;
-        }
-        return ((ResolvedModuleRevision) obj).getId().equals(getId());
+        return obj instanceof ResolvedModuleRevision && ((ResolvedModuleRevision) obj).getId().equals(getId());
     }
 
     public int hashCode() {

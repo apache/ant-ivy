@@ -78,7 +78,7 @@ public class InstallEngine {
 
         // build module file declaring the dependency
         Message.info(":: installing " + mrid + " ::");
-        DependencyResolver oldDicator = resolveEngine.getDictatorResolver();
+        DependencyResolver oldDictator = resolveEngine.getDictatorResolver();
         boolean log = settings.logNotConvertedExclusionRule();
         try {
             settings.setLogNotConvertedExclusionRule(true);
@@ -203,7 +203,7 @@ public class InstallEngine {
             // IVY-834: log the problems if there were any...
             Message.sumupProblems();
 
-            resolveEngine.setDictatorResolver(oldDicator);
+            resolveEngine.setDictatorResolver(oldDictator);
             settings.setLogNotConvertedExclusionRule(log);
         }
     }

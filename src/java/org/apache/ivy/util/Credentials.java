@@ -18,7 +18,7 @@
 package org.apache.ivy.util;
 
 /**
- * 
+ *
  */
 public class Credentials {
     private String realm;
@@ -63,6 +63,8 @@ public class Credentials {
     /**
      * Return a string that can be used for debug purpose. It contains only stars for each password
      * character.
+     *
+     * @return String
      */
     public String toString() {
         return getKey() + " " + getUserName() + "/" + getPasswdAsStars();
