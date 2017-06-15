@@ -69,10 +69,10 @@ halt the build with a failure.
 
 
 
-=== Parameters specified as nested elements
+== Parameters specified as nested elements
 
 
-==== fileset
+=== fileset
 
 FileSets are used to select sets of files to order.
 

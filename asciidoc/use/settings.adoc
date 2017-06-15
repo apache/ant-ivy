@@ -23,7 +23,7 @@ my.variable.yourid=your.value
 ----
 
 
-=== Attributes
+== Attributes
 
 
 [options="header",cols="15%,50%,35%"]
@@ -39,7 +39,7 @@ my.variable.yourid=your.value
 |=======
 
 
-=== HTTP Authentication
+== HTTP Authentication
 
 __Note: HTTP Authentication can be used only if link:http://jakarta.apache.org/commons/httpclient/[commons-httpclient.jar] is in your classpath__
 If any of the url you use in ivy (especially in dependency resolvers) need http
@@ -50,7 +50,7 @@ further call to ivy tasks.
 
 
 
-=== Multiple classloader
+== Multiple classloader
 
 A special attention should be applied when you have a multi-project build with __subant__ call, using ivy task loaded by a __typedef__.  Indeed in this situation, it is possible to pass settings reference to a subbuild.  When you do that, you should take of the classloader.  The ivy task of your subant should not be defined in a different classloader than the parent one.  This can be achieved by using the __loader__ parameter of the antlib declaration, or avoid to reload the ivy antlib in the subbuild (place the taskdef in a target only executed when the antlib is not yet loaded).
 
@@ -58,10 +58,10 @@ A special attention should be applied when you have a multi-project build with _
 
 
 
-=== Examples
+== Examples
 
 
-==== Simplest settings
+=== Simplest settings
 
 
 [source]
@@ -73,7 +73,7 @@ Use either ${ivy.settings.file} if it exists, or the link:../samples/ivysettings
 
 This simplest setting is implicit.
 
-==== Configure with a file
+=== Configure with a file
 
 
 [source]
@@ -82,7 +82,7 @@ This simplest setting is implicit.
 ----
 
 
-==== Configure with an url
+=== Configure with an url
 
 
 [source]
@@ -91,7 +91,7 @@ This simplest setting is implicit.
 ----
 
 
-==== Configure multiple realms which require autentication
+=== Configure multiple realms which require autentication
 
 
 [source]
@@ -105,7 +105,7 @@ This simplest setting is implicit.
 ----
 
 
-==== Configure 2 different settings
+=== Configure 2 different settings
 
 You can use multiple ivy settings during a build. Then every ivy task should specify the settings it uses using the settingsRef attribute.
 

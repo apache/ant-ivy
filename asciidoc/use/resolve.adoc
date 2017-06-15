@@ -108,14 +108,14 @@ This is the number of artifacts actually downloaded from the repository.
 </ul>
 
 
-=== Inline mode
+== Inline mode
 
 *__since 1.4__* The inline mode allow to call a resolve without an ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an ant task for example. When inline is set to true, the organisation module and revision attributes are used to specify which module should be resolved from the repository. 
 
 *Remark:* if you want the standard ivy properties to be set or to reuse the results of an inline resolve by other post-resolve tasks like retrieve, cachepath, report, ..., you must set the keep attribute to true!
 
 
-=== Resolve mode
+== Resolve mode
 
 *__since 2.0__* The resolve mode allows to define how Ivy should use dependency revision constraints when performing the resolution.
 
@@ -130,7 +130,7 @@ Two modes are available:
 
 
 
-=== Concurrency
+== Concurrency
 
 During resolve, Ivy creates a file in the link:../settings/caches.html[resolution cache]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same resolveId. 
 

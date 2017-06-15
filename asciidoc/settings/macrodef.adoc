@@ -15,7 +15,7 @@ A macro is defined by declaring an existing resolver within it. Then you can use
 ----
 
 
-=== Resolvers names
+== Resolvers names
 
 Since you can use the same macro several times it can define several resolvers (in a chain for instance), the resolver names need to be chosen carefully to avoid name conflicts (each resolver must have a unique name).
 

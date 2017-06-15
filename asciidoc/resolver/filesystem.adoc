@@ -17,7 +17,7 @@ The configuration of such a resolver is mainly done through ivy and artifact pat
 *Limitation*: in m2compatible mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
 
 
-=== Atomic publish support
+== Atomic publish support
 
 *__since 2.0__* This resolver supports atomic publish, which is useful for environments with a lot of concurrent publish and resolve actions. The atomic publish relies on the atomicity of the rename operation in the underlying filesystem (which includes NTFS and POSIX based filesystems).
 In this case the resolver starts by publishing the module according to the pattern, but where a '.part' suffix is appended to the revision. Then the publish is committed with a rename to the final location. 

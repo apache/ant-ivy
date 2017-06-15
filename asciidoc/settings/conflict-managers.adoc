@@ -51,7 +51,7 @@ This conflict manager is based on a regular expression and throws an exception (
 
 
 
-==== Child elements
+== Child elements
 
 
 [options="header"]

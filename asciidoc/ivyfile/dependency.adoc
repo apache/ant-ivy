@@ -4,7 +4,7 @@
 Declares a dependency for this module. A dependency is described by the module on which the current module depends (identified by its name, organisation and revision), and a mapping of configurations.
 
 
-=== [[revision]]Fixed and dynamic revisions
+== [[revision]]Fixed and dynamic revisions
 
 The revision can be given as a fixed one (1.5.2, for instance) or as a latest (or dynamic) one. Several possibilities for dynamic revisions are implemented in Ivy:
 
@@ -39,14 +39,14 @@ Examples:
 The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference.html[ivy main concepts] for details about this.
 
 
-=== [[revision-constraint]]Revision constraint
+== [[revision-constraint]]Revision constraint
 
 *__since 2.0__* The dependency tag supports two revision attributes: rev, corresponding to the default required dependency revision, and revConstraint, corresponding to a dynamic revision constraint applied on this dependency. 
 
 Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a stic version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the revConstraint attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility. 
 
 
-=== Configurations mapping
+== Configurations mapping
 
 This mapping indicates which configurations of the dependency are required in which configurations of the current module, also called master configurations.
 
@@ -236,13 +236,13 @@ conf for dependencies of organisation 'B'.
 If you prefer more verbose mapping declaration, everything is also possible with sub elements mapping declaration. 
 
 
-=== Artifact restriction
+== Artifact restriction
 
 Moreover, the dependency element also supports an artifact restriction feature (since 0.6).
 See link:../ivyfile/dependency-artifact.html[dependency artifact] for details.
 
 
-=== Forcing revision
+== Forcing revision
 
 Finally, the dependency element also supports an a force attribute (since 0.8), which gives an indication
 to conflicts manager to force the revision of a dependency to the one given here.

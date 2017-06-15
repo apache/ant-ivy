@@ -36,19 +36,19 @@ For those familiar with xml schema, the schema used to validate ivy files can be
 ----
 
 
-=== Dynamic and [[resolved]]resolved ivy files
+== Dynamic and [[resolved]]resolved ivy files
 
 
 A module descriptor (ivy file) is needed both before and after the publication of each revision of the module. Depending on the case, a module descriptor can be either _dynamic_ or _resolved_:
 
 
-==== Dynamic descriptor for module development
+=== Dynamic descriptor for module development
 
 
 During the module development time, between publications, the descriptor helps in managing all the possibly changing dependencies of the module. For that purpose, development time ivy files can declare dynamic dependencies to allow for a greater flexibility of use. link:ivyfile/dependency.html#revision[Dynamic revision] references like "latest.integration" or "1.0.+" are possible and may resolve to different artifacts at different times. Variables can be used for even more flexibility. Development time ivy files are hence called "dynamic", because they can produce different results over time. The dynamic ivy files are normally considered source files and kept with them (under SCM control).
 
 
-==== Resolved descriptors for publishing
+=== Resolved descriptors for publishing
 
 
 At each publication, another kind of a module descriptor is needed to document the dependencies of the particular published revision of the module. For that purpose, the descriptor usually needs to be fixed as its dependencies should no longer change. In doing so, the published module revision gets fixed, explicitly resolved dependencies. No variables are allowed either. Such publication-friendly, static ivy files are called "resolved", because they should always produce the same results. The resolved ivy files are comparable to published artifacts and are kept with them in a repository.

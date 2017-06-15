@@ -144,7 +144,7 @@ For more details on configurations and how they are used in ivy, please refer to
 
 Ivy settings files are xml files used to configure ivy to indicate where the modules can be found and how.
 
-==== __History of settings__
+=== __History of settings__
 
 __Prior to Ivy 2.0, the settings files were called configuration files and usually named ivyconf.xml. This resulted in confusion between module configurations and Ivy configuration files, so they were renamed to settings files. If you happen to fall on an ivyconf file or something called a configuration file, most of the time it's only unupdated information (documentation, tutorial or article). Feel free to report any problem like this if you find such an inconsistency.__
 

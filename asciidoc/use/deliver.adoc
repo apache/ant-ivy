@@ -3,7 +3,7 @@ Deliver a resolved descriptor of the current module, and possibly perform a recu
 
 This task does two main things:
 
-=== Generate a resolved ivy file
+== Generate a resolved ivy file
 
 This task generates a resolved descriptor of the current module, based upon the last resolve done. The resolved ivy file contains updated information about the delivered module, such as revision and status.
 
@@ -14,7 +14,7 @@ Finally, in the resolved ivy file, dynamic revisions are replaced by the static 
 *__since 1.3__* The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the ivy file. This is an exception to the recommended standard that published module descriptors be fully resolved, so use it with caution.
 
 
-=== do recursive delivery
+== do recursive delivery
 
 This is done only if a deliver target is given to the deliver task.
 
@@ -64,7 +64,7 @@ Usually the deliver target itself triggers an another ant build (using ant task)
 The delivered ivy file will update its dependency revisions with those given here.  
 
 
-=== deliver and publish
+== deliver and publish
 
 The deliver task is most of the time not called explicitly, but rather called automatically by the link:../use/publish.html[publish] task. So, when shall the deliver task be called explictly? When you actually need to separate what is performed by the deliver task (see above), from what is performed by the publish task, i.e. upload a module to a repository.
 

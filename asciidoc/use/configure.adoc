@@ -31,7 +31,7 @@ an error is raised if a settings has already been defined with this id|No, defau
 |=======
 
 
-=== HTTP Authentication
+== HTTP Authentication
 
 If any of the url you use in ivy (especially in dependency resolvers) need http
 authentication, then you have to provide the host, realm, username and passwd
@@ -44,10 +44,10 @@ further call to ivy tasks.
 It's also possible to configure authentication settings for multiple urls. This can be done with the <credentials> subelements. See the examples for more details.
 
 
-=== Examples
+== Examples
 
 
-==== Simplest settings
+=== Simplest settings
 
 
 [source]
@@ -57,7 +57,7 @@ It's also possible to configure authentication settings for multiple urls. This 
 
 Use either ${ivy.settings.file} if it exists, or the link:../samples/ivysettings-default.xml[default settings file]
 
-==== Configure with a file
+=== Configure with a file
 
 
 [source]
@@ -66,7 +66,7 @@ Use either ${ivy.settings.file} if it exists, or the link:../samples/ivysettings
 ----
 
 
-==== Configure with an url
+=== Configure with an url
 
 
 [source]

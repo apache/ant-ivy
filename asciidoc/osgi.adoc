@@ -13,7 +13,7 @@ Since Apache Ivy&#153; 2.3, some support for OSGi&#153; dependency management ha
 So with a standard ivy.xml, you can express some dependency on some OSGi bundle and every of their trasitive dependencies will be resolved. You can also declare in your ivy.xml some OSGi dependency, like a `Require-Bundle`, an `Import-Package` or an `Import-Service`, miming an OSGi MANIFEST.MF.
 
 
-=== Note on the implementation
+== Note on the implementation
 
 
 With OSGi we can declare different kind of capabilites of a bundle which can match different kind of requirements of some other bundles (`Require-Bundle`/`Bundle-SymbolicName`, `Import-Package`/`Export-Package`, `Import-Service`/`Export-Service`). In Ivy we only have one kind of requirement and one kind of capability: the symbolic name of the bundle. Due to that restriction Ivy may not resolve exactly how we would expect with OSGi.  The runtime of Ivy won't be as smart as a pure OSGi dependency manager. But we think that the mapping is working for most of the use cases involing OSGi dependencies management.
@@ -21,7 +21,7 @@ With OSGi we can declare different kind of capabilites of a bundle which can mat
 Details on the mapping of the OSGi dependency model into Ivy's one can be found in that link:osgi/osgi-mapping.html[page].
 
 
-=== Repository descriptor based resolvers
+== Repository descriptor based resolvers
 
 
 Since the nature of the OSGi dependencies, resolving against a repository cannot be started before acquiring the metadata of every bundle of the repository. To resolve an `Import-Package`, Ivy has to find every bundle which has the proper `Export-Package`. So unlike the usual Ivy resolvers, the OSGi capable ones have to get the descriptor before starting a resolve.
@@ -29,7 +29,7 @@ Since the nature of the OSGi dependencies, resolving against a repository cannot
 The descriptor probably being not instantanly downloaded, the descriptor is put in cache. (FIXME not implemented)
 
 
-=== Use cases
+== Use cases
 
 
 Here are different use case of using the OSGi capabilities of Ivy:
