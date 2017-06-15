@@ -52,7 +52,7 @@
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
         <property name="msg" value="hello ivy !"/>
-        <java classpathref="run.path.id" classname="example.Hello">
+        <java classpathref="run.path.id" classname="example.HelloConsole">
             <arg value="-message"/>
             <arg value="${msg}"/>
         </java>
