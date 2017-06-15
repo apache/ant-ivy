@@ -121,12 +121,12 @@ public abstract class IvyTask extends Task {
         return (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
     }
 
-    protected Object getResolvedDescriptor(String resolveId) {
+    protected <T> T getResolvedDescriptor(String resolveId) {
         return getResolvedDescriptor(resolveId, true);
     }
 
-    protected Object getResolvedDescriptor(String resolveId, boolean strict) {
-        Object result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
+    protected <T> T getResolvedDescriptor(String resolveId, boolean strict) {
+        T result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
         if (strict && (result == null)) {
             throw new BuildException("ModuleDescriptor for resolve with id '" + resolveId
                     + "' not found.");
@@ -134,16 +134,16 @@ public abstract class IvyTask extends Task {
         return result;
     }
 
-    protected Object getResolvedDescriptor(String org, String module) {
+    protected <T> T getResolvedDescriptor(String org, String module) {
         return getResolvedDescriptor(org, module, false);
     }
 
-    protected Object getResolvedDescriptor(String org, String module, boolean strict) {
+    protected <T> T getResolvedDescriptor(String org, String module, boolean strict) {
         return getReference("ivy.resolved.descriptor", org, module, strict);
     }
 
-    private Object getReference(String prefix, String org, String module, boolean strict) {
-        Object reference = null;
+    private <T> T getReference(String prefix, String org, String module, boolean strict) {
+        T reference = null;
         if (org != null && module != null) {
             reference = getProject().getReference(prefix + "." + org + "." + module);
         }
@@ -157,9 +157,9 @@ public abstract class IvyTask extends Task {
         ResolveReport result = null;
 
         if (resolveId == null) {
-            result = (ResolveReport) getReference("ivy.resolved.report", org, module, false);
+            result = getReference("ivy.resolved.report", org, module, false);
         } else {
-            result = (ResolveReport) getReference("ivy.resolved.report." + resolveId, null, null,
+            result = getReference("ivy.resolved.report." + resolveId, null, null,
                 false);
         }
 

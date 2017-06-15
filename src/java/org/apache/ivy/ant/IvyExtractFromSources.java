@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,9 +66,10 @@ public class IvyExtractFromSources extends Task {
 
     private String status;
 
-    private List ignoredPackaged = new ArrayList(); // List (String package)
+    private final List<String> ignoredPackaged = new ArrayList<>(); // List (String package)
 
-    private Map mapping = new HashMap(); // Map (String package -> ModuleRevisionId)
+    private final Map<String, ModuleRevisionId> mapping = new HashMap<>();
+    // Map(String package -> ModuleRevisionId)
 
     private Concat concat = new Concat();
 
@@ -132,35 +132,28 @@ public class IvyExtractFromSources extends Task {
         Writer out = new StringWriter();
         concat.setWriter(out);
         concat.execute();
-        Set importsSet = new HashSet(Arrays.asList(out.toString().split("\n")));
-        Set dependencies = new HashSet();
-        for (Iterator iter = importsSet.iterator(); iter.hasNext();) {
-            String pack = ((String) iter.next()).trim();
-            ModuleRevisionId mrid = getMapping(pack);
+        Set<String> importsSet = new HashSet<>(Arrays.asList(out.toString().split("\n")));
+        Set<ModuleRevisionId> dependencies = new HashSet<>();
+        for (String pack : importsSet) {
+            ModuleRevisionId mrid = getMapping(pack.trim());
             if (mrid != null) {
                 dependencies.add(mrid);
             }
         }
         try {
             PrintWriter writer = new PrintWriter(new FileOutputStream(to));
-            writer.println("<ivy-module version=\"1.0\">");
-            writer.println("\t<info organisation=\"" + organisation + "\"");
-            writer.println("\t       module=\"" + module + "\"");
+            writer.println(String.format("<ivy-module version=\"1.0\">%n\t<info organisation=\"%s\"%n\t       module=\"%s\"",
+                    organisation, module));
             if (revision != null) {
                 writer.println("\t       revision=\"" + revision + "\"");
             }
-            if (status != null) {
-                writer.println("\t       status=\"" + status + "\"");
-            } else {
-                writer.println("\t       status=\"integration\"");
-            }
-            writer.println("\t/>");
+            writer.println(String.format("\t       status=\"%s\"%n\t/>",
+                    (status == null) ? "integration" : status));
             if (!dependencies.isEmpty()) {
                 writer.println("\t<dependencies>");
-                for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-                    ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
-                    writer.println("\t\t<dependency org=\"" + mrid.getOrganisation() + "\" name=\""
-                            + mrid.getName() + "\" rev=\"" + mrid.getRevision() + "\"/>");
+                for (ModuleRevisionId mrid : dependencies) {
+                    writer.println(String.format("\t\t<dependency org=\"%s\" name=\"%s\" rev=\"%s\"/>",
+                            mrid.getOrganisation(), mrid.getName(), mrid.getRevision()));
                 }
                 writer.println("\t</dependencies>");
             }
@@ -183,7 +176,7 @@ public class IvyExtractFromSources extends Task {
             if (ignoredPackaged.contains(pack)) {
                 return null;
             }
-            ret = (ModuleRevisionId) mapping.get(pack);
+            ret = mapping.get(pack);
             int lastDotIndex = pack.lastIndexOf('.');
             if (lastDotIndex != -1) {
                 pack = pack.substring(0, lastDotIndex);

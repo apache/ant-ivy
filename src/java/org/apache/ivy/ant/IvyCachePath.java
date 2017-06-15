@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -73,11 +72,10 @@ public class IvyCachePath extends IvyCacheTask {
         try {
             Path path = new Path(getProject());
             getProject().addReference(pathid, path);
-            for (Iterator iter = getArtifactReports().iterator(); iter.hasNext();) {
-                ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
-                File f = a.getLocalFile();
-                if (a.getUnpackedLocalFile() != null) {
-                    f = a.getUnpackedLocalFile();
+            for (ArtifactDownloadReport adr : getArtifactReports()) {
+                File f = adr.getLocalFile();
+                if (adr.getUnpackedLocalFile() != null) {
+                    f = adr.getUnpackedLocalFile();
                 }
                 addToPath(path, f);
             }
@@ -98,13 +96,12 @@ public class IvyCachePath extends IvyCacheTask {
             return;
         }
         BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
-        List/* <String> */cp = bundleInfo.getClasspath();
+        List<String> cp = bundleInfo.getClasspath();
         if (cp == null) {
             path.createPathElement().setLocation(f);
             return;
         }
-        for (int i = 0; i < cp.size(); i++) {
-            String p = (String) cp.get(i);
+        for (String p : cp) {
             if (p.equals(".")) {
                 path.createPathElement().setLocation(f);
             } else {

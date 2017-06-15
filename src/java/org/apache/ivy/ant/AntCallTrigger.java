@@ -19,7 +19,6 @@ package org.apache.ivy.ant;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -55,7 +54,7 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
 
     private String target = null;
 
-    private Collection calls = new ArrayList();
+    private Collection<IvyEvent> calls = new ArrayList<>();
 
     private String prefix;
 
@@ -73,16 +72,14 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
             call.setProject(project);
             call.setTaskName("antcall");
 
-            Map attributes = event.getAttributes();
+            Map<String, String> attributes = event.getAttributes();
             String target = IvyPatternHelper.substituteTokens(getTarget(), attributes);
             call.setTarget(target);
 
-            for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
-                String key = (String) iter.next();
-                String value = (String) attributes.get(key);
+            for (Map.Entry<String, String> entry : attributes.entrySet()) {
                 Property p = call.createParam();
-                p.setName(prefix == null ? key : prefix + key);
-                p.setValue(value == null ? "" : value);
+                p.setName(prefix == null ? entry.getKey() : prefix + entry.getKey());
+                p.setValue(entry.getValue() == null ? "" : entry.getValue());
             }
 
             Message.verbose("triggering ant call: target=" + target + " for " + event);

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -86,28 +85,26 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             String[] confs = splitConfs(getConf());
             ModuleDescriptor md = null;
             if (getResolveId() != null) {
-                md = (ModuleDescriptor) getResolvedDescriptor(getResolveId());
+                md = getResolvedDescriptor(getResolveId());
             } else {
-                md = (ModuleDescriptor) getResolvedDescriptor(getOrganisation(), getModule(), false);
+                md = getResolvedDescriptor(getOrganisation(), getModule(), false);
             }
-            IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(
-                md,
+            IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(md,
                 ((ResolveOptions) new ResolveOptions().setLog(getLog())).setConfs(confs)
                         .setResolveId(getResolveId()).setValidate(doValidate(getSettings())), null);
 
-            Map artifactsToCopy = getIvyInstance().getRetrieveEngine().determineArtifactsToCopy(
-                ModuleRevisionId.newInstance(getOrganisation(), getModule(), getRevision()),
-                pattern,
-                ((RetrieveOptions) new RetrieveOptions().setLog(getLog())).setConfs(confs)
-                        .setResolveId(getResolveId()));
+            Map<ArtifactDownloadReport, Set<String>> artifactsToCopy = getIvyInstance().getRetrieveEngine()
+                    .determineArtifactsToCopy(ModuleRevisionId.newInstance(getOrganisation(),
+                            getModule(), getRevision()), pattern,
+                            ((RetrieveOptions) new RetrieveOptions().setLog(getLog()))
+                                    .setConfs(confs).setResolveId(getResolveId()));
 
-            Map moduleRevToArtifactsMap = new HashMap();
-            for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
-                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
-                Set moduleRevArtifacts = (Set) moduleRevToArtifactsMap.get(artifact.getArtifact()
+            Map<ModuleRevisionId, Set<ArtifactDownloadReport>> moduleRevToArtifactsMap = new HashMap<>();
+            for (ArtifactDownloadReport artifact : artifactsToCopy.keySet()) {
+                Set<ArtifactDownloadReport> moduleRevArtifacts = moduleRevToArtifactsMap.get(artifact.getArtifact()
                         .getModuleRevisionId());
                 if (moduleRevArtifacts == null) {
-                    moduleRevArtifacts = new HashSet();
+                    moduleRevArtifacts = new HashSet<>();
                     moduleRevToArtifactsMap.put(artifact.getArtifact().getModuleRevisionId(),
                         moduleRevArtifacts);
                 }
@@ -123,29 +120,28 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private void generateXml(IvyNode[] dependencies, Map moduleRevToArtifactsMap,
-            Map artifactsToCopy) {
+    private void generateXml(IvyNode[] dependencies,
+                             Map<ModuleRevisionId, Set<ArtifactDownloadReport>> moduleRevToArtifactsMap,
+                             Map<ArtifactDownloadReport, Set<String>> artifactsToCopy) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(tofile);
-            try {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(tofile)) {
                 TransformerHandler saxHandler = createTransformerHandler(fileOutputStream);
 
                 saxHandler.startDocument();
                 saxHandler.startElement(null, "modules", "modules", new AttributesImpl());
 
-                for (int i = 0; i < dependencies.length; i++) {
-                    IvyNode dependency = dependencies[i];
-                    if (dependency.getModuleRevision() == null || dependency.isCompletelyEvicted()) {
+                for (IvyNode dependency : dependencies) {
+                    if (dependency.getModuleRevision() == null
+                            || dependency.isCompletelyEvicted()) {
                         continue;
                     }
 
                     startModule(saxHandler, dependency);
 
-                    Set artifactsOfModuleRev = (Set) moduleRevToArtifactsMap.get(dependency
+                    Set<ArtifactDownloadReport> artifactsOfModuleRev = moduleRevToArtifactsMap.get(dependency
                             .getModuleRevision().getId());
                     if (artifactsOfModuleRev != null) {
-                        for (Iterator iter = artifactsOfModuleRev.iterator(); iter.hasNext();) {
-                            ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
+                        for (ArtifactDownloadReport artifact : artifactsOfModuleRev) {
 
                             RepositoryCacheManager cache = dependency.getModuleRevision()
                                     .getArtifactResolver().getRepositoryCacheManager();
@@ -155,10 +151,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                             writeOriginLocationIfPresent(cache, saxHandler, artifact);
                             writeCacheLocationIfPresent(cache, saxHandler, artifact);
 
-                            Set artifactDestPaths = (Set) artifactsToCopy.get(artifact);
-                            for (Iterator iterator = artifactDestPaths.iterator(); iterator
-                                    .hasNext();) {
-                                String artifactDestPath = (String) iterator.next();
+                            for (String artifactDestPath : artifactsToCopy.get(artifact)) {
                                 writeRetrieveLocation(saxHandler, artifactDestPath);
                             }
                             saxHandler.endElement(null, "artifact", "artifact");
@@ -168,14 +161,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                 }
                 saxHandler.endElement(null, "modules", "modules");
                 saxHandler.endDocument();
-            } finally {
-                fileOutputStream.close();
             }
-        } catch (SAXException e) {
-            throw new BuildException("impossible to generate report", e);
-        } catch (TransformerConfigurationException e) {
-            throw new BuildException("impossible to generate report", e);
-        } catch (IOException e) {
+        } catch (SAXException | IOException | TransformerConfigurationException e) {
             throw new BuildException("impossible to generate report", e);
         }
     }

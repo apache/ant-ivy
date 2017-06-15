@@ -20,7 +20,6 @@ package org.apache.ivy.ant;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -82,9 +81,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 displayMissingDependencyOnLatest(getResolvedReport(), latestReport);
             }
 
-        } catch (ParseException e) {
-            throw new BuildException("impossible to resolve dependencies:\n\t" + e, e);
-        } catch (IOException e) {
+        } catch (ParseException | IOException e) {
             throw new BuildException("impossible to resolve dependencies:\n\t" + e, e);
         }
 
@@ -93,11 +90,8 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
     private void displayDependencyUpdates(ResolveReport originalReport, ResolveReport latestReport) {
         log("Dependencies updates available :");
         boolean dependencyUpdateDetected = false;
-        for (Iterator iterator = latestReport.getDependencies().iterator(); iterator.hasNext();) {
-            IvyNode latest = (IvyNode) iterator.next();
-            for (Iterator iterator2 = originalReport.getDependencies().iterator(); iterator2
-                    .hasNext();) {
-                IvyNode originalDependency = (IvyNode) iterator2.next();
+        for (IvyNode latest : latestReport.getDependencies()) {
+            for (IvyNode originalDependency : originalReport.getDependencies()) {
                 if (originalDependency.getModuleId().equals(latest.getModuleId())) {
                     if (!originalDependency.getResolvedId().getRevision()
                             .equals(latest.getResolvedId().getRevision())) {
@@ -105,18 +99,13 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                         // (unfortunately .isTransitive() methods do not have the same meaning)
                         boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
                                 .getRoot()) == null;
-                        if ((!isTransitiveDependency) || (isTransitiveDependency && showTransitive)) {
-                            StringBuffer sb = new StringBuffer();
-                            sb.append("\t")//
-                                    .append(originalDependency.getResolvedId().getOrganisation()) //
-                                    .append('#')//
-                                    .append(originalDependency.getResolvedId().getName())//
-                                    .append(isTransitiveDependency ? " (transitive)" : "") //
-                                    .append("\t")//
-                                    .append(originalDependency.getResolvedId().getRevision())//
-                                    .append(" -> ")//
-                                    .append(latest.getResolvedId().getRevision());
-                            log(sb.toString());
+                        if (!isTransitiveDependency || showTransitive) {
+                            log(String.format("\t%s#%s%s\t%s -> %s",
+                                    originalDependency.getResolvedId().getOrganisation(),
+                                    originalDependency.getResolvedId().getName(),
+                                    isTransitiveDependency ? " (transitive)" : "",
+                                    originalDependency.getResolvedId().getRevision(),
+                                    latest.getResolvedId().getRevision()));
                             dependencyUpdateDetected = true;
                         }
                     }
@@ -131,16 +120,10 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     private void displayMissingDependencyOnLatest(ResolveReport originalReport,
             ResolveReport latestReport) {
-        List/* <ModuleRevisionId> */listOfMissingDependencyOnLatest = new ArrayList/*
-                                                                                    * <ModuleRevisionId
-                                                                                    * >
-                                                                                    */();
-        for (Iterator iterator = originalReport.getDependencies().iterator(); iterator.hasNext();) {
-            IvyNode originalDependency = (IvyNode) iterator.next();
+        List<ModuleRevisionId> listOfMissingDependencyOnLatest = new ArrayList<>();
+        for (IvyNode originalDependency : originalReport.getDependencies()) {
             boolean dependencyFound = false;
-            for (Iterator iterator2 = latestReport.getDependencies().iterator(); iterator2
-                    .hasNext();) {
-                IvyNode latest = (IvyNode) iterator2.next();
+            for (IvyNode latest : latestReport.getDependencies()) {
                 if (originalDependency.getModuleId().equals(latest.getModuleId())) {
                     dependencyFound = true;
                 }
@@ -152,8 +135,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
         if (listOfMissingDependencyOnLatest.size() > 0) {
             log("List of missing dependency on latest resolve :");
-            for (Iterator iterator = listOfMissingDependencyOnLatest.iterator(); iterator.hasNext();) {
-                ModuleRevisionId moduleRevisionId = (ModuleRevisionId) iterator.next();
+            for (ModuleRevisionId moduleRevisionId : listOfMissingDependencyOnLatest) {
                 log("\t" + moduleRevisionId.toString());
             }
         }
@@ -161,14 +143,10 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     private void displayNewDependencyOnLatest(ResolveReport originalReport,
             ResolveReport latestReport) {
-        List/* <ModuleRevisionId> */listOfNewDependencyOnLatest = new ArrayList/* <ModuleRevisionId> */();
-        for (Iterator iterator = latestReport.getDependencies().iterator(); iterator.hasNext();) {
-            IvyNode latest = (IvyNode) iterator.next();
-
+        List<ModuleRevisionId> listOfNewDependencyOnLatest = new ArrayList<>();
+        for (IvyNode latest : latestReport.getDependencies()) {
             boolean dependencyFound = false;
-            for (Iterator iterator2 = originalReport.getDependencies().iterator(); iterator2
-                    .hasNext();) {
-                IvyNode originalDependency = (IvyNode) iterator2.next();
+            for (IvyNode originalDependency : originalReport.getDependencies()) {
                 if (originalDependency.getModuleId().equals(latest.getModuleId())) {
                     dependencyFound = true;
                 }
@@ -179,8 +157,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         }
         if (listOfNewDependencyOnLatest.size() > 0) {
             log("List of new dependency on latest resolve :");
-            for (Iterator iterator = listOfNewDependencyOnLatest.iterator(); iterator.hasNext();) {
-                ModuleRevisionId moduleRevisionId = (ModuleRevisionId) iterator.next();
+            for (ModuleRevisionId moduleRevisionId : listOfNewDependencyOnLatest) {
                 log("\t" + moduleRevisionId.toString());
             }
         }

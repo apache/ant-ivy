@@ -46,7 +46,7 @@ public class IvyEvent {
 
     private String name;
 
-    private Map attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<>();
 
     protected IvyEvent(String name) {
         this.source = IvyContext.getContext().getEventManager();
@@ -101,8 +101,8 @@ public class IvyEvent {
      *
      * @return the attributes of this event, as a Map(String,String)
      */
-    public Map getAttributes() {
-        return new HashMap(attributes);
+    public Map<String, String> getAttributes() {
+        return new HashMap<>(attributes);
     }
 
     public String toString() {

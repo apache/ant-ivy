@@ -38,7 +38,7 @@ import org.apache.tools.ant.types.FileSet;
 public class IvyCheck extends IvyTask {
     private File file = null;
 
-    private List filesets = new ArrayList();
+    private final List<FileSet> filesets = new ArrayList<>();
 
     private String resolvername;
 
@@ -76,15 +76,14 @@ public class IvyCheck extends IvyTask {
                     Message.verbose("checked " + file + ": OK");
                 }
             }
-            for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.get(i);
+            for (FileSet fs : filesets) {
                 DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 
                 File fromDir = fs.getDir(getProject());
 
                 String[] srcFiles = ds.getIncludedFiles();
-                for (int j = 0; j < srcFiles.length; j++) {
-                    File file = new File(fromDir, srcFiles[j]);
+                for (String srcFile : srcFiles) {
+                    File file = new File(fromDir, srcFile);
                     if (ivy.check(file.toURI().toURL(), resolvername)) {
                         Message.verbose("checked " + file + ": OK");
                     }

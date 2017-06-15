@@ -32,7 +32,7 @@ public class FixDepsTask extends IvyPostResolveTask {
 
     private File dest;
 
-    private List<Keep> keeps = new ArrayList<Keep>();
+    private List<Keep> keeps = new ArrayList<>();
 
     public void setToFile(File dest) {
         this.dest = dest;
@@ -73,7 +73,7 @@ public class FixDepsTask extends IvyPostResolveTask {
 
         ResolveReport report = getResolvedReport();
 
-        List<ModuleId> midToKeep = new ArrayList<ModuleId>();
+        List<ModuleId> midToKeep = new ArrayList<>();
         for (Keep keep : keeps) {
             midToKeep.add(ModuleId.newInstance(keep.org, keep.module));
         }

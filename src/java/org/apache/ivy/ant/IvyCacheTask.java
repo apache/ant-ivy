@@ -46,7 +46,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
     protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException,
             ParseException, IOException {
         Collection<ArtifactDownloadReport> artifacts = getAllArtifactReports();
-        List<ArtifactDownloadReport> ret = new ArrayList<ArtifactDownloadReport>();
+        List<ArtifactDownloadReport> ret = new ArrayList<>();
         for (ArtifactDownloadReport artifactReport : artifacts) {
             if (getArtifactFilter().accept(artifactReport.getArtifact())) {
                 ret.add(artifactReport);
@@ -59,16 +59,16 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
     private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException,
             IOException {
         String[] confs = splitConfs(getConf());
-        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
 
         ResolveReport report = getResolvedReport();
         if (report != null) {
             Message.debug("using internal report instance to get artifacts list");
-            for (int i = 0; i < confs.length; i++) {
+            for (String conf : confs) {
                 ConfigurationResolveReport configurationReport = report
-                        .getConfigurationReport(confs[i]);
+                        .getConfigurationReport(conf);
                 if (configurationReport == null) {
-                    throw new BuildException("bad confs provided: " + confs[i]
+                    throw new BuildException("bad confs provided: " + conf
                             + " not found among " + Arrays.asList(report.getConfigurations()));
                 }
                 Set<ModuleRevisionId> revisions = configurationReport.getModuleRevisionIds();
@@ -87,9 +87,9 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
             if (resolvedId == null) {
                 resolvedId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
             }
-            for (int i = 0; i < confs.length; i++) {
+            for (String conf : confs) {
                 File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolvedId,
-                    confs[i]);
+                        conf);
                 parser.parse(reportFile);
 
                 ArtifactDownloadReport[] aReports = parser.getArtifactReports();

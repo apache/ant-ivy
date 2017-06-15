@@ -31,13 +31,13 @@ import org.apache.tools.ant.BuildException;
 
 public class IvyDependency {
 
-    private List<IvyDependencyConf> confs = new ArrayList<IvyDependencyConf>();
+    private List<IvyDependencyConf> confs = new ArrayList<>();
 
-    private List<IvyDependencyArtifact> artifacts = new ArrayList<IvyDependencyArtifact>();
+    private List<IvyDependencyArtifact> artifacts = new ArrayList<>();
 
-    private List<IvyDependencyExclude> excludes = new ArrayList<IvyDependencyExclude>();
+    private List<IvyDependencyExclude> excludes = new ArrayList<>();
 
-    private List<IvyDependencyInclude> includes = new ArrayList<IvyDependencyInclude>();
+    private List<IvyDependencyInclude> includes = new ArrayList<>();
 
     private String org;
 

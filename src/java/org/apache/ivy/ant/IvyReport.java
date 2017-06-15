@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.Source;
@@ -79,7 +78,7 @@ public class IvyReport extends IvyTask {
 
     private String xslext = "html";
 
-    private List params = new ArrayList();
+    private final List<XSLTProcess.Param> params = new ArrayList<>();
 
     private String resolveId;
 
@@ -223,14 +222,14 @@ public class IvyReport extends IvyTask {
 
     private void genxml(String[] confs) throws IOException {
         ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
-        for (int i = 0; i < confs.length; i++) {
-            File xml = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+        for (String config : confs) {
+            File xml = cacheMgr.getConfigurationResolveReportInCache(resolveId, config);
 
             File out;
             if (todir != null) {
-                out = new File(todir, getOutputPattern(confs[i], "xml"));
+                out = new File(todir, getOutputPattern(config, "xml"));
             } else {
-                out = getProject().resolveFile(getOutputPattern(confs[i], "xml"));
+                out = getProject().resolveFile(getOutputPattern(config, "xml"));
             }
 
             FileUtil.copy(xml, out, null);
@@ -322,16 +321,14 @@ public class IvyReport extends IvyTask {
             transformer.setParameter("extension", xslext);
 
             // add the provided XSLT parameters
-            for (Iterator it = params.iterator(); it.hasNext();) {
-                XSLTProcess.Param param = (XSLTProcess.Param) it.next();
+            for (XSLTProcess.Param param : params) {
                 transformer.setParameter(param.getName(), param.getExpression());
             }
 
             // create the report
-            for (int i = 0; i < confs.length; i++) {
-                File reportFile = cacheMgr
-                        .getConfigurationResolveReportInCache(resolveId, confs[i]);
-                File outFile = new File(out, getOutputPattern(confs[i], ext));
+            for (String config : confs) {
+                File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, config);
+                File outFile = new File(out, getOutputPattern(config, ext));
 
                 log("Processing " + reportFile + " to " + outFile);
 

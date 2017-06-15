@@ -304,10 +304,7 @@ public class IvyAntSettings extends DataType {
             }
             ivyAntVariableContainer.updateProject(id);
             ivyEngine = ivy;
-        } catch (ParseException e) {
-            throw new BuildException("impossible to configure ivy:settings with given "
-                    + (file != null ? "file: " + file : "url: " + url) + " : " + e, e);
-        } catch (IOException e) {
+        } catch (ParseException | IOException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
                     + (file != null ? "file: " + file : "url: " + url) + " : " + e, e);
         } finally {
@@ -354,15 +351,14 @@ public class IvyAntSettings extends DataType {
                 new File(getProject().getBaseDir(), settingsFileName),
                 new File(getProject().getBaseDir(), "ivyconf.xml"), new File(settingsFileName),
                 new File("ivyconf.xml")};
-        for (int i = 0; i < settingsLocations.length; i++) {
-            file = settingsLocations[i];
-            task.log("searching settings file: trying " + file, Project.MSG_VERBOSE);
-            if (file.exists()) {
+        for (File settingsFile : settingsLocations) {
+            task.log("searching settings file: trying " + settingsFile, Project.MSG_VERBOSE);
+            if (settingsFile.exists()) {
+                file = settingsFile;
                 break;
             }
         }
-        if (!file.exists()) {
-            file = null;
+        if (file == null) {
             if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible"))) {
                 task.log("no settings file found, using Ivy 1.4 default...", Project.MSG_VERBOSE);
                 url = IvySettings.getDefault14SettingsURL();

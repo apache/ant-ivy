@@ -31,14 +31,14 @@ public class RepositoryAnalyser {
         JarModuleFinder finder = new JarModuleFinder(pattern);
         ModuleDescriptor[] mds = depAnalyser.analyze(finder.findJarModules());
         Message.info("found " + mds.length + " modules");
-        for (int i = 0; i < mds.length; i++) {
+        for (ModuleDescriptor md : mds) {
             File ivyFile = new File(IvyPatternHelper.substitute(
-                pattern,
-                DefaultArtifact.newIvyArtifact(mds[i].getModuleRevisionId(),
-                    mds[i].getPublicationDate())));
+                    pattern,
+                    DefaultArtifact.newIvyArtifact(md.getModuleRevisionId(),
+                            md.getPublicationDate())));
             try {
                 Message.info("generating " + ivyFile);
-                XmlModuleDescriptorWriter.write(mds[i], ivyFile);
+                XmlModuleDescriptorWriter.write(md, ivyFile);
             } catch (IOException e) {
                 Message.debug(e);
             }

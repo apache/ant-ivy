@@ -29,6 +29,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
+import org.apache.tools.ant.types.Resource;
 
 /**
  * Creates an ant fileset consisting in all artifacts found during a resolve. Note that this task is
@@ -94,7 +95,7 @@ public class IvyCacheFileset extends IvyCacheTask {
      *
      * @param artifactDownloadReports The artifact download reports for which the common base directory of the artifacts
      *                                has to be determined
-     * @return
+     * @return File
      */
     File requireCommonBaseDir(final List<ArtifactDownloadReport> artifactDownloadReports) {
         File base = null;
@@ -196,8 +197,8 @@ public class IvyCacheFileset extends IvyCacheTask {
 
         private DirectoryScanner ds = new EmptyDirectoryScanner();
 
-        public Iterator iterator() {
-            return new EmptyIterator();
+        public Iterator<Resource> iterator() {
+            return new EmptyIterator<>();
         }
 
         public Object clone() {
@@ -213,13 +214,13 @@ public class IvyCacheFileset extends IvyCacheTask {
         }
     }
 
-    private static class EmptyIterator implements Iterator {
+    private static class EmptyIterator<T> implements Iterator<T> {
 
         public boolean hasNext() {
             return false;
         }
 
-        public Object next() {
+        public T next() {
             throw new NoSuchElementException("EmptyFileSet Iterator");
         }
 

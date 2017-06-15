@@ -90,11 +90,11 @@ public class IvyResolve extends IvyTask {
 
     private boolean checkIfChanged = true; // for backward compatibility
 
-    private List<IvyDependency> dependencies = new ArrayList<IvyDependency>();
+    private List<IvyDependency> dependencies = new ArrayList<>();
 
-    private List<IvyExclude> excludes = new ArrayList<IvyExclude>();
+    private List<IvyExclude> excludes = new ArrayList<>();
 
-    private List<IvyConflict> conflicts = new ArrayList<IvyConflict>();
+    private List<IvyConflict> conflicts = new ArrayList<>();
 
     public boolean isUseOrigin() {
         return useOrigin;

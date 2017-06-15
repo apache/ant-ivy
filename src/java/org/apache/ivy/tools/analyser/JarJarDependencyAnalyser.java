@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.Message;
 
 public class JarJarDependencyAnalyser implements DependencyAnalyser {
@@ -39,10 +40,10 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
 
     public ModuleDescriptor[] analyze(JarModule[] modules) {
 
-        StringBuffer jarjarCmd = new StringBuffer("java -jar \"").append(
+        StringBuilder jarjarCmd = new StringBuilder("java -jar \"").append(
             jarjarjarLocation.getAbsolutePath()).append("\" --find --level=jar ");
-        Map jarModulesMap = new HashMap();
-        Map mds = new HashMap();
+        Map<String, JarModule> jarModulesMap = new HashMap<>();
+        Map<ModuleRevisionId, DefaultModuleDescriptor> mds = new HashMap<>();
 
         for (int i = 0; i < modules.length; i++) {
             jarModulesMap.put(modules[i].getJar().getAbsolutePath(), modules[i]);
@@ -63,15 +64,15 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
             String line;
             while ((line = r.readLine()) != null) {
                 String[] deps = line.split(" -> ");
-                JarModule module = (JarModule) jarModulesMap.get(deps[0]);
-                JarModule dependency = (JarModule) jarModulesMap.get(deps[1]);
+                JarModule module = jarModulesMap.get(deps[0]);
+                JarModule dependency = jarModulesMap.get(deps[1]);
 
                 if (module.getMrid().getModuleId().equals(dependency.getMrid().getModuleId())) {
                     continue;
                 }
                 Message.verbose(module.getMrid() + " depends on " + dependency.getMrid());
 
-                DefaultModuleDescriptor md = (DefaultModuleDescriptor) mds.get(module.getMrid());
+                DefaultModuleDescriptor md = mds.get(module.getMrid());
 
                 DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
                         dependency.getMrid(), false, false, true);
@@ -82,7 +83,7 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
         } catch (IOException e) {
             Message.debug(e);
         }
-        return (ModuleDescriptor[]) mds.values().toArray(new ModuleDescriptor[mds.values().size()]);
+        return mds.values().toArray(new ModuleDescriptor[mds.values().size()]);
     }
 
     public static void main(String[] args) {
