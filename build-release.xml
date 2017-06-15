@@ -17,10 +17,10 @@
    under the License.
 -->
 <project name="IvyRelease" default="snapshot"
-         xmlns:ivy="antlib:org.apache.ivy.ant"
-         xmlns:ivy2="antlib:org.apache.ivy.ant_2"
-         xmlns:xooki="antlib:xooki"
-         xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
+        xmlns:ivy="antlib:org.apache.ivy.ant"
+        xmlns:ivy2="antlib:org.apache.ivy.ant_2"
+        xmlns:asciidoctor="antlib:org.asciidoctor.ant"
+        xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
     <import file="build.xml"/>
 
     <macrodef name="run-tutorial">
@@ -63,8 +63,8 @@
         </sequential>
     </macrodef>
 
-    <target name="generate-tutorial-output" depends="jar,generate-doc-init">
-        <property name="output.dir" value="${build.dir}/output"/>
+    <target name="generate-tutorial-output" depends="jar,generate-doc-init" unless="skip.generate-tutorial-output">
+        <property name="output.dir" value="${basedir}/asciidoc/tutorial/log"/>
         <delete dir="${output.dir}"/>
         <mkdir dir="${output.dir}"/>
 
@@ -157,27 +157,41 @@
             <fileset file="${artifacts.build.dir}/jars/${final.name}"/>
         </pathconvert>
 
-        <replace dir="${output.dir}" token="\" value="/" />
-        <replace dir="${output.dir}" token="${tutorial.root}" value="/ivy" />
-        <replace dir="${output.dir}" token="${tutorial.local}" value="/home/ivy/.ivy2/local" />
-        <replace dir="${output.dir}" token="${ivy.jar.location}" value="//home/ivy/ivy.jar" />
-        <replace dir="${output.dir}" token="-f build.xml " value="" />
-        <replace dir="${output.dir}" token="${ivy.revision}" value="working@apache" />
+        <replace dir="${output.dir}" token="\" value="/"/>
+        <replace dir="${output.dir}" token="${tutorial.root}" value="/ivy"/>
+        <replace dir="${output.dir}" token="${tutorial.local}" value="/home/ivy/.ivy2/local"/>
+        <replace dir="${output.dir}" token="${ivy.jar.location}" value="//home/ivy/ivy.jar"/>
+        <replace dir="${output.dir}" token="-f build.xml " value=""/>
+        <replace dir="${output.dir}" token="${ivy.revision}" value="working@apache"/>
     </target>
 
-    <target name="generate-doc" depends="init-ivy">
-        <ivy:cachepath pathid="asciidoctor.path">
-            <dependency org="org.asciidoctor" name="asciidoctor-ant" rev="1.5.4" />
-        </ivy:cachepath>
-        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path" />
-        <asciidoctor:convert sourceDirectory="${doc.src.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.src.dir}/templates" preserveDirectories="true">
-            <attribute key="basedir" value="${doc.src.dir}" />
-            <attribute key="imagesdir" value="" />
+    <target name="generate-doc-init" depends="release-version">
+        <!-- copy documentation to temp dir to replace version tokens -->
+        <!-- TODO: Don't like it that we are copying the entire set of files,
+            just so that we can replace some tokens and feed the updated files
+            to document generation. Need to figure out if there's a better way
+            to deal with this, at some point -->
+        <property name="doc.tmp.src.dir" value="${build.dir}/tempdoc"/>
+        <mkdir dir="${doc.tmp.src.dir}"/>
+        <copy todir="${doc.tmp.src.dir}" preservelastmodified="true" overwrite="true">
+            <fileset dir="${doc.src.dir}"/>
+            <filterset>
+                <filter token="version" value="${build.version}"/>
+            </filterset>
+        </copy>
+    </target>
+
+    <target name="generate-doc" depends="generate-doc-init,generate-tutorial-output">
+        <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
+        <asciidoctor:convert sourceDirectory="${doc.tmp.src.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.tmp.src.dir}/templates" preserveDirectories="true">
+            <attribute key="basedir" value="${doc.tmp.src.dir}"/>
+            <attribute key="imagesdir" value=""/>
         </asciidoctor:convert>
         <!-- copy static resources -->
         <copy todir="${doc.build.dir}">
-            <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
-            <fileset dir="${doc.src.dir}" includes="tutorial/log/multi-project-general-publishall.txt" />
+            <fileset dir="${doc.tmp.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd"/>
+            <fileset dir="${doc.tmp.src.dir}" includes="tutorial/log/multi-project-general-publishall.txt"/>
         </copy>
     </target>
 
