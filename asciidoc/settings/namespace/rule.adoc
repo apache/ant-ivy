@@ -1,0 +1,19 @@
+
+*Tag:* rule
+
+Defines a new namespace rule. A rule defines a translation between system namespace and the defined namespace, and vice versa.
+
+See the link:../../settings/namespace.html[namespace] doc for details.
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../../settings/namespace/fromtosystem.html[fromsystem]|defines the translation to apply from the system namespace to the defined namespace|1
+|link:../../settings/namespace/fromtosystem.html[tosystem]|defines the translation to apply from the defined namespace to the system namespace|1
+|=======
+
+	

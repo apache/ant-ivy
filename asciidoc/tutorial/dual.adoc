@@ -1,0 +1,140 @@
+
+In some cases, your module descriptions (i.e. Ivy files, maven poms) are located separately from the module artifacts (i.e. jars). So what can you do about it?
+
+Use a Dual resolver! And this tutorial will show you how.
+
+
+== project description
+
+Let's have a look at the `src/example/dual` directory in your Ivy distribution.
+It contains a build file and 3 directories:
+
+
+* settings: contains the ivy settings file +
+
+* repository: a sample repository of ivy files +
+
+* project: the project making use of Ivy with dual resolver +
+
+
+
+=== the dual project
+
+The project is very simple and contains only one simple class: `example.Hello`
+It depends on two libraries: Apache commons-lang and Apache commons-httpclient.
+
+Here is the content of the project:
+
+  
+* build.xml: the ant build file for the project +
+  
+* ivy.xml: the ivy project file +
+  
+* src\example\Hello.java: the only class of the project +
+
+
+Let's have a look at the `ivy.xml` file:
+
+[source]
+----
+
+<ivy-module version="1.0">
+    <info organisation="org.apache" module="hello-ivy"/>
+    <dependencies>
+        <dependency org="commons-httpclient" name="commons-httpclient" rev="2.0.2"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
+    </dependencies>
+</ivy-module>
+
+----
+
+As you can see, nothing special here... Indeed, Ivy's philosophy is to keep ivy files independent of the way dependencies are resolved.
+
+
+=== the *ivy* settings
+
+The ivy settings are defined in the `ivysettings.xml` file located in the `settings` directory. Here is what it contains, followed by an explanation.
+
+
+[source]
+----
+
+<ivysettings>
+  <settings defaultResolver="dual-example"/>
+  <resolvers>
+    <dual name="dual-example">
+      <filesystem name="ivys">
+        <ivy pattern="${ivy.settings.dir}/../repository/[module]-ivy-[revision].xml" />
+      </filesystem>
+      <ibiblio name="ibiblio" m2compatible="true" usepoms="false" />
+    </dual>
+  </resolvers>
+</ivysettings>
+
+----
+
+Here we configured one resolver, the default one, which is a dual resolver. This dual resolver has two sub resolvers: the first is what is called the "ivy" or "metadata" resolver of the dual resolver, and the second one is what is called the "artifact" resolver. It is important that the dual resolver has exactly two sub resolvers in this given order.
+
+The metadata resolver, here a filesystem one, is used only to find module descriptors, in this case Ivy files. The setting shown here tells Ivy that all ivy files are in the `repository` directory, named with the pattern: `[module]-ivy-[revision].xml`. If we check the `repository` directory, we can confirm that it contains a file named `commons-httpclient-ivy-2.0.2.xml`. This file matches the pattern, so it will be found by the resolver.
+
+The artifact resolver is simply an ibiblio one, configured in m2compatible mode to use the maven 2 repository, with `usepoms="false"` to make sure it won't use maven 2 metadata. Note that this isn't necessary, since the second resolver in a dual resolver (the artifact resolver) is never asked to find module metadata.
+
+
+== walkthrough
+
+
+
+=== step 1 : preparation
+
+Open a DOS or shell window, and go to the `dual` directory.
+
+
+
+=== step 2 : clean up
+
+On the prompt type : `ant`
+
+This will clean up the entire project directory tree (compiled classes and retrieved libs) and the Ivy cache. You can run this each time you want to clean up this example.
+
+
+
+=== step 3 : run the project
+
+Go to the project directory. And simply run `ant`.
+
+[source,shell]
+----
+
+include::asciidoc/tutorial/log/dual.txt[]
+
+----
+
+
+
+
+As you can see, Ivy not only downloaded commons-lang and commons-httpclient, but also commons-logging. Indeed, commons-logging is a dependency of httpclient, as we can see in the httpclient ivy file found in the `repository` directory:
+
+[source]
+----
+
+<ivy-module version="1.0">
+    <info 
+        organisation="commons-httpclient"
+        module="commons-httpclient"
+        revision="2.0.2"
+        status="release"
+        publication="20041010174300"/>
+    <dependencies>
+        <dependency org="commons-logging" name="commons-logging" rev="1.0.4" conf="default"/>
+    </dependencies>
+</ivy-module>
+
+----
+
+
+
+So everything seemed to work. The ivy file was found in the `repository` directory and the artifacts have been downloaded from ibiblio. 
+
+This kind of setup can be useful if you don't want to rely on the maven 2 repository for metadata, or if you want to take full advantage of Ivy files for some or all modules. Combining chain and dual resolvers should give you enough flexibility to meet almost any requirement.
+
+For full details about the dual resolver, have a look at the corresponding link:../resolver/dual.html[reference documentation].

@@ -1,0 +1,10 @@
+$ find /ivy/build-a-ivy-repository/myrepository/advanced -type f -print
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/ivys/ivy-1.0.xml
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/ivys/ivy-1.0.xml.md5
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/ivys/ivy-1.0.xml.sha1
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/jars/commons-lang-1.0.jar
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/jars/commons-lang-1.0.jar.md5
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/jars/commons-lang-1.0.jar.sha1
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/javadocs/commons-lang-1.0.jar
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/javadocs/commons-lang-1.0.jar.md5
+/ivy/build-a-ivy-repository/myrepository/advanced/apache/commons-lang/javadocs/commons-lang-1.0.jar.sha1

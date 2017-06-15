@@ -1,0 +1,23 @@
+
+*Tag:* modules
+
+Defines per module or module set settings.
+
+The rules are given by defining a module set, using a pattern for module organisation and name, and giving some settings for the set, like the name of the corresponding resolver to use.
+
+If no rules match a given module, the default setting will be used.
+
+Note: You can greatly improve the performance of dependency resolution by configuring multiple smaller resolvers instead of one large resolver (i.e. chain). For instance, if you have a local repository for your modules and a remote repository for third party libraries, it is a good idea to have two separate resolvers, one for all of your modules and another for the rest (the default one).
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../settings/module.html[module]|defines a module set rule|1..n
+|=======
+
+
+	

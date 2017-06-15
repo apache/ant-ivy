@@ -1,0 +1,55 @@
+
+*Tag:* classpath
+
+Includes a jar in the classpath used to load plugins. *__since 1.4__*
+
+This let you add ivy plugins without relying on an external classpath (the ant classpath for instance), therefore easing the use of ivy in multiple execution environments (ant, standalone, IDE plugins, ...).
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|url|the url of a jar to add to the classpath|Yes, unless file is specified
+|file|a jar to add to the classpath|Yes, unless url is specified
+|=======
+
+
+== Examples
+
+
+[source]
+----
+
+<ivysettings>
+  <classpath file="${ivy.settings.dir}/custom-resolver.jar"/>
+  <typedef name="custom" classname="org.apache.ivy.resolver.CustomResolver"/>
+  <resolvers>
+    <custom name="custom"/>
+  </resolvers>
+</ivysettings>
+
+----
+
+Adds the custom-resolver.jar (found in the same directory as the ivysettings.xml file) to the classpath, then defines a custom resolver and uses it.
+
+
+'''
+
+
+[source]
+----
+
+<ivysettings>
+  <classpath url="http://www.myserver.com/ivy/custom-resolver.jar"/>
+  <typedef name="custom" classname="org.apache.ivy.resolver.CustomResolver"/>
+  <resolvers>
+    <custom name="custom"/>
+  </resolvers>
+</ivysettings>
+
+----
+
+Same as above, but finds the jar on a web server.

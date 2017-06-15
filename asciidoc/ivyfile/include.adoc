@@ -1,0 +1,57 @@
+
+*Tag:* include *Parent:* link:../ivyfile/configurations.html[configurations]
+
+Include configurations specified in another file. *__since 1.3__*
+
+The included file should have a configurations tag as root tag, which follow the same specification as the link:../ivyfile/configurations.html[configurations] tag of the ivy file. 
+
+This means that it can contain conf declarations, other file inclusion, and also a defaultconfmapping.
+
+When delivering an ivy file with such an inclusion, the included configuration file is inlined, i.e. ivy remove the dependency on the external file.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|file|the file to include|Yes
+|=======
+
+
+== Examples
+
+
+[source]
+----
+
+<ivy-module version="1.0">
+  <info organisation="myorg"
+         module="mymodule"
+  />
+  <configurations>
+    <include file="path/to/included-configurations.xml"/>
+    <conf name="conf3"/>
+  </configurations>
+  <dependencies>
+    <dependency name="mymodule1" rev="1.0"/>
+    <dependency name="mymodule2" rev="2.0" conf="conf2,conf3->*"/>
+  </dependencies>
+</ivy-module>
+
+----
+
+with included-configurations.xml like this:
+
+[source]
+----
+
+<configurations defaultconfmapping="*->@">
+  <conf name="conf1" visibility="public"/>
+  <conf name="conf2" visibility="private"/>
+</configurations>
+
+----
+
+Defines 3 configurations, conf1, conf2 and conf3. mymodule1 is required in each configuration, with for each the same configuration (conf1 is needed in conf1, conf2 in conf2, and conf3 in conf3) due to the defaultconfmapping defined in the included file.

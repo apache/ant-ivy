@@ -1,0 +1,90 @@
+
+The configure task is used to configure ivy with an xml settings file.
+
+
+See link:../settings.html[Settings Files] for details about the settings file itself.
+
+
+
+*__since 2.0__* The file loaded used to be called configuration file in versions prior to 2.0. The name 'settings' and the use of the ivy.settings.file is new to 2.0.
+
+*__since 2.0__* It is also possible to configure Ivy with the link:../use/settings.html[settings] declaration. The difference with this task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|settingsId|The settings id useable in the settingsRef attributes of the ivy task that needs a setting.  Note that the ivy tasks will search by default for the settings with the id "ivy.instance", which is the default value.|No, defaults to "ivy.instance"
+|file|path to the settings file to use|No. If a file is provided, url is ignored. If none are provided, then it attempts to find a file at ${ivy.settings.file}, and if this file does not exist, it uses ${ivy.settings.url} *__(since 2.3)__* or a link:../samples/ivysettings-default.xml[default settings file]
+|url|url of the settings file to use
+|override|Specify what to do when another settings with the same id has already been loaded.
+* true +
+ the current settings will take precedence over any previously defined setting with this id
+* false +
+ the current settings will not override a previously defined setting with this id
+* notallowed +
+an error is raised if a settings has already been defined with this id|No, defaults to "notallowed"
+|host|http authentication host|No, unless authentication is required
+|realm|http authentication realm
+|username|http authentication user name
+|passwd|http authentication password
+|=======
+
+
+=== HTTP Authentication
+
+If any of the url you use in ivy (especially in dependency resolvers) need http
+authentication, then you have to provide the host, realm, username and passwd
+attributes of the configure task. These settings will then be used in any
+further call to ivy tasks.
+
+
+
+*Since 1.4:*
+It's also possible to configure authentication settings for multiple urls. This can be done with the <credentials> subelements. See the examples for more details.
+
+
+=== Examples
+
+
+==== Simplest settings
+
+
+[source]
+----
+<ivy:configure />
+----
+
+Use either ${ivy.settings.file} if it exists, or the link:../samples/ivysettings-default.xml[default settings file]
+
+==== Configure with a file
+
+
+[source]
+----
+<ivy:configure file="myconffile.xml" />
+----
+
+
+==== Configure with an url
+
+
+[source]
+----
+<ivy:configure url="http://mysite.com/myconffile.xml" />
+----
+
+
+==== Configure multiple URLs which require autentication
+
+
+[source]
+----
+
+<ivy:configure file="path/to/my/ivysettings.xml">
+  <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
+  <credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
+</ivy:configure> 
+
+----
+

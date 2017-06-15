@@ -1,0 +1,242 @@
+
+
+This page is a description of how OSGi&#153; dependencies are mapped into Apache Ivy&#153; ones
+
+Goal: the purpose of this mapping is to transform an OSGi manifest into an ivy.xml, so Ivy can understand OSGi bundles and resolve them. We don't want to do the reverse here.
+
+
+=== Bundle Symbolic name / Ivy organisation and module
+
+
+In OSGi a bundle is identified by its symbolic name. In Ivy there is a notion of organisation and module name.
+
+The choosen mapping is:
+
+
+* The organisation is "bundle" (transitive dependencies like pakages or services have their own organisations, "package" and "service") +
+
+* The module name is the symbolic name +
+
+
+
+[]
+|=======
+| *OSGi* | *Ivy* 
+| `Bundle-SymbolicName: com.acme.product.plugin` |
+
+[source]
+----
+
+<info organisation="bundle" module="com.acme.product.plugin" />
+
+----
+
+
+|=======
+
+
+
+=== Version and version range
+
+
+The OSGi specification is defining a version as a composition of 3 numbers and an arbitrary qualifier. This fit well into the lazy definition of Ivy. We will just have to use a special latest strategy in Ivy.
+
+Then about version range, Ivy will understand correctly fully defined range as `[1.2.3,1.4.9)` or `(1.2.3,1.4.9]`. But for OSGi version range defined as in `1.2.3`, it has to be transformed into `[1.2.3,)`
+
+
+[]
+|=======
+| *OSGi* | *Ivy* 
+| `Bundle-Version: 3.3.3` | `revision="3.3.3"` 
+|`Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1"` |
+
+[source]
+----
+
+<dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" />
+
+----
+
+
+|=======
+
+
+
+=== Ivy configurations
+
+
+The Ivy configuration is a notion that doesn't exist explicitely in OSGi, but some notion of the latter can be expressed with that configurations.
+
+First the mapping is defining three configurations:
+
+
+* `default` : it will contain every required dependency (transitively) +
+
+* `optional` : it will contain every optional dependency and every required depedency the the first degree dependencies. +
+
+* `transitive-optional` : it will contain every optional dependency (optional transitively) +
+
+
+Then there will be some configurations used for the `use` parameter of the `Import-Package` OSGi manifest header. All of these kinds of configuration have their names starting with "use_". See in the next section.
+
+
+=== OSGi capabilities
+
+
+Generally speaking, declaring capabilities in an ivy.xml is useless (in the scope of this mapping which is to transform an OSGi manifest into an ivy.xml and not the reverse). In the resolve process we want to find the bundle which have the capability matching the expected requirement. In Ivy, if we are about to get the ivy.xml of a module, we are getting the bundle so we already have reached the requirement.
+
+So OSGi capabilities of bundles in a repo will be gathered direclty from the manifests to passed directly to the Ivy resolver, no need to express them into ivy.xml, except for the Export-Package, see the next section.
+
+
+==== Export-Package
+
+
+Exported package are declaring capabilities of the bundle in term of package. But they also declare dependencies between the declared package via the parameter `use`. These dependencies have to be declared in the ivy.xml. And we will use Ivy configurations for that.
+
+First, each exported package will be declared in the ivy.xml as a configuration. The name of the configuration will start will `use_` and will finished with the name of that package.
+
+Then each time an exported package is declared to use some other one, it will be mapped as a dependency between the Ivy configurations coresponding to those packages. 
+
+
+[]
+|=======
+| *OSGi* | *Ivy* 
+| `Export-Package: com.acme.product.plugin.utils` |
+
+[source]
+----
+
+<configuration name="use_com.acme.product.plugin.utils" extends="default" />
+
+----
+
+
+| `Export-Package: com.acme.product.plugin.utils,com.acme.product.plugin.common;use:=com.acme.product.plugin.utils` |
+
+[source]
+----
+
+<configuration name="use_com.acme.product.plugin.utils" extends="default" />
+<configuration name="use_com.acme.product.plugin.common" extends="default,use_com.acme.product.plugin.utils" />
+
+----
+
+
+|=======
+
+
+
+=== OSGi Requirements / Ivy dependencies
+
+
+In OSGi there are different kind of dependencies, which is an OSGi bundle repository documentation is called a "requirement". The problem is that Ivy is understanding only one kind of requirement, so we use here some extra attribute to declare those different kind of dependency.
+
+
+==== Require-Bundle
+
+
+The OSGi `Require-Bundle` is some a requirement directly on a specific bundle. Ivy does it too. So we just use the `osgi="bundle"` extra attribute.
+
+If there is the OSGi `resolution` parameter specified to `optional`, then the dependency will be declared in the configuration `optional` and `transitive-optional`. Otherwise it will be declared in the `default` configuration.
+
+
+[]
+|=======
+| *OSGi* | *Ivy* 
+| `Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1"` 
+|
+
+[source]
+----
+
+<dependency osgi="bundle" org="" name="com.acme.product.plugin" rev="[3.2.1,)" conf="default->default" />
+
+----
+
+
+| `Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1";resolution:="optional"` |
+
+[source]
+----
+
+<dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional" />
+
+----
+
+
+|=======
+
+
+
+==== Import-Package
+
+
+The OSGi `Import-Package` is some a requirement on a package of a bundle. Ivy has no notion of package. So we will use the `osgi="pkg"` extra attribute.
+
+If there is the OSGi `resolution` parameter specified to `optional`, then the dependency will be declared in the configuration `optional` and `transitive-optional`. Otherwise it will be declared in the `default` configuration.
+
+As it is an import package the configuration of the dependency will be the `use_XXX` one. So that transitive dependency via the use parameter will be respected in the dependency.
+
+
+[]
+|=======
+| *OSGi* | *Ivy* 
+| `Import-Package: com.acme.product.plugin.utils;version="3.2.1"` 
+|
+
+[source]
+----
+
+<dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="default->default;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
+
+----
+
+
+| `Import-Package: com.acme.product.plugin.utils;version="3.2.1";resolution:="optional"` |
+ 
+[source]
+----
+
+<dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
+
+----
+
+
+|=======
+
+
+
+=== Execution environment
+
+
+The OSGi `Bundle-RequiredExecutionEnvironment` manifest attribute is specifing is which environment the bundle is expected to run. In our problematic of dependency management it means that some of the transitive dependencies won't be resolved within the OSGi space but will be provided by the JRE. So we have to exclude from the dependency tree every requirement that will be provided by the environment. Basically it will be about excluding the packaged declared in the JRE.
+
+
+[]
+|=======
+| *OSGi* | *Ivy* 
+| `Bundle-RequiredExecutionEnvironment: JavaSE-1.6` |
+
+[source]
+----
+
+<dependencies>
+    <exclude org="package" module="javax.accessibility" />
+    <exclude org="package" module="javax.activation" />
+    <exclude org="package" module="javax.activity" />
+    ...
+</dependencies>
+
+----
+
+
+|=======
+
+
+
+=== Bundle Fragment
+
+
+Ivy doesn't support the header `Fragment-Host`.
+
+The work around is to manually specify as dependencies in the ivy.xml the bundles which would fit to be the extensions of the host bundle.

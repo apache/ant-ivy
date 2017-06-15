@@ -1,0 +1,35 @@
+
+*Tag:* conflict *Parent:* link:../ivyfile/dependencies.html[dependencies]
+
+
+
+*__(since 2.0)__*
+
+Specify a a conflict manager for one or several dependencies.
+The way to specify a conflict manager is by giving indication to which dependencies the conflict manager applies (by giving organisation and module names or name regexp), and then specifying the conflict manager, either by giving its name or by specifying a fixed revision list, in which case a fixed conflicts manager is used.
+
+The list of built-in conflict managers available is listed on the link:../settings/conflict-managers.html[conflict manager configuration page].
+
+Conflicts manager are used during the resolve operation, i.e. when ivy analyse the graph of dependencies and download corresponding ivy files and artifacts. The fact to manage conflict at resolve time enables to minimize downloads: when a module is evicted by a conflict manager, it is not downloaded.
+
+There are two things optimized during conflict resolution: download of artifacts and download of ivy files. The first is always ensured by ivy, i.e. artifacts of a module evicted will never be downloaded. The second is not as simple to handle because to know what are the conflicts ivy needs to know the dependency graph, and to know the dependency graph, it has to download ivy files. But ivy is highly optimized on this too, and it tries to evict modules as soon as possible.
+That's why the order of dependencies is important for download optimization. Indeed ivy traverses the dependency graph in the order in which dependencies are declared in the ivy files, and each time it encounters a dependency on a module, it first check if there is a conflict on this module, and if this is the case, it asks the conflict manager to resolve the conflict. Then if the module is evicted, it does not download its ivy file, and the whole branch is not traversed, which can saves a lot of time.
+
+If no specific conflict manager is defined, a default conflict manager is used for all modules.
+ 
+The current default conflict manager is the "latest-revision" conflict manager.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|org|the name, or an expression matching the name of organisation to which this conflict manager should apply (see matcher attribute below)|No, defaults to * (match all)
+|module|the name, or an expression matching the name of module to which this conflict manager should apply (see matcher attribute below)|No, defaults to * (match all)
+|manager|the name of the conflict manager to use|Exactly one of two
+|rev|a comma separated list of revisions this conflict manager should select
+|matcher|the link:../concept.html#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to exact
+|=======
+

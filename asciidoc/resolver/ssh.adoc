@@ -1,0 +1,92 @@
+
+
+[]
+|=======
+|Tag|ssh
+|Handle latest|yes
+|Handle publish|yes
+|=======
+
+
+
+
+This resolver can be used when your ivy repository is located on a server accessible via ssh. The secured nature of ssh and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. *__since 1.4__*
+
+If your server supports sftp, you can consider using the link:../resolver/sftp.html[sftp resolver].
+
+Internally this resolver shares most of its behaviour with the link:../resolver/sftp.html[sftp resolver], so refer to its documentation for details.
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|user|The username to provide as credential|No, defaults to username given on the patterns, or prompt if none is set
+|userPassword|The password to provide as credential|No, defaults to password given on the patterns, or prompt if none is set
+|keyFile|Path to the keyfile to use for authentication|No, defaults to username/password authentication
+|keyFilePassword|the password used to protect the key file|No, will prompt for password if keyFile authentication is used and if it is password encrypted
+|host|The host to connect to|No, defaults to host given on the patterns, fail if none is set
+|port|The port to connect to|No, defaults to 22
+|sshConfig|Path to an OpenSSH-style config file containing additional
+            configuration|No
+|publishPermissions|A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of the published files. *__(since 2.0)__*
+|No, defaults to scp standard behaviour
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|artifact|defines a pattern for artifacts, using the pattern attribute|1..n
+|=======
+
+
+
+== Example
+
+
+[source]
+----
+
+<ssh user="myuser" host="myhost.com">
+  <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
+  <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
+</ssh> 
+
+----
+
+Will connect to myhost.com using myuser and prompt for the password.
+
+'''
+
+
+[source]
+----
+
+<ssh keyFile="path/to/key/file" keyFilePassword="${password}">
+  <ivy pattern="ssh://user:geheim@yourserver.com:8022/path/to/repos/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="ssh://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
+</ssh>
+
+----
+
+Will connect to yourserver.com on port 8022 with user geheim and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user geheim with the same keyFile/keyFilePassword pair for the artifacts.
+
+
+[source]
+----
+
+<ssh host="myhost" sshConfig="/path/to/.ssh/config">
+  <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
+  <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
+</ssh>
+
+----
+
+Will connect to the host named by myhost according to the config file in /path/to/.ssh/config, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.

@@ -1,0 +1,17 @@
+[ivy@apache:/ivy/multi-project/projects/find]$ ant -p
+Buildfile: /ivy/multi-project/projects/find/build.xml
+
+Main targets:
+
+ clean          --> clean the project
+ clean-build    --> clean the project built files
+ clean-lib      --> clean the project libraries directory (dependencies)
+ clean-local    --> cleans the local repository for the current module
+ compile        --> compile the project
+ jar            --> make a jar file for this project
+ publish        --> publish this project in the ivy repository
+ publish-local  --> publish this project in the local ivy repository
+ report         --> generates a report of dependencies
+ resolve        --> resolve and retrieve dependencies with ivy
+ run            --> compile and run the project
+Default target: compile

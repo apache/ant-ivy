@@ -1,0 +1,38 @@
+[ivy@apache:/ivy/chained-resolvers/chainedresolvers-project]$ ant 
+Buildfile: /ivy/chained-resolvers/chainedresolvers-project/build.xml
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = /ivy/chained-resolvers/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#chained-resolvers;working@apache
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found commons-lang#commons-lang;2.6 in ibiblio
+[ivy:retrieve] 	found org.apache#test;1.0 in libraries
+[ivy:retrieve] downloading https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar ...
+[ivy:retrieve] ............................. (277kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] commons-lang#commons-lang;2.6!commons-lang.jar (2303ms)
+[ivy:retrieve] downloading /ivy/chained-resolvers/settings/repository/test-1.0.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] 	[SUCCESSFUL ] org.apache#test;1.0!test.jar (1ms)
+[ivy:retrieve] :: resolution report :: resolve 8989ms :: artifacts dl 2306ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   2   |   2   |   1   |   0   ||   2   |   2   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#chained-resolvers
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	2 artifacts copied, 0 already retrieved (278kB/10ms)
+
+run:
+    [mkdir] Created dir: /ivy/chained-resolvers/chainedresolvers-project/build
+    [javac] /ivy/chained-resolvers/chainedresolvers-project/build.xml:58: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /ivy/chained-resolvers/chainedresolvers-project/build
+     [java] standard message :example world !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Example World !
+     [java] upperCased by test.StringUtils : EXAMPLE WORLD !
+
+BUILD SUCCESSFUL
+Total time: 12 seconds

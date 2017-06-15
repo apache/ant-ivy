@@ -1,0 +1,53 @@
+
+
+[]
+|=======
+|Tag|bintray
+|Handle latest|yes, at least if the repository server is apache based
+|Handle publish|no
+|=======
+
+
+This resolver uses Bintray DaaS (Distribution as a Service) platform to retrieve artifacts.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|subject|Bintray username of a repository owner.|No, defaults to Bintray
+|repo|User's repository name.|No, defaults to JCenter
+|=======
+
+
+
+== Examples
+
+
+[source]
+----
+
+<bintray />
+
+----
+
+A default, defines a link:https://bintray.com/bintray/jcenter[JCenter] (http://jcenter.bintray.com/) resolver. 
+In most circumstances you won't need any other resolvers as JCenter is already a super-set of many other repositories, including Maven Central.
+
+
+'''
+
+
+
+[source]
+----
+
+<bintray subject="dsowerby" repo="maven"/>
+<bintray subject="igelgrun" repo="batrak"/>
+
+----
+
+Defines two resolvers to use a link:https://bintray.com/dsowerby/maven[repository] "maven" of user "dsowerby" (https://dl.bintray.com/dsowerby/maven/) 
+and link:https://bintray.com/igelgrun/batrak[repository] "batrak" of user "igelgrun" (https://dl.bintray.com/igelgrun/batrak/).

@@ -1,0 +1,30 @@
+
+
+== JVM compability
+
+
+Up to Ivy 2.3.x, a minimum of Java 1.4 is required.
+
+For Ivy 2.4.0, a minimum of Java 5 is required.
+
+Since Ivy 2.5.0, a minimum of Java 7 is required.
+
+
+== Apache Ant
+
+
+Ivy doesn't require a specific version of Ant as long as the Ant being used complies with the JVM compatibility requirements noted above.
+
+
+== Other optional dependencies
+
+
+The required versions of the Apache HttpClient, Jsch or any optional dependency are to be checked against Ivy's dependency descriptor. In Ivy's source, check for the ivy.xml file at the root. Or the pom.xml of `org.apache.ivy#ivy` in the Maven Central repository.
+
+
+== Environment / Configuration Requirements
+
+
+Ivy does not at this time support multithreaded use. It thus should not be used with the ant `&lt;parallel&gt;` task.
+
+	

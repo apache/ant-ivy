@@ -1,0 +1,78 @@
+
+*Tag:* signers
+*__since 2.2__*
+
+Defines a list of detached signature generators usable in ivy. Each generator is identified by its name, given as an attribute.
+The child tags used to configure the signature generator must be equal to the name of a signature generator type (either built-in or added with the typedef tag).
+
+Ivy supports the following signature generator out of the box: 
+
+
+* pgp +
+ generates an OpenPGP compatible ASCII armored detached signature.
+
+
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|any signature generator|adds a signature generator to the list of registered generators|1..n
+|=======
+
+
+
+== Built-in Generators
+
+
+
+=== PGP
+
+
+This generator is capable of generating an OpenPGP compatible ASCII armored detached signature.
+
+*Remark:* This generator uses the link:http://www.bouncycastle.org/java.html[BouncyCastle OpenPGP] library. Before this generator can be used, these libraries must be available on Ivy's classpath.
+
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|name|The name of the signature generator.|Yes
+|secring|The location of the secret keyring.|No, defaults to ${user.home}/.gnupg/secring.gpg
+|keyId|The identifier of the key to use. The keyword 'auto' can be used to indicate a key will be selected automatically.|No, defaults to 'auto'.
+|password|The password of the private key.|Yes
+|=======
+
+
+
+== Examples
+
+
+[source]
+----
+
+<signers>
+    <pgp name="mypgp" password="my-password" />
+</signers>
+
+----
+
+Defines a detached signature generator with name 'mypgp' which uses the secret key ring on the default location and automatically selects a private key.
+
+'''
+
+
+[source]
+----
+
+<signers>
+    <pgp name="mypgp" password="my-password" keyId="123ABC45"/>
+</signers>
+
+----
+
+Same as before, but this time the key '123ABC45' is used to generate the detached signature.

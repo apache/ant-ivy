@@ -1,0 +1,83 @@
+
+
+[]
+|=======
+|Tag|mirroredurl
+|Handle latest|yes with http urls (and apache server) and with file urls, no with other urls
+|Handle publish|no
+|=======
+
+
+*__since 2.3__*
+
+
+
+<span class="tagdoc" id="ivysettings.resolvers.mirroredurl">This resolver can resolve dependencies against several mirrors of the same repository. From a list of mirror urls, it will iteratively try to resolve the dependencies against each one.
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|m2compatible|True if this resolver should be maven2 compatible, false otherwise|No, defaults to false
+|mirrorListUrl|The url where to retrive the list of mirror urls.|Yes
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|artifact|defines a pattern for artifacts, using the pattern attribute|1..n
+|=======
+
+
+
+== Example
+
+
+Having the file mavenrepolist.txt content:
+
+[source]
+----
+
+https://repo1.maven.org/maven2/
+http://repo2.maven.org/maven2/
+
+----
+
+And the piece of settings:
+
+[source]
+----
+
+<mirroredurl name="mirrored-maven" m2compatible="true" mirrorListUrl="file:///Users/me/dev/repo/mavenrepolist.txt">
+      <artifact pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+</mirroredurl>
+
+----
+
+It will resolve first on the repo1 and if failing it will fall back on repo2.
+
+
+'''
+
+
+The mirror list can be retrieved from a geo-location aware url:
+
+[source]
+----
+
+<mirroredurl name="mirrored-asf" mirrorListUrl="http://www.apache.org/dyn/closer.cgi">
+  <ivy pattern="repo/[organisation]/[module]/[revision]/ivy.xml" />
+  <artifact pattern="repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+</mirroredurl>
+
+----
+

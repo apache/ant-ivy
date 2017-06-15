@@ -1,0 +1,33 @@
+
+If you have successfully followed and understood all the tutorials, you still might need to get a better picture of how to use Ivy in the real world.
+
+Here are some links which might be interesting:
+
+
+==== link:http://wiki.hippo.nl/display/OS/SAnt+build+system[SAnt]
+
+SAnt is an experimental build system based on Ant and Ivy. It can be interesting to use "as is", or to get insight on an interesting approach to manage your builds.
+
+
+==== link:https://springmodules.dev.java.net/[Spring Modules]
+
+The spring modules project build system is based on Ant and Ivy, and it's really interesting to have a look at how a modularized project can take advantage of advanced Ant and Ivy features to make the build simpler.
+
+
+==== link:http://www.opensymphony.com/webwork/[Webwork]
+
+The webwork project (which should become struts action framework) uses ant+ivy for their build, and thus makes their framework very easy to use in an ant+ivy build system. They have a link:http://wiki.opensymphony.com/display/WW/Dependencies[page documenting how to use Ivy with their framework], which can be an interesting reading, even if you don't plan to use webwork.
+
+
+==== link:http://www.jaya.free.fr/ivy/doc/articles/ease-multi-module.html[Easing multi-module development]
+
+Johan stuyts, the author of SAnt, also contributed a nice article on his view of how to use Ivy on a multi-module environment.
+
+
+==== link:http://olmex.blogspot.in/2012/04/ivy-beginners-guide.html[Beginners Guide]
+
+
+Apache Ivy - Beginners Guide is a step by step guide to assist beginners in understanding basic concepts/tasks and use them straight away in their projects either through Ant build or in Eclipse IDE.
+
+
+	

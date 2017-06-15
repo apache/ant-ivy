@@ -1,0 +1,158 @@
+
+*Tag:* macrodef
+
+Defines a new dependency resolver type based upon another. This definition is very similar to the macrodef feature of ant for defining macro tasks. *__since 1.3__*
+
+This task eases the process of creating a new dependency resolver, because it avoids writing java code.
+
+It is generally used in combination with the link:../settings/include.html[include] feature to help reuse a macro in multiple settings files.
+
+A macro is defined by declaring an existing resolver within it. Then you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name, and optionally a default value, and are used using the following syntax: 
+
+[source]
+----
+@{attributename}
+----
+
+
+=== Resolvers names
+
+Since you can use the same macro several times it can define several resolvers (in a chain for instance), the resolver names need to be chosen carefully to avoid name conflicts (each resolver must have a unique name).
+
+Here is how Ivy deals with the names of the resolvers defined in a macro:
+
+
+* if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This is what usually should be done for the main resolver defined in the macro +
+
+* if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a @{name} inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash +
+
+* if there is a name attribute on a resolver in the macrodef, and this name contains @{name} somewhere, then Ivy will use this name, and replace @{name} with the name provided when using the macro. +
+
+
+Example:
+
+[source]
+----
+
+<ivysettings>
+  <macrodef name="mymacro">
+    <chain>
+      <ibiblio name="ex1" />
+      <ibiblio name="ex2.@{name}" m2compatible="true" />
+    </chain>
+  </macrodef>
+	
+  <resolvers>
+    <mymacro name="default" />
+    <mymacro name="other" />
+   </resolvers>
+</ivysettings>
+
+----
+
+This is equivalent to:
+
+[source]
+----
+
+<ivysettings>
+  <resolvers>
+    <chain name="default">
+      <ibiblio name="default-ex1" />
+      <ibiblio name="ex2.default" m2compatible="true" />
+    </chain>
+    <chain name="other">
+      <ibiblio name="other-ex1" />
+      <ibiblio name="ex2.other" m2compatible="true" />
+    </chain>
+   </resolvers>
+</ivysettings>
+
+----
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|name|name of the resover type created|Yes
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../settings/macrodef/attribute.html[attribute]|defines an attribute for the macro resolver|0..n
+|any resolver|defines the base resolver upon which this macro is defined|1
+|=======
+
+
+== Examples
+
+Defining a simple macro:
+
+[source]
+----
+
+  <macrodef name="mymacro">
+    <attribute name="mymainrep"/>
+      <filesystem name="fs1">
+        <ivy pattern="@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+        <artifact pattern="@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+      </filesystem>
+  </macrodef>
+
+----
+
+Using it:
+
+[source]
+----
+
+  <resolvers>
+    <mymacro name="default" mymainrep="path/to/myrep"/>
+  </resolvers>
+
+----
+
+
+'''
+
+A complete example:
+
+[source]
+----
+
+<ivysettings>
+  <macrodef name="mymacro">
+    <attribute name="mymainrep"/>
+    <attribute name="mysecondrep"/>
+    <attribute name="myseconddirlayout" default="[organisation]/[module]/[type]s"/>
+    <chain>
+      <filesystem name="fs1">
+        <ivy pattern="@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+        <artifact pattern="@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+      </filesystem>
+      <filesystem name="fs2" latest="latest-time">
+        <ivy pattern="@{mysecondrep}/@{myseconddirlayout}/ivy-[revision].xml"/>
+        <artifact pattern="@{mysecondrep}/@{myseconddirlayout}/[artifact]-[revision].[ext]"/>
+      </filesystem>
+    </chain>
+  </macrodef>
+	
+  <resolvers>
+    <mymacro name="default" mymainrep="path/to/myrep" mysecondrep="path/to/secondrep"/>
+    <mymacro name="other" 
+       mymainrep="path/to/myrep" 
+       mysecondrep="path/to/secondrep" 
+       myseconddirlayout="[module]/[type]s"/>
+   </resolvers>
+</ivysettings>
+
+----
+

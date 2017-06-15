@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivy-module version="2.2" xmlns:o="http://ant.apache.org/ivy/osgi">
+    <info organisation="bundle" module="myplugin">
+        <extends organisation="bundle" module="com.acme.myplugin" revision="1.0.0.qualifier" location="META-INF/MANIFEST.MF" />
+    </info>
+    <configurations>
+        <conf name="compile"  extends="default,embedded" description="Dependencies for the compilation" />
+        <conf name="embedded"                            description="Dependencies embedded into the plugin's jar" />
+        <conf name="win32"    extends="compile"          description="To run on Microsoft Windows" />
+        <conf name="macos"    extends="compile"          description="To run on Mac OS X" />
+        <conf name="linux"    extends="compile"          description="To run on Linux" />
+    </configurations>
+    <dependencies>
+        <!-- example of a dependency that we can't declare in the MANIFEST.MF because we want it to be embedded -->
+        <!--dependency osgi="bundle" org="" module="org.apache.commons.httpcore" rev="4.1.0" conf="embedded->default" /-->
+        <!-- Ivy-Osgi doesn't understand bundle fragment -->
+        <dependency org="bundle" name="org.eclipse.swt.win32.win32.x86" rev="3.+" conf="win32->default" />
+        <dependency org="bundle" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="3.+" conf="macos->default" />
+        <dependency org="bundle" name="org.eclipse.swt.gtk.linux.x86" rev="3.+" conf="linux->default" />
+     </dependencies>
+</ivy-module>

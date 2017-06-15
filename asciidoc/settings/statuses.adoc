@@ -1,0 +1,50 @@
+
+*Tag:* statuses
+
+Defines the list of available statuses. *__since 1.4__*
+
+By default, ivy has 3 statuses: release, milestone and integration. By adding a statuses section to your ivysettings file, you define the statuses you want to use. Note that in this case if you still want to have ivy default statuses you will have to declare them.
+
+The integration property on each status is only used for recursive delivery, an integration dependency being delivered if the caller is not in integration state itself.
+
+The default status is the one used when none is defined in a module descriptor. If not specified, it defaults to the last defined status.
+
+The statuses order is important, the first is considered the more mature, the last the less mature. This is used to know if a status is compatible with a latest._&lt;status&gt;_ version matcher.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|default|the name of the status to use when none is declared in an ivy file|No, defaults to the last status declared
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../settings/status.html[status]|defines a new status|0..n
+|=======
+
+
+== Examples
+
+
+[source]
+----
+
+<statuses default="bronze">
+  <status name="gold" integration="false"/>
+  <status name="silver" integration="false"/>
+  <status name="bronze" integration="true"/>
+</statuses> 
+
+----
+
+Defines 3 statuses, gold, silver and bronze. The default status used when none is declared in an ivy file will be bronze. 
+It is also considered as an integration status, and thus doesn't trigger any recrusive delivery.

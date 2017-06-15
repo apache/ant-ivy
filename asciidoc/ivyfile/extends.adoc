@@ -1,0 +1,40 @@
+
+*Tag:* extends *Parent:* link:../ivyfile/info.html[info]
+
+*__since 2.2__* Identifies an optional parent descriptor for this module.  For complicated projects composed of many modules that have common configurations or dependencies, inheritance allows modules to share this information.  Which parts of the parent descriptor are inherited can be controlled with the __extendType__ attribute.  Supported __extendType__ values are:
+
+[options="header",cols="15%,50%"]
+|=======
+|Value|Description
+|info|Attributes of the link:../ivyfile/info.html[info] element are inherited from the parent.  When an attribute appears in both child and parent, the child value is used.
+|description|The content of the link:../ivyfile/description.html[info/description] element is inherited from the parent.
+|configurations|link:../ivyfile/conf.html[Configurations] defined in the parent descriptor are added to any configurations defined in the child descriptor.
+|dependencies|link:../ivyfile/dependency.html[Dependencies] defined in the parent descriptor are added to any dependencies defined in the child descriptor.
+|licenses|link:../ivyfile/license.html[Licenses] defined in the parent descriptor are added to any licenses defined in the child descriptor.
+|all|info, description, configurations, licenses and dependencies from the parent descriptor are merged into the child descriptor.
+|=======
+
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|organisation|the organisation of the parent module|Yes
+|module|the name of the parent module|Yes
+|revision|the revision of the parent module.  Can be fixed, a dynamic value, or range of revisions; see link:../ivyfile/dependency.html[dependency] for information on specifying revisions.|Yes
+|extendType|which part(s) of the parent descriptor are inherited.  Valid values are __info__, __description__,
+__configurations__, __dependencies__, and __all__.|No, default is __all__
+|location|
+
+A local filesystem path that should be searched for the parent descriptor.  If the parent descriptor cannot be found at this location, it will be located using dependency resolvers like any normal dependency.
+
+
+
+This attribute is intended for development use.  For example, child module descriptors appear in a source control directory with the parent module descriptor at a higher level.  __location__ will then contain the relative path to the parent descriptor for use during development builds.
+
+|No, as long as the parent descriptor exists in an Ivy resolver
+|=======
+

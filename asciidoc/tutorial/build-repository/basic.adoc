@@ -1,0 +1,122 @@
+
+In this first step, we use the link:../../use/install.html[install] Ant task to install modules from the maven 2 repository to a file system based repository. We first install a module by itself, excluding dependencies, then again with its dependencies.
+
+
+== Basic: ivysettings.xml file used
+
+The ivy settings file that we will use is very simple here. It defines two resolvers, __libraries__ and __my-repository__. The first one is used as the source, the second one as the destination. In a typical setup, the second one would be configured using an link:../../settings/include.html[include] that included an existing settings file used by the development team.
+
+
+[source]
+----
+
+<ivysettings>
+	<settings	defaultResolver="libraries"
+			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+	<caches defaultCacheDir="${ivy.cache.dir}/no-namespace" />
+	<resolvers>
+		<ibiblio name="libraries" m2compatible="true" />
+  		<filesystem name="my-repository">
+  			<ivy pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+  			<artifact pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+  		</filesystem>
+	</resolvers>
+</ivysettings>
+
+----
+
+
+== install a simple module with no dependencies
+
+Let's have a look at the _maven2_ target.
+
+[source]
+----
+
+    <target name="maven2" depends="init-ivy"
+    	description="--> install module from maven 2 repository">
+    	<ivy:install settingsRef="basic.settings" 
+    		organisation="commons-lang" module="commons-lang" revision="1.0" 
+    		from="${from.resolver}" to="${to.resolver}" />
+    </target>
+
+----
+
+Pretty simple, we call the [[ant:install] task with the settings we have loaded using link:../../use/settings.html[ivy:settings] as usual. We then set the source and destination repositories using the __from__ and __to__ attributes. We used Ant properties for these values here, which helps ease the maintenance of the script, but it's basically the name of our resolvers: 'libraries' for the source and 'my-repository' for the destination.
+
+Here is the Ant call output :
+
+[source,shell]
+----
+
+include::asciidoc/tutorial/log/install.txt[]
+
+----
+
+
+The trace tells us that the module definition was found using the "libraries" resolver and that the corresponding artifact was downloaded from the maven 2 repository. Then both were published to the filesystem repository (my-repository).
+
+Let's have a look at our repository :
+
+[source,shell]
+----
+
+include::asciidoc/tutorial/log/myrepository-content.txt[]
+
+----
+
+
+We can see that we now have the commons-lang module version 1.0 in our repository, with a generated ivy.xml file, its jar, and all the md5 and sha1 checksums for future consistency checks when developers use this repository to resolve modules.
+
+
+== install a module with dependencies
+
+Now let's say that we want to be sure all the dependencies of the module we install are available in our repository after the installation. We could either install without dependencies on a staging repository and check the missing dependencies (more control), or use transitive dependency management and ask Ivy to install everything for us (much simpler).
+
+The `maven2-deps` target is very similar to the one described above, except that we explicitly ask for transitive installation.
+
+[source]
+----
+
+    <target name="maven2-deps" depends="init-ivy" 
+    	description="--> install module from maven 2 repository with dependencies">
+    	<ivy:install settingsRef="basic.settings" 
+    		organisation="org.hibernate" module="hibernate" revision="3.2.5.ga" 
+    		from="${from.resolver}" to="${to.resolver}" transitive="true" />
+    </target>
+
+----
+
+If you call this target, you will see that Ivy installs not only the hibernate module but also its dependencies:
+
+[source,shell]
+----
+
+include::asciidoc/tutorial/log/install-deps.txt[]
+
+
+----
+
+
+
+As you can see the installation has failed, if you look at the log you will see that there are missing artifacts on the source repository. This means that you will need to download those artifacts manually, and copy them to your destination repository to complete the installation. Fortunately Ivy uses a best effort algorithm during install, so that everything gets installed except the missing artifacts. (Note: these missing artifacts are not in the public maven repository due to licensing issues)
+
+You may also have noticed that Ivy installed 2 different revisions of commons-logging (1.0.2, 1.0.4). This is due to the fact that we used the "no conflict" link:../../settings/conflict-managers.html[conflict manager] in the ivysettings file.
+
+We do not want to evict any modules because we are building our own repository. Indeed if we get both commons-logging 1.0.2 and 1.0.4 it's because some modules among the transitive dependencies of hibernate depend on 1.0.2 and others on 1.0.4. If we got only 1.0.4, the module depending on 1.0.2 would be inconsistent in your own repository (depending on a version you don't have installed). Thus developers using this module directly would run into a problem.
+
+If you now have a closer look at your repository, you will probably notice that it isn't an exact replication of the original one. Let's have a look at the directory of one module:
+
+[source,shell]
+----
+
+include::asciidoc/tutorial/log/myrepository-content-deps.txt[]
+
+
+----
+
+
+
+As you can see there is no pom here (pom is the module metadata format used by maven 2, available on the maven 2 repository). Instead you can see there's an ivy file, which is actually the original hibernate pom converted into an ivy file. So now you have a true Ivy repository with ivy files, where you can use the full power of Ivy if you want to adjust the module metadata (module configurations, fine grain exclusions and transitivity control, per module conflict manager, ...).
+
+OK, enough for this simple repository installation, the link:../../tutorial/build-repository/advanced.html[next tutorial] will show how you can deal with more complex cases where your source and destination repositories do not follow the same naming conventions.

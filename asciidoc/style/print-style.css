@@ -1,0 +1,299 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+@import "color.css";
+@import "nav.css";
+@import "xmlverbatim.css";
+@import "ant.css";
+@import "ivy-ref.css";
+@import "shell.css";
+
+#body  {
+  padding: 0;
+}
+#body  {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/*
+** HTML elements
+*/
+body  {
+  margin: 0;
+  padding: 0;
+  bgcolor: #ffffff;
+}
+body, p, td, li, ul, ol  {
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size: small;
+}
+h1, h2, h3, h4, h5, h6, .toc-title {
+  font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
+}
+.toc-title {
+  margin: 15px;
+  padding: 10px;
+  font-size: 2em;
+  text-align: center;
+  border: solid 2px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+}
+h1 {
+/*
+  margin-left: 15px;
+  margin-right: 15px;
+  */
+  padding-left: 10px;
+  font-size: 1.6em;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+}
+h2 {
+  font-size: 1.4em;
+}
+h3 {
+  font-size: 1.2em;
+}
+h4 {
+  font-size: 1.1em;
+}
+tr.dark td, tr.light td {
+  padding: 0.3em;
+}
+a:link {
+  text-decoration: none;
+  font-weight: bold;
+}
+a:visited {
+  text-decoration: none;
+  font-weight: bold;
+}
+a:hover, a:active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+p {
+  margin: 0 0 1.3em 0;
+  padding: 0;
+}
+blockquote {
+  padding: 0 15px 0 15px;
+  margin: 15px 50px 15px 50px;
+  text-align: left;
+  font-size: 1.2em;
+  line-height: 1.3em;
+  font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
+}
+pre {
+  padding: 0.75em 1.5em;
+  font-size: 1em;
+}
+.form-item {
+  margin-top: 1em;
+}
+.item-list .title {
+  font-size: 0.85em;
+}
+.hide {
+  display: none
+}
+
+/*
+** Page layout blocks / IDs
+*/
+#home img {
+  padding: 5px 20px 10px 10px;
+}
+.product img {
+  padding: 5px 20px 10px 10px;
+}
+
+#top-menu tr {
+  padding: 0;
+  margin: 0;
+}
+
+#top-menu td {
+  padding: 0;
+  margin: 0;
+}
+
+#search {
+  padding: 0 1em 0 1em;
+  margin: 0;
+}
+#search .form-text, #search .form-submit {
+  padding: 0;
+  margin: 0;
+  font-size: 0.85em;
+}
+#search .form-text {
+  width: 8em;
+  padding: 0;
+  margin: 0;
+}
+
+#sidebar-left, #sidebar-right {
+  width: 200px;
+  /* padding in px not ex because IE messes up 100% width tables otherwise */
+  padding: 15px 5px 75px 10px;
+  vertical-align: top;
+}
+#sidebar-left li, #sidebar-right li {
+  font-size: 1em;
+}
+.block h2 {
+  margin: 5px 0px 0px 0px;
+  padding: 1px 5px 1px 30px;
+  font-size: 1.2em;
+  font-weight: 700;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+} 
+
+.block .content {
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  margin-bottom: 10px;
+}
+
+#main {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  background: transparent url(../images/background.png) center center no-repeat;
+}
+
+.content {
+  padding-top: 10px;
+}
+
+#forum {
+  margin: 15px 0 15px 0;
+}
+#forum table {
+  width: 100%;
+}
+#forum table tr th {
+  text-align: center;
+  font-size: 0.75em;
+}
+#forum table tr th a  {
+  text-decoration: underline;
+}
+#forum table tr th img  {
+  margin: 0;
+}
+#forum td {
+  padding: 0.5em 0.5em 0.5em 0.5em;
+}
+#forum td.container a {
+  padding: 20px 0 20px 35px;
+}
+#forum td.statistics, #forum td.settings, #forum td.pager {
+  height: 1.5em;
+}
+#forum td .links {
+  padding-top: 0.7em;
+  font-size: 0.9em;
+}
+.block-forum h3 {
+  margin-bottom: .5em;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 3pt;
+  margin-bottom: 3pt;
+  font-size: 85%;
+}
+
+#footer-menu td {
+  padding-top: 3px;
+}
+
+.comparison td, .comparison th {
+    text-align: center;
+}
+
+.comment {
+  -moz-border-radius: 5px;
+  border: 1px solid #abc;
+  padding: .5em;
+  margin-bottom: 1em;
+}
+.comment .title {
+  font-size: 1em;
+  padding: 10px 0px 12px 19px;
+  background: transparent url(icon-comment.png) left center no-repeat;
+}
+.comment .new {
+  font-weight: bold;
+  font-size: 1em;
+  margin-left: 2px;
+  color: red;
+}
+.comment .picture {
+  border: 1px solid #fff;
+  float: right;
+  margin: 10px;
+}
+.submitted {
+  color: #999;
+  font-size: 0.79em;
+}
+.since {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.postit {
+  margin:10px;
+  padding:10px;
+  -moz-border-radius:10px;
+  float:right;
+  width:400px;
+}
+
+table.home {
+    text-align:center;
+    color:#6e9244;
+    font-family:verdana, "Lucida Grande", arial, helvetica, sans-serif;
+}
+tr.homeitems {
+    font-size:large;
+}
+tr.homeitems td {
+    padding: 0 0.5cm 0 0.5cm;
+}
+tr.homeitems a:link, a:visited {
+    color: #6e9244; 
+    text-decoration: none;
+}
+tr.homeitems a:hover {
+    text-decoration: underline;
+    background: none !important;
+}
+.home img { border-width:0; }
+

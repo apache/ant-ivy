@@ -1,0 +1,48 @@
+
+*__since 1.4__*
+Finds the latest revision of a module matching a given version constraint.
+
+A version constraint is what is used when declaring a link:../ivyfile/dependency.html[dependency] on a module.
+If the module is not found the property is not set.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|organisation|the organisation of the module to find|Yes
+|module|the the name of the module to find|Yes
+|branch|the branch of the module to find|No, defaults to the default branch for the given module
+|revision|the revision constraint to apply|Yes
+|property|the property to set with the found revision|No, defaults to ivy.revision
+|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, 'ivy.instance' is taken by default.
+|=======
+
+
+== Examples
+
+
+[source]
+----
+
+<ivy:findrevision organisation="apache" module="ivy" revision="latest.integration"/>
+
+----
+
+finds the latest version of ivy available in the repository and sets the property ivy.revision according to what was found.
+
+
+'''
+
+
+
+[source]
+----
+
+<ivy:findrevision organisation="apache" module="ivy" revision="1.0+"/>
+
+----
+
+same as above but only with 1.0 sub versions.

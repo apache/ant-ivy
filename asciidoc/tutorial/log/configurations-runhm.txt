@@ -1,0 +1,32 @@
+[ivy@apache:/ivy/configurations/multi-projects/myapp]$ ant run-hm
+Buildfile: /ivy/configurations/multi-projects/myapp/build.xml
+
+resolve:
+[ivy:retrieve] :: Apache Ivy 2.5.0 - 20170615164456 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: url = jar:file://home/ivy/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: org.apache#myapp;working@apache
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	found org.apache#filter-framework;1.3 in local
+[ivy:retrieve] 	[1.3] org.apache#filter-framework;latest.integration
+[ivy:retrieve] 	found org.apache.commons#commons-collections4;4.1 in public
+[ivy:retrieve] :: resolution report :: resolve 144ms :: artifacts dl 8ms
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|       build      |   1   |   1   |   0   |   0   ||   1   |   0   |
+	|   noexternaljar  |   1   |   1   |   0   |   0   ||   2   |   0   |
+	|  withexternaljar |   2   |   1   |   0   |   0   ||   3   |   0   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache#myapp
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	0 artifacts copied, 6 already retrieved (0kB/6ms)
+
+build:
+
+run-hm:
+     [java] Filtering with:class filter.hmimpl.HMFilter
+     [java] Result :[two, tree]
+
+BUILD SUCCESSFUL
+Total time: 0 seconds

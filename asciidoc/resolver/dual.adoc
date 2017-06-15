@@ -1,0 +1,29 @@
+
+
+[]
+|=======
+|Tag|dual
+|Handle latest|depends on sub resolvers
+|Handle publish|delegates to ivy sub resolver if artifact to publish is of "ivy" type, to artifact sub resolver otherwise
+|=======
+
+
+This resolver delegates its job to one resolver for ivy files and another for artifacts.
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|any resolver|two resolvers, the first being the ivy resolver, the second the artifact resolver|2
+|=======
+
+
+	

@@ -1,0 +1,13 @@
+[ivy@apache:/]$ find /ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate -type f -print
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/ivys/ivy-3.2.5.ga.xml
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/ivys/ivy-3.2.5.ga.xml.md5
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/ivys/ivy-3.2.5.ga.xml.sha1
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/jars/hibernate-3.2.5.ga.jar
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/jars/hibernate-3.2.5.ga.jar.md5
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/jars/hibernate-3.2.5.ga.jar.sha1
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/javadocs/hibernate-3.2.5.ga.jar
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/javadocs/hibernate-3.2.5.ga.jar.md5
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/javadocs/hibernate-3.2.5.ga.jar.sha1
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/sources/hibernate-3.2.5.ga.jar
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/sources/hibernate-3.2.5.ga.jar.md5
+/ivy/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate/sources/hibernate-3.2.5.ga.jar.sha1
