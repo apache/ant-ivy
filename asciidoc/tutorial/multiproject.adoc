@@ -61,8 +61,8 @@ contains a directory per module, with each containing:
   Ivy file of the module, describing its dependencies upon other modules and/or external modules.
   Example:
 
-  [source]
-  ----
+[source]
+----
 
   <ivy-module version="1.0">
       <info 
@@ -84,14 +84,14 @@ contains a directory per module, with each containing:
       </dependencies>
   </ivy-module>
 
-  ----
+----
 
 
   ** build.xml +
   The build file of the project, which consists mainly of an import of the common build file and of a module specific properties file:
 
-  [source]
-  ----
+[source]
+----
 
   <project name="find" default="compile">
   	<property file="build.properties"/>
@@ -99,20 +99,20 @@ contains a directory per module, with each containing:
   	<import file="${common.dir}/common.xml"/>
   </project>
 
-  ----
+----
 
 
   ** build.properties +
   Module specific properties + properties to find the common build file
 
-  [source]
-  ----
+[source]
+----
 
   projects.dir = ${basedir}/..
   wkspace.dir = ${projects.dir}/..
   common.dir = ${wkspace.dir}/common
 
-  ----
+----
 
 
   ** src +

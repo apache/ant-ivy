@@ -22,15 +22,12 @@ The choosen mapping is:
 []
 |=======
 | *OSGi* | *Ivy* 
-| `Bundle-SymbolicName: com.acme.product.plugin` |
-
-[source]
+| `Bundle-SymbolicName: com.acme.product.plugin` 
+a|
+[source, xml]
 ----
-
 <info organisation="bundle" module="com.acme.product.plugin" />
-
 ----
-
 
 |=======
 
@@ -48,13 +45,11 @@ Then about version range, Ivy will understand correctly fully defined range as `
 |=======
 | *OSGi* | *Ivy* 
 | `Bundle-Version: 3.3.3` | `revision="3.3.3"` 
-|`Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1"` |
-
-[source]
+|`Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1"` 
+a|
+[source, xml]
 ----
-
 <dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" />
-
 ----
 
 
@@ -101,24 +96,20 @@ Then each time an exported package is declared to use some other one, it will be
 []
 |=======
 | *OSGi* | *Ivy* 
-| `Export-Package: com.acme.product.plugin.utils` |
-
-[source]
+| `Export-Package: com.acme.product.plugin.utils` 
+a|
+[source, xml]
 ----
-
 <configuration name="use_com.acme.product.plugin.utils" extends="default" />
-
 ----
 
 
-| `Export-Package: com.acme.product.plugin.utils,com.acme.product.plugin.common;use:=com.acme.product.plugin.utils` |
-
-[source]
+| `Export-Package: com.acme.product.plugin.utils,com.acme.product.plugin.common;use:=com.acme.product.plugin.utils` 
+a|
+[source, xml]
 ----
-
 <configuration name="use_com.acme.product.plugin.utils" extends="default" />
 <configuration name="use_com.acme.product.plugin.common" extends="default,use_com.acme.product.plugin.utils" />
-
 ----
 
 
@@ -144,23 +135,18 @@ If there is the OSGi `resolution` parameter specified to `optional`, then the de
 |=======
 | *OSGi* | *Ivy* 
 | `Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1"` 
-|
-
-[source]
+a|
+[source, xml]
 ----
-
 <dependency osgi="bundle" org="" name="com.acme.product.plugin" rev="[3.2.1,)" conf="default->default" />
-
 ----
 
 
-| `Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1";resolution:="optional"` |
-
-[source]
+| `Require-Bundle: com.acme.product.plugin;bundle-version="3.2.1";resolution:="optional"` 
+a|
+[source, xml]
 ----
-
 <dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional" />
-
 ----
 
 
@@ -182,23 +168,18 @@ As it is an import package the configuration of the dependency will be the `use_
 |=======
 | *OSGi* | *Ivy* 
 | `Import-Package: com.acme.product.plugin.utils;version="3.2.1"` 
-|
-
-[source]
+a|
+[source, xml]
 ----
-
 <dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="default->default;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
-
 ----
 
 
-| `Import-Package: com.acme.product.plugin.utils;version="3.2.1";resolution:="optional"` |
- 
-[source]
+| `Import-Package: com.acme.product.plugin.utils;version="3.2.1";resolution:="optional"` 
+a| 
+[source, xml]
 ----
-
 <dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils" />
-
 ----
 
 
@@ -215,9 +196,9 @@ The OSGi `Bundle-RequiredExecutionEnvironment` manifest attribute is specifing i
 []
 |=======
 | *OSGi* | *Ivy* 
-| `Bundle-RequiredExecutionEnvironment: JavaSE-1.6` |
-
-[source]
+| `Bundle-RequiredExecutionEnvironment: JavaSE-1.6` 
+a|
+[source, xml]
 ----
 
 <dependencies>
