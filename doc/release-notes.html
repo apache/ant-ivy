@@ -76,6 +76,7 @@ List of changes since Ivy 2.4.0:
 - FIX: Including optional ivysettings of type 'file' doesn't work when file doesn't exist (IVY-1555) (Thanks to Jaikiran Pai)
 - FIX: Makepom ignores dependency classifiers (IVY-1528) (Thanks to Jaikiran Pai)
 - FIX: Infinite loop in dependencytree (IVY-1540) (Thanks to Jaikiran Pai)
+- FIX: ivy:cachefileset fails with String index out of range on Windows (IVY-1475)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (IVY-1482)
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
