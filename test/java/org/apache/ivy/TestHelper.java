@@ -19,6 +19,8 @@ package org.apache.ivy;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -344,5 +346,27 @@ public class TestHelper {
         del.setProject(new Project());
         del.setDir(cache);
         del.execute();
+    }
+
+    /**
+     * The {@link Authenticator} doesn't have API to get hold of the current system level {@link Authenticator}.
+     * This method does a best-effort attempt to try and get hold of the current {@link Authenticator} in a way that's
+     * specific to the implementation of this method. There's no guarantee that this method will return the current
+     * authenticator.
+     *
+     * @return Returns the currently setup system level {@link Authenticator}. In cases where this method isn't able to get
+     * the current authenticator, this method returns null
+     */
+    public static Authenticator getCurrentAuthenticator() {
+        // we use reflection to try and get hold of the "current" authenticator
+        // since there's no getter available on the Authenticator.
+        try {
+            Field f = Authenticator.class.getDeclaredField("theAuthenticator");
+            f.setAccessible(true);
+            return (Authenticator) f.get(null);
+        } catch (Throwable t) {
+            // ignore and return null
+            return null;
+        }
     }
 }

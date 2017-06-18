@@ -103,7 +103,7 @@ public final class IvyAuthenticator extends Authenticator {
             try {
                 result = Authenticator.requestPasswordAuthentication(getRequestingHost(),
                     getRequestingSite(), getRequestingPort(), getRequestingProtocol(),
-                    getRequestingPrompt(), getRequestingScheme());
+                    getRequestingPrompt(), getRequestingScheme(), getRequestingURL(), getRequestorType());
             } finally {
                 Authenticator.setDefault(this);
             }
