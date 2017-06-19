@@ -315,15 +315,6 @@ tr.homeitems a:hover {
 }
 .home img { border-width:0; }
 
-.notice {
-    padding: 15px;
-    border-style:solid;
-    border-width:1px;
-    border-color: #F0D88D;
-    background-color: #FCFCCA;
-    margin: 10px;
-}
-
 table.tableblock {
     border-collapse: collapse;
     width: 90%;
@@ -358,13 +349,12 @@ table.tableblock td p:last-child {
 }
 
 .note {
-	margin: 10px 10px 10px 50px;
-	padding: 10px;
-	font-style: italic;
-	-moz-border-radius: 10px;
-	background-color: #F6FF7F;
-	border: 1px solid #FFB643;
-	color: #4E3000;
+    padding: 15px;
+    border-style:solid;
+    border-width:1px;
+    border-color: #F0D88D;
+    background-color: #FCFCCA;
+    margin: 10px;
 }
 
 .note .title {
