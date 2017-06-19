@@ -37,7 +37,7 @@ Packager repositories allow the creation of Ivy repositories that require neithe
 
 
 
-The Packager resolver supports a "resource cache", where downloaded archives can be stored to avoid duplicate downloads. This cache is entirely separate from the link:../concept.html#cache[normal Ivy cache]: it is "private" to the Packager resolver, and it stores unmodified original software archives, not Ivy artifacts. See the <span class="ivy-att">resourceCache</span> attribute below for details.
+The Packager resolver supports a "resource cache", where downloaded archives can be stored to avoid duplicate downloads. This cache is entirely separate from the link:../concept.html#cache[normal Ivy cache]: it is "private" to the Packager resolver, and it stores unmodified original software archives, not Ivy artifacts. See the `resourceCache` attribute below for details.
 
 
 
@@ -85,7 +85,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |buildRoot|Defines the root of the temporary build directory hierarchy|Yes
 |resourceCache|Directory where downloaded resources should be cached|No; defaults to none
 |resourceURL|Ivy pattern that specifies a base URL to use for downloading __all__ resources; overrides the URLs in the packaging instructions|No; defaults to none
-|restricted|True if this resolver should only allow "safe" ant tasks in the packaging instructions. *Warning:* setting <span class="ivy-att">restricted</span> to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.|No; defaults to true
+|restricted|True if this resolver should only allow "safe" ant tasks in the packaging instructions. *Warning:* setting `restricted` to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.|No; defaults to true
 |verbose|True to run ant with the -verbose flag|No; defaults to false
 |quiet|True to run ant with the -quiet flag|No; defaults to false
 |validate|True if this resolver should validate (via XSD) the downloaded XML packaging instructions|No; defaults to true
@@ -242,8 +242,8 @@ This resolver ensures following ant properties are defined when it executes the 
 |ivy.packager.module|Module of the ivy module whose artifacts are being built
 |ivy.packager.revision|Revision of the ivy module whose artifacts are being built
 |ivy.packager.branch|Branch of the ivy module whose artifacts are being built
-|ivy.packager.resourceCache|The configured <span class="ivy-att">resourceCache</span> if any; otherwise not defined
-|ivy.packager.resourceURL|The resolved <span class="ivy-att">resourceURL</span> pattern if any; otherwise not defined
+|ivy.packager.resourceCache|The configured `resourceCache` if any; otherwise not defined
+|ivy.packager.resourceURL|The resolved `resourceURL` pattern if any; otherwise not defined
 |=======
 
 
@@ -263,12 +263,12 @@ The packager.xml document element can contain the following child tags.
 
 
 
-Which ant tasks are allowed within the build tag is controlled by the <span class="ivy-att">restricted</span> configuration attribute. When true (the default), only the following ant tasks are allowed: copy, jar, mkdir, move, tar, unjar, untar, unwar, unzip, war, and zip. When false, all ant tasks are allowed.
+Which ant tasks are allowed within the build tag is controlled by the `restricted` configuration attribute. When true (the default), only the following ant tasks are allowed: copy, jar, mkdir, move, tar, unjar, untar, unwar, unzip, war, and zip. When false, all ant tasks are allowed.
 
 
 
 
-*Warning:* setting <span class="ivy-att">restricted</span> to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.
+*Warning:* setting `restricted` to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.
 
 
 

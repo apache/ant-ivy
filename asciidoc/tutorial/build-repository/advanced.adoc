@@ -39,7 +39,7 @@ include::asciidoc/tutorial/log/myrepository-content-namespace.txt[]
 
 
 We can even have a look at the commons-lang ivy file in our repository:
-<div>
+
 [source]
 ----
 
@@ -57,7 +57,7 @@ We can even have a look at the commons-lang ivy file in our repository:
 
 ----
 
-</div>
+
 Alright, we see that the organisation is now 'apache'. But where did Ivy pick this up?
 
 === How does this work ?

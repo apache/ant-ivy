@@ -90,8 +90,8 @@ By using such a resolver at the beginning of a chain, you can be sure that Ivy w
 
 Any resolver which is able to parse a Maven pom.xml file has to detect the related sources or javadocs artifacts. This often involves sevrals network connection even if neither the sources nor the javadoc are requested to be downloaded.
 
-*__since 2.5__* Setting the property `ivy.maven.lookup.sources<tt> to <tt>false` disable the lookup of the sources artifact. 
-And setting the property `ivy.maven.lookup.javadoc<tt> to <tt>false` disable the lookup of the javadoc artifact. 
+*__since 2.5__* Setting the property `ivy.maven.lookup.sources` to `false` disable the lookup of the sources artifact. 
+And setting the property `ivy.maven.lookup.javadoc` to `false` disable the lookup of the javadoc artifact. 
 
 
 === Attributes

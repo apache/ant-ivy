@@ -10,7 +10,7 @@
 
 *__since 2.4__*
 
-<span class="tagdoc" id="ivysettings.resolvers.osgi-agg">This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.
+This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.
 
 This resolvers is like a classic link:[chain] resolver, but which better support OSGi metadata.
 

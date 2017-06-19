@@ -10,9 +10,7 @@
 
 *__since 2.3__*
 
-
-
-<span class="tagdoc" id="ivysettings.resolvers.mirroredurl">This resolver can resolve dependencies against several mirrors of the same repository. From a list of mirror urls, it will iteratively try to resolve the dependencies against each one.
+This resolver can resolve dependencies against several mirrors of the same repository. From a list of mirror urls, it will iteratively try to resolve the dependencies against each one.
 
 
 == Attributes

@@ -6,11 +6,11 @@ Namespaces are an advanced feature of Ivy which let you use resolvers in which m
 For instance, if you want to use both a maven2 repository and an ivyrep, you will face some naming issues. For example, all apache commons projects are declared to be part of the organisation __apache__ in ivyrep whereas in maven2 ibiblio repository, their organisation is same as the module.
 
 So if you try to use both maven2 and ivyrep repositories, you will face some issues like:
-<quote>
+[quote]
+_______
 How do I declare a dependency on commons-lang?
 I have an error while trying to resolve module xxx. It says that it depends on [commons-httpclient commons-httpclient] and that it isn't available.
-...
-</quote>
+_______
 
 Ivy's answer to this issue is called namespaces. In short, you can attach a namespace to each dependency resolver in Ivy, and each namespace defines rules to convert names from the system namespace to the defined namespace itself, and vice versa.
 

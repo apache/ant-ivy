@@ -31,8 +31,8 @@ In Ivy 2.1.0 and earlier, if both defaultconf and defaultconfmapping are defined
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|defaultconf|the default configuration to use when none is specified in a dependency. *__since 1.1__*</em>|No, defaults to *->*
-|defaultconfmapping|the default configuration mapping to use in this ivy file. *__since 1.3__*</em>|No, defaults to no default conf mapping
+|defaultconf|the default configuration to use when none is specified in a dependency. *__since 1.1__*|No, defaults to *->*
+|defaultconfmapping|the default configuration mapping to use in this ivy file. *__since 1.3__*|No, defaults to no default conf mapping
 |=======
 
 

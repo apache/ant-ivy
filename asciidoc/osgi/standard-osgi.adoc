@@ -3,13 +3,9 @@
 
 [NOTE]
 ====
+Note that this feature is considered as *experimental*.
 
-<table class="notice">
-  <tr>
-    <td style="vertical-align: top"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1em" version="1.1" y="0px" x="0px" viewBox="0 0 980.02045 886.1"><g fill="red"><path d="m972.9158,794.5l-426.1,-761.1c-10.5,-20 -31.1,-32.7 -53.7,-33.4l-1.7,0c-22,0 -42.4,11.5 -53.7,30.5l-428.9,761c-11.5,19.4 -11.8,43.3 -0.6,62.9c11.1,19.6 31.9,31.7 54.4,31.7l854.9,0c21.9,0 42.2,-11.5 53.5,-30.2s12,-42 1.9,-61.4zm-910.4,29.2l428.9,-761.1l426,761.1l-854.9,0z"/><path d="m490.3158,626.7c-36.5,0 -62.1,25.6 -62.1,62.8c0,35.8 24.9,62.8 60.7,62.8l1.4,0c37.3,0 61.5,-27 61.5,-62.8c-0.7,-37.3 -24.9,-62.8 -61.5,-62.8z"/><path d="m451.0158,592.1l78.7,0l15.2,-312.6l-109,0l15.1,312.6z"/></g></svg></td>
-    <td>
-    Note that this feature is considered as *experimental*. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
-
+It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 ====
 
 
@@ -29,18 +25,12 @@ In oder to produce OSGi metadata of suffient quality and to avoid maintaining th
 
 == Quick setup
 
-
 In few steps, we will setup a build to compile and publish an OSGi bundle.
 
-
-
-. download this <a href="../samples/standard-osgi/ivy.xml">ivy.xml<a>, this <a href="../samples/standard-osgi/ivysettings.xml">ivysettings.xml</a>, this <a href="../samples/standard-osgi/build.xml">build.xml</a>, this <a href="../samples/standard-osgi/org.apache.ivy.sample.standard-osgi.bnd">bnd file</a>, and put them into your project folder; +
+. download this link:../samples/standard-osgi/ivy.xml[ivy.xml], this link:../samples/standard-osgi/ivysettings.xml[ivysettings.xml], this link:../samples/standard-osgi/build.xml[build.xml], this link:../samples/standard-osgi/org.apache.ivy.sample.standard-osgi.bnd[bnd file], and put them into your project folder; +
 
 . in the ivysettings.properties, specify the location of the plugins folder of your Eclipse target; +
 
 . __(optional)__ by default the build.xml is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case +
 
-. __(optional)__ if Ivy is not in Ant's classpath, get the jar of <a href="../download.html">Apache Ivy</a> and edit the build.xml accordingly (see the comments at the begining of the file) +
-
-
-	
+. __(optional)__ if Ivy is not in Ant's classpath, get the jar of link:../download.html[Apache Ivy] and edit the build.xml accordingly (see the comments at the begining of the file) +
