@@ -1,0 +1,43 @@
+
+
+[]
+|=======
+|Tag|osgi-agg
+|Handle latest|yes
+|Handle publish|no
+|=======
+
+
+*__since 2.4__*
+
+<span class="tagdoc" id="ivysettings.resolvers.osgi-agg">This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.
+
+This resolvers is like a classic link:[chain] resolver, but which better support OSGi metadata.
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+
+
+== Elements
+
+As sub element, this resolver accept any kind of OSGi resolver: link:../obr.html[obr], link:../updatesite.html[updatesite], or any other `osgi-agg`.
+
+
+== Examples
+
+
+[source]
+----
+
+<updatesite name="ivyde-updatesite" url="http://www.apache.org/dist/ant/ivyde/updatesite" />
+<obr name="felix-repo" repoXmlURL="http://felix.apache.org/obr/releases.xml" />
+<osgi-agg name="all-osgi">
+    <resolver ref="ivyde-updatesite" />
+    <resolver ref="felix-repo" />
+</osgi-agg>
+
+----
+
+An aggregated OSGi reporsory composed of the Apache IvyDE Eclipse update site and the Felix OBR.

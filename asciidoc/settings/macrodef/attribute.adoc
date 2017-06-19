@@ -1,0 +1,18 @@
+
+*Tag:* attribute
+
+Defines a macrodef attribute. See macrodef for details.
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|name|the name of the attribute|Yes
+|default|the default value of the attribute if none is specified|No, by default attribute are required
+|=======
+
+
+
+	

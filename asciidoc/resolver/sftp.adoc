@@ -1,0 +1,133 @@
+
+
+[]
+|=======
+|Tag|sftp
+|Handle latest|yes
+|Handle publish|yes
+|=======
+
+
+
+
+This resolver can be used when your ivy repository is located on a server accessible via sftp. The secured nature of sftp and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. *__since 1.4__*
+
+If your server supports ssh but not sftp, there is also an link:../resolver/ssh.html[ssh resolver].
+
+Note that sftp is also supported by vfs, so you can use a vfs resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the vfs resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use ant input task for example before calling ivy.
+
+All necessary connection parameters can be set here via attributes, or via an OpenSSH-style config file specified by sshConfig.
+However all attributes defined in the pattern url of the resolver will have higher priority and will overwrite the values given here. To specify connection parameters in the pattern, you have to specify a full url and not just a path as pattern.
+e.g. pattern="/path/to/my/repos/[artifact].[ext]" will use all connection parameters from this class
+e.g. pattern="sftp://myserver.com/path/to/my/repos/[artifact].[ext]" will use all parameters from the attributes with the exception of the host, which will be "myserver.com"
+e.g. pattern="sftp://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[ext]" will use only the keyFile and keyFilePassword from the attributes (if needed). Rest will come from the url.
+
+
+
+Note that the authentication features of this resolver are exactly the same as the ssh resolver. Choosing between the two is often a matter of server implementation. If your server supports sftp, usually it's preferrable.
+
+Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as ssh client, which is a popular java ssh client, used for example in eclipse.
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|user|The username to provide as credential|No, defaults to username given on the patterns, or prompt if none is set
+|userPassword|The password to provide as credential|No, defaults to password given on the patterns, or prompt if none is set
+|keyFile|Path to the keyfile to use for authentication|No, defaults to username/password authentication
+|keyFilePassword|the password used to protect the key file|No, will prompt for password if keyFile authentication is used and if it is password encrypted
+|host|The host to connect to|No, defaults to host given on the patterns, fail if none is set
+|port|The port to connect to|No, defaults to 22
+|sshConfig|Path to an OpenSSH-style config file containing additional
+            configuration|No
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|artifact|defines a pattern for artifacts, using the pattern attribute|1..n
+|=======
+
+
+
+== Example
+
+
+[source]
+----
+
+<sftp user="myuser" host="myhost.com">
+  <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
+  <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
+</sftp> 
+
+----
+
+Will connect to myhost.com using myuser and prompt for the password.
+
+'''
+
+
+[source]
+----
+
+<sftp user="${myuser}" userPassword="${my.password}" host="myhost.com">
+  <ivy pattern="path/to/ivy/[module]/ivy.xml"/>
+  <artifact pattern="path/to/[organisation]/[module]/[artifact].[ext]"/>
+</sftp>
+
+----
+
+Will connect to myhost.com using user and password provided with ivy variables.
+
+'''
+
+
+[source]
+----
+
+<sftp>
+  <ivy pattern="sftp://user:geheim@yourserver.com:8022/path/to/repos/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="sftp://user:secret@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
+</sftp>
+
+----
+
+Will connect to yourserver.com on port 8022 with user 'user' and password 'geheim' for authentication for ivy files, and to myserver.com on port 8022 using user 'user' and password 'secret' for the artifacts.
+
+'''
+
+
+[source]
+----
+
+<sftp keyFile="path/to/key/file" keyFilePassword="${password}">
+  <ivy pattern="sftp://user@yourserver.com:8022/path/to/repos/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="sftp://user@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
+</sftp>
+
+----
+
+Will connect to yourserver.com on port 8022 with user 'user' and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user 'user' with the same keyFile/keyFilePassword pair for the artifacts.
+
+
+[source]
+----
+
+<sftp host="myhost" sshConfig="/path/to/.ssh/config">
+  <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
+  <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
+</ssh>
+
+----
+
+Will connect to the host named by myhost according to the config file in /path/to/.ssh/config, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.

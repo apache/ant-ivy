@@ -1,0 +1,39 @@
+
+*Tag:* info *Parent:* link:../ivyfile.html[ivy-module]
+
+Gives identification and basic information about the module this ivy file describes.
+
+*__since 1.4__* This tag supports link:../concept.html#extra[extra attributes].
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|organisation|the name of the organisation that is the owner of this module.|Yes
+|module|the name of the module described by this ivy file.|Yes
+|branch|the branch of this module. *__since 1.4__*|No, defaults to the default branch setting, or nothing if no default branch is configured
+|revision|the revision of this module.|Yes in repository ivy files, no in ivy files to resolve
+|status|the status of this module. See link:../reference.html[terminology] section for details|No, default to 'integration'
+|publication|the date of publication of this module. It should be given in this format: yyyyMMddHHmmss|No, but it's a good practice to set it with delivered ivy files
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../ivyfile/extends.html[extends]|identifies a parent Ivy file from which this descriptor inherits content|0..n
+|link:../ivyfile/license.html[license]|contains information about the licenses of the described module|0..n
+|link:../ivyfile/ivyauthor.html[ivyauthor]|describes who has contributed to write the ivy file|0..n
+|link:../ivyfile/repository.html[repository]|describes on which public repositories this module can be found|0..n
+|link:../ivyfile/description.html[description]|describes how to use the module|0..1
+|=======
+
+After the description, you can also place your own tags in your own namespace.  This allow to provide some custom information about the module.
+
+	

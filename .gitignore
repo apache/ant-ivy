@@ -18,3 +18,5 @@ doc/samples/target-platform/cache
 /test/repositories/checkmodified/mod1.1-1.0.jar
 /test/repositories/norevision/ivy-mod1.1.xml
 /test/repositories/norevision/mod1.1.jar
+asciidoc/tutorial/log
+

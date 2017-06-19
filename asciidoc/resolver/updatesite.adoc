@@ -1,0 +1,52 @@
+
+
+[]
+|=======
+|Tag|updatesite
+|Handle latest|yes
+|Handle publish|no
+|=======
+
+
+*__since 2.3__*
+
+<span class="tagdoc" id="ivysettings.resolvers.updatesite">This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.
+It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.
+
+This resolver supports old style Eclipse updatesite, based on simply a site.xml. It also supports Eclipse P2 repositories.
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|url|the URL of the Eclipse updatesite|Yes
+|requirementStrategy|defines how strict should be the OSGi resolution. Can be one of `first` or `noambiguity`|No, default to `noambiguity`
+|metadataTtl|the time in milliseconds the updatesite metadata are considered up to date|No, default to 3600000 (1 hour)
+|forceMetadataUpdate|force the update of the updatesite metadata without checking their freshness|No, default to false
+|=======
+
+
+The requirement strategy is defining how the resolver should behave in front of several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
+
+
+* if the requirement strategy is `first`, among the bundles statifying the requirement, it will shoose the first one. A warn will be logged ahout the choice Ivy has to arbitrarily do. +
+
+* if the requirement strategy is `noambiguity`, Ivy will make the resolution fail. +
+
+
+
+== Examples
+
+
+[source]
+----
+
+<updatesite name="ivyde-updatesite" url="http://www.apache.org/dist/ant/ivyde/updatesite" />
+
+----
+
+A simple repository configured to load the Apache IvyDE Eclipse update site.

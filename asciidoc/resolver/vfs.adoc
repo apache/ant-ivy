@@ -1,0 +1,46 @@
+
+
+[]
+|=======
+|Tag|vfs
+|Handle latest|depend on vfs capacity, usually yes
+|Handle publish|depend on vfs capacity, usually yes
+|=======
+
+
+
+This resolver is certainly the most capable, since it relies on link:http://jakarta.apache.org/commons/vfs/[Apache commons VFS], which gives an uniform access to link:http://jakarta.apache.org/commons/vfs/filesystems.html[a good number of file systems], including ftp, webdav, zip, ... *__since 1.4__*
+
+__Note: commons vfs has not released a stable version yet, hence Ivy relies on a nightly build. Stability should thus be considered carefully before using this resolver in a production environment__
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|artifact|defines a pattern for artifacts, using the pattern attribute|1..n
+|=======
+
+
+
+== Example
+
+
+[source]
+----
+
+<vfs name="vfs-resolver">
+  <ivy pattern="sftp://username:password@host/[organisation]/[module]/[revision]/ivy.xml" />
+  <artifact pattern="sftp://username:password@host/[organisation]/[module]/[revision]/[artifact].[ext]" />
+</vfs> 
+
+----
+
+Access ivy and artifacts files using sftp.

@@ -1,0 +1,11 @@
+
+    Ivy is sending http headers when downloading files.
+    The User-Agent http header can be controlled using a 
+[source]
+----
+http.agent
+----
+
+system property.
+    When this system property is not set, the default value for the User-Agent header is "Apache Ivy/ivyversion"
+    where ivyversion is replaced by the currently running version of ivy.

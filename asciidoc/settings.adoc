@@ -1,0 +1,131 @@
+
+In order to work as you want, ivy sometimes needs some settings. Actually, ivy can work with no specific settings at all, see the link:tutorial/defaultconf.html[default settings documentation] for details about that. But ivy is able to work in very different contexts. You just have to configure it properly.
+
+Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to use the link:use/settings.html[settings] datatype with the path of your settings file.
+
+Here is an example of the settings file:
+
+[source]
+----
+
+<ivysettings>
+        <properties file="${ivy.settings.dir}/ivysettings-file.properties" />
+        <settings defaultResolver="ibiblio" />
+        <caches  defaultCacheDir="${cache.dir}" checkUpToDate="false" />
+        <resolvers>
+                <ibiblio name="ibiblio" />
+                <filesystem name="internal">
+                        <ivy pattern="${repository.dir}/[module]/ivy-[revision].xml" />
+                        <artifact pattern="${repository.dir}/[module]/[artifact]-[revision].[ext]" />
+                </filesystem>
+        </resolvers>
+        <modules>
+                <module organisation="jayasoft" name=".*" resolver="internal" />
+        </modules>
+</ivysettings>
+
+----
+
+
+
+Mainly, the settings enable you to configure the default cache directory used by ivy and the dependency resolvers that it will use to resolve dependencies.
+__Note: To work, this settings file needs a property file named ivysettings-file.properties in the same directory as the settings file, with ivy variables you want in it.__
+
+Some useful variables are available in settings files:
+
+
+* ivy.settings.dir +
+ this variable references the directory in which the ivysettings itself is. This is available if the settings has been loaded as a file. In case of a URL, it takes the part before the last slash of the URL, if any. If the URL has no slash, then this variable is not set.
+
+* ivy.settings.file +
+ the path of the settings file itself if it has been loaded as a file only. If it has been loaded as a URL, this variable is not set
+
+* ivy.settings.url +
+ the URL pointing to the settings file. This is set both when it has been loaded as a file or a URL
+
+
+*__since 1.4__* Note that all link:http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html#getProperties()[java system properties] are available as ivy variables in your settings file.
+
+
+== Settings file structure
+
+
+The settings file is structured in some parts and left open in others. Indeed, each resolver has its own structure, thus it's not the settings file itself which defines the structure for the resolvers.
+
+
+[source]
+----
+
+ivysettings
+    link:settings/property.html[property]
+    link:settings/properties.html[properties]
+    link:settings/settings.html[settings]
+    link:settings/include.html[include]
+    link:settings/classpath.html[classpath]
+    link:settings/typedef.html[typedef]
+    link:settings/credentials.html[credentials]
+    link:settings/lock-strategies.html[lock-strategies]
+    link:settings/caches.html[caches]
+        link:settings/caches/cache.html[cache]
+    link:settings/latest-strategies.html[latest-strategies]
+    link:settings/version-matchers.html[version-matchers]
+    link:settings/triggers.html[triggers]
+    link:settings/parsers.html[parsers]
+    link:settings/conflict-managers.html[conflict-managers]
+    link:settings/outputters.html[outputters]
+    link:settings/namespaces.html[namespaces]
+        link:settings/namespace.html[namespace]
+            link:settings/namespace/rule.html[rule]
+                link:settings/namespace/fromtosystem.html[fromsystem]
+                    link:settings/namespace/src.html[src]
+                    link:settings/namespace/dest.html[dest]
+                link:settings/namespace/fromtosystem.html[tosystem]
+                    link:settings/namespace/src.html[src]
+                    link:settings/namespace/dest.html[dest]
+    link:settings/macrodef.html[macrodef]
+        link:settings/macrodef/attribute.html[attribute]
+        any resolver
+    link:settings/resolvers.html[resolvers]
+        any resolver
+    link:settings/modules.html[modules]
+        link:settings/module.html[module]
+    link:settings/statuses.html[statuses]
+        link:settings/status.html[status]
+
+----
+
+
+
+
+== ivysettings
+
+*Tag:* ivysettings
+
+Root tag of any ivysettings file.
+
+=== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:settings/property.html[property]|set an ivy variable|0..n
+|link:settings/properties.html[properties]|loads a properties file as ivy variables|0..n
+|link:settings/settings.html[settings]|configures ivy with some defaults|0..1
+|link:settings/include.html[include]|includes another settings file|0..n
+|link:settings/classpath.html[classpath]|add a location in the classpath used to load plugins|0..n
+|link:settings/typedef.html[typedef]|defines new types in ivy|0..n
+|link:settings/lock-strategies.html[lock-strategies]|defines lock strategies|0..1
+|link:settings/caches.html[caches]|defines repository cache managers|0..1
+|link:settings/latest-strategies.html[latest-strategies]|defines latest strategies|0..1
+|link:settings/parsers.html[parsers]|defines module descriptor parsers|0..1
+|link:settings/version-matchers.html[version-matchers]|defines new version matchers|0..1
+|link:settings/triggers.html[triggers]|register triggers on ivy events|0..1
+|link:settings/namespaces.html[namespaces]|defines new namespaces|0..1
+|link:settings/macrodef.html[macrodef]|defines a new macro resolver|0..n
+|link:settings/resolvers.html[resolvers]|defines dependency resolvers|0..1
+|link:settings/conflict-managers.html[conflict-managers]|defines conflicts managers|0..1
+|link:settings/modules.html[modules]|defines rules between modules and dependency resolvers|0..1
+|link:settings/outputters.html[outputters]|defines the list of available report outputters|0..1
+|link:settings/statuses.html[statuses]|defines the list of available statuses|0..1
+|=======

@@ -1,0 +1,62 @@
+
+
+[]
+|=======
+|Tag|obr
+|Handle latest|yes
+|Handle publish|no
+|=======
+
+
+*__since 2.3__*
+
+<span class="tagdoc" id="ivysettings.resolvers.obr">This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies. As part of the OSGi specification resides the OBR (OSGi Bundle Repository). The OBR defines the aggregation of the OSGi metadata of every bundle included in an repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|repoXmlURL|the URL of the obr.xml to load.|Yes
+|repoXmlFile|the local path of the obr.xml to load.|Yes
+|requirementStrategy|defines how strict should be the OSGi resolution. Can be one of `first` or `noambiguity`|No, default to `noambiguity`
+|metadataTtl|the time in milliseconds the obr.xml is considered up to date|No, default to 3600000 (1 hour)
+|forceMetadataUpdate|force the update of the obr.xml without checking its freshness|No, default to false
+|=======
+
+
+The requirement strategy is defining how the resolver should behave in front of several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
+
+
+* if the requirement strategy is `first`, among the bundles statifying the requirement, it will shoose the first one. A warn will be logged ahout the choice Ivy has to arbitrarily do. +
+
+* if the requirement strategy is `noambiguity`, Ivy will make the resolution fail. +
+
+
+
+== Examples
+
+
+[source]
+----
+
+<obr name="felix-repo" repoXmlURL="http://felix.apache.org/obr/releases.xml" />
+
+----
+
+A simple repository configured to use the Felix OBR.
+
+'''
+
+
+[source]
+----
+
+<obr name="my-osgi-repo" repoXmlFile="${ivy.settings.dir}/obr/obr.xml" requirementStrategy="first" />
+
+----
+
+A local repository which is trusted to always provide correct dependency for the `Import-Package` requirements.

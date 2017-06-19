@@ -1,0 +1,73 @@
+
+*Tag:* include
+
+Includes another ivysettings file as if it were part of this one. *__since 1.3__*
+
+The included ivysettings file has to be a complete well formed ivysettings file, i.e. it does have to include the 
+[source]
+----
+<ivysettings>
+----
+
+tag.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|url|a URL to the ivysettings file to include|Yes, unless file is specified
+|file|a path to the ivysettings file to include|Yes, unless url is specified
+|optional|indicates whether Ivy should throw an error if the specified file doesn't exist. *__(Since 2.4)__*.|No, default to false
+|=======
+
+
+== Examples
+
+
+[source]
+----
+
+<ivysettings>
+  <property name="myrepository" value="path/to/my/real/rep"/>
+  <settings defaultResolver="default"/>
+  <include file="path/to/ivysettings-default.xml"/>
+</ivysettings>
+
+----
+
+with ivysettings-default.xml:
+
+[source]
+----
+
+<ivysettings>
+  <property name="myrepository" value="path/to/rep" overwrite="false"/>
+  <resolvers>
+    <ivyrep name="default" ivyroot="${myrepository}"/>
+  </resolvers>
+</ivysettings>
+
+----
+
+The included ivysettings defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value path/to/rep in the included file, but because the attribute overwrite is set to false, it will not override the value given in the main ivysettings including this one, so the value used for myrepository will be path/to/my/real/rep.
+
+'''
+
+
+[source]
+----
+
+<ivysettings>
+  <include file="ivysettings-macro.xml"/>
+  <resolvers>
+    <mymacro name="includeworks" mymainrep="included/myrep" mysecondrep="included/secondrep"/>
+  </resolvers>
+</ivysettings> 
+
+----
+
+with ivysettings-macro.xml being the ivysettings example given on the link:../settings/macrodef.html[macrodef documentation page].
+This lets us easily reuse the custom macro resolver.

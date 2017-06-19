@@ -1,0 +1,47 @@
+
+
+[]
+|=======
+|Tag|ivyrep
+|Handle latest|yes, at least if the repository server is apache based
+|Handle publish|no
+|=======
+
+This resolver usually uses an URL based repository usually similar in structure to link:http://ivyrep.jayasoft.org/[ivyrep] to find ivy files, and ibiblio to find artifacts.
+It can also be configured to use other similar repositories.
+
+
+[NOTE]
+====
+
+Since ivyrep is not maintained anymore, the ivyroot attribute is mandatory, and the use of this resolver is not recommended (we recommend using link:../resolver/url.html[url resolver] as replacement in most cases).
+
+====
+
+
+
+== Attributes
+
+This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|ivyroot|the root of the ivy repository.|Yes, but may be provided through ${ivy.ivyrep.default.ivy.root} *__since 2.0__*
+|ivypattern|a pattern describing the layout of the ivy repository.|No, defaults to ${ivy.ivyrep.default.ivy.pattern}
+|artroot|the root of the artifacts repository.|No, defaults to ${ivy.ivyrep.default.artifact.root}
+|artpattern|a pattern describing the layout of the artifacts repository.|No, defaults to ${ivy.ivyrep.default.artifact pattern}
+|=======
+
+
+== Examples
+
+
+[source]
+----
+
+<ivyrep name="ivyrep" ivyroot="http://ivyrep.mycompany.com"/>
+
+----
+
+Looks for ivy files on and ivyrep like web site located at http://ivyrep.mycompany.com.

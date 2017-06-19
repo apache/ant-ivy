@@ -1,0 +1,121 @@
+
+*Tag:* version-matchers
+
+Defines a list of version matchers. *__since 1.4__* 
+
+The child tag used for the version matcher must be equal to a name of a report outputter type (added with the typedef tag).
+
+A version matcher is used to evaluate if a dependency version constraint matches a dependency version.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Descrition|Required
+|usedefaults|when set to true, includes the built-in version matchers (Latest, Sub Revision, and Version Ranger Matcher). Exact Revision Matcher is always included|No, defaults to false
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|any version matcher|adds a version matcher to the list of available ones|0..n
+|=======
+
+
+
+== Built-in Version Matchers
+
+
+=== Exact Revesion Matcher
+
+A matcher that matches a dependency revision id to the module revision id using simple string equality.
+
+
+=== Sub Revision Matcher
+
+A matcher that matches all revisions starting with a specific prefix. The syntax is: [prefix]+
+
+
+[options="header"]
+|=======
+|Revision|Matches
+|1.0.+|all revisions starting with '1.0.', like 1.0.1, 1.0.5, 1.0.a
+|1.1+|all revisions starting with '1.1', like 1.1, 1.1.5, but also 1.10, 1.11
+|=======
+
+
+
+=== Latest (Status) Matcher
+
+
+A matcher that matches versions based on their status. The predefined statuses in Ivy are 'release', 'milestone' and 'integration'. It's possible to define your own statuses, see link:../settings/statuses.html[statuses] for more details.
+
+
+[options="header"]
+|=======
+|Revision|Matches
+|latest.integration|all versions
+|latest.milestone|all modules having at least 'milestone' as status
+|latest.release|all modules having at least 'release' as status
+|latest.[any status]|all modules having at least the specified status
+|=======
+
+
+
+=== Version Range Matcher
+
+
+Range types are exhaustively listed by example in the table below.
+
+
+[options="header"]
+|=======
+|Revision|Matches
+| [1.0,2.0] | all versions greater or equal to 1.0 and lower or equal to 2.0
+| [1.0,2.0[ | all versions greater or equal to 1.0 and lower than 2.0
+| ]1.0,2.0] 
+| [1.0,) | all versions greater or equal to 1.0 
+| ]1.0,) | all versions greater than 1.0
+| (,2.0] | all versions lower or equal to 2.0
+| (,2.0[ | all versions lower than 2.0 
+|=======
+
+
+
+=== Version Pattern Matcher
+
+
+The version pattern matcher allows for more flexibility in pattern matching at the cost of adding a matcher declaration in Ivy settings.  A simple example is given below.
+
+
+==== Settings.xml
+
+
+[source]
+----
+
+<pattern-vm>
+  <match revision="foo" pattern="${major}\.${minor}\.\d+" args="major, minor" matcher="regexp" />
+</pattern-vm>
+
+----
+
+
+==== Ivy.xml
+
+
+[source]
+----
+
+<dependency org="acme" name="tool" rev="foo(1, 3)" />
+
+----
+
+The version pattern matcher may contain more than one match element.  The matcher will attempt to match a dependency revision against each match in sequence, checking the revision tag (e.g. foo(..)) and then the pattern.
+Matcher types may be one of "regexp", "exact", "glob", or "exactOrRegexp".  Glob pattern matching requires Apache ORO 2.0.8 or higher to be on the classpath.

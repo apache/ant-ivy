@@ -1,0 +1,83 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<project name="standard-osgi" xmlns:ivy="ivy" xmlns:bnd="bnd">
+
+    <!-- Load Ivy ant tasks -->
+    <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml" />
+    <!-- If Ivy is not in Ant's classpath, get the jar of Ivy and use the folowing -->
+    <!-- taskdef rather than the above one -->
+    <!--path id="ivy.classpath"> 
+        <fileset dir="${basedir}">
+            <include name="ivy.jar" />
+        </fileset>
+    </path>
+    <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml" classpathref="ivy.classpath" /-->
+
+    <!-- Load Bnd ant tasks -->
+    <taskdef uri="bnd" resource="org/apache/ivy/ant/antlib.xml" />
+    <!-- If Bnd is not in Ant's classpath, get the jar of Bnd and use the folowing -->
+    <!-- taskdef rather than the above one -->
+    <!--path id="bnd.classpath"> 
+        <fileset dir="${basedir}">
+            <include name="bnd.jar" />
+        </fileset>
+    </path>
+    <taskdef uri="bnd" resource="aQute/bnd/ant/taskdef.properties" classpathref="bnd.classpath" /-->
+
+    <target name="clean" description="Clean the build directory">
+        <delete dir="${basedir}/target" />
+    </target>
+
+    <target name="ivy:configure">
+        <!-- classical ivy configuration -->
+        <ivy:configure file="${basedir}/ivysettings.xml" />
+    </target>
+
+    <target name="ivy:resolve" depends="ivy:configure">
+        <ivy:resolve file="ivy.xml" conf="*" />
+        <ivy:cachepath pathid="compile.classpath" conf="default" useOrigin="true" />
+    </target>
+
+    <target name="compile" depends="ivy:resolve" description="Compile the OSGi bundle">
+        <mkdir dir="${basedir}/target/classes" />
+        <!-- simple javac (WARNING: contrary to the JDT, javac doesn't understand OSGi's accessibility (private packages)) -->
+        <javac srcdir="${basedir}/src" classpathref="compile.classpath" destdir="${basedir}/target/classes" debug="true" includeAntRuntime="false" />
+        <copy todir="${basedir}/target/classes">
+            <fileset dir="${basedir}/src">
+                <include name="**" />
+                <exclude name="**/*.java" />
+                <exclude name="**/package.html" />
+            </fileset>
+            <fileset dir="${basedir}">
+                <include name="plugin.xml" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="generate-manifest" depends="ivy:resolve">
+        <mkdir dir="META-INF" />
+        <bnd:bnd classpath="${toString:compile.classpath}" sourcepath="${basedir}/src" eclipse="false" files="org.apache.ivy.sample.standard-osgi.bnd" />
+    </target>
+
+    <target name="build" depends="compile,generate-manifest" description="Build the OSGi app">
+        <!-- simple jaring -->
+        <jar basedir="${basedir}/target/classes" destfile="${basedir}/target/${ant.project.name}.jar" manifest="META-INF/MANIFEST.MF" />
+    </target>
+
+</project>

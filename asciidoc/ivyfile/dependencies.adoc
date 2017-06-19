@@ -1,0 +1,52 @@
+
+*Tag:* dependencies *Parent:* link:../ivyfile.html[ivy-module]
+
+Container for dependency elements, used to describe the dependencies of this module. 
+If this container is not present, it is assumed that the module has no dependency at all.
+
+This container provides for two similar behaviors.  An overview is given here.  (See link:../ivyfile/configurations.html[configurations doc page] for more details about these behaviors).
+
+*__since 1.1__*
+[source]
+----
+defaultconf
+----
+
+Defines the conf attribute to use when no conf is defined for a dependency in this ivy file. It is only used when no conf mapping is defined, and has no influence in other cases.
+
+*__since 1.3__*
+[source]
+----
+defaultconfmapping
+----
+
+Influences the way that a conf mapping with no mapped conf is interpreted.
+
+In Ivy 2.1.0 and earlier, if both defaultconf and defaultconfmapping are defined, it's the defaultconfmapping that is used. Since Ivy 2.2.0, these attributes can be used together.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|defaultconf|the default configuration to use when none is specified in a dependency. *__since 1.1__*</em>|No, defaults to *->*
+|defaultconfmapping|the default configuration mapping to use in this ivy file. *__since 1.3__*</em>|No, defaults to no default conf mapping
+|=======
+
+
+== Child elements
+
+
+Note: as specified by the ivy.xsd, the children elements are ordered; must come first the `link:../ivyfile/dependency.html[dependency]` elements, then the `link:../ivyfile/exclude.html[exclude]` elements, then the `link:../ivyfile/override.html[override]` elements, and then the `link:../ivyfile/conflict.html[conflict]` elements.
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../ivyfile/dependency.html[dependency]|declares a dependency for this module|0..n
+|link:../ivyfile/exclude.html[exclude]|excludes artifacts, modules or whole organizations from the set of dependencies of this module *__since 2.0__*|0..n
+|link:../ivyfile/override.html[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency *__since 2.0__*|0..n
+|link:../ivyfile/conflict.html[conflict]|specify a a conflict manager for one or several dependencies *__since 2.0__*|0..n
+|=======

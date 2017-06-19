@@ -1,0 +1,318 @@
+
+
+== Making a release
+
+
+=== Requirements
+
+Requirements for making a release are similar to the requirements for building from source, except that JDK 1.6+ and Apache Ant 1.9+ are required.
+
+=== Procedure
+
+
+==== 1. Check the files which needs to be updated for the release.
+
+On the master, check that files which require update for the release are up to date.
+This includes particularly:
+doc/release-notes.html
+
+==== 2. Check out a clean copy of the branch
+
+Run the following git command to checkout the branch, revert any change and remove untracked and ignored files:
+
+[source]
+----
+
+git checkout 2.0.x
+git reset --hard
+git clean -d -x -f
+
+----
+
+
+==== 3. Add Ivy xsd file.
+
+You need to store the current ivy xml schema in the documentation, so that it will later be accessible on public web site. To do so, run the following command in the directory in which you checked out the release branch:
+
+[source]
+----
+
+ant -f build-release.xml release-xsd
+
+----
+
+And commit your changes in the branch:
+
+[source]
+----
+
+git add doc/ivy.xsd
+git commit -m "release the ivy.xsd"
+
+----
+
+
+==== 4. Launch the release script
+
+
+[source]
+----
+
+ant -f build-release.xml release
+
+----
+
+The status should be release only for final releases, and milestone for any other intermediate release.
+If the release script is successful, release artifacts will be waiting for you in the build/distrib directory.
+
+
+==== 5. Verify the release
+
+Check that all zips can be opened correctly, and that running 'ant' after unzipping the source distribution works properly.
+You can also do a smoke test with the generated ivy.jar, to see if it is able to resolve properly a basic module (for instance you can run some tutorials provided in the src/example directory in all distributions).
+
+
+==== 6. Sign the artifacts
+
+It's now time to sign the release artifacts and upload them to a location accessible by other Apache commiters.
+
+Here is a simple way to sign the files using gnupg:
+
+[source]
+----
+
+gpg --armor --output file.zip.asc --detach-sig file.zip
+
+----
+
+Here is a ruby script you can use to sign the files:
+
+[source]
+----
+
+require 'find'
+
+Find.find('build/distrib') do |f| 
+    `gpg --armor --output #{f}.asc --detach-sig #{f}` if File.file?(f) && ['.zip', '.gz', '.jar', '.pom'].include?(File.extname(f))
+end
+
+----
+
+Be prepared to enter your passphrase several times if you use this script, gpg will ask for your passphrase for each file to sign.
+
+
+==== 7. Prepare the Eclipse update site
+
+
+To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See link:http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html[that page] to know how to process.
+
+
+==== 8. Publish the release candidate
+
+
+All artifacts in `build/distrib/dist` needs to be published on the 'dist' svn of the ASF, in the *dev* part.
+
+The following command lines should do the job:
+
+[source]
+----
+
+svn checkout -N https://dist.apache.org/repos/dist/dev/ant/ivy build/distrib/dist
+svn add build/distrib/dist/*
+svn commit build/distrib/dist -m 'Ivy 2.4.0 distribution'
+
+----
+
+
+==== 9. Publish the Maven artifact to Nexus
+
+
+Having your GPG key ID, its password, your apache ID and the associated password, just launch ant and enter the information as required:
+
+[source]
+----
+
+ant -f build-release.xml upload-nexus
+
+----
+
+Once uploaded, log in https://repository.apache.org/ with your prefered web browser (use your Apache ID).
+
+You should find there an __open__ repository with the name of the form `orgapacheant-XXXX`. It should contain the Maven artifacts: the pom, the jar, the sources, the javadocs and the md5 and asc files.
+
+Now __close__ the staging repository, with the description "Ivy 2.0.0-beta1". Closing means you finished the upload and some automatic checks will run. You can see them in the __Activity__ tab of the repository.
+
+Once the checks passed, you can find in the __Summary__ the URL of the staging repository. It will something like: https://repository.apache.org/content/repositories/orgapacheant-XXXX/
+
+
+==== 10. Create a signed tag
+
+As soon as you are happy with the artifacts to be released, it is time to tag the release
+
+[source]
+----
+
+git tag -s 2.0.0-beta1 -m 'Release Ivy 2.0.0-beta1'
+
+----
+
+And push the changes to the ASF repo
+
+[source]
+----
+
+git push --tags 
+
+----
+
+
+==== 11. Call for a vote to approve the release
+
+Cast a vote to approve the release on the dev@ant.apache.org mailing list.
+
+Here is an example:
+
+[source]
+----
+
+Subject: [VOTE] Ivy ${version} Release
+
+I have built a release candidate for Ivy ${version}
+
+The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tag;h=refs/tags/2.0.0-beta1
+
+The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION at revision ${svn-rev-of-the-check-in}
+
+The staging maven repository is availble there: https://repository.apache.org/content/repositories/orgapacheant-XXXX
+
+The Eclipse updatesite has been build there: https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivy-2.0.0.beta1_20141213170938/
+
+Do you vote for the release of these binaries?
+
+[ ] Yes
+[ ] No
+
+Regards,
+
+${me}, Ivy ${version} release manager
+
+----
+
+
+==== 12. Publish the release
+
+
+If the release is approved, it's now time to make it public. The artifacts in the __dev__ part needs to be moved into the __release__ one:
+
+[source]
+----
+
+$ svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.apache.org/repos/dist/release/ant/ivy/$VERSION
+
+----
+
+In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the link:http://archive.apache.org/dist/ant/ivy/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
+
+
+==== 13. Promote the Maven staging repository
+
+
+Go log in https://repository.apache.org/ with your prefered web browser (use your Apache ID).
+
+Select the appropriate `orgapacheant-XXXX` repository and select the __Release__ action.
+
+
+==== 14. Update the web site
+
+
+It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have link:http://www.gimp.org/[gimp] installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
+
+The just release documentation should be added to the site. To do so, you need to:
+
+
+. edit the toc.json file in the site component of Ivy +
+and add a piece of json with a title and an url; note that the version in the url must be the same as the tag in the git repo.
+
+[source]
+----
+
+{
+   "title":"2.0.0-beta1",
+   "url":"http://ant.apache.org/ivy/history/2.0.0-beta1/index.html"
+}
+
+----
+
+
+. generate the part of the site for the new version: +
+
+[source]
+----
+
+ant checkout-history -Dhistory.version=2.0.0-beta1
+ant generate-history -Dhistory.version=2.0.0-beta1
+
+----
+
+
+. if the 'latest-milestone' needs to be update too, run: +
+
+[source]
+----
+
+ant checkout-history -Dhistory.version=2.0.0-beta1 -Dtarget.history.folder=latest-milestone
+
+----
+
+
+
+Now let's generate the website with the new toc:
+
+[source]
+----
+
+ant /all generate-site
+
+----
+
+You should verify that the site generated in the production directory is OK. You can open the files with your prefered web browser like it was deployed.
+
+And once your happy with it, commit the changes in the source directory, and in the production directoy to get it actually deployed via svnpubsub.
+
+Tip: lot's of files might need to be 'added' to svn. An handy command to `add` any file which is not yet under version control is the following one:
+
+[source]
+----
+svn add --force sources
+----
+
+
+==== 15. Deploy the Eclipse updatesite
+
+
+If the Eclipse update site has already been prepared to include that new Ivy release, it is now needed to be deployed. Then follow the deployment instruction on link:http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html[that page].
+
+
+==== 16. Announce
+
+Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org and announce@apache.org mailing lists.
+You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
+
+
+==== 17. Update this doc
+
+If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
+
+
+==== 18. Merge your modifications back to the master if necessary.
+
+Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
+
+
+==== 19. Prepare next release
+
+In the master branch, update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
+
+If the version just release is a final one (not an alpha, beta or rc), the list of changes should be emptied in doc/release-notes.html, and update there the next expected version. The announcement in the file should also be changed accordingly to the next expected version.
+
+Release the version in link:https://issues.apache.org/jira/browse/IVY[jira], and create a new unreleased version for the next planned version.

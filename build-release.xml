@@ -17,10 +17,10 @@
    under the License.
 -->
 <project name="IvyRelease" default="snapshot"
-         xmlns:ivy="antlib:org.apache.ivy.ant"
-         xmlns:ivy2="antlib:org.apache.ivy.ant_2"
-         xmlns:xooki="antlib:xooki"
-         xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
+        xmlns:ivy="antlib:org.apache.ivy.ant"
+        xmlns:ivy2="antlib:org.apache.ivy.ant_2"
+        xmlns:asciidoctor="antlib:org.asciidoctor.ant"
+        xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
     <import file="build.xml"/>
 
     <macrodef name="run-tutorial">
@@ -63,8 +63,8 @@
         </sequential>
     </macrodef>
 
-    <target name="generate-tutorial-output" depends="jar,generate-doc-init">
-        <property name="output.dir" value="${build.dir}/output"/>
+    <target name="generate-tutorial-output" depends="jar,generate-doc-init" unless="skip.generate-tutorial-output">
+        <property name="output.dir" value="${basedir}/asciidoc/tutorial/log"/>
         <delete dir="${output.dir}"/>
         <mkdir dir="${output.dir}"/>
 
@@ -163,17 +163,17 @@
         <replace dir="${output.dir}" token="${ivy.jar.location}" value="//home/ivy/ivy.jar"/>
         <replace dir="${output.dir}" token="-f build.xml " value=""/>
         <replace dir="${output.dir}" token="${ivy.revision}" value="working@apache"/>
-
-        <copy todir="${doc.tmp.dir}/tutorial/log">
-            <fileset dir="${output.dir}"/>
-        </copy>
     </target>
 
     <target name="generate-doc-init" depends="release-version">
         <!-- copy documentation to temp dir to replace version tokens -->
-        <property name="doc.tmp.dir" value="${build.dir}/tempdoc"/>
-        <mkdir dir="${doc.tmp.dir}"/>
-        <copy todir="${doc.tmp.dir}" preservelastmodified="true" overwrite="true">
+        <!-- TODO: Don't like it that we are copying the entire set of files,
+            just so that we can replace some tokens and feed the updated files
+            to document generation. Need to figure out if there's a better way
+            to deal with this, at some point -->
+        <property name="doc.tmp.src.dir" value="${build.dir}/tempdoc"/>
+        <mkdir dir="${doc.tmp.src.dir}"/>
+        <copy todir="${doc.tmp.src.dir}" preservelastmodified="true" overwrite="true">
             <fileset dir="${doc.src.dir}"/>
             <filterset>
                 <filter token="version" value="${build.version}"/>
@@ -182,38 +182,17 @@
     </target>
 
     <target name="generate-doc" depends="generate-doc-init,generate-tutorial-output">
+        <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
+        <asciidoctor:convert sourceDirectory="${doc.tmp.src.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.tmp.src.dir}/templates" preserveDirectories="true">
+            <attribute key="basedir" value="${doc.tmp.src.dir}"/>
+            <attribute key="imagesdir" value=""/>
+        </asciidoctor:convert>
+        <!-- copy static resources -->
         <copy todir="${doc.build.dir}">
-            <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd"/>
-            <fileset dir="${doc.tmp.dir}" includes="tutorial/log/multi-project-general-publishall.txt"/>
+            <fileset dir="${doc.tmp.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd"/>
+            <fileset dir="${doc.tmp.src.dir}" includes="tutorial/log/multi-project-general-publishall.txt"/>
         </copy>
-
-        <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
-        <taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml"/>
-        <xooki:generate destDir="${doc.build.dir}" checkUpToDate="true" xookidir="${doc.src.dir}/xooki">
-            <fileset dir="${doc.tmp.dir}">
-                <include name="**/*.html"/>
-                <exclude name="template.html"/>
-                <exclude name="*Template.html"/>
-                <exclude name="conflict-solving-algo.html"/>
-                <exclude name="use.html"/>
-                <exclude name="samples/**"/>
-                <exclude name="js/**"/>
-                <exclude name="reports/**"/>
-                <exclude name="xooki/**"/>
-            </fileset>
-        </xooki:generate>
-
-        <!-- generate print-friendly doc -->
-        <!-- modify the basedir because othwise xooki.js will not be found! -->
-        <ant antfile="../build-release.xml" target="generate-print-doc" dir="doc"/>
-    </target>
-
-    <target name="generate-print-doc">
-        <!-- requires java 6 jdk in path and Apache Ant 1.7 -->
-        <taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml"/>
-        <xooki:print src="${doc.tmp.dir}/index.html"
-                     dest="${doc.build.dir}/book.html"
-                     xookidir="${doc.src.dir}/xooki"/>
     </target>
 
     <target name="all-doc" depends="javadoc,generate-doc"/>

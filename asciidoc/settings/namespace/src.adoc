@@ -1,0 +1,18 @@
+
+*Tag:* src
+
+Defines the acceptation part of a translation rule. If a name matches this src, it will be translated using the dest part.
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|org|the organisation to match as a regexp|No, defaults to .*
+|module|the module name to match as a regexp|No, defaults to .*
+|rev|the revision to match as a regexp|No, defaults to .*
+|=======
+
+
+	

@@ -1,0 +1,19 @@
+
+*Tag:* status
+
+Define one available module status.
+
+See link:../settings/statuses.html[statuses] page for details about how statuses are defined.
+
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|name|name of status defined|Yes
+|integration|true if this is an integration status, false otherwise|No, defaults to false
+|=======
+
+	

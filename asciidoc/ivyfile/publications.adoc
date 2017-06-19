@@ -1,0 +1,34 @@
+
+*Tag:* publications *Parent:* link:../ivyfile.html[ivy-module]
+
+
+
+Container for artifact elements, used to describe the artifacts published by this module. 
+
+If this container is not present, it is assumed that the module has one artifact, with the same name as the module, and published in all module configurations.
+
+
+Thus if you have a module which publishes no artifacts (a sort of virtual module, made only to integrate several other modules as a whole), you have to include a publications element with no artifact sub element.
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|defaultconf|comma separated list of public configurations in which artifacts are published by default (when no specific configurations are set on the artifact element).
+    	'*' wildcard can be used to designate all public configurations of this module. *__since 2.0__*|No, defaults to '*'
+|=======
+
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../ivyfile/artifact.html[artifact]|declares a published artifact for this module|0..n
+|=======
+
+
+	
