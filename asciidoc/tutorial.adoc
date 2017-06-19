@@ -1,12 +1,12 @@
 
-The best way to learn is to practice! That's what the Ivy tutorials will help you to do, to discover some of the great Ivy features.
+The best way to learn is to practice! That's what the Ivy tutorials will help you to do, to discover some of the great Ivy link:https://ant.apache.org/ivy/features.html[features].
 
 For the first tutorial you won't even have to install Ivy (assuming you have Ant and a JDK properly installed), and it shouldn't take more than 30 seconds.
 
 *First Tutorial*
 
 
-. Make sure you have link:http://ant.apache.org/[ant] 1.6.0 or greater and a link:http://java.sun.com[jdk] properly installed +
+. Make sure you have link:http://ant.apache.org/[ant] 1.9.9 or greater and a link:http://java.sun.com[jdk] properly installed +
 
 . Copy link:samples/build.xml[this build file] in an empty directory on your local filesystem (and make sure you name it build.xml) +
 
@@ -31,7 +31,7 @@ Teaches you how to configure Ivy to find its dependencies in multiple places.
 * link:tutorial/dual.html[Dual Resolver] + 
 Helps you configure Ivy to find ivy files in one place and artifacts in another.
 
-* link:tutorial/dependence.html[Project dependencies]</a> + 
+* link:tutorial/dependence.html[Project dependencies] + 
 A starting point for using Ivy in a multi-project environment.
 
 * link:tutorial/multiproject.html[Using Ivy in multiple projects environment] + 

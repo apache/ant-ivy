@@ -61,37 +61,34 @@ Note that although it is technically possible to publish module revisions with d
 == Hierarchical Index
 
 
-[source]
-----
+* *ivy-module*
+    ** link:ivyfile/info.html[info]
+        *** link:ivyfile/license.html[license]
+        *** link:ivyfile/ivyauthor.html[ivyauthor]
+        *** link:ivyfile/repository.html[repository]
+        *** link:ivyfile/description.html[description]
+    ** link:ivyfile/configurations.html[configurations]
+        *** link:ivyfile/conf.html[conf]
+    ** link:ivyfile/publications.html[publications]
+        *** link:ivyfile/artifact.html[artifact]
+            **** link:ivyfile/artifact-conf.html[conf]
+    ** link:ivyfile/dependencies.html[dependencies]
+        *** link:ivyfile/dependency.html[dependency]
+            **** link:ivyfile/dependency-conf.html[conf]
+                ***** link:ivyfile/mapped.html[mapped]
+            **** link:ivyfile/dependency-artifact.html[artifact]
+                ***** link:ivyfile/dependency-artifact-conf.html[conf]
+            **** link:ivyfile/dependency-artifact.html[include]
+                ***** link:ivyfile/dependency-artifact-conf.html[conf]
+            **** link:ivyfile/artifact-exclude.html[exclude]
+                ***** link:ivyfile/artifact-exclude-conf.html[conf]
+        *** link:ivyfile/exclude.html[exclude]
+        *** link:ivyfile/override.html[override]
+        *** link:ivyfile/conflict.html[conflict]
+    ** link:ivyfile/conflicts.html[conflicts]
+        *** link:ivyfile/manager.html[manager]
 
-ivy-module
-    link:ivyfile/info.html[info]
-        link:ivyfile/license.html[license]
-        link:ivyfile/ivyauthor.html[ivyauthor]
-        link:ivyfile/repository.html[repository]
-        link:ivyfile/description.html[description]
-    link:ivyfile/configurations.html[configurations]
-        link:ivyfile/conf.html[conf]
-    link:ivyfile/publications.html[publications]
-        link:ivyfile/artifact.html[artifact]
-            link:ivyfile/artifact-conf.html[conf]
-    link:ivyfile/dependencies.html[dependencies]
-        link:ivyfile/dependency.html[dependency]
-            link:ivyfile/dependency-conf.html[conf]
-                link:ivyfile/mapped.html[mapped]
-            link:ivyfile/dependency-artifact.html[artifact]
-                link:ivyfile/dependency-artifact-conf.html[conf]
-            link:ivyfile/dependency-artifact.html[include]
-                link:ivyfile/dependency-artifact-conf.html[conf]
-            link:ivyfile/artifact-exclude.html[exclude]
-                link:ivyfile/artifact-exclude-conf.html[conf]
-        link:ivyfile/exclude.html[exclude]
-        link:ivyfile/override.html[override]
-        link:ivyfile/conflict.html[conflict]
-    link:ivyfile/conflicts.html[conflicts]
-        link:ivyfile/manager.html[manager]
 
-----
 
 
 
