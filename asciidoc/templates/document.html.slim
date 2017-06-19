@@ -21,7 +21,7 @@ html lang=(attr :lang, 'en' unless attr? :nolang)
   head
     meta http-equiv="Content-Type" content="text/html; charset=utf-8"
     meta name='generator' content="Asciidoctor #{attr 'asciidoctor-version'}"
-    title=((doctitle :sanitize => true) || (attr 'untitled-label'))
+    title=((doctitle :sanitize => true) || (attr 'untitled-label')) + " | Apache Ivy&#153; Documentation"
     link rel="stylesheet" type="text/css" href="#{page.relativeRoot}style/style.css"
     script src="#{page.relativeRoot}js/jquery.pack.js" type="text/javascript"
     script src="#{page.relativeRoot}js/jquery.treeview.js" type="text/javascript"
