@@ -410,26 +410,41 @@
                        inline="true" conf="default" pathid="ivyapiref.classpath" log="download-only"/>
     </target>
 
+    <target name="/revapi-all" description="report status of all public APIs">
+        <property name="revapi.all" value="true"/>
+    </target>
+
+    <target name="/revapi-changed" description="report all changed public APIs">
+        <property name="revapi.changed" value="true"/>
+    </target>
 
     <target name="revapi" depends="init-revapi" unless="skip.test">
+        <property name="revapi.all" value="false"/>
+        <property name="revapi.changed" value="false"/>
+        <condition property="revapi.binary" value="true" else="false">
+            <not>
+                <or>
+                    <istrue value="${revapi.all}"/>
+                    <istrue value="${revapi.changed}"/>
+                </or>
+            </not>
+        </condition>
         <scriptdef name="revapi" language="javascript" classpathref="japicmp.classpath">
             <attribute name="old"/>
             <attribute name="new"/>
-            <attribute name="missing"/>
+            <attribute name="olddeps"/>
+            <attribute name="newdeps"/>
+            <attribute name="missingregexp"/>
             <attribute name="binary"/>
             <attribute name="changed"/>
             <attribute name="html"/>
             <![CDATA[
 	            var options = Packages.japicmp.config.Options.newDefault();
-	            var oldArchives = attributes.get("old").split(":").map(function(obj){
-	                return new Packages.japicmp.cmp.JApiCmpArchive(new java.io.File(obj), "n.a.")
-	            });
-                var newArchives = attributes.get("new").split(":").map(function(obj){
-                    return new Packages.japicmp.cmp.JApiCmpArchive(new java.io.File(obj), "n.a.")
-                });
-	            options.setOldArchives(java.util.Arrays.asList(oldArchives));
-                options.setNewArchives(java.util.Arrays.asList(newArchives));
-                options.addIgnoreMissingClassRegularExpression(attributes.get("missing"));
+	            options.setOldArchives(java.util.Arrays.asList(new Packages.japicmp.cmp.JApiCmpArchive(new java.io.File(attributes.get("old")), "n.a.")));
+                options.setNewArchives(java.util.Arrays.asList(new Packages.japicmp.cmp.JApiCmpArchive(new java.io.File(attributes.get("new")), "n.a.")));
+                options.setOldClassPath(Packages.com.google.common.base.Optional.fromNullable(attributes.get("olddeps")));
+                options.setNewClassPath(Packages.com.google.common.base.Optional.fromNullable(attributes.get("newdeps")));
+                options.addIgnoreMissingClassRegularExpression(attributes.get("missingregexp"));
                 var echo = project.createTask("echo");
                 var onlyBinary = attributes.get("binary") === "true";
                 var onlyChanges = attributes.get("changed") === "true";
@@ -462,10 +477,13 @@
                 }
             ]]>
         </scriptdef>
-        <revapi old="${toString:ivyapiref.classpath}:${toString:lib.classpath}"
-                new="${artifacts.build.dir}/jars/${final.name}:${toString:lib.classpath}"
-                missing="org.apache.(commons|bcel).*"
-                binary="true" html="${reports.dir}/japicmp.html"/>
+        <revapi old="${toString:ivyapiref.classpath}"
+                new="${artifacts.build.dir}/jars/${final.name}"
+                olddeps="${toString:lib.classpath}"
+                newdeps="${toString:lib.classpath}"
+                missingregexp="org.apache.(commons|bcel).*"
+                binary="${revapi.binary}" changed="${revapi.changed}"
+                html="${reports.dir}/japicmp.html"/>
     </target>
 
     <target name="init-jacoco" depends="jar" unless="skip.test">
