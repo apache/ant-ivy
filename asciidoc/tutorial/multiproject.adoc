@@ -267,7 +267,7 @@ after having called report in the console project, and that's it, you have a cle
 
 You can play with this tutorial by using regular Ant commands. Begin in the base directory of the tutorial (src/example/multi-project), and run ant -p:
 
-[source,shell]
+[source.shell]
 ----
 
 include::asciidoc/tutorial/log/multi-project-general-antp.txt[]
@@ -282,7 +282,7 @@ You will see that Ivy calls the publish target on all the modules, following the
 
 Then you can go in one of the example project directories (like projects/find for instance), and run `ant -p`:
 
-[source,shell]
+[source.shell]
 ----
 
 include::asciidoc/tutorial/log/multi-project-find-antp.txt[]

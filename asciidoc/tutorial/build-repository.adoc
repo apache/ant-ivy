@@ -12,7 +12,7 @@ The project that we will use is pretty simple. It is composed of an Ant build fi
 
 Here are the public targets that we will use: 
 
-[source,shell]
+[source.shell]
 ----
 
 Z:\ivy-repository>ant -p

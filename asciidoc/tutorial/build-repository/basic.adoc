@@ -46,7 +46,7 @@ Pretty simple, we call the [[ant:install] task with the settings we have loaded 
 
 Here is the Ant call output :
 
-[source,shell]
+[source.shell]
 ----
 
 include::asciidoc/tutorial/log/install.txt[]
@@ -58,7 +58,7 @@ The trace tells us that the module definition was found using the "libraries" re
 
 Let's have a look at our repository :
 
-[source,shell]
+[source.shell]
 ----
 
 include::asciidoc/tutorial/log/myrepository-content.txt[]
@@ -89,7 +89,7 @@ The `maven2-deps` target is very similar to the one described above, except that
 
 If you call this target, you will see that Ivy installs not only the hibernate module but also its dependencies:
 
-[source,shell]
+[source.shell]
 ----
 
 include::asciidoc/tutorial/log/install-deps.txt[]
@@ -107,7 +107,7 @@ We do not want to evict any modules because we are building our own repository. 
 
 If you now have a closer look at your repository, you will probably notice that it isn't an exact replication of the original one. Let's have a look at the directory of one module:
 
-[source,shell]
+[source.shell]
 ----
 
 include::asciidoc/tutorial/log/myrepository-content-deps.txt[]
