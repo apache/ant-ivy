@@ -1,5 +1,7 @@
+= signers
 
 *Tag:* signers
+
 *__since 2.2__*
 
 Defines a list of detached signature generators usable in ivy. Each generator is identified by its name, given as an attribute.
@@ -10,8 +12,6 @@ Ivy supports the following signature generator out of the box:
 
 * pgp +
  generates an OpenPGP compatible ASCII armored detached signature.
-
-
 
 
 == Child elements
@@ -42,8 +42,8 @@ This generator is capable of generating an OpenPGP compatible ASCII armored deta
 |=======
 |Attribute|Description|Required
 |name|The name of the signature generator.|Yes
-|secring|The location of the secret keyring.|No, defaults to ${user.home}/.gnupg/secring.gpg
-|keyId|The identifier of the key to use. The keyword 'auto' can be used to indicate a key will be selected automatically.|No, defaults to 'auto'.
+|secring|The location of the secret keyring.|No, defaults to `${user.home}/.gnupg/secring.gpg`
+|keyId|The identifier of the key to use. The keyword `auto` can be used to indicate a key will be selected automatically.|No, defaults to `auto`.
 |password|The password of the private key.|Yes
 |=======
 
@@ -52,7 +52,7 @@ This generator is capable of generating an OpenPGP compatible ASCII armored deta
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <signers>
@@ -66,7 +66,7 @@ Defines a detached signature generator with name 'mypgp' which uses the secret k
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <signers>
@@ -75,4 +75,4 @@ Defines a detached signature generator with name 'mypgp' which uses the secret k
 
 ----
 
-Same as before, but this time the key '123ABC45' is used to generate the detached signature.
+Same as before, but this time the key `123ABC45` is used to generate the detached signature.

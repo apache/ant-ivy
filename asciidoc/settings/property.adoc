@@ -1,9 +1,10 @@
+= property
 
 *Tag:* property
 
-Defines an ivy variable. *__since 1.3__*
+Defines an ivy variable. 
 
-The optional override attribute enables you to avoid overriding the previous value of the variable, which makes the definition behave like an ant property, which is particularly useful to define default values (values which are used only if they haven't been defined yet).
+*__since 1.3__*: The optional override attribute enables you to avoid overriding the previous value of the variable, which makes the definition behave like an ant property, which is particularly useful to define default values (values which are used only if they haven't been defined yet).
 
 == Attributes
 
@@ -22,7 +23,7 @@ The optional override attribute enables you to avoid overriding the previous val
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <property name="myvar" value="myvalue"/>
@@ -34,7 +35,7 @@ Sets the variable myvar to the value myvalue.
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <property name="myvar" value="myvalue" override="false"/>
@@ -46,7 +47,7 @@ Sets the variable myvar to the value myvalue only if myvar has not been set yet.
 '''
 
 
-[source]
+[source, xml]
 ----
 
  <properties environment="env"/>

@@ -1,9 +1,10 @@
+= version-matchers
 
 *Tag:* version-matchers
 
 Defines a list of version matchers. *__since 1.4__* 
 
-The child tag used for the version matcher must be equal to a name of a report outputter type (added with the typedef tag).
+The child tag used for the version matcher must be equal to a name of a report outputter type (added with the `typedef` tag).
 
 A version matcher is used to evaluate if a dependency version constraint matches a dependency version.
 
@@ -13,7 +14,7 @@ A version matcher is used to evaluate if a dependency version constraint matches
 
 [options="header",cols="15%,50%,35%"]
 |=======
-|Descrition|Required
+|Attribute|Descrition|Required
 |usedefaults|when set to true, includes the built-in version matchers (Latest, Sub Revision, and Version Ranger Matcher). Exact Revision Matcher is always included|No, defaults to false
 |=======
 
@@ -39,7 +40,7 @@ A matcher that matches a dependency revision id to the module revision id using 
 
 === Sub Revision Matcher
 
-A matcher that matches all revisions starting with a specific prefix. The syntax is: [prefix]+
+A matcher that matches all revisions starting with a specific prefix. The syntax is: `[prefix]+`
 
 
 [options="header"]
@@ -54,7 +55,7 @@ A matcher that matches all revisions starting with a specific prefix. The syntax
 === Latest (Status) Matcher
 
 
-A matcher that matches versions based on their status. The predefined statuses in Ivy are 'release', 'milestone' and 'integration'. It's possible to define your own statuses, see link:../settings/statuses.html[statuses] for more details.
+A matcher that matches versions based on their status. The predefined statuses in Ivy are `release`, `milestone` and `integration`. It's possible to define your own statuses, see link:../settings/statuses.html[statuses] for more details.
 
 
 [options="header"]
@@ -79,7 +80,8 @@ Range types are exhaustively listed by example in the table below.
 |Revision|Matches
 | [1.0,2.0] | all versions greater or equal to 1.0 and lower or equal to 2.0
 | [1.0,2.0[ | all versions greater or equal to 1.0 and lower than 2.0
-| ]1.0,2.0] 
+| ]1.0,2.0] | all versions greater than 1.0 and lower or equal to 2.0
+| ]1.0,2.0[ | all versions greater than 1.0 and lower than 2.0
 | [1.0,) | all versions greater or equal to 1.0 
 | ]1.0,) | all versions greater than 1.0
 | (,2.0] | all versions lower or equal to 2.0
@@ -97,7 +99,7 @@ The version pattern matcher allows for more flexibility in pattern matching at t
 ==== Settings.xml
 
 
-[source]
+[source, xml]
 ----
 
 <pattern-vm>
@@ -110,7 +112,7 @@ The version pattern matcher allows for more flexibility in pattern matching at t
 ==== Ivy.xml
 
 
-[source]
+[source, xml]
 ----
 
 <dependency org="acme" name="tool" rev="foo(1, 3)" />

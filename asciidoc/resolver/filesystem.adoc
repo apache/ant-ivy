@@ -1,4 +1,4 @@
-
+= Filesystem resolver
 
 []
 |=======
@@ -8,46 +8,43 @@
 |=======
 
 
-
 This resolver uses the file system to resolve ivy files and artifacts. An advantage of this resolver is that it usually provides very good performance. Moreover, it is easy to setup using basic OS file sharing mechanisms.
 
 The configuration of such a resolver is mainly done through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the file system. These patterns must be absolute paths (*__since 2.0__*). You can indicate a list of patterns which will be checked one after the other.
 
-*__since 1.3__* Using the m2compatible attribute, this resolver will convert dots found in organisation into slashes like maven2 does for groupId. For instance, it will transform the organisation from 'com.company' into 'com/company' when replacing the token [organisation] in your pattern.
-*Limitation*: in m2compatible mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
+*__since 1.3__* Using the `m2compatible` attribute, this resolver will convert dots found in organisation into slashes like maven2 does for groupId. For instance, it will transform the organisation from `com.company` into `com/company` when replacing the token `[organisation]` in your pattern.
+
+*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
 
 
 == Atomic publish support
 
 *__since 2.0__* This resolver supports atomic publish, which is useful for environments with a lot of concurrent publish and resolve actions. The atomic publish relies on the atomicity of the rename operation in the underlying filesystem (which includes NTFS and POSIX based filesystems).
-In this case the resolver starts by publishing the module according to the pattern, but where a '.part' suffix is appended to the revision. Then the publish is committed with a rename to the final location. 
+In this case the resolver starts by publishing the module according to the pattern, but where a `.part` suffix is appended to the revision. Then the publish is committed with a rename to the final location. 
 
 *Limitations*
 Atomic publish is currently limited in several ways:
 
 
-* you need to use a pattern for both the artifact and the ivy files which uses the revision as a directory. For instance "${repository.dir}/[module]/[revision]/[artifact].[ext]" works, "${repository.dir}/[module]/[artifact]-[revision].[ext]" doesn't +
+    * you need to use a pattern for both the artifact and the ivy files which uses the revision as a directory. For instance `${repository.dir}/[module]/[revision]/[artifact].[ext]` works, `${repository.dir}/[module]/[artifact]-[revision].[ext]` doesn't +
 
-* both the artifact and ivy pattern should have the same prefix until the [revision] token. +
+    * both the artifact and ivy pattern should have the same prefix until the `[revision]` token. +
 
-* overwrite during publish is not supported +
+    * overwrite during publish is not supported +
 
-* you should not use revision names ending with '.part' +
-
-
-The *transactional* attribute can be used to configure the atomicity behavior:
+    * you should not use revision names ending with `.part` +
 
 
-* auto +
- use transaction if possible (according to limitation), otherwise don't
+The `*transactional*` attribute can be used to configure the atomicity behavior:
 
-* true +
- always use transaction, fail the build if a limitation is not fulfilled
+    * auto +
+     use transaction if possible (according to limitation), otherwise don't
 
-* false +
- don't use transaction at all
+    * true +
+     always use transaction, fail the build if a limitation is not fulfilled
 
-
+    * false +
+     don't use transaction at all
 
 
 == Attributes

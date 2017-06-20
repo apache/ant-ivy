@@ -1,4 +1,4 @@
-
+= SSH resolver
 
 []
 |=======
@@ -7,10 +7,9 @@
 |Handle publish|yes
 |=======
 
+*__since 1.4__*
 
-
-
-This resolver can be used when your ivy repository is located on a server accessible via ssh. The secured nature of ssh and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. *__since 1.4__*
+This resolver can be used when your ivy repository is located on a server accessible via ssh. The secured nature of ssh and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. 
 
 If your server supports sftp, you can consider using the link:../resolver/sftp.html[sftp resolver].
 
@@ -51,7 +50,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 == Example
 
 
-[source]
+[source, xml]
 ----
 
 <ssh user="myuser" host="myhost.com">
@@ -66,7 +65,7 @@ Will connect to myhost.com using myuser and prompt for the password.
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <ssh keyFile="path/to/key/file" keyFilePassword="${password}">
@@ -76,10 +75,10 @@ Will connect to myhost.com using myuser and prompt for the password.
 
 ----
 
-Will connect to yourserver.com on port 8022 with user geheim and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user geheim with the same keyFile/keyFilePassword pair for the artifacts.
+Will connect to yourserver.com on port 8022 with user geheim and use `path/to/key/file` for `keyFile` and the value of password variable for `keyFilePassword` authentication for ivy files, and to myserver.com on port 8022 using user geheim with the same keyFile/keyFilePassword pair for the artifacts.
 
 
-[source]
+[source, xml]
 ----
 
 <ssh host="myhost" sshConfig="/path/to/.ssh/config">
@@ -89,4 +88,4 @@ Will connect to yourserver.com on port 8022 with user geheim and use keyFile pat
 
 ----
 
-Will connect to the host named by myhost according to the config file in /path/to/.ssh/config, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.
+Will connect to the host named by myhost according to the config file in `/path/to/.ssh/config`, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.

@@ -1,4 +1,4 @@
-
+= IvyRep resolver
 
 []
 |=======
@@ -7,8 +7,7 @@
 |Handle publish|no
 |=======
 
-This resolver usually uses an URL based repository usually similar in structure to link:http://ivyrep.jayasoft.org/[ivyrep] to find ivy files, and ibiblio to find artifacts.
-It can also be configured to use other similar repositories.
+This resolver usually uses an URL based repository usually similar in structure to the, now defunct, `http://ivyrep.jayasoft.org/` repo, to find ivy files, and ibiblio to find artifacts. It can also be configured to use other similar repositories.
 
 
 [NOTE]
@@ -37,11 +36,11 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <ivyrep name="ivyrep" ivyroot="http://ivyrep.mycompany.com"/>
 
 ----
 
-Looks for ivy files on and ivyrep like web site located at http://ivyrep.mycompany.com.
+Looks for ivy files on and ivyrep like web site located at `http://ivyrep.mycompany.com`.

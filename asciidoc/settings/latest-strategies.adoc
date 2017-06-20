@@ -1,19 +1,20 @@
+= Latest strategies
 
 *Tag:* latest-strategies
 
 Defines a list of link:../concept.html#latest[latest strategies] usable in Ivy. Each latest strategy is identified by its name, given as an attribute.
-The child tag used for the latest strategy must be equal to a name of a latest strategy type (usually added with the typedef tag).
+
+The child tag used for the latest strategy must be equal to a name of a latest strategy type (usually added with the `typedef` tag).
 
 The latest strategies which are included in Ivy by default are:
 
 
 * latest-time +
- compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it's drawback is that it can be slow when dealing with remote repositories. If you use ivyrep, 
-for example, Ivy has to ask the http server for the date of each ivy file before knowing which is the latest.
+ compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it's drawback is that it can be slow when dealing with remote repositories. If you use ivyrep, for example, Ivy has to ask the http server for the date of each ivy file before knowing which is the latest.
 
 * latest-revision +
  compares the revisions as strings, using an algorithm close to the one used in php's version_compare function.
-This algorithm takes into account the special meaning of some text. For instance, with this strategy, 1.0-dev1 is considered before 1.0-alpha1, which in turn is before 1.0-rc1, which is before 1.0, which is before 1.0.1.
+This algorithm takes into account the special meaning of some text. For instance, with this strategy, `1.0-dev1` is considered before `1.0-alpha1`, which in turn is before `1.0-rc1`, which is before `1.0`, which is before `1.0.1`.
 
 * latest-lexico +
  compares the revisions as strings, using lexicographic order (the one used by java string comparison).
@@ -37,7 +38,7 @@ This algorithm takes into account the special meaning of some text. For instance
 
 Here is an example of how you can do so:
 
-[source]
+[source, xml]
 ----
 
 <latest-strategies>
@@ -52,7 +53,7 @@ Here is an example of how you can do so:
 
 Knowing that the default "special meaning" words are the following:
 
-[source]
+[source, xml]
 ----
 
     <specialMeaning name="dev" value="-1"/>
@@ -61,10 +62,10 @@ Knowing that the default "special meaning" words are the following:
 
 ----
 
-You can even remove or redefine the default special meanings by setting usedefaultspecialmeanings="false" on the latest-revision tag.
+You can even remove or redefine the default special meanings by setting `usedefaultspecialmeanings="false"` on the `latest-revision` tag.
 Example:
 
-[source]
+[source, xml]
 ----
 
 <latest-strategies>

@@ -1,11 +1,14 @@
+= ttl
 
 *Tag:* ttl
 
-*__Since 2.0__* Defines a TTL (Time To Live) rule for resolved revision caching.
+*__Since 2.0__* 
 
-When Ivy resolves a dynamic version constraint (like latest.integration or a version range), it can store the result of the resolution (like latest.integration=1.5.1) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running link:../../use/resolve.html[resolve] in refresh mode.
+Defines a TTL (Time To Live) rule for resolved revision caching.
 
-This tag let you define a rule to define a TTL specific to a set of dynamic revision, based on the whole module revision information (organization, module name, revision, ...). The revision considered in the rule is the revision before the resolution (for instance 'latest.integration') and not the resolved revision (for instance '1.5.1').
+When Ivy resolves a dynamic version constraint (like `latest.integration` or a version range), it can store the result of the resolution (like `latest.integration=1.5.1`) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running link:../../use/resolve.html[resolve] in refresh mode.
+
+This tag let you define a rule to define a TTL specific to a set of dynamic revision, based on the whole module revision information (organization, module name, revision, ...). The revision considered in the rule is the revision before the resolution (for instance `latest.integration`) and not the resolved revision (for instance `1.5.1`).
 
 The rules are evaluated in order, the first matching rule being used to define the TTL. If no rule matches, the cache defaultTTL will be used.
 
@@ -20,7 +23,7 @@ XXd XXh XXm XXs XXXms
 
 Where 'd' stands for days, 'h' for hours, 'm' for minutes, 's' for seconds and 'ms' for milliseconds. Any part of the specification can be omitted, so '12d', '2h 5m' and '1d 5ms' are all valid.
 
-The TTL duration can also be set to 'eternal', in which case once resolved the revision is always use, except when resolving in refresh mode. 
+The TTL duration can also be set to `eternal`, in which case once resolved the revision is always use, except when resolving in refresh mode. 
 
 Using a 0ms TTL disable resolved revision caching for the given rule.
 
@@ -38,3 +41,5 @@ Using a 0ms TTL disable resolved revision caching for the given rule.
 |matcher|the link:../../concept.html#matcher[matcher] to use to match the modules to which the resolver should be applied|No, defaults to exact
 |duration|the TTL to apply (see above for format)|Yes
 |=======
+
+

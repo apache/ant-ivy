@@ -1,4 +1,4 @@
-
+= Aggregate OSGi Repository
 
 []
 |=======
@@ -12,7 +12,7 @@
 
 This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.
 
-This resolvers is like a classic link:[chain] resolver, but which better support OSGi metadata.
+This resolvers is like a classic link:../resolver/chain.html[chain] resolver, but which better support OSGi metadata.
 
 
 == Attributes
@@ -22,13 +22,13 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 
 == Elements
 
-As sub element, this resolver accept any kind of OSGi resolver: link:../obr.html[obr], link:../updatesite.html[updatesite], or any other `osgi-agg`.
+As sub element, this resolver accept any kind of OSGi resolver: link:../resolver/obr.html[obr], link:../resolver/updatesite.html[updatesite], or any other `osgi-agg`.
 
 
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <updatesite name="ivyde-updatesite" url="http://www.apache.org/dist/ant/ivyde/updatesite" />
@@ -41,3 +41,4 @@ As sub element, this resolver accept any kind of OSGi resolver: link:../obr.html
 ----
 
 An aggregated OSGi reporsory composed of the Apache IvyDE Eclipse update site and the Felix OBR.
+

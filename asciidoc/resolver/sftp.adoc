@@ -1,4 +1,4 @@
-
+= SFTP resolver
 
 []
 |=======
@@ -7,16 +7,15 @@
 |Handle publish|yes
 |=======
 
+*__since 1.4__*
 
-
-
-This resolver can be used when your ivy repository is located on a server accessible via sftp. The secured nature of sftp and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. *__since 1.4__*
+This resolver can be used when your ivy repository is located on a server accessible via sftp. The secured nature of sftp and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. 
 
 If your server supports ssh but not sftp, there is also an link:../resolver/ssh.html[ssh resolver].
 
 Note that sftp is also supported by vfs, so you can use a vfs resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the vfs resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use ant input task for example before calling ivy.
 
-All necessary connection parameters can be set here via attributes, or via an OpenSSH-style config file specified by sshConfig.
+All necessary connection parameters can be set here via attributes, or via an OpenSSH-style config file specified by `sshConfig`.
 However all attributes defined in the pattern url of the resolver will have higher priority and will overwrite the values given here. To specify connection parameters in the pattern, you have to specify a full url and not just a path as pattern.
 e.g. pattern="/path/to/my/repos/[artifact].[ext]" will use all connection parameters from this class
 e.g. pattern="sftp://myserver.com/path/to/my/repos/[artifact].[ext]" will use all parameters from the attributes with the exception of the host, which will be "myserver.com"
@@ -26,7 +25,7 @@ e.g. pattern="sftp://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[
 
 Note that the authentication features of this resolver are exactly the same as the ssh resolver. Choosing between the two is often a matter of server implementation. If your server supports sftp, usually it's preferrable.
 
-Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as ssh client, which is a popular java ssh client, used for example in eclipse.
+Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as ssh client, which is a popular java ssh client, used for example in Eclipse.
 
 
 == Attributes
@@ -62,7 +61,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 == Example
 
 
-[source]
+[source, xml]
 ----
 
 <sftp user="myuser" host="myhost.com">
@@ -77,7 +76,7 @@ Will connect to myhost.com using myuser and prompt for the password.
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <sftp user="${myuser}" userPassword="${my.password}" host="myhost.com">
@@ -92,7 +91,7 @@ Will connect to myhost.com using user and password provided with ivy variables.
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <sftp>
@@ -107,7 +106,7 @@ Will connect to yourserver.com on port 8022 with user 'user' and password 'gehei
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <sftp keyFile="path/to/key/file" keyFilePassword="${password}">
@@ -117,10 +116,10 @@ Will connect to yourserver.com on port 8022 with user 'user' and password 'gehei
 
 ----
 
-Will connect to yourserver.com on port 8022 with user 'user' and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user 'user' with the same keyFile/keyFilePassword pair for the artifacts.
+Will connect to yourserver.com on port 8022 with user 'user' and use keyFile `path/to/key/file` for `keyFile` and the value of password variable for `keyFilePassword` authentication for ivy files, and to myserver.com on port 8022 using user 'user' with the same keyFile/keyFilePassword pair for the artifacts.
 
 
-[source]
+[source, xml]
 ----
 
 <sftp host="myhost" sshConfig="/path/to/.ssh/config">
@@ -130,4 +129,5 @@ Will connect to yourserver.com on port 8022 with user 'user' and use keyFile pat
 
 ----
 
-Will connect to the host named by myhost according to the config file in /path/to/.ssh/config, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.
+Will connect to the host named by myhost according to the config file in `/path/to/.ssh/config`, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.
+

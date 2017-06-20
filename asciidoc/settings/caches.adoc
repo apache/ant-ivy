@@ -1,18 +1,21 @@
+= caches
 
 *Tag:* caches
 
 Configures the Ivy cache system. *__since 2.0__*.
+
+
 See link:../concept.html#cache[cache concept] for details on the Ivy cache concept.
 
-By default, Ivy defines one repository cache instance, called 'default-cache', which uses the default cache settings defined using attributes on this tag. This default instance is defined as long as you don't define your own default cache using the 'default' attribute, and have at least one dependency resolver which doesn't specify which cache instance to use.
+By default, Ivy defines one repository cache instance, called `default-cache`, which uses the default cache settings defined using attributes on this tag. This default instance is defined as long as you don't define your own default cache using the `default` attribute, and have at least one dependency resolver which doesn't specify which cache instance to use.
 
-_defaultCacheDir_ is the default directory used for both the resolution and repository cache(s). It usually points to a directory in your filesystem. If you want to isolate resolution cache from repository cache, we recommend setting both the resolutionCacheDir and repositoryCacheDir attributes on this tag instead of using defaultCacheDir.
+`defaultCacheDir` is the default directory used for both the resolution and repository cache(s). It usually points to a directory in your filesystem. If you want to isolate resolution cache from repository cache, we recommend setting both the `resolutionCacheDir` and `repositoryCacheDir` attributes on this tag instead of using `defaultCacheDir`.
 
 Since repository cache implementations are pluggable, you can either define new cache instances based on the default implementation provided in Ivy using the link:../settings/caches/cache.html[cache] child element, or use custom cache implementations using child elements as you have defined using link:../settings/typedef.html[typedef].
 
-_ivyPattern_ and _artifactPattern_ are used to configure the default way Ivy stores ivy files and artifacts in repository cache(s). Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended. These patterns are relative to the repository cache base directory.
+`ivyPattern` and `artifactPattern` are used to configure the default way Ivy stores ivy files and artifacts in repository cache(s). Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended. These patterns are relative to the repository cache base directory.
 
-_checkUpToDate_ indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from
+`checkUpToDate` indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from
 cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's most of the time a local copy.
 
 
@@ -49,7 +52,7 @@ cache to another place in your filesystem). Usually it is a good thing to check 
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <caches>

@@ -1,4 +1,4 @@
-
+= Jar resolver
 
 []
 |=======
@@ -8,14 +8,13 @@
 |=======
 
 
-
 *__since 2.3__*
 
 This resolver uses a specified jar resolve ivy files and artifacts.
 
 This kind of resolver helps the packaging of an entire repository. Since the entire "repository" jar is expected to be local at some point, the size of a such repository should be considered to be not too large if it is expected to be remote; hence the artifacts in a such repo should be little in size.
 
-The configuration of such a resolver is done via specifying the location of the jar, and through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the jar. You can indicate a list of patterns which will be checked one after the other. Note that the patterns MUST NOT start with a slash.
+The configuration of such a resolver is done via specifying the location of the jar, and through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the jar. You can indicate a list of patterns which will be checked one after the other. Note that the patterns *MUST NOT* start with a slash.
 
 
 == Attributes
@@ -45,7 +44,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <jar name="my-local-jar-resolver" file="/home/me/myrepo.jar">
@@ -60,7 +59,7 @@ A simple local jar repository.
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <jar name="my-remote-jar-resolver" url="http://www.mywebsite.com/dist/myrepo.jar">
@@ -74,3 +73,4 @@ A simple local jar repository.
 ----
 
 A remote jar repository with multiple ivy and artifact patterns, patterns pointing in some sub directories in the jar.
+

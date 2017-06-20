@@ -1,4 +1,4 @@
-
+= Mirrored resolver
 
 []
 |=======
@@ -52,7 +52,7 @@ http://repo2.maven.org/maven2/
 
 And the piece of settings:
 
-[source]
+[source, xml]
 ----
 
 <mirroredurl name="mirrored-maven" m2compatible="true" mirrorListUrl="file:///Users/me/dev/repo/mavenrepolist.txt">
@@ -61,7 +61,7 @@ And the piece of settings:
 
 ----
 
-It will resolve first on the repo1 and if failing it will fall back on repo2.
+It will resolve first on the `repo1` and if failing it will fall back on `repo2`.
 
 
 '''
@@ -69,7 +69,7 @@ It will resolve first on the repo1 and if failing it will fall back on repo2.
 
 The mirror list can be retrieved from a geo-location aware url:
 
-[source]
+[source, xml]
 ----
 
 <mirroredurl name="mirrored-asf" mirrorListUrl="http://www.apache.org/dyn/closer.cgi">

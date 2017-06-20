@@ -1,9 +1,10 @@
+= macrodef
 
 *Tag:* macrodef
 
 Defines a new dependency resolver type based upon another. This definition is very similar to the macrodef feature of ant for defining macro tasks. *__since 1.3__*
 
-This task eases the process of creating a new dependency resolver, because it avoids writing java code.
+This task eases the process of creating a new dependency resolver, because it avoids writing Java code.
 
 It is generally used in combination with the link:../settings/include.html[include] feature to help reuse a macro in multiple settings files.
 
@@ -22,16 +23,16 @@ Since you can use the same macro several times it can define several resolvers (
 Here is how Ivy deals with the names of the resolvers defined in a macro:
 
 
-* if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This is what usually should be done for the main resolver defined in the macro +
+    * if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This is what usually should be done for the main resolver defined in the macro
 
-* if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a @{name} inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash +
+    * if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a `@{name}` inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash
 
-* if there is a name attribute on a resolver in the macrodef, and this name contains @{name} somewhere, then Ivy will use this name, and replace @{name} with the name provided when using the macro. +
+    * if there is a name attribute on a resolver in the macrodef, and this name contains `@{name}` somewhere, then Ivy will use this name, and replace `@{name}` with the name provided when using the macro.
 
 
 Example:
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>
@@ -52,7 +53,7 @@ Example:
 
 This is equivalent to:
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>
@@ -96,7 +97,7 @@ This is equivalent to:
 
 Defining a simple macro:
 
-[source]
+[source, xml]
 ----
 
   <macrodef name="mymacro">
@@ -111,7 +112,7 @@ Defining a simple macro:
 
 Using it:
 
-[source]
+[source, xml]
 ----
 
   <resolvers>
@@ -125,7 +126,7 @@ Using it:
 
 A complete example:
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>

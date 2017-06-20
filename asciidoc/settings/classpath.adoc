@@ -1,3 +1,4 @@
+= classpath
 
 *Tag:* classpath
 
@@ -20,7 +21,7 @@ This let you add ivy plugins without relying on an external classpath (the ant c
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>
@@ -39,7 +40,7 @@ Adds the custom-resolver.jar (found in the same directory as the ivysettings.xml
 '''
 
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>

@@ -1,3 +1,4 @@
+= resolvers
 
 *Tag:* resolvers
 
@@ -7,14 +8,14 @@ The child tag used for the dependency resolver must be equal to a name of a depe
 
 *__since 1.3__* Once defined, resolvers can be referenced by their name, using the following syntax:
 
-[source]
+[source, xml]
 ----
 
 <resolver ref="alreadydefinedresolver"/>
 
 ----
 
-Note that this works only if the resolver has already been defined and NOT if it is defined later in the ivysettings file.
+Note that this works only if the resolver has already been defined and *NOT* if it is defined later in the ivysettings file.
 
 == Child elements
 
@@ -33,7 +34,7 @@ Ivy comes with a set of built-in dependency resolvers that handle most common ne
 
 If you don't find the one you want here, you can also check if someone has contributed it on the links page, or even link:../extend.html[write your own].
 
-There are basically two types of resolvers in Ivy: composite and standard. A composite resolver is a resolver which delegates the work to other resolvers. The other resolvers are standard resolvers.
+There are basically two types of resolvers in Ivy - composite and standard. A composite resolver is a resolver which delegates the work to other resolvers. The other resolvers are standard resolvers.
 
 Here is the list of built-in resolvers:
 
@@ -69,19 +70,19 @@ All resolvers of the same type share some common features and attributes detaile
 
 All standard resolvers support several options for validation.
 
-The __validate__ attribute is used to configure if ivy files should be checked against the ivy file xml schema.
+The `validate` attribute is used to configure if ivy files should be checked against the ivy file xml schema.
 
-The checkconsistency attribute allows you to enable or disable consistency checking between what is expected by Ivy when it finds a module descriptor, and what the module descriptor actually contains.
+The `checkconsistency` attribute allows you to enable or disable consistency checking between what is expected by Ivy when it finds a module descriptor, and what the module descriptor actually contains.
 
-The descriptor attribute lets you define if module descriptors are mandatory or optional.
+The `descriptor` attribute lets you define if module descriptors are mandatory or optional.
 
-The checksums attribute is used to define the list of checksums files to use to check if the content of downloaded files has not been corrupted (eg during transfer).
+The `checksums` attribute is used to define the list of checksums files to use to check if the content of downloaded files has not been corrupted (eg during transfer).
 
 ==== force
 
-Any standard resolver can be used in force mode, which is used mainly to handle local development builds. In force mode, the resolver attempts to find a dependency whatever the requested revision is (internally it replace the requested revision by 'latest.integration'), and if it finds one, it forces this revision to be returned, even when used in a chain with returnFirst=false.
+Any standard resolver can be used in `force` mode, which is used mainly to handle local development builds. In force mode, the resolver attempts to find a dependency whatever the requested revision is (internally it replace the requested revision by `latest.integration`), and if it finds one, it forces this revision to be returned, even when used in a chain with `returnFirst=false`.
 
-By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules A and C, where A -> B -> C, and pick up the local build for C without having to publish a local version of B.
+By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules `A` and `C`, where `A -> B -> C`, and pick up the local build for `C` without having to publish a local version of `B`.
 *__since 2.0__*
 
 
@@ -123,7 +124,7 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <resolvers>
@@ -143,4 +144,5 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 
 ----
 
-Defines a filesystem resolver, named '1', which is then used in two chains, the first which combines the filesystem resolver with an ivyrep resolver, and second which combines the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver 1 will use a cache named 'cache-1' which should have been defined under the caches element.
+Defines a filesystem resolver, named `1`, which is then used in two chains, the first which combines the filesystem resolver with an ivyrep resolver, and second which combines the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver `1` will use a cache named `cache-1` which should have been defined under the caches element.
+

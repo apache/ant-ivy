@@ -1,3 +1,4 @@
+= outputters
 
 *Tag:* outputters
 
@@ -8,10 +9,10 @@ A report outputter is used at the end of the resolve process to generate a repor
 Two report outputters are registered by default:
 
 
-* a log report outputter (link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/plugins/report/LogReportOutputter.java[LogReportOutputter]) +
-which produces the output on the console at the end of the resolve, which looks like this:
+    * a log report outputter (link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/plugins/report/LogReportOutputter.java[LogReportOutputter]) +
+    which produces the output on the console at the end of the resolve, which looks like this:
 
-[source]
+[source.shell]
 ----
 
         ---------------------------------------------------------------------
@@ -24,11 +25,11 @@ which produces the output on the console at the end of the resolve, which looks 
 ----
 
 
-* an xml report outputter (link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/plugins/report/XmlReportOutputter.java[XmlReportOutputter]) +
-which produces an xml report in the cache, which is mandatory for correct Ivy behaviour, since it's that report which is used when you do a post resolve step in a separate build from the resolve itself. It's also this xml report which is processed to generate all the different reports available in the link:../use/report.html[report] task.
+    * an xml report outputter (link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/plugins/report/XmlReportOutputter.java[XmlReportOutputter]) +
+    which produces an xml report in the cache, which is mandatory for correct Ivy behaviour, since it's that report which is used when you do a post resolve step in a separate build from the resolve itself. It's also this xml report which is processed to generate all the different reports available in the link:../use/report.html[report] task.
 
 
-The child tag used for the parser must be equal to a name of a report outputter type (added with the typedef tag).
+The child tag used for the parser must be equal to a name of a report outputter type (added with the `typedef` tag).
 
 To see how to define your own report outputter see link:../extend.html[Extending Ivy documentation]
 
@@ -41,3 +42,4 @@ To see how to define your own report outputter see link:../extend.html[Extending
 |Element|Description|Cardinality
 |any report outputter|adds a report outputter to the list of available ones|0..n
 |=======
+

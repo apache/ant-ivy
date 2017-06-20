@@ -1,7 +1,8 @@
+= attribute
 
 *Tag:* attribute
 
-Defines a macrodef attribute. See macrodef for details.
+Defines a macrodef attribute. See link:../macrodef.html[macrodef] for details.
 
 == Attributes
 

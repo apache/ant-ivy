@@ -1,11 +1,12 @@
+= Ivy Settings
 
 In order to work as you want, ivy sometimes needs some settings. Actually, ivy can work with no specific settings at all, see the link:tutorial/defaultconf.html[default settings documentation] for details about that. But ivy is able to work in very different contexts. You just have to configure it properly.
 
-Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to use the link:use/settings.html[settings] datatype with the path of your settings file.
+Settings are specified through an xml file, usually called `ivysettings.xml`. To configure ivy from ant, you just have to use the link:use/settings.html[settings] datatype with the path of your settings file.
 
 Here is an example of the settings file:
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>
@@ -25,13 +26,12 @@ Here is an example of the settings file:
 </ivysettings>
 
 ----
-
+__Note: To work, this settings file needs a property file named ivysettings-file.properties in the same directory as the settings file, with ivy variables you want in it.__
 
 
 Mainly, the settings enable you to configure the default cache directory used by ivy and the dependency resolvers that it will use to resolve dependencies.
-__Note: To work, this settings file needs a property file named ivysettings-file.properties in the same directory as the settings file, with ivy variables you want in it.__
 
-Some useful variables are available in settings files:
+Some useful variables are available for use in settings files:
 
 
 * ivy.settings.dir +
@@ -44,14 +44,13 @@ Some useful variables are available in settings files:
  the URL pointing to the settings file. This is set both when it has been loaded as a file or a URL
 
 
-*__since 1.4__* Note that all link:http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html#getProperties()[java system properties] are available as ivy variables in your settings file.
+*__since 1.4__* Note that all link:https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#getProperties()[Java system properties] are available as ivy variables in your settings file.
 
 
 == Settings file structure
 
 
-The settings file is structured in some parts and left open in others. Indeed, each resolver has its own structure, thus it's not the settings file itself which defines the structure for the resolvers.
-
+The settings file is structured in some parts and left open in others. In fact, each resolver has its own structure, thus it's not the settings file itself which defines the structure for the resolvers.
 
 [source]
 ----
@@ -93,8 +92,6 @@ ivysettings
         link:settings/status.html[status]
 
 ----
-
-
 
 
 == ivysettings

@@ -1,3 +1,4 @@
+= cache
 
 *Tag:* cache
 
@@ -43,7 +44,7 @@ To know if an artifact is local ivy asks to the resolver. Only filesystem resolv
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <cache name="mycache" 
@@ -60,6 +61,5 @@ To know if an artifact is local ivy asks to the resolver. Only filesystem resolv
 
 ----
 
-Defines a cache called 'mycache', storing files in the '/path/to/mycache' directory using '[module]/ivy-[revision].xml' as pattern to store Ivy files and '[module]/[artifact]-[revision].[ext]' as pattern to store other artifacts.
-The lock strategy used by this cache is the 'no-lock' strategy, which does not perform any locking. 
-The defaultTTL used is of 1s, meaning that by default dynamic revision result will be stored and used for one second. TTL rules then define that all 'latest.integration' revisions will be stored and used for 200ms, while other dynamic revisions from org1 org2 and org3 modules will be stored respectively for 10 minutes 20 seconds; 5 hours; and 2 days and 12 hours.
+Defines a cache called `mycache`, storing files in the `/path/to/mycache` directory using `[module]/ivy-[revision].xml` as pattern to store Ivy files and `[module]/[artifact]-[revision].[ext]` as pattern to store other artifacts. The lock strategy used by this cache is the `no-lock` strategy, which does not perform any locking. The defaultTTL used is of 1s, meaning that by default dynamic revision result will be stored and used for one second. TTL rules then define that all `latest.integration` revisions will be stored and used for 200ms, while other dynamic revisions from `org1` `org2` and `org3` modules will be stored respectively for 10 minutes 20 seconds; 5 hours; and 2 days and 12 hours.
+

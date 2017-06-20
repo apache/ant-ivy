@@ -1,10 +1,11 @@
+= parsers
 
 *Tag:* parsers
 
 Defines a list of module descriptor parsers usable in ivy. Each parser defines which resources (which descriptor file) it accepts.
-The child tag used for the parser must be equal to a name of a parser type (added with the typedef tag).
+The child tag used for the parser must be equal to a name of a parser type (added with the `typedef` tag).
 
-Note that when looking for a parser, ivy queries the parsers list in the reverse order. So the last parser in the list will be queried first. Consequently, if the last parser accepts all resources, the other parsers will never have a chance to parse the resource.
+Note that when looking for a parser, ivy queries the parsers list in the reverse order. So the last parser in the list will be queried first. Consequently, if the last parser accepts all resources, the other parsers will _never_ have a chance to parse the resource.
 
 Two parsers are available by default and thus do not need to be declared in this section:
 
@@ -13,7 +14,7 @@ Two parsers are available by default and thus do not need to be declared in this
  this is the parser used for ivy xml files. This parser is used for resources that aren't accepted by any other parser.
 
 * pom parser +
-this parser is able to parse maven2 pom files
+this parser is able to parse Maven2 `pom` files
 
 
 == Child elements

@@ -1,3 +1,4 @@
+= modules
 
 *Tag:* modules
 
@@ -7,7 +8,7 @@ The rules are given by defining a module set, using a pattern for module organis
 
 If no rules match a given module, the default setting will be used.
 
-Note: You can greatly improve the performance of dependency resolution by configuring multiple smaller resolvers instead of one large resolver (i.e. chain). For instance, if you have a local repository for your modules and a remote repository for third party libraries, it is a good idea to have two separate resolvers, one for all of your modules and another for the rest (the default one).
+NOTE: You can greatly improve the performance of dependency resolution by configuring multiple smaller resolvers instead of one large resolver (i.e. chain). For instance, if you have a local repository for your modules and a remote repository for third party libraries, it is a good idea to have two separate resolvers, one for all of your modules and another for the rest (the default one).
 
 
 == Child elements

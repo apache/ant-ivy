@@ -1,4 +1,4 @@
-
+= URL resolver
 
 []
 |=======
@@ -8,11 +8,9 @@
 |=======
 
 
-
-
 This resolver is one of the most generic. In fact, most of the previous resolvers can be obtained by a particular configuration of this one. Indeed it uses urls to find ivy files and artifacts. The urls it uses are defined through ivy and artifact children, each giving a pattern to find ivy files or artifacts.
 
-*Limitation*: in m2compatible mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
+*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
 
 
 == Attributes
@@ -41,7 +39,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 == Example
 
 
-[source]
+[source, xml]
 ----
 
 <url name="two-patterns-example">

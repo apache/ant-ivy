@@ -1,4 +1,4 @@
-
+= Packager resolver
 
 []
 |=======
@@ -8,72 +8,28 @@
 |=======
 
 
-
-
-
-
-
 *__Since 2.0__*.
-
-
-
-
-
-
 
 This resolver accesses ivy files and "packaging instructions" from an online "packager" repository. "Packager" repositories contain no actual artifacts. To get the artifacts, the packaging instructions are downloaded from the repository and executed locally. These instructions specify additional resource(s) to download and how to create the artifacts from them, for example, by downloading a project's original distribution archive directly from their web site and extracting the desired artifacts.
 
-
-
-
-
-
-
-Packager repositories allow the creation of Ivy repositories that require neither the participation of any of the modules' creators nor setting up a huge mirror site. One such repository on the web is link:http://ivyroundup.googlecode.com/[Ivy RoundUp]. Of course, private packager repositories are feasible as well.
-
-
-
-
-
+Packager repositories allow the creation of Ivy repositories that require neither the participation of any of the modules' creators nor setting up a huge mirror site.
 
 
 The Packager resolver supports a "resource cache", where downloaded archives can be stored to avoid duplicate downloads. This cache is entirely separate from the link:../concept.html#cache[normal Ivy cache]: it is "private" to the Packager resolver, and it stores unmodified original software archives, not Ivy artifacts. See the `resourceCache` attribute below for details.
 
 
+The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using link:https://ant.apache.org/[Ant]. Therefore, Ant must be available as an executable on the platform. The ant task executes in a separate ant project and so is not affected by properties, etc. that may be set in any existing ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
 
+For security reasons, the XSLT transform ensures that 
 
-
-
-
-The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using link:http://ant.apache.org/[ant]. Therefore, ant must be available as an executable on the platform. The ant task executes in a separate ant project and so is not affected by properties, etc. that may be set in any existing ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
-
-
-
-
-
-
-
-For security reasons, the XSLT transform ensures that (a) all downloaded archives have verified SHA1 checksums (including cached resources); and (b) only a very limited set of ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
-
-
-
-
-
+    a. all downloaded archives have verified SHA1 checksums (including cached resources); and 
+    
+    b. only a very limited set of ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
 
 
 The Packager resolver is based on the link:url.html[URL resolver] and is configured similarly, except the artifact child tags specify where to find the packager.xml files, rather than the artifacts themselves.
 
-
-
-
-
-
-
 Because the packaging process is relatively slow, it is important to use link:../concept.html#cache[Ivy's caching support] to avoid repeated execution of the packaging instructions.
-
-
-
-
 
 == Attributes
 
@@ -94,29 +50,11 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 
 
 
-
-
-
-Setting a resourceURL will cause the resolver to override the URLs for resources specified by the packaging instructions. Instead, all resources will be downloaded from an URL constructed by first resolving the resourceURL pattern into a base URL, and then resolving the resource filename relative to that base URL. In other words, the resourceURL pattern specifies the URL "directory", so it should always end in a forward slash.
-
-
-
-
-
-
+Setting a `resourceURL` will cause the resolver to override the URLs for resources specified by the packaging instructions. Instead, all resources will be downloaded from an URL constructed by first resolving the resourceURL pattern into a base URL, and then resolving the resource filename relative to that base URL. In other words, the `resourceURL` pattern specifies the URL "directory", so it should always end in a forward slash.
 
 If a resourceURL download fails, the resolver will fall back to the original URL from the packaging instructions.
 
-
-
-
-
-
-
 Configure a resourceURL in situations where you don't want to rely on (or wait for) the web sites configured in the packaging instructions, and have access to a better (perhaps private) mirror site.
-
-
-
 
 
 == Child elements
@@ -134,7 +72,7 @@ Configure a resourceURL in situations where you don't want to rely on (or wait f
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <packager name="ivyroundup"
@@ -147,7 +85,7 @@ Configure a resourceURL in situations where you don't want to rely on (or wait f
 
 ----
 
-Defines a packager resolver which points to the link:http://ivyroundup.googlecode.com/[Ivy RoundUp] online repository. Builds will occur in a subdirectory of 
+Defines a packager resolver which points to the `http://ivyroundup.googlecode.com/` online repository. Builds will occur in a subdirectory of 
 [source]
 ----
 ${user.home}/.ivy2/packager/build
@@ -171,19 +109,12 @@ will be tried first for all resources.
 == Packaging Instructions
 
 
+The goal of the packaging instructions is to download the required archives, extract the artifacts, and put the artifacts into a subdirectory. Each artifact should be written to `artifacts/[type]s/[artifact].[ext]` when the ant build completes.
 
 
-The goal of the packaging instructions is to download the required archives, extract the artifacts, and put the artifacts into a subdirectory. Each artifact should be written to artifacts/[type]s/[artifact].[ext] when the ant build completes.
+Below is an example of packaging instructions for link:http://testng.org/[TestNG]:
 
-
-
-
-
-
-
-Below is an example of packaging instructions for link:http://testng.org/[TestNG 2.5]:
-
-[source]
+[source, xml]
 ----
 
 <packager-module version="1.0">
@@ -327,7 +258,8 @@ The artifact children of m2resource tags support the following attributes:
 |ext|Maven filename extension|No; defaults to "jar"
 |classifier|Maven classifier (e.g., "sources", "javadoc")|No; defaults to none
 |sha1|SHA1 checksum of the resource|Yes
-|dest|Defines the name of the subdirectory into which the artifact should be unpacked|Exactly one of "dest" or "tofile" must be supplied
+|dest|Defines the name of the subdirectory into which the artifact should be unpacked
+.2+|Exactly one of "dest" or "tofile" must be supplied
 |tofile|Where to put the file; no extraction will be performed
 |type|Type of archive: "zip", "jar", "war", "tar", "tgz", "tar.gz", "tar.bz2"|No; if not present, will be automatically determined from the filename suffix
 |=======

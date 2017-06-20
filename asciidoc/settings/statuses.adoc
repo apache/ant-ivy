@@ -1,15 +1,16 @@
+= statuses
 
 *Tag:* statuses
 
 Defines the list of available statuses. *__since 1.4__*
 
-By default, ivy has 3 statuses: release, milestone and integration. By adding a statuses section to your ivysettings file, you define the statuses you want to use. Note that in this case if you still want to have ivy default statuses you will have to declare them.
+By default, ivy has 3 statuses: `release`, `milestone` and `integration`. By adding a statuses section to your ivysettings file, you define the statuses you want to use. Note that in this case if you still want to have ivy default statuses you will have to declare them.
 
-The integration property on each status is only used for recursive delivery, an integration dependency being delivered if the caller is not in integration state itself.
+The `integration` property on each status is only used for recursive delivery, an integration dependency being delivered if the caller is not in integration state itself.
 
-The default status is the one used when none is defined in a module descriptor. If not specified, it defaults to the last defined status.
+The `default` status is the one used when none is defined in a module descriptor. If not specified, it defaults to the last defined status.
 
-The statuses order is important, the first is considered the more mature, the last the less mature. This is used to know if a status is compatible with a latest._&lt;status&gt;_ version matcher.
+NOTE: The statuses order is important, the first is considered the more mature, the last the less mature. This is used to know if a status is compatible with a `latest._&lt;status&gt;_` version matcher.
 
 
 == Attributes
@@ -35,7 +36,7 @@ The statuses order is important, the first is considered the more mature, the la
 == Examples
 
 
-[source]
+[source, xml]
 ----
 
 <statuses default="bronze">
@@ -46,5 +47,5 @@ The statuses order is important, the first is considered the more mature, the la
 
 ----
 
-Defines 3 statuses, gold, silver and bronze. The default status used when none is declared in an ivy file will be bronze. 
+Defines 3 statuses, `gold`, `silver` and `bronze`. The default status used when none is declared in an ivy file will be `bronze`. 
 It is also considered as an integration status, and thus doesn't trigger any recrusive delivery.
