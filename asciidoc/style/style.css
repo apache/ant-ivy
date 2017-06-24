@@ -43,6 +43,9 @@ body, p, td, li, ul, ol  {
   font-family: Verdana, Helvetica, Arial, sans-serif;
   font-size: small;
 }
+li p {
+  margin: 0;
+}
 h1, h2, h3, h4, h5, h6 {
   font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
