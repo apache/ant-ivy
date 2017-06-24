@@ -13,7 +13,7 @@ module IvyDocHelpers
         def initialize()
             @id = ""
             @title = ""
-            @url = ""
+            @url = nil
             @allChildIds = []
             @children = []
             @parent = nil
