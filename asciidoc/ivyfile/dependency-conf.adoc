@@ -14,7 +14,7 @@ in dependency element.
 |=======
 |Attribute|Description|Required
 |name|the name of the master configuration to map. 
-    	'*' wildcard can be used to designate all configurations of this module|Yes
+    	'`$$*$$`' wildcard can be used to designate all configurations of this module|Yes
 |mapped|a comma separated list of dependency configurations to which this
     master configuration should be mapped|No, default to the same configuration as master one, unless nested mapped elements are specified
 |=======
@@ -23,11 +23,10 @@ in dependency element.
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/mapped.html[mapped]|map dependency configurations for this master configuration|0..n
 |=======
 
 
-	

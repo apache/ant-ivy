@@ -1,7 +1,9 @@
 
 *Tag:* extends *Parent:* link:../ivyfile/info.html[info]
 
-*__since 2.2__* Identifies an optional parent descriptor for this module.  For complicated projects composed of many modules that have common configurations or dependencies, inheritance allows modules to share this information.  Which parts of the parent descriptor are inherited can be controlled with the __extendType__ attribute.  Supported __extendType__ values are:
+*__since 2.2__* Identifies an optional parent descriptor for this module. For complicated projects composed of many modules that have common configurations or dependencies, inheritance allows modules to share this information.  Which parts of the parent descriptor are inherited can be controlled with the __extendType__ attribute.
+
+Supported __extendType__ values are:
 
 [options="header",cols="15%,50%"]
 |=======

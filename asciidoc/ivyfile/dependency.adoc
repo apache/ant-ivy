@@ -9,31 +9,28 @@ Declares a dependency for this module. A dependency is described by the module o
 The revision can be given as a fixed one (1.5.2, for instance) or as a latest (or dynamic) one. Several possibilities for dynamic revisions are implemented in Ivy:
 
 
-* latest.integration +
+* `latest.integration` +
  selects the latest revision of the dependency module.
 
-* latest.[any status] *__since 1.4__* +
- selects the latest revision of the dependency module with at least the specified status. 
-
+* `latest.[any status]` *__since 1.4__* +
+ selects the latest revision of the dependency module with at least the specified status. +
 For instance latest.milestone will select the latest version being either a milestone or a release, and latest.release will only selects the latest release. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
 See also link:../settings/statuses.html[statuses] to see how to configure module statuses.
-
-* end the revision with a + +
+* end the revision with a '`+`' +
  selects the latest sub-revision of the dependency module. For instance, 
 if the dependency module exists in revision 1.0.3, 1.0.7 and 1.1.2, "1.0.+" will select 1.0.7.
 
 * version ranges *__since 1.4__* +
- mathematical notation for ranges can be used to match a range of version.   
-
-Examples:
-[1.0,2.0] matches all versions greater or equal to 1.0 and lower or equal to 2.0
-[1.0,2.0[ matches all versions greater or equal to 1.0 and lower than 2.0
-]1.0,2.0] matches all versions greater than 1.0 and lower or equal to 2.0
-]1.0,2.0[ matches all versions greater than 1.0 and lower than 2.0
-[1.0,) matches all versions greater or equal to 1.0
-]1.0,) matches all versions greater than 1.0
-(,2.0] matches all versions lower or equal to 2.0
-(,2.0[ matches all versions lower than 2.0 
+ mathematical notation for ranges can be used to match a range of version. +
+Examples: +
+`[1.0,2.0]` matches all versions greater or equal to 1.0 and lower or equal to 2.0 +
+`[1.0,2.0[` matches all versions greater or equal to 1.0 and lower than 2.0 +
+`]1.0,2.0]` matches all versions greater than 1.0 and lower or equal to 2.0 +
+`]1.0,2.0[` matches all versions greater than 1.0 and lower than 2.0 +
+`[1.0,)` matches all versions greater or equal to 1.0 +
+`]1.0,)` matches all versions greater than 1.0 +
+`(,2.0]` matches all versions lower or equal to 2.0 +
+`(,2.0[` matches all versions lower than 2.0  +
 
 *__since 1.4__* If you don't find a way to expression your dependency version constraint among these, you can link:../settings/version-matchers.html[plug your own].
 The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference.html[ivy main concepts] for details about this.
@@ -57,34 +54,33 @@ The first way to declare this mapping is called the inline mapping. It is maybe 
 
 
 * Specify one configuration name +
- This means that in this master configuration the same dependency configuration is needed (except if a defaultconfmapping has been specified in this ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
-For instance, if the current module has defined a configuration named 'runtime', and the dependency too, then having an inline mapping configuration set to 'runtime' means that in the runtime master configuration the runtime dependency configuration is required.
-
+ This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
+For instance, if the current module has defined a configuration named '`runtime`', and the dependency too, then having an inline mapping configuration set to '`runtime`' means that in the runtime master configuration the runtime dependency configuration is required. +
 The link:../ivyfile/configurations.html#defaultconfmapping[examples on the dependency on the configurations page] explain how ivy interprets the conf attribute according to how link:../ivyfile/configurations.html[defaultconfmapping] and link:../ivyfile/configurations.html[defaultconf] is set.
 
 
 
-* Specify a configuration mapping using the '->' operator separating a comma separated list of master configurations (left operand) of a comma separated list of dependency configurations (right operand). +
-A good way to remember which side is for the master configuration (i.e. the configuration of the module defining the dependency) and which side is for the dependency configuration is to read the '->' as 'depends on'.
+* Specify a configuration mapping using the `$$->$$` operator separating a comma separated list of master configurations (left operand) of a comma separated list of dependency configurations (right operand). +
+A good way to remember which side is for the master configuration (i.e. the configuration of the module defining the dependency) and which side is for the dependency configuration is to read the '$$->$$' as 'depends on'.
 
 In this case, all specified dependency configurations are required in all specified master configurations.
-For instance, 'A, B, C -> E, F' means that dependency configurations E & F are required in master configurations A, B and C.
+For instance, `$$A, B, C -> E, F$$` means that dependency configurations E and F are required in master configurations A, B and C.
 
-Note that you can use the wildcard '*' as a configuration name, meaning that all configurations (either master or dependency public ones depending on the side) are wanted. For instance, '* -> B, C' means that B & C dependency configurations are required in all master configurations.
+Note that you can use the wildcard `$$*$$` as a configuration name, meaning that all configurations (either master or dependency public ones depending on the side) are wanted. For instance, '$$* -> B, C$$' means that B & C dependency configurations are required in all master configurations.
 
-*__since 1.4__* you can use * wildcard followed by negated configurations to mean all but xxx. For instance, '*, !A, !B -> X' means that X dependency configuration is required in all master configurations except A and B.
+*__since 1.4__* you can use * wildcard followed by negated configurations to mean all but xxx. For instance, '$$*, !A, !B -> X$$' means that X dependency configuration is required in all master configurations except A and B.
 
-*__since 1.2__* '@' also has a special meaning as a right operand of the dependency mapping, it means map to self. This is particularly useful with '*', '*->@' meaning that all configurations of the module maps to their equivalent (same name) in the dependency.
+*__since 1.2__* '`@`' also has a special meaning as a right operand of the dependency mapping, it means map to self. This is particularly useful with '$$*$$', '$$*->@$$' meaning that all configurations of the module maps to their equivalent (same name) in the dependency.
 
-*__since 1.4__* '#' can be used as right side operand to mean 'this' configuration, and thus refers to the configuration being resolved. It is slightly similar to @, except that it takes into account the configuration being actually resolved in case of a configuration extending another one.
+*__since 1.4__* '`#`' can be used as right side operand to mean 'this' configuration, and thus refers to the configuration being resolved. It is slightly similar to @, except that it takes into account the configuration being actually resolved in case of a configuration extending another one.
 
 Example:
 Let's foo be a module with two configurations, A and B, B extending A.
-Then a dependency declaring conf A-># will get A dep conf in its confs A (when resolving A, ivy will find interpret the # symbol as A) and B dep conf in its conf B (when resolving B, ivy will interpret the # symbol as B, even if this dependency is only required because of the A dependency).
+Then a dependency declaring conf `$$A->#$$` will get A dep conf in its confs A (when resolving A, ivy will find interpret the `#` symbol as A) and B dep conf in its conf B (when resolving B, ivy will interpret the `#` symbol as B, even if this dependency is only required because of the A dependency).
 
 If you don't understand really how this works, do not use it :-)
 
-*__since 1.4__* '%' can be used as left side operand to mean 'all the other configurations'. This can be usefull when you only have a specific mapping for some configurations and a default mapping for all the others.
+*__since 1.4__* '`%`' can be used as left side operand to mean 'all the other configurations'. This can be usefull when you only have a specific mapping for some configurations and a default mapping for all the others.
 
 Example:
 
@@ -147,11 +143,11 @@ conf doesn't exist then it will be considered as an error. Note that the
 
 wildcard can be used as fallback conf.
 
-*__since 2.1__* It is also possible to define dependencies on configurations intersection. A configuration intersection is defined using a '+' sign to separate the configuration (eg 'A+B' means the intersection of configuration 'A' and 'B'). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
+*__since 2.1__* It is also possible to define dependencies on configurations intersection. A configuration intersection is defined using a '`+`' sign to separate the configuration (eg '`A+B`' means the intersection of configuration 'A' and 'B'). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
 
 Configuration intersections can also be used when specifying the confs to link:../use/resolve.html[resolve]. 
 
-Moreover, the mapping '*->@' is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf A+B in a module which defines a dependency with mapping *->@, the mapping *->@ is interpreted as A+B->A+B so the intersection of A and B will be resolved in the dependency.
+Moreover, the mapping '`$$*->@$$`' is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf `A+B` in a module which defines a dependency with mapping `$$*->@$$`, the mapping `$$*->@$$` is interpreted as `$$A+B->A+B$$` so the intersection of A and B will be resolved in the dependency.
 
 *__since 2.1__* you can refer to a group of configurations sharing the same value for an attribute as left side part of the dependency mapping. 
 
@@ -230,7 +226,7 @@ conf for dependencies of organisation 'B'.
 
 
 * Specify a semi-column separated list of any of the previous specs. +
- In this case, it is the union of the mapping which is kept. For instance, 'A -> B; * -> C' means that B conf is needed in A conf and C conf is need in all master conf... so both B & C dep conf are required in A master conf
+ In this case, it is the union of the mapping which is kept. For instance, '`$$A -> B; * -> C$$`' means that B conf is needed in A conf and C conf is need in all master conf... so both B & C dep conf are required in A master conf
 
 
 If you prefer more verbose mapping declaration, everything is also possible with sub elements mapping declaration. 
@@ -272,7 +268,7 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/dependency-conf.html[conf]|defines configuration mapping has sub element|0..n

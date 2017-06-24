@@ -47,7 +47,7 @@ Example:
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/dependency-artifact-conf.html[conf]|configuration in which the artifact should be included|0..n

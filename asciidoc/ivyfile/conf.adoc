@@ -14,9 +14,9 @@ This notion is very helpful to define configurations which are similar with some
 *__since 1.4__* The extends attribute can use the following wildcards:
 [cols="15%,50%"]
 |=======
-|*|all other configurations
-|*(public)|all other public configurations
-|*(private)|all other private configurations
+|`*`|all other configurations
+|`*(public)`|all other public configurations
+|`*(private)`|all other private configurations
 |=======
 
 
@@ -41,7 +41,7 @@ This is very useful to build a compile configuration, for instance, forcing the 
     current configuration extends|No, defaults to none
 |transitive|a boolean to indicate if this conf is transitive or not *__since 1.4__*|No, defaults to true
 |deprecated|indicates that this conf has been deprecated by giving the date of the deprecation. 
-    	It should be given in this format: yyyyMMddHHmmss|No, by default the conf is not deprecated
+    	It should be given in this format: `yyyyMMddHHmmss`|No, by default the conf is not deprecated
 |=======
 
 

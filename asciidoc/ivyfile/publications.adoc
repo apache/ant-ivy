@@ -17,18 +17,17 @@ Thus if you have a module which publishes no artifacts (a sort of virtual module
 |=======
 |Attribute|Description|Required
 |defaultconf|comma separated list of public configurations in which artifacts are published by default (when no specific configurations are set on the artifact element).
-    	'*' wildcard can be used to designate all public configurations of this module. *__since 2.0__*|No, defaults to '*'
+    	'`$$*$$`' wildcard can be used to designate all public configurations of this module. *__since 2.0__*|No, defaults to '`$$*$$`'
 |=======
 
 
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/artifact.html[artifact]|declares a published artifact for this module|0..n
 |=======
 
 
-	

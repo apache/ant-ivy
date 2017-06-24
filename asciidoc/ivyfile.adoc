@@ -39,7 +39,7 @@ For those familiar with xml schema, the schema used to validate ivy files can be
 == Dynamic and [[resolved]]resolved ivy files
 
 
-A module descriptor (ivy file) is needed both before and after the publication of each revision of the module. Depending on the case, a module descriptor can be either _dynamic_ or _resolved_:
+A module descriptor (ivy file) is needed both before and after the publication of each revision of the module. Depending on the case, a module descriptor can be either _dynamic_ or _resolved_.
 
 
 === Dynamic descriptor for module development

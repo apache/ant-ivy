@@ -34,7 +34,7 @@ See link:#defaultconfmapping[examples below] to clarify the behavior of these tw
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/conf.html[conf]|declares a configuration of this module|0..n
@@ -85,110 +85,17 @@ When you now resolve the conf2 configuration, you'll get the other2 dependencies
 == Examples involving defaultconf and defaultconfmapping
 
 The table below indicates how Ivy interprets the conf attribute according to how link:../ivyfile/configurations.html[defaultconfmapping] and link:../ivyfile/configurations.html[defaultconf] are set:
-[options="header",cols="15%,50%,18%,18%"]
+[options="header",cols="15%,40%,15%,30%"]
 |=======
 |defaultconf|defaultconfmapping|conf|ivy interpretation
-|||
-a|
-[source]
-----
-*->*
-----
-
-|||runtime
-a|
-[source]
-----
-runtime->runtime
-----
-
-|||test
-a|
-[source]
-----
-test->test
-----
-
-a|
-[source]
-----
-runtime
-----
-||
-a|
-[source]
-----
-runtime->runtime
-----
-
-a|
-[source]
-----
-runtime
-----
-a|
-[source]
-----
-runtime->*;test->default
-----
-|
-a|
-[source]
-----
-runtime->*
-----
-
-a|
-[source]
-----
-runtime
-----
-a|
-[source]
-----
-runtime->*;test->default
-----
-|test|test->default
-
-
-|
-a|
-[source]
-----
-runtime->*;test->default
-----
-|
-a|
-[source]
-----
-runtime->*;test->default
-----
-
-|
-a|
-[source]
-----
-runtime->*;test->default
-----
-|runtime
-a|
-[source]
-----
-runtime->*
-----
-
-|
-a|
-[source]
-----
-runtime->*;test->default
-----
-|test
-a|
-[source]
-----
-test->default
-----
-
+| | | |`$$*->*$$`
+| | |`runtime`|`$$runtime->runtime$$`
+| | |`test`|`$$test->test$$`
+|`runtime`| | |`$$runtime->runtime$$`
+|`runtime`|`$$runtime->*;test->default$$`| |`$$runtime->*$$`
+|`runtime`|`$$runtime->*;test->default$$`|`test`|`$$test->default$$`
+| |`$$runtime->*;test->default$$`| |`$$runtime->*;test->default$$`
+| |`$$runtime->*;test->default$$`|`runtime`|`$$runtime->*$$`
+| |`$$runtime->*;test->default$$`|`test`|`$$test->default$$`
 
 |=======

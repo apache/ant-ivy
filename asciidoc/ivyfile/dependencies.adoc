@@ -31,7 +31,7 @@ In Ivy 2.1.0 and earlier, if both defaultconf and defaultconfmapping are defined
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|defaultconf|the default configuration to use when none is specified in a dependency. *__since 1.1__*|No, defaults to *->*
+|defaultconf|the default configuration to use when none is specified in a dependency. *__since 1.1__*|No, defaults to $$*->*$$
 |defaultconfmapping|the default configuration mapping to use in this ivy file. *__since 1.3__*|No, defaults to no default conf mapping
 |=======
 
@@ -42,7 +42,7 @@ In Ivy 2.1.0 and earlier, if both defaultconf and defaultconfmapping are defined
 Note: as specified by the ivy.xsd, the children elements are ordered; must come first the `link:../ivyfile/dependency.html[dependency]` elements, then the `link:../ivyfile/exclude.html[exclude]` elements, then the `link:../ivyfile/override.html[override]` elements, and then the `link:../ivyfile/conflict.html[conflict]` elements.
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/dependency.html[dependency]|declares a dependency for this module|0..n

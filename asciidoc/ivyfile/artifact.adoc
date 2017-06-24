@@ -39,7 +39,7 @@ If this is the only artifact declared, then it's equivalent to having no publica
 |type|the type of the published artifact. It's usually its extension, but not necessarily. For instance, ivy files are of type 'ivy' but have 'xml' extension|No, defaults to jar
 |ext|the extension of the published artifact|No, defaults to type
 |conf|comma separated list of public configurations in which this artifact is published.
-    	'*' wildcard can be used to designate all public configurations of this module|No, defaults to defaultconf attribute value on parent publications element.
+    	'`$$*$$`' wildcard can be used to designate all public configurations of this module|No, defaults to defaultconf attribute value on parent publications element.
 |url|a url at which this artifact can be found if it isn't located at the standard location in the repository *__since 1.4__*|No, defaults to no url
 |packaging|a comma separated list of link:../concept.html#packaging[packaging] types *__since 2.4__*|No, defaults to no packaging
 |=======
@@ -48,7 +48,7 @@ If this is the only artifact declared, then it's equivalent to having no publica
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/artifact-conf.html[conf]|indicates a public configuration in which this artifact is published|0..n

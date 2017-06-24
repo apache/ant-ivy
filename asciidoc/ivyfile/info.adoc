@@ -24,7 +24,7 @@ Gives identification and basic information about the module this ivy file descri
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/extends.html[extends]|identifies a parent Ivy file from which this descriptor inherits content|0..n
@@ -36,4 +36,3 @@ Gives identification and basic information about the module this ivy file descri
 
 After the description, you can also place your own tags in your own namespace.  This allow to provide some custom information about the module.
 
-	

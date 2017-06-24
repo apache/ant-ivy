@@ -41,11 +41,10 @@ The current default conflict manager is the "latest-revision" conflict manager.
 == Child elements
 
 
-[options="header"]
+[options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/manager.html[manager]|declares a conflict manager for this module|1..n
 |=======
 
 
-	

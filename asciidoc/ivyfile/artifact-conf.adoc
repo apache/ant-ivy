@@ -12,8 +12,7 @@ Indicates a public configuration in which enclosing artifact is published.
 |=======
 |Attribute|Description|Required
 |name|the name of the module public configuration in which this artifact is published. 
-    	'*' wildcard can be used to designate all public configurations of this module|Yes
+    	'`$$*$$`' wildcard can be used to designate all public configurations of this module|Yes
 |=======
 
 
-	

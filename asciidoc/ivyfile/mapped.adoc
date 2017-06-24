@@ -13,8 +13,7 @@ Describes a mapped dependency configuration for a master configuration.
 |=======
 |Attribute|Description|Required
 |name|the name of the dependency configuration mapped. 
-    	'*' wildcard can be used to designate all configurations of this module|Yes
+    	'`$$*$$`' wildcard can be used to designate all configurations of this module|Yes
 |=======
 
 
-	
