@@ -33,13 +33,15 @@ padding-left: 22px;
 margin-bottom: 3px;
 }
 
-.treeview li.submenu{ 
+.treeview li.submenu {
 background: white url(../images/closed.gif) no-repeat left 1px;
-cursor: hand !important;
-cursor: pointer !important;
 }
 
-.treeview li.collapsable, .treeview li.open { 
+.treeview .hitarea {
+    cursor: pointer;
+}
+
+.treeview li.collapsable, .treeview li.open {
 background: white url(../images/open.gif) no-repeat left 1px;
 }
 
