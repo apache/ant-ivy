@@ -165,12 +165,13 @@
         <replace dir="${output.dir}" token="${ivy.revision}" value="working@apache"/>
     </target>
 
-    <target name="generate-doc" depends="generate-tutorial-output">
+    <target name="generate-doc" depends="generate-tutorial-output,default-version">
         <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
         <asciidoctor:convert sourceDirectory="${doc.src.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5" templateDir="${doc.src.dir}/templates" preserveDirectories="true">
             <attribute key="basedir" value="${doc.src.dir}"/>
             <attribute key="imagesdir" value=""/>
+            <attribute key="version" value="${build.version}" />
         </asciidoctor:convert>
         <!-- copy static resources -->
         <copy todir="${doc.build.dir}">

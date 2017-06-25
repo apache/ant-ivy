@@ -2,7 +2,7 @@
   "children": [
       {
         "id":"index",
-        "title":"Documentation",
+        "title":"Documentation (${version})",
         "children": [
             {
             	"id":"release-notes",

@@ -122,8 +122,8 @@ module IvyDocHelpers
 
     end
 
-    def self.page(basedir, docfile)
-        rootpage = loadPages(basedir)
+    def self.page(basedir, docfile, version)
+        rootpage = loadPages(basedir, version)
         pageId = docfile[basedir.length+1..docfile.rindex(/\./)-1]
         p = findPage(rootpage, pageId)
         if !p
@@ -132,25 +132,26 @@ module IvyDocHelpers
         return p
     end
 
-    def self.loadPages(basedir)
+    def self.loadPages(basedir, version)
         rootpage = Page.new
         toc = JSON.parse(IO.read(basedir + "/toc.json"))
         toc['children'].each do |child|
-            rootpage.children << loadPage(basedir, rootpage, child, "")
+            rootpage.children << loadPage(basedir, rootpage, child, "", version)
         end
         return rootpage
     end
 
-    def self.loadPage(basedir, parent, node, path)
+    def self.loadPage(basedir, parent, node, path, version)
         p = Page.new
         p.title = node['title']
+        p.title.sub! '${version}', version
         p.parent = parent
         if node.has_key?("importRoot")
             p.id = path + node['importRoot'] + '/' + node['importNode']
             p.url = p.id + ".html"
             toc = JSON.parse(IO.read(basedir + '/' + node['importRoot'] + "/toc.json"))
             toc['children'].each do |child|
-                p.children << loadPage(basedir, node, child, path + node['importRoot'] + '/')
+                p.children << loadPage(basedir, node, child, path + node['importRoot'] + '/', version)
             end
         else
             p.id = node['id']
@@ -163,7 +164,7 @@ module IvyDocHelpers
             end
             if node.has_key?("children")
                 node['children'].each do |child|
-                    p.children << loadPage(basedir, p, child, path)
+                    p.children << loadPage(basedir, p, child, path, version)
                 end
             end
         end
