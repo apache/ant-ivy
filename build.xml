@@ -603,7 +603,7 @@
                   value="${findbugs.download.name}.zip"
                   description="The filename of the ZIP."/>
         <property name="findbugs.download.url"
-                  value="https://sourceforge.net/projects/findbugs/files/findbugs/${findbugs.version}/${findbugs.download.file}/download"
+                  value="http://downloads.sourceforge.net/project/findbugs/findbugs/${findbugs.version}/findbugs-${findbugs.version}.zip"
                   description="The download adress at a mirror of Sourceforge."/>
         <property name="findbugs.download.to"
                   value="${build.dir}/.downloads"
