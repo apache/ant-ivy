@@ -417,6 +417,10 @@
                 <exclude name="**/*.txt"/>
                 <exclude name="**/MANIFEST*.MF"/>
                 <exclude name="**/*.json"/>
+                <exclude name="**/*.SHA-256"/>
+                <exclude name="**/*.SHA-512"/>
+                <exclude name="asciidoc/js/jquery.pack.js"/>
+                <exclude name="asciidoc/js/jquery.treeview.js"/>
                 <exclude name="doc/config.js"/>
                 <exclude name="doc/js/jquery.pack.js"/>
                 <exclude name="doc/js/jquery.treeview.js"/>
