@@ -618,7 +618,7 @@ public final class FileUtil {
             return new DissectedPath(root, rest);
         }
 
-        return new DissectedPath(File.separator, pathToDissect.substring(1));
+        return new DissectedPath(File.separator, pathToDissect);
     }
 
     /**
