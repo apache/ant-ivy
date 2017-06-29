@@ -147,23 +147,23 @@ public class VersionRange {
             if (major == null) {
                 return null;
             }
-            Integer minor = new Integer(0);
-            Integer patch = new Integer(0);
+            Integer minor = 0;
+            Integer patch = 0;
             String qualifier = null;
             if (parseNumberSeparator()) {
                 minor = parseNumber();
                 if (minor == null) {
-                    minor = new Integer(0);
+                    minor = 0;
                 } else if (parseNumberSeparator()) {
                     patch = parseNumber();
                     if (patch == null) {
-                        patch = new Integer(0);
+                        patch = 0;
                     } else if (parseNumberSeparator()) {
                         qualifier = parseQualifier();
                     }
                 }
             }
-            return new Version(major.intValue(), minor.intValue(), patch.intValue(), qualifier);
+            return new Version(major, minor, patch, qualifier);
         }
 
         private Integer parseNumber() {
@@ -183,7 +183,7 @@ public class VersionRange {
                     case '7':
                     case '8':
                     case '9':
-                        n = new Integer((n == null ? 0 : n.intValue() * 10) + c - '0');
+                        n = (n == null ? 0 : n * 10) + c - '0';
                         break;
                     default:
                         unread();
@@ -215,7 +215,7 @@ public class VersionRange {
         }
 
         private String parseQualifier() {
-            StringBuffer q = new StringBuffer();
+            StringBuilder q = new StringBuilder();
             do {
                 readNext();
                 if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9'
@@ -269,7 +269,7 @@ public class VersionRange {
     }
 
     public String toIvyRevision() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(startExclusive ? "(" : "[");
         buffer.append(startVersion);
         if (endVersion == null) {

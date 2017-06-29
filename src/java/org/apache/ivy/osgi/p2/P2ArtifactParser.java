@@ -71,7 +71,7 @@ public class P2ArtifactParser implements XMLInputParser {
         //
         // private static final String VERSION = "version";
 
-        private Map<OSGiFilter, String> artifactPatterns = new LinkedHashMap<OSGiFilter, String>();
+        private Map<OSGiFilter, String> artifactPatterns = new LinkedHashMap<>();
 
         public RepositoryHandler(final P2Descriptor p2Descriptor, String repoUrl) {
             super(REPOSITORY);
@@ -130,7 +130,7 @@ public class P2ArtifactParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            outputByFilter = new LinkedHashMap<String, String>(size);
+            outputByFilter = new LinkedHashMap<>(size);
         }
 
     }
@@ -180,10 +180,7 @@ public class P2ArtifactParser implements XMLInputParser {
                         URI uri;
                         try {
                             uri = new URL(url).toURI();
-                        } catch (MalformedURLException e) {
-                            throw new SAXParseException("Incorrect artifact url '" + url + "' ("
-                                    + e.getMessage() + ")", getLocator(), e);
-                        } catch (URISyntaxException e) {
+                        } catch (MalformedURLException | URISyntaxException e) {
                             throw new SAXParseException("Incorrect artifact url '" + url + "' ("
                                     + e.getMessage() + ")", getLocator(), e);
                         }
@@ -194,7 +191,7 @@ public class P2ArtifactParser implements XMLInputParser {
                 }
 
                 private String getPattern(P2Artifact p2Artifact, Map<String, String> properties) {
-                    Map<String, String> props = new HashMap<String, String>(properties);
+                    Map<String, String> props = new HashMap<>(properties);
                     props.put("classifier", p2Artifact.getClassifier());
                     for (Entry<OSGiFilter, String> pattern : artifactPatterns.entrySet()) {
                         if (pattern.getKey().eval(props)) {

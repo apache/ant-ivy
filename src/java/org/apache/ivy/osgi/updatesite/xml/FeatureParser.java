@@ -229,7 +229,7 @@ public class FeatureParser {
 
         private static final String REQUIRES = "requires";
 
-        List<Require> requires = new ArrayList<Require>();
+        List<Require> requires = new ArrayList<>();
 
         public RequiresHandler() {
             super(REQUIRES);

@@ -100,7 +100,7 @@ public class BundleInfoAdapter {
         md.addConfiguration(CONF_OPTIONAL);
         md.addConfiguration(CONF_TRANSITIVE_OPTIONAL);
 
-        Set<String> exportedPkgNames = new HashSet<String>(bundle.getExports().size());
+        Set<String> exportedPkgNames = new HashSet<>(bundle.getExports().size());
         for (ExportPackage exportPackage : bundle.getExports()) {
             md.getExtraInfos().add(
                 new ExtraInfoHolder(EXTRA_INFO_EXPORT_PREFIX + exportPackage.getName(),
@@ -161,8 +161,8 @@ public class BundleInfoAdapter {
                     DefaultExcludeRule rule = new DefaultExcludeRule(id,
                             ExactOrRegexpPatternMatcher.INSTANCE, null);
                     String[] confs = md.getConfigurationsNames();
-                    for (int i = 0; i < confs.length; i++) {
-                        rule.addConfiguration(confs[i]);
+                    for (String conf : confs) {
+                        rule.addConfiguration(conf);
                     }
                     md.addExcludeRule(rule);
                 }
@@ -188,7 +188,7 @@ public class BundleInfoAdapter {
             if (!uri.isAbsolute()) {
                 uri = baseUri.resolve(uri);
             }
-            Map<String, String> extraAtt = new HashMap<String, String>();
+            Map<String, String> extraAtt = new HashMap<>();
             if (packaging != null) {
                 extraAtt.put("packaging", packaging);
             }
@@ -203,7 +203,7 @@ public class BundleInfoAdapter {
     }
 
     public static List<String> getConfigurations(BundleInfo bundle) {
-        List<String> confs = new ArrayList<String>();
+        List<String> confs = new ArrayList<>();
         confs.add(CONF_NAME_DEFAULT);
         confs.add(CONF_NAME_OPTIONAL);
         confs.add(CONF_NAME_TRANSITIVE_OPTIONAL);
@@ -223,7 +223,7 @@ public class BundleInfoAdapter {
 
     private static URI asIvyURI(String org, String name, String branch, String rev, String type,
             String art, String ext) {
-        StringBuffer builder = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         builder.append("ivy:///");
         builder.append(org);
         builder.append('/');
@@ -279,8 +279,7 @@ public class BundleInfoAdapter {
 
         String query = uri.getQuery();
         String[] parameters = query.split("&");
-        for (int j = 0; j < parameters.length; j++) {
-            String parameter = parameters[j];
+        for (String parameter : parameters) {
             if (parameter.length() == 0) {
                 continue;
             }

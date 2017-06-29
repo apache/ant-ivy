@@ -36,8 +36,8 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
     /**
      * List of directory name that usually contains jars but are not bundles
      */
-    public static final Set<String> NON_BUNDLE_DIRS = new HashSet<String>(Arrays.asList("source",
-        "sources", "javadoc", "javadocs", "doc", "docs"));
+    public static final Set<String> NON_BUNDLE_DIRS = new HashSet<>(Arrays.asList("source",
+            "sources", "javadoc", "javadocs", "doc", "docs"));
 
     /**
      * Default directory filter that doesn't select .svn directories, neither the directories that

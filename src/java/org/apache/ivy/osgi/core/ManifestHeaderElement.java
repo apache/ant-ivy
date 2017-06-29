@@ -25,11 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class ManifestHeaderElement {
-    private List<String> values = new ArrayList<String>();
+    private List<String> values = new ArrayList<>();
 
-    private Map<String, String> attributes = new HashMap<String, String>();
+    private Map<String, String> attributes = new HashMap<>();
 
-    private Map<String, String> directives = new HashMap<String, String>();
+    private Map<String, String> directives = new HashMap<>();
 
     public List<String> getValues() {
         return values;

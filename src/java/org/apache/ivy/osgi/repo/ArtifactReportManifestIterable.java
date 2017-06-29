@@ -37,7 +37,7 @@ import org.apache.ivy.util.Message;
 
 public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocation> {
 
-    private final Map<ModuleRevisionId, List<ArtifactDownloadReport>> artifactReports = new HashMap<ModuleRevisionId, List<ArtifactDownloadReport>>();
+    private final Map<ModuleRevisionId, List<ArtifactDownloadReport>> artifactReports = new HashMap<>();
 
     private List<String> sourceTypes;
 
@@ -48,7 +48,7 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
             ModuleRevisionId mrid = report.getArtifact().getModuleRevisionId();
             List<ArtifactDownloadReport> moduleReports = artifactReports.get(mrid);
             if (moduleReports == null) {
-                moduleReports = new ArrayList<ArtifactDownloadReport>();
+                moduleReports = new ArrayList<>();
                 artifactReports.put(mrid, moduleReports);
             }
             moduleReports.add(report);

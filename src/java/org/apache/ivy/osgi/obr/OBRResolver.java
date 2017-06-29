@@ -88,7 +88,7 @@ public class OBRResolver extends AbstractOSGiResolver {
                 Resource obrResource = new URLResource(url);
                 CacheResourceOptions options = new CacheResourceOptions();
                 if (metadataTtl != null) {
-                    options.setTtl(metadataTtl.longValue());
+                    options.setTtl(metadataTtl);
                 }
                 if (forceMetadataUpdate != null) {
                     options.setForce(forceMetadataUpdate);

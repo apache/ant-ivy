@@ -32,9 +32,9 @@ import org.apache.ivy.util.Message;
 
 public class P2Descriptor extends EditableRepoDescriptor {
 
-    private Map<String, Map<Version, BundleInfo>> sourceTargetBundles = new HashMap<String, Map<Version, BundleInfo>>();
+    private Map<String, Map<Version, BundleInfo>> sourceTargetBundles = new HashMap<>();
 
-    private Map<String, Map<Version, BundleInfo>> sourceBundles = new HashMap<String, Map<Version, BundleInfo>>();
+    private Map<String, Map<Version, BundleInfo>> sourceBundles = new HashMap<>();
 
     public P2Descriptor(URI repoUri, ExecutionEnvironmentProfileProvider profileProvider) {
         super(repoUri, profileProvider);
@@ -51,7 +51,7 @@ public class P2Descriptor extends EditableRepoDescriptor {
             }
             Map<Version, BundleInfo> byVersion = sourceBundles.get(bundleInfo.getSymbolicName());
             if (byVersion == null) {
-                byVersion = new HashMap<Version, BundleInfo>();
+                byVersion = new HashMap<>();
                 sourceBundles.put(bundleInfo.getSymbolicName(), byVersion);
             }
             byVersion.put(bundleInfo.getVersion(), bundleInfo);
@@ -59,7 +59,7 @@ public class P2Descriptor extends EditableRepoDescriptor {
             Map<Version, BundleInfo> byTargetVersion = sourceTargetBundles.get(bundleInfo
                     .getSymbolicNameTarget());
             if (byTargetVersion == null) {
-                byTargetVersion = new HashMap<Version, BundleInfo>();
+                byTargetVersion = new HashMap<>();
                 sourceTargetBundles.put(bundleInfo.getSymbolicNameTarget(), byTargetVersion);
             }
             BundleInfo old = byTargetVersion.put(bundleInfo.getVersionTarget(), bundleInfo);

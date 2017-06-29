@@ -48,11 +48,11 @@ public class BundleInfo {
 
     private Version version;
 
-    private Set<BundleRequirement> requirements = new LinkedHashSet<BundleRequirement>();
+    private Set<BundleRequirement> requirements = new LinkedHashSet<>();
 
-    private Set<BundleCapability> capabilities = new LinkedHashSet<BundleCapability>();
+    private Set<BundleCapability> capabilities = new LinkedHashSet<>();
 
-    private List<String> executionEnvironments = new ArrayList<String>();
+    private List<String> executionEnvironments = new ArrayList<>();
 
     private String description;
 
@@ -74,7 +74,7 @@ public class BundleInfo {
 
     private List<String> classpath;
 
-    private List<BundleArtifact> artifacts = new ArrayList<BundleArtifact>();
+    private List<BundleArtifact> artifacts = new ArrayList<>();
 
     public BundleInfo(String name, Version version) {
         this.symbolicName = name;
@@ -82,7 +82,7 @@ public class BundleInfo {
     }
 
     public String toString() {
-        StringBuffer builder = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         builder.append("BundleInfo [executionEnvironments=");
         builder.append(executionEnvironments);
         builder.append(", capabilities=");
@@ -339,7 +339,7 @@ public class BundleInfo {
     }
 
     public Set<BundleRequirement> getRequires() {
-        Set<BundleRequirement> set = new LinkedHashSet<BundleRequirement>();
+        Set<BundleRequirement> set = new LinkedHashSet<>();
         for (BundleRequirement requirement : requirements) {
             if (requirement.getType().equals(BUNDLE_TYPE)) {
                 set.add(requirement);
@@ -349,7 +349,7 @@ public class BundleInfo {
     }
 
     public Set<BundleRequirement> getImports() {
-        Set<BundleRequirement> set = new LinkedHashSet<BundleRequirement>();
+        Set<BundleRequirement> set = new LinkedHashSet<>();
         for (BundleRequirement requirement : requirements) {
             if (requirement.getType().equals(PACKAGE_TYPE)) {
                 set.add(requirement);
@@ -359,7 +359,7 @@ public class BundleInfo {
     }
 
     public Set<ExportPackage> getExports() {
-        Set<ExportPackage> set = new LinkedHashSet<ExportPackage>();
+        Set<ExportPackage> set = new LinkedHashSet<>();
         for (BundleCapability capability : capabilities) {
             if (PACKAGE_TYPE.equals(capability.getType())) {
                 set.add((ExportPackage) capability);
@@ -369,7 +369,7 @@ public class BundleInfo {
     }
 
     public Set<BundleCapability> getServices() {
-        Set<BundleCapability> set = new LinkedHashSet<BundleCapability>();
+        Set<BundleCapability> set = new LinkedHashSet<>();
         for (BundleCapability capability : capabilities) {
             if (SERVICE_TYPE.equals(capability.getType())) {
                 set.add(capability);

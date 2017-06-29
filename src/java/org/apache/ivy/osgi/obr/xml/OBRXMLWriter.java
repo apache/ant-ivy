@@ -148,33 +148,40 @@ public class OBRXMLWriter {
         String type = capability.getType();
         addAttr(atts, CapabilityHandler.NAME, type);
         handler.startElement("", CapabilityHandler.CAPABILITY, CapabilityHandler.CAPABILITY, atts);
-        if (type.equals(BundleInfo.BUNDLE_TYPE)) {
-            // nothing to do, already handled with the resource tag
-        } else if (type.equals(BundleInfo.PACKAGE_TYPE)) {
-            saxCapabilityProperty("package", capability.getName(), handler);
-            Version v = capability.getRawVersion();
-            if (v != null) {
-                saxCapabilityProperty("version", v.toString(), handler);
-            }
-            Set<String> uses = ((ExportPackage) capability).getUses();
-            if (uses != null && !uses.isEmpty()) {
-                StringBuffer builder = new StringBuffer();
-                for (String use : uses) {
-                    if (builder.length() != 0) {
-                        builder.append(',');
-                    }
-                    builder.append(use);
+        switch (type) {
+            case BundleInfo.BUNDLE_TYPE:
+                // nothing to do, already handled with the resource tag
+                break;
+            case BundleInfo.PACKAGE_TYPE: {
+                saxCapabilityProperty("package", capability.getName(), handler);
+                Version v = capability.getRawVersion();
+                if (v != null) {
+                    saxCapabilityProperty("version", v.toString(), handler);
                 }
-                saxCapabilityProperty("uses", builder.toString(), handler);
+                Set<String> uses = ((ExportPackage) capability).getUses();
+                if (uses != null && !uses.isEmpty()) {
+                    StringBuilder builder = new StringBuilder();
+                    for (String use : uses) {
+                        if (builder.length() != 0) {
+                            builder.append(',');
+                        }
+                        builder.append(use);
+                    }
+                    saxCapabilityProperty("uses", builder.toString(), handler);
+                }
+                break;
             }
-        } else if (type.equals(BundleInfo.SERVICE_TYPE)) {
-            saxCapabilityProperty("service", capability.getName(), handler);
-            Version v = capability.getRawVersion();
-            if (v != null) {
-                saxCapabilityProperty("version", v.toString(), handler);
+            case BundleInfo.SERVICE_TYPE: {
+                saxCapabilityProperty("service", capability.getName(), handler);
+                Version v = capability.getRawVersion();
+                if (v != null) {
+                    saxCapabilityProperty("version", v.toString(), handler);
+                }
+                break;
             }
-        } else {
-            // oups
+            default:
+                // oups
+                break;
         }
         handler.endElement("", CapabilityHandler.CAPABILITY, CapabilityHandler.CAPABILITY);
         handler.characters("\n".toCharArray(), 0, 1);

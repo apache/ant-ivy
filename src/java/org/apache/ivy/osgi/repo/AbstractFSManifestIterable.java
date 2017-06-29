@@ -62,7 +62,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
          * the stack is an iterator on the children on the root. The last iterator in the stack
          * points to {@link #currentDir}.
          */
-        private Stack<Iterator<T>> dirs = new Stack<Iterator<T>>();
+        private Stack<Iterator<T>> dirs = new Stack<>();
 
         /**
          * The bundles files being lookup.

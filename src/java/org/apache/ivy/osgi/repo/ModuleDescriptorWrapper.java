@@ -34,7 +34,7 @@ public class ModuleDescriptorWrapper {
 
     private BundleInfo bundleInfo;
 
-    private DefaultModuleDescriptor md;
+    private volatile DefaultModuleDescriptor md;
 
     private URI baseUri;
 
@@ -71,7 +71,7 @@ public class ModuleDescriptorWrapper {
         if (collection.isEmpty()) {
             return Collections.emptyList();
         }
-        List<ModuleDescriptor> unwrapped = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> unwrapped = new ArrayList<>();
         for (ModuleDescriptorWrapper wrapped : collection) {
             unwrapped.add(wrapped.getModuleDescriptor());
         }

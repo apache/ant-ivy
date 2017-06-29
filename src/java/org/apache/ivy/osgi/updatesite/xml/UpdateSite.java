@@ -33,7 +33,7 @@ public class UpdateSite {
 
     private URI digestUri;
 
-    private List<EclipseFeature> features = new ArrayList<EclipseFeature>();
+    private List<EclipseFeature> features = new ArrayList<>();
 
     public void setUri(URI uri) {
         this.uri = uri;
