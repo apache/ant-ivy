@@ -56,7 +56,7 @@ The way to determine which revision is the "latest" between two is configurable 
 
 *__since 2.0__* The `dependency` tag supports two revision attributes: `rev`, corresponding to the default required dependency revision, and `revConstraint`, corresponding to a dynamic revision constraint applied on this dependency.
 
-Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a stic version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility.
+Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a static version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility.
 
 == Configurations mapping
 
@@ -95,7 +95,7 @@ Example: Let's foo be a module with two configurations, A and B, B extending A. 
 
 If you don't understand really how this works, do not use it :-)
 
-*__since 1.4__* `%` can be used as left side operand to mean "all the other configurations". This can be usefull when you only have a specific mapping for some configurations and a default mapping for all the others. For instance, `$$test->runtime;%->default$$` means that the `test` configuration is mapped to the `runtime` configuration, but all the other configurations are mapped to the `default` configuration.
+*__since 1.4__* `%` can be used as left side operand to mean "all the other configurations". This can be useful when you only have a specific mapping for some configurations and a default mapping for all the others. For instance, `$$test->runtime;%->default$$` means that the `test` configuration is mapped to the `runtime` configuration, but all the other configurations are mapped to the `default` configuration.
 
 *__since 1.3__* a fallback mechanism can be used when you are not sure that the dependency will have the required conf. You can indicate to ivy that you want one configuration, but if it isn't present, use another one. 
 The syntax for specifying this adds the fallback conf between parenthesis right after the required conf. 
@@ -104,7 +104,7 @@ For instance, `$$test->runtime(default)$$` means that in the test configuration 
 
 *__since 2.1__* It is also possible to define dependencies on configurations intersection. A configuration intersection is defined using a `+` sign to separate the configuration (eg `A+B` means the intersection of configuration A and B). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
 
-Configuration intersections can also be used when specifying the confs to link:../use/resolve.html[resolve]. 
+Configuration intersections can also be used when specifying the confs to link:../use/resolve.html[resolve].
 
 Moreover, the mapping `$$*->@$$` is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf `A+B` in a module which defines a dependency with mapping `$$*->@$$`, the mapping `$$*->@$$` is interpreted as `$$A+B->A+B$$` so the intersection of A and B will be resolved in the dependency.
 
@@ -114,10 +114,10 @@ For instance, if you have:
 [source,xml]
 ----
 <configurations>
-	<conf name="red" e:axis="color" />
-	<conf name="blue" e:axis="color" />
-		
-	<conf name="windows" e:axis="platform" />
+	<conf name="red" e:axis="color"/>
+	<conf name="blue" e:axis="color"/>
+
+	<conf name="windows" e:axis="platform"/>
 	<conf name="linux" e:axis="platform"/>
 </configurations>
 ----
@@ -148,7 +148,7 @@ See link:../ivyfile/dependency-artifact.html[dependency artifact] for details.
 
 Finally, the dependency element also supports an a force attribute (since 0.8), which gives an indication
 to conflicts manager to force the revision of a dependency to the one given here.
-See link:../ivyfile/conflicts.html[conflicts manager] for details. 
+See link:../ivyfile/conflicts.html[conflicts manager] for details.
 
 *__since 1.4__* this tag supports link:../concept.html#extra[extra attributes]
 

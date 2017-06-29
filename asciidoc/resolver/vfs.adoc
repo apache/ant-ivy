@@ -52,11 +52,10 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 ----
 
 <vfs name="vfs-resolver">
-  <ivy pattern="sftp://username:password@host/[organisation]/[module]/[revision]/ivy.xml" />
-  <artifact pattern="sftp://username:password@host/[organisation]/[module]/[revision]/[artifact].[ext]" />
-</vfs> 
+  <ivy pattern="sftp://username:password@host/[organisation]/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="sftp://username:password@host/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+</vfs>
 
 ----
 
 Access ivy and artifacts files using sftp.
-

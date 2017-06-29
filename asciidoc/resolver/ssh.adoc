@@ -28,7 +28,7 @@
 
 *__since 1.4__*
 
-This resolver can be used when your ivy repository is located on a server accessible via ssh. The secured nature of ssh and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. 
+This resolver can be used when your ivy repository is located on a server accessible via ssh. The secured nature of ssh and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
 If your server supports sftp, you can consider using the link:../resolver/sftp.html[sftp resolver].
 
@@ -75,7 +75,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 <ssh user="myuser" host="myhost.com">
   <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
   <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
-</ssh> 
+</ssh>
 
 ----
 

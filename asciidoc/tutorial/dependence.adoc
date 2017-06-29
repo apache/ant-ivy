@@ -19,11 +19,11 @@
 
 This tutorial will show you how to use Ivy when one of your projects depends on another.
 
-For our example, we will have two projects, depender and dependee, where the depender project uses/requires the dependee project. This example will help illustrate two things about Ivy: 
+For our example, we will have two projects, depender and dependee, where the depender project uses/requires the dependee project. This example will help illustrate two things about Ivy:
 
-  
+
 * that dependencies defined by parent projects (dependee) will automatically be retrieved for use by child projects (depender) +
-  
+
 * that child projects can retrieve the "latest" version of the dependee project +
 
 
@@ -34,19 +34,19 @@ For our example, we will have two projects, depender and dependee, where the dep
 
 The dependee project is very simple. It depends on the apache library commons-lang and contains only one class: `standalone.Main` which provides two services:
 
-  
+
 * return the version of the project +
-  
+
 * capitalize a string using `org.apache.commons.lang.WordUtils.capitalizeFully` +
 
 Here is the content of the project:
 
-  
+
 * build.xml: the ant build file for the project +
-  
+
 * ivy.xml: the project ivy file +
-  
-* src tandalone\Main.java: the only class of the project +
+
+* src standalone\Main.java: the only class of the project +
 
 Take a look at the *ivy.xml* file:
 
@@ -68,9 +68,9 @@ The ivy file declares only one dependency, that being the apache commons-lang li
 
 The depender project is very simple as well. It declares only one dependency on the latest version of the dependee project, and it contains only one class, `depending.Main`, which does 2 things:
 
-  
+
 * gets the version of the standalone project by calling `standalone.Main.getVersion()` +
-  
+
 * transforms a string by calling `standalone.Main.capitalizeWords(str)` +
 
 Take a look at the `ivy.xml` file:
@@ -81,7 +81,7 @@ Take a look at the `ivy.xml` file:
 <ivy-module version="1.0">
     <info organisation="org.apache" module="depender"/>
     <dependencies>
-        <dependency name="dependee" rev="latest.integration" />
+        <dependency name="dependee" rev="latest.integration"/>
     </dependencies>
 </ivy-module>
 
@@ -92,9 +92,9 @@ Take a look at the `ivy.xml` file:
 
 The Ivy settings are defined in two files located in the settings directory:
 
-  
+
 * `ivysettings.properties`: a property file +
-  
+
 * `ivysettings.xml`: the file containing the settings +
 
 
@@ -105,14 +105,14 @@ Let's have a look at the `ivysettings.xml` file:
 
 <ivysettings>
 	<properties file="${ivy.settings.dir}/ivysettings.properties"/>
-	<settings defaultResolver="libraries" />
-	<caches defaultCacheDir="${ivy.settings.dir}/ivy-cache" />
+	<settings defaultResolver="libraries"/>
+	<caches defaultCacheDir="${ivy.settings.dir}/ivy-cache"/>
 	<resolvers>
 		<filesystem name="projects">
-			<artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
-			<ivy pattern="${repository.dir}/[module]-[revision].xml" />
+			<artifact pattern="${repository.dir}/[artifact]-[revision].[ext]"/>
+			<ivy pattern="${repository.dir}/[module]-[revision].xml"/>
 		</filesystem>
-		<ibiblio name="libraries" m2compatible="true" usepoms="false" />
+		<ibiblio name="libraries" m2compatible="true" usepoms="false"/>
 	</resolvers>
 	<modules>
 		<module organisation="org.apache" name="dependee" resolver="projects"/>
@@ -129,13 +129,13 @@ This tag loads some properties for the Ivy process, just like Ant does.
 
 === settings
 
-This tag initializes some parameters for the Ivy process. In this case, the directory that Ivy will use to cache artifacts will be in a sub directory called ivy-cache of the directory containing the `ivysettings.xml` file itself. 
+This tag initializes some parameters for the Ivy process. In this case, the directory that Ivy will use to cache artifacts will be in a sub directory called ivy-cache of the directory containing the `ivysettings.xml` file itself.
 The second parameter, tells Ivy to use a resolver named "libraries" as its default resolver. More information can be found in the link:../settings.html[settings reference documentation].
 
 === resolvers
 
 This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".
-The filesystem resolver called "projects" is able to resolve the internal dependencies by locating them on the local filesystem. 
+The filesystem resolver called "projects" is able to resolve the internal dependencies by locating them on the local filesystem.
 The ibiblio resolver called "libraries" is able to find dependencies on the maven 2 repository, but doesn't use maven poms.
 
 === modules
@@ -175,11 +175,11 @@ include::asciidoc/tutorial/log/dependence-standalone.txt[]
 
 What we see here:
 
-  
+
 * the project depends on 1 library (1 artifact) +
-  
+
 * the library was not in the Ivy cache and so was downloaded (1 downloaded) +
-  
+
 * the project has been released under version number 1 +
 
 
@@ -210,13 +210,13 @@ include::asciidoc/tutorial/log/dependence-depending.txt[]
 
 What we see here:
 
-  
+
 * the project depends on 2 libraries (2 artifacts) +
-  
+
 * one of the libraries was in the cache because there was only 1 download (1 downloaded) +
-  
+
 * Ivy retrieved version 1 of the project "dependee". The call to `standalone.Main.getVersion()` has returned 1. If you look in the `depender/lib` directory, you should see `dependee-1.jar` which is the version 1 artifact of the project "dependee" +
-  
+
 * the call to `standalone.Main.capitalizeWords(str)` succeed, which means that the required library was in the classpath. If you look at the `lib` directory, you will see that the library `commons-lang-2.0.jar` was also retrieved. This library was declared as a dependency of the "dependee" project, so Ivy retrieves it (transitively) along with the dependee artifact. +
 
 
@@ -253,11 +253,11 @@ OK, now our repository contains two versions of the project *dependee*, so other
 
 === step 6: get the new version in _depender_ project
 
-What should we expect if we run the depender project again? It should: 
+What should we expect if we run the depender project again? It should:
 
-  
+
 * retrieve version 2 as the latest.integration version of the dependee project +
-  
+
 * display version 2 of dependee project +
 
 Let's try it!!

@@ -35,4 +35,3 @@ See the link:../../settings/namespace.html[namespace] doc for details.
 |link:../../settings/namespace/fromtosystem.html[fromsystem]|defines the translation to apply from the system namespace to the defined namespace|1
 |link:../../settings/namespace/fromtosystem.html[tosystem]|defines the translation to apply from the defined namespace to the system namespace|1
 |=======
-

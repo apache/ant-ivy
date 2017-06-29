@@ -34,7 +34,7 @@ Ivy is open source and released under a very permissive link:https://ant.apache.
 
 Ivy has a lot of powerful link:https://ant.apache.org/ivy/features.html[features], the most popular and useful being its flexibility, integration with ant, and its strong transitive dependencies management engine.
 
-The transitive dependencies management is a feature which lets you get dependencies of your dependencies, transitively. In order to address this general problem, ivy needs to find metadata about your modules, usually in an link:ivyfile.html[ivy file]. To find the metadata and your dependencies' artifacts (usually jars), Ivy can be configured to use a lot of different link:configuration/resolvers.html[repositories].
+The transitive dependencies management is a feature which lets you get dependencies of your dependencies, transitively. In order to address this general problem, ivy needs to find metadata about your modules, usually in an link:ivyfile.html[ivy file]. To find the metadata and your dependencies' artifacts (usually jars), Ivy can be configured to use a lot of different link:settings/resolvers.html[repositories].
 
 
 == About this doc
@@ -62,7 +62,7 @@ For earlier versions, we suggest downloading the documentation to browse the doc
 
 == Other places to go
 
-Check out Ivy link:https://ant.apache.org/ivy/features.html[features]. + 
+Check out Ivy link:https://ant.apache.org/ivy/features.html[features]. +
 Read our link:https://ant.apache.org/ivy/faq.html[FAQ]. +
 Ask for help on our link:https://ant.apache.org/ivy/mailing-lists.html[mailing lists]. +
 Report a bug or feature request in our link:https://ant.apache.org/ivy/issues.html[issue tracking system]. +
@@ -73,15 +73,14 @@ Check link:https://ant.apache.org/ivy/links.html[external tools and resources]. 
 
 This documentation is composed of three main parts:
 
-  
-* link:tutorial.html[Tutorials] + 
-The tutorials is the best way to begin to play with Ivy. You will easily and quickly learn the basics of Ivy.
-  
-* link:reference.html[Reference] + 
-The reference documentation gives you all the details of Ivy. 
-The introduction part is particularly useful: it defines some vocabulary, explains main concepts such as dependency resolvers and patterns, and gives an overview of how ivy works internally. 
-It's also in the reference doc that you will find all you always dreamed to know about ivy settings, ivy files, and ivy use (especially with ant).
-  
-* link:dev.html[Developer doc] + 
-The developers's doc is useful for users who would like to extend Ivy or build it from source. It's also the documentation used by the Ivy team, so you will also find information about how we make releases.
 
+* link:tutorial.html[Tutorials] +
+The tutorials is the best way to begin to play with Ivy. You will easily and quickly learn the basics of Ivy.
+
+* link:reference.html[Reference] +
+The reference documentation gives you all the details of Ivy.
+The introduction part is particularly useful: it defines some vocabulary, explains main concepts such as dependency resolvers and patterns, and gives an overview of how ivy works internally.
+It's also in the reference doc that you will find all you always dreamed to know about ivy settings, ivy files, and ivy use (especially with ant).
+
+* link:dev.html[Developer doc] +
+The developers's doc is useful for users who would like to extend Ivy or build it from source. It's also the documentation used by the Ivy team, so you will also find information about how we make releases.

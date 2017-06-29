@@ -46,5 +46,3 @@ Johan stuyts, the author of SAnt, also contributed a nice article on his view of
 
 
 Apache Ivy - Beginners Guide is a step by step guide to assist beginners in understanding basic concepts/tasks and use them straight away in their projects either through Ant build or in Eclipse IDE.
-
-

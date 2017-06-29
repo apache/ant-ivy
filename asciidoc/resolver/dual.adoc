@@ -43,5 +43,3 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |Element|Description|Cardinality
 |any resolver|two resolvers, the first being the ivy resolver, the second the artifact resolver|2
 |=======
-
-

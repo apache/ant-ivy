@@ -18,7 +18,7 @@
 ////
 
     Ivy is sending http headers when downloading files.
-    The User-Agent http header can be controlled using a 
+    The User-Agent http header can be controlled using a
 [source]
 ----
 http.agent

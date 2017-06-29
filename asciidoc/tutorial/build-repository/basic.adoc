@@ -30,10 +30,10 @@ The ivy settings file that we will use is very simple here. It defines two resol
 
 <ivysettings>
 	<settings	defaultResolver="libraries"
-			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
-	<caches defaultCacheDir="${ivy.cache.dir}/no-namespace" />
+			defaultConflictManager="all"/>		<!-- in order to get all revisions without any eviction -->
+	<caches defaultCacheDir="${ivy.cache.dir}/no-namespace"/>
 	<resolvers>
-		<ibiblio name="libraries" m2compatible="true" />
+		<ibiblio name="libraries" m2compatible="true"/>
   		<filesystem name="my-repository">
   			<ivy pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/ivys/ivy-[revision].xml"/>
   			<artifact pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
@@ -53,9 +53,9 @@ Let's have a look at the _maven2_ target.
 
     <target name="maven2" depends="init-ivy"
     	description="--> install module from maven 2 repository">
-    	<ivy:install settingsRef="basic.settings" 
-    		organisation="commons-lang" module="commons-lang" revision="1.0" 
-    		from="${from.resolver}" to="${to.resolver}" />
+    	<ivy:install settingsRef="basic.settings"
+    		organisation="commons-lang" module="commons-lang" revision="1.0"
+    		from="${from.resolver}" to="${to.resolver}"/>
     </target>
 
 ----
@@ -96,11 +96,11 @@ The `maven2-deps` target is very similar to the one described above, except that
 [source]
 ----
 
-    <target name="maven2-deps" depends="init-ivy" 
+    <target name="maven2-deps" depends="init-ivy"
     	description="--> install module from maven 2 repository with dependencies">
-    	<ivy:install settingsRef="basic.settings" 
-    		organisation="org.hibernate" module="hibernate" revision="3.2.5.ga" 
-    		from="${from.resolver}" to="${to.resolver}" transitive="true" />
+    	<ivy:install settingsRef="basic.settings"
+    		organisation="org.hibernate" module="hibernate" revision="3.2.5.ga"
+    		from="${from.resolver}" to="${to.resolver}" transitive="true"/>
     </target>
 
 ----

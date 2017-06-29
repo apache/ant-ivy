@@ -21,7 +21,7 @@
 
 *Tag:* module
 
-Define a module set rule. The tag defines a module set, by giving an expression and the matcher to use for organisation, name, revision and any extra attribute identifying your modules. The rule matching is performed in order, and is using a pattern matcher. Hence you can use `*` to specify all, or simply avoid specifying the attribute. 
+Define a module set rule. The tag defines a module set, by giving an expression and the matcher to use for organisation, name, revision and any extra attribute identifying your modules. The rule matching is performed in order, and is using a pattern matcher. Hence you can use `*` to specify all, or simply avoid specifying the attribute.
 
 The revision and extra attributes are only used for rules defining the resolver to use. For other settings, use only organisation and module name.
 
@@ -107,7 +107,7 @@ Uses `myapachecommonsresolver` for all modules from `apache` beginning with `com
 ----
 
 <modules>
-  <module organisation="apache" name="ivy*" matcher="glob" conflict-manager="latest-time"/> 
+  <module organisation="apache" name="ivy*" matcher="glob" conflict-manager="latest-time"/>
 </modules>
 
 ----
@@ -121,10 +121,9 @@ Uses `latest-time` conflict manager for all modules from `apache` whose name beg
 ----
 
 <modules>
-  <module organisation="apache" name="ivy*" matcher="glob" branch="fix-103"/> 
+  <module organisation="apache" name="ivy*" matcher="glob" branch="fix-103"/>
 </modules>
 
 ----
 
 Uses `fix-103` as default branch for all modules from `apache` whose name begins with `ivy`.
-

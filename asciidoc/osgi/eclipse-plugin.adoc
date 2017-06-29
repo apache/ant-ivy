@@ -39,11 +39,11 @@ In few steps, we will setup a build to compile and package an Eclipse plugin.
 
     * in the `ivysettings.properties`, specify the location of the plugins folder of your Eclipse target
 
-    * in the `ivy.xml`, change the symbolic name declared in the extends element 
+    * in the `ivy.xml`, change the symbolic name declared in the extends element
 
-    * *__(optional)__* by default the `build.xml` is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case 
+    * *__(optional)__* by default the `build.xml` is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case
 
-    * *__(optional)__* if Ivy is not in Ant's classpath, link:http://ant.apache.org/ivy/download.cgi[download the Ivy jar] and edit the `build.xml` accordingly (see the comments at the begining of the file) 
+    * *__(optional)__* if Ivy is not in Ant's classpath, link:http://ant.apache.org/ivy/download.cgi[download the Ivy jar] and edit the `build.xml` accordingly (see the comments at the beginning of the file)
 
 
 And that's it ! Now let's use it.
@@ -91,8 +91,8 @@ NOTE: For resolution to work correctly, Ivy relies on the aggregated metadata of
 
 When building an Eclipse plugin, we are relying on a "target platform", the Eclipse installation we want our plugin to be eventually installed into. For Ivy, this will represent the repository of artifacts.
 
-Ivy needs an aggragation of the OSGi metadata in order to resolve a such repository. The Ant task link:../use/buildobr.html[buildobr] builds a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". In the above example, the file is built in `target/repo-eclipse.xml`.
+Ivy needs an aggregation of the OSGi metadata in order to resolve a such repository. The Ant task link:../use/buildobr.html[buildobr] builds a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". In the above example, the file is built in `target/repo-eclipse.xml`.
 
-The plugin to be built has a `ivy.xml` file describing its depedencies to be used by Ivy. Since the actual depedencies are in the `MANIFEST.MF` file, in the `ivy.xml` file we specify that it extends `META-INF/MANIFEST.MF`. So there not much dependencies specified in the `ivy.xml`. But as Ivy doesn't support the `Bundle-Fragment` OSGi feature, the `ivy.xml` can help specify the missing dependencies. 
+The plugin to be built has a `ivy.xml` file describing its dependencies to be used by Ivy. Since the actual dependencies are in the `MANIFEST.MF` file, in the `ivy.xml` file we specify that it extends `META-INF/MANIFEST.MF`. So there not much dependencies specified in the `ivy.xml`. But as Ivy doesn't support the `Bundle-Fragment` OSGi feature, the `ivy.xml` can help specify the missing dependencies.
 
 Having this setup, it is then a standard Ant+Ivy build. Ivy computes the classpath to be then used by the `javac` tasks. Note that `javac` is not aware of the OSGi metadata and is then incapable of failing to compile if private packages are accessed.

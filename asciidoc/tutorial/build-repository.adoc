@@ -28,7 +28,7 @@ To demonstrate this, we will first use a basic ivy settings file to show how it 
 
 The project that we will use is pretty simple. It is composed of an Ant build file, and two ivy settings files.
 
-Here are the public targets that we will use: 
+Here are the public targets that we will use:
 
 [source,shell]
 ----
@@ -57,5 +57,3 @@ This project is accessible in the link:https://git-wip-us.apache.org/repos/asf?p
 Next steps:
 link:../tutorial/build-repository/basic.html[Basic repository copy]
 link:../tutorial/build-repository/advanced.html[Using namespaces]
-
-

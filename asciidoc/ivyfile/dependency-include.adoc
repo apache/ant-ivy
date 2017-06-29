@@ -19,7 +19,7 @@
 
 *Tag:* include *Parent:* link:../ivyfile/dependency.html[dependency]
 
-This feature gives you more control on a dependency for which you do not control its ivy file. 
+This feature gives you more control on a dependency for which you do not control its ivy file.
 It enables to restrict the artifacts required by including only the artifacts given here, even if configuration does not a good separation of published artifacts.
 
 Each artifact restriction can be given in the context of particular master configurations. By default, if no configuration is specified, artifacts restriction apply to all master configurations. But you can specify that a restriction applies only to one or several master configurations, using either inline or nested conf specification. In this case, do not forget that if you do not specify any restriction for a particular configuration, then no restriction will apply for this configuration and it will be resolved not taking into account any restriction.

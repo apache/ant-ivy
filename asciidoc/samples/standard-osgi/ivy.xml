@@ -14,11 +14,11 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="2.0">
-    <info organisation="com.acme" module="local-osgi-repo" />
+    <info organisation="com.acme" module="local-osgi-repo"/>
     <dependencies>
-        <dependency org="javax.servlet" name="com.springsource.javax.servlet" rev="2.4.0" />
+        <dependency org="javax.servlet" name="com.springsource.javax.servlet" rev="2.4.0"/>
     </dependencies>
 </ivy-module>

@@ -26,7 +26,7 @@ Describes a configuration mapping for a dependency. See also the inline configur
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|name|the name of the master configuration to map. 
+|name|the name of the master configuration to map.
 
 `$$*$$` wildcard can be used to designate all configurations of this module|Yes
 |mapped|a comma separated list of dependency configurations to which this master configuration should be mapped|No, default to the same configuration as master one, unless nested mapped elements are specified

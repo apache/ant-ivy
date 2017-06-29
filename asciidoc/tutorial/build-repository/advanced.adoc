@@ -17,13 +17,13 @@
    under the License.
 ////
 
-Now that you have seen how simple it is to create your own repository from an existing one, you may wonder how you can handle more complex cases, like when the source and destination repositories don't follow the same naming conventions. 
+Now that you have seen how simple it is to create your own repository from an existing one, you may wonder how you can handle more complex cases, like when the source and destination repositories don't follow the same naming conventions.
 
 
 
 == On the road to a professional repository
 
-In this section, you will learn how to build a *professional* repository. What is a *professional* repository? Our vision is to say that a good quality repository must follow clear rules about projects naming and must offer correct, useable, configurations and verified project descriptors. In order to achieve those goals, we think that you have to build your own repository.
+In this section, you will learn how to build a *professional* repository. What is a *professional* repository? Our vision is to say that a good quality repository must follow clear rules about projects naming and must offer correct, usable, configurations and verified project descriptors. In order to achieve those goals, we think that you have to build your own repository.
 We have seen in the previous example, that we could use some public repositories to begin to build our own repository. Nevertheless, the result is not always the expected one, especially concerning the naming rules used.
 
 This problem is pretty normal when you have an existing repository, and want to benefit from large public repositories which do not follow the same naming conventions. It also shows up because many public repositories do not use a  consistent naming scheme. For example, why don't all the apache commons modules use the org.apache.commons organization? Well.. for historical reasons. But if you setup your own repository, you may not want to suffer from the mistakes of history.
@@ -85,8 +85,8 @@ Actually, Ivy uses the same repository as before for the source repository, with
 [source]
 ----
 
-<ibiblio name="libraries" 
-    root="${ibiblio-maven2-root}" 
+<ibiblio name="libraries"
+    root="${ibiblio-maven2-root}"
     m2compatible="true"
     namespace="maven2"
 />
@@ -105,14 +105,14 @@ For the namespace we call __maven2__, we have declared several rules. Below is o
 <rule>	<!-- imported apache maven1 projects -->
 	<fromsystem>
 	    <src org="apache" module=".+"/>
-	    
+
 	    <dest org="$m0" module="$m0"/>
 	</fromsystem>
 	<tosystem>
-	    <src org="commons-.+" module="commons-.+" />
-	    <src org="ant.*" module="ant.*" />
+	    <src org="commons-.+" module="commons-.+"/>
+	    <src org="ant.*" module="ant.*"/>
 	    ...
-	    <src org="xmlrpc" module="xmlrpc" />
+	    <src org="xmlrpc" module="xmlrpc"/>
 
 	    <dest org="apache" module="$m0"/>
 	</tosystem>
@@ -132,7 +132,7 @@ and for revisions : $r0, $r1, ...
 
 ====
 
-To understand namespaces, 
+To understand namespaces,
 
 
 * *fromsystem :* we define here that the projects defined in the system namespace under the organization called "apache" are transformed into the destination namespace into projects whose organization is named with the module name, whatever the revision is. For example, the project apache#commons-lang;1.0  in the system namespace will be translated into commons-lang#commons-lang;1.0 in the maven2 resolver namespace. +
@@ -142,7 +142,7 @@ To understand namespaces,
 
 OK, you should now get the idea behind namespaces, so go ahead and look at the `ivysettings-advanced.xml` file in this example. You can test the installation of a module and its dependencies using namespaces.
 
-Run 
+Run
 
 [source]
 ----

@@ -29,18 +29,18 @@ Here is an example of the settings file:
 ----
 
 <ivysettings>
-        <properties file="${ivy.settings.dir}/ivysettings-file.properties" />
-        <settings defaultResolver="ibiblio" />
-        <caches  defaultCacheDir="${cache.dir}" checkUpToDate="false" />
+        <properties file="${ivy.settings.dir}/ivysettings-file.properties"/>
+        <settings defaultResolver="ibiblio"/>
+        <caches  defaultCacheDir="${cache.dir}" checkUpToDate="false"/>
         <resolvers>
-                <ibiblio name="ibiblio" />
+                <ibiblio name="ibiblio"/>
                 <filesystem name="internal">
-                        <ivy pattern="${repository.dir}/[module]/ivy-[revision].xml" />
-                        <artifact pattern="${repository.dir}/[module]/[artifact]-[revision].[ext]" />
+                        <ivy pattern="${repository.dir}/[module]/ivy-[revision].xml"/>
+                        <artifact pattern="${repository.dir}/[module]/[artifact]-[revision].[ext]"/>
                 </filesystem>
         </resolvers>
         <modules>
-                <module organisation="jayasoft" name=".*" resolver="internal" />
+                <module organisation="jayasoft" name=".*" resolver="internal"/>
         </modules>
 </ivysettings>
 

@@ -40,7 +40,7 @@ By default also, the parsed module descriptor read from the cache are kept in a 
 |basedir|the path of the base directory to use to put repository cache data. *This should not point to a directory used as a repository!*|No, defaults to repositoryCacheDir defined in link:../../settings/caches.html[caches]
 |ivyPattern|the pattern to use to store cached ivy files|No, defaults to default cache ivy pattern as configured in link:../../settings/caches.html[caches]
 |artifactPattern|the pattern to use to store cached artifacts|No, defaults to default cache artifact pattern as configured in link:../../settings/caches.html[caches]
-|useOrigin|true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise. 
+|useOrigin|true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise.
 To know if an artifact is local ivy asks to the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you use the cache for some non local resolvers. In this case the cache will behave as usual, copying files to the cache. Note also that this only applies to artifacts, not to ivy files, which are still copied in the cache.|No. defaults to the default value configured in link:../../settings/caches.html[caches]
 |lockStrategy|the name of the link:../../settings/lock-strategies.html[lock strategy] to use for this cache|No, defaults to default lock strategy as configured in link:../../settings/caches.html[caches]
 |defaultTTL|the default link:../../settings/caches/ttl.html[TTL] to use when no specific one is defined|No, defaults to ${ivy.cache.ttl.default}
@@ -66,19 +66,18 @@ To know if an artifact is local ivy asks to the resolver. Only filesystem resolv
 [source, xml]
 ----
 
-<cache name="mycache" 
+<cache name="mycache"
        basedir="/path/to/mycache"
-       ivyPattern="[module]/ivy-[revision].xml" 
+       ivyPattern="[module]/ivy-[revision].xml"
        artifactPattern="[module]/[artifact]-[revision].[ext]"
        lockStrategy="no-lock"
        defaultTTL="1s">
-    <ttl revision="latest.integration" duration="200ms" />
-    <ttl organisation="org1" duration="10m 20s" />
-    <ttl organisation="org2" duration="5h" />
-    <ttl organisation="org3" duration="2d 12h" />
+    <ttl revision="latest.integration" duration="200ms"/>
+    <ttl organisation="org1" duration="10m 20s"/>
+    <ttl organisation="org2" duration="5h"/>
+    <ttl organisation="org3" duration="2d 12h"/>
 </cache>
 
 ----
 
 Defines a cache called `mycache`, storing files in the `/path/to/mycache` directory using `[module]/ivy-[revision].xml` as pattern to store Ivy files and `[module]/[artifact]-[revision].[ext]` as pattern to store other artifacts. The lock strategy used by this cache is the `no-lock` strategy, which does not perform any locking. The defaultTTL used is of 1s, meaning that by default dynamic revision result will be stored and used for one second. TTL rules then define that all `latest.integration` revisions will be stored and used for 200ms, while other dynamic revisions from `org1` `org2` and `org3` modules will be stored respectively for 10 minutes 20 seconds; 5 hours; and 2 days and 12 hours.
-

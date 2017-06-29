@@ -33,5 +33,3 @@ See link:../extend.html[how to write and plug your own dependency resolver] for 
 |name|the name of the type to define. This name is then used as an xml tag.|Yes
 |classname|the fully qualified class name of the type to define.|Yes
 |=======
-
-

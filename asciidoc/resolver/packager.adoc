@@ -39,10 +39,10 @@ The Packager resolver supports a "resource cache", where downloaded archives can
 
 The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using link:https://ant.apache.org/[Ant]. Therefore, Ant must be available as an executable on the platform. The ant task executes in a separate ant project and so is not affected by properties, etc. that may be set in any existing ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
 
-For security reasons, the XSLT transform ensures that 
+For security reasons, the XSLT transform ensures that
 
-    a. all downloaded archives have verified SHA1 checksums (including cached resources); and 
-    
+    a. all downloaded archives have verified SHA1 checksums (including cached resources); and
+
     b. only a very limited set of ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
 
 
@@ -104,22 +104,22 @@ Configure a resourceURL in situations where you don't want to rely on (or wait f
 
 ----
 
-Defines a packager resolver which points to the `http://ivyroundup.googlecode.com/` online repository. Builds will occur in a subdirectory of 
+Defines a packager resolver which points to the `http://ivyroundup.googlecode.com/` online repository. Builds will occur in a subdirectory of
 [source]
 ----
 ${user.home}/.ivy2/packager/build
 ----
 
-downloaded resources will be cached in 
+downloaded resources will be cached in
 [source]
 ----
 ${user.home}/.ivy2/packager/cache
 ----
 
-and the mirror site 
+and the mirror site
 [source]
 ----
-ftp://mirror.example.com/pub/resources/[organisation]/[module]/ 
+ftp://mirror.example.com/pub/resources/[organisation]/[module]/
 ----
 
 will be tried first for all resources.
@@ -259,7 +259,7 @@ The m2resource XML tag supports the following attributes:
 |groupId|Maven group ID|No; defaults to ${ivy.packager.organisation}
 |artifactId|Maven artifact ID|No; defaults to ${ivy.packager.module}
 |version|Maven version|No; defaults to ${ivy.packager.revision}
-|repo|Maven repository URL|No; defaults to https://repo1.maven.org/maven2/ 
+|repo|Maven repository URL|No; defaults to https://repo1.maven.org/maven2/
 |=======
 
 
@@ -299,4 +299,3 @@ Below is an example of packaging instructions for the link:http://commons.apache
 </packager-module>
 
 ----
-

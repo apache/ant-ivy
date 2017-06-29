@@ -66,7 +66,7 @@ Here is an example of how you can do so:
     <specialMeaning name="QA" value="4"/>
     <specialMeaning name="PROD" value="5"/>
   </latest-revision>
-</latest-strategies> 
+</latest-strategies>
 
 ----
 
@@ -94,7 +94,6 @@ Example:
     <specialMeaning name="rc" value="2"/>
     <specialMeaning name="prod" value="3"/>
   </latest-revision>
-</latest-strategies> 
+</latest-strategies>
 
 ----
-

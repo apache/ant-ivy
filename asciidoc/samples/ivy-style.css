@@ -18,13 +18,13 @@
 
 body {
 	font-family:"Trebuchet MS",Verdana,Geneva,Arial,Helvetica,sans-serif;
-	font-size:small; 
+	font-size:small;
 }
 
 div#logo {
-    float: right; 
-    padding-left: 10px; 
-    padding-bottom: 10px; 
+    float: right;
+    padding-left: 10px;
+    padding-bottom: 10px;
     background: white;
     text-align: center;
 }
@@ -46,7 +46,7 @@ a#rep:hover {
 
 h1 {
     margin-bottom:2px;
-    
+
 	border-color:#7A9437;
 	border-style:solid;
 	border-width:0 0 3px 0;
@@ -76,7 +76,7 @@ span#organisation a:hover {
 h2 {
     margin-bottom:2px;
     font-size:medium;
-    
+
 	border-color:#7A9437;
 	border-style:solid;
 	border-width:0 0 2px 0;

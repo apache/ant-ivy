@@ -28,7 +28,7 @@
 
 *__since 1.4__*
 
-This resolver can be used when your ivy repository is located on a server accessible via sftp. The secured nature of sftp and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment. 
+This resolver can be used when your ivy repository is located on a server accessible via sftp. The secured nature of sftp and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
 If your server supports ssh but not sftp, there is also an link:../resolver/ssh.html[ssh resolver].
 
@@ -42,7 +42,7 @@ e.g. pattern="sftp://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[
 
 
 
-Note that the authentication features of this resolver are exactly the same as the ssh resolver. Choosing between the two is often a matter of server implementation. If your server supports sftp, usually it's preferrable.
+Note that the authentication features of this resolver are exactly the same as the ssh resolver. Choosing between the two is often a matter of server implementation. If your server supports sftp, usually it's preferable.
 
 Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as ssh client, which is a popular java ssh client, used for example in Eclipse.
 
@@ -86,7 +86,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 <sftp user="myuser" host="myhost.com">
   <ivy pattern="/path/to/ivy/[module]/ivy.xml"/>
   <artifact pattern="/path/to/[organisation]/[module]/[artifact].[ext]"/>
-</sftp> 
+</sftp>
 
 ----
 
@@ -149,4 +149,3 @@ Will connect to yourserver.com on port 8022 with user 'user' and use keyFile `pa
 ----
 
 Will connect to the host named by myhost according to the config file in `/path/to/.ssh/config`, using the hostname, username, and optionally IdentityFile specified in the config section "Host myhost". For example, if the corresponding Host section contains "Hostname yourserver.com" and "User myremoteusername", it will connect to yourserver.com using username myremoteusername.
-

@@ -21,7 +21,7 @@ Sets a variable (by name and value), or set of variables (from file or url) in I
 
 Variables are case sensitive.
 
-Contrary to ant properties, ivy variables are mutable. But a problem with this is that you do not control when 
+Contrary to ant properties, ivy variables are mutable. But a problem with this is that you do not control when
 variables are substituted, and usually it is done as soon as possible. So changing the value of a variable will
 have no effect if it has already been substituted. Consequently, *using this task is NOT recommended*.
 

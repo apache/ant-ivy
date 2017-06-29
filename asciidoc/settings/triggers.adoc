@@ -26,14 +26,14 @@
 Defines a list of triggers to activate on some Ivy events.
 
 A trigger is an action which is performed whenever a particular event occurs.
-Ivy supports 3 type of triggers out of the box: 
+Ivy supports 3 type of triggers out of the box:
 
 
     * ant-call +
-     calls a target in the same build as the original one whenever a particular event occurs. 
+     calls a target in the same build as the original one whenever a particular event occurs.
 
     * ant-build +
-     calls an ant build which may be in another ant build script. 
+     calls an ant build which may be in another ant build script.
 
     * log +
      echo a message, usually in a file
@@ -47,385 +47,385 @@ The following events are available in Ivy:
 |=======
 |Name|Attributes|Description
 |pre-resolve|
-          
-            
+
+
 * organisation +
 the organisation of the module for which the dependencies will be resolved
-            
+
 * module +
 the name of the module for which the dependencies will be resolved
-            
+
 * revision +
 the revision of the module for which the dependencies will be resolved
-            
+
 * conf +
 comma separated list of configurations which will be resolved
-          
+
         |Fired at the beginning of the resolve process, before module dependencies and transitive dependencies are resolved.
 |pre-resolve-dependency|
-          
-            
+
+
 * organisation +
 the organisation of the dependency resolved
-            
+
 * module +
 the name of the dependency resolved
-            
+
 * req-revision +
 the requested revision for the dependency *__since 2.0__* (provided for consistency with post-resolve-dependency)
-            
+
 * req-revision-default +
 the default requested revision constraint for the dependency *__since 2.0__*
-            
+
 * req-revision-dynamic +
 the requested revision dynamic constraint for the dependency *__since 2.0__*
-            
+
 * revision +
 the requested revision for the dependency
-            
+
 * resolver +
 the name of the resolver used to resolve the dependency
-          
+
         |Fired before each dependency is resolved. In this case resolved means resolving the actual revision if the requested revision is a version constraint and not a static version, and downloading all necessary metadata information.
 |post-resolve-dependency|
-          
-            
+
+
 * organisation +
 the organisation of the dependency resolved
-            
+
 * module +
 the name of the dependency resolved
-            
+
 * req-revision +
 the requested revision for the dependency *__since 2.0__*
-            
+
 * req-revision-default +
 the default requested revision constraint for the dependency *__since 2.0__*
-            
+
 * req-revision-dynamic +
 the requested revision dynamic constraint for the dependency *__since 2.0__*
-            
+
 * revision +
 the revision of the dependency resolved, or the requested revision if the resolution was not successful
-            
+
 * resolved +
 true if the resolution was successful, false otherwise
-            
+
 * duration +
 the time elapsed to resolve the dependency (in ms) *__since 2.0__*
-            
+
 * resolver +
 the name of the resolver used to resolve the dependency
-            
+
 * any extra attribute +
 all extra attributes found on the info tag of the resolved dependency are available *__since 2.0__*
-          
+
         |Fired after each dependency is resolved
 |post-resolve|
-          
-            
+
+
 * organisation +
 the organisation of the module for which the dependencies have been resolved
-            
+
 * module +
 the name of the module for which the dependencies have been resolved
-            
+
 * revision +
 the revision of the module for which the dependencies have been resolved
-            
+
 * conf +
 comma separated list of configurations resolved
-            
+
 * resolve-id +
 the identifier of the resolution process *__since 2.0__*
-            
+
 * nb-dependencies +
 total number of dependencies, including transitive and evicted ones *__since 2.0__*
-            
+
 * nb-artifacts +
 total number of artifacts resolved, excluding metadata artifacts *__since 2.0__*
-            
+
 * resolve-duration +
-the time (in ms) elapsed to resolve dependencies, before dowloading artifacts *__since 2.0__*
-            
+the time (in ms) elapsed to resolve dependencies, before downloading artifacts *__since 2.0__*
+
 * download-duration +
 the time (in ms) elapsed to download all artifacts, excluding metadata artifacts downloaded during the first phase of the resolution process *__since 2.0__*
-            
+
 * download-size +
 the total size (in bytes) of all downloaded artifacts, excluding metadata artifacts. Only artifacts actually downloaded (not in cache or used from their original location) are considered *__since 2.0__*
-          
+
         |Fired at the end of the resolve process, when all module dependencies have been resolved
 |pre-download-artifact|
-          
-            
+
+
 * organisation +
 the organisation of the artifact which is about to be downloaded
-            
+
 * module +
 the name of the module of the artifact which is about to be downloaded
-            
+
 * revision +
 the revision of the the artifact which is about to be downloaded
-            
+
 * artifact +
 the name of the the artifact which is about to be downloaded
-            
+
 * type +
 the type of the the artifact which is about to be downloaded
-            
+
 * ext +
 the extension of the the artifact which is about to be downloaded
-            
+
 * metadata +
 true if the artifact to be downloaded is a metadata artifact, false for published artifacts *__since 2.0__*
-            
+
 * resolver +
 the name of the resolver used to download the artifact
-            
+
 * origin +
 the origin location from which it will be downloaded
-            
+
 * local +
 true if it's a local artifact, false otherwise
-          
+
         |Fired before an artifact is downloaded from a repository to the cache
 |post-download-artifact|
-          
-            
+
+
 * organisation +
 the organisation of the artifact which was just downloaded
-            
+
 * module +
 the name of the module of the artifact which was just downloaded
-            
+
 * revision +
 the revision of the the artifact which was just downloaded
-            
+
 * artifact +
 the name of the the artifact which was just downloaded
-            
+
 * type +
 the type of the the artifact which was just downloaded
-            
+
 * ext +
 the extension of the the artifact which was just downloaded
-            
+
 * metadata +
 true if the downloaded artifact is a metadata artifact, false for published artifacts *__since 2.0__*
-            
+
 * resolver +
 the name of the resolver used to download the artifact
-            
+
 * origin +
 the origin location from which it was downloaded
-            
+
 * local +
 true if it's a local artifact, false otherwise
-            
+
 * size +
 the size in bytes of the downloaded artifact
-            
+
 * duration +
 the time elapsed to download the artifact (in ms) *__since 2.0__*
-            
+
 * file +
 the file to which it has been downloaded
-          
+
         |Fired after an artifact has been downloaded from a repository to the cache
-|pre-retrieve 
+|pre-retrieve
 *__since 2.0__*|
-          
-            
+
+
 * organisation +
 the organisation of the module for which the dependencies will be retrieved
-            
+
 * module +
 the name of the module for which the dependencies will be retrieved
-            
+
 * revision +
 the revision of the module for which the dependencies will be retrieved
-            
+
 * conf +
 comma separated list of configurations which will be retrieved
-            
+
 * symlink +
 true if Ivy will use symbolic links instead of copies on supported platforms, false otherwise
-            
+
 * sync +
 true if the retrieve process will be performed in sync mode, false otherwise
-          
+
         |Fired at the beginning of the retrieve process.
-|post-retrieve 
+|post-retrieve
 *__since 2.0__*|
-          
-            
+
+
 * organisation +
 the organisation of the module for which the dependencies have been retrieved
-            
+
 * module +
 the name of the module for which the dependencies will be retrieved
-            
+
 * revision +
 the revision of the module for which the dependencies have been retrieved
-            
+
 * conf +
 comma separated list of configurations which have been retrieved
-            
+
 * symlink +
 true if Ivy used symbolic links instead of copies on supported platforms, false otherwise
-            
+
 * sync +
 true if the retrieve process has been performed in sync mode, false otherwise
-            
+
 * duration +
 the time elapsed in ms during the retrieve process
-            
+
 * size +
 the total size of artifacts which have actually been copied (or symlinked)
-            
+
 * nbCopied +
 the number of artifacts copied or symlinked
-            
+
 * nbUptodate +
 the number of artifacts which were already present and up to date at the destination location
-          
+
         |Fired at the end of the retrieve process.
-|pre-retrieve-artifact 
+|pre-retrieve-artifact
 *__since 2.1__*|
-          
-            
+
+
 * organisation +
 the organisation of the artifact which is about to be retrieved
-            
+
 * module +
 the name of the module of the artifact which is about to be retrieved
-            
+
 * revision +
 the revision of the the artifact which is about to be retrieved
-            
+
 * artifact +
 the name of the the artifact which is about to be retrieved
-            
+
 * type +
 the type of the the artifact which is about to be retrieved
-            
+
 * ext +
 the extension of the the artifact which is about to be retrieved
-            
+
 * metadata +
-true if the retrieved artifact is a metadata artifact, false for published artifacts 
-            
+true if the retrieved artifact is a metadata artifact, false for published artifacts
+
 * size +
 the size in bytes of the retrieved artifact
-            
+
 * from +
 the absolute path from which it will be retrieved (usually a location in cache)
-            
+
 * to +
 the absolute path to which it will be retrieved
-          
+
         |Fired before an artifact is retrieved from the cache to a local location
-|post-retrieve-artifact 
+|post-retrieve-artifact
 *__since 2.1__*|
-          
-            
+
+
 * organisation +
 the organisation of the artifact which has just been retrieved
-            
+
 * module +
 the name of the module of the artifact which has just been retrieved
-            
+
 * revision +
 the revision of the the artifact which has just been retrieved
-            
+
 * artifact +
 the name of the the artifact which has just been retrieved
-            
+
 * type +
 the type of the the artifact which has just been retrieved
-            
+
 * ext +
 the extension of the the artifact which has just been retrieved
-            
+
 * metadata +
-true if the retrieved artifact is a metadata artifact, false for published artifacts 
-            
+true if the retrieved artifact is a metadata artifact, false for published artifacts
+
 * size +
 the size in bytes of the retrieved artifact
-            
+
 * from +
 the absolute path from which it has just been retrieved (usually a location in cache)
-            
+
 * to +
 the absolute path to which it has just been retrieved
-          
+
         |Fired after an artifact is retrieved from the cache to a local location
-|pre-publish-artifact 
+|pre-publish-artifact
 *__since 2.0__*|
-          
-            
+
+
 * organisation +
 the organisation of the artifact which is about to be published
-            
+
 * module +
 the name of the module of the artifact which is about to be published
-            
+
 * revision +
 the revision of the the artifact which is about to be published
-            
+
 * artifact +
 the name of the the artifact which is about to be published
-            
+
 * type +
 the type of the the artifact which is about to be published
-            
+
 * ext +
 the extension of the the artifact which is about to be published
-            
+
 * resolver +
 the name of the resolver into which the artifact is about to be published
-            
+
 * file +
 the absolute path of the source file for the artifact
-            
+
 * overwrite +
 "true" if the new data will overwrite existing artifacts, "false" otherwise
-          
+
         |Fired before an artifact is published into a repository
-|post-publish-artifact 
+|post-publish-artifact
 *__since 2.0__*|
-          
-            
+
+
 * organisation +
 the organisation of the artifact that was published
-            
+
 * module +
 the name of the module of the artifact that was published
-            
+
 * revision +
 the revision of the the artifact that was published
-            
+
 * artifact +
 the name of the the artifact that was published
-            
+
 * type +
 the type of the the artifact that was published
-            
+
 * ext +
 the extension of the the artifact that was published
-            
+
 * resolver +
 the name of the resolver into which the artifact was published
-            
+
 * file +
 the absolute path of the source file for the artifact
-            
+
 * overwrite +
 "true" if the new data overwrote existing artifacts, "false" otherwise
-            
+
 * status +
 "successful" if the artifact published successfully; "failed" if the artifact failed to publish, or if the status is unknown
-          
+
         |Fired after an artifact is published into a repository.  Note that this event is fired whether or not the publication succeeded.  The "status" property can be checked to verify success.
 |=======
 
@@ -447,7 +447,7 @@ The child tag used for the dependency resolver must be equal to a name of a trig
 
 == Built-in Triggers
 
-Ivy comes with 3 built-in triggers: 
+Ivy comes with 3 built-in triggers:
 
 
 [options="header",cols="15%,50%"]
@@ -465,9 +465,9 @@ Ivy comes with 3 built-in triggers:
 
 All triggers share some common attributes detailed here.
 
-Among these attributes, you will find how to select when the trigger should be performed. You have to provide an event name, which is simple, but you can also use a filter expression. The syntax for this expression is very simple and limited: 
+Among these attributes, you will find how to select when the trigger should be performed. You have to provide an event name, which is simple, but you can also use a filter expression. The syntax for this expression is very simple and limited:
 
-    - you can use the = operator to compare an attribute (left operande) with a value (right operande).
+    - you can use the = operator to compare an attribute (left operand) with a value (right operand).
     - you can use AND OR NOT as boolean operators
     - you cannot use parenthesis to change the precedence
 
@@ -507,7 +507,7 @@ Note that by default the ant build is triggered only once per build file. See be
 <triggers>
     <ant-build antfile="${ivy.settings.dir}/[module]/build.xml" target="publish"
            event="pre-resolve-dependency" filter="revision=latest.integration"
-           onlyonce="false" />
+           onlyonce="false"/>
 </triggers>
 
 ----
@@ -535,9 +535,9 @@ Here is how the target can look like:
 
 <target name="unzip">
      <echo>
-        unzipping artifact: 
-        organisation=${dep.organisation} 
-        module=${dep.module} 
+        unzipping artifact:
+        organisation=${dep.organisation}
+        module=${dep.module}
         revision=${dep.revision}
         artifact=${dep.artifact}
         type=${dep.type}
@@ -561,7 +561,7 @@ Here is how the target can look like:
 ----
 
 <triggers>
-    <log file="ivy.log" 
+    <log file="ivy.log"
           message='downloaded "${origin}" to "${file}" (${duration}ms - ${size}B)'
           event="post-download-artifact" filter="status=successful"/>
 </triggers>

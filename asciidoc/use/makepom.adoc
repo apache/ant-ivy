@@ -28,14 +28,14 @@ _Note that all Ivy features are not supported by maven poms, so the converted po
 It is possible to specify a template file defining the structure of the generated POM. The following processing is done on this template:
 
 * properties like `${property.name}` are replaced if they are defined in Ant or by the `ivy:makepom` task (see below for the standard properties)
-* lines containg the string `SKIP_LINE` are skipped.
+* lines containing the string `SKIP_LINE` are skipped.
 * the defined dependencies will be added to the first `<dependencies>` element encountered in the pom template. If the template doesn't contain a `<dependencies>` element, it is generated a the end of the pom.
 
 The `ivy:makepom` task defines following properties that can be used in the template.
 
 * `ivy.pom.groupId`: defaults to the organisation as defined in the ivy.xml file
-* `ivy.pom.artifactId`: defaults to the value of the `atifactName` attribute of this task, or the name of the module as defined in the ivy.xml file
-* `ivy.pom.packaging`: defaults to the value of the `artifactPackaging` attribute of this task, or the extenstion of the artifact
+* `ivy.pom.artifactId`: defaults to the value of the `artifactName` attribute of this task, or the name of the module as defined in the ivy.xml file
+* `ivy.pom.packaging`: defaults to the value of the `artifactPackaging` attribute of this task, or the extension of the artifact
 * `ivy.pom.version`: defaults to the revision as defined in the ivy.xml file
 * `ivy.pom.name`: defaults to `SKIP_LINE`
 * `ivy.pom.description`: defaults to the value of the `description` attribute of this task, or `SKIP_LINE` when not specified +

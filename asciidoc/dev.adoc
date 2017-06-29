@@ -20,11 +20,11 @@
 
 == Building from source
 
-To build Ivy from source it's really easy. 
+To build Ivy from source it's really easy.
 
 === Requirements
 
-All you need is 
+All you need is
 
 
 * an link:http://subversion.tigris.org/[svn] client +
@@ -135,7 +135,7 @@ Download the file and unzip its content in your eclipse installation directory.
 
 === recommended plugins
 
-The Ivy project comes with settings for the link:http://eclipse-cs.sourceforge.net/[checkstyle plugin] we recommend to use to avoid introducing new disgression to the checkstyle rules we use.
+The Ivy project comes with settings for the link:http://eclipse-cs.sourceforge.net/[checkstyle plugin] we recommend to use to avoid introducing new digression to the checkstyle rules we use.
 If you use this plugin, you will many errors in Ivy. As we said, following strict checkstyle rules is a work in progress and we used to have pretty different code conventions (like using _ as prefix for private attributes), so we still have things to fix. We usually use the filter in the problems view to filter out checkstyle errors from this view, which helps to know what the real compilation problem are.
 
 Besides this plugin we also recommend to use a subversion plugin, link:http://www.eclipse.org/subversive/[subversive] or link:http://subclipse.tigris.org[subclipse] being the two options currently available in the open source landscape.

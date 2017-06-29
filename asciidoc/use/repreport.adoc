@@ -56,7 +56,7 @@ To generate a xml report for all the latest versions of all the modules in your 
 
 [source,xml]
 ----
-<ivy:repreport />
+<ivy:repreport/>
 ----
 
 '''
@@ -65,7 +65,7 @@ To generate a graphml report for all the latest versions of all the modules in y
 
 [source,xml]
 ----
-<ivy:repreport xml="false" graph="true" />
+<ivy:repreport xml="false" graph="true"/>
 ----
 
 '''
@@ -74,7 +74,7 @@ To generate a xml report for all the latest versions of the modules from the org
 
 [source,xml]
 ----
-<ivy:repreport organisation="foo" />
+<ivy:repreport organisation="foo"/>
 ----
 
 '''
@@ -83,7 +83,7 @@ To generate a xml report for all the versions on the 1.x stream of the modules n
 
 [source,xml]
 ----
-<ivy:repreport organisation="foo" module="bar*" revision="1.+" matcher="glob" />
+<ivy:repreport organisation="foo" module="bar*" revision="1.+" matcher="glob"/>
 ----
 
 '''
@@ -92,7 +92,7 @@ To generate an XML report using a custom stylesheet:
 
 [source,xml]
 ----
-<ivy:repreport xsl="true" xslfile="my-custom-stylesheet.xsl" xslext="xml" />
+<ivy:repreport xsl="true" xslfile="my-custom-stylesheet.xsl" xslext="xml"/>
 ----
 
 '''
@@ -102,7 +102,7 @@ To generate an XML report using a custom stylesheet which needs some parameters:
 [source,xml]
 ----
 <ivy:repreport xsl="true" xslfile="my-custom-stylesheet.xsl" xslext="xml">
-    <param name="param1" expression="value1" /> 
-    <param name="param2" expression="value2" /> 
+    <param name="param1" expression="value1"/>
+    <param name="param2" expression="value2"/>
 </report>
 ----

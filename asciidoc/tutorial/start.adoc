@@ -17,7 +17,7 @@
    under the License.
 ////
 
-In this tutorial, you will see one of the simplest ways to use Ivy. With no specific settings, Ivy uses the maven 2 repository to resolve the dependencies you declare in an Ivy file. Let's have a look at the content of the files involved. 
+In this tutorial, you will see one of the simplest ways to use Ivy. With no specific settings, Ivy uses the maven 2 repository to resolve the dependencies you declare in an Ivy file. Let's have a look at the content of the files involved.
 
 _You'll find this tutorial's sources in the ivy distribution in the src/example/hello-ivy directory._
 
@@ -25,7 +25,7 @@ _You'll find this tutorial's sources in the ivy distribution in the src/example/
 == The ivy.xml file
 
 This file is used to describe the dependencies of the project on other libraries.
-Here is the sample: 
+Here is the sample:
 
 [source]
 ----
@@ -40,11 +40,11 @@ Here is the sample:
 
 ----
 
-The format of this file should pretty easy to understand, but let's give some details about what is declared here. First, the root element ivy-module, with the version attribute used to tell Ivy which version of Ivy this file uses. 
+The format of this file should pretty easy to understand, but let's give some details about what is declared here. First, the root element ivy-module, with the version attribute used to tell Ivy which version of Ivy this file uses.
 
 Then there is an info tag, which is used to give information about the module for which we are defining dependencies. Here we define only the organization and module name. You are free to choose whatever you want for them, but we recommend avoiding spaces for both.
 
-Finally, the dependencies section lets you define dependencies. Here this module depends on two libraries: commons-lang and commons-cli. As you can see, we use the `org` and `name` attributes to define the organization and module name of the dependencies we need. The `rev` attribute is used to specify the version of the module you depend on. 
+Finally, the dependencies section lets you define dependencies. Here this module depends on two libraries: commons-lang and commons-cli. As you can see, we use the `org` and `name` attributes to define the organization and module name of the dependencies we need. The `rev` attribute is used to specify the version of the module you depend on.
 
 To know what to put in these attributes, you need to know the exact information for the libraries you depend on. Ivy uses the maven 2 repository by default, so we recommend you use link:http://mvnrepository.com[mvnrepository.com] to look for the module you want. Once you find it, you will have the details on how to declare the dependency in a maven POM. For instance:
 
@@ -72,14 +72,14 @@ You can use the standard "ant -p" to get the list of available targets. Feel fre
 ----
 
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="hello-ivy" default="run">
-    
+
     ...
-    
-    <!-- ================================= 
-          target: resolve              
+
+    <!-- =================================
+          target: resolve
          ================================= -->
     <target name="resolve" description="--> retrieve dependencies with ivy">
-        <ivy:retrieve />
+        <ivy:retrieve/>
     </target>
 </project>
 
@@ -107,7 +107,7 @@ include::asciidoc/tutorial/log/hello-ivy-1.txt[]
 
 == What happened ?
 
-Without any settings, Ivy retrieves files from the maven 2 repository. That's what happened here. 
+Without any settings, Ivy retrieves files from the maven 2 repository. That's what happened here.
 The resolve task has found the commons-lang and commons-cli modules in the maven 2 repository, identified that commons-cli depends on commons-logging and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a .ivy2/cache directory). Finally, the retrieve task copies the resolved jars from the ivy cache to the default library directory of the project: the lib dir (you can change this easily by setting the pattern attribute on the link:../use/retrieve.html[retrieve] task).
 
 You might say that the task took a long time just to write out a "Hello Ivy!" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:

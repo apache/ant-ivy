@@ -41,8 +41,7 @@ When delivering an ivy file with such an inclusion, the included configuration f
 ----
 <ivy-module version="1.0">
   <info organisation="myorg"
-         module="mymodule"
-  />
+         module="mymodule"/>
   <configurations>
     <include file="path/to/included-configurations.xml"/>
     <conf name="conf3"/>

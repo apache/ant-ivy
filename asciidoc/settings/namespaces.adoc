@@ -45,5 +45,3 @@ This very powerful feature is thoroughly used in the link:../tutorial/build-repo
 |Element|Description|Cardinality
 |link:../settings/namespace.html[namespace]|defines a new namespace|0..n
 |=======
-
-

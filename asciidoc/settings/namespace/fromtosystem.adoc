@@ -32,5 +32,3 @@ Defines a one way translation rule, i.e. a translation from system namespace to 
 |link:../../settings/namespace/src.html[src]|defines a source name which can be accepted|1..n
 |link:../../settings/namespace/dest.html[dest]|defines the translation to apply when a name is accepted by an src pattern|1
 |=======
-
-

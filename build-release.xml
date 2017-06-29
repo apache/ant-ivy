@@ -17,10 +17,11 @@
    under the License.
 -->
 <project name="IvyRelease" default="snapshot"
-        xmlns:ivy="antlib:org.apache.ivy.ant"
-        xmlns:ivy2="antlib:org.apache.ivy.ant_2"
-        xmlns:asciidoctor="antlib:org.asciidoctor.ant"
-        xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:ivy2="antlib:org.apache.ivy.ant_2"
+         xmlns:asciidoctor="antlib:org.asciidoctor.ant"
+         xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
+
     <import file="build.xml"/>
 
     <macrodef name="run-tutorial">
@@ -314,7 +315,7 @@
             <zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar,bcpg-*.jar,bcprov*.jar"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin-with-deps.tar.gz"
-            compression="gzip" longfile="gnu">
+             compression="gzip" longfile="gnu">
             <zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin-with-deps.zip"/>
         </tar>
     </target>
@@ -336,14 +337,14 @@
             <mapping conf="test" scope="test"/>
         </ivy:makepom>
         <copy file="${artifacts.build.dir}/jars/${final.name}"
-                tofile="${m2.distrib.dir}/ivy-${build.version}.jar"/>
+              tofile="${m2.distrib.dir}/ivy-${build.version}.jar"/>
         <!-- jar javadocs -->
         <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar">
             <fileset dir="${javadoc.build.dir}"/>
         </jar>
         <!-- copy sources jar -->
         <copy file="${artifacts.build.dir}/sources/${final.name}"
-                tofile="${m2.distrib.dir}/ivy-${build.version}-sources.jar"/>
+              tofile="${m2.distrib.dir}/ivy-${build.version}-sources.jar"/>
 
         <checksum algorithm="md5">
             <fileset dir="${m2.distrib.dir}">
@@ -412,18 +413,18 @@
 
         <ivy2:settings id="sign.settingsId" file="ivysettings-release.xml"/>
         <ivy2:cachepath organisation="org.apache.commons" settingsRef="sign.settingsId" transitive="false" log="download-only"
-                module="commons-openpgp" revision="1.0-SNAPSHOT" inline="true" pathid="openpgp.classpath"/>
+                        module="commons-openpgp" revision="1.0-SNAPSHOT" inline="true" pathid="openpgp.classpath"/>
         <ivy2:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" log="download-only"
-                module="bcprov-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcprov.classpath"/>
+                        module="bcprov-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcprov.classpath"/>
         <ivy2:cachepath organisation="org.bouncycastle" settingsRef="sign.settingsId" transitive="false" log="download-only"
-                module="bcpg-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcpg.classpath"/>
+                        module="bcpg-jdk16" revision="1.45" inline="true" pathid="bouncycastle.bcpg.classpath"/>
 
         <!--
             For some reason, if we use the openpgp:signer task here directly, the bouncycastle security
             provider cannot be loaded. If we launch it as a forked process everything works fine !?!
         -->
         <java classname="org.apache.tools.ant.launch.Launcher"
-                fork="true">
+              fork="true">
             <classpath>
                 <fileset dir="${ant.home}" includes="**/*.jar"/>
                 <path refid="bouncycastle.bcprov.classpath"/>
@@ -535,10 +536,14 @@
     </target>
 
     <target name="prepare-snapshot"
-            depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, test-report" />
+            depends="/localivy,clean-ivy-home,clean,clean-lib,snapshot-version,install,clean-examples,test-report"/>
+
     <target name="snapshot"
             depends="prepare-snapshot,snapshot-src,snapshot-bin,snapshot-maven2,snapshot-checksums"
             description="used for nightly and integration builds"/>
-    <target name="release" depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot" description="make a new release of Ivy"/>
+
+    <target name="release"
+            depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot"
+            description="make a new release of Ivy"/>
 
 </project>

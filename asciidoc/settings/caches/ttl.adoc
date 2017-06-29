@@ -21,7 +21,7 @@
 
 *Tag:* ttl
 
-*__Since 2.0__* 
+*__Since 2.0__*
 
 Defines a TTL (Time To Live) rule for resolved revision caching.
 
@@ -42,7 +42,7 @@ XXd XXh XXm XXs XXXms
 
 Where 'd' stands for days, 'h' for hours, 'm' for minutes, 's' for seconds and 'ms' for milliseconds. Any part of the specification can be omitted, so '12d', '2h 5m' and '1d 5ms' are all valid.
 
-The TTL duration can also be set to `eternal`, in which case once resolved the revision is always use, except when resolving in refresh mode. 
+The TTL duration can also be set to `eternal`, in which case once resolved the revision is always use, except when resolving in refresh mode.
 
 Using a 0ms TTL disable resolved revision caching for the given rule.
 
@@ -60,5 +60,3 @@ Using a 0ms TTL disable resolved revision caching for the given rule.
 |matcher|the link:../../concept.html#matcher[matcher] to use to match the modules to which the resolver should be applied|No, defaults to exact
 |duration|the TTL to apply (see above for format)|Yes
 |=======
-
-

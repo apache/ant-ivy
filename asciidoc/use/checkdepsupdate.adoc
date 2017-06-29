@@ -43,7 +43,7 @@ Then:
 
 [source,xml]
 ----
-<checkdepsupdate />
+<checkdepsupdate/>
 ----
 
 will display the following updates in the console:
@@ -59,7 +59,7 @@ Same example with transitive dependencies :
 
 [source,xml]
 ----
-<checkdepsupdate showTransitive="true" />
+<checkdepsupdate showTransitive="true"/>
 ----
 
 will display the following updates in the console:

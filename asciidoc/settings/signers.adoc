@@ -26,7 +26,7 @@
 Defines a list of detached signature generators usable in ivy. Each generator is identified by its name, given as an attribute.
 The child tags used to configure the signature generator must be equal to the name of a signature generator type (either built-in or added with the typedef tag).
 
-Ivy supports the following signature generator out of the box: 
+Ivy supports the following signature generator out of the box:
 
 
 * pgp +
@@ -75,7 +75,7 @@ This generator is capable of generating an OpenPGP compatible ASCII armored deta
 ----
 
 <signers>
-    <pgp name="mypgp" password="my-password" />
+    <pgp name="mypgp" password="my-password"/>
 </signers>
 
 ----

@@ -19,7 +19,7 @@
 
 *Tag:* artifact *Parent:* link:../ivyfile/publications.html[publications]
 
-Declares an artifact published by this module. This is especially useful for other modules dependending on this one. They thus get all published artifacts belonging to the configurations asked. Indeed, each published artifact declares in which public configuration it is published. Thus a module depending on this module only get artifacts marked with the asked configurations, taking into account configurations extension (see link:../ivyfile/conf.html[configuration declaration]).
+Declares an artifact published by this module. This is especially useful for other modules depending on this one. They thus get all published artifacts belonging to the configurations asked. Indeed, each published artifact declares in which public configuration it is published. Thus a module depending on this module only get artifacts marked with the asked configurations, taking into account configurations extension (see link:../ivyfile/conf.html[configuration declaration]).
 
 The configurations in which an artifact is published can be configured in two ways:
 
@@ -31,7 +31,7 @@ The two are equivalent, it is only a matter of preference. However, do not mix b
 *__since 1.4__* The artifact element has default values for all its attributes, so if you want to declare a default artifact you can just declare it like that:
 [source,xml]
 ----
-<artifact />
+<artifact/>
 ----
 
 If this is the only artifact declared, then it's equivalent to having no publication section at all.
@@ -69,7 +69,7 @@ If this is the only artifact declared, then it's equivalent to having no publica
 
 [source,xml]
 ----
-<artifact />
+<artifact/>
 ----
 
 Declares an artifact with the name of the module as name, type and ext jar, and published in all configurations.
@@ -78,7 +78,7 @@ Declares an artifact with the name of the module as name, type and ext jar, and 
 
 [source,xml]
 ----
-<artifact name="foo-src" type="source" ext="zip" conf="src" />
+<artifact name="foo-src" type="source" ext="zip" conf="src"/>
 ----
 
 Declares an artifact `foo-src`, of type `source` with extension `zip`, and published in the `src` configuration.
@@ -87,7 +87,7 @@ Declares an artifact `foo-src`, of type `source` with extension `zip`, and publi
 
 [source,xml]
 ----
-<artifact name="foo" url="http://www.acme.com/repository/barbaz/foo-1.2-bar.jar" />
+<artifact name="foo" url="http://www.acme.com/repository/barbaz/foo-1.2-bar.jar"/>
 ----
 
 Declares an artifact `foo`, of type and extension `jar'` located at the url `$$http://www.acme.com/repository/barbaz/foo-1.2-bar.jar$$`. This url will only be used if the artifact cannot be found at its standard location.

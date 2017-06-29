@@ -15,7 +15,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -35,10 +35,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <html>
   <head>
     <title><xsl:value-of select="info/@module"/> by <xsl:value-of select="info/@organisation"/> :: Ivy description</title>
-    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
-    <meta http-equiv="content-language" content="en" />
-    <meta name="robots" content="index,follow" />
-    <link rel="stylesheet" type="text/css" href="ivy-style.css" /> 
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
+    <meta http-equiv="content-language" content="en"/>
+    <meta name="robots" content="index,follow"/>
+    <link rel="stylesheet" type="text/css" href="ivy-style.css"/>
   </head>
   <body>
     <div id="logo"><a href="http://ant.apache.org/ivy/"><img src="http://ant.apache.org/ivy/images/logo.png"/></a><br/><a id="rep" href="http://www.jayasoft.fr/org/ivyrep/">Ivy Repository</a></div>
@@ -48,13 +48,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	            <xsl:attribute name="href">http://www.jayasoft.fr/org/ivyrep/<xsl:value-of select="info/@organisation"/>/<xsl:value-of select="info/@module"/>/</xsl:attribute>
 	            <xsl:value-of select="info/@module"/>
 	        </xsl:element>
-    </span> 
-    by 
+    </span>
+    by
     <span id="organisation">
 	        <xsl:element name="a">
 	            <xsl:attribute name="href">http://www.jayasoft.fr/org/ivyrep/<xsl:value-of select="info/@organisation"/>/</xsl:attribute>
 	            <xsl:value-of select="info/@organisation"/>
-	        </xsl:element> 
+	        </xsl:element>
     </span></h1>
     <div id="revision"><span id="revision">Revision: </span><xsl:value-of select="info/@revision"/></div>
     <table class="header">
@@ -95,7 +95,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </td></tr>
     <tr><td class="title">Description</td><td class="value"><xsl:copy-of select="info/description"/></td></tr>
     </table>
-    
+
     <xsl:if test="count($repositories) > 0">
     <div id="repositories">
     <h2>Public Repositories</h2>
@@ -128,7 +128,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </table>
     </div>
     </xsl:if>
-    
+
     <div id="public-confs" class="conf">
     <h2>Public Configurations</h2>
     <table>
@@ -157,7 +157,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </tbody>
     </table>
     </div>
-    
+
     <xsl:if test="count($deprecated.conf) > 0">
     <div id="deprecated-confs" class="conf">
     <h2>Deprecated Configurations</h2>
@@ -181,7 +181,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </table>
     </div>
     </xsl:if>
-    
+
     <xsl:if test="count($private.conf) > 0">
     <div id="deprecated-confs" class="conf">
     <h2>Private Configurations</h2>
@@ -205,7 +205,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </table>
     </div>
     </xsl:if>
-    
+
     <div id="artifacts">
     <h2>Published Artifacts</h2>
     <table>
@@ -224,13 +224,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <td>
           <xsl:value-of select="@conf"/>
           <xsl:for-each select="conf">
-            <xsl:if test="position() > 1">, 
+            <xsl:if test="position() > 1">,
             </xsl:if>
             <xsl:value-of select="@name"/>
           </xsl:for-each>
           <xsl:if test="not(@conf) and count(conf) = 0">
           <i>all</i>
-          </xsl:if> 
+          </xsl:if>
       </td>
     </tr>
     </xsl:for-each>
@@ -242,7 +242,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </tbody>
     </table>
     </div>
-    
+
     <xsl:if test="count($dependencies) > 0">
     <div id="dependencies">
     <h2>Dependencies</h2>
@@ -273,8 +273,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </table>
     </div>
     </xsl:if>
-    
-    
+
+
   </body>
   </html>
 </xsl:template>

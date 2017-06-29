@@ -126,6 +126,3 @@ There are two main possibilities for using these rules. By default, a namespace 
 </namespace>
 
 ----
-
-
-

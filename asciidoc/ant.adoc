@@ -41,7 +41,7 @@ If you use ant *1.5.1* or superior, you have to define the tasks you use in your
   <taskdef name="ivy-configure" classname="org.apache.ivy.ant.IvyConfigure"/>
   <taskdef name="ivy-resolve" classname="org.apache.ivy.ant.IvyResolve"/>
   <taskdef name="ivy-retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>
-  <taskdef name="ivy-deliver" classname="org.apache.ivy.ant.IvyDeliver"/> 
+  <taskdef name="ivy-deliver" classname="org.apache.ivy.ant.IvyDeliver"/>
   <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/>
 ----
 
@@ -57,7 +57,7 @@ Once your build file is ok to call ivy tasks, the simplest way to use ivy is to 
 
 [source,xml]
 ----
-<ivy:retrieve />
+<ivy:retrieve/>
 ----
 
 This calls ivy with default values, which might be ok in several projects. In fact, it is equivalent to:
@@ -65,11 +65,11 @@ This calls ivy with default values, which might be ok in several projects. In fa
 [source,xml]
 ----
 <target name="resolve">
-    <ivy:configure />
-    
-    <ivy:resolve file="${ivy.dep.file}" conf="${ivy.configurations}" />
-    
-    <ivy:retrieve pattern="${ivy.retrieve.pattern}" conf="${ivy.configurations}" />
+    <ivy:configure/>
+
+    <ivy:resolve file="${ivy.dep.file}" conf="${ivy.configurations}"/>
+
+    <ivy:retrieve pattern="${ivy.retrieve.pattern}" conf="${ivy.configurations}"/>
 </target>
 ----
 
@@ -87,7 +87,7 @@ ivy.project.dir = ${basedir}
 ivy.lib.dir = ${ivy.project.dir}/lib
 ivy.build.artifacts.dir = ${ivy.project.dir}/build/artifacts
 ivy.distrib.dir = ${ivy.project.dir}/distrib
-	
+
 ivy.resolver.default.check.modified = false
 ivy.default.always.check.exact.revision = true
 
@@ -139,33 +139,33 @@ Here is a more complete example of build file using Ivy:
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="sample" default="resolve">
 
     <target name="resolve">
-        <ivy:configure file="../ivysettings.xml" />
-        
-        <ivy:resolve file="my-ivy.xml" conf="default, myconf" />
-        
+        <ivy:configure file="../ivysettings.xml"/>
+
+        <ivy:resolve file="my-ivy.xml" conf="default, myconf"/>
+
     </target>
-    
+
     <target name="retrieve-default" depends="resolve">
-        <ivy:retrieve pattern="lib/default/[artifact]-[revision].[ext]" conf="default" />
+        <ivy:retrieve pattern="lib/default/[artifact]-[revision].[ext]" conf="default"/>
     </target>
 
     <target name="retrieve-myconf" depends="resolve">
-        <ivy:retrieve pattern="lib/myconf/[artifact]-[revision].[ext]" conf="myconf" />
+        <ivy:retrieve pattern="lib/myconf/[artifact]-[revision].[ext]" conf="myconf"/>
     </target>
 
     <target name="retrieve-all" depends="resolve">
-        <ivy:retrieve pattern="lib/[conf]/[artifact]-[revision].[ext]" conf="*" />
+        <ivy:retrieve pattern="lib/[conf]/[artifact]-[revision].[ext]" conf="*"/>
     </target>
 
     <target name="deliver" depends="retrieve-all">
         <ivy:deliver deliverpattern="distrib/[artifact]-[revision].[ext]"
-                     pubrevision="1.1b4" pubdate="20050115123254" status="milestone" />
+                     pubrevision="1.1b4" pubdate="20050115123254" status="milestone"/>
     </target>
 
     <target name="publish" depends="deliver">
-        <ivy:publish resolver="internal" 
-                     artifactspattern="distrib/[artifact]-[revision].[ext]" 
-                     pubrevision="1.1b4" />
+        <ivy:publish resolver="internal"
+                     artifactspattern="distrib/[artifact]-[revision].[ext]"
+                     pubrevision="1.1b4"/>
     </target>
 </project>
 ----

@@ -55,4 +55,3 @@ For details about regexp and groups, see the link:https://docs.oracle.com/javase
 ----
 
 Matches modules from `systemorg2` which have a name beginning with `system` followed by a `minus` and anything else, and translate it to organisation `B` and module the part following `system-` of the original name.
-

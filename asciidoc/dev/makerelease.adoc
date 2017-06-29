@@ -92,7 +92,7 @@ You can also do a smoke test with the generated ivy.jar, to see if it is able to
 
 ==== 6. Sign the artifacts
 
-It's now time to sign the release artifacts and upload them to a location accessible by other Apache commiters.
+It's now time to sign the release artifacts and upload them to a location accessible by other Apache committers.
 
 Here is a simple way to sign the files using gnupg:
 
@@ -110,7 +110,7 @@ Here is a ruby script you can use to sign the files:
 
 require 'find'
 
-Find.find('build/distrib') do |f| 
+Find.find('build/distrib') do |f|
     `gpg --armor --output #{f}.asc --detach-sig #{f}` if File.file?(f) && ['.zip', '.gz', '.jar', '.pom'].include?(File.extname(f))
 end
 
@@ -154,7 +154,7 @@ ant -f build-release.xml upload-nexus
 
 ----
 
-Once uploaded, log in https://repository.apache.org/ with your prefered web browser (use your Apache ID).
+Once uploaded, log in https://repository.apache.org/ with your preferred web browser (use your Apache ID).
 
 You should find there an __open__ repository with the name of the form `orgapacheant-XXXX`. It should contain the Maven artifacts: the pom, the jar, the sources, the javadocs and the md5 and asc files.
 
@@ -179,7 +179,7 @@ And push the changes to the ASF repo
 [source]
 ----
 
-git push --tags 
+git push --tags
 
 ----
 
@@ -229,13 +229,13 @@ $ svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.ap
 
 ----
 
-In order to keep the main dist area of a reasonable size, old releases should be removed. They will disapear from the main dist but will still be available via the link:http://archive.apache.org/dist/ant/ivy/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
+In order to keep the main dist area of a reasonable size, old releases should be removed. They will disappear from the main dist but will still be available via the link:http://archive.apache.org/dist/ant/ivy/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
 
 
 ==== 13. Promote the Maven staging repository
 
 
-Go log in https://repository.apache.org/ with your prefered web browser (use your Apache ID).
+Go log in https://repository.apache.org/ with your preferred web browser (use your Apache ID).
 
 Select the appropriate `orgapacheant-XXXX` repository and select the __Release__ action.
 
@@ -293,9 +293,9 @@ ant /all generate-site
 
 ----
 
-You should verify that the site generated in the production directory is OK. You can open the files with your prefered web browser like it was deployed.
+You should verify that the site generated in the production directory is OK. You can open the files with your preferred web browser like it was deployed.
 
-And once your happy with it, commit the changes in the source directory, and in the production directoy to get it actually deployed via svnpubsub.
+And once your happy with it, commit the changes in the source directory, and in the production directory to get it actually deployed via svnpubsub.
 
 Tip: lot's of files might need to be 'added' to svn. An handy command to `add` any file which is not yet under version control is the following one:
 

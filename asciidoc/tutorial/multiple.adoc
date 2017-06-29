@@ -45,11 +45,11 @@ It depends on two libraries: Apache's commons-lang and a custom library named te
 
 Here is the content of the project:
 
-  
+
 * build.xml: the ant build file for the project +
-  
+
 * ivy.xml: the Ivy project file +
-  
+
 * src\example\Hello.java: the only class of the project +
 
 Let's have a look at the *ivy.xml* file:
@@ -83,9 +83,9 @@ The settings are defined in the ivysettings.xml file located in the settings dir
   <resolvers>
     <chain name="chain-example">
       <filesystem name="libraries">
-        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[ext]" />
+        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[ext]"/>
       </filesystem>
-      <ibiblio name="ibiblio" m2compatible="true" />
+      <ibiblio name="ibiblio" m2compatible="true"/>
     </chain>
   </resolvers>
 </ivysettings>
@@ -103,9 +103,9 @@ This tag initializes Ivy with some parameters. Here only one parameter is set, t
 The resolvers section defines the list of resolvers that Ivy will use to locate artifacts. In our example, we have only one resolver named "chain-example", which is unique in that it defines a list (hence a chain) of resolvers.
 The resolvers in this chain are:
 
-  
+
 * libraries : It is a filesystem resolver, so looks at a directory structure to retrieve the artifacts. This one is configured to look in the `repository` sub directory of the directory that contains the `ivysettings.xml` file. +
-  
+
 * ibiblio : It looks in the ibiblio maven repository to retrieve the artifacts. +
 
 
@@ -132,7 +132,7 @@ This will clean up the entire project directory tree and Ivy cache. You can do t
 [NOTE]
 ====
 
-In almost all examples, we provide a clean target as default target. Since most examples use the same Ivy cache, you will clean the whole Ivy cache each time you call this target. 
+In almost all examples, we provide a clean target as default target. Since most examples use the same Ivy cache, you will clean the whole Ivy cache each time you call this target.
 
 Cleaning the Ivy cache is something you can do without fear (except performance): it's only a cache, so everything can be (and should be) obtained again from repositories. This may sound strange to those coming from maven 2 land. But remember that in Ivy, the cache is not a local repository and the two are completely isolated.
 
@@ -155,7 +155,7 @@ include::asciidoc/tutorial/log/chained-resolvers.txt[]
 
 
 
-We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the Ivy cache directory (2 downloaded). 
+We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the Ivy cache directory (2 downloaded).
 
 Also notice that the 'run' Ant target succeeded in using both commons-lang.jar coming from the ibiblio repository and test.jar coming from the local repository.
 

@@ -92,7 +92,7 @@ An artifact is _a single file_ ready for delivery with the publication of a modu
 
 Compressed package formats are often preferred because they are easier to manage, transfer and store. For the same reasons, only one or a few artifacts per module are commonly used. However, artifacts can be of any file type and any number of them can be declared in a single module.
 
-In the Java world, common artifacts are Java archives or JAR files. In many cases, each revision of a module publishes only one artifact (like jakarta-log4j-1.2.6.tar.gz, for instance), but some of them publish many artifacts dependending on the use of the module (like apache-ant binary and source distributions in zip, gz and bz2 package formats, for instance).
+In the Java world, common artifacts are Java archives or JAR files. In many cases, each revision of a module publishes only one artifact (like jakarta-log4j-1.2.6.tar.gz, for instance), but some of them publish many artifacts depending on the use of the module (like apache-ant binary and source distributions in zip, gz and bz2 package formats, for instance).
 
 __Examples: ant-1.7.0-bin.zip, apache-ant-1.7.0-src.tar.gz __
 
@@ -141,20 +141,20 @@ A module's status indicates how stable a module revision can be considered. It c
 Three statuses are defined by default in Ivy:
 
 
-* *integration*: revisions builded by a continuous build, a nightly build, and so on, fall in this category +
+* *integration*: revisions built by a continuous build, a nightly build, and so on, fall in this category +
 
 * *milestone*: revisions delivered to the public but not actually finished fall in this category +
 
 * *release*: a revision fully tested and labelled fall in this category +
 
-*__Since 1.4__* This list is link:configuration/statuses.html[configurable] in your settings file.
+*__Since 1.4__* This list is link:settings/statuses.html[configurable] in your settings file.
 
 == [[configurations]]Configurations of a module
 
 A _module configuration_ is a way to use or construct a module. If the same module has different dependencies based on how it's used, those distinct dependency-sets are called its configurations in Ivy.
 
 Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server).
-Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in ivy. 
+Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in ivy.
 
 For more details on configurations and how they are used in ivy, please refer to the link:concept.html[main concepts page].
 

@@ -14,20 +14,20 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
 
-    <settings defaultResolver="eclipse-juno" defaultLatestStrategy="latest-osgi" />
+    <settings defaultResolver="eclipse-juno" defaultLatestStrategy="latest-osgi"/>
 
     <!-- These are usual cache setup -->
     <caches resolutionCacheDir="${ivy.settings.dir}/cache/resolution" useOrigin="true">
-        <cache name="eclipse-juno" basedir="${ivy.settings.dir}/cache/eclipse-juno" />
+        <cache name="eclipse-juno" basedir="${ivy.settings.dir}/cache/eclipse-juno"/>
     </caches>
 
     <!-- The resolvers from which we will find our bundles -->
     <resolvers>
-        <updatesite name="eclipse-juno" url="http://download.eclipse.org/releases/juno" cache="eclipse-juno" requirementStrategy="first" />
+        <updatesite name="eclipse-juno" url="http://download.eclipse.org/releases/juno" cache="eclipse-juno" requirementStrategy="first"/>
     </resolvers>
 
 </ivysettings>

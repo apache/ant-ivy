@@ -25,8 +25,7 @@ Here is the simplest ivy file you can write:
 ----
 <ivy-module version="2.0">
   <info organisation="myorg"
-        module="mymodule"
-        />
+        module="mymodule"/>
 </ivy-module>
 ----
 
@@ -39,13 +38,12 @@ For those familiar with xml schema, the schema used to validate ivy files can be
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
-<ivy-module version="2.0" 
+<ivy-module version="2.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation=
                    "http://ant.apache.org/ivy/schemas/ivy.xsd">
   <info organisation="myorg"
-        module="mymodule"
-        />
+        module="mymodule"/>
 </ivy-module>
 ----
 

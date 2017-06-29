@@ -103,7 +103,7 @@ module C revision 2.5 depends on module D with the version constraint [1.0,1.6].
 
 
 
-As you can see, using text conventions is much more concise. 
+As you can see, using text conventions is much more concise.
 
 Another benefit is that these conventions are usually used in Ivy console output, and can also be used in some cases to be parsed into Ivy objects (we use it for test cases for instance). To make sure text parsing works fine, we recommend using only a limited range of characters for each attributes of your module identifiers.
 
@@ -130,4 +130,3 @@ Here is the recommended characters set for each attribute:
 
 * type +
  a-z A-Z 0-9 - / . _ + =
-

@@ -108,10 +108,10 @@ By using such a resolver at the beginning of a chain, you can be sure that Ivy w
 ==== Maven
 
 
-Any resolver which is able to parse a Maven pom.xml file has to detect the related sources or javadocs artifacts. This often involves sevrals network connection even if neither the sources nor the javadoc are requested to be downloaded.
+Any resolver which is able to parse a Maven pom.xml file has to detect the related sources or javadocs artifacts. This often involves several network connections even if neither the sources nor the javadoc are requested to be downloaded.
 
-*__since 2.5__* Setting the property `ivy.maven.lookup.sources` to `false` disable the lookup of the sources artifact. 
-And setting the property `ivy.maven.lookup.javadoc` to `false` disable the lookup of the javadoc artifact. 
+*__since 2.5__* Setting the property `ivy.maven.lookup.sources` to `false` disable the lookup of the sources artifact.
+And setting the property `ivy.maven.lookup.javadoc` to `false` disable the lookup of the javadoc artifact.
 
 
 === Attributes
@@ -127,7 +127,7 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 |changingPattern|Indicates for which revision pattern this resolver should check lastmodified date to know if an artifact file is up to date. *__since 1.4__*. See link:../concept.html#change[cache and change management] for details.|No, defaults to none|Yes|Yes
 |changingMatcher|The name of the link:../concept.html#matcher[pattern matcher] to use to match a revision against the configured changingPattern. *__since 1.4__*. See link:../concept.html#change[cache and change management] for details.|No, defaults to exactOrRegexp|Yes|Yes
 |alwaysCheckExactRevision|Indicates if this resolver should check the given revision even if it's a special one (like latest.integration). *__since 1.3__*|No, defaults to ${ivy.default.always.check.exact.revision}|No|Yes
-|namespace|The name of the namespace to which this resolver belons *__since 1.3__*|No, defaults to 'system'|Yes|Yes
+|namespace|The name of the namespace to which this resolver belongs *__since 1.3__*|No, defaults to 'system'|Yes|Yes
 |checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check *__since 1.3__*|No, defaults to true|No|Yes
 |descriptor|'optional' if a module descriptor (usually an ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor *__since 2.0__*|No, defaults to 'optional'|No (except dual)|Yes
 |allownomd|_DEPRECATED. Use descriptor="required | optional" instead._
@@ -164,4 +164,3 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 ----
 
 Defines a filesystem resolver, named `1`, which is then used in two chains, the first which combines the filesystem resolver with an ivyrep resolver, and second which combines the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver `1` will use a cache named `cache-1` which should have been defined under the caches element.
-

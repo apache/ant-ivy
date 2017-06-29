@@ -32,7 +32,7 @@
 
 [source,xml]
 ----
-    <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml" />
+    <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml"/>
 ----
 
 Just convert an pom.xml file into an ivy.xml.

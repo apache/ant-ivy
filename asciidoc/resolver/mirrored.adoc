@@ -40,7 +40,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |=======
 |Attribute|Description|Required
 |m2compatible|True if this resolver should be maven2 compatible, false otherwise|No, defaults to false
-|mirrorListUrl|The url where to retrive the list of mirror urls.|Yes
+|mirrorListUrl|The url where to retrieve the list of mirror urls.|Yes
 |=======
 
 
@@ -75,7 +75,7 @@ And the piece of settings:
 ----
 
 <mirroredurl name="mirrored-maven" m2compatible="true" mirrorListUrl="file:///Users/me/dev/repo/mavenrepolist.txt">
-      <artifact pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+      <artifact pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
 </mirroredurl>
 
 ----
@@ -92,9 +92,8 @@ The mirror list can be retrieved from a geo-location aware url:
 ----
 
 <mirroredurl name="mirrored-asf" mirrorListUrl="http://www.apache.org/dyn/closer.cgi">
-  <ivy pattern="repo/[organisation]/[module]/[revision]/ivy.xml" />
-  <artifact pattern="repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+  <ivy pattern="repo/[organisation]/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
 </mirroredurl>
 
 ----
-

@@ -49,4 +49,3 @@ Gives identification and basic information about the module this ivy file descri
 |=======
 
 After the description, you can also place your own tags in your own namespace.  This allow to provide some custom information about the module.
-
