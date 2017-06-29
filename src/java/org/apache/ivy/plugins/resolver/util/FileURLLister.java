@@ -52,10 +52,10 @@ public class FileURLLister implements URLLister {
         File file = basedir == null ? new File(path) : new File(basedir, path);
         if (file.exists() && file.isDirectory()) {
             String[] files = file.list();
-            List<URL> ret = new ArrayList<URL>(files.length);
+            List<URL> ret = new ArrayList<>(files.length);
             URL context = url.getPath().endsWith("/") ? url : new URL(url.toExternalForm() + "/");
-            for (int i = 0; i < files.length; i++) {
-                ret.add(new URL(context, files[i]));
+            for (String fileName : files) {
+                ret.add(new URL(context, fileName));
             }
             return ret;
         } else {

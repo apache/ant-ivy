@@ -33,7 +33,7 @@ public class FixedConflictManager extends AbstractConflictManager {
     }
 
     public Collection<IvyNode> resolveConflicts(IvyNode parent, Collection<IvyNode> conflicts) {
-        Collection<IvyNode> resolved = new ArrayList<IvyNode>(conflicts.size());
+        Collection<IvyNode> resolved = new ArrayList<>(conflicts.size());
         for (IvyNode node : conflicts) {
             String revision = node.getResolvedId().getRevision();
             if (revisions.contains(revision)) {

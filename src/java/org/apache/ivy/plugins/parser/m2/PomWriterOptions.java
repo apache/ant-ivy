@@ -37,7 +37,7 @@ public class PomWriterOptions {
 
     private String artifactPackaging;
 
-    private List<ExtraDependency> extraDependencies = new ArrayList<ExtraDependency>();
+    private List<ExtraDependency> extraDependencies = new ArrayList<>();
 
     private String description;
 
@@ -132,7 +132,7 @@ public class PomWriterOptions {
 
         public ConfigurationScopeMapping(Map<String, String> scopesMapping) {
             // preserve the order
-            this.scopes = new LinkedHashMap<String, String>(scopesMapping);
+            this.scopes = new LinkedHashMap<>(scopesMapping);
         }
 
         /**
@@ -143,9 +143,9 @@ public class PomWriterOptions {
          * @return the scope to which the conf is mapped
          */
         public String getScope(String[] confs) {
-            for (int i = 0; i < confs.length; i++) {
-                if (scopes.containsKey(confs[i])) {
-                    return scopes.get(confs[i]);
+            for (String conf : confs) {
+                if (scopes.containsKey(conf)) {
+                    return scopes.get(conf);
                 }
             }
 

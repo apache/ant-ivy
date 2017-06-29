@@ -50,18 +50,16 @@ public class LogReportOutputter implements ReportOutputter {
 
         if (settings.logModulesInUse() && ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info("\t:: modules in use:");
-            List dependencies = new ArrayList(report.getDependencies());
+            List<IvyNode> dependencies = new ArrayList<>(report.getDependencies());
             Collections.sort(dependencies);
             if (dependencies.size() > 0) {
                 String[] confs = report.getConfigurations();
-                for (int i = 0; i < dependencies.size(); i++) {
-                    IvyNode node = (IvyNode) dependencies.get(i);
+                for (IvyNode node : dependencies) {
                     if (node.isCompletelyEvicted() || node.hasProblem()) {
                         continue;
                     }
-                    List nodeConfs = new ArrayList(confs.length);
-                    for (int j = 0; j < confs.length; j++) {
-                        String conf = confs[j];
+                    List<String> nodeConfs = new ArrayList<>(confs.length);
+                    for (String conf : confs) {
                         if (report.getConfigurationReport(conf).getModuleRevisionIds()
                                 .contains(node.getResolvedId())) {
                             nodeConfs.add(conf);
@@ -77,22 +75,21 @@ public class LogReportOutputter implements ReportOutputter {
 
         if (evicted.length > 0 && ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info("\t:: evicted modules:");
-            for (int i = 0; i < evicted.length; i++) {
-                Collection allEvictingNodes = evicted[i].getAllEvictingNodesDetails();
+            for (IvyNode evictedNode : evicted) {
+                Collection<String> allEvictingNodes = evictedNode.getAllEvictingNodesDetails();
                 if (allEvictingNodes == null) {
-                    Message.info("\t" + evicted[i] + " transitively in "
-                            + Arrays.asList(evicted[i].getEvictedConfs()));
+                    Message.info("\t" + evictedNode + " transitively in "
+                            + Arrays.asList(evictedNode.getEvictedConfs()));
                 } else if (allEvictingNodes.isEmpty()) {
-                    Message.info("\t" + evicted[i] + " by [] ("
-                            + evicted[i].getAllEvictingConflictManagers() + ") in "
-                            + Arrays.asList(evicted[i].getEvictedConfs()));
+                    Message.info(
+                        "\t" + evictedNode + " by [] (" + evictedNode.getAllEvictingConflictManagers()
+                                + ") in " + Arrays.asList(evictedNode.getEvictedConfs()));
                 } else {
-                    Message.info("\t" + evicted[i] + " by " + allEvictingNodes + " in "
-                            + Arrays.asList(evicted[i].getEvictedConfs()));
+                    Message.info("\t" + evictedNode + " by " + allEvictingNodes + " in "
+                            + Arrays.asList(evictedNode.getEvictedConfs()));
                 }
-                String[] confs = evicted[i].getEvictedConfs();
-                for (int j = 0; j < confs.length; j++) {
-                    EvictionData evictedData = evicted[i].getEvictedData(confs[j]);
+                for (String conf : evictedNode.getEvictedConfs()) {
+                    EvictionData evictedData = evictedNode.getEvictedData(conf);
                     if (evictedData.getParent() != null) {
                         Message.verbose("\t  in " + evictedData.getParent() + " with "
                                 + evictedData.getConflictManager());
@@ -128,9 +125,8 @@ public class LogReportOutputter implements ReportOutputter {
             Message.rawinfo(line.toString());
             Message.rawinfo("\t" + new String(sep));
 
-            String[] confs = report.getConfigurations();
-            for (int i = 0; i < confs.length; i++) {
-                output(report.getConfigurationReport(confs[i]));
+            for (String conf : report.getConfigurations()) {
+                output(report.getConfigurationReport(conf));
             }
             Message.rawinfo("\t" + new String(sep));
         }
@@ -141,8 +137,8 @@ public class LogReportOutputter implements ReportOutputter {
             Message.warn("\t::          UNRESOLVED DEPENDENCIES         ::");
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::");
         }
-        for (int i = 0; i < unresolved.length; i++) {
-            Message.warn("\t:: " + unresolved[i] + ": " + unresolved[i].getProblemMessage());
+        for (IvyNode anUnresolved : unresolved) {
+            Message.warn("\t:: " + anUnresolved + ": " + anUnresolved.getProblemMessage());
         }
         if (unresolved.length > 0) {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::\n");
@@ -155,8 +151,8 @@ public class LogReportOutputter implements ReportOutputter {
             Message.warn("\t:: ^ see resolution messages for details  ^ ::");
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::");
         }
-        for (int i = 0; i < errors.length; i++) {
-            Message.warn("\t:: " + errors[i].getArtifact());
+        for (ArtifactDownloadReport error : errors) {
+            Message.warn("\t:: " + error.getArtifact());
         }
         if (errors.length > 0) {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::\n");

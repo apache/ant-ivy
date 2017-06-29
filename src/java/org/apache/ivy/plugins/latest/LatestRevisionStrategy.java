@@ -154,10 +154,10 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
 
     private static final Map<String, Integer> DEFAULT_SPECIAL_MEANINGS;
     static {
-        DEFAULT_SPECIAL_MEANINGS = new HashMap<String, Integer>();
-        DEFAULT_SPECIAL_MEANINGS.put("dev", new Integer(-1));
-        DEFAULT_SPECIAL_MEANINGS.put("rc", new Integer(1));
-        DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
+        DEFAULT_SPECIAL_MEANINGS = new HashMap<>();
+        DEFAULT_SPECIAL_MEANINGS.put("dev", -1);
+        DEFAULT_SPECIAL_MEANINGS.put("rc", 1);
+        DEFAULT_SPECIAL_MEANINGS.put("final", 2);
     }
 
     private final Comparator<ModuleRevisionId> mridComparator = new MridComparator();
@@ -180,7 +180,7 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
 
     public synchronized Map<String, Integer> getSpecialMeanings() {
         if (specialMeanings == null) {
-            specialMeanings = new HashMap<String, Integer>();
+            specialMeanings = new HashMap<>();
             if (isUsedefaultspecialmeanings()) {
                 specialMeanings.putAll(DEFAULT_SPECIAL_MEANINGS);
             }

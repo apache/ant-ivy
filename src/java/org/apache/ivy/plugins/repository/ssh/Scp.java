@@ -154,7 +154,7 @@ public class Scp {
     }
 
     private String receiveLine(InputStream is) throws IOException, RemoteScpException {
-        StringBuffer sb = new StringBuffer(DEFAULT_LINE_BUFFER_LENGTH);
+        StringBuilder sb = new StringBuilder(DEFAULT_LINE_BUFFER_LENGTH);
 
         while (true) {
 
@@ -290,8 +290,8 @@ public class Scp {
             } else {
                 channel.connect();
             }
-        } catch (JSchException e1) {
-            throw (IOException) new IOException("Channel connection problems").initCause(e1);
+        } catch (JSchException jsche) {
+            throw new IOException("Channel connection problems", jsche);
         }
 
         readResponse(is);
@@ -375,8 +375,8 @@ public class Scp {
             } else {
                 channel.connect();
             }
-        } catch (JSchException e1) {
-            throw (IOException) new IOException("Channel connection problems").initCause(e1);
+        } catch (JSchException jsche) {
+            throw new IOException("Channel connection problems", jsche);
         }
         os.write(0x0);
         os.flush();
@@ -452,7 +452,7 @@ public class Scp {
 
     /**
      * @return ChannelExec
-     * @throws JSchException
+     * @throws JSchException if something goes wrong
      */
     private ChannelExec getExecChannel() throws JSchException {
         ChannelExec channel;
@@ -515,8 +515,7 @@ public class Scp {
             if (channel != null) {
                 channel.disconnect();
             }
-            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
-                    .initCause(e);
+            throw new IOException("Error during SCP transfer." + e.getMessage(), e);
         }
     }
 
@@ -570,8 +569,7 @@ public class Scp {
             if (channel != null) {
                 channel.disconnect();
             }
-            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
-                    .initCause(e);
+            throw new IOException("Error during SCP transfer. " + e.getMessage(), e);
         }
     }
 
@@ -602,8 +600,7 @@ public class Scp {
             fileInfo = receiveStream(channel, remoteFile, null);
             channel.disconnect();
         } catch (JSchException e) {
-            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
-                    .initCause(e);
+            throw new IOException("Error during SCP transfer. " + e.getMessage(), e);
         } finally {
             if (channel != null) {
                 channel.disconnect();

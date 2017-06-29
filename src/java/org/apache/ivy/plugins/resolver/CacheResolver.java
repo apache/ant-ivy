@@ -107,13 +107,13 @@ public class CacheResolver extends FileSystemResolver {
         ensureConfigured();
         clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();
-        for (int i = 0; i < artifacts.length; i++) {
-            final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
+        for (Artifact artifact : artifacts) {
+            final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
             dr.addArtifactReport(adr);
-            ResolvedResource artifactRef = getArtifactRef(artifacts[i], null);
+            ResolvedResource artifactRef = getArtifactRef(artifact, null);
             if (artifactRef != null) {
-                Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
-                ArtifactOrigin origin = new ArtifactOrigin(artifacts[i], true, artifactRef
+                Message.verbose("\t[NOT REQUIRED] " + artifact);
+                ArtifactOrigin origin = new ArtifactOrigin(artifact, true, artifactRef
                         .getResource().getName());
                 File archiveFile = ((FileResource) artifactRef.getResource()).getFile();
                 adr.setDownloadStatus(DownloadStatus.NO);
@@ -173,14 +173,14 @@ public class CacheResolver extends FileSystemResolver {
             setIvyPatterns(new ArrayList<String>());
             setArtifactPatterns(new ArrayList<String>());
             RepositoryCacheManager[] caches = getSettings().getRepositoryCacheManagers();
-            for (int i = 0; i < caches.length; i++) {
-                if (caches[i] instanceof DefaultRepositoryCacheManager) {
-                    DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) caches[i];
+            for (RepositoryCacheManager cache : caches) {
+                if (cache instanceof DefaultRepositoryCacheManager) {
+                    DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) cache;
                     addIvyPattern(c.getBasedir().getAbsolutePath() + "/" + c.getIvyPattern());
                     addArtifactPattern(c.getBasedir().getAbsolutePath() + "/"
                             + c.getArtifactPattern());
                 } else {
-                    Message.verbose(caches[i]
+                    Message.verbose(cache
                             + ": cache implementation is not a DefaultRepositoryCacheManager:"
                             + " unable to configure cache resolver with it");
                 }

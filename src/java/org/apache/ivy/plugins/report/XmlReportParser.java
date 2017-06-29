@@ -65,7 +65,7 @@ public class XmlReportParser {
             private boolean isDefault;
 
             // Use a TreeMap to order by
-            private SortedMap<Integer, List<ArtifactDownloadReport>> revisionsMap = new TreeMap<Integer, List<ArtifactDownloadReport>>();
+            private SortedMap<Integer, List<ArtifactDownloadReport>> revisionsMap = new TreeMap<>();
 
             private List<ArtifactDownloadReport> revisionArtifacts = null;
 
@@ -75,7 +75,7 @@ public class XmlReportParser {
                     organisation = attributes.getValue("organisation");
                     module = attributes.getValue("name");
                 } else if ("revision".equals(qName)) {
-                    revisionArtifacts = new ArrayList<ArtifactDownloadReport>();
+                    revisionArtifacts = new ArrayList<>();
                     branch = attributes.getValue("branch");
                     revision = attributes.getValue("name");
                     isDefault = Boolean.valueOf(attributes.getValue("default"));
@@ -83,14 +83,14 @@ public class XmlReportParser {
                     // report generated with a previous version,
                     // in which case, we put it at the last position
                     String pos = attributes.getValue("position");
-                    position = pos == null ? getMaxPos() + 1 : Integer.valueOf(pos).intValue();
+                    position = pos == null ? getMaxPos() + 1 : Integer.valueOf(pos);
                     if (attributes.getValue("error") != null) {
                         hasError = true;
                         skip = true;
                     } else if (attributes.getValue("evicted") != null) {
                         skip = true;
                     } else {
-                        revisionsMap.put(new Integer(position), revisionArtifacts);
+                        revisionsMap.put(position, revisionArtifacts);
                         mrid = ModuleRevisionId.newInstance(organisation, module, branch, revision,
                             ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
                         mrids.add(mrid);
@@ -186,7 +186,7 @@ public class XmlReportParser {
                     String name = attributes.getValue("module");
                     String branch = attributes.getValue("branch");
                     String revision = attributes.getValue("revision");
-                    Map<String, String> extraAttributes = new HashMap<String, String>();
+                    Map<String, String> extraAttributes = new HashMap<>();
                     for (int i = 0; i < attributes.getLength(); i++) {
                         String attName = attributes.getQName(i);
                         if (attName.startsWith("extra-")) {
@@ -217,22 +217,21 @@ public class XmlReportParser {
 
             private int getMaxPos() {
                 return revisionsMap.isEmpty() ? -1
-                        : ((Integer) revisionsMap.keySet().toArray()[revisionsMap.size() - 1])
-                                .intValue();
+                        : (Integer) revisionsMap.keySet().toArray()[revisionsMap.size() - 1];
             }
         }
 
-        private List<ModuleRevisionId> mrids = new ArrayList<ModuleRevisionId>();
+        private List<ModuleRevisionId> mrids = new ArrayList<>();
 
-        private List<ModuleRevisionId> defaultMrids = new ArrayList<ModuleRevisionId>();
+        private List<ModuleRevisionId> defaultMrids = new ArrayList<>();
 
-        private List<ModuleRevisionId> realMrids = new ArrayList<ModuleRevisionId>();
+        private List<ModuleRevisionId> realMrids = new ArrayList<>();
 
-        private List<Artifact> artifacts = new ArrayList<Artifact>();
+        private List<Artifact> artifacts = new ArrayList<>();
 
-        private List<ArtifactDownloadReport> artifactReports = new ArrayList<ArtifactDownloadReport>();
+        private List<ArtifactDownloadReport> artifactReports = new ArrayList<>();
 
-        private Map<ModuleRevisionId, MetadataArtifactDownloadReport> metadataReports = new HashMap<ModuleRevisionId, MetadataArtifactDownloadReport>();
+        private Map<ModuleRevisionId, MetadataArtifactDownloadReport> metadataReports = new HashMap<>();
 
         private ModuleRevisionId mRevisionId;
 

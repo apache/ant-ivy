@@ -224,7 +224,7 @@ public class IvyRepResolver extends URLResolver {
         ensureIvyConfigured(getSettings());
         try {
             URL content = new URL(ivyroot + "content.xml");
-            final List<OrganisationEntry> ret = new ArrayList<OrganisationEntry>();
+            final List<OrganisationEntry> ret = new ArrayList<>();
             XMLHelper.parse(content, null, new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName,
@@ -251,7 +251,7 @@ public class IvyRepResolver extends URLResolver {
     @Override
     public ModuleEntry[] listModules(OrganisationEntry org) {
         ensureIvyConfigured(getSettings());
-        Map<String, String> tokenValues = new HashMap<String, String>();
+        Map<String, String> tokenValues = new HashMap<>();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
         Collection<String> names = findIvyNames(tokenValues, IvyPatternHelper.MODULE_KEY);
         ModuleEntry[] ret = new ModuleEntry[names.size()];

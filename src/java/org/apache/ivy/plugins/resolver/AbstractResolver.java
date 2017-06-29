@@ -604,7 +604,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
             return AbstractResolver.this.getSettings().resolveFile(filename);
         }
 
-        public Map substitute(Map strings) {
+        public Map<String, String> substitute(Map<String, String> strings) {
             return AbstractResolver.this.getSettings().substitute(strings);
         }
 

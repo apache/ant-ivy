@@ -63,7 +63,7 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvySetti
      * @return int
      */
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
-            Comparator staticComparator) {
+            Comparator<ModuleRevisionId> staticComparator) {
         return 0;
     }
 

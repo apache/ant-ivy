@@ -18,7 +18,6 @@
 package org.apache.ivy.plugins.namespace;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,13 +77,13 @@ public class MRIDTransformationRule implements NamespaceTransformer {
                 return rule;
             }
             String res = rule == null ? "$" + ruleType + "0" : rule;
-            for (int i = 0; i < TYPES.length; i++) {
-                if (TYPES[i].equals(type)) {
+            for (String tp : TYPES) {
+                if (tp.equals(type)) {
                     res = res.replaceAll("([^\\\\])\\$" + type, "$1\\$");
                     res = res.replaceAll("^\\$" + type, "\\$");
                 } else {
-                    res = res.replaceAll("([^\\\\])\\$" + TYPES[i], "$1\\\\\\$" + TYPES[i]);
-                    res = res.replaceAll("^\\$" + TYPES[i], "\\\\\\$" + TYPES[i]);
+                    res = res.replaceAll("([^\\\\])\\$" + tp, "$1\\\\\\$" + tp);
+                    res = res.replaceAll("^\\$" + tp, "\\\\\\$" + tp);
                 }
             }
 
@@ -107,7 +106,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
         }
     }
 
-    private List src = new ArrayList();
+    private final List<MRIDRule> src = new ArrayList<>();
 
     private MRIDRule dest;
 
@@ -124,8 +123,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
 
     public ModuleRevisionId transform(ModuleRevisionId mrid) {
         MridRuleMatcher matcher = new MridRuleMatcher();
-        for (Iterator iter = src.iterator(); iter.hasNext();) {
-            MRIDRule rule = (MRIDRule) iter.next();
+        for (MRIDRule rule : src) {
             if (matcher.match(rule, mrid)) {
                 ModuleRevisionId destMrid = matcher.apply(dest, mrid);
                 Message.debug("found matching namespace rule: " + rule + ". Applied " + dest

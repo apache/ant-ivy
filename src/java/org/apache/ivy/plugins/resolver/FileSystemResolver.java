@@ -67,7 +67,7 @@ public class FileSystemResolver extends RepositoryResolver {
      * Map between actual patterns and patterns used during the transaction to put files in a
      * temporary directory
      */
-    private Map<String, String> fullTransactionPatterns = new HashMap<String, String>();
+    private Map<String, String> fullTransactionPatterns = new HashMap<>();
 
     /**
      * Location where files are published during the transaction

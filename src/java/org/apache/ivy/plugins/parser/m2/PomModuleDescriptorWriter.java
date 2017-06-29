@@ -27,7 +27,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +115,7 @@ public final class PomModuleDescriptorWriter {
             String line = in.readLine();
             while (line != null) {
                 line = IvyPatternHelper.substituteVariables(line, variables);
-                if (line.indexOf(SKIP_LINE) != -1) {
+                if (line.contains(SKIP_LINE)) {
                     // skip this line
                     line = in.readLine();
                     continue;
@@ -132,12 +131,12 @@ public final class PomModuleDescriptorWriter {
                 lastIndent = indent;
                 indent = line.indexOf('<');
 
-                if (!dependenciesPrinted && line.indexOf("</dependencies>") != -1) {
+                if (!dependenciesPrinted && line.contains("</dependencies>")) {
                     printDependencies(md, out, options, indent, false);
                     dependenciesPrinted = true;
                 }
 
-                if (!dependenciesPrinted && line.indexOf("</project>") != -1) {
+                if (!dependenciesPrinted && line.contains("</project>")) {
                     printDependencies(md, out, options, lastIndent, true);
                     dependenciesPrinted = true;
                 }
@@ -193,10 +192,10 @@ public final class PomModuleDescriptorWriter {
      */
     private static Artifact findArtifact(ModuleDescriptor md, String artifactName) {
         Artifact[] artifacts = md.getAllArtifacts();
-        for (int i = 0; i < artifacts.length; i++) {
-            if (artifacts[i].getName().equals(artifactName)
-                    && artifacts[i].getAttribute("classifier") == null) {
-                return artifacts[i];
+        for (Artifact artifact : artifacts) {
+            if (artifact.getName().equals(artifactName)
+                    && artifact.getAttribute("classifier") == null) {
+                return artifact;
             }
         }
 
@@ -211,7 +210,7 @@ public final class PomModuleDescriptorWriter {
 
     private static void printDependencies(ModuleDescriptor md, PrintWriter out,
             PomWriterOptions options, int indent, boolean printDependencies) {
-        List extraDeps = options.getExtraDependencies();
+        List<ExtraDependency> extraDeps = options.getExtraDependencies();
         DependencyDescriptor[] dds = getDependencies(md, options);
 
         if (!extraDeps.isEmpty() || (dds.length > 0)) {
@@ -221,8 +220,7 @@ public final class PomModuleDescriptorWriter {
             }
 
             // print the extra dependencies first
-            for (Iterator it = extraDeps.iterator(); it.hasNext();) {
-                PomWriterOptions.ExtraDependency dep = (ExtraDependency) it.next();
+            for (ExtraDependency dep : extraDeps) {
                 String groupId = dep.getGroup();
                 if (groupId == null) {
                     groupId = md.getModuleRevisionId().getOrganisation();
@@ -241,29 +239,29 @@ public final class PomModuleDescriptorWriter {
                 mapping = DEFAULT_MAPPING;
             }
 
-            for (int i = 0; i < dds.length; i++) {
-                ModuleRevisionId mrid = dds[i].getDependencyRevisionId();
+            for (DependencyDescriptor dd : dds) {
+                ModuleRevisionId mrid = dd.getDependencyRevisionId();
                 ExcludeRule[] excludes = null;
-                if (dds[i].canExclude()) {
-                    excludes = dds[i].getAllExcludeRules();
+                if (dd.canExclude()) {
+                    excludes = dd.getAllExcludeRules();
                 }
-                DependencyArtifactDescriptor[] dads = dds[i].getAllDependencyArtifacts();
+                DependencyArtifactDescriptor[] dads = dd.getAllDependencyArtifacts();
                 if (dads.length > 0) {
-                    for (int j = 0; j < dads.length; j++) {
-                        String type = dads[j].getType();
-                        String classifier = dads[j].getExtraAttribute("classifier");
-                        String scope = mapping.getScope(dds[i].getModuleConfigurations());
-                        boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
+                    for (DependencyArtifactDescriptor dad : dads) {
+                        String type = dad.getType();
+                        String classifier = dad.getExtraAttribute("classifier");
+                        String scope = mapping.getScope(dd.getModuleConfigurations());
+                        boolean optional = mapping.isOptional(dd.getModuleConfigurations());
                         printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
                             mrid.getRevision(), type, classifier, scope, optional,
-                            dds[i].isTransitive(), excludes);
+                            dd.isTransitive(), excludes);
                     }
                 } else {
-                    String scope = mapping.getScope(dds[i].getModuleConfigurations());
-                    boolean optional = mapping.isOptional(dds[i].getModuleConfigurations());
-                    final String classifier = dds[i].getExtraAttribute("classifier");
+                    String scope = mapping.getScope(dd.getModuleConfigurations());
+                    boolean optional = mapping.isOptional(dd.getModuleConfigurations());
+                    final String classifier = dd.getExtraAttribute("classifier");
                     printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
-                        mrid.getRevision(), null, classifier, scope, optional, dds[i].isTransitive(),
+                        mrid.getRevision(), null, classifier, scope, optional, dd.isTransitive(),
                         excludes);
                 }
             }
@@ -326,14 +324,15 @@ public final class PomModuleDescriptorWriter {
         indent(out, indent * 3);
         out.println("<exclusions>");
 
-        for (int i = 0; i < exclusions.length; i++) {
+        for (ExcludeRule exclusion : exclusions) {
             indent(out, indent * 4);
             out.println("<exclusion>");
-            ExcludeRule rule = exclusions[i];
             indent(out, indent * 5);
-            out.println("<groupId>" + rule.getId().getModuleId().getOrganisation() + "</groupId>");
+            out.println(
+                "<groupId>" + exclusion.getId().getModuleId().getOrganisation() + "</groupId>");
             indent(out, indent * 5);
-            out.println("<artifactId>" + rule.getId().getModuleId().getName() + "</artifactId>");
+            out.println(
+                "<artifactId>" + exclusion.getId().getModuleId().getName() + "</artifactId>");
             indent(out, indent * 4);
             out.println("</exclusion>");
         }
@@ -346,16 +345,16 @@ public final class PomModuleDescriptorWriter {
             PomWriterOptions options) {
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
-        List result = new ArrayList();
+        List<DependencyDescriptor> result = new ArrayList<>();
         DependencyDescriptor[] dds = md.getDependencies();
-        for (int i = 0; i < dds.length; i++) {
-            String[] depConfs = dds[i].getDependencyConfigurations(confs);
+        for (DependencyDescriptor dd : dds) {
+            String[] depConfs = dd.getDependencyConfigurations(confs);
             if ((depConfs != null) && (depConfs.length > 0)) {
-                result.add(dds[i]);
+                result.add(dd);
             }
         }
 
-        return (DependencyDescriptor[]) result.toArray(new DependencyDescriptor[result.size()]);
+        return result.toArray(new DependencyDescriptor[result.size()]);
     }
 
     /**
@@ -367,7 +366,7 @@ public final class PomModuleDescriptorWriter {
 
         private final IvyVariableContainer variables;
 
-        private Map localVariables = new HashMap();
+        private Map<String, String> localVariables = new HashMap<>();
 
         private IvyVariableContainerWrapper(IvyVariableContainer variables) {
             this.variables = variables;
@@ -384,7 +383,7 @@ public final class PomModuleDescriptorWriter {
         public String getVariable(String name) {
             String result = variables.getVariable(name);
             if (result == null) {
-                result = (String) localVariables.get(name);
+                result = localVariables.get(name);
             }
             return result;
         }

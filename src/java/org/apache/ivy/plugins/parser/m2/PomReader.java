@@ -111,7 +111,7 @@ public class PomReader {
 
     private static final String PROFILE = "profile";
 
-    private final Map<String, String> properties = new HashMap<String, String>();
+    private final Map<String, String> properties = new HashMap<>();
 
     private final Element projectElement;
 
@@ -258,7 +258,7 @@ public class PomReader {
             return new License[0];
         }
         licenses.normalize();
-        List<License> lics = new ArrayList<License>();
+        List<License> lics = new ArrayList<>();
         for (Element license : getAllChilds(licenses)) {
             if (LICENSE.equals(license.getNodeName())) {
                 String name = getFirstChildText(license, LICENSE_NAME);
@@ -305,7 +305,7 @@ public class PomReader {
         if (dependenciesElement == null) {
             return Collections.emptyList();
         }
-        List<PomDependencyData> dependencies = new LinkedList<PomDependencyData>();
+        List<PomDependencyData> dependencies = new LinkedList<>();
         NodeList children = dependenciesElement.getChildNodes();
         for (int i = 0, sz = children.getLength(); i < sz; i++) {
             Node node = children.item(i);
@@ -326,7 +326,7 @@ public class PomReader {
         if (dependenciesElement == null) {
             return Collections.emptyList();
         }
-        List<PomDependencyMgt> dependencies = new LinkedList<PomDependencyMgt>();
+        List<PomDependencyMgt> dependencies = new LinkedList<>();
         NodeList children = dependenciesElement.getChildNodes();
         for (int i = 0, sz = children.getLength(); i < sz; i++) {
             Node node = children.item(i);
@@ -342,7 +342,7 @@ public class PomReader {
         if (profilesElement == null) {
             return Collections.emptyList();
         }
-        List<PomProfileElement> result = new LinkedList<PomReader.PomProfileElement>();
+        List<PomProfileElement> result = new LinkedList<>();
         NodeList children = profilesElement.getChildNodes();
         for (int i = 0, sz = children.getLength(); i < sz; i++) {
             Node node = children.item(i);
@@ -401,7 +401,7 @@ public class PomReader {
             if (exclusionsElement == null) {
                 return Collections.emptyList();
             }
-            LinkedList<ModuleId> exclusions = new LinkedList<ModuleId>();
+            LinkedList<ModuleId> exclusions = new LinkedList<>();
             NodeList children = exclusionsElement.getChildNodes();
             for (int i = 0, sz = children.getLength(); i < sz; i++) {
                 Node node = children.item(i);
@@ -429,7 +429,7 @@ public class PomReader {
             return Collections.emptyList();
         }
         NodeList children = pluginsElement.getChildNodes();
-        List<PomPluginElement> plugins = new LinkedList<PomPluginElement>();
+        List<PomPluginElement> plugins = new LinkedList<>();
         for (int i = 0; i < children.getLength(); i++) {
             Node node = children.item(i);
             if (node instanceof Element && PLUGIN.equals(node.getNodeName())) {
@@ -581,7 +581,7 @@ public class PomReader {
      * @return the content of the properties tag into the pom.
      */
     public Map<String, String> getPomProperties() {
-        Map<String, String> pomProperties = new HashMap<String, String>();
+        Map<String, String> pomProperties = new HashMap<>();
         Element propsEl = getFirstChildElement(projectElement, PROPERTIES);
         if (propsEl != null) {
             propsEl.normalize();
@@ -644,7 +644,7 @@ public class PomReader {
     }
 
     private static List<Element> getAllChilds(Element parent) {
-        List<Element> r = new LinkedList<Element>();
+        List<Element> r = new LinkedList<>();
         if (parent != null) {
             NodeList childs = parent.getChildNodes();
             for (int i = 0; i < childs.getLength(); i++) {

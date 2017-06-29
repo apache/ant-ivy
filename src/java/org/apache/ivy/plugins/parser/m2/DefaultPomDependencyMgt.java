@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import org.apache.ivy.core.module.id.ModuleId;
+
 import java.util.List;
 
 public class DefaultPomDependencyMgt implements PomDependencyMgt {
@@ -28,10 +30,10 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
 
     private String scope;
 
-    private List /* <ModuleId> */excludedModules;
+    private List<ModuleId> excludedModules;
 
     public DefaultPomDependencyMgt(String groupId, String artifactId, String version, String scope,
-            List /* <ModuleId> */excludedModules) {
+            List<ModuleId> excludedModules) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -55,7 +57,7 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
         return version;
     }
 
-    public List /* <ModuleId> */getExcludedModules() {
+    public List<ModuleId> getExcludedModules() {
         return excludedModules;
     }
 }

@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.repository.url;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.plugins.repository.AbstractRepository;
@@ -30,16 +29,14 @@ import org.apache.ivy.util.Message;
 
 public class ChainedRepository extends AbstractRepository {
 
-    private List/* Repository */repositories;
+    private List<Repository> repositories;
 
-    public void setRepositories(List/* Repository */repositories) {
+    public void setRepositories(List<Repository> repositories) {
         this.repositories = repositories;
     }
 
     public Resource getResource(String source) throws IOException {
-        Iterator it = repositories.iterator();
-        while (it.hasNext()) {
-            Repository repository = (Repository) it.next();
+        for (Repository repository : repositories) {
             logTry(repository);
             try {
                 Resource r = repository.getResource(source);
@@ -56,9 +53,7 @@ public class ChainedRepository extends AbstractRepository {
     }
 
     public void get(String source, File destination) throws IOException {
-        Iterator it = repositories.iterator();
-        while (it.hasNext()) {
-            Repository repository = (Repository) it.next();
+        for (Repository repository : repositories) {
             logTry(repository);
             boolean ok = false;
             try {
@@ -75,13 +70,11 @@ public class ChainedRepository extends AbstractRepository {
         throw newIOEFail("copy " + source + " into " + destination);
     }
 
-    public List list(String parent) throws IOException {
-        Iterator it = repositories.iterator();
-        while (it.hasNext()) {
-            Repository repository = (Repository) it.next();
+    public List<String> list(String parent) throws IOException {
+        for (Repository repository : repositories) {
             logTry(repository);
             try {
-                List list = repository.list(parent);
+                List<String> list = repository.list(parent);
                 if (list != null) {
                     logSuccess(repository);
                     return list;

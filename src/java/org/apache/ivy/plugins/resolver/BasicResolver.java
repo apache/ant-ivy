@@ -140,9 +140,9 @@ public abstract class BasicResolver extends AbstractResolver {
      */
     private boolean envDependent = true;
 
-    private List<String> ivyattempts = new ArrayList<String>();
+    private List<String> ivyattempts = new ArrayList<>();
 
-    private Map<Artifact, List<String>> artattempts = new HashMap<Artifact, List<String>>();
+    private Map<Artifact, List<String>> artattempts = new HashMap<>();
 
     private boolean checkconsistency = true;
 
@@ -471,7 +471,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private ModuleRevisionId getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid,
             ModuleDescriptor md) {
-        Map<String, String> allAttributes = new HashMap<String, String>();
+        Map<String, String> allAttributes = new HashMap<>();
         allAttributes.putAll(md.getQualifiedExtraAttributes());
         allAttributes.putAll(askedMrid.getQualifiedExtraAttributes());
 
@@ -656,8 +656,8 @@ public abstract class BasicResolver extends AbstractResolver {
 
         ResolvedResource found = null;
         List<ArtifactInfo> sorted = getLatestStrategy().sort(rress);
-        List<String> rejected = new ArrayList<String>();
-        List<ModuleRevisionId> foundBlacklisted = new ArrayList<ModuleRevisionId>();
+        List<String> rejected = new ArrayList<>();
+        List<ModuleRevisionId> foundBlacklisted = new ArrayList<>();
         IvyContext context = IvyContext.getContext();
 
         for (ListIterator<ArtifactInfo> iter = sorted.listIterator(sorted.size()); iter
@@ -667,7 +667,7 @@ public abstract class BasicResolver extends AbstractResolver {
             // even though we don't even know if the resource actually exist.
             // But checking for existence is most of the time more costly than checking
             // name, blacklisting and first level version matching
-            if (filterNames(new ArrayList<String>(Collections.singleton(rres.getRevision())))
+            if (filterNames(new ArrayList<>(Collections.singleton(rres.getRevision())))
                     .isEmpty()) {
                 Message.debug("\t" + name + ": filtered by name: " + rres);
                 continue;
@@ -772,7 +772,7 @@ public abstract class BasicResolver extends AbstractResolver {
     protected void logArtifactAttempt(Artifact art, String attempt) {
         List<String> attempts = artattempts.get(art);
         if (attempts == null) {
-            attempts = new ArrayList<String>();
+            attempts = new ArrayList<>();
             artattempts.put(art, attempts);
         }
         attempts.add(attempt);
@@ -826,9 +826,9 @@ public abstract class BasicResolver extends AbstractResolver {
 
         clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();
-        for (int i = 0; i < artifacts.length; i++) {
-            ArtifactDownloadReport adr = cacheManager.download(artifacts[i],
-                artifactResourceResolver, downloader, getCacheDownloadOptions(options));
+        for (Artifact artifact : artifacts) {
+            ArtifactDownloadReport adr = cacheManager.download(artifact, artifactResourceResolver,
+                downloader, getCacheDownloadOptions(options));
             if (DownloadStatus.FAILED == adr.getDownloadStatus()) {
                 if (!ArtifactDownloadReport.MISSING_ARTIFACT.equals(adr.getDownloadDetails())) {
                     Message.warn("\t" + adr);
@@ -929,7 +929,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     @Override
     public ModuleEntry[] listModules(OrganisationEntry org) {
-        Map<String, String> tokenValues = new HashMap<String, String>();
+        Map<String, String> tokenValues = new HashMap<>();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
         Collection<String> names = findNames(tokenValues, IvyPatternHelper.MODULE_KEY);
         ModuleEntry[] ret = new ModuleEntry[names.size()];
@@ -942,7 +942,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     @Override
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
-        Map<String, String> tokenValues = new HashMap<String, String>();
+        Map<String, String> tokenValues = new HashMap<>();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, mod.getOrganisation());
         tokenValues.put(IvyPatternHelper.MODULE_KEY, mod.getModule());
         Collection<String> names = findNames(tokenValues, IvyPatternHelper.REVISION_KEY);
@@ -1098,7 +1098,7 @@ public abstract class BasicResolver extends AbstractResolver {
         } else {
             throw new IllegalArgumentException("unknown descriptor rule '" + descriptorRule
                     + "'. Allowed rules are: "
-                    + Arrays.asList(new String[] {DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL}));
+                    + Arrays.asList(DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL));
         }
     }
 
@@ -1109,7 +1109,7 @@ public abstract class BasicResolver extends AbstractResolver {
         }
         // csDef is a comma separated list of checksum algorithms to use with this resolver
         // we parse and return it as a String[]
-        List<String> algos = new ArrayList<String>();
+        List<String> algos = new ArrayList<>();
         for (String checksum : csDef.split(",")) {
             String cs = checksum.trim();
             if (!"".equals(cs) && !"none".equals(cs)) {

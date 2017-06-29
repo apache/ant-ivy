@@ -24,7 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.plugins.repository.BasicResource;
@@ -91,17 +90,14 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         try {
             ChannelSftp c = getSftpChannel(path);
 
-            Collection r = c.ls(getPath(path));
+            // ls() returns a Vector of LsEntry
+            Collection<LsEntry> r = c.ls(getPath(path));
 
             if (r != null) {
-                for (Iterator iter = r.iterator(); iter.hasNext();) {
-                    Object obj = iter.next();
-                    if (obj instanceof LsEntry) {
-                        LsEntry entry = (LsEntry) obj;
-                        SftpATTRS attrs = entry.getAttrs();
-                        return new BasicResource(path, true, attrs.getSize(), attrs.getMTime()
-                                * MILLIS_PER_SECOND, false);
-                    }
+                for (LsEntry entry : r) {
+                    SftpATTRS attrs = entry.getAttrs();
+                    return new BasicResource(path, true, attrs.getSize(),
+                            attrs.getMTime() * MILLIS_PER_SECOND, false);
                 }
             }
         } catch (Exception e) {
@@ -117,16 +113,9 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         try {
             String path = getPath(resource.getName());
             return c.get(path);
-        } catch (SftpException e) {
-            IOException ex = new IOException("impossible to open stream for " + resource + " on "
-                    + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
-            ex.initCause(e);
-            throw ex;
-        } catch (URISyntaxException e) {
-            IOException ex = new IOException("impossible to open stream for " + resource + " on "
-                    + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
-            ex.initCause(e);
-            throw ex;
+        } catch (SftpException | URISyntaxException e) {
+            throw new IOException("impossible to open stream for " + resource + " on "
+                    + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""), e);
         }
     }
 
@@ -136,16 +125,9 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         try {
             String path = getPath(source);
             c.get(path, destination.getAbsolutePath(), new MyProgressMonitor());
-        } catch (SftpException e) {
-            IOException ex = new IOException("impossible to get " + source + " on " + getHost()
-                    + (e.getMessage() != null ? ": " + e.getMessage() : ""));
-            ex.initCause(e);
-            throw ex;
-        } catch (URISyntaxException e) {
-            IOException ex = new IOException("impossible to get " + source + " on " + getHost()
-                    + (e.getMessage() != null ? ": " + e.getMessage() : ""));
-            ex.initCause(e);
-            throw ex;
+        } catch (SftpException | URISyntaxException e) {
+            throw new IOException("impossible to get " + source + " on " + getHost()
+                    + (e.getMessage() != null ? ": " + e.getMessage() : ""), e);
         }
     }
 
@@ -161,14 +143,8 @@ public class SFTPRepository extends AbstractSshBasedRepository {
                 mkdirs(path.substring(0, path.lastIndexOf('/')), c);
             }
             c.put(source.getAbsolutePath(), path, new MyProgressMonitor());
-        } catch (SftpException e) {
-            IOException ex = new IOException(e.getMessage());
-            ex.initCause(e);
-            throw ex;
-        } catch (URISyntaxException e) {
-            IOException ex = new IOException(e.getMessage());
-            ex.initCause(e);
-            throw ex;
+        } catch (SftpException | URISyntaxException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -201,36 +177,26 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List list(String parent) throws IOException {
+    public List<String> list(String parent) throws IOException {
         try {
             ChannelSftp c = getSftpChannel(parent);
             String path = getPath(parent);
-            Collection r = c.ls(path);
+            Collection<LsEntry> r = c.ls(path);
             if (r != null) {
                 if (!path.endsWith("/")) {
                     path = parent + "/";
                 }
-                List result = new ArrayList();
-                for (Iterator iter = r.iterator(); iter.hasNext();) {
-                    Object obj = iter.next();
-                    if (obj instanceof LsEntry) {
-                        LsEntry entry = (LsEntry) obj;
-                        if (".".equals(entry.getFilename()) || "..".equals(entry.getFilename())) {
-                            continue;
-                        }
-                        result.add(path + entry.getFilename());
+                List<String> result = new ArrayList<>();
+                for (LsEntry entry : r) {
+                    if (".".equals(entry.getFilename()) || "..".equals(entry.getFilename())) {
+                        continue;
                     }
+                    result.add(path + entry.getFilename());
                 }
                 return result;
             }
-        } catch (SftpException e) {
-            IOException ex = new IOException("Failed to return a listing for '" + parent + "'");
-            ex.initCause(e);
-            throw ex;
-        } catch (URISyntaxException usex) {
-            IOException ex = new IOException("Failed to return a listing for '" + parent + "'");
-            ex.initCause(usex);
-            throw ex;
+        } catch (SftpException | URISyntaxException e) {
+            throw new IOException("Failed to return a listing for '" + parent + "'", e);
         }
         return null;
     }
@@ -272,9 +238,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
                 Message.verbose(":: SFTP :: connected to " + host + "!");
                 SshCache.getInstance().attachChannelSftp(session, channel);
             } catch (JSchException e) {
-                IOException ex = new IOException(e.getMessage());
-                ex.initCause(e);
-                throw ex;
+                throw new IOException(e.getMessage(), e);
             }
         }
         return channel;

@@ -39,7 +39,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
      * The list of version matchers in the chain. This list will be queried in order, so the last
      * matcher will be used only if no other matcher accept the revision before.
      */
-    private List/* <VersionMatcher> */matchers = new LinkedList();
+    private final List<VersionMatcher> matchers = new LinkedList<>();
 
     /**
      * Unique Constructor.
@@ -71,8 +71,7 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
      */
     public void setSettings(IvySettings settings) {
         super.setSettings(settings);
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher) iter.next();
+        for (VersionMatcher matcher : matchers) {
             if (matcher instanceof IvySettingsAware) {
                 ((IvySettingsAware) matcher).setSettings(settings);
             }
@@ -87,14 +86,13 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
      *
      * @return the list of matchers in the chain. Is never null.
      */
-    public List getMatchers() {
+    public List<VersionMatcher> getMatchers() {
         return Collections.unmodifiableList(matchers);
     }
 
     public boolean isDynamic(ModuleRevisionId askedMrid) {
         Checks.checkNotNull(askedMrid, "askedMrid");
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher) iter.next();
+        for (VersionMatcher matcher : matchers) {
             if (matcher.isDynamic(askedMrid)) {
                 return true;
             }
@@ -103,12 +101,11 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     }
 
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
-            Comparator staticComparator) {
+            Comparator<ModuleRevisionId> staticComparator) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMrid, "foundMrid");
         Checks.checkNotNull(staticComparator, "staticComparator");
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher) iter.next();
+        for (VersionMatcher matcher : matchers) {
             if (matcher.isDynamic(askedMrid)) {
                 return matcher.compare(askedMrid, foundMrid, staticComparator);
             }
@@ -120,8 +117,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMrid, "foundMrid");
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher) iter.next();
+        for (Iterator<VersionMatcher> iter = matchers.iterator(); iter.hasNext();) {
+            VersionMatcher matcher = iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.accept(askedMrid, foundMrid);
             }
@@ -132,8 +129,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMrid, "foundMrid");
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher) iter.next();
+        for (Iterator<VersionMatcher> iter = matchers.iterator(); iter.hasNext();) {
+            VersionMatcher matcher = iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.needModuleDescriptor(askedMrid, foundMrid);
             }
@@ -144,8 +141,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMD, "foundMD");
-        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher) iter.next();
+        for (Iterator<VersionMatcher> iter = matchers.iterator(); iter.hasNext();) {
+            VersionMatcher matcher = iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.accept(askedMrid, foundMD);
             }

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,7 +68,7 @@ public class ChainResolver extends AbstractResolver {
 
     private boolean returnFirst = false;
 
-    private List<DependencyResolver> chain = new ArrayList<DependencyResolver>();
+    private List<DependencyResolver> chain = new ArrayList<>();
 
     private boolean dual;
 
@@ -81,7 +80,7 @@ public class ChainResolver extends AbstractResolver {
             throws ParseException {
         data = new ResolveData(data, doValidate(data));
 
-        List<Exception> errors = new ArrayList<Exception>();
+        List<Exception> errors = new ArrayList<>();
 
         ResolvedModuleRevision resolved = data.getCurrentResolvedModuleRevision();
         ResolvedModuleRevision mr = resolved;
@@ -125,7 +124,7 @@ public class ChainResolver extends AbstractResolver {
                     throw new RuntimeException(ex.toString(), ex);
                 }
             } else {
-                StringBuffer err = new StringBuffer();
+                StringBuilder err = new StringBuilder();
                 for (Exception ex : errors) {
                     err.append("\t").append(StringUtils.getErrorMessage(ex)).append("\n");
                 }
@@ -183,10 +182,10 @@ public class ChainResolver extends AbstractResolver {
 
     @Override
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
-        Set<Map<String, String>> result = new HashSet<Map<String, String>>();
+        Set<Map<String, String>> result = new HashSet<>();
         for (DependencyResolver resolver : chain) {
             Map<String, String>[] temp = resolver.listTokenValues(tokens,
-                new HashMap<String, Object>(criteria));
+                    new HashMap<>(criteria));
             result.addAll(Arrays.asList(temp));
         }
 
@@ -208,18 +207,18 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        List<Artifact> artifactsToDownload = new ArrayList<Artifact>(Arrays.asList(artifacts));
+        List<Artifact> artifactsToDownload = new ArrayList<>(Arrays.asList(artifacts));
         DownloadReport report = new DownloadReport();
-        for (Iterator<DependencyResolver> iter = chain.iterator(); iter.hasNext()
-                && !artifactsToDownload.isEmpty();) {
-            DependencyResolver resolver = iter.next();
+        for (DependencyResolver resolver : chain) {
+            if (artifactsToDownload.isEmpty()) {
+                break;
+            }
             DownloadReport r = resolver.download(
                 artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), options);
-            ArtifactDownloadReport[] adr = r.getArtifactsReports();
-            for (int i = 0; i < adr.length; i++) {
-                if (adr[i].getDownloadStatus() != DownloadStatus.FAILED) {
-                    artifactsToDownload.remove(adr[i].getArtifact());
-                    report.addArtifactReport(adr[i]);
+            for (ArtifactDownloadReport adr : r.getArtifactsReports()) {
+                if (adr.getDownloadStatus() != DownloadStatus.FAILED) {
+                    artifactsToDownload.remove(adr.getArtifact());
+                    report.addArtifactReport(adr);
                 }
             }
         }

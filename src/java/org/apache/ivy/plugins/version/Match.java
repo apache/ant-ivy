@@ -83,7 +83,7 @@ public class Match {
             return new NoMatchMatcher();
         }
 
-        Map variables = new HashMap();
+        Map<String, String> variables = new HashMap<>();
         for (int i = 0; i < args.length; i++) {
             variables.put(args[i], argValues[i]);
         }
@@ -116,12 +116,12 @@ public class Match {
         }
 
         StringTokenizer tokenizer = new StringTokenizer(string, ", ");
-        List tokens = new ArrayList();
+        List<String> tokens = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
 
-        return (String[]) tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[tokens.size()]);
     }
 
     private static class NoMatchMatcher implements Matcher {

@@ -25,10 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.License;
@@ -76,11 +74,10 @@ public class XmlReportWriter {
         if (mrid.getBranch() != null) {
             out.println("\t\tbranch=\"" + XMLHelper.escape(mrid.getBranch()) + "\"");
         }
-        Map extraAttributes = mrid.getExtraAttributes();
-        for (Iterator it = extraAttributes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Entry) it.next();
+        Map<String, String> extraAttributes = mrid.getExtraAttributes();
+        for (Map.Entry<String, String> entry : extraAttributes.entrySet()) {
             out.println("\t\textra-" + entry.getKey() + "=\""
-                    + XMLHelper.escape(entry.getValue().toString()) + "\"");
+                    + XMLHelper.escape(entry.getValue()) + "\"");
         }
         out.println("\t\tconf=\"" + XMLHelper.escape(report.getConfiguration()) + "\"");
         out.println("\t\tconfs=\"" + XMLHelper.escape(StringUtils.join(confs, ", ")) + "\"");
@@ -89,14 +86,12 @@ public class XmlReportWriter {
         out.println("\t<dependencies>");
 
         // create a list of ModuleRevisionIds indicating the position for each dependency
-        List dependencies = new ArrayList(report.getModuleRevisionIds());
+        List<ModuleRevisionId> dependencies = new ArrayList<>(report.getModuleRevisionIds());
 
-        for (Iterator iter = report.getModuleIds().iterator(); iter.hasNext();) {
-            ModuleId mid = (ModuleId) iter.next();
+        for (ModuleId mid : report.getModuleIds()) {
             out.println("\t\t<module organisation=\"" + XMLHelper.escape(mid.getOrganisation())
                     + "\"" + " name=\"" + XMLHelper.escape(mid.getName()) + "\">");
-            for (Iterator it2 = report.getNodes(mid).iterator(); it2.hasNext();) {
-                IvyNode dep = (IvyNode) it2.next();
+            for (IvyNode dep : report.getNodes(mid)) {
                 ouputRevision(report, out, dependencies, dep);
             }
             out.println("\t\t</module>");
@@ -107,13 +102,13 @@ public class XmlReportWriter {
     }
 
     private void ouputRevision(ConfigurationResolveReport report, PrintWriter out,
-            List dependencies, IvyNode dep) {
-        Map extraAttributes;
+            List<ModuleRevisionId> dependencies, IvyNode dep) {
+        Map<String, String> extraAttributes;
         ModuleDescriptor md = null;
         if (dep.getModuleRevision() != null) {
             md = dep.getModuleRevision().getDescriptor();
         }
-        StringBuffer details = new StringBuffer();
+        StringBuilder details = new StringBuilder();
         if (dep.isLoaded()) {
             details.append(" status=\"");
             details.append(XMLHelper.escape(dep.getDescriptor().getStatus()));
@@ -145,36 +140,32 @@ public class XmlReportWriter {
         if (md != null && md.getHomePage() != null) {
             details.append(" homepage=\"").append(XMLHelper.escape(md.getHomePage())).append("\"");
         }
-        extraAttributes = md != null ? md.getExtraAttributes() : dep.getResolvedId()
+        extraAttributes = (md != null) ? md.getExtraAttributes() : dep.getResolvedId()
                 .getExtraAttributes();
-        for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
-            String attName = (String) iterator.next();
-            details.append(" extra-").append(attName).append("=\"")
-                    .append(XMLHelper.escape(extraAttributes.get(attName).toString())).append("\"");
+        for (Map.Entry<String, String> entry : extraAttributes.entrySet()) {
+            details.append(" extra-").append(entry.getKey()).append("=\"")
+                    .append(XMLHelper.escape(entry.getValue())).append("\"");
         }
-        String defaultValue = dep.getDescriptor() != null ? " default=\""
-                + dep.getDescriptor().isDefault() + "\"" : "";
-        int position = dependencies.indexOf(dep.getResolvedId());
-        out.println("\t\t\t<revision name=\""
-                + XMLHelper.escape(dep.getResolvedId().getRevision())
-                + "\""
-                + (dep.getResolvedId().getBranch() == null ? "" : " branch=\""
-                        + XMLHelper.escape(dep.getResolvedId().getBranch()) + "\"") + details
-                + " downloaded=\"" + dep.isDownloaded() + "\"" + " searched=\"" + dep.isSearched()
-                + "\"" + defaultValue + " conf=\""
-                + toString(dep.getConfigurations(report.getConfiguration())) + "\""
-                + " position=\"" + position + "\">");
+        out.println(String.format("\t\t\t<revision name=\"%s\"%s%s downloaded=\"%s\" searched=\"%s\"%s conf=\"%s\" position=\"%d\">",
+                XMLHelper.escape(dep.getResolvedId().getRevision()),
+                (dep.getResolvedId().getBranch() == null) ? "" : " branch=\""
+                + XMLHelper.escape(dep.getResolvedId().getBranch()) + "\"",
+                details, dep.isDownloaded(), dep.isSearched(),
+                (dep.getDescriptor() == null) ? "" : " default=\""
+                + dep.getDescriptor().isDefault() + "\"",
+                toString(dep.getConfigurations(report.getConfiguration())),
+                dependencies.indexOf(dep.getResolvedId())));
         if (md != null) {
             License[] licenses = md.getLicenses();
-            for (int i = 0; i < licenses.length; i++) {
+            for (License license : licenses) {
                 String lurl;
-                if (licenses[i].getUrl() != null) {
-                    lurl = " url=\"" + XMLHelper.escape(licenses[i].getUrl()) + "\"";
+                if (license.getUrl() != null) {
+                    lurl = " url=\"" + XMLHelper.escape(license.getUrl()) + "\"";
                 } else {
                     lurl = "";
                 }
-                out.println("\t\t\t\t<license name=\"" + XMLHelper.escape(licenses[i].getName())
-                        + "\"" + lurl + "/>");
+                out.println("\t\t\t\t<license name=\"" + XMLHelper.escape(license.getName()) + "\""
+                        + lurl + "/>");
             }
         }
         outputMetadataArtifact(out, dep);
@@ -188,10 +179,9 @@ public class XmlReportWriter {
             IvyNode dep) {
         if (dep.isEvicted(report.getConfiguration())) {
             EvictionData ed = dep.getEvictedData(report.getConfiguration());
-            Collection selected = ed.getSelected();
+            Collection<IvyNode> selected = ed.getSelected();
             if (selected != null) {
-                for (Iterator it3 = selected.iterator(); it3.hasNext();) {
-                    IvyNode sel = (IvyNode) it3.next();
+                for (IvyNode sel : selected) {
                     out.println("\t\t\t\t<evicted-by rev=\""
                             + XMLHelper.escape(sel.getResolvedId().getRevision()) + "\"/>");
                 }
@@ -230,69 +220,50 @@ public class XmlReportWriter {
 
     private void outputCallers(ConfigurationResolveReport report, PrintWriter out, IvyNode dep) {
         Caller[] callers = dep.getCallers(report.getConfiguration());
-        for (int i = 0; i < callers.length; i++) {
-            StringBuffer callerDetails = new StringBuffer();
-            Map callerExtraAttributes = callers[i].getDependencyDescriptor().getExtraAttributes();
-            for (Iterator iterator = callerExtraAttributes.keySet().iterator(); iterator.hasNext();) {
-                String attName = (String) iterator.next();
-                callerDetails.append(" extra-").append(attName).append("=\"")
-                        .append(XMLHelper.escape(callerExtraAttributes.get(attName).toString()))
-                        .append("\"");
+        for (Caller caller : callers) {
+            StringBuilder callerDetails = new StringBuilder();
+            Map<String, String> callerExtraAttributes = caller.getDependencyDescriptor()
+                    .getExtraAttributes();
+            for (Map.Entry<String, String> entry : callerExtraAttributes.entrySet()) {
+                callerDetails.append(" extra-").append(entry.getKey()).append("=\"")
+                        .append(XMLHelper.escape(entry.getValue())).append("\"");
             }
 
-            out.println("\t\t\t\t<caller organisation=\""
-                    + XMLHelper.escape(callers[i].getModuleRevisionId().getOrganisation())
-                    + "\""
-                    + " name=\""
-                    + XMLHelper.escape(callers[i].getModuleRevisionId().getName())
-                    + "\""
-                    + " conf=\""
-                    + XMLHelper.escape(toString(callers[i].getCallerConfigurations()))
-                    + "\""
-                    + " rev=\""
-                    + XMLHelper.escape(callers[i].getAskedDependencyId(dep.getData()).getRevision())
-                    + "\""
-                    + " rev-constraint-default=\""
-                    + XMLHelper.escape(callers[i].getDependencyDescriptor()
-                            .getDependencyRevisionId().getRevision())
-                    + "\""
-                    + " rev-constraint-dynamic=\""
-                    + XMLHelper.escape(callers[i].getDependencyDescriptor()
-                            .getDynamicConstraintDependencyRevisionId().getRevision()) + "\""
-                    + " callerrev=\""
-                    + XMLHelper.escape(callers[i].getModuleRevisionId().getRevision()) + "\""
-                    + callerDetails + "/>");
+            out.println(String.format("\t\t\t\t<caller organisation=\"%s\" name=\"%s\" conf=\"%s\" rev=\"%s\" rev-constraint-default=\"%s\" rev-constraint-dynamic=\"%s\" callerrev=\"%s\"%s/>",
+                    XMLHelper.escape(caller.getModuleRevisionId().getOrganisation()),
+                    XMLHelper.escape(caller.getModuleRevisionId().getName()),
+                    XMLHelper.escape(toString(caller.getCallerConfigurations())),
+                    XMLHelper.escape(caller.getAskedDependencyId(dep.getData()).getRevision()),
+                    XMLHelper.escape(caller.getDependencyDescriptor().getDependencyRevisionId().getRevision()),
+                    XMLHelper.escape(caller.getDependencyDescriptor().getDynamicConstraintDependencyRevisionId().getRevision()),
+                    XMLHelper.escape(caller.getModuleRevisionId().getRevision()), callerDetails));
         }
     }
 
     private void outputArtifacts(ConfigurationResolveReport report, PrintWriter out, IvyNode dep) {
-        Map extraAttributes;
-        ArtifactDownloadReport[] adr = report.getDownloadReports(dep.getResolvedId());
         out.println("\t\t\t\t<artifacts>");
-        for (int i = 0; i < adr.length; i++) {
-            out.print("\t\t\t\t\t<artifact name=\"" + XMLHelper.escape(adr[i].getName())
-                    + "\" type=\"" + XMLHelper.escape(adr[i].getType()) + "\" ext=\""
-                    + XMLHelper.escape(adr[i].getExt()) + "\"");
-            extraAttributes = adr[i].getArtifact().getExtraAttributes();
-            for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
-                String attName = (String) iterator.next();
-                out.print(" extra-" + attName + "=\""
-                        + XMLHelper.escape(extraAttributes.get(attName).toString()) + "\"");
+        for (ArtifactDownloadReport adr : report.getDownloadReports(dep.getResolvedId())) {
+            out.print("\t\t\t\t\t<artifact name=\"" + XMLHelper.escape(adr.getName())
+                    + "\" type=\"" + XMLHelper.escape(adr.getType()) + "\" ext=\""
+                    + XMLHelper.escape(adr.getExt()) + "\"");
+            for (Map.Entry<String, String> entry : adr.getArtifact().getExtraAttributes().entrySet()) {
+                out.print(" extra-" + entry.getKey() + "=\""
+                        + XMLHelper.escape(entry.getValue()) + "\"");
             }
-            out.print(" status=\"" + XMLHelper.escape(adr[i].getDownloadStatus().toString()) + "\"");
-            out.print(" details=\"" + XMLHelper.escape(adr[i].getDownloadDetails()) + "\"");
-            out.print(" size=\"" + adr[i].getSize() + "\"");
-            out.print(" time=\"" + adr[i].getDownloadTimeMillis() + "\"");
-            if (adr[i].getLocalFile() != null) {
+            out.print(" status=\"" + XMLHelper.escape(adr.getDownloadStatus().toString()) + "\"");
+            out.print(" details=\"" + XMLHelper.escape(adr.getDownloadDetails()) + "\"");
+            out.print(" size=\"" + adr.getSize() + "\"");
+            out.print(" time=\"" + adr.getDownloadTimeMillis() + "\"");
+            if (adr.getLocalFile() != null) {
                 out.print(" location=\""
-                        + XMLHelper.escape(adr[i].getLocalFile().getAbsolutePath()) + "\"");
+                        + XMLHelper.escape(adr.getLocalFile().getAbsolutePath()) + "\"");
             }
-            if (adr[i].getUnpackedLocalFile() != null) {
+            if (adr.getUnpackedLocalFile() != null) {
                 out.print(" unpackedFile=\""
-                        + XMLHelper.escape(adr[i].getUnpackedLocalFile().getAbsolutePath()) + "\"");
+                        + XMLHelper.escape(adr.getUnpackedLocalFile().getAbsolutePath()) + "\"");
             }
 
-            ArtifactOrigin origin = adr[i].getArtifactOrigin();
+            ArtifactOrigin origin = adr.getArtifactOrigin();
             if (origin != null) {
                 out.println(">");
                 out.println("\t\t\t\t\t\t<origin-location is-local=\""
@@ -307,12 +278,12 @@ public class XmlReportWriter {
     }
 
     private String toString(String[] strs) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < strs.length; i++) {
-            buf.append(strs[i]);
-            if (i + 1 < strs.length) {
+        StringBuilder buf = new StringBuilder();
+        for (String str : strs) {
+            if (buf.length() > 0) {
                 buf.append(", ");
             }
+            buf.append(str);
         }
         return XMLHelper.escape(buf.toString());
     }

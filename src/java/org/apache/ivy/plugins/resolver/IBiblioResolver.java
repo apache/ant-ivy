@@ -198,9 +198,7 @@ public class IBiblioResolver extends URLResolver {
                 }
             } catch (IOException e) {
                 Message.verbose("impossible to access maven metadata file, ignored", e);
-            } catch (SAXException e) {
-                Message.verbose("impossible to parse maven metadata file, ignored", e);
-            } catch (ParserConfigurationException e) {
+            } catch (SAXException | ParserConfigurationException e) {
                 Message.verbose("impossible to parse maven metadata file, ignored", e);
             } finally {
                 if (metadataStream != null) {
@@ -356,7 +354,8 @@ public class IBiblioResolver extends URLResolver {
                 String metadataLocation = pattern.substring(0,
                     pattern.lastIndexOf(partiallyResolvedM2PerModulePattern))
                         + "maven-metadata.xml";
-                List<?> revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
+                List<String> revs = listRevisionsWithMavenMetadata(getRepository(),
+                    metadataLocation);
                 if (revs != null) {
                     return revs.toArray(new String[revs.size()]);
                 }
@@ -402,7 +401,7 @@ public class IBiblioResolver extends URLResolver {
                     .getAttributes());
             if (revs != null) {
                 Message.debug("\tfound revs: " + revs);
-                List<ResolvedResource> rres = new ArrayList<ResolvedResource>();
+                List<ResolvedResource> rres = new ArrayList<>();
                 for (String rev : revs) {
                     ModuleRevisionId historicalMrid = ModuleRevisionId.newInstance(mrid, rev);
 
@@ -456,7 +455,7 @@ public class IBiblioResolver extends URLResolver {
             Resource metadata = repository.getResource(metadataLocation);
             if (metadata.exists()) {
                 Message.verbose("\tlisting revisions from maven-metadata: " + metadata);
-                final List<String> metadataRevs = new ArrayList<String>();
+                final List<String> metadataRevs = new ArrayList<>();
                 metadataStream = metadata.openStream();
                 XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
                     @Override
@@ -474,9 +473,7 @@ public class IBiblioResolver extends URLResolver {
             }
         } catch (IOException e) {
             Message.verbose("impossible to access maven metadata file, ignored", e);
-        } catch (SAXException e) {
-            Message.verbose("impossible to parse maven metadata file, ignored", e);
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | ParserConfigurationException e) {
             Message.verbose("impossible to parse maven metadata file, ignored", e);
         } finally {
             if (metadataStream != null) {

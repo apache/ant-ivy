@@ -43,8 +43,8 @@ public class XmlReportOutputter implements ReportOutputter {
     public void output(ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options)
             throws IOException {
         String[] confs = report.getConfigurations();
-        for (int i = 0; i < confs.length; i++) {
-            output(report.getConfigurationReport(confs[i]), report.getResolveId(), confs, cacheMgr);
+        for (String conf : confs) {
+            output(report.getConfigurationReport(conf), report.getResolveId(), confs, cacheMgr);
         }
     }
 
