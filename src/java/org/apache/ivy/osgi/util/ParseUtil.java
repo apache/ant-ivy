@@ -39,14 +39,14 @@ public class ParseUtil {
             value = "";
         }
 
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
 
         final int CHAR = 1;
         final int DELIMITER = 2;
         final int STARTQUOTE = 4;
         final int ENDQUOTE = 8;
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         int expecting = (CHAR | DELIMITER | STARTQUOTE);
 

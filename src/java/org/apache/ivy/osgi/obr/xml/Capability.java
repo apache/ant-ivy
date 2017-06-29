@@ -22,7 +22,7 @@ import java.util.List;
 
 public class Capability {
 
-    private List<CapabilityProperty> properties = new ArrayList<CapabilityProperty>();
+    private List<CapabilityProperty> properties = new ArrayList<>();
 
     private String name;
 

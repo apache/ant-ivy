@@ -138,7 +138,7 @@ public class P2MetadataParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            repositoryUris = new ArrayList<URI>(size);
+            repositoryUris = new ArrayList<>(size);
         }
     }
 
@@ -219,7 +219,7 @@ public class P2MetadataParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            bundles = new ArrayList<BundleInfo>(size);
+            bundles = new ArrayList<>(size);
         }
 
     }
@@ -487,7 +487,7 @@ public class P2MetadataParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            capabilities = new ArrayList<BundleCapability>(size);
+            capabilities = new ArrayList<>(size);
         }
 
     }
@@ -551,7 +551,7 @@ public class P2MetadataParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            requirements = new ArrayList<BundleRequirement>(size);
+            requirements = new ArrayList<>(size);
         }
 
     }
@@ -657,7 +657,7 @@ public class P2MetadataParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            artifacts = new ArrayList<P2Artifact>(size);
+            artifacts = new ArrayList<>(size);
         }
 
     }

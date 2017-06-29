@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class ManifestHeaderValue {
 
-    private List<ManifestHeaderElement> elements = new ArrayList<ManifestHeaderElement>();
+    private List<ManifestHeaderElement> elements = new ArrayList<>();
 
     ManifestHeaderValue() {
         // just for unit testing
@@ -71,7 +71,7 @@ public class ManifestHeaderValue {
         if (elements.isEmpty()) {
             return Collections.emptyList();
         }
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (ManifestHeaderElement element : getElements()) {
             list.addAll(element.getValues());
         }

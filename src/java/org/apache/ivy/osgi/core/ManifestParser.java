@@ -106,8 +106,7 @@ public class ManifestParser {
 
     public static BundleInfo parseManifest(InputStream manifestStream) throws IOException,
             ParseException {
-        BundleInfo parseManifest = parseManifest(new Manifest(manifestStream));
-        return parseManifest;
+        return parseManifest(new Manifest(manifestStream));
     }
 
     public static BundleInfo parseManifest(Manifest manifest) throws ParseException {
@@ -174,9 +173,8 @@ public class ManifestParser {
                 ExportPackage export = new ExportPackage(name, v);
                 String uses = exportElement.getDirectives().get(ATTR_USE);
                 if (uses != null) {
-                    String[] split = uses.trim().split(",");
-                    for (int i = 0; i < split.length; i++) {
-                        export.addUse(split[i].trim());
+                    for (String use : uses.split(",")) {
+                        export.addUse(use.trim());
                     }
                 }
                 bundleInfo.addCapability(export);
@@ -274,24 +272,24 @@ public class ManifestParser {
      * @return String
      */
     public static String formatLines(String manifest) {
-        StringBuffer buffer = new StringBuffer(manifest.length());
+        StringBuilder buffer = new StringBuilder(manifest.length());
         String[] lines = manifest.split("\n");
-        for (int i = 0; i < lines.length; i++) {
-            if (lines[i].length() <= 72) {
-                buffer.append(lines[i]);
+        for (String line : lines) {
+            if (line.length() <= 72) {
+                buffer.append(line);
                 buffer.append('\n');
             } else {
-                buffer.append(lines[i].substring(0, 72));
+                buffer.append(line.substring(0, 72));
                 buffer.append("\n ");
                 int n = 72;
-                while (n <= lines[i].length() - 1) {
+                while (n <= line.length() - 1) {
                     int end = n + 71;
-                    if (end > lines[i].length()) {
-                        end = lines[i].length();
+                    if (end > line.length()) {
+                        end = line.length();
                     }
-                    buffer.append(lines[i].substring(n, end));
+                    buffer.append(line.substring(n, end));
                     buffer.append('\n');
-                    if (end != lines[i].length()) {
+                    if (end != line.length()) {
                         buffer.append(' ');
                     }
                     n = end;

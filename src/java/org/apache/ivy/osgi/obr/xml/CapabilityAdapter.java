@@ -67,10 +67,8 @@ public class CapabilityAdapter {
         }
         ExportPackage exportPackage = new ExportPackage(pkgName, version);
         if (uses != null) {
-            String[] split = uses.trim().split(",");
-            for (int i = 0; i < split.length; i++) {
-                String u = split[i];
-                exportPackage.addUse(u.trim());
+            for (String use : uses.split(",")) {
+                exportPackage.addUse(use.trim());
             }
         }
         return exportPackage;

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class AggregatedOSGiResolver extends AbstractOSGiResolver {
 
-    private List<AbstractOSGiResolver> resolvers = new ArrayList<AbstractOSGiResolver>();
+    private List<AbstractOSGiResolver> resolvers = new ArrayList<>();
 
     public void add(AbstractOSGiResolver resolver) {
         resolvers.add(resolver);
@@ -30,7 +30,7 @@ public class AggregatedOSGiResolver extends AbstractOSGiResolver {
 
     @Override
     protected void init() {
-        List<RepoDescriptor> repos = new ArrayList<RepoDescriptor>();
+        List<RepoDescriptor> repos = new ArrayList<>();
         for (AbstractOSGiResolver resolver : resolvers) {
             repos.add(resolver.getRepoDescriptor());
         }

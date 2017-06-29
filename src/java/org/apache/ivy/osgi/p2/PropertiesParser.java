@@ -51,7 +51,7 @@ public class PropertiesParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            properties = new HashMap<String, String>(size);
+            properties = new HashMap<>(size);
         }
 
     }

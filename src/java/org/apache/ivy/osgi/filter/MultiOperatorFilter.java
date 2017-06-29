@@ -22,15 +22,14 @@ import java.util.List;
 
 public abstract class MultiOperatorFilter extends OSGiFilter {
 
-    private List<OSGiFilter> subFilters = new ArrayList<OSGiFilter>();
+    private List<OSGiFilter> subFilters = new ArrayList<>();
 
     public MultiOperatorFilter() {
         // default constructor
     }
 
     public MultiOperatorFilter(OSGiFilter[] filters) {
-        for (int i = 0; i < filters.length; i++) {
-            OSGiFilter filter = filters[i];
+        for (OSGiFilter filter : filters) {
             add(filter);
         }
     }

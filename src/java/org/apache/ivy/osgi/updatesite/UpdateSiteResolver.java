@@ -67,7 +67,7 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
         }
         CacheResourceOptions options = new CacheResourceOptions();
         if (metadataTtl != null) {
-            options.setTtl(metadataTtl.longValue());
+            options.setTtl(metadataTtl);
         }
         if (forceMetadataUpdate != null) {
             options.setForce(forceMetadataUpdate);

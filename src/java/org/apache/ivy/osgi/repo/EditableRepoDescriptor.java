@@ -33,9 +33,9 @@ import org.apache.ivy.util.Message;
 
 public class EditableRepoDescriptor extends RepoDescriptor {
 
-    private final Map<String, Map<String, Set<ModuleDescriptorWrapper>>> moduleByCapabilities = new HashMap<String, Map<String, Set<ModuleDescriptorWrapper>>>();
+    private final Map<String, Map<String, Set<ModuleDescriptorWrapper>>> moduleByCapabilities = new HashMap<>();
 
-    private final Set<ModuleDescriptorWrapper> modules = new HashSet<ModuleDescriptorWrapper>();
+    private final Set<ModuleDescriptorWrapper> modules = new HashSet<>();
 
     private final ExecutionEnvironmentProfileProvider profileProvider;
 
@@ -102,12 +102,12 @@ public class EditableRepoDescriptor extends RepoDescriptor {
         modules.add(md);
         Map<String, Set<ModuleDescriptorWrapper>> map = moduleByCapabilities.get(type);
         if (map == null) {
-            map = new HashMap<String, Set<ModuleDescriptorWrapper>>();
+            map = new HashMap<>();
             moduleByCapabilities.put(type, map);
         }
         Set<ModuleDescriptorWrapper> bundleReferences = map.get(value);
         if (bundleReferences == null) {
-            bundleReferences = new HashSet<ModuleDescriptorWrapper>();
+            bundleReferences = new HashSet<>();
             map.put(value, bundleReferences);
         }
         if (!bundleReferences.add(md)) {

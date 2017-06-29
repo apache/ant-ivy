@@ -75,7 +75,7 @@ public class AggregatedRepoDescriptor extends RepoDescriptor {
 
     @Override
     public Set<String> getCapabilities() {
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
         for (RepoDescriptor repo : repos) {
             Set<String> capabilities = repo.getCapabilities();
             if (capabilities != null) {
@@ -87,7 +87,7 @@ public class AggregatedRepoDescriptor extends RepoDescriptor {
 
     @Override
     public Set<ModuleDescriptorWrapper> findModules(String requirement, String value) {
-        Set<ModuleDescriptorWrapper> ret = new HashSet<ModuleDescriptorWrapper>();
+        Set<ModuleDescriptorWrapper> ret = new HashSet<>();
         for (RepoDescriptor repo : repos) {
             Set<ModuleDescriptorWrapper> modules = repo.findModules(requirement, value);
             if (modules != null) {
@@ -99,7 +99,7 @@ public class AggregatedRepoDescriptor extends RepoDescriptor {
 
     @Override
     public Set<String> getCapabilityValues(String capabilityName) {
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
         for (RepoDescriptor repo : repos) {
             Set<String> capabilityValues = repo.getCapabilityValues(capabilityName);
             if (capabilityValues != null) {

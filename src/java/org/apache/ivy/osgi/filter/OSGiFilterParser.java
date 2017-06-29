@@ -128,7 +128,7 @@ public class OSGiFilterParser {
         }
 
         private String parseCompareValue() {
-            StringBuffer builder = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             do {
                 readNext();
                 if (!isOperator(c) && c != ')' && c != '(') {

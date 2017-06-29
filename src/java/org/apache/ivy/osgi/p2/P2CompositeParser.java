@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 
 public class P2CompositeParser implements XMLInputParser {
 
-    private Set<String> childLocations = new LinkedHashSet<String>();
+    private Set<String> childLocations = new LinkedHashSet<>();
 
     public Set<String> getChildLocations() {
         return childLocations;
@@ -100,7 +100,7 @@ public class P2CompositeParser implements XMLInputParser {
         @Override
         protected void handleAttributes(Attributes atts) {
             int size = Integer.parseInt(atts.getValue(SIZE));
-            childLocations = new ArrayList<String>(size);
+            childLocations = new ArrayList<>(size);
         }
 
     }

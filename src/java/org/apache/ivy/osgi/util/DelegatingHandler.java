@@ -38,9 +38,9 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
 
     DelegatingHandler parent;
 
-    private final Map<String, DelegatingHandler> saxHandlerMapping = new HashMap<String, DelegatingHandler>();
+    private final Map<String, DelegatingHandler> saxHandlerMapping = new HashMap<>();
 
-    private final Map<String, ChildElementHandler<?>> childHandlerMapping = new HashMap<String, DelegatingHandler.ChildElementHandler<?>>();
+    private final Map<String, ChildElementHandler<?>> childHandlerMapping = new HashMap<>();
 
     private final String tagName;
 
@@ -131,7 +131,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
     }
 
     private interface SkipOnErrorCallback {
-        public void call() throws SAXException;
+        void call() throws SAXException;
     }
 
     private void skipOnError(SkipOnErrorCallback callback) throws SAXException {
@@ -634,7 +634,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         if (value == null) {
             return defaultValue;
         }
-        return new Integer(parseInt(name, value));
+        return parseInt(name, value);
     }
 
     private int parseInt(String name, String value) throws SAXParseException {
@@ -657,7 +657,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
         if (value == null) {
             return defaultValue;
         }
-        return new Long(parseLong(name, value));
+        return parseLong(name, value);
     }
 
     private long parseLong(String name, String value) throws SAXParseException {

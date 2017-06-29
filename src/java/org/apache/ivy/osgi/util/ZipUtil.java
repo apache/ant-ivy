@@ -43,9 +43,8 @@ public class ZipUtil {
     private static void zipFiles(File rootDir, File currDir, ZipOutputStream zos)
             throws IOException {
         if (currDir.isDirectory()) {
-            final File[] files = currDir.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                zipFiles(rootDir, files[i], zos);
+            for (File file : currDir.listFiles()) {
+                zipFiles(rootDir, file, zos);
             }
         } else {
             final String strAbsPath = currDir.getPath();

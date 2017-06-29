@@ -21,14 +21,14 @@ import java.util.Map;
 
 public class CompareFilter extends OSGiFilter {
 
-    public static enum Operator {
+    public enum Operator {
 
         EQUALS("="), LOWER_THAN("<"), LOWER_OR_EQUAL("<="), GREATER_THAN(">"), GREATER_OR_EQUAL(
                 ">="), APPROX("~="), PRESENT("=*");
 
         private String op;
 
-        private Operator(String op) {
+        Operator(String op) {
             this.op = op;
         }
 

@@ -243,16 +243,16 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             // several candidates with different symbolic name : make an warning about the ambiguity
             if (rress.length != 1) {
                 // several candidates with different symbolic name ?
-                Map<String, List<MDResolvedResource>> matching = new HashMap<String, List<MDResolvedResource>>();
-                for (int i = 0; i < rress.length; i++) {
-                    String name = ((MDResolvedResource) rress[i]).getResolvedModuleRevision()
+                Map<String, List<MDResolvedResource>> matching = new HashMap<>();
+                for (ResolvedResource rres : rress) {
+                    String name = ((MDResolvedResource) rres).getResolvedModuleRevision()
                             .getDescriptor().getExtraAttribute(CAPABILITY_EXTRA_ATTR);
                     List<MDResolvedResource> list = matching.get(name);
                     if (list == null) {
-                        list = new ArrayList<MDResolvedResource>();
+                        list = new ArrayList<>();
                         matching.put(name, list);
                     }
-                    list.add((MDResolvedResource) rress[i]);
+                    list.add((MDResolvedResource) rres);
                 }
                 if (matching.keySet().size() != 1) {
                     if (requirementStrategy == RequirementStrategy.first) {
@@ -335,7 +335,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             String name = tokenValues.get(IvyPatternHelper.MODULE_KEY);
-            List<String> versions = new ArrayList<String>();
+            List<String> versions = new ArrayList<>();
             Set<ModuleDescriptorWrapper> mds = getRepoDescriptor().findModules(osgiType, name);
             if (mds != null) {
                 for (ModuleDescriptorWrapper md : mds) {
@@ -405,14 +405,14 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     @Override
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
-        Set<String> tokenSet = new HashSet<String>(Arrays.asList(tokens));
+        Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
         Set<Map<String, String>> listTokenValues = listTokenValues(tokenSet, criteria);
         return listTokenValues.toArray(new Map[listTokenValues.size()]);
     }
 
     private Set<Map<String, String>> listTokenValues(Set<String> tokens,
             Map<String, Object> criteria) {
-        Map<String, String> stringCriteria = new HashMap<String, String>();
+        Map<String, String> stringCriteria = new HashMap<>();
         for (Entry<String, Object> entry : criteria.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -428,25 +428,25 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             return Collections.singleton(stringCriteria);
         }
 
-        Set<String> remainingTokens = new HashSet<String>(tokens);
+        Set<String> remainingTokens = new HashSet<>(tokens);
 
         remainingTokens.remove(IvyPatternHelper.ORGANISATION_KEY);
         String osgiType = stringCriteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null) {
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
-            Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
+            Set<Map<String, String>> tokenValues = new HashSet<>();
+            Map<String, Object> newCriteria = new HashMap<>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.BUNDLE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
-            newCriteria = new HashMap<String, Object>(criteria);
+            newCriteria = new HashMap<>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.PACKAGE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
-            newCriteria = new HashMap<String, Object>(criteria);
+            newCriteria = new HashMap<>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.SERVICE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             return tokenValues;
         }
 
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put(IvyPatternHelper.ORGANISATION_KEY, osgiType);
 
         Set<String> capabilities = getRepoDescriptor().getCapabilityValues(osgiType);
@@ -457,9 +457,9 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         remainingTokens.remove(IvyPatternHelper.MODULE_KEY);
         String module = stringCriteria.get(IvyPatternHelper.MODULE_KEY);
         if (module == null) {
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            Set<Map<String, String>> tokenValues = new HashSet<>();
             for (String name : capabilities) {
-                Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
+                Map<String, Object> newCriteria = new HashMap<>(criteria);
                 newCriteria.put(IvyPatternHelper.MODULE_KEY, name);
                 tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
             }
@@ -474,9 +474,9 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (mdws == null || mdws.isEmpty()) {
                 return Collections.emptySet();
             }
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            Set<Map<String, String>> tokenValues = new HashSet<>();
             for (ModuleDescriptorWrapper mdw : mdws) {
-                Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
+                Map<String, Object> newCriteria = new HashMap<>(criteria);
                 newCriteria.put(IvyPatternHelper.REVISION_KEY, mdw.getBundleInfo().getVersion()
                         .toString());
                 tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
@@ -507,12 +507,12 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             if (found == null) {
                 return Collections.emptySet();
             }
-            Set<Map<String, String>> tokenValues = new HashSet<Map<String, String>>();
+            Set<Map<String, String>> tokenValues = new HashSet<>();
             List<String> configurations = BundleInfoAdapter
                     .getConfigurations(found.getBundleInfo());
-            for (int i = 0; i < configurations.size(); i++) {
-                Map<String, String> newCriteria = new HashMap<String, String>(stringCriteria);
-                newCriteria.put(IvyPatternHelper.CONF_KEY, configurations.get(i));
+            for (String configuration : configurations) {
+                Map<String, String> newCriteria = new HashMap<>(stringCriteria);
+                newCriteria.put(IvyPatternHelper.CONF_KEY, configuration);
                 tokenValues.add(newCriteria);
             }
             return tokenValues;

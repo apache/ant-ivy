@@ -232,13 +232,10 @@ public class UpdateSiteLoader {
         if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             return null;
         }
-        InputStream in = new FileInputStream(report.getLocalFile());
-        try {
+        try (InputStream in = new FileInputStream(report.getLocalFile())) {
             UpdateSite site = EclipseUpdateSiteParser.parse(in);
             site.setUri(normalizeSiteUri(site.getUri(), siteUri));
             return site;
-        } finally {
-            in.close();
         }
     }
 
@@ -281,15 +278,12 @@ public class UpdateSiteLoader {
         if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             return null;
         }
-        InputStream in = new FileInputStream(report.getLocalFile());
-        try {
+        try (InputStream in = new FileInputStream(report.getLocalFile())) {
             ZipInputStream zipped = findEntry(in, "digest.xml");
             if (zipped == null) {
                 return null;
             }
             return UpdateSiteDigestParser.parse(zipped, site);
-        } finally {
-            in.close();
         }
     }
 
@@ -307,8 +301,7 @@ public class UpdateSiteLoader {
             if (report.getDownloadStatus() == DownloadStatus.FAILED) {
                 return null;
             }
-            InputStream in = new FileInputStream(report.getLocalFile());
-            try {
+            try (InputStream in = new FileInputStream(report.getLocalFile())) {
                 ZipInputStream zipped = findEntry(in, "feature.xml");
                 if (zipped == null) {
                     return null;
@@ -316,8 +309,6 @@ public class UpdateSiteLoader {
                 EclipseFeature f = FeatureParser.parse(zipped);
                 f.setURL(feature.getUrl());
                 repoDescriptor.addFeature(f);
-            } finally {
-                in.close();
             }
         }
 

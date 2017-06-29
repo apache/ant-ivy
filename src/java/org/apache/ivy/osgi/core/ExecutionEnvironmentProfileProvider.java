@@ -72,7 +72,7 @@ public class ExecutionEnvironmentProfileProvider {
         } finally {
             defaultProfilesFile.close();
         }
-        Map<String, ExecutionEnvironmentProfile> profiles = new HashMap<String, ExecutionEnvironmentProfile>();
+        Map<String, ExecutionEnvironmentProfile> profiles = new HashMap<>();
         for (Entry<Object, Object> prop : props.entrySet()) {
             String propName = (String) prop.getKey();
             if (propName.endsWith(".pkglist")) {
@@ -103,9 +103,8 @@ public class ExecutionEnvironmentProfileProvider {
 
         // load the actual list
         String pkgList = props.getProperty(name + ".pkglist");
-        String[] packages = pkgList.split(",");
-        for (int i = 0; i < packages.length; i++) {
-            String pkg = packages[i].trim();
+        for (String pack : pkgList.split(",")) {
+            String pkg = pack.trim();
             if (pkg.length() != 0) {
                 profile.pkgNames.add(pkg);
             }
@@ -115,9 +114,8 @@ public class ExecutionEnvironmentProfileProvider {
 
         String aliasList = props.getProperty(name + ".aliases");
         if (aliasList != null) {
-            String[] aliases = aliasList.split(",");
-            for (int i = 0; i < aliases.length; i++) {
-                String alias = aliases[i].trim();
+            for (String aka : aliasList.split(",")) {
+                String alias = aka.trim();
                 if (alias.length() != 0) {
                     ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(
                             alias);

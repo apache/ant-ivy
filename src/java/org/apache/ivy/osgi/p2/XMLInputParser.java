@@ -25,6 +25,6 @@ import org.xml.sax.SAXException;
 
 public interface XMLInputParser {
 
-    public void parse(InputStream in) throws ParseException, IOException, SAXException;
+    void parse(InputStream in) throws ParseException, IOException, SAXException;
 
 }

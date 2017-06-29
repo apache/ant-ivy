@@ -28,9 +28,9 @@ public class EclipseFeature {
 
     private Version version;
 
-    private List<EclipsePlugin> plugins = new ArrayList<EclipsePlugin>();
+    private List<EclipsePlugin> plugins = new ArrayList<>();
 
-    private List<Require> requires = new ArrayList<Require>();
+    private List<Require> requires = new ArrayList<>();
 
     private String url;
 
