@@ -39,7 +39,7 @@
 
     <target name="init-ivy" depends="compile-bootstrap,init-ivy-home">
         <taskdef resource="org/apache/ivy/ant/antlib.xml"
-                uri="antlib:org.apache.ivy.ant">
+                 uri="antlib:org.apache.ivy.ant">
             <classpath>
                 <pathelement location="${core.classes.build.dir}"/>
                 <pathelement location="${bootstrap.classes.build.dir}"/>
@@ -50,7 +50,7 @@
     </target>
 
     <target name="install" depends="jar"
-        description="build Ivy and install it in Ivy user home for builds using Ivy user home to load Ivy jar">
+            description="build Ivy and install it in Ivy user home for builds using Ivy user home to load Ivy jar">
         <property name="ivy.jar.file" value="${ivy.home}/jars/ivy.jar"/>
         <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ivy.jar.file}"/>
     </target>
@@ -95,8 +95,6 @@
                 <include name="*.jar"/>
                 <exclude name="ant.jar"/>
                 <exclude name="ant-launcher.jar"/>
-                <exclude name="ant-nodeps.jar"/>
-                <exclude name="ant-trax.jar"/>
             </fileset>
             <pathelement location="${core.classes.build.dir}"/>
             <pathelement location="${ant.classes.build.dir}"/>
@@ -185,13 +183,13 @@
     </target>
 
     <target name="compile-core" depends="prepare">
-        <javac  srcdir="${src.dir}"
-                destdir="${core.classes.build.dir}"
-                sourcepath=""
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                includeantruntime="no">
+        <javac srcdir="${src.dir}"
+               destdir="${core.classes.build.dir}"
+               sourcepath=""
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}"
+               debug="${debug.mode}"
+               includeantruntime="no">
             <excludesfile name="ant.patterns"/>
             <excludesfile name="optional.patterns"/>
         </javac>
@@ -220,14 +218,14 @@
 
     <!-- Build the Ant tasks with the current Ant runtime -->
     <target name="compile-bootstrap" depends="compile-core">
-        <javac  srcdir="${src.dir}"
-                destdir="${bootstrap.classes.build.dir}"
-                sourcepath=""
-                classpathref="build.bootstrap.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                includeantruntime="yes">
+        <javac srcdir="${src.dir}"
+               destdir="${bootstrap.classes.build.dir}"
+               sourcepath=""
+               classpathref="build.bootstrap.classpath"
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}"
+               debug="${debug.mode}"
+               includeantruntime="yes">
             <includesfile name="ant.patterns"/>
         </javac>
         <copy todir="${bootstrap.classes.build.dir}" includeEmptyDirs="false">
@@ -240,14 +238,14 @@
 
     <!-- Build the Ant tasks with the minimal Ant runtime -->
     <target name="compile-ant" depends="compile-core,resolve">
-        <javac  srcdir="${src.dir}"
-                destdir="${ant.classes.build.dir}"
-                sourcepath=""
-                classpathref="build.ant.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                includeantruntime="no">
+        <javac srcdir="${src.dir}"
+               destdir="${ant.classes.build.dir}"
+               sourcepath=""
+               classpathref="build.ant.classpath"
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}"
+               debug="${debug.mode}"
+               includeantruntime="no">
             <includesfile name="ant.patterns"/>
         </javac>
         <copy todir="${ant.classes.build.dir}" includeEmptyDirs="false">
@@ -263,14 +261,14 @@
     </target>
 
     <target name="compile-optional" depends="compile-ant">
-        <javac  srcdir="${src.dir}"
-                destdir="${optional.classes.build.dir}"
-                sourcepath=""
-                classpathref="build.optional.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                includeantruntime="no">
+        <javac srcdir="${src.dir}"
+               destdir="${optional.classes.build.dir}"
+               sourcepath=""
+               classpathref="build.optional.classpath"
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}"
+               debug="${debug.mode}"
+               includeantruntime="no">
             <includesfile name="optional.patterns"/>
             <includesfile name="ant.patterns"/>
         </javac>
@@ -310,7 +308,7 @@
         </copy>
 
         <jar destfile="${artifacts.build.dir}/jars/${final.name}"
-                manifest="${artifacts.build.dir}/MANIFEST.MF">
+             manifest="${artifacts.build.dir}/MANIFEST.MF">
             <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
             <manifest>
                 <attribute name="Specification-Title" value="Apache Ivy with Ant tasks"/>
@@ -346,14 +344,14 @@
          TESTS
          ================================================================= -->
     <target name="build-test" depends="jar">
-        <javac  srcdir="${test.dir}"
-                destdir="${test.build.dir}"
-                classpathref="run.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                encoding="UTF-8"
-                includeantruntime="no"/>
+        <javac srcdir="${test.dir}"
+               destdir="${test.build.dir}"
+               classpathref="run.classpath"
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}"
+               debug="${debug.mode}"
+               encoding="UTF-8"
+               includeantruntime="no"/>
         <copy todir="${test.build.dir}">
             <fileset dir="${test.dir}">
                 <exclude name="**/*.java"/>
@@ -363,15 +361,15 @@
 
     <target name="build-custom-resolver-jar" depends="jar">
         <mkdir dir="${build.dir}/custom-classpath"/>
-        <javac  srcdir="${basedir}/test/custom-classpath"
-                destdir="${build.dir}/custom-classpath"
-                classpathref="run.classpath"
-                source="${ivy.minimum.javaversion}"
-                target="${ivy.minimum.javaversion}"
-                debug="${debug.mode}"
-                includeantruntime="no"/>
-        <jar    destfile="${test.dir}/org/apache/ivy/core/settings/custom-resolver.jar"
-                basedir="${build.dir}/custom-classpath"/>
+        <javac srcdir="${basedir}/test/custom-classpath"
+               destdir="${build.dir}/custom-classpath"
+               classpathref="run.classpath"
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}"
+               debug="${debug.mode}"
+               includeantruntime="no"/>
+        <jar destfile="${test.dir}/org/apache/ivy/core/settings/custom-resolver.jar"
+             basedir="${build.dir}/custom-classpath"/>
     </target>
 
     <target name="init-tests-offline" if="offline">
@@ -551,7 +549,7 @@
 
     <target name="init-checkstyle" depends="jar">
         <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8.1"
-                inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
+                       inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
         <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
                  resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
     </target>
@@ -560,8 +558,8 @@
     <target name="checkstyle-internal" depends="init-checkstyle">
         <mkdir dir="${checkstyle.report.dir}"/>
         <cs:checkstyle xmlns:cs="antlib:com.puppycrawl.tools.checkstyle.ant"
-		       config="${checkstyle.src.dir}/checkstyle-config"
-		       failOnViolation="false" failureProperty="checkstyle.failed">
+                       config="${checkstyle.src.dir}/checkstyle-config"
+                       failOnViolation="false" failureProperty="checkstyle.failed">
             <classpath>
                 <path refid="run.classpath"/>
             </classpath>
@@ -576,7 +574,7 @@
     </target>
 
     <target name="checkstyle" depends="checkstyle-internal"
-	    description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
+            description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
         <fail if="checkstyle.failed"
             message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
     </target>
@@ -584,8 +582,8 @@
     <target name="checkstyle-report" depends="checkstyle-internal">
         <property name="checkstyle.basedir" location="${src.dir}"/>
         <xslt in="${checkstyle.report.dir}/checkstyle.xml"
-                style="${checkstyle.src.dir}/checkstyle-frames.xsl"
-                out="${checkstyle.report.dir}/output.txt">
+              style="${checkstyle.src.dir}/checkstyle-frames.xsl"
+              out="${checkstyle.report.dir}/output.txt">
             <param name="basedir" expression="${checkstyle.basedir}"/>
             <param name="output.dir" expression="${checkstyle.report.dir}"/>
         </xslt>
