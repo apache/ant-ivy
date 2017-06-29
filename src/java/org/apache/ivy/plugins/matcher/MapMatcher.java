@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class MapMatcher {
-    private Map<String, Matcher> matchers = new HashMap<String, Matcher>();
+    private Map<String, Matcher> matchers = new HashMap<>();
 
     private PatternMatcher pm;
 

@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.version;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +30,10 @@ import org.apache.ivy.plugins.matcher.Matcher;
  */
 public class PatternVersionMatcher extends AbstractVersionMatcher {
 
-    private List matches = new ArrayList();
+    private final List<Match> matches = new ArrayList<>();
 
-    private Map revisionMatches = new HashMap(); // revision -> list of Match instances
+    private final Map<String, List<Match>> revisionMatches = new HashMap<>();
+    // revision -> list of Match instances
 
     private boolean init = false;
 
@@ -43,11 +43,10 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
 
     private void init() {
         if (!init) {
-            for (Iterator it = matches.iterator(); it.hasNext();) {
-                Match match = (Match) it.next();
-                List revMatches = (List) revisionMatches.get(match.getRevision());
+            for (Match match : matches) {
+                List<Match> revMatches = revisionMatches.get(match.getRevision());
                 if (revMatches == null) {
-                    revMatches = new ArrayList();
+                    revMatches = new ArrayList<>();
                     revisionMatches.put(match.getRevision(), revMatches);
                 }
                 revMatches.add(match);
@@ -69,14 +68,15 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
             revision = revision.substring(0, bracketIndex);
         }
 
-        List revMatches = (List) revisionMatches.get(revision);
+        List<Match> revMatches = revisionMatches.get(revision);
 
         if (revMatches != null) {
-            Iterator it = revMatches.iterator();
-            while (!accept && it.hasNext()) {
-                Match match = (Match) it.next();
+            for (Match match : revMatches) {
                 Matcher matcher = match.getPatternMatcher(askedMrid);
                 accept = matcher.matches(foundMrid.getRevision());
+                if (accept) {
+                    break;
+                }
             }
         }
 

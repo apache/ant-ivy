@@ -22,9 +22,7 @@ import java.util.Comparator;
 public class LatestTimeStrategy extends ComparatorLatestStrategy {
     private static final Comparator<ArtifactInfo> COMPARATOR = new Comparator<ArtifactInfo>() {
         public int compare(ArtifactInfo o1, ArtifactInfo o2) {
-            long d1 = o1.getLastModified();
-            long d2 = o2.getLastModified();
-            return new Long(d1).compareTo(new Long(d2));
+            return Long.compare(o1.getLastModified(), o2.getLastModified());
         }
 
     };

@@ -48,9 +48,9 @@ import org.apache.ivy.util.Message;
  */
 public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
-    private List<String> ivyPatterns = new ArrayList<String>();
+    private List<String> ivyPatterns = new ArrayList<>();
 
-    private List<String> artifactPatterns = new ArrayList<String>();
+    private List<String> artifactPatterns = new ArrayList<>();
 
     private boolean m2compatible = false;
 
@@ -89,8 +89,8 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision,
             List<String> patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
-        List<ResolvedResource> resolvedResources = new ArrayList<ResolvedResource>();
-        Set<String> foundRevisions = new HashSet<String>();
+        List<ResolvedResource> resolvedResources = new ArrayList<>();
+        Set<String> foundRevisions = new HashSet<>();
         boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
         boolean stop = false;
         for (Iterator<String> iter = patternList.iterator(); iter.hasNext() && !stop;) {
@@ -121,7 +121,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     @Override
     protected Collection<String> findNames(Map<String, String> tokenValues, String token) {
-        Collection<String> names = new HashSet<String>();
+        Collection<String> names = new HashSet<>();
         names.addAll(findIvyNames(tokenValues, token));
         if (isAllownomd()) {
             names.addAll(findArtifactNames(tokenValues, token));
@@ -130,8 +130,8 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
     }
 
     protected Collection<String> findIvyNames(Map<String, String> tokenValues, String token) {
-        Collection<String> names = new HashSet<String>();
-        tokenValues = new HashMap<String, String>(tokenValues);
+        Collection<String> names = new HashSet<>();
+        tokenValues = new HashMap<>(tokenValues);
         tokenValues.put(IvyPatternHelper.ARTIFACT_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
@@ -144,8 +144,8 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
     }
 
     protected Collection<String> findArtifactNames(Map<String, String> tokenValues, String token) {
-        Collection<String> names = new HashSet<String>();
-        tokenValues = new HashMap<String, String>(tokenValues);
+        Collection<String> names = new HashSet<>();
+        tokenValues = new HashMap<>(tokenValues);
         tokenValues
                 .put(IvyPatternHelper.ARTIFACT_KEY, tokenValues.get(IvyPatternHelper.MODULE_KEY));
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
@@ -160,11 +160,11 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     @Override
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
-        Set<Map<String, String>> result = new LinkedHashSet<Map<String, String>>();
+        Set<Map<String, String>> result = new LinkedHashSet<>();
 
         // use ivy patterns
         List<String> ivyPatterns = getIvyPatterns();
-        Map<String, Object> subcriteria = new HashMap<String, Object>(criteria);
+        Map<String, Object> subcriteria = new HashMap<>(criteria);
         subcriteria.put(IvyPatternHelper.TYPE_KEY, "ivy");
         subcriteria.put(IvyPatternHelper.EXT_KEY, getModuleDescriptorExtension());
         if (isM2compatible()) {
@@ -176,7 +176,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
         if (isAllownomd()) {
             List<String> artifactPatterns = getArtifactPatterns();
-            subcriteria = new HashMap<String, Object>(criteria);
+            subcriteria = new HashMap<>(criteria);
             subcriteria.put(IvyPatternHelper.TYPE_KEY, "jar");
             subcriteria.put(IvyPatternHelper.EXT_KEY, "jar");
             if (isM2compatible()) {
@@ -196,10 +196,10 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     private Set<Map<String, String>> resolveTokenValues(String[] tokens, String pattern,
             Map<String, Object> criteria, boolean noMd) {
-        Set<Map<String, String>> result = new LinkedHashSet<Map<String, String>>();
-        Set<String> tokenSet = new HashSet<String>(Arrays.asList(tokens));
+        Set<Map<String, String>> result = new LinkedHashSet<>();
+        Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
 
-        Map<String, String> tokenValues = new HashMap<String, String>();
+        Map<String, String> tokenValues = new HashMap<>();
         for (Entry<String, Object> entry : criteria.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -235,7 +235,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             return result;
         }
 
-        List<String> vals = new ArrayList<String>(Arrays.asList(values));
+        List<String> vals = new ArrayList<>(Arrays.asList(values));
         filterNames(vals);
 
         for (String value : vals) {
@@ -247,7 +247,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             String moreResolvedPattern = IvyPatternHelper.substituteTokens(
                 partiallyResolvedPattern, tokenValues);
 
-            Map<String, Object> newCriteria = new HashMap<String, Object>(criteria);
+            Map<String, Object> newCriteria = new HashMap<>(criteria);
             newCriteria.put(token, value);
             if (noMd && "artifact".equals(token)) {
                 newCriteria.put("module", value);

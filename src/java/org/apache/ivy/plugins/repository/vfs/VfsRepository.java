@@ -88,8 +88,8 @@ public class VfsRepository extends AbstractRepository {
             Message.verbose("Available VFS schemes...");
             String[] schemes = result.getSchemes();
             Arrays.sort(schemes);
-            for (int i = 0; i < schemes.length; i++) {
-                Message.verbose("VFS Supported Scheme: " + schemes[i]);
+            for (String scheme : schemes) {
+                Message.verbose("VFS Supported Scheme: " + scheme);
             }
         } catch (FileSystemException e) {
             /*
@@ -100,9 +100,7 @@ public class VfsRepository extends AbstractRepository {
              */
             Message.error("Unable to initialize VFS repository manager!");
             Message.error(e.getLocalizedMessage());
-            IOException error = new IOException(e.getLocalizedMessage());
-            error.initCause(e);
-            throw error;
+            throw new IOException(e.getLocalizedMessage(), e);
         }
 
         return result;
@@ -148,10 +146,7 @@ public class VfsRepository extends AbstractRepository {
                         + ": no content found");
             }
             FileUtil.copy(content.getInputStream(), destination, progress);
-        } catch (IOException ex) {
-            fireTransferError(ex);
-            throw ex;
-        } catch (RuntimeException ex) {
+        } catch (IOException | RuntimeException ex) {
             fireTransferError(ex);
             throw ex;
         }
@@ -168,8 +163,8 @@ public class VfsRepository extends AbstractRepository {
      *             on failure.
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
      */
-    public List list(String vfsURI) throws IOException {
-        ArrayList list = new ArrayList();
+    public List<String> list(String vfsURI) throws IOException {
+        ArrayList<String> list = new ArrayList<>();
         Message.debug("list called for URI" + vfsURI);
         FileObject resourceImpl = getVFSManager().resolveFile(vfsURI);
         Message.debug("resourceImpl=" + resourceImpl.toString());

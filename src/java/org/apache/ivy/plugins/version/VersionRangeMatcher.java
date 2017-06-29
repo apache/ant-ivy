@@ -114,15 +114,15 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
         }
     }
 
-    private final Comparator comparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
+    private final Comparator<ModuleRevisionId> comparator = new Comparator<ModuleRevisionId>() {
+        public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
             if (o1.equals(o2)) {
                 return 0;
             }
-            ArtifactInfo art1 = new MRIDArtifactInfo((ModuleRevisionId) o1);
-            ArtifactInfo art2 = new MRIDArtifactInfo((ModuleRevisionId) o2);
-            ArtifactInfo art = getLatestStrategy()
-                    .findLatest(new ArtifactInfo[] {art1, art2}, null);
+            ArtifactInfo art1 = new MRIDArtifactInfo(o1);
+            ArtifactInfo art2 = new MRIDArtifactInfo(o2);
+            ArtifactInfo art = getLatestStrategy().findLatest(new ArtifactInfo[] {art1, art2},
+                null);
             return art == art1 ? -1 : 1;
         }
     };
@@ -187,7 +187,7 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     }
 
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
-            Comparator staticComparator) {
+            Comparator<ModuleRevisionId> staticComparator) {
         String revision = askedMrid.getRevision();
         Matcher m;
         m = UPPER_INFINITE_RANGE.matcher(revision);

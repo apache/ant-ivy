@@ -120,9 +120,7 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
 
             sGen.generate().encode(out);
         } catch (PGPException e) {
-            IOException ioexc = new IOException();
-            ioexc.initCause(e);
-            throw ioexc;
+            throw new IOException(e);
         } finally {
             if (out != null) {
                 try {
@@ -161,7 +159,7 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
                     key = k;
                 }
                 if ((keyId != null)
-                        && (Long.valueOf(keyId, 16).longValue() == (k.getKeyID() & MASK))) {
+                        && (Long.valueOf(keyId, 16) == (k.getKeyID() & MASK))) {
                     key = k;
                 }
             }

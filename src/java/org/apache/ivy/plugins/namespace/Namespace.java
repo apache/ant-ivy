@@ -18,7 +18,6 @@
 package org.apache.ivy.plugins.namespace;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -29,7 +28,7 @@ public class Namespace {
         SYSTEM_NAMESPACE = new Namespace();
     }
 
-    private List/* <NamespaceRule> */rules = new ArrayList();
+    private final List<NamespaceRule> rules = new ArrayList<>();
 
     private String name;
 
@@ -40,8 +39,7 @@ public class Namespace {
             if (mrid == null) {
                 return null;
             }
-            for (Iterator iter = rules.iterator(); iter.hasNext();) {
-                NamespaceRule rule = (NamespaceRule) iter.next();
+            for (NamespaceRule rule : rules) {
                 ModuleRevisionId nmrid = rule.getFromSystem().transform(mrid);
                 if (chainRules) {
                     mrid = nmrid;
@@ -62,8 +60,7 @@ public class Namespace {
             if (mrid == null) {
                 return null;
             }
-            for (Iterator iter = rules.iterator(); iter.hasNext();) {
-                NamespaceRule rule = (NamespaceRule) iter.next();
+            for (NamespaceRule rule : rules) {
                 ModuleRevisionId nmrid = rule.getToSystem().transform(mrid);
                 if (chainRules) {
                     mrid = nmrid;

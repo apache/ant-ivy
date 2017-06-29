@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -57,12 +58,9 @@ public class JarRepository extends AbstractRepository {
             if (entry == null) {
                 throw new FileNotFoundException();
             }
-            getProgressListener().setTotalLength(new Long(entry.getSize()));
+            getProgressListener().setTotalLength(entry.getSize());
             FileUtil.copy(jarFile.getInputStream(entry), destination, getProgressListener());
-        } catch (IOException ex) {
-            fireTransferError(ex);
-            throw ex;
-        } catch (RuntimeException ex) {
+        } catch (IOException | RuntimeException ex) {
             fireTransferError(ex);
             throw ex;
         } finally {
@@ -70,16 +68,17 @@ public class JarRepository extends AbstractRepository {
         }
     }
 
-    public List/* <String> */list(String parent) throws IOException {
+    public List<String> list(String parent) throws IOException {
         ZipEntry parentEntry = jarFile.getEntry(parent);
         if (parentEntry == null || !parentEntry.isDirectory()) {
             return null;
         }
-        List/* <String> */children = new ArrayList();
-        Enumeration entries = jarFile.entries();
+        List<String> children = new ArrayList<>();
+        Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            if (entry.getName().startsWith(parent) && entry.getName().equals(parentEntry.getName())) {
+            JarEntry entry = entries.nextElement();
+            if (entry.getName().startsWith(parent)
+                    && entry.getName().equals(parentEntry.getName())) {
                 children.add(entry.getName());
             }
         }

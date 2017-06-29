@@ -209,8 +209,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
 
-        protected static final List<String> ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0",
-                "1.1", "1.2", "1.3", "1.4", "2.0", "2.1", "2.2", "2.3", "2.4"});
+        protected static final List<String> ALLOWED_VERSIONS = Arrays.asList("1.0",
+                "1.1", "1.2", "1.3", "1.4", "2.0", "2.1", "2.2", "2.3", "2.4");
 
         /* how and what do we have to parse */
         private ParserSettings settings;
@@ -242,7 +242,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private String[] publicationsDefaultConf;
 
-        private Stack<ExtraInfoHolder> extraInfoStack = new Stack<ExtraInfoHolder>();
+        private Stack<ExtraInfoHolder> extraInfoStack = new Stack<>();
 
         public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings) {
             super(parser);
@@ -275,20 +275,15 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     DefaultArtifact.newIvyArtifact(getMd().getResolvedModuleRevisionId(), getMd()
                             .getPublicationDate()));
                 if (!artifactsDeclared) {
-                    String[] confs = getMd().getConfigurationsNames();
-                    for (int i = 0; i < confs.length; i++) {
-                        getMd().addArtifact(
-                            confs[i],
-                            new MDArtifact(getMd(), getMd().getModuleRevisionId().getName(), "jar",
-                                    "jar"));
+                    for (String config : getMd().getConfigurationsNames()) {
+                        getMd().addArtifact(config, new MDArtifact(getMd(),
+                                getMd().getModuleRevisionId().getName(), "jar", "jar"));
                     }
                 }
                 getMd().check();
             } catch (ParserConfigurationException ex) {
-                IllegalStateException ise = new IllegalStateException(ex.getMessage() + " in "
-                        + descriptorURL);
-                ise.initCause(ex);
-                throw ise;
+                throw new IllegalStateException(ex.getMessage() + " in "
+                        + descriptorURL, ex);
             } catch (Exception ex) {
                 checkErrors();
                 ParseException pe = new ParseException(ex.getMessage() + " in " + descriptorURL, 0);
@@ -579,7 +574,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private static Map<String, String> mergeValues(Map<String, String> inherited,
                 Map<String, String> overrides) {
-            LinkedHashMap<String, String> dup = new LinkedHashMap<String, String>(inherited.size()
+            LinkedHashMap<String, String> dup = new LinkedHashMap<>(inherited.size()
                     + overrides.size());
             dup.putAll(inherited);
             dup.putAll(overrides);
@@ -594,9 +589,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          */
         protected void mergeConfigurations(ModuleDescriptor parent) {
             ModuleRevisionId sourceMrid = parent.getModuleRevisionId();
-            Configuration[] configurations = parent.getConfigurations();
-            for (int i = 0; i < configurations.length; i++) {
-                Configuration configuration = configurations[i];
+            for (Configuration configuration : parent.getConfigurations()) {
                 Message.debug("Merging configuration with: " + configuration.getName());
                 // copy configuration from parent descriptor
                 getMd().addConfiguration(new Configuration(configuration, sourceMrid));
@@ -617,8 +610,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          */
         protected void mergeDependencies(DependencyDescriptor[] dependencies) {
             DefaultModuleDescriptor md = getMd();
-            for (int i = 0; i < dependencies.length; i++) {
-                DependencyDescriptor dependencyDescriptor = dependencies[i];
+            for (DependencyDescriptor dependencyDescriptor : dependencies) {
                 Message.debug("Merging dependency with: "
                         + dependencyDescriptor.getDependencyRevisionId().toString());
                 md.addDependency(dependencyDescriptor);
@@ -645,8 +637,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          *            licenses going to be inherited
          */
         public void mergeLicenses(License[] licenses) {
-            for (int i = 0; i < licenses.length; i++) {
-                getMd().addLicense(licenses[i]);
+            for (License license : licenses) {
+                getMd().addLicense(license);
             }
         }
 
@@ -657,8 +649,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          *            exclude rules going to be inherited
          */
         public void mergeExcludes(ExcludeRule[] excludeRules) {
-            for (int i = 0; i < excludeRules.length; i++) {
-                getMd().addExcludeRule(excludeRules[i]);
+            for (ExcludeRule excludeRule : excludeRules) {
+                getMd().addExcludeRule(excludeRule);
             }
         }
 
@@ -819,9 +811,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             XMLHelper.parse(url, null, parser);
 
             // add the configurations from this temporary parser to this module descriptor
-            Configuration[] configs = parser.getModuleDescriptor().getConfigurations();
-            for (int i = 0; i < configs.length; i++) {
-                getMd().addConfiguration(configs[i]);
+            for (Configuration config : parser.getModuleDescriptor().getConfigurations()) {
+                getMd().addConfiguration(config);
             }
             if (parser.getDefaultConfMapping() != null) {
                 Message.debug("setting default conf mapping from imported configurations file: "
@@ -860,10 +851,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     break;
                 case State.PUB:
                     if ("*".equals(conf)) {
-                        String[] confs = getMd().getConfigurationsNames();
-                        for (int i = 0; i < confs.length; i++) {
-                            artifact.addConfiguration(confs[i]);
-                            getMd().addArtifact(confs[i], artifact);
+                        for (String config : getMd().getConfigurationsNames()) {
+                            artifact.addConfiguration(config);
+                            getMd().addArtifact(config, artifact);
                         }
                     } else {
                         artifact.addConfiguration(conf);
@@ -874,9 +864,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     this.conf = conf;
                     String mappeds = settings.substitute(attributes.getValue("mapped"));
                     if (mappeds != null) {
-                        String[] mapped = mappeds.split(",");
-                        for (int i = 0; i < mapped.length; i++) {
-                            dd.addDependencyConfiguration(conf, mapped[i].trim());
+                        for (String mapped : mappeds.split(",")) {
+                            dd.addDependencyConfiguration(conf, mapped.trim());
                         }
                     }
                     break;
@@ -971,15 +960,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 // handle this
                 // only if there are no conf defined in sub elements
                 if (confs != null && confs.length() > 0) {
-                    String[] conf;
-                    if ("*".equals(confs)) {
-                        conf = getMd().getConfigurationsNames();
-                    } else {
-                        conf = confs.split(",");
-                    }
-                    for (int i = 0; i < conf.length; i++) {
-                        artifact.addConfiguration(conf[i].trim());
-                        getMd().addArtifact(conf[i].trim(), artifact);
+                    String[] configs = "*".equals(confs) ? getMd().getConfigurationsNames()
+                            : confs.split(",");
+                    for (String config : configs) {
+                        artifact.addConfiguration(config.trim());
+                        getMd().addArtifact(config.trim(), artifact);
                     }
                 }
             } else if (state == State.DEP) {
@@ -1152,14 +1137,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             // only add confs if they are specified. if they aren't, endElement will handle this
             // only if there are no conf defined in sub elements
             if (confs != null && confs.length() > 0) {
-                String[] conf;
-                if ("*".equals(confs)) {
-                    conf = getMd().getConfigurationsNames();
-                } else {
-                    conf = confs.split(",");
-                }
-                for (int i = 0; i < conf.length; i++) {
-                    addConfiguration(conf[i].trim());
+                String[] configs = "*".equals(confs) ? getMd().getConfigurationsNames()
+                        : confs.split(",");
+                for (String config : configs) {
+                    addConfiguration(config.trim());
                 }
             }
         }
@@ -1204,11 +1185,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (state == State.PUB && "artifact".equals(qName)
                     && artifact.getConfigurations().length == 0) {
-                String[] confs = publicationsDefaultConf == null ? getMd().getConfigurationsNames()
+                String[] configs = publicationsDefaultConf == null ? getMd().getConfigurationsNames()
                         : publicationsDefaultConf;
-                for (int i = 0; i < confs.length; i++) {
-                    artifact.addConfiguration(confs[i].trim());
-                    getMd().addArtifact(confs[i].trim(), artifact);
+                for (String config : configs) {
+                    artifact.addConfiguration(config.trim());
+                    getMd().addArtifact(config.trim(), artifact);
                 }
             } else if ("configurations".equals(qName)) {
                 checkConfigurations();
@@ -1217,17 +1198,15 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     || (state == State.ARTIFACT_EXCLUDE && "exclude".equals(qName))) {
                 state = State.DEP;
                 if (confAware.getConfigurations().length == 0) {
-                    String[] confs = getMd().getConfigurationsNames();
-                    for (int i = 0; i < confs.length; i++) {
-                        addConfiguration(confs[i]);
+                    for (String config : getMd().getConfigurationsNames()) {
+                        addConfiguration(config);
                     }
                 }
                 confAware = null;
             } else if ("exclude".equals(qName) && state == State.EXCLUDE) {
                 if (confAware.getConfigurations().length == 0) {
-                    String[] confs = getMd().getConfigurationsNames();
-                    for (int i = 0; i < confs.length; i++) {
-                        addConfiguration(confs[i]);
+                    for (String config : getMd().getConfigurationsNames()) {
+                        addConfiguration(config);
                     }
                 }
                 confAware = null;
@@ -1274,9 +1253,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         protected void replaceConfigurationWildcards() {
-            Configuration[] configs = getMd().getConfigurations();
-            for (int i = 0; i < configs.length; i++) {
-                configs[i].replaceWildcards(getMd());
+            for (Configuration config : getMd().getConfigurations()) {
+                config.replaceWildcards(getMd());
             }
         }
 

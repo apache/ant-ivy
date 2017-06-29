@@ -91,8 +91,7 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
             Boolean result = Boolean.TRUE;
 
             char[] expressionChars = expression.toCharArray();
-            for (int i = 0; i < expressionChars.length; i++) {
-                char ch = expressionChars[i];
+            for (char ch : expressionChars) {
                 if (ch == '*' || ch == '?' || ch == '[' || ch == ']') {
                     result = Boolean.FALSE;
                     break;

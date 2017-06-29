@@ -69,7 +69,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         private Resource res;
 
-        private List<String> errors = new ArrayList<String>();
+        private List<String> errors = new ArrayList<>();
 
         private DefaultModuleDescriptor md;
 
@@ -132,57 +132,55 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperand, true);
         }
 
-        protected void parseDepsConfs(String[] conf, DefaultDependencyDescriptor dd,
+        protected void parseDepsConfs(String[] confs, DefaultDependencyDescriptor dd,
                 boolean useDefaultMappingToGuessRightOperand, boolean evaluateConditions) {
             replaceConfigurationWildcards(md);
-            for (int i = 0; i < conf.length; i++) {
-                String[] ops = conf[i].split("->");
+            for (String conf : confs) {
+                String[] ops = conf.split("->");
                 if (ops.length == 1) {
                     String[] modConfs = ops[0].split(",");
                     if (!useDefaultMappingToGuessRightOperand) {
-                        for (int j = 0; j < modConfs.length; j++) {
-                            dd.addDependencyConfiguration(modConfs[j].trim(), modConfs[j].trim());
+                        for (String modConf : modConfs) {
+                            dd.addDependencyConfiguration(modConf.trim(), modConf.trim());
                         }
                     } else {
-                        for (int j = 0; j < modConfs.length; j++) {
+                        for (String modConf : modConfs) {
                             String[] depConfs = getDefaultConfMappingDescriptor()
-                                    .getDependencyConfigurations(modConfs[j]);
+                                    .getDependencyConfigurations(modConf);
                             if (depConfs.length > 0) {
-                                for (int k = 0; k < depConfs.length; k++) {
+                                for (String depConf : depConfs) {
                                     String mappedDependency = evaluateConditions ? evaluateCondition(
-                                        depConfs[k].trim(), dd) : depConfs[k].trim();
+                                            depConf.trim(), dd) : depConf.trim();
                                     if (mappedDependency != null) {
-                                        dd.addDependencyConfiguration(modConfs[j].trim(),
-                                            mappedDependency);
+                                        dd.addDependencyConfiguration(modConf.trim(),
+                                                mappedDependency);
                                     }
                                 }
                             } else {
                                 // no default mapping found for this configuration, map
                                 // configuration to itself
-                                dd.addDependencyConfiguration(modConfs[j].trim(),
-                                    modConfs[j].trim());
+                                dd.addDependencyConfiguration(modConf.trim(),
+                                        modConf.trim());
                             }
                         }
                     }
                 } else if (ops.length == 2) {
-                    String[] modConfs = ops[0].split(",");
-                    String[] depConfs = ops[1].split(",");
-                    for (int j = 0; j < modConfs.length; j++) {
-                        for (int k = 0; k < depConfs.length; k++) {
+                    for (String modConf : ops[0].split(",")) {
+                        for (String depConf : ops[1].split(",")) {
                             String mappedDependency = evaluateConditions ? evaluateCondition(
-                                depConfs[k].trim(), dd) : depConfs[k].trim();
+                                    depConf.trim(), dd) : depConf.trim();
                             if (mappedDependency != null) {
-                                dd.addDependencyConfiguration(modConfs[j].trim(), mappedDependency);
+                                dd.addDependencyConfiguration(modConf.trim(), mappedDependency);
                             }
                         }
                     }
                 } else {
-                    addError("invalid conf " + conf[i] + " for " + dd);
+                    addError("invalid conf " + conf + " for " + dd);
                 }
             }
 
             if (md.isMappingOverride()) {
-                addExtendingConfigurations(conf, dd, useDefaultMappingToGuessRightOperand);
+                addExtendingConfigurations(confs, dd, useDefaultMappingToGuessRightOperand);
             }
         }
 
@@ -251,29 +249,27 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         private void addExtendingConfigurations(String[] confs, DefaultDependencyDescriptor dd,
                 boolean useDefaultMappingToGuessRightOperand) {
-            for (int i = 0; i < confs.length; i++) {
-                addExtendingConfigurations(confs[i], dd, useDefaultMappingToGuessRightOperand);
+            for (String conf : confs) {
+                addExtendingConfigurations(conf, dd, useDefaultMappingToGuessRightOperand);
             }
         }
 
         private void addExtendingConfigurations(String conf, DefaultDependencyDescriptor dd,
                 boolean useDefaultMappingToGuessRightOperand) {
-            Set<String> configsToAdd = new HashSet<String>();
-            Configuration[] configs = md.getConfigurations();
-            for (int i = 0; i < configs.length; i++) {
-                String[] ext = configs[i].getExtends();
-                for (int j = 0; j < ext.length; j++) {
-                    if (conf.equals(ext[j])) {
-                        String configName = configs[i].getName();
+            Set<String> configsToAdd = new HashSet<>();
+            for (Configuration config : md.getConfigurations()) {
+                for (String ext : config.getExtends()) {
+                    if (conf.equals(ext)) {
+                        String configName = config.getName();
                         configsToAdd.add(configName);
                         addExtendingConfigurations(configName, dd,
-                            useDefaultMappingToGuessRightOperand);
+                                useDefaultMappingToGuessRightOperand);
                     }
                 }
             }
 
-            String[] confs = configsToAdd.toArray(new String[configsToAdd.size()]);
-            parseDepsConfs(confs, dd, useDefaultMappingToGuessRightOperand);
+            parseDepsConfs(configsToAdd.toArray(new String[configsToAdd.size()]),
+                    dd, useDefaultMappingToGuessRightOperand);
         }
 
         protected DependencyDescriptor getDefaultConfMappingDescriptor() {
@@ -310,7 +306,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         /** Returns a string of the location. */
         private String getLocationString(SAXParseException ex) {
-            StringBuffer str = new StringBuffer();
+            StringBuilder str = new StringBuilder();
 
             String systemId = ex.getSystemId();
             if (systemId != null) {
@@ -351,9 +347,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         }
 
         private void replaceConfigurationWildcards(ModuleDescriptor md) {
-            Configuration[] configs = md.getConfigurations();
-            for (int i = 0; i < configs.length; i++) {
-                configs[i].replaceWildcards(md);
+            for (Configuration config : md.getConfigurations()) {
+                config.replaceWildcards(md);
             }
         }
 

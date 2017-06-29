@@ -76,51 +76,55 @@ public abstract class AbstractWorkspaceResolver extends AbstractResolver {
 
         // search a match on the organization and the module name
 
-        if (org.equals(BundleInfo.BUNDLE_TYPE)) {
-            // looking for an OSGi bundle via its symbolic name
-            String sn = md.getExtraInfoContentByTagName("Bundle-SymbolicName");
-            if (sn == null || !module.equals(sn)) {
-                // not found, skip to next
-                return null;
-            }
-        } else if (org.equals(BundleInfo.PACKAGE_TYPE)) {
-            // looking for an OSGi bundle via its exported package
-            String exportedPackages = md.getExtraInfoContentByTagName("Export-Package");
-            if (exportedPackages == null) {
-                // not found, skip to next
-                return null;
-            }
-            boolean found = false;
-            String version = null;
-            ManifestHeaderValue exportElements;
-            try {
-                exportElements = new ManifestHeaderValue(exportedPackages);
-            } catch (ParseException e) {
-                // wrong OSGi header: skip it
-                return null;
-            }
-            for (ManifestHeaderElement exportElement : exportElements.getElements()) {
-                if (exportElement.getValues().contains(module)) {
-                    found = true;
-                    version = exportElement.getAttributes().get("version");
-                    break;
+        switch (org) {
+            case BundleInfo.BUNDLE_TYPE:
+                // looking for an OSGi bundle via its symbolic name
+                String sn = md.getExtraInfoContentByTagName("Bundle-SymbolicName");
+                if (sn == null || !module.equals(sn)) {
+                    // not found, skip to next
+                    return null;
                 }
-            }
-            if (!found) {
-                // not found, skip to next
-                return null;
-            }
-            if (version == null) {
-                // no version means anything can match. Let's trick the version matcher by
-                // setting the exact expected version
-                version = dependencyMrid.getRevision();
-            }
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(org, module, version));
-        } else {
-            if (!candidateMrid.getModuleId().equals(dependencyMrid.getModuleId())) {
-                // it doesn't match org#module, skip to next
-                return null;
-            }
+                break;
+            case BundleInfo.PACKAGE_TYPE:
+                // looking for an OSGi bundle via its exported package
+                String exportedPackages = md.getExtraInfoContentByTagName("Export-Package");
+                if (exportedPackages == null) {
+                    // not found, skip to next
+                    return null;
+                }
+                boolean found = false;
+                String version = null;
+                ManifestHeaderValue exportElements;
+                try {
+                    exportElements = new ManifestHeaderValue(exportedPackages);
+                } catch (ParseException e) {
+                    // wrong OSGi header: skip it
+                    return null;
+                }
+                for (ManifestHeaderElement exportElement : exportElements.getElements()) {
+                    if (exportElement.getValues().contains(module)) {
+                        found = true;
+                        version = exportElement.getAttributes().get("version");
+                        break;
+                    }
+                }
+                if (!found) {
+                    // not found, skip to next
+                    return null;
+                }
+                if (version == null) {
+                    // no version means anything can match. Let's trick the version matcher by
+                    // setting the exact expected version
+                    version = dependencyMrid.getRevision();
+                }
+                md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(org, module, version));
+                break;
+            default:
+                if (!candidateMrid.getModuleId().equals(dependencyMrid.getModuleId())) {
+                    // it doesn't match org#module, skip to next
+                    return null;
+                }
+                break;
         }
 
         Message.verbose("Workspace resolver found potential matching workspace module "
@@ -199,28 +203,25 @@ public abstract class AbstractWorkspaceResolver extends AbstractResolver {
             if (allConfs.length == 0) {
                 newMd.addArtifact(ModuleDescriptor.DEFAULT_CONFIGURATION, af);
             } else {
-                for (int k = 0; k < allConfs.length; k++) {
-                    newMd.addConfiguration(allConfs[k]);
-                    newMd.addArtifact(allConfs[k].getName(), af);
+                for (Configuration conf : allConfs) {
+                    newMd.addConfiguration(conf);
+                    newMd.addArtifact(conf.getName(), af);
                 }
             }
         }
 
-        DependencyDescriptor[] dependencies = md.getDependencies();
-        for (int k = 0; k < dependencies.length; k++) {
-            newMd.addDependency(dependencies[k]);
+        for (DependencyDescriptor dependency : md.getDependencies()) {
+            newMd.addDependency(dependency);
         }
 
-        ExcludeRule[] allExcludeRules = md.getAllExcludeRules();
-        for (int k = 0; k < allExcludeRules.length; k++) {
-            newMd.addExcludeRule(allExcludeRules[k]);
+        for (ExcludeRule excludeRule : md.getAllExcludeRules()) {
+            newMd.addExcludeRule(excludeRule);
         }
 
         newMd.getExtraInfos().addAll(md.getExtraInfos());
 
-        License[] licenses = md.getLicenses();
-        for (int k = 0; k < licenses.length; k++) {
-            newMd.addLicense(licenses[k]);
+        for (License license : md.getLicenses()) {
+            newMd.addLicense(license);
         }
 
         return newMd;

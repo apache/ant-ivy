@@ -98,7 +98,9 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                 boolean reachable = res.exists();
                 if (reachable) {
                     String revision;
-                    if (pattern.indexOf(IvyPatternHelper.REVISION_KEY) == -1) {
+                    if (pattern.contains(IvyPatternHelper.REVISION_KEY)) {
+                        revision = mrid.getRevision();
+                    } else {
                         if ("ivy".equals(artifact.getType()) || "pom".equals(artifact.getType())) {
                             // we can't determine the revision from the pattern, get it
                             // from the moduledescriptor itself
@@ -116,8 +118,6 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                         } else {
                             revision = "working@" + name;
                         }
-                    } else {
-                        revision = mrid.getRevision();
                     }
                     return new ResolvedResource(res, revision);
                 } else if (versionMatcher.isDynamic(mrid)) {
@@ -130,10 +130,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             } else {
                 return findDynamicResourceUsingPattern(rmdparser, mrid, pattern, artifact, date);
             }
-        } catch (IOException ex) {
-            throw new RuntimeException(name + ": unable to get resource for " + mrid + ": res="
-                    + IvyPatternHelper.substitute(pattern, mrid, artifact) + ": " + ex, ex);
-        } catch (ParseException ex) {
+        } catch (IOException | ParseException ex) {
             throw new RuntimeException(name + ": unable to get resource for " + mrid + ": res="
                     + IvyPatternHelper.substitute(pattern, mrid, artifact) + ": " + ex, ex);
         }
@@ -228,15 +225,15 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             throws IOException {
         // verify the checksum algorithms before uploading artifacts!
         String[] checksums = getChecksumAlgorithms();
-        for (int i = 0; i < checksums.length; i++) {
-            if (!ChecksumHelper.isKnownAlgorithm(checksums[i])) {
-                throw new IllegalArgumentException("Unknown checksum algorithm: " + checksums[i]);
+        for (String checksum : checksums) {
+            if (!ChecksumHelper.isKnownAlgorithm(checksum)) {
+                throw new IllegalArgumentException("Unknown checksum algorithm: " + checksum);
             }
         }
 
         repository.put(artifact, src, dest, overwrite);
-        for (int i = 0; i < checksums.length; i++) {
-            putChecksum(artifact, src, dest, overwrite, checksums[i]);
+        for (String checksum : checksums) {
+            putChecksum(artifact, src, dest, overwrite, checksum);
         }
 
         if (signerName != null) {
@@ -303,7 +300,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             String[] values = ResolverHelper.listTokenValues(repository, partiallyResolvedPattern,
                 token);
             if (values != null) {
-                names.addAll(filterNames(new ArrayList<String>(Arrays.asList(values))));
+                names.addAll(filterNames(new ArrayList<>(Arrays.asList(values))));
             }
         }
     }

@@ -57,7 +57,7 @@ public class MirroredURLResolver extends RepositoryResolver {
             throw new IllegalStateException("The mirror list could not be read from "
                     + mirrorListUrl + " (" + e.getMessage() + ")");
         }
-        List<Repository> repositories = new ArrayList<Repository>();
+        List<Repository> repositories = new ArrayList<>();
         for (String baseUrl : mirrorBaseUrls) {
             URL url = null;
             try {
@@ -87,17 +87,14 @@ public class MirroredURLResolver extends RepositoryResolver {
     }
 
     private List<String> readMirrorList(File mirrorListFile) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(
-                mirrorListFile)));
-        List<String> list = new ArrayList<String>();
-        try {
+        List<String> list = new ArrayList<>();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(
+                mirrorListFile)))) {
             String line = in.readLine();
             while (line != null) {
                 list.add(line);
                 line = in.readLine();
             }
-        } finally {
-            in.close();
         }
         return list;
     }

@@ -61,7 +61,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     /**
      * hashmap of user/hosts with credentials. key is hostname, value is Credentials
      **/
-    private static HashMap credentialsCache = new HashMap();
+    private static final HashMap<String, Credentials> credentialsCache = new HashMap<>();
 
     private static final int MAX_CREDENTIALS_CACHE_SIZE = 100;
 
@@ -91,7 +91,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
             }
             if (uri.getUserInfo() != null) {
                 String userInfo = uri.getUserInfo();
-                if (userInfo.indexOf(":") == -1) {
+                if (!userInfo.contains(":")) {
                     user = userInfo;
                 } else {
                     user = userInfo.substring(0, userInfo.indexOf(":"));

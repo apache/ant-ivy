@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class PackagerResolver extends URLResolver {
 
     private static final String PACKAGER_ARTIFACT_EXT = "xml";
 
-    private final HashMap/* <ModuleRevisionId, PackagerCacheEntry> */packagerCache = new HashMap();
+    private final HashMap<ModuleRevisionId, PackagerCacheEntry> packagerCache = new HashMap<>();
 
     private File buildRoot;
 
@@ -58,7 +57,7 @@ public class PackagerResolver extends URLResolver {
 
     private String resourceURL;
 
-    private Map/* <String,String> */properties = new LinkedHashMap();
+    private final Map<String, String> properties = new LinkedHashMap<>();
 
     private boolean validate = true;
 
@@ -82,8 +81,7 @@ public class PackagerResolver extends URLResolver {
         if (this.preserve) {
             return;
         }
-        for (Iterator i = packagerCache.values().iterator(); i.hasNext();) {
-            PackagerCacheEntry entry = (PackagerCacheEntry) i.next();
+        for (PackagerCacheEntry entry : packagerCache.values()) {
             entry.cleanup();
         }
         packagerCache.clear();
@@ -143,7 +141,7 @@ public class PackagerResolver extends URLResolver {
      * @param pattern String
      */
     public void setPackagerPattern(String pattern) {
-        ArrayList list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add(pattern);
         setArtifactPatterns(list);
     }
@@ -241,7 +239,7 @@ public class PackagerResolver extends URLResolver {
 
         // Check the cache
         ModuleRevisionId mr = artifact.getModuleRevisionId();
-        PackagerCacheEntry entry = (PackagerCacheEntry) packagerCache.get(mr);
+        PackagerCacheEntry entry = packagerCache.get(mr);
 
         // Ignore invalid entries
         if (entry != null && !entry.isBuilt()) {

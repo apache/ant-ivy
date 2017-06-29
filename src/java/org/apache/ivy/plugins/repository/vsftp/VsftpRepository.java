@@ -217,7 +217,7 @@ public class VsftpRepository extends AbstractRepository {
         }
     }
 
-    public List list(String parent) throws IOException {
+    public List<String> list(String parent) throws IOException {
         initIvy();
         try {
             if (!parent.endsWith("/")) {
@@ -228,7 +228,7 @@ public class VsftpRepository extends AbstractRepository {
                 return null;
             }
             String[] lines = response.split("\n");
-            List ret = new ArrayList(lines.length);
+            List<String> ret = new ArrayList<>(lines.length);
             for (int i = 0; i < lines.length; i++) {
                 while (lines[i].endsWith("\r") || lines[i].endsWith("\n")) {
                     lines[i] = lines[i].substring(0, lines[i].length() - 1);

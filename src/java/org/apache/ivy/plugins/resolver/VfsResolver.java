@@ -50,7 +50,7 @@ public class VfsResolver extends RepositoryResolver {
         if (m.matches()) {
             final String password = m.group(PASSWORD_GROUP);
             final int passwordposi = s.indexOf(password);
-            StringBuffer stars = new StringBuffer(password);
+            StringBuilder stars = new StringBuilder(password);
             for (int posi = 0; posi < password.length(); posi++) {
                 stars.setCharAt(posi, '*');
             }

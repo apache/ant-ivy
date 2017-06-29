@@ -72,7 +72,7 @@ public class FileRepository extends AbstractRepository {
 
     private void copy(File src, File destination, boolean overwrite) throws IOException {
         try {
-            getProgressListener().setTotalLength(new Long(src.length()));
+            getProgressListener().setTotalLength(src.length());
             if (!FileUtil.copy(src, destination, getProgressListener(), overwrite)) {
                 if (!overwrite && destination.exists()) {
                     throw new IOException("file copy not done from " + src + " to " + destination
@@ -81,10 +81,7 @@ public class FileRepository extends AbstractRepository {
                     throw new IOException("file copy not done from " + src + " to " + destination);
                 }
             }
-        } catch (IOException ex) {
-            fireTransferError(ex);
-            throw ex;
-        } catch (RuntimeException ex) {
+        } catch (IOException | RuntimeException ex) {
             fireTransferError(ex);
             throw ex;
         } finally {
@@ -96,14 +93,14 @@ public class FileRepository extends AbstractRepository {
         return progress;
     }
 
-    public List list(String parent) throws IOException {
+    public List<String> list(String parent) throws IOException {
         File dir = getFile(parent);
         if (dir.exists() && dir.isDirectory()) {
             String[] names = dir.list();
             if (names != null) {
-                List ret = new ArrayList(names.length);
-                for (int i = 0; i < names.length; i++) {
-                    ret.add(parent + getFileSeparator() + names[i]);
+                List<String> ret = new ArrayList<>(names.length);
+                for (String name : names) {
+                    ret.add(parent + getFileSeparator() + name);
                 }
                 return ret;
             }

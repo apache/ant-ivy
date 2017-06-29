@@ -18,7 +18,6 @@
 package org.apache.ivy.plugins.circular;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -40,14 +39,14 @@ public final class CircularDependencyHelper {
      * @return a string representation of this circular dependency graph
      */
     public static String formatMessage(final ModuleRevisionId[] mrids) {
-        Set alreadyAdded = new HashSet();
-        StringBuffer buff = new StringBuffer();
-        buff.append(mrids[0]);
-        alreadyAdded.add(mrids[0]);
-        for (int i = 1; i < mrids.length; i++) {
-            buff.append("->");
-            if (alreadyAdded.add(mrids[i])) {
-                buff.append(mrids[i]);
+        Set<ModuleRevisionId> alreadyAdded = new HashSet<>();
+        StringBuilder buff = new StringBuilder();
+        for (ModuleRevisionId mrid : mrids) {
+            if (buff.length() > 0) {
+                buff.append("->");
+            }
+            if (alreadyAdded.add(mrid)) {
+                buff.append(mrid);
             } else {
                 buff.append("...");
                 break;
@@ -65,11 +64,10 @@ public final class CircularDependencyHelper {
      *            a List&lt;ModuleDescriptor&gt;
      * @return String
      */
-    public static String formatMessageFromDescriptors(List loopElements) {
+    public static String formatMessageFromDescriptors(List<ModuleDescriptor> loopElements) {
         ModuleRevisionId[] mrids = new ModuleRevisionId[loopElements.size()];
         int pos = 0;
-        for (Iterator it = loopElements.iterator(); it.hasNext();) {
-            ModuleDescriptor descriptor = (ModuleDescriptor) it.next();
+        for (ModuleDescriptor descriptor: loopElements) {
             mrids[pos] = descriptor.getModuleRevisionId();
             pos++;
         }

@@ -50,7 +50,7 @@ public interface VersionMatcher {
      *            the dependency module revision id as asked by a module
      * @return true if this revision is considered as a dynamic one, false otherwise
      */
-    public boolean isDynamic(ModuleRevisionId askedMrid);
+    boolean isDynamic(ModuleRevisionId askedMrid);
 
     /**
      * Indicates if this version matcher considers that the module revision found matches the asked
@@ -60,7 +60,7 @@ public interface VersionMatcher {
      * @param foundMrid ModuleRevisionId
      * @return boolean
      */
-    public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid);
+    boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid);
 
     /**
      * Indicates if this VersionMatcher needs module descriptors to determine if a module revision
@@ -71,7 +71,7 @@ public interface VersionMatcher {
      * @param foundMrid ModuleRevisionId
      * @return boolean
      */
-    public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid);
+    boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid);
 
     /**
      * Indicates if this version matcher considers that the module found matches the asked one. This
@@ -83,7 +83,7 @@ public interface VersionMatcher {
      * @param foundMD ModuleDescriptor
      * @return boolean
      */
-    public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD);
+    boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD);
 
     /**
      * Compares a dynamic revision (askedMrid) with a static one (foundMrid) to indicate which one
@@ -100,13 +100,13 @@ public interface VersionMatcher {
      * @return 0 if it's not possible to know which one is greater, greater than 0 if askedMrid
      *         should be considered greater, lower than 0 if it can't be consider greater
      */
-    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
-            Comparator staticComparator);
+    int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
+            Comparator<ModuleRevisionId> staticComparator);
 
     /**
      * Returns the version matcher name identifying this version matcher
      *
      * @return the version matcher name identifying this version matcher
      */
-    public String getName();
+    String getName();
 }

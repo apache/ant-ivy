@@ -101,7 +101,7 @@ public class LatestConflictManager extends AbstractConflictManager {
             }
         }
 
-        ArrayList<IvyNode> unevicted = new ArrayList<IvyNode>();
+        ArrayList<IvyNode> unevicted = new ArrayList<>();
         for (IvyNode node : conflicts) {
             if (!node.isCompletelyEvicted()) {
                 unevicted.add(node);
@@ -127,7 +127,7 @@ public class LatestConflictManager extends AbstractConflictManager {
     }
 
     protected ArtifactInfo[] toArtifactInfo(Collection<IvyNode> conflicts) {
-        List<ArtifactInfo> artifacts = new ArrayList<ArtifactInfo>(conflicts.size());
+        List<ArtifactInfo> artifacts = new ArrayList<>(conflicts.size());
         for (IvyNode node : conflicts) {
             artifacts.add(new IvyNodeArtifactInfo(node));
         }

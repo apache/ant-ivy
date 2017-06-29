@@ -108,7 +108,7 @@ public class PomModuleDescriptorBuilder {
             new Configuration("optional", Visibility.PUBLIC, "contains all optional dependencies",
                     new String[0], true, null)};
 
-    static final Map<String, ConfMapper> MAVEN2_CONF_MAPPING = new HashMap<String, ConfMapper>();
+    static final Map<String, ConfMapper> MAVEN2_CONF_MAPPING = new HashMap<>();
 
     private static final String DEPENDENCY_MANAGEMENT = "m:dependency.management";
 
@@ -116,12 +116,12 @@ public class PomModuleDescriptorBuilder {
 
     private static final String EXTRA_INFO_DELIMITER = "__";
 
-    private static final Collection<String> JAR_PACKAGINGS = Arrays.asList(new String[] {"ejb",
+    private static final Collection<String> JAR_PACKAGINGS = Arrays.asList("ejb",
             "bundle", "maven-plugin", "eclipse-plugin", "jbi-component", "jbi-shared-library",
-            "orbit", "hk2-jar"});
+            "orbit", "hk2-jar");
 
-    static interface ConfMapper {
-        public void addMappingConfs(DefaultDependencyDescriptor dd, boolean isOptional);
+    interface ConfMapper {
+        void addMappingConfs(DefaultDependencyDescriptor dd, boolean isOptional);
     }
 
     static {
@@ -199,8 +199,8 @@ public class PomModuleDescriptorBuilder {
             ParserSettings ivySettings) {
         ivyModuleDescriptor = new PomModuleDescriptor(parser, res);
         ivyModuleDescriptor.setResolvedPublicationDate(new Date(res.getLastModified()));
-        for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
-            ivyModuleDescriptor.addConfiguration(MAVEN2_CONFIGURATIONS[i]);
+        for (Configuration m2conf : MAVEN2_CONFIGURATIONS) {
+            ivyModuleDescriptor.addConfiguration(m2conf);
         }
         ivyModuleDescriptor.setMappingOverride(true);
         ivyModuleDescriptor.addExtraAttributeNamespace("m", Ivy.getIvyHomeURL() + "maven");
@@ -231,8 +231,8 @@ public class PomModuleDescriptorBuilder {
     }
 
     public void setLicenses(License[] licenses) {
-        for (int i = 0; i < licenses.length; i++) {
-            ivyModuleDescriptor.addLicense(licenses[i]);
+        for (License license : licenses) {
+            ivyModuleDescriptor.addLicense(license);
         }
     }
 
@@ -304,7 +304,7 @@ public class PomModuleDescriptorBuilder {
         scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
         ConfMapper mapping = MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
-        Map<String, String> extraAtt = new HashMap<String, String>();
+        Map<String, String> extraAtt = new HashMap<>();
         if ((dep.getClassifier() != null)
                 || ((dep.getType() != null) && !"jar".equals(dep.getType()))) {
             String type = "jar";
@@ -342,8 +342,8 @@ public class PomModuleDescriptorBuilder {
                 continue;
             }
             String[] confs = dd.getModuleConfigurations();
-            for (int k = 0; k < confs.length; k++) {
-                dd.addExcludeRule(confs[k], new DefaultExcludeRule(new ArtifactId(excludedModule,
+            for (String conf : confs) {
+                dd.addExcludeRule(conf, new DefaultExcludeRule(new ArtifactId(excludedModule,
                         PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
                         PatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, null));
             }
@@ -430,14 +430,13 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static List<PomDependencyMgt> getPlugins(ModuleDescriptor md) {
-        List<PomDependencyMgt> result = new ArrayList<PomDependencyMgt>();
+        List<PomDependencyMgt> result = new ArrayList<>();
         String plugins = md.getExtraInfoContentByTagName("m:maven.plugins");
         if (plugins == null) {
-            return new ArrayList<PomDependencyMgt>();
+            return new ArrayList<>();
         }
-        String[] pluginsArray = plugins.split("\\|");
-        for (int i = 0; i < pluginsArray.length; i++) {
-            String[] parts = pluginsArray[i].split(EXTRA_INFO_DELIMITER);
+        for (String plugin : plugins.split("\\|")) {
+            String[] parts = plugin.split(EXTRA_INFO_DELIMITER);
             result.add(new PomPluginElement(parts[0], parts[1], parts[2]));
         }
 
@@ -532,7 +531,7 @@ public class PomModuleDescriptorBuilder {
             }
         }
         String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(groupId, artifactId);
-        List<ModuleId> exclusionIds = new LinkedList<ModuleId>();
+        List<ModuleId> exclusionIds = new LinkedList<>();
         for (ExtraInfoHolder extraInfoHolder : descriptor.getExtraInfos()) {
             String key = extraInfoHolder.getName();
             if (key.startsWith(exclusionPrefix)) {
@@ -550,7 +549,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static Map<ModuleId, String> getDependencyManagementMap(ModuleDescriptor md) {
-        Map<ModuleId, String> ret = new LinkedHashMap<ModuleId, String>();
+        Map<ModuleId, String> ret = new LinkedHashMap<>();
         if (md instanceof PomModuleDescriptor) {
             for (Map.Entry<ModuleId, PomDependencyMgt> e : ((PomModuleDescriptor) md)
                     .getDependencyManagementMap().entrySet()) {
@@ -576,7 +575,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static List<PomDependencyMgt> getDependencyManagements(ModuleDescriptor md) {
-        List<PomDependencyMgt> result = new ArrayList<PomDependencyMgt>();
+        List<PomDependencyMgt> result = new ArrayList<>();
 
         if (md instanceof PomModuleDescriptor) {
             result.addAll(((PomModuleDescriptor) md).getDependencyManagementMap().values());
@@ -643,7 +642,7 @@ public class PomModuleDescriptorBuilder {
 
     @Deprecated
     public static Map<String, String> extractPomProperties(Map<String, String> extraInfo) {
-        Map<String, String> r = new HashMap<String, String>();
+        Map<String, String> r = new HashMap<>();
         for (Map.Entry<String, String> extraInfoEntry : extraInfo.entrySet()) {
             if (extraInfoEntry.getKey().startsWith(PROPERTIES)) {
                 String prop = extraInfoEntry.getKey().substring(
@@ -655,7 +654,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static Map<String, String> extractPomProperties(List<ExtraInfoHolder> extraInfos) {
-        Map<String, String> r = new HashMap<String, String>();
+        Map<String, String> r = new HashMap<>();
         for (ExtraInfoHolder extraInfoHolder : extraInfos) {
             if ((extraInfoHolder.getName()).startsWith(PROPERTIES)) {
                 String prop = (extraInfoHolder.getName()).substring(PROPERTIES.length()
@@ -725,7 +724,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static class PomModuleDescriptor extends DefaultModuleDescriptor {
-        private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new LinkedHashMap<ModuleId, PomDependencyMgt>();
+        private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new LinkedHashMap<>();
 
         public PomModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
             super(parser, res);

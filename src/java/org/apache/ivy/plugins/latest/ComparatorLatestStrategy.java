@@ -35,7 +35,7 @@ public class ComparatorLatestStrategy extends AbstractLatestStrategy {
     }
 
     public List<ArtifactInfo> sort(ArtifactInfo[] infos) {
-        List<ArtifactInfo> ret = new ArrayList<ArtifactInfo>(Arrays.asList(infos));
+        List<ArtifactInfo> ret = new ArrayList<>(Arrays.asList(infos));
         Collections.sort(ret, comparator);
         return ret;
     }

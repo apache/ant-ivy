@@ -32,7 +32,7 @@ public abstract class AbstractLogCircularDependencyStrategy extends
         super(name);
     }
 
-    private Collection/* <String> */circularDependencies = new HashSet();
+    private final Collection<String> circularDependencies = new HashSet<>();
 
     public void handleCircularDependency(ModuleRevisionId[] mrids) {
         String circularDependencyId = getCircularDependencyId(mrids);

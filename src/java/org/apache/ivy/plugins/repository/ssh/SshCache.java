@@ -153,12 +153,12 @@ public final class SshCache {
      *
      * @see #createCacheKey(String, String, int) for details
      */
-    private Map uriCacheMap = new HashMap();
+    private final Map<String, Entry> uriCacheMap = new HashMap<>();
 
     /**
      * key is the session itself
      */
-    private Map sessionCacheMap = new HashMap();
+    private final Map<Session, Entry> sessionCacheMap = new HashMap<>();
 
     /**
      * retrieves a session entry for a given hostname from the cache
@@ -172,7 +172,7 @@ public final class SshCache {
      * @return null or the existing entry
      */
     private Entry getCacheEntry(String user, String host, int port) {
-        return (Entry) uriCacheMap.get(createCacheKey(user, host, port));
+        return uriCacheMap.get(createCacheKey(user, host, port));
     }
 
     /**
@@ -203,7 +203,7 @@ public final class SshCache {
      * @return null or the existing entry
      */
     private Entry getCacheEntry(Session session) {
-        return (Entry) sessionCacheMap.get(session);
+        return sessionCacheMap.get(session);
     }
 
     /**
@@ -220,7 +220,7 @@ public final class SshCache {
      *            Session to save
      */
     private void setSession(String user, String host, int port, Session newSession) {
-        Entry entry = (Entry) uriCacheMap.get(createCacheKey(user, host, port));
+        Entry entry = uriCacheMap.get(createCacheKey(user, host, port));
         Session oldSession = null;
         if (entry != null) {
             oldSession = entry.getSession();
@@ -251,7 +251,7 @@ public final class SshCache {
      *            to clear
      */
     public void clearSession(Session session) {
-        Entry entry = (Entry) sessionCacheMap.get(session);
+        Entry entry = sessionCacheMap.get(session);
         if (entry != null) {
             setSession(entry.getUser(), entry.getHost(), entry.getPort(), null);
         }
@@ -375,9 +375,7 @@ public final class SshCache {
                 if (passFile != null && passFile.exists()) {
                     passFile.delete();
                 }
-                IOException ex = new IOException(e.getMessage());
-                ex.initCause(e);
-                throw ex;
+                throw new IOException(e.getMessage(), e);
             }
         }
         return session;

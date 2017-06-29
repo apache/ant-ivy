@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,12 +162,12 @@ public final class XmlModuleDescriptorUpdater {
     private static class UpdaterHandler extends DefaultHandler implements LexicalHandler {
 
         /** standard attributes of ivy-module/info */
-        private static final Collection STD_ATTS = Arrays.asList(new String[] {"organisation",
-                "module", "branch", "revision", "status", "publication", "namespace"});
+        private static final Collection<String> STD_ATTS = Arrays.asList("organisation",
+                "module", "branch", "revision", "status", "publication", "namespace");
 
         /** elements that may appear inside ivy-module, in expected order */
-        private static final List MODULE_ELEMENTS = Arrays.asList(new String[] {"info",
-                "configurations", "publications", "dependencies", "conflicts"});
+        private static final List<String> MODULE_ELEMENTS = Arrays.asList("info",
+                "configurations", "publications", "dependencies", "conflicts");
 
         /** element position of "configurations" inside "ivy-module" */
         private static final int CONFIGURATIONS_POSITION = MODULE_ELEMENTS
@@ -178,16 +177,16 @@ public final class XmlModuleDescriptorUpdater {
         private static final int DEPENDENCIES_POSITION = MODULE_ELEMENTS.indexOf("dependencies");
 
         /** elements that may appear inside of ivy-module/info */
-        private static final Collection INFO_ELEMENTS = Arrays.asList(new String[] {"extends",
-                "ivyauthor", "license", "repository", "description"});
+        private static final Collection<String> INFO_ELEMENTS = Arrays.asList("extends",
+                "ivyauthor", "license", "repository", "description");
 
         private final ParserSettings settings;
 
         private final PrintWriter out;
 
-        private final Map resolvedRevisions;
+        private final Map<ModuleRevisionId, String> resolvedRevisions;
 
-        private final Map resolvedBranches;
+        private final Map<ModuleRevisionId, String> resolvedBranches;
 
         private final String status;
 
@@ -203,7 +202,7 @@ public final class XmlModuleDescriptorUpdater {
 
         private boolean inHeader = true;
 
-        private final List confs;
+        private final List<String> confs;
 
         private final URL relativePathCtx;
 
@@ -252,7 +251,7 @@ public final class XmlModuleDescriptorUpdater {
 
         private StringBuffer currentIndent = new StringBuffer();
 
-        private ArrayList indentLevels = new ArrayList(); // ArrayList<String>
+        private ArrayList<String> indentLevels = new ArrayList<>(); // ArrayList<String>
 
         // true if an ivy-module/info/description element has been found in the published descriptor
         private boolean hasDescription = false;
@@ -266,11 +265,11 @@ public final class XmlModuleDescriptorUpdater {
         // the new value of the defaultconf attribute on the publications tag
         private String newDefaultConf = null;
 
-        private Stack context = new Stack();
+        private Stack<String> context = new Stack<>();
 
-        private Stack buffers = new Stack();
+        private Stack<ExtendedBuffer> buffers = new Stack<>();
 
-        private Stack confAttributeBuffers = new Stack();
+        private Stack<ExtendedBuffer> confAttributeBuffers = new Stack<>();
 
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
@@ -315,11 +314,11 @@ public final class XmlModuleDescriptorUpdater {
                     || "ivy-module/dependencies/dependency/conf".equals(path)
                     || "ivy-module/dependencies/dependency/artifact/conf".equals(path)) {
                 buffers.push(new ExtendedBuffer(getContext()));
-                ((ExtendedBuffer) confAttributeBuffers.peek()).setDefaultPrint(false);
+                confAttributeBuffers.peek().setDefaultPrint(false);
                 String confName = substitute(settings, attributes.getValue("name"));
                 if (!confs.contains(confName)) {
-                    ((ExtendedBuffer) confAttributeBuffers.peek()).setPrint(true);
-                    ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                    confAttributeBuffers.peek().setPrint(true);
+                    buffers.peek().setPrint(true);
                     write("<" + qName);
                     for (int i = 0; i < attributes.getLength(); i++) {
                         write(" " + attributes.getQName(i) + "=\""
@@ -340,7 +339,7 @@ public final class XmlModuleDescriptorUpdater {
                         String newConf = removeConfigurationsFromList(confName, confs);
                         if (newConf.length() > 0) {
                             write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");
-                            ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                            buffers.peek().setPrint(true);
                         }
                     } else {
                         write(" " + attributes.getQName(i) + "=\""
@@ -360,7 +359,7 @@ public final class XmlModuleDescriptorUpdater {
                         String newConf = removeConfigurationsFromList(confName, confs);
                         if (newConf.length() > 0) {
                             write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");
-                            ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                            buffers.peek().setPrint(true);
                         }
                     } else {
                         write(" " + attributes.getQName(i) + "=\""
@@ -439,7 +438,7 @@ public final class XmlModuleDescriptorUpdater {
             buffers.push(new ExtendedBuffer(getContext()));
             String confName = substitute(settings, attributes.getValue("name"));
             if (!confs.contains(confName)) {
-                ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                buffers.peek().setPrint(true);
                 String extend = substitute(settings, attributes.getValue("extends"));
                 if (extend != null) {
                     for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
@@ -526,8 +525,7 @@ public final class XmlModuleDescriptorUpdater {
                 if (ns != null) {
                     mid = NameSpaceHelper.transform(mid, ns.getToSystemTransformer());
                 }
-                for (Iterator iter = resolvedRevisions.keySet().iterator(); iter.hasNext();) {
-                    ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
+                for (ModuleRevisionId mrid : resolvedRevisions.keySet()) {
                     if (mrid.getModuleId().equals(mid)) {
                         branch = mrid.getBranch();
                         break;
@@ -537,19 +535,19 @@ public final class XmlModuleDescriptorUpdater {
 
             String revision = substitute(settings, attributes.getValue("rev"));
             String revisionConstraint = substitute(settings, attributes.getValue("revConstraint"));
-            Map extraAttributes = ExtendableItemHelper.getExtraAttributes(settings, attributes,
+            Map<String, String> extraAttributes = ExtendableItemHelper.getExtraAttributes(settings, attributes,
                 XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
             ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
                 revision, extraAttributes);
             ModuleRevisionId systemMrid = ns == null ? localMrid : ns.getToSystemTransformer()
                     .transform(localMrid);
 
-            String newBranch = (String) resolvedBranches.get(systemMrid);
+            String newBranch = resolvedBranches.get(systemMrid);
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
                 if ("rev".equals(attName)) {
-                    String rev = (String) resolvedRevisions.get(systemMrid);
+                    String rev = resolvedRevisions.get(systemMrid);
                     if (rev != null) {
                         write(" rev=\"" + rev + "\"");
                         if (attributes.getIndex("branchConstraint") == -1
@@ -586,7 +584,7 @@ public final class XmlModuleDescriptorUpdater {
                         String newMapping = removeConfigurationsFromMapping(oldMapping, confs);
                         if (newMapping.length() > 0) {
                             write(" conf=\"" + newMapping + "\"");
-                            ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                            buffers.peek().setPrint(true);
                         }
                     }
                 } else {
@@ -698,7 +696,7 @@ public final class XmlModuleDescriptorUpdater {
             String branch = null;
             String status = null;
             String namespace = null;
-            Map/* <String,String> */extraAttributes = null;
+            Map<String, String> extraAttributes = null;
 
             if (options.isMerge()) {
                 // get attributes from merged descriptor, ignoring raw XML
@@ -729,7 +727,7 @@ public final class XmlModuleDescriptorUpdater {
                 branch = substitute(settings, attributes.getValue("branch"));
                 status = substitute(settings, attributes.getValue("status"));
                 namespace = substitute(settings, attributes.getValue("namespace"));
-                extraAttributes = new LinkedHashMap(attributes.getLength());
+                extraAttributes = new LinkedHashMap<>(attributes.getLength());
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String qname = attributes.getQName(i);
                     if (!STD_ATTS.contains(qname)) {
@@ -754,7 +752,7 @@ public final class XmlModuleDescriptorUpdater {
                 rev, ExtendableItemHelper
                         .getExtraAttributes(settings, attributes, new String[] {"organisation",
                                 "module", "revision", "status", "publication", "namespace"}));
-            ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
+            ModuleRevisionId systemMid = (ns == null) ? localMid : ns.getToSystemTransformer()
                     .transform(localMid);
 
             write("<info");
@@ -779,8 +777,7 @@ public final class XmlModuleDescriptorUpdater {
                 write(" namespace=\"" + namespace + "\"");
             }
 
-            for (Iterator extras = extraAttributes.entrySet().iterator(); extras.hasNext();) {
-                Map.Entry extra = (Map.Entry) extras.next();
+            for (Map.Entry<String, String> extra : extraAttributes.entrySet()) {
                 write(" " + extra.getKey() + "=\"" + extra.getValue() + "\"");
             }
         }
@@ -790,13 +787,12 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         private PrintWriter getWriter() {
-            return buffers.isEmpty() ? out : ((ExtendedBuffer) buffers.peek()).getWriter();
+            return buffers.isEmpty() ? out : buffers.peek().getWriter();
         }
 
         private String getContext() {
-            StringBuffer buf = new StringBuffer();
-            for (Iterator iter = context.iterator(); iter.hasNext();) {
-                String ctx = (String) iter.next();
+            StringBuilder buf = new StringBuilder();
+            for (String ctx : context) {
                 buf.append(ctx).append("/");
             }
             if (buf.length() > 0) {
@@ -811,26 +807,25 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         private String removeConfigurationsFromMapping(String mapping, List confsToRemove) {
-            StringBuffer newMapping = new StringBuffer();
+            StringBuilder newMapping = new StringBuilder();
             String mappingSep = "";
             for (StringTokenizer tokenizer = new StringTokenizer(mapping, ";"); tokenizer
                     .hasMoreTokens();) {
                 String current = tokenizer.nextToken();
                 String[] ops = current.split("->");
-                String[] lhs = ops[0].split(",");
-                List confsToWrite = new ArrayList();
-                for (int j = 0; j < lhs.length; j++) {
-                    if (!confs.contains(lhs[j].trim())) {
-                        confsToWrite.add(lhs[j]);
+                List<String> confsToWrite = new ArrayList<>();
+                for (String lh : ops[0].split(",")) {
+                    if (!confs.contains(lh.trim())) {
+                        confsToWrite.add(lh);
                     }
                 }
                 if (!confsToWrite.isEmpty()) {
                     newMapping.append(mappingSep);
 
                     String sep = "";
-                    for (Iterator it = confsToWrite.iterator(); it.hasNext();) {
+                    for (String confToWrite : confsToWrite) {
                         newMapping.append(sep);
-                        newMapping.append(it.next());
+                        newMapping.append(confToWrite);
                         sep = ",";
                     }
                     if (ops.length == 2) {
@@ -845,7 +840,7 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         private String removeConfigurationsFromList(String list, List confsToRemove) {
-            StringBuffer newList = new StringBuffer();
+            StringBuilder newList = new StringBuilder();
             String listSep = "";
             for (StringTokenizer tokenizer = new StringTokenizer(list, ","); tokenizer
                     .hasMoreTokens();) {
@@ -918,7 +913,7 @@ public final class XmlModuleDescriptorUpdater {
                 // add a default single-level indent until we see indents in the document
                 indentLevels.add("    ");
             }
-            String oneLevel = (String) indentLevels.get(0);
+            String oneLevel = indentLevels.get(0);
             for (int fill = indentLevels.size(); fill <= level; ++fill) {
                 indentLevels.add(indentLevels.get(fill - 1) + oneLevel);
             }
@@ -930,7 +925,7 @@ public final class XmlModuleDescriptorUpdater {
         private String getIndent() {
             int level = context.size() - 1;
             fillIndents(level);
-            return (String) indentLevels.get(level);
+            return indentLevels.get(level);
         }
 
         /**
@@ -956,7 +951,8 @@ public final class XmlModuleDescriptorUpdater {
             // we can add some useful comments
             PrintWriter out = getWriter();
 
-            Map inheritedItems = collateInheritedItems(merged, items);
+            Map<ModuleRevisionId, List<InheritableItem>> inheritedItems = collateInheritedItems(
+                merged, items);
             boolean hasItems = !inheritedItems.isEmpty();
 
             if (hasItems && includeContainer) {
@@ -968,18 +964,17 @@ public final class XmlModuleDescriptorUpdater {
                 justOpen = null;
             }
 
-            for (Iterator parents = inheritedItems.entrySet().iterator(); parents.hasNext();) {
-                Map.Entry entry = (Map.Entry) parents.next();
-                ModuleRevisionId parent = (ModuleRevisionId) entry.getKey();
-                List list = (List) entry.getValue();
+            for (Map.Entry<ModuleRevisionId, List<InheritableItem>> entry : inheritedItems
+                    .entrySet()) {
+                ModuleRevisionId parent = entry.getKey();
+                List<InheritableItem> list = entry.getValue();
 
                 if (justOpen != null) {
                     out.println(">");
                     justOpen = null; // helps endElement() decide how to write close tags
                 }
                 writeInheritanceComment(itemName, parent);
-                for (int c = 0; c < list.size(); ++c) {
-                    InheritableItem item = (InheritableItem) list.get(c);
+                for (InheritableItem item : list) {
                     out.print(getIndent());
                     printer.print(merged, item, out);
                 }
@@ -1015,20 +1010,20 @@ public final class XmlModuleDescriptorUpdater {
          * @return maps parent ModuleRevisionId to a List of InheritedItems imported from that
          *         parent
          */
-        private Map/* <ModuleRevisionId,List> */collateInheritedItems(ModuleDescriptor merged,
-                InheritableItem[] items) {
-            LinkedHashMap/* <ModuleRevisionId,List> */inheritedItems = new LinkedHashMap();
-            for (int i = 0; i < items.length; ++i) {
-                ModuleRevisionId source = items[i].getSourceModule();
+        private Map<ModuleRevisionId, List<InheritableItem>> collateInheritedItems(
+                ModuleDescriptor merged, InheritableItem[] items) {
+            Map<ModuleRevisionId, List<InheritableItem>> inheritedItems = new LinkedHashMap<>();
+            for (InheritableItem item : items) {
+                ModuleRevisionId source = item.getSourceModule();
                 // ignore items that are defined directly in the child descriptor
                 if (source != null
                         && !source.getModuleId().equals(merged.getModuleRevisionId().getModuleId())) {
-                    List accum = (List) inheritedItems.get(source);
+                    List<InheritableItem> accum = inheritedItems.get(source);
                     if (accum == null) {
-                        accum = new ArrayList();
+                        accum = new ArrayList<>();
                         inheritedItems.put(source, accum);
                     }
-                    accum.add(items[i]);
+                    accum.add(item);
                 }
             }
             return inheritedItems;
@@ -1156,7 +1151,7 @@ public final class XmlModuleDescriptorUpdater {
             }
 
             if (!buffers.isEmpty()) {
-                ExtendedBuffer buffer = (ExtendedBuffer) buffers.peek();
+                ExtendedBuffer buffer = buffers.peek();
                 if (buffer.getContext().equals(path)) {
                     buffers.pop();
                     if (buffer.isPrint()) {
@@ -1166,7 +1161,7 @@ public final class XmlModuleDescriptorUpdater {
             }
 
             if (!confAttributeBuffers.isEmpty()) {
-                ExtendedBuffer buffer = (ExtendedBuffer) confAttributeBuffers.peek();
+                ExtendedBuffer buffer = confAttributeBuffers.peek();
                 if (buffer.getContext().equals(path)) {
                     confAttributeBuffers.pop();
                 }
@@ -1223,10 +1218,8 @@ public final class XmlModuleDescriptorUpdater {
                 justOpen = null;
             }
 
-            StringBuffer comment = new StringBuffer();
-            comment.append(ch, start, length);
             write("<!--");
-            write(comment.toString());
+            write(String.valueOf(ch, start, length));
             write("-->");
 
             if (inHeader) {
@@ -1259,10 +1252,7 @@ public final class XmlModuleDescriptorUpdater {
             }
             XMLHelper.parse(inSrc, null, updaterHandler, updaterHandler);
         } catch (ParserConfigurationException e) {
-            IllegalStateException ise = new IllegalStateException(
-                    "impossible to update Ivy files: parser problem");
-            ise.initCause(e);
-            throw ise;
+            throw new IllegalStateException("impossible to update Ivy files: parser problem", e);
         }
     }
 
@@ -1313,7 +1303,7 @@ public final class XmlModuleDescriptorUpdater {
     /**
      * Prints a descriptor item's XML representation
      */
-    protected static interface ItemPrinter {
+    protected interface ItemPrinter {
         /**
          * Print an XML representation of <code>item</code> to <code>out</code>.
          *
@@ -1324,7 +1314,7 @@ public final class XmlModuleDescriptorUpdater {
          *            {@link Configuration}
          * @param out PrintWriter
          */
-        public void print(ModuleDescriptor parent, Object item, PrintWriter out);
+        void print(ModuleDescriptor parent, Object item, PrintWriter out);
     }
 
     protected static class DependencyPrinter implements ItemPrinter {

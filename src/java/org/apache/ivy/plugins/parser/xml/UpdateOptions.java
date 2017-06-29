@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ParserSettings;
 
@@ -39,12 +40,12 @@ public class UpdateOptions {
     /**
      * Map from ModuleId of dependencies to new revision (as String)
      */
-    private Map resolvedRevisions = Collections.emptyMap();
+    private Map<ModuleRevisionId, String> resolvedRevisions = Collections.emptyMap();
 
     /**
      * Map from ModuleId of dependencies to new branch (as String)
      */
-    private Map resolvedBranches = Collections.emptyMap();
+    private Map<ModuleRevisionId, String> resolvedBranches = Collections.emptyMap();
 
     /**
      * the new status, <code>null</code> to keep the old one
@@ -110,11 +111,11 @@ public class UpdateOptions {
         return this;
     }
 
-    public Map getResolvedRevisions() {
+    public Map<ModuleRevisionId, String> getResolvedRevisions() {
         return resolvedRevisions;
     }
 
-    public UpdateOptions setResolvedRevisions(Map resolvedRevisions) {
+    public UpdateOptions setResolvedRevisions(Map<ModuleRevisionId, String> resolvedRevisions) {
         this.resolvedRevisions = resolvedRevisions;
         return this;
     }
@@ -211,11 +212,11 @@ public class UpdateOptions {
         return this;
     }
 
-    public Map getResolvedBranches() {
+    public Map<ModuleRevisionId, String> getResolvedBranches() {
         return resolvedBranches;
     }
 
-    public UpdateOptions setResolvedBranches(Map resolvedBranches) {
+    public UpdateOptions setResolvedBranches(Map<ModuleRevisionId, String> resolvedBranches) {
         this.resolvedBranches = resolvedBranches;
         return this;
     }

@@ -31,7 +31,7 @@ final class DeleteOnExitHook {
         });
     }
 
-    private static LinkedHashSet files = new LinkedHashSet();
+    private static final LinkedHashSet<File> files = new LinkedHashSet<>();
 
     private DeleteOnExitHook() {
     }
@@ -45,9 +45,9 @@ final class DeleteOnExitHook {
     }
 
     static synchronized void runHook() {
-        Iterator itr = files.iterator();
+        Iterator<File> itr = files.iterator();
         while (itr.hasNext()) {
-            ((File) itr.next()).delete();
+            itr.next().delete();
             itr.remove();
         }
     }

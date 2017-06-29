@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
-import java.util.Enumeration;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -44,7 +42,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      * Lock counter list must be static: locks are implicitly shared to the entire process, so the
      * list too much be.
      */
-    private static ConcurrentMap/* <File, Map<Thread, Integer>> */currentLockHolders = new ConcurrentHashMap();
+    private static ConcurrentMap<File, ConcurrentMap<Thread, Integer>> currentLockHolders = new ConcurrentHashMap<>();
 
     protected FileBasedLockStrategy() {
         this(new CreateFileLocker(false), false);
@@ -151,15 +149,15 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      *            thread for which lock status is being queried
      */
     private int hasLock(File file, Thread forThread) {
-        Map locksPerThread = (Map) currentLockHolders.get(file);
+        ConcurrentMap<Thread, Integer> locksPerThread = currentLockHolders.get(file);
         if (locksPerThread == null) {
             return 0;
         }
         if (locksPerThread.isEmpty()) {
             return 0;
         }
-        Integer counterObj = (Integer) locksPerThread.get(forThread);
-        int counter = counterObj == null ? 0 : counterObj.intValue();
+        Integer counterObj = locksPerThread.get(forThread);
+        int counter = (counterObj == null) ? 0 : counterObj;
         if (counter > 0) {
             return counter;
         } else {
@@ -180,14 +178,14 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      * @return number of times this thread has grabbed the lock
      */
     private int incrementLock(File file, Thread forThread) {
-        Map locksPerThread = (Map) currentLockHolders.get(file);
+        ConcurrentMap<Thread, Integer> locksPerThread = currentLockHolders.get(file);
         if (locksPerThread == null) {
-            locksPerThread = new ConcurrentHashMap();
+            locksPerThread = new ConcurrentHashMap<>();
             currentLockHolders.put(file, locksPerThread);
         }
-        Integer c = (Integer) locksPerThread.get(forThread);
-        int holdLocks = c == null ? 1 : c.intValue() + 1;
-        locksPerThread.put(forThread, new Integer(holdLocks));
+        Integer c = locksPerThread.get(forThread);
+        int holdLocks = (c == null) ? 1 : c + 1;
+        locksPerThread.put(forThread, holdLocks);
         return holdLocks;
     }
 
@@ -205,18 +203,18 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      * @return remaining depth of this lock
      */
     private int decrementLock(File file, Thread forThread) {
-        ConcurrentHashMap locksPerThread = (ConcurrentHashMap) currentLockHolders.get(file);
+        ConcurrentMap<Thread, Integer> locksPerThread = currentLockHolders.get(file);
         if (locksPerThread == null) {
             throw new RuntimeException("Calling decrementLock on a thread which holds no locks");
         }
-        Integer c = (Integer) locksPerThread.get(forThread);
-        int oldHeldLocks = c == null ? 0 : c.intValue();
+        Integer c = locksPerThread.get(forThread);
+        int oldHeldLocks = (c == null) ? 0 : c;
         if (oldHeldLocks <= 0) {
             throw new RuntimeException("Calling decrementLock on a thread which holds no locks");
         }
         int newHeldLocks = oldHeldLocks - 1;
         if (newHeldLocks > 0) {
-            locksPerThread.put(forThread, new Integer(newHeldLocks));
+            locksPerThread.put(forThread, newHeldLocks);
         } else {
             locksPerThread.remove(forThread);
         }
@@ -231,22 +229,20 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      */
     protected String getCurrentLockHolderNames(File file) {
         StringBuilder sb = new StringBuilder();
-        ConcurrentHashMap m = (ConcurrentHashMap) currentLockHolders.get(file);
+        ConcurrentMap<Thread, Integer> m = currentLockHolders.get(file);
         if (m == null) {
             return "(NULL)";
         }
-        Enumeration threads = m.keys();
-        while (threads.hasMoreElements()) {
-            Thread t = (Thread) threads.nextElement();
-            sb.append(t.toString());
-            if (threads.hasMoreElements()) {
+        for (Thread t : m.keySet()) {
+            if (sb.length() > 0) {
                 sb.append(", ");
             }
+            sb.append(t.toString());
         }
         return sb.toString();
     }
 
-    public static interface FileLocker {
+    public interface FileLocker {
         boolean tryLock(File f);
 
         void unlock(File f);
@@ -294,7 +290,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      */
     public static class NIOFileLocker implements FileLocker {
 
-        private Map locks = new ConcurrentHashMap();
+        private ConcurrentMap<File, LockData> locks = new ConcurrentHashMap<>();
 
         private boolean debugLocking;
 
@@ -341,7 +337,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
 
         public void unlock(File file) {
             synchronized (this) {
-                LockData data = (LockData) locks.get(file);
+                LockData data = locks.get(file);
                 if (data == null) {
                     throw new IllegalArgumentException("file not previously locked: " + file);
                 }

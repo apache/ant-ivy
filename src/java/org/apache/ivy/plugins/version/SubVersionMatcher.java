@@ -36,7 +36,7 @@ public class SubVersionMatcher extends AbstractVersionMatcher {
     }
 
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
-            Comparator staticComparator) {
+            Comparator<ModuleRevisionId> staticComparator) {
         if (foundMrid.getRevision().startsWith(
             askedMrid.getRevision().substring(0, askedMrid.getRevision().length() - 1))) {
             return 1;

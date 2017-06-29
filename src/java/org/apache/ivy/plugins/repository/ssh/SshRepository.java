@@ -87,12 +87,7 @@ public class SshRepository extends AbstractSshBasedRepository {
             Scp.FileInfo fileInfo = myCopy.getFileinfo(new URI(source).getPath());
             result = new SshResource(this, source, true, fileInfo.getLength(),
                     fileInfo.getLastModified());
-        } catch (IOException e) {
-            if (session != null) {
-                releaseSession(session, source);
-            }
-            result = new SshResource();
-        } catch (URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             if (session != null) {
                 releaseSession(session, source);
             }
@@ -123,8 +118,8 @@ public class SshRepository extends AbstractSshBasedRepository {
 
         try {
             channel.connect();
-        } catch (JSchException e1) {
-            throw (IOException) new IOException("Channel connection problems").initCause(e1);
+        } catch (JSchException jsche) {
+            throw new IOException("Channel connection problems", jsche);
         }
 
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -163,9 +158,9 @@ public class SshRepository extends AbstractSshBasedRepository {
      *
      * @see org.apache.ivy.repository.Repository#list(java.lang.String)
      */
-    public List list(String parent) throws IOException {
+    public List<String> list(String parent) throws IOException {
         Message.debug("SShRepository:list called: " + parent);
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<>();
         Session session = null;
         ChannelExec channel = null;
         session = getSession(parent);
@@ -174,9 +169,7 @@ public class SshRepository extends AbstractSshBasedRepository {
         try {
             parentUri = new URI(parent);
         } catch (URISyntaxException e) {
-            IOException ioe = new IOException("The uri '" + parent + "' is not valid!");
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException("The uri '" + parent + "' is not valid!", e);
         }
         String fullCmd = replaceArgument(listCommand, parentUri.getPath());
         channel.setCommand(fullCmd);
@@ -222,7 +215,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      */
     private String replaceArgument(String command, String argument) {
         String fullCmd;
-        if (command.indexOf(ARGUMENT_PLACEHOLDER) == -1) {
+        if (!command.contains(ARGUMENT_PLACEHOLDER)) {
             fullCmd = command + " " + argument;
         } else {
             fullCmd = command.replaceAll(ARGUMENT_PLACEHOLDER, argument);
@@ -243,9 +236,7 @@ public class SshRepository extends AbstractSshBasedRepository {
         try {
             destinationUri = new URI(destination);
         } catch (URISyntaxException e) {
-            IOException ioe = new IOException("The uri '" + destination + "' is not valid!");
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException("The uri '" + destination + "' is not valid!", e);
         }
 
         try {
@@ -355,9 +346,7 @@ public class SshRepository extends AbstractSshBasedRepository {
         try {
             sourceUri = new URI(source);
         } catch (URISyntaxException e) {
-            IOException ioe = new IOException("The uri '" + source + "' is not valid!");
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException("The uri '" + source + "' is not valid!", e);
         }
 
         try {

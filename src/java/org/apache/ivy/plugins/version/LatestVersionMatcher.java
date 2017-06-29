@@ -68,7 +68,7 @@ public class LatestVersionMatcher extends AbstractVersionMatcher {
      * @return int
      */
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
-            Comparator staticComparator) {
+            Comparator<ModuleRevisionId> staticComparator) {
         return needModuleDescriptor(askedMrid, foundMrid) ? 0 : 1;
     }
 }

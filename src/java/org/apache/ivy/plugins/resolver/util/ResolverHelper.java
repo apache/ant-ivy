@@ -63,7 +63,7 @@ public final class ResolverHelper {
                 String[] all = listAll(rep, root);
                 if (all != null) {
                     Message.debug("\t\tfound " + all.length + " urls");
-                    List<String> ret = new ArrayList<String>(all.length);
+                    List<String> ret = new ArrayList<>(all.length);
                     int endNameIndex = pattern.indexOf(fileSep, slashIndex + 1);
                     String namePattern;
                     if (endNameIndex != -1) {
@@ -100,7 +100,7 @@ public final class ResolverHelper {
             List<String> all = rep.list(parent);
             if (all != null) {
                 Message.debug("\t\tfound " + all.size() + " resources");
-                List<String> names = new ArrayList<String>(all.size());
+                List<String> names = new ArrayList<>(all.size());
                 for (String path : all) {
                     if (path.endsWith(fileSep)) {
                         path = path.substring(0, path.length() - 1);
@@ -135,17 +135,17 @@ public final class ResolverHelper {
             IvyPatternHelper.REVISION_KEY);
         if (revs != null) {
             Message.debug("\tfound revs: " + Arrays.asList(revs));
-            List<ResolvedResource> ret = new ArrayList<ResolvedResource>(revs.length);
-            for (int i = 0; i < revs.length; i++) {
+            List<ResolvedResource> ret = new ArrayList<>(revs.length);
+            for (String rev : revs) {
                 String rres = IvyPatternHelper.substituteToken(partiallyResolvedPattern,
-                    IvyPatternHelper.REVISION_KEY, revs[i]);
+                        IvyPatternHelper.REVISION_KEY, rev);
                 try {
                     Resource res = rep.getResource(rres);
                     if (res != null) {
                         // we do not test if the resource actually exist here, it would cause
                         // a lot of checks which are not always necessary depending on the usage
                         // which is done of the returned ResolvedResource array
-                        ret.add(new ResolvedResource(res, revs[i]));
+                        ret.add(new ResolvedResource(res, rev));
                     }
                 } catch (IOException e) {
                     Message.warn("impossible to get resource from name listed by repository: "
@@ -156,7 +156,7 @@ public final class ResolverHelper {
                 Message.debug("\tfound resolved res: " + ret);
             }
             return ret.toArray(new ResolvedResource[ret.size()]);
-        } else if (partiallyResolvedPattern.indexOf("[" + IvyPatternHelper.REVISION_KEY + "]") == -1) {
+        } else if (!partiallyResolvedPattern.contains("[" + IvyPatternHelper.REVISION_KEY + "]")) {
             // the partially resolved pattern is completely resolved, check the resource
             try {
                 Resource res = rep.getResource(partiallyResolvedPattern);
@@ -267,7 +267,7 @@ public final class ResolverHelper {
                     Message.debug("\tusing " + lister + " to list all in " + root);
                     List<URL> all = lister.listAll(new URL(root));
                     Message.debug("\t\tfound " + all.size() + " urls");
-                    List<String> ret = new ArrayList<String>(all.size());
+                    List<String> ret = new ArrayList<>(all.size());
                     int endNameIndex = pattern.indexOf('/', slashIndex + 1);
                     String namePattern;
                     if (endNameIndex != -1) {
@@ -308,7 +308,7 @@ public final class ResolverHelper {
                 Message.debug("\tusing " + lister + " to list all in " + root);
                 List<URL> all = lister.listAll(root);
                 Message.debug("\t\tfound " + all.size() + " urls");
-                List<String> names = new ArrayList<String>(all.size());
+                List<String> names = new ArrayList<>(all.size());
                 for (URL dir : all) {
                     String path = dir.getPath();
                     if (path.endsWith("/")) {

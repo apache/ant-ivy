@@ -39,7 +39,7 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
         return INSTANCE;
     }
 
-    private List<ModuleDescriptorParser> parsers = new LinkedList<ModuleDescriptorParser>();
+    private List<ModuleDescriptorParser> parsers = new LinkedList<>();
 
     private ModuleDescriptorParserRegistry() {
         parsers.add(PomModuleDescriptorParser.getInstance());

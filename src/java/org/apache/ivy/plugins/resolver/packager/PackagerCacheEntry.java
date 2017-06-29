@@ -20,9 +20,7 @@ package org.apache.ivy.plugins.resolver.packager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -91,7 +89,7 @@ public class PackagerCacheEntry {
      * @throws IOException
      *             if this entry has already been built
      */
-    public synchronized void build(Resource packagerResource, Map properties) throws IOException {
+    public synchronized void build(Resource packagerResource, Map<String, String> properties) throws IOException {
         // Sanity check
         if (this.built) {
             throw new IllegalStateException("build in directory `" + this.dir
@@ -157,9 +155,8 @@ public class PackagerCacheEntry {
         project.setUserProperty("ivy.packager.restricted", "" + this.restricted);
         project.setUserProperty("ivy.packager.quiet", String.valueOf(quiet));
         if (properties != null) {
-            for (Iterator it = properties.entrySet().iterator(); it.hasNext();) {
-                Entry entry = (Entry) it.next();
-                project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                project.setUserProperty(entry.getKey(), entry.getValue());
             }
         }
 

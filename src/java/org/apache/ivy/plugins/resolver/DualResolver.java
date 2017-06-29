@@ -218,7 +218,7 @@ public class DualResolver extends AbstractResolver {
         } else {
             throw new IllegalArgumentException("unknown descriptor rule '" + descriptorRule
                     + "'. Allowed rules are: "
-                    + Arrays.asList(new String[] {DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL}));
+                    + Arrays.asList(DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL));
         }
     }
 
