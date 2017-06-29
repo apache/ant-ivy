@@ -71,46 +71,42 @@ Some useful variables are available for use in settings files:
 
 The settings file is structured in some parts and left open in others. In fact, each resolver has its own structure, thus it's not the settings file itself which defines the structure for the resolvers.
 
-[source]
-----
+**ivysettings**
 
-ivysettings
-    link:settings/property.html[property]
-    link:settings/properties.html[properties]
-    link:settings/settings.html[settings]
-    link:settings/include.html[include]
-    link:settings/classpath.html[classpath]
-    link:settings/typedef.html[typedef]
-    link:settings/credentials.html[credentials]
-    link:settings/lock-strategies.html[lock-strategies]
-    link:settings/caches.html[caches]
-        link:settings/caches/cache.html[cache]
-    link:settings/latest-strategies.html[latest-strategies]
-    link:settings/version-matchers.html[version-matchers]
-    link:settings/triggers.html[triggers]
-    link:settings/parsers.html[parsers]
-    link:settings/conflict-managers.html[conflict-managers]
-    link:settings/outputters.html[outputters]
-    link:settings/namespaces.html[namespaces]
-        link:settings/namespace.html[namespace]
-            link:settings/namespace/rule.html[rule]
-                link:settings/namespace/fromtosystem.html[fromsystem]
-                    link:settings/namespace/src.html[src]
-                    link:settings/namespace/dest.html[dest]
-                link:settings/namespace/fromtosystem.html[tosystem]
-                    link:settings/namespace/src.html[src]
-                    link:settings/namespace/dest.html[dest]
-    link:settings/macrodef.html[macrodef]
-        link:settings/macrodef/attribute.html[attribute]
-        any resolver
-    link:settings/resolvers.html[resolvers]
-        any resolver
-    link:settings/modules.html[modules]
-        link:settings/module.html[module]
-    link:settings/statuses.html[statuses]
-        link:settings/status.html[status]
-
-----
+    * link:settings/property.html[property]
+    * link:settings/properties.html[properties]
+    * link:settings/settings.html[settings]
+    * link:settings/include.html[include]
+    * link:settings/classpath.html[classpath]
+    * link:settings/typedef.html[typedef]
+    * link:settings/credentials.html[credentials]
+    * link:settings/lock-strategies.html[lock-strategies]
+    * link:settings/caches.html[caches]
+        ** link:settings/caches/cache.html[cache]
+    * link:settings/latest-strategies.html[latest-strategies]
+    * link:settings/version-matchers.html[version-matchers]
+    * link:settings/triggers.html[triggers]
+    * link:settings/parsers.html[parsers]
+    * link:settings/conflict-managers.html[conflict-managers]
+    * link:settings/outputters.html[outputters]
+    * link:settings/namespaces.html[namespaces]
+        ** link:settings/namespace.html[namespace]
+            *** link:settings/namespace/rule.html[rule]
+                **** link:settings/namespace/fromtosystem.html[fromsystem]
+                    ***** link:settings/namespace/src.html[src]
+                    ***** link:settings/namespace/dest.html[dest]
+                **** link:settings/namespace/fromtosystem.html[tosystem]
+                    ***** link:settings/namespace/src.html[src]
+                    ***** link:settings/namespace/dest.html[dest]
+    * link:settings/macrodef.html[macrodef]
+        ** link:settings/macrodef/attribute.html[attribute]
+        ** any resolver
+    * link:settings/resolvers.html[resolvers]
+        ** any resolver
+    * link:settings/modules.html[modules]
+        ** link:settings/module.html[module]
+    * link:settings/statuses.html[statuses]
+        ** link:settings/status.html[status]
 
 
 == ivysettings
