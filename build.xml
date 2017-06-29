@@ -95,8 +95,6 @@
                 <include name="*.jar"/>
                 <exclude name="ant.jar"/>
                 <exclude name="ant-launcher.jar"/>
-                <exclude name="ant-nodeps.jar"/>
-                <exclude name="ant-trax.jar"/>
             </fileset>
             <pathelement location="${core.classes.build.dir}"/>
             <pathelement location="${ant.classes.build.dir}"/>
@@ -403,6 +401,89 @@
         <jar destfile="${basedir}/test/jar-repos/jarrepo1_subdir.jar">
             <fileset dir="${basedir}/test/repositories" includes="1/**/*"/>
         </jar>
+    </target>
+
+    <target name="init-revapi" depends="jar" unless="skip.test">
+        <ivy:cachepath organisation="com.github.siom79.japicmp" module="japicmp" revision="0.10.0"
+                       inline="true" conf="default" pathid="japicmp.classpath" log="download-only"/>
+        <ivy:cachepath organisation="org.apache.ivy" module="ivy" revision="${ivy.api.reference}"
+                       inline="true" conf="default" pathid="ivyapiref.classpath" log="download-only"/>
+    </target>
+
+    <target name="/revapi-all" description="report status of all public APIs">
+        <property name="revapi.all" value="true"/>
+    </target>
+
+    <target name="/revapi-changed" description="report all changed public APIs">
+        <property name="revapi.changed" value="true"/>
+    </target>
+
+    <target name="revapi" depends="init-revapi" unless="skip.test">
+        <property name="revapi.all" value="false"/>
+        <property name="revapi.changed" value="false"/>
+        <condition property="revapi.binary" value="true" else="false">
+            <not>
+                <or>
+                    <istrue value="${revapi.all}"/>
+                    <istrue value="${revapi.changed}"/>
+                </or>
+            </not>
+        </condition>
+        <scriptdef name="revapi" language="javascript" classpathref="japicmp.classpath">
+            <attribute name="old"/>
+            <attribute name="new"/>
+            <attribute name="olddeps"/>
+            <attribute name="newdeps"/>
+            <attribute name="missingregexp"/>
+            <attribute name="binary"/>
+            <attribute name="changed"/>
+            <attribute name="html"/>
+            <![CDATA[
+	            var options = Packages.japicmp.config.Options.newDefault();
+	            options.setOldArchives(java.util.Arrays.asList(new Packages.japicmp.cmp.JApiCmpArchive(new java.io.File(attributes.get("old")), "n.a.")));
+                options.setNewArchives(java.util.Arrays.asList(new Packages.japicmp.cmp.JApiCmpArchive(new java.io.File(attributes.get("new")), "n.a.")));
+                options.setOldClassPath(Packages.com.google.common.base.Optional.fromNullable(attributes.get("olddeps")));
+                options.setNewClassPath(Packages.com.google.common.base.Optional.fromNullable(attributes.get("newdeps")));
+                options.addIgnoreMissingClassRegularExpression(attributes.get("missingregexp"));
+                var echo = project.createTask("echo");
+                var onlyBinary = attributes.get("binary") === "true";
+                var onlyChanges = attributes.get("changed") === "true";
+                var htmlReport = attributes.get("html");
+                if (onlyBinary && onlyChanges) {
+                    echo.setMessage("'binary' and 'changed' cannot be set to 'true' simultaneously, 'binary' takes precedence!");
+                    echo.perform();
+                }
+                options.setOutputOnlyBinaryIncompatibleModifications(onlyBinary);
+                options.setOutputOnlyModifications(onlyChanges);
+                options.setHtmlOutputFile(Packages.com.google.common.base.Optional.fromNullable(htmlReport));
+	            options.verify();
+                var jarArchiveComparator = new Packages.japicmp.cmp.JarArchiveComparator(Packages.japicmp.cmp.JarArchiveComparatorOptions.of(options));
+                var jApiClasses = jarArchiveComparator.compare(options.getOldArchives(), options.getNewArchives());
+                var stdoutOutputGenerator = new Packages.japicmp.output.stdout.StdoutOutputGenerator(options, jApiClasses);
+                var output = stdoutOutputGenerator.generate();
+                if (htmlReport !== null && !new java.io.File(htmlReport).exists()) {
+                    echo.setMessage("Saving output in " + htmlReport);
+                    echo.perform();
+		    		var semverOut = new Packages.japicmp.output.semver.SemverOut(options, jApiClasses);
+    				var xmlOutputGeneratorOptions = new Packages.japicmp.output.xml.XmlOutputGeneratorOptions();
+	    			xmlOutputGeneratorOptions.setCreateSchemaFile(true);
+		    		xmlOutputGeneratorOptions.setSemanticVersioningInformation(semverOut.generate());
+			    	var xmlGenerator = new Packages.japicmp.output.xml.XmlOutputGenerator(jApiClasses, options, xmlOutputGeneratorOptions);
+				    var xmlOutput = xmlGenerator.generate();
+					Packages.japicmp.output.xml.XmlOutputGenerator.writeToFiles(options, xmlOutput);
+                } else {
+                    echo.setMessage(output);
+                    echo.perform();
+                }
+            ]]>
+        </scriptdef>
+        <revapi old="${toString:ivyapiref.classpath}"
+                new="${artifacts.build.dir}/jars/${final.name}"
+                olddeps="${toString:lib.classpath}"
+                newdeps="${toString:lib.classpath}"
+                missingregexp="org.apache.(commons|bcel).*"
+                binary="${revapi.binary}" changed="${revapi.changed}"
+                html="${reports.dir}/japicmp.html"/>
     </target>
 
     <target name="init-jacoco" depends="jar" unless="skip.test">
