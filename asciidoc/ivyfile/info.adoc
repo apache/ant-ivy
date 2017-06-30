@@ -23,9 +23,7 @@ Gives identification and basic information about the module this ivy file descri
 
 *__since 1.4__* This tag supports link:../concept.html#extra[extra attributes].
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -34,13 +32,11 @@ Gives identification and basic information about the module this ivy file descri
 |module|the name of the module described by this ivy file.|Yes
 |branch|the branch of this module. *__since 1.4__*|No, defaults to the default branch setting, or nothing if no default branch is configured
 |revision|the revision of this module.|Yes in repository ivy files, no in ivy files to resolve
-|status|the status of this module. See link:../reference.html[terminology] section for details|No, default to 'integration'
-|publication|the date of publication of this module. It should be given in this format: yyyyMMddHHmmss|No, but it's a good practice to set it with delivered ivy files
+|status|the status of this module. See link:../reference.html[terminology] section for details|No, default to `integration`
+|publication|the date of publication of this module. It should be given in this format: `yyyyMMddHHmmss`|No, but it's a good practice to set it with delivered ivy files
 |=======
 
-
 == Child elements
-
 
 [options="header",cols="20%,60%,20%"]
 |=======

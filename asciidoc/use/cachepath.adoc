@@ -38,7 +38,7 @@ Built path is registered in ant with a given id, and can thus be used like any o
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <cachepath pathid="default.classpath" conf="default" />
 ----
@@ -47,7 +47,7 @@ Construct an Ant path composed of all artifacts being part of the default config
 
 '''
 
-[source]
+[source,xml]
 ----
 <cachepath pathid="default.classpath" conf="default" useOrigin="true" />
 ----
@@ -56,7 +56,7 @@ Same as before but will use the original location for local artifacts, and the c
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:cachepath organisation="emma" module="emma" revision="2.0.4217" inline="true" conf="ant" pathid="emma.classpath"/>
 <taskdef resource="emma_ant.properties" classpathref="emma.classpath" /> 

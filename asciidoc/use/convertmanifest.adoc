@@ -30,7 +30,7 @@
 
 == Examples
 
-[source]
+[source,xml]
 ----
     <ivy:convertmanifest manifest="META-INF/MANIFEST.MF" ivyFile="ivy.xml" />
 ----

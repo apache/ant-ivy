@@ -73,7 +73,7 @@ Note that when asking for revision 1, you can get a revision 10.0. To avoid that
 
 Here is how it can be used (suppose 1.3.1 is the latest version of ivy in the repository):
 
-[source]
+[source,xml]
 ----
 <ivy:buildnumber organisation="apache" module="ivy" />
 ----
@@ -82,7 +82,7 @@ will set 1.3.1 as revision, 1.3.2 as new revision, 1 as build number and 2 as ne
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:buildnumber organisation="apache" module="ivy" revision="1.3" />
 ----
@@ -91,7 +91,7 @@ will set 1.3.1 as revision, 1.3.2 as new revision, 1 as build number and 2 as ne
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:buildnumber organisation="apache" module="ivy" revision="1.2" />
 ----
@@ -100,7 +100,7 @@ will set 1.2 as revision, 1.2.1 as new revision, no build number and 1 as new bu
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:buildnumber organisation="apache" module="ivy" revision="1." />
 ----
@@ -109,7 +109,7 @@ will set 1.3.1 as revision, 1.4 as new revision, 3 as build number and 4 as new 
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:buildnumber organisation="apache" module="ivy" revision="3." />
 ----
@@ -118,7 +118,7 @@ will set no revision, 3.0 as new revision, no build number and 0 as new build nu
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:buildnumber organisation="apache" module="ivy" revision="1.4-RC" defaultBuildNumber="1" revSep=""/>
 ----

@@ -19,13 +19,9 @@
 
 *Tag:* repository *Parent:* link:../ivyfile/info.html[info]
 
-
-
-Gives information about a public repository where the module can be found. This information
-is given as an indication, repositories being able to be down over time.
+Gives information about a public repository where the module can be found. This information is given as an indication, repositories being able to be down over time.
 
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -33,8 +29,6 @@ is given as an indication, repositories being able to be down over time.
 |name|the name of the repository. Try to respect spelling for common repositories (ibiblio, ivyrep, ...)|Yes
 |url|an url pointing to the repository.|Yes
 |pattern|an ivy pattern to find modules on this repository|No, but it's recommended to indicate it.
-|ivys|true if ivy file can be found on this repository|No, defaults to false.
-|artifacts|true if module artifacts can be found on this repository|No, defaults to false.
+|ivys|`true` if ivy file can be found on this repository|No, defaults to `false`.
+|artifacts|`true` if module artifacts can be found on this repository|No, defaults to `false`.
 |=======
-
-

@@ -71,7 +71,7 @@ Available options are the same as for link:../use/resolve.html[resolve] when use
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve />
 ----
@@ -80,7 +80,7 @@ Retrieves dependencies using default parameters. This usually retrieves all the 
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]"/>
 ----
@@ -102,7 +102,7 @@ Note that if a dependency is required in the two configurations, it will be copi
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true" />
 ----
@@ -136,7 +136,7 @@ With no synchronisation, commons-logging would not have been removed by the call
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve pattern="${lib.dir}/[type]/[artifact]-[revision].[ext]" conf="runtime"/>
 ----
@@ -157,7 +157,7 @@ lib
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve pattern="${lib.dir}/[organisation]/[artifact]-[revision].[ext]" />
 ----
@@ -174,7 +174,7 @@ lib
     junit-4.1.zip
 ----
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve pattern="${lib.dir}/[orgPath]/[artifact]-[revision].[ext]" />
 ----
@@ -194,7 +194,7 @@ lib
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve organisation="foo" module="bar" inline="true" pattern="${my.install.dir}/[artifact].[ext]"/>
 ----
@@ -203,7 +203,7 @@ Resolves and retrieve the latest version of the module bar and its dependencies 
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve pattern="lib/[artifact]-[revision].[ext]">
     <firstmatchmapper>

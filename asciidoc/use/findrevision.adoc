@@ -38,7 +38,7 @@ If the module is not found the property is not set.
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:findrevision organisation="apache" module="ivy" revision="latest.integration"/>
 ----
@@ -47,7 +47,7 @@ finds the latest version of ivy available in the repository and sets the propert
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:findrevision organisation="apache" module="ivy" revision="1.0+"/>
 ----

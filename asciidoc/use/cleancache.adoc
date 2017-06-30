@@ -22,7 +22,7 @@ Cleans the Ivy cache.
 
 This task is roughly equivalent to:
 
-[source]
+[source,xml]
 ----
 <delete dir="${ivy.cache.dir}" />
 ----
@@ -41,14 +41,14 @@ This task loads the Ivy settings as any other post settings task, and allows eas
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:cleancache />
 ----
 
 Cleans the cache directory as defined in the loaded settings (by default `~/.ivy2/cache`)
 
-[source]
+[source,xml]
 ----
 <ivy:cleancache settingsRef="mysettings"/>
 ----

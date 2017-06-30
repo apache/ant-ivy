@@ -88,7 +88,7 @@ There is one important difference with the ivy.xml's link:../ivyfile/dependencie
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:cachepath organisation="emma" module="emma" revision="2.0.4217" inline="true" conf="ant" pathid="emma.classpath"/>
 <taskdef resource="emma_ant.properties" classpathref="emma.classpath" /> 

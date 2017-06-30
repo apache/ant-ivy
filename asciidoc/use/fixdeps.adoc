@@ -56,7 +56,7 @@ These elements takes two attributes: +
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:fixdeps tofile="ivy-fixed.xml" />
 ----
@@ -65,7 +65,7 @@ Simple fix of some dependencies.
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:fixdeps tofile="ivy-fixed.xml">
     <keep org="com.acme" module="mymodule" />

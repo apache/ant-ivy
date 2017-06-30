@@ -47,7 +47,7 @@ Note that each property can be given a value manually in the Ant build file. In 
 
 The default template that ships with Ivy looks like this:
 
-[source]
+[source,xml]
 ----
 ${ivy.pom.license}
 ${ivy.pom.header}
@@ -104,7 +104,7 @@ These elements takes the following attributes: +
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:makepom ivyfile="${basedir}/path/to/ivy.xml" pomfile="${basedir}/path/to/module.pom" conf="default,runtime">
    <mapping conf="default" scope="compile"/>

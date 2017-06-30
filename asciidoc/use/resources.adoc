@@ -24,7 +24,7 @@ This datatype share the same attributes, child elements and behaviour of a link:
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:resources file="path/to/ivy.xml"/>
 ----
@@ -33,7 +33,7 @@ Build a resource collection of every artifacts of all dependencies declared in `
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resources file="path/to/ivy.xml" transitive="false" />
 ----
@@ -42,7 +42,7 @@ Same as above, but with transitive dependencies disabled.
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resources file="path/to/ivy.xml" conf="default, test"/>
 ----
@@ -51,7 +51,7 @@ Build a resource collection of every artifacts of the dependencies declared in t
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resources file="path/to/ivy.xml" type="jar"/>
 ----
@@ -60,7 +60,7 @@ Build a resource collection of every `jar` artifact of all dependencies declared
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resources organisation="apache" module="commons-lang" revision="2+" inline="true" />
 ----
@@ -69,7 +69,7 @@ Build a resource collection of every artifacts of `commons-lang` module revision
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resources>
     <dependency org="apache" module="commons-lang" rev="2+" />
@@ -82,7 +82,7 @@ Build a resource collection of every artifacts of both `commons-lang` and `commo
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resources>
     <dependency org="org.slf4j" module="slf4j" rev="1.6" conf="api,log4j" />

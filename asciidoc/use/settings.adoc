@@ -30,7 +30,7 @@ All Ivy variables set during the settings are available in the Ant project as lo
 Moreover, the variables are exposed under two names: the variable name, and the variable name suffixed by dot + the settings id. 
 
 For instance, if you load a settings with the id `myid`, and define a variable `my.variable=my.value` in the Ivy settings, both `my.variable` and `my.variable.myid` will now be available as properties in Ant and equal to `my.value`. If you later load another settings with the id `yourid`, and in this settings assign the variable `my.variable` the value `your.value`, in the Ant project you will have:
-[source]
+[source,properties]
 ----
 my.variable=my.value
 my.variable.myid=my.value
@@ -67,7 +67,7 @@ A special attention should be applied when you have a multi-project build with `
 
 === Simplest settings
 
-[source]
+[source,xml]
 ----
 <ivy:settings />
 ----
@@ -78,21 +78,21 @@ This simplest setting is implicit.
 
 === Configure with a file
 
-[source]
+[source,xml]
 ----
 <ivy:settings file="mysettings.xml" />
 ----
 
 === Configure with an url
 
-[source]
+[source,xml]
 ----
 <ivy:settings url="http://mysite.com/mysettings.xml" />
 ----
 
 === Configure multiple realms which require autentication
 
-[source]
+[source,xml]
 ----
 <ivy:settings file="path/to/my/ivysettings.xml">
   <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
@@ -104,7 +104,7 @@ This simplest setting is implicit.
 
 You can use multiple ivy settings during a build. Then every ivy task should specify the settings it uses using the `settingsRef` attribute.
 
-[source]
+[source,xml]
 ----
  <ivy:settings id="ivy.normal.settings" file="normal_settings.xml" />
  <ivy:settings id="ivy.release.settings" file="release_settings.xml" />

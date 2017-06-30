@@ -19,8 +19,6 @@
 
 *Tag:* conflict *Parent:* link:../ivyfile/dependencies.html[dependencies]
 
-
-
 *__(since 2.0)__*
 
 Specify a a conflict manager for one or several dependencies.
@@ -35,19 +33,17 @@ That's why the order of dependencies is important for download optimization. Ind
 
 If no specific conflict manager is defined, a default conflict manager is used for all modules.
  
-The current default conflict manager is the "latest-revision" conflict manager.
-
+The current default conflict manager is the `latest-revision` conflict manager.
 
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|org|the name, or an expression matching the name of organisation to which this conflict manager should apply (see matcher attribute below)|No, defaults to '`$$*$$`' (match all)
-|module|the name, or an expression matching the name of module to which this conflict manager should apply (see matcher attribute below)|No, defaults to '`$$*$$`' (match all)
-|manager|the name of the conflict manager to use|Exactly one of two
+|org|the name, or an expression matching the name of organisation to which this conflict manager should apply (see `matcher` attribute below)|No, defaults to `$$*$$` (match all)
+|module|the name, or an expression matching the name of module to which this conflict manager should apply (see `matcher` attribute below)|No, defaults to `$$*$$` (match all)
+|manager|the name of the conflict manager to use
+.2+.^|Exactly one of two
 |rev|a comma separated list of revisions this conflict manager should select
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to exact
+|matcher|the link:../concept.html#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to `exact`
 |=======
-

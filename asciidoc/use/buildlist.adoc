@@ -82,7 +82,7 @@ FileSets are used to select sets of files to order.
 
 == Examples
 
-[source]
+[source,xml]
 ----
     <ivy:buildlist reference="build-path">
       <fileset dir="projects" includes="**/build.xml"/>
@@ -93,14 +93,14 @@ Builds a list of `build.xml` files sorted according to the `ivy.xml` files found
 
 This list can then be used like that:
 
-[source]
+[source,xml]
 ----
     <subant target="build" buildpathref="build-path" />
 ----
 
 '''
 
-[source]
+[source,xml]
 ----
     <ivy:buildlist reference="build-path" ivyfilepath="ivy/ivy.xml" reverse="true">
       <fileset dir="projects" includes="**/build.xml"/>
@@ -111,7 +111,7 @@ Builds a list of `build.xml` files sorted according to the `ivy.xml` files found
 
 '''
 
-[source]
+[source,xml]
 ----
     <ivy:buildlist reference="build-path" ivyfilepath="ivy/ivy.xml" root="myapp">
       <fileset dir="projects" includes="**/build.xml"/>
@@ -122,7 +122,7 @@ Builds a list of `build.xml` files sorted according to the `ivy.xml` files found
 
 '''
 
-[source]
+[source,xml]
 ----
     <ivy:buildlist reference="build-path" ivyfilepath="ivy/ivy.xml" leaf="mymodule">
       <fileset dir="projects" includes="**/build.xml"/>

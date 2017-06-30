@@ -23,7 +23,7 @@ If you use ant version *1.6.0* or superior, you just have to add Ivy's namespace
 
 If you want to make your build handle ivy.jar in either ant lib dir or a local lib dir, you can use a taskdef like this:
 
-[source]
+[source,xml]
 ----
 <path id="ivy.lib.path">
     <fileset dir="path/to/dir/with/ivy/jar" includes="*.jar"/>
@@ -36,7 +36,7 @@ Combined with the antlib definition in the project namespace, it will load Ivy c
 
 If you use ant *1.5.1* or superior, you have to define the tasks you use in your build file. For instance:
 
-[source]
+[source,xml]
 ----
   <taskdef name="ivy-configure" classname="org.apache.ivy.ant.IvyConfigure"/>
   <taskdef name="ivy-resolve" classname="org.apache.ivy.ant.IvyResolve"/>
@@ -55,14 +55,14 @@ If you use an ant version lower than 1.5.1, you can not use the ivy tasks... you
 
 Once your build file is ok to call ivy tasks, the simplest way to use ivy is to call the ivy retrieve task with no parameters:
 
-[source]
+[source,xml]
 ----
 <ivy:retrieve />
 ----
 
 This calls ivy with default values, which might be ok in several projects. In fact, it is equivalent to:
 
-[source]
+[source,xml]
 ----
 <target name="resolve">
     <ivy:configure />
@@ -134,7 +134,7 @@ image::images/main-tasks.png[]
 
 Here is a more complete example of build file using Ivy:
 
-[source]
+[source,xml]
 ----
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="sample" default="resolve">
 

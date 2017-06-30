@@ -19,12 +19,9 @@
 
 *Tag:* license *Parent:* link:../ivyfile/info.html[info]
 
-
-
 Gives information about a license of the described module.
 
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -32,5 +29,4 @@ Gives information about a license of the described module.
 |name|the name of the license. Try to respect spelling when using a classical license.|Yes
 |url|an url pointing to the license text.|No, but it's a good practice to indicate it
 |=======
-
 

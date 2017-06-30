@@ -72,7 +72,7 @@ The source artifact pattern can be specified either as an attribute on the task 
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:publish resolver="local" pubrevision="1.0">
    <artifacts pattern="build/artifacts/jars/[artifact].[ext]" />

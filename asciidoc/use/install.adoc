@@ -49,7 +49,7 @@ For more details about this task and its usage see the link:../tutorial/build-re
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:install organisation="apache" module="commons-lang" revision="2.0" from="ivyrep" to="myfsresolver"/>
 ----

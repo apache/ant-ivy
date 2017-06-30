@@ -19,24 +19,22 @@
 
 *Tag:* exclude *Parent:* link:../ivyfile/dependencies.html[dependencies]
 
-*__since 2.0__* This feature gives you more control on a dependency for which you do not control its ivy file. 
-It allows to exclude artifacts, modules or organizations from the list of dependencies for the whole module.
+*__since 2.0__* This feature gives you more control on a dependency for which you do not control its ivy file. It allows to exclude artifacts, modules or organizations from the list of dependencies for the whole module.
 
 It is very similar to the link:../ivyfile/artifact-exclude.html[dependency exclude] element, except that it applies to a whole module, which can be very useful when a lot of dependencies transitively bring a module you don't want.
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|org|the organization of the dependency module or artifact to exclude, or a regexp matching this organization|No, defaults to '`$$*$$`'
-|module|the name of the dependency module or the artifact to exclude, or a regexp matching this module name|No, defaults to '`$$*$$`'
-|artifact|the name of an artifact of the dependency module to add to the exclude list, or an expression matching this name (see matcher attribute below)|No, defaults to '`$$*$$`'
-|type|the type of the artifact of the dependency module to add to the exclude list, or a regexp matching this name|No, defaults to '`$$*$$`'
-|ext|the extension of the artifact of the dependency module to add to the exclude list, or an expression matching this name (see matcher attribute below)|No, defaults to type
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to excludes|No, defaults to exactOrRegexp in pre 1.3 ivy files, and exact in 1.3 and superior
+|org|the organization of the dependency module or artifact to exclude, or a regexp matching this organization|No, defaults to `$$*$$`
+|module|the name of the dependency module or the artifact to exclude, or a regexp matching this module name|No, defaults to `$$*$$`
+|artifact|the name of an artifact of the dependency module to add to the exclude list, or an expression matching this name (see `matcher` attribute below)|No, defaults to `$$*$$`
+|type|the type of the artifact of the dependency module to add to the exclude list, or a regexp matching this name|No, defaults to `$$*$$`
+|ext|the extension of the artifact of the dependency module to add to the exclude list, or an expression matching this name (see `matcher` attribute below)|No, defaults to the value of `type`
+|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to excludes|No, defaults to `exactOrRegexp` in pre 1.3 ivy files, and `exact` in 1.3 and superior
 |conf|comma separated list of the master configurations in which this artifact should be included.
-    '`$$*$$`' wildcard can be used to designate all configurations of this module|No, defaults to '`$$*$$`', unless nested conf are specified
+
+`$$*$$` wildcard can be used to designate all configurations of this module|No, defaults to `$$*$$`, unless nested conf are specified
 |=======

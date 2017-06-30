@@ -19,32 +19,23 @@
 
 *Tag:* conf *Parent:* link:../ivyfile/dependency.html[dependency]
 
-
-
-Describes a configuration mapping for a dependency. See also the inline configuration mapping
-in dependency element.
-
+Describes a configuration mapping for a dependency. See also the inline configuration mapping in dependency element.
 
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |name|the name of the master configuration to map. 
-    	'`$$*$$`' wildcard can be used to designate all configurations of this module|Yes
-|mapped|a comma separated list of dependency configurations to which this
-    master configuration should be mapped|No, default to the same configuration as master one, unless nested mapped elements are specified
+
+`$$*$$` wildcard can be used to designate all configurations of this module|Yes
+|mapped|a comma separated list of dependency configurations to which this master configuration should be mapped|No, default to the same configuration as master one, unless nested mapped elements are specified
 |=======
 
-
 == Child elements
-
 
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/mapped.html[mapped]|map dependency configurations for this master configuration|0..n
 |=======
-
-

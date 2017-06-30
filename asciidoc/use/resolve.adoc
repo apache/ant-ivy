@@ -153,7 +153,7 @@ There is one important difference with the ivy.xml's link:../ivyfile/dependencie
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:resolve file="path/to/ivy.xml"/>
 ----
@@ -162,7 +162,7 @@ Resolve all dependencies declared in path/to/ivy.xml file.
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resolve file="path/to/ivy.xml" transitive="false" />
 ----
@@ -171,7 +171,7 @@ Same as above, but with transitive dependencies disabled.
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resolve file="path/to/ivy.xml" conf="default, test"/>
 ----
@@ -180,7 +180,7 @@ Resolve the dependencies declared in the configuration `default` and `test` of t
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resolve file="path/to/ivy.xml" type="jar"/>
 ----
@@ -189,7 +189,7 @@ Resolve all dependencies declared in `path/to/ivy.xml` file, but download only `
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resolve organisation="apache" module="commons-lang" revision="2+" inline="true" />
 ----
@@ -198,7 +198,7 @@ Resolve the `commons-lang` module revision 2+ from the repository, with its depe
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resolve>
     <dependency org="apache" name="commons-lang" rev="2+" />
@@ -211,7 +211,7 @@ Resolve of both `commons-lang` and `commons-logging`, with their dependencies bu
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:resolve>
     <dependency org="org.slf4j" module="slf4j" rev="1.6" conf="api,log4j" />
