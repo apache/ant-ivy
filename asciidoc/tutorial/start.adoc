@@ -96,7 +96,7 @@ Note that in this case we define a `resolve` target and call the `link:../use/re
 OK, now that we have seen the files involved, let's run the sample to see what happens. Open a shell (or command line) window, and enter the `hello-ivy` example directory.
 Then, at the command prompt, run `ant`:
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/hello-ivy-1.txt[]
@@ -112,7 +112,7 @@ The resolve task has found the commons-lang and commons-cli modules in the maven
 
 You might say that the task took a long time just to write out a "Hello Ivy!" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/hello-ivy-2.txt[]

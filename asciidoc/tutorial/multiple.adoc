@@ -146,7 +146,7 @@ Cleaning the Ivy cache is something you can do without fear (except performance)
 Go to `chained-resolvers` project directory. And simply run `ant`.
 
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/chained-resolvers.txt[]

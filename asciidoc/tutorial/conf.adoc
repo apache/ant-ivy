@@ -85,7 +85,7 @@ In the publications tag, we defined the artifacts we produce (jars in this case)
 
 The filter-framework project is built using Ant. Open a shell in the root directory of the project and type `ant`.
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/configurations-lib.txt[]
@@ -156,7 +156,7 @@ In the Ant `build.xml` file, we defined a 'resolve' target as follow:
 
 When we call this target, Ivy will do a resolve using our `ivy.xml` file in the root folder and then retrieve all the artifacts. The artifacts retrieved are kept in separate folders according to the configurations they belong to. Here is how your lib directory should look after a call to this target:
 
-[source.shell]
+[source,shell]
 ----
 
  Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib
@@ -195,7 +195,7 @@ Let's try to launch our app.
 
 Use Ant to run the application. The default Ant target is __run-cc__ and will launch the application using the Apache commons-collections implementation.
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/configurations-runcc.txt[]
@@ -207,7 +207,7 @@ Launching the application using the homemade implementation is also straightforw
 type `ant run-hm`
 
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/configurations-runhm.txt[]

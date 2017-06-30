@@ -120,7 +120,7 @@ This will clean up the entire project directory tree (compiled classes and retri
 
 Go to the project directory. And simply run `ant`.
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/dual.txt[]

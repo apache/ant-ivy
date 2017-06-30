@@ -31,7 +31,7 @@ Two report outputters are registered by default:
     * a log report outputter (link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/plugins/report/LogReportOutputter.java[LogReportOutputter]) +
     which produces the output on the console at the end of the resolve, which looks like this:
 
-[source.shell]
+[source,shell]
 ----
 
         ---------------------------------------------------------------------

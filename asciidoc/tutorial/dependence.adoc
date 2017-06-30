@@ -165,7 +165,7 @@ This will clean up the entire project directory tree. You can do this each time 
 
 Go to `dependee` directory  and publish the project
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/dependence-standalone.txt[]
@@ -200,7 +200,7 @@ Both are just copies of the files found in the current project, or more precisel
 
 Go to directory depender and run `ant`
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/dependence-depending.txt[]
@@ -226,7 +226,7 @@ What we see here:
 
 Like we did before in step 3, publish the dependee project again. This will result in a new version of the project being published.
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/dependence-standalone-2.txt[]
@@ -237,7 +237,7 @@ include::asciidoc/tutorial/log/dependence-standalone-2.txt[]
 Now if you look in your repository folder, you will find 2 versions of the dependee project.
 Let's look at it:
 
-[source.shell]
+[source,shell]
 ----
 I:\dependee>dir ..\settings\repository /w
 
@@ -262,7 +262,7 @@ What should we expect if we run the depender project again? It should:
 
 Let's try it!!
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/dependence-depending-2.txt[]

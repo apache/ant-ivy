@@ -37,7 +37,7 @@ If you look at the repository built with the link:../../tutorial/build-repositor
 
 So let's see what Ivy can do using namespaces (we will dig into details later):
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/install-namespace.txt[]
@@ -48,7 +48,7 @@ include::asciidoc/tutorial/log/install-namespace.txt[]
 
 Now if we look at our repository, it seems to look fine.
 
-[source.shell]
+[source,shell]
 ----
 
 include::asciidoc/tutorial/log/myrepository-content-namespace.txt[]
