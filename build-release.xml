@@ -165,9 +165,19 @@
         <replace dir="${output.dir}" token="${ivy.revision}" value="working@apache"/>
     </target>
 
-    <target name="generate-doc" depends="generate-tutorial-output,default-version">
+    <target name="init-asciidoctor" depends="init-ivy" unless="skip.doc">
         <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
+    </target>
+
+    <target name="copy-doc-files" unless="skip.doc">
+        <copy todir="${doc.build.dir}">
+            <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd"/>
+            <fileset dir="${doc.src.dir}" includes="tutorial/log/multi-project-general-publishall.txt"/>
+        </copy>
+    </target>
+
+    <target name="generate-doc" depends="generate-tutorial-output,default-version,init-asciidoctor,copy-doc-files" unless="skip.doc">
         <asciidoctor:convert sourceDirectory="${doc.src.dir}" outputDirectory="${doc.build.dir}" backend="xhtml5"
                              templateDir="${doc.src.dir}/templates" preserveDirectories="true"
                              sourceHighlighter="highlightjs">
@@ -175,14 +185,61 @@
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}" />
         </asciidoctor:convert>
-        <!-- copy static resources -->
-        <copy todir="${doc.build.dir}">
-            <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd"/>
-            <fileset dir="${doc.src.dir}" includes="tutorial/log/multi-project-general-publishall.txt"/>
-        </copy>
     </target>
 
-    <target name="all-doc" depends="javadoc,generate-doc"/>
+    <target name="generate-book-adoc" depends="default-version,copy-doc-files" unless="skip.doc">
+        <scriptdef name="generate-book-adoc" language="javascript">
+            <attribute name="jsontocfile" />
+            <attribute name="destFile" />
+            <![CDATA[
+                var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
+                r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
+                var val = "";
+                while((s = r.readLine()) != null) {
+                    val += s;
+                }
+                r.close();
+                var toc = eval("("+val+")")
+
+                var writeToc = function(o, children, level) {
+                    for(var c in children) {
+                        o.write(level + ' link:#' + children[c].id.replace(/\//g, '_') + '[' + children[c].title + ']\n');
+                        if (children[c].children && children[c].children.length && children[c].children.length != 0) {
+                            writeToc(o, children[c].children, level+'*');
+                        }
+                    }
+                };
+
+                var writeInclude = function(o, children) {
+                    for(var c in children) {
+                        o.write('== [[' + children[c].id.replace(/\//g, '_') + ']]' + children[c].title + '\n\n');
+                        o.write('include::../asciidoc/' + children[c].id + '.adoc[]\n\n');
+                        if (children[c].children && children[c].children.length && children[c].children.length != 0) {
+                            writeInclude(o, children[c].children);
+                        }
+                    }
+                };
+
+                out = new java.io.FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
+                out.write('== Table of Contents\n\n');
+                writeToc(out, toc.children[0].children, '*');
+                out.write('\n\n');
+                writeInclude(out, toc.children[0].children, '*');
+                out.close();
+            ]]>
+        </scriptdef>
+        <mkdir dir="${build.dir}/book" />
+        <generate-book-adoc jsontocfile="${doc.src.dir}/toc.json" destFile="${build.dir}/book/book.adoc" />
+    </target>
+
+    <target name="generate-book" depends="generate-book-adoc,init-asciidoctor">
+        <asciidoctor:convert sourceDirectory="${build.dir}/book" outputDirectory="${doc.build.dir}" backend="xhtml5"
+                             templateDir="${doc.src.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
+            <attribute key="version" value="${build.version}" />
+        </asciidoctor:convert>
+    </target>
+
+    <target name="all-doc" depends="javadoc,generate-doc,generate-book"/>
 
     <target name="init-snapshot" depends="default-version">
         <property name="snapshot.full.name" value="apache-ivy-${build.version}"/>
