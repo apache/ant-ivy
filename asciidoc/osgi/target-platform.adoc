@@ -17,19 +17,20 @@
    under the License.
 ////
 
-
+= Managing a target platform
 
 [NOTE]
 ====
 Note that this feature is considered as *experimental*.
 
-It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discussed your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+
 ====
 
 
-The concept of "target platform" is a concept introduced by Eclipse&#153; to describe the set of bundle which will run together in an OSGi&#153; environement. Then when developping an OSGi bundle, we expect it to run in a such "target platform".
+The concept of "target platform" is a concept introduced by Eclipse&#153; to describe the set of bundles which will run together in an OSGi&#153; environement. Then when developping an OSGi bundle, we expect it to run in such a "target platform".
 
-When developping a single OSGi bundle, a single ivy.xml (together with the use of the link:../use/fixdeps.html[fixdeps] task) is sufficent to describe precisely how the bundle requirements.
+When developping a single OSGi bundle, a single `ivy.xml` (together with the use of the link:../use/fixdeps.html[fixdeps] task) is sufficent to describe precisely the bundle requirements.
 
 But when developping several bundles, it will be error prone to declare for each bundle its dependencies. Because once deployed in an OSGi environement, the bindings are sensitive to the available bundles. So when developping, we must ensure that the set of bundles will be the same set as the one at deploy time.
 
@@ -42,20 +43,21 @@ The concept of "target platform" is a perfect fit to describe the set of bundles
 First you need a project (basically a folder) in which you will manage your target platform. In this project you'll need 3 files:
 
 
-* an link:../samples/target-platform/ivy.xml[ivy.xml] in which you will describe the bundles you need, +
+    * an link:../samples/target-platform/ivy.xml[ivy.xml] in which you will describe the bundles you need
 
-* an link:../samples/target-platform/ivysettings.xml[ivysettings.xml] which will describe where to download bundles from, +
+    * an link:../samples/target-platform/ivysettings.xml[ivysettings.xml] which will describe where to download bundles from
 
-* and a link:../samples/target-platform/build.xml[build.xml] with which you'll manage your target platform. +
+    * and a link:../samples/target-platform/build.xml[build.xml] with which you'll manage your target platform
 
 
-In the build there is a first important target: `'update-dependencies'`. Since the OSGi dependencies are very sensible to the available resources to resolve against, it is important to make the resolve as tight and reproductible as possible. First this target will do a resolve with the `ivy.xml`: a resolve which is very sensible to the content of the remote repo, thus not much reproductible. And it is will generate an `ivy-fixed.xml` from the resolved depedencies: this Ivy file contains only fixed non transitive dependencies (see the link:../use/fixdeps.html[fixdeps] task for further info). With that `ivy-fixed.xml` file, resolves are then reproductible and will always generate the same set of artifacts.
+In the build there is a target: `update-dependencies`. This target will do a resolve with the `ivy.xml` and will generate an `ivy-fixed.xml` from the resolved depedencies. This `ivy-fixed.xml` file contains only fixed non transitive dependencies (see the link:../use/fixdeps.html[fixdeps] task for further info). With that `ivy-fixed.xml` file, subsequent dependency resolutions are then reproducible and will always generate the same set of artifacts.
 
-Once generated, it is recommended to share that `ivy-fixed.xml` file into you version control system (subversion, git, etc...). The target `'update-dependencies'` is then to be launched each time you edit the `ivy.xml`, when you want to change the content of your target platform.
+Once generated, it is recommended to share that `ivy-fixed.xml` file into you version control system (subversion, git, etc...). The target `update-dependencies` is then to be launched each time you edit the `ivy.xml`, when you want to change the content of your target platform.
 
-The second target `'generate-target-platform'` will generate an `obr.xml`, a OSGi Bundle repository descriptor. This file will list every artifact wich has been resolved by the `ivy-fixed.xml`. Then each of your bundles you develop will do its resolve against that `obr.xml` (see the link:../resolver/obr.html[obr resolver]).
+The second target `generate-target-platform` will generate an `obr.xml`, a OSGi Bundle repository descriptor. This file will list every artifact wich has been resolved by the `ivy-fixed.xml`. Then each of your bundles you develop will do its resolve against that `obr.xml` (see the link:../resolver/obr.html[obr resolver]).
 
-The generated `obr.xml` contains paths to the local filesystem, so it is recommended to not share it between developpers.
+The generated `obr.xml` contains paths to the local filesystem, so it is neither recommended to share it between developers nor commit it to version control system.
 
-If it is required to develop your plugin with the Eclipse PDE plugin, you can then use the alternative target `generate-retrieved-target-platform`. It has the same principle than the `'generate-target-platform'` but the artifacts are also retrieved in a single folder, just like are plugins in an Eclipse install. That way you can define your target platform within Eclipse quite easily.
+If it is required to develop your plugin with the Eclipse PDE plugin, you can then use the alternative target `generate-retrieved-target-platform`. It has the same principle as the `generate-target-platform` but the artifacts are also retrieved in a single folder, just like the plugins in an Eclipse install. That way you can define your target platform within Eclipse quite easily.
+
 
