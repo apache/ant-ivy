@@ -692,16 +692,16 @@
                             ]
                         },
                         {
-                          "id":"use/buildobr",
-                          "title":"buildobr",
+                          "id":"use/buildnumber",
+                          "title":"buildnumber",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"use/buildnumber",
-                          "title":"buildnumber",
-                          "children": [
+                            "id":"use/buildobr",
+                            "title":"buildobr",
+                            "children": [
 
                             ]
                         },
