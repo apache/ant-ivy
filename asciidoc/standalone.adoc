@@ -17,7 +17,9 @@
    under the License.
 ////
 
-Ivy can be used as a standalone program very easily. All you need is a Java 5+ runtime environment (JRE)!
+= Using standalone
+
+Ivy can be used as a standalone program very easily. All you need is a Java 1.7+ runtime environment (JRE)!
 
 Then here is how to call it:
 
@@ -28,11 +30,11 @@ java -jar ivy.jar -?
 
 ----
 
-It will display an online help like this:
+It will display usage text as follows:
 
 [source]
 ----
-
+usage: ivy
 ==== settings options
  -settings <settingsfile>     use given file for settings
  -cache <cachedir>            use given directory for cache
@@ -41,14 +43,20 @@ It will display an online help like this:
 
 ==== resolve options
  -ivy <ivyfile>               use given file as ivy file
- -dependency <organisation> <module> <revision>
+ -refresh                     refresh dynamic resolved revisions
+ -dependency <organisation> <module> <revision> 
                               use this instead of ivy file to do the rest of the
                                work with this as a dependency.
  -confs <configurations>      resolve given configurations
+ -types <types>               comma separated list of accepted artifact types
+ -mode <resolvemode>          the resolve mode to use
+ -notransitive                do not resolve dependencies transitively
 
 ==== retrieve options
  -retrieve <retrievepattern>  use given pattern as retrieve pattern
+ -ivypattern <pattern>        use given pattern to copy the ivy files
  -sync                        use sync mode for retrieve
+ -symlink                     create symbolic links
 
 ==== cache path options
  -cachepath <cachepathfile>   outputs a classpath consisting of all dependencies
@@ -63,6 +71,7 @@ It will display an online help like this:
  -publishpattern <artpattern> use given pattern to find artifacts to publish
  -revision <revision>         use given revision to publish the module
  -status <status>             use given status to publish the module
+ -overwrite                   overwrite files in the repository if they exist
 
 ==== http auth options
  -realm <realm>               use given realm for HTTP AUTH
@@ -84,6 +93,7 @@ It will display an online help like this:
 ==== help options
  -?                           display this help
  -deprecated                  show deprecated options
+ -version                     displays version information
 
 ----
 
@@ -132,7 +142,7 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -dependency apache commons
 
 ----
 
-calls ivy with given ivysettings file and resolve apache commons-lang 2.0. 
+calls ivy with given ivysettings file and resolve apache `commons-lang 2.0`. 
 
 This is equivalent to:
 
@@ -143,7 +153,7 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -ivy ivy.xml
 
 ----
 
-with ivy.xml like this:
+with `ivy.xml` like this:
 
 [source]
 ----
@@ -172,7 +182,7 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -ivy path/to/myivy.xml -ca
 
 ----
 
-calls ivy with given ivysettings file and resolve the dependencies found in the given ivy file, and then output the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program. 
+calls ivy with given ivysettings file and resolves the dependencies found in the given ivy file, and then outputs the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program. 
 
 
 '''
@@ -186,4 +196,4 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -dependency bar foo 2.0 -m
 
 ----
 
-calls ivy with given ivysettings file and resolve bar foo 2.0, and then run org.foo.FooMain class with the resolved artifacts as classpath
+calls ivy with given ivysettings file and resolves the depedency `bar` `foo` `2.0`, and then runs `org.foo.FooMain` class with the resolved artifacts as classpath
