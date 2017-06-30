@@ -22,102 +22,71 @@
 
 This datatype share the same attributes, child elements and behaviour of a link:../use/postresolvetask.html[post resolve task]. It is not expected to be used as an Ant task though, only as a resource collection.
 
-
 == Examples
-
 
 [source]
 ----
-
 <ivy:resources file="path/to/ivy.xml"/>
-
 ----
 
-Build a resource collection of every artifacts of all dependencies declared in path/to/ivy.xml file.
-
+Build a resource collection of every artifacts of all dependencies declared in `path/to/ivy.xml` file.
 
 '''
 
-
-
 [source]
 ----
-
 <ivy:resources file="path/to/ivy.xml" transitive="false" />
-
 ----
 
 Same as above, but with transitive dependencies disabled.
 
-
 '''
-
-
 
 [source]
 ----
-
 <ivy:resources file="path/to/ivy.xml" conf="default, test"/>
-
 ----
 
-Build a resource collection of every artifacts of the dependencies declared in the configuration default and test of the path/to/ivy.xml file.
-
+Build a resource collection of every artifacts of the dependencies declared in the configuration default and test of the `path/to/ivy.xml` file.
 
 '''
 
-
-
 [source]
 ----
-
 <ivy:resources file="path/to/ivy.xml" type="jar"/>
-
 ----
 
-Build a resource collection of every jar artifact of all dependencies declared in path/to/ivy.xml file.
-
+Build a resource collection of every `jar` artifact of all dependencies declared in `path/to/ivy.xml` file.
 
 '''
 
-
 [source]
 ----
-
 <ivy:resources organisation="apache" module="commons-lang" revision="2+" inline="true" />
-
 ----
 
-Build a resource collection of every artifacts of commons-lang module revision 2+ from the repository, with its dependencies.
-
+Build a resource collection of every artifacts of `commons-lang` module revision 2+ from the repository, with its dependencies.
 
 '''
 
-
 [source]
 ----
-
 <ivy:resources>
     <dependency org="apache" module="commons-lang" rev="2+" />
     <dependency org="apache" module="commons-logging" rev="1.1" />
     <exclude org="apache" module="log4j" />
 </ivy:resources>
-
 ----
 
-Build a resource collection of every artifacts of both commons lang and commons logging, with their dependencies but not log4j.
-
+Build a resource collection of every artifacts of both `commons-lang` and `commons-logging`, with their dependencies but not `log4j`.
 
 '''
 
-
 [source]
 ----
-
 <ivy:resources>
     <dependency org="org.slf4j" module="slf4j" rev="1.6" conf="api,log4j" />
 </ivy:resources>
-
 ----
 
-Build a resource collection of every artifacts of the configurations "api" and "log4j" of "slf4j".
+Build a resource collection of every artifacts of the configurations `api` and `log4j` of `slf4j`.

@@ -17,93 +17,72 @@
    under the License.
 ////
 
-The retrieve task copies resolved dependencies anywhere you want in your file system.
+The `retrieve` task copies resolved dependencies anywhere you want in your file system.
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-*__since 1.4__* This task can even be used to synchronize the destination directory with what should actually be in according to the dependency resolution. This means that by setting sync="true", Ivy will not only copy the necessary files, but it will also remove the files which do not need to be there.
+*__since 1.4__* This task can even be used to synchronize the destination directory with what should actually be in according to the dependency resolution. This means that by setting `sync="true"`, Ivy will not only copy the necessary files, but it will also remove the files which do not need to be there.
 
 The synchronisation actually consists in deleting all filles and directories in the root destination directory which are not required by the retrieve.
 
 The root destination directory is the the directory denoted by the first level up the first token in the destination pattern.
-Example:
-pattern: lib/[conf]/[artifact].[ext]
-root: lib
+For instance, for the pattern `lib/[conf]/[artifact].[ext]`, the root will be `lib`.
 
 *__since 2.3__* A nested link:http://ant.apache.org/manual/Types/mapper.html[mapper] element can be used to specify more complex filename transformations of the retrieved files. See the examples below.
 
+== Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|pattern|the pattern to use to copy the dependencies|No. Defaults to ${ivy.retrieve.pattern}
+|pattern|the pattern to use to copy the dependencies|No. Defaults to `${ivy.retrieve.pattern}`
 |ivypattern|the pattern to use to copy the ivy files of dependencies *__since 1.3__*|No. Dependencies ivy files are not retrieved by default.
-|conf|a comma separated list of the configurations to retrieve|No. Defaults to the configurations resolved by the last resolve call, or * if no resolve was explicitly called
-|sync|true to synchronize the destination, false to just make a copy *__since 1.4__*|No. Defaults to false
+|conf|a comma separated list of the configurations to retrieve|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
+|sync|`true` to synchronize the destination, false to just make a copy *__since 1.4__*|No. Defaults to `false`
 |type|comma separated list of accepted artifact types *__since 1.4__*|No. All artifact types are accepted by default.
 |overwriteMode|option to configure when the destination file should be overwritten if it exist *__(since 2.2.0)__*.
-Possible values are:
 
-* *newer* (default) +
- overwrite the destination file if a more recent one is available (based on timestamp)
-
-* *different* +
- overwrite the destination file if the timestamp is different
-
-* *always* +
- always overwrite the destination file
-
-* *never* +
- never overwrite the destination file
-|No. Defaults to 'newer'.
-|symlink|true to create symbolic links, false to copy the artifacts.
-    The destination of the symbolic links depends on the value of the useOrigin attribute.
-    (requires "ln" to be a valid command, and to support the options -s and -f (works on UNIX/Linux, on other systems you may need to script "ln")
-    *__(since 2.0)__*|No. Defaults to false
-|symlinkmass|true to create symbolic links in mass, false to copy the artifacts.
-    "symlinkmass" overrides "symlink" if both are set to "true".
-    "symlinkmass" will create the same symbolic links "symlink" does, but with a single process call to "sh" with batched "ln" commands passed in as standard input (works on UNIX/Linux, on other systems you may need to script it)
-    Far large lists of resolved jars, this can be dramatically faster.
-    The destination of the symbolic links depends on the value of the useOrigin attribute.
-    The events "StartRetrieveArtifactEvent" and EndRetrieveEvent are NOT fired by this activity, because it is not clear when they should be called.
-    *__(since 2.4)__*|No. Defaults to false
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, 'ivy.instance' is taken by default.
+Possible values are: +
+* `newer`: overwrite the destination file if a more recent one is available (based on timestamp) +
+* `different`: overwrite the destination file if the timestamp is different +
+* `always`: always overwrite the destination file +
+* `never`: never overwrite the destination file +
+|No. Defaults to `newer`.
+|symlink|`true` to create symbolic links, `false` to copy the artifacts.
+    The destination of the symbolic links depends on the value of the `useOrigin` attribute.
+    (requires `ln` to be a valid command, and to support the options `-s` and `-f` (works on UNIX/Linux, on other systems you may need to script `ln`)
+    *__(since 2.0)__*|No. Defaults to `false`
+|symlinkmass|`true` to create symbolic links in mass, `false` to copy the artifacts. +
+`symlinkmass` overrides `symlink` if both are set to `true`. +
+`symlinkmass` will create the same symbolic links `symlink` does, but with a single process call to `sh` with batched `ln` commands passed in as standard input (works on UNIX/Linux, on other systems you may need to script it). For large lists of resolved jars, this can be dramatically faster. +
+The destination of the symbolic links depends on the value of the `useOrigin` attribute. +
+The events `StartRetrieveArtifactEvent` and `EndRetrieveEvent` are __NOT__ fired by this activity, because it is not clear when they should be called.
+    *__(since 2.4)__*|No. Defaults to `false`
+|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults ot `ivy.instance`.
 |log|the log setting to use during the resolve and retrieve process. *__(since 2.0)__*
 
-Available options are the same as for link:../use/resolve.html[resolve] when used to trigger resolve automatically (see link:../use/postresolvetask.html[postresolvetask]), or the following for the retrieve process only:
-
-* *default* +
- the default log settings, where all usual messages are output to the console
-
-* *quiet* +
- disable all usual messages, making the whole retrieve process quiet unless errors occur
-|No, defaults to 'default'.
+Available options are the same as for link:../use/resolve.html[resolve] when used to trigger resolve automatically (see link:../use/postresolvetask.html[postresolvetask]), or the following for the retrieve process only: +
+* `default`: the default log settings, where all usual messages are output to the console +
+* `quiet`: disable all usual messages, making the whole retrieve process quiet unless errors occur
+|No, defaults to `default`.
 |pathId|the id of the path to create containing the retrieved artifacts. *__since 2.3__*|No. No path is created by default.
 |setId|the id of the fileset to create containing the retrieved artifacts. *__since 2.3__*|No. No fileset is created by default.
 |=======
 
-
 == Examples
-
 
 [source]
 ----
-
 <ivy:retrieve />
-
 ----
 
 Retrieves dependencies using default parameters. This usually retrieves all the dependencies of the last resolve call to a lib directory.
 
-
 '''
-
 
 [source]
 ----
-
 <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]"/>
-
 ----
 
 Retrieves all dependencies of the last resolve call to a lib directory, dependencies being separated in directories named by configuration, each conf directory containing corresponding artifacts without the revision.
@@ -111,27 +90,21 @@ For instance, if the ivy file declares two configurations default and test, the 
 
 [source]
 ----
-
 lib
   default
     commons-lang.jar
     commons-logging.jar
   test
     junit.jar
-
 ----
 
 Note that if a dependency is required in the two configurations, it will be copied in the two directories. The download of the dependency is however only made once at resolve time.
 
-
 '''
-
 
 [source]
 ----
-
 <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true" />
-
 ----
 
 Same as before, but with synchronisation enabled.
@@ -140,100 +113,76 @@ For instance, if the ivy file declares two configurations default and test, the 
 
 [source]
 ----
-
 lib
   default
     commons-lang.jar
     commons-logging.jar
   test
     junit.jar
-
 ----
 
 And now suppose commons-logging is no longer part of the dependencies of the default configuration, then a new call to retrieve will result in:
 
 [source]
 ----
-
 lib
   default
     commons-lang.jar
   test
     junit.jar
-
 ----
 
 With no synchronisation, commons-logging would not have been removed by the call.
 
-
 '''
 
-
 [source]
 ----
-
 <ivy:retrieve pattern="${lib.dir}/[type]/[artifact]-[revision].[ext]" conf="runtime"/>
-
 ----
 
-Retrieves only the dependencies of the 
-[source]
-----
-runtime
-----
+Retrieves only the dependencies of the `runtime`.
 
 configuration in directories named by artifact type. The resulting lib dir could look like this:
 
 [source]
 ----
-
 lib
   jar
     commons-lang-1.0.jar
     looks-1.1.jar
   source
     looks-1.1.zip
-
 ----
-
 
 '''
 
-
 [source]
 ----
-
 <ivy:retrieve pattern="${lib.dir}/[organisation]/[artifact]-[revision].[ext]" />
-
 ----
 
-Retrieves all dependencies of the last resolve call to a lib directory. The [organisation] token will get the unmodified organisation value. The resulting lib dir could look like this:
+Retrieves all dependencies of the last resolve call to a lib directory. The `[organisation]` token will get the unmodified organisation value. The resulting lib dir could look like this:
 
 [source]
 ----
-
 lib
   org.apache
     commons-lang-1.0.jar
   org.junit
     junit-4.1.jar
     junit-4.1.zip
-
 ----
-
 
 [source]
 ----
-
 <ivy:retrieve pattern="${lib.dir}/[orgPath]/[artifact]-[revision].[ext]" />
-
 ----
 
-Retrieves all dependencies of the last resolve call to a lib directory. The [orgPath] token will get a tree structure. The resulting lib dir could look like this:
+Retrieves all dependencies of the last resolve call to a lib directory. The `[orgPath]` token will get a tree structure. The resulting lib dir could look like this:
 
 [source]
 ----
-
 lib
   org
     apache
@@ -241,35 +190,27 @@ lib
     junit
       junit-4.1.jar
       junit-4.1.zip
-
 ----
-
 
 '''
 
-
 [source]
 ----
-
 <ivy:retrieve organisation="foo" module="bar" inline="true" pattern="${my.install.dir}/[artifact].[ext]"/>
-
 ----
 
-Resolves and retrieve the latest version of the module bar and its dependencies in the directory pointed by ${my.install.dir}.
+Resolves and retrieve the latest version of the module bar and its dependencies in the directory pointed by `${my.install.dir}`.
 
 '''
 
-
 [source]
 ----
-
 <ivy:retrieve pattern="lib/[artifact]-[revision].[ext]">
     <firstmatchmapper>
         <globmapper from="lib/*-SNAPSHOT.jar" to="lib/snapshots/*-SNAPSHOT.jar" />
         <globmapper from="lib/*" to="lib/releases/*"/>
     </firstmatchmapper>
 </ivy:retrieve>
-
 ----
 
-Retrieves all dependencies of the last resolve call to a lib directory. The jar files with a version equal to 'SNAPSHOT' are retrieved in a 'snapshots' directory. The other ones are retrieved in a 'releases' directory.
+Retrieves all dependencies of the last resolve call to a lib directory. The jar files with a version equal to `SNAPSHOT` are retrieved in a `snapshots` directory. The other ones are retrieved in a `releases` directory.

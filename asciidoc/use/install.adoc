@@ -24,7 +24,8 @@ The module to install should be available in a resolver, and will be installed i
 This is particularly useful for users who only have a private repository, and want to benefit from public repositories from time to time. In this case, when a module is missing in the private repository, a call to install let download the module from a public repository not usually used for dependency resolution, and install it and its dependencies in the private repository.
 
 For more details about this task and its usage see the link:../tutorial/build-repository.html[build repository tutorial]
-  
+
+== Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -33,28 +34,24 @@ For more details about this task and its usage see the link:../tutorial/build-re
 |to|the name of the resolver in which the module must be installed|Yes
 |organisation|the name of the organisation of the module to install|Yes
 |module|the name of the module to install|Yes
-|branch|the branch of the module to install *__since 2.0__*|No, defaults to default branch with exact matcher, '*' with any other matcher
+|branch|the branch of the module to install *__since 2.0__*|No, defaults to default branch with exact matcher, `*` with any other matcher
 |revision|the revision of the module to install|Yes
-|type|the type(s) of artefact(s) to install.  You can give multiple values separated by commas|No, defaults to '*' meaning all types
-|conf|the configurations to install. Only the dependencies of the specified configurations will be installed. *__since 2.3__*|No, defaults to '*' meaning all configurations
-|validate|true to force ivy files validation against ivy.xsd, false to force no validation|No. Defaults to default ivy value (as configured in configuration file)
-|overwrite|true to override modules already present in the destination resolver, false otherwise|No, defaults to false
-|transitive|true to install the module and all its transitive dependencies, false to install only the module|No, defaults to false
-|matcher|the name of the matcher to use to find the modules to install|No, defaults to exact
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, 'ivy.instance' is taken by default.
-|haltonfailure|true to fail build on unresolved dependencies *__since 2.0__*|No, defaults to true
-|installOriginalMetadata|true to install original metadata (if available). If the module has been originally resolved from a m2 repository, the original metadata is the original POM file *__since 2.4__*|No, defaults to false
+|type|the type(s) of artefact(s) to install.  You can give multiple values separated by commas|No, defaults to `*` meaning all types
+|conf|the configurations to install. Only the dependencies of the specified configurations will be installed. *__since 2.3__*|No, defaults to `*` meaning all configurations
+|validate|`true` to force ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default ivy value (as configured in configuration file)
+|overwrite|`true` to override modules already present in the destination resolver, `false` otherwise|No, defaults to `false`
+|transitive|`true` to install the module and all its transitive dependencies, `false` to install only the module|No, defaults to `false`
+|matcher|the name of the matcher to use to find the modules to install|No, defaults to `exact`
+|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|haltonfailure|`true` to fail build on unresolved dependencies *__since 2.0__*|No, defaults to `true`
+|installOriginalMetadata|`true` to install original metadata (if available). If the module has been originally resolved from a m2 repository, the original metadata is the original POM file *__since 2.4__*|No, defaults to `false`
 |=======
-
 
 == Examples
 
-
 [source]
 ----
-
 <ivy:install organisation="apache" module="commons-lang" revision="2.0" from="ivyrep" to="myfsresolver"/>
-
 ----
 
-Installs the module commons-lang from apache in revision 2.0 in the resolver myfsresolver. The module is found in the resolver named 'ivyrep'.
+Installs the module commons-lang from apache in revision 2.0 in the resolver myfsresolver. The module is found in the resolver named `ivyrep`.

@@ -28,26 +28,25 @@ Then following a few link:../yed.html[simple steps] you can obtain a graph like 
 
 *__since 1.4__* If a custom XSL is specified, it's possible to specify additional parameters to the stylesheet.
 
+== Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|todir|the directory to which reports should be generated|No, defaults to ${ivy.report.todir}, or execution directory if not defined
-|outputpattern|the generated report names pattern|No, defaults to ${ivy.report.output.pattern}, or [organisation]-[module]-[conf].[ext] if not defined
-|xsl|true to generate a report (by default html report) using xslt, false otherwise *__since 1.3__*|No, defaults to true
-|xml|true to generate a xml report, false otherwise *__since 1.3__*|No, defaults to false
-|graph|true to generate graphml files, false otherwise|No, defaults to true
-|dot|true to generate link:http://www.graphviz.org/[graphviz dot] files, false otherwise *__since 1.4__*|No, defaults to false
-|conf|a comma separated list of the configurations for which a report should be generated|No. Defaults to the configurations resolved by the last resolve call (during same ant build), or ${ivy.resolved.configurations} if no resolve was called
+|todir|the directory to which reports should be generated|No, defaults to `${ivy.report.todir}`, or execution directory if not defined
+|outputpattern|the generated report names pattern|No, defaults to `${ivy.report.output.pattern}`, or `[organisation]-[module]-[conf].[ext]` if not defined
+|xsl|`true` to generate a report (by default html report) using xslt, `false` otherwise *__since 1.3__*|No, defaults to `true`
+|xml|`true` to generate a xml report, `false` otherwise *__since 1.3__*|No, defaults to `false`
+|graph|`true` to generate graphml files, `false` otherwise|No, defaults to `true`
+|dot|`true` to generate link:http://www.graphviz.org/[graphviz dot] files, `false` otherwise *__since 1.4__*|No, defaults to `false`
+|conf|a comma separated list of the configurations for which a report should be generated|No. Defaults to the configurations resolved by the last resolve call (during same ant build), or `${ivy.resolved.configurations}` if no resolve was called
 |organisation|the name of the organisation of the module for which report should be generated|No, unless resolveId has not been specified and no resolve was called during the build. Defaults to last resolved module organisation.
 |module|the name of the module for which report should be generated|No, unless resolveId has not been specified and no resolve was called during the build. Defaults to last resolved module.
 |validate|true to force ivy files validation against ivy.xsd, false to force no validation|No. Defaults to default ivy value (as configured in configuration file)
 |xslfile|indicates which xsl file should be used to generate the report|No, defaults to ivy provided xsl which generates html report
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, 'ivy.instance' is taken by default.
-|resolveId|The id which was used for a previous resolve *__(since 2.0)__*|No, defaults to '[org]-[module]'.
+|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|resolveId|The id which was used for a previous resolve *__(since 2.0)__*|No, defaults to `[org]-[module]`.
 |=======
-
-
 
 == Examples
 
@@ -55,11 +54,8 @@ To generate a HTML and graphml report:
 
 [source]
 ----
-
 <report conf="compile" />
-
 ----
-
 
 '''
 
@@ -67,11 +63,8 @@ To generate a HTML report only:
 
 [source]
 ----
-
 <report conf="compile" graph="false" />
-
 ----
-
 
 '''
 
@@ -79,20 +72,15 @@ To generate an XML report using a custom stylesheet:
 
 [source]
 ----
-
 <report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml" />
-
 ----
 
 To generate an XML report using a custom stylesheet which needs some parameters:
 
 [source]
 ----
-
 <report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml">
     <param name="param1" expression="value1" /> 
     <param name="param2" expression="value2" /> 
 </report>
-
 ----
-

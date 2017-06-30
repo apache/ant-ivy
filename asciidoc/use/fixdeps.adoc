@@ -18,9 +18,9 @@
 ////
 
 *__since 2.4__*
-The `fixdeps` task serializes transitively resolved dependencies into an ivy.xml file. 
+The `fixdeps` task serializes transitively resolved dependencies into an `ivy.xml` file.
 
-The dependencies declared in an ivy.xml can be specified as range of revisions. And the transitive dependencies too. As new versions of modules can be added to the repository anytime, resolved versions of ranges can change over time. It is then safer to resolve a range once and stick with the resolved revision. This way a resolve process is highly reproductible.
+The dependencies declared in an `ivy.xml` can be specified as range of revisions. And the transitive dependencies too. As new versions of modules can be added to the repository anytime, resolved versions of ranges can change over time. It is then safer to resolve a range once and stick with the resolved revision. This way a resolve process is highly reproductible.
 
 It is especially useful in a very dynamic environment like the link:../osgi.html[OSGi] one.
 
@@ -28,19 +28,13 @@ In a multi project environment some dependencies still need to be maintained loo
 
 The recommended setup is then to:
 
-
-* have an `ivy-spec.xml` in your project which specifies the dependencies, with ranges if needed +
-
-* have an Ant target which resolve the `ivy-spec.xml` and call `fixdeps` to generate an `ivy.xml`. This target should then only be called after `ivy-spec.xml` is modified. The generated `ivy.xml` can safely be shared in a version control repository (svn, git,...). +
-
-* make the entire build workflow based on the resolve of the generated `ivy.xml` +
-
+* have an `ivy-spec.xml` in your project which specifies the dependencies, with ranges if needed
+* have an Ant target which resolve the `ivy-spec.xml` and call `fixdeps` to generate an `ivy.xml`. This target should then only be called after `ivy-spec.xml` is modified. The generated `ivy.xml` can safely be shared in a version control repository (svn, git,...).
+* make the entire build workflow based on the resolve of the generated `ivy.xml`
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -48,51 +42,34 @@ This is a link:../use/postresolvetask.html[post resolve task], with all the beha
 |tofile|The location of the ivy file to generate|Yes
 |=======
 
-
-
 == Child elements
-
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Element|Description|Cardinality
 |keep|declares a dependency to keep from being fixed, and keep its original declaration from the original ivy.xml
     
-These elements takes two attributes: 
-* org +
- the organization
-* module +
-the name of the module|0..n
+These elements takes two attributes: +
+* `org`: the organization +
+* `module`: the name of the module|0..n
 |=======
-
-
 
 == Examples
 
-
-
 [source]
 ----
-
 <ivy:fixdeps tofile="ivy-fixed.xml" />
-
 ----
 
 Simple fix of some dependencies.
 
-
 '''
-
-
 
 [source]
 ----
-
 <ivy:fixdeps tofile="ivy-fixed.xml">
     <keep org="com.acme" module="mymodule" />
 </ivy:fixdeps>
-
 ----
 
 Fix of the dependencies but keep the dependency on `com.acme#mymodule` as defined in the original ivy.xml.

@@ -18,7 +18,7 @@
 ////
 
 *__since 1.4__*
-The artifactreport task generates an xml report of all artifacts dependencies resolved by the last link:../use/resolve.html[resolve] task call during the same build.
+The `artifactreport` task generates an xml report of all artifacts dependencies resolved by the last link:../use/resolve.html[resolve] task call during the same build.
 
 *__since 2.0__* This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
@@ -32,7 +32,6 @@ Here is an example of generate file:
 
 [source]
 ----
-
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
   <module organisation="hippo" name="sant-classes" rev="1.01.00b04-dev" status="integration">
@@ -58,43 +57,33 @@ Here is an example of generate file:
       <cache-location>C:/home/jstuyts/data/ivy/cache/testng/testng/jars/testng-4.6.1-jdk15.jar</cache-location>
       <retrieve-location>lib/test/testng-4.6.1-jdk15.jar</retrieve-location>
     </artifact>
-  </module> 
-
+  </module>
 ----
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |tofile|the file to which the report should be written|Yes
-|pattern|the retrieve pattern to use to fill the retrieve location information about the artifacts|No. Defaults to ${ivy.retrieve.pattern}.
+|pattern|the retrieve pattern to use to fill the retrieve location information about the artifacts|No. Defaults to `${ivy.retrieve.pattern}`.
 |conf|a comma separated list of the configurations to use to generate the report|No. Defaults to the configurations resolved by the last resolve call
-|haltonfailure|true to halt the build on ivy failure, false to continue|No. Defaults to true
-|settingsRef|A reference to the ivy settings that must be used by this task *(since 2.0)*|No, 'ivy.instance' is taken by default.
+|haltonfailure|`true` to halt the build on ivy failure, `false` to continue|No. Defaults to `true`
+|settingsRef|A reference to the ivy settings that must be used by this task *(since 2.0)*|No, `ivy.instance` is taken by default.
 |=======
-
 
 == Examples
 
-
 [source]
 ----
-
 <ivy:artifactreport tofile="${basedir}/path/to/myreport.xml" />
-
 ----
 
 Generates the artifact report for all configurations resolved during the last resolve call (in the same build).
 
-
 [source]
 ----
-
 <ivy:artifactreport tofile="${basedir}/path/to/myreport.xml" conf="default"/>
-
 ----
 
 Generates the artifact report for only the default configuration resolved during the last resolve call.

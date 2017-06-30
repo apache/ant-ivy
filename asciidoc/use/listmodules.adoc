@@ -24,51 +24,44 @@ The criteria is set by given patterns matching the organisation, name branch and
 
 To know if a module matches the criteria ivy will use the configured link:../concept.html#matcher[pattern matcher].
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |organisation|the pattern matching the organisation of the modules to list|Yes
 |module|the pattern matching the name of the modules to list|Yes
-|branch|the pattern matching the branch of the modules to list|No, defaults to '*'
+|branch|the pattern matching the branch of the modules to list|No, defaults to `*`
 |revision|the pattern matching the revision of the modules to list|Yes
-|matcher|the name of the pattern matcher to use for matching the modules fields|No. Defaults to exactOrRegexp.
+|matcher|the name of the pattern matcher to use for matching the modules fields|No. Defaults to `exactOrRegexp`.
 |property|the pattern of the property to set when a module is found|Yes
 |value|The pattern of the value to set when a module is found|Yes
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, 'ivy.instance' is taken by default.
+|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
 |resolver|The name of the resolver to use for searching the modules *__(since 2.2.0)__*|No, all available resolvers will be used by default.
 |=======
 
-
 == Examples
-
 
 [source]
 ----
-
 <ivy:listmodules organisation="apache" module="ivy" revision="*" property="ivy.[revision]" value="found"/>
-
 ----
 
-will find all revisions of the module ivy in the org apache, and create one property for each revision found, the name of the property depending on the revision, the value being always 'found'
-
+will find all revisions of the module ivy in the org apache, and create one property for each revision found, the name of the property depending on the revision, the value being always `found`
 
 '''
 
-
-
 [source]
 ----
-
 <ivy:listmodules organisation="*" module="ivy*" revision="1.0" matcher="glob" property="modules.[module]" value="[organisation]"/>
-
 ----
 
 use the glob matcher to find all modules which name starts with ivy with revision 1.0, and sets for each a property with module name found  and organisation for value.
+
 Example:
+[source]
+----
 modules.ivy=apache
 modules.ivyde=apache
 modules.ivytools=ivytools
+----

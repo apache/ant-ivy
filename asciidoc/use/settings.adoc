@@ -19,122 +19,96 @@
 
 *__(since 2.0)__*
 
-The settings declaration is used to configure ivy with an xml settings file. The difference with the link:../use/configure.html[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
+The settings declaration is used to configure Ivy with an xml settings file. The difference with the link:../use/configure.html[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
 
 See link:../settings.html[Settings Files] for details about the settings file itself.
 
-
-
 Multiple settings can be defined in a build script. Every task can reference its own settings.
 
-All Ivy variables set during the settings are available in the Ant project as long as they were not set in Ant before (Ant properties are immutable). 
-Moreover, the variables are exposed under two names: the variable name, and the variable name suffixed by dot + the settings id. 
-For instance, if you load a settings with the id 'myid', and define a variable my.variable=my.value in the Ivy settings, both my.variable and my.variable.myid will now be available as properties in Ant and equal to 'my.value'. If you later load another settings with the id 'yourid', and in this settings assign the variable 'my.variable' the value 'your.value', in the Ant project you will have:
+All Ivy variables set during the settings are available in the Ant project as long as they were not set in Ant before (Ant properties are immutable).
 
+Moreover, the variables are exposed under two names: the variable name, and the variable name suffixed by dot + the settings id. 
+
+For instance, if you load a settings with the id `myid`, and define a variable `my.variable=my.value` in the Ivy settings, both `my.variable` and `my.variable.myid` will now be available as properties in Ant and equal to `my.value`. If you later load another settings with the id `yourid`, and in this settings assign the variable `my.variable` the value `your.value`, in the Ant project you will have:
 [source]
 ----
-
 my.variable=my.value
 my.variable.myid=my.value
 my.variable.yourid=your.value
-
 ----
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|id|The settings id useable in the settingsRef attributes of the ivy task that needs a setting.  Note that the ivy tasks will search by default for the settings with the id "ivy.instance", which is the default value.|No, defaults to "ivy.instance"
-|file|path to the settings file to use|No. If a file is provided, url is ignored. If none are provided, then it attempts to find a file at ${ivy.settings.file}, and if this file does not exist, it uses a link:../tutorial/defaultconf.html[default settings file]
+|id|The settings id useable in the `settingsRef` attributes of the ivy task that needs a setting.|No, defaults to `ivy.instance`
+|file|path to the settings file to use
+.2+.^|No. If a file is provided, url is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses a link:../tutorial/defaultconf.html[default settings file]
 |url|url of the settings file to use
-|host|http authentication host|No, unless authentication is required
-|realm|http authentication realm
-|username|http authentication user name
-|passwd|http authentication password
+|host|HTTP authentication host
+.4+.^|No, unless authentication is required
+|realm|HTTP authentication realm
+|username|HTTP authentication user name
+|passwd|HTTP authentication password
 |=======
-
 
 == HTTP Authentication
 
-__Note: HTTP Authentication can be used only if link:http://jakarta.apache.org/commons/httpclient/[commons-httpclient.jar] is in your classpath__
-If any of the url you use in ivy (especially in dependency resolvers) need http
-authentication, then you have to provide the host, realm, username and passwd
-attributes of the configure task. These settings will then be used in any
-further call to ivy tasks.
+__Note__: HTTP Authentication can be used only if link:http://jakarta.apache.org/commons/httpclient/[commons-httpclient.jar] is in your classpath
 
-
-
+If any of the url you use in Ivy (especially in dependency resolvers) need HTTP authentication, then you have to provide the `host`, `realm`, `username` and `passwd` attributes of the configure task. These settings will then be used in any further call to ivy tasks.
 
 == Multiple classloader
 
-A special attention should be applied when you have a multi-project build with __subant__ call, using ivy task loaded by a __typedef__.  Indeed in this situation, it is possible to pass settings reference to a subbuild.  When you do that, you should take of the classloader.  The ivy task of your subant should not be defined in a different classloader than the parent one.  This can be achieved by using the __loader__ parameter of the antlib declaration, or avoid to reload the ivy antlib in the subbuild (place the taskdef in a target only executed when the antlib is not yet loaded).
-
-
-
-
+A special attention should be applied when you have a multi-project build with `subant` call, using ivy task loaded by a `typedef`.  Indeed in this situation, it is possible to pass settings reference to a subbuild.  When you do that, you should take of the classloader.  The ivy task of your `subant` should not be defined in a different classloader than the parent one.  This can be achieved by using the `loader` parameter of the antlib declaration, or avoid to reload the ivy antlib in the subbuild (place the `taskdef` in a target only executed when the antlib is not yet loaded).
 
 == Examples
 
-
 === Simplest settings
-
 
 [source]
 ----
 <ivy:settings />
 ----
 
-Use either ${ivy.settings.file} if it exists, or the link:../samples/ivysettings-default.xml[default settings file]
+Use either `${ivy.settings.file}` if it exists, or the link:../samples/ivysettings-default.xml[default settings file]
 
 This simplest setting is implicit.
 
 === Configure with a file
-
 
 [source]
 ----
 <ivy:settings file="mysettings.xml" />
 ----
 
-
 === Configure with an url
-
 
 [source]
 ----
 <ivy:settings url="http://mysite.com/mysettings.xml" />
 ----
 
-
 === Configure multiple realms which require autentication
-
 
 [source]
 ----
-
 <ivy:settings file="path/to/my/ivysettings.xml">
   <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
   <credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
-</ivy:settings> 
-
+</ivy:settings>
 ----
-
 
 === Configure 2 different settings
 
-You can use multiple ivy settings during a build. Then every ivy task should specify the settings it uses using the settingsRef attribute.
+You can use multiple ivy settings during a build. Then every ivy task should specify the settings it uses using the `settingsRef` attribute.
 
 [source]
 ----
-
  <ivy:settings id="ivy.normal.settings" file="normal_settings.xml" />
  <ivy:settings id="ivy.release.settings" file="release_settings.xml" />
 
  <ivy:resolve settingsRef="ivy.normal.settings" />
  <ivy:resolve settingsRef="ivy.release.settings" />
-
 ----
-

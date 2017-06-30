@@ -17,8 +17,9 @@
    under the License.
 ////
 
-*__since 2.1__* Convert pom.xml into an ivy.xml
+*__since 2.1__* Convert `pom.xml` into an `ivy.xml`
 
+== Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -27,16 +28,11 @@
 |ivyFile|the location of the ivy.xml to generate|Yes
 |=======
 
-
-
 == Examples
-
 
 [source]
 ----
-
     <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml" />
-
 ----
 
 Just convert an pom.xml file into an ivy.xml.

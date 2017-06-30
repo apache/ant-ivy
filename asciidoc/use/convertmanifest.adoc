@@ -17,26 +17,22 @@
    under the License.
 ////
 
-*__since 2.3__* Convert a MANIFEST.MF into an ivy.ml file
+*__since 2.3__* Convert a `MANIFEST.MF` into an `ivy.ml` file
 
+== Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|manifest|the location of the MANIFEST.MF to convert|Yes
-|ivyFile|the location of the ivy.xml file to generate|Yes
+|manifest|the location of the `MANIFEST.MF` to convert|Yes
+|ivyFile|the location of the `ivy.xml` file to generate|Yes
 |=======
-
-
 
 == Examples
 
-
 [source]
 ----
-
     <ivy:convertmanifest manifest="META-INF/MANIFEST.MF" ivyFile="ivy.xml" />
-
 ----
 
-Just converts a manifest into an ivy.xml file.
+Just converts a manifest into an `ivy.xml` file.

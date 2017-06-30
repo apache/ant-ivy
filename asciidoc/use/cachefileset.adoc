@@ -17,38 +17,32 @@
    under the License.
 ////
 
-Constructs an ant fileset consisting of artifacts in ivy cache for a configuration (*__since 1.2__*).
-
+Constructs an Ant `fileset consisting` of artifacts in Ivy's cache for a configuration (*__since 1.2__*).
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks. Note that this task
-does not rely on retrieve, because built fileset is made of artifacts direcly in ivy cache.
-
+does not rely on retrieve, because built fileset is made of artifacts direcly in Ivy's cache.
 
 Please prefer the use of retrieve + standard ant path creation, which make your build
-more independent from ivy (once artifacts are properly retrieved, ivy is not required any more).
+more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
 
-
-Built fileset is registered in ant with a given id, and can thus be used like any other ant fileset using
-refid.
-
+Built `fileset` is registered in Ant with a given id, and can thus be used like any other Ant `fileset` using
+`refid`.
 
 == Limitation
 
-A fileset, in Ant, requires a base directory from within which the files are included/excluded. The cachefileset task, in Ivy, internally tries to determine a common base directory across all the resolved artifacts' files that have been downloaded in the Ivy repository cache(s). Given that Ivy can be configured to consist multiple repository caches and each one can potentially be on a different filesystem root, there are times, when cachefileset cannot determine a common base directory for these resolved artifacts. The cachefileset throws an exception in such cases.
-
+A `fileset`, in Ant, requires a base directory from within which the files are included/excluded. The `cachefileset` task, in Ivy, internally tries to determine a common base directory across all the resolved artifacts' files that have been downloaded in the Ivy repository cache(s). Given that Ivy can be configured to consist multiple repository caches and each one can potentially be on a different filesystem root, there are times, when `cachefileset` cannot determine a common base directory for these resolved artifacts. The `cachefileset` throws an exception in such cases.
 
 == Alternative task
 
-If cachefileset doesn't fit the need of your use case (maybe due to the limitations noted above), the link:../use/resources.html[resources] task could be an alternative task to use in certain cases.
+If `cachefileset` doesn't fit the need of your use case (maybe due to the limitations noted above), the link:../use/resources.html[resources] task could be an alternative task to use in certain cases.
 
+== Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |setid|the id to reference the built fileset|Yes
-|conf|a comma separated list of the configurations to put in the created path|No. Defaults to the configurations resolved by the last resolve call, or * if no resolve was explicitly called
-|type|comma separated list of artifact types to accept in the path, * for all|No. Defaults to *
-|settingsRef|*__(since 2.0)__* A reference to the ivy settings that must be used by this task|No, 'ivy.instance' is taken by default.
+|conf|a comma separated list of the configurations to put in the created path|No. Defaults to the configurations resolved by the last resolve call, or `*` if no resolve was explicitly called
+|type|comma separated list of artifact types to accept in the path, `*` for all|No. Defaults to `*`
+|settingsRef|*__(since 2.0)__* A reference to the ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
 |=======
-
-

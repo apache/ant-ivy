@@ -21,24 +21,16 @@
 
 The set of jars which will be described by the OBR can be defined in 4 exclusive ways:
 
-
-* via an Ivy resolver: every jar listed by the resolver will be taken into account +
-
-* by defining a root directory: every jar found recursively in that folder will be taken into account +
-
-* via the name of an Ivy cache: every artifact contained in the cache will be taken into account +
-
-* *__since 2.4__* via a resolve: this task is a link:../use/postresolvetask.html[post resolve task] (with all the behaviour and attributes common to all post resolve tasks), thus ever artifact which has been resolved will be taken into account; it is especially useful for building a link:../osgi/target-platform.html[target platform] +
-
+* via an Ivy resolver: every jar listed by the resolver will be taken into account
+* by defining a root directory: every jar found recursively in that folder will be taken into account
+* via the name of an Ivy cache: every artifact contained in the cache will be taken into account
+* *__since 2.4__* via a resolve: this task is a link:../use/postresolvetask.html[post resolve task] (with all the behaviour and attributes common to all post resolve tasks), thus ever artifact which has been resolved will be taken into account; it is especially useful for building a link:../osgi/target-platform.html[target platform]
 
 NB: among every listed files or artifacts, only the actually OSGi bundles will be described by the OBR descriptor; the other files are ignored. 
 
-
 == Attributes
 
-
 *__since 2.4__* This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -47,65 +39,48 @@ NB: among every listed files or artifacts, only the actually OSGi bundles will b
 |resolverName|the name of the resolver from which the jars should be to gathered|No
 |cacheName|the name of the cache from which the jars should be to gathered|No
 |baseDir|the folder into which the jars should be gather recursively|No
-|sourceType|if used as a post resolve task, 'sourceType' define the type of artifacts which should be considered as source artifacts (defaults to 'source,sources,src')|No
+|sourceType|if used as a post resolve task, `sourceType` define the type of artifacts which should be considered as source artifacts|No. Defaults to `source,sources,src`
 |encoding|The encoding of the resulting xml file|No. Defaults to `UTF-8`
 |indent|Specify if the xml result file should be indented|No. Defaults to `true`
 |quiet|Log as debug rather than warning the rejected jars as they are illformed|No. Defaults to `false`
 |=======
 
-
-
 == Examples
-
 
 [source]
 ----
-
     <ivy:buildobr baseDir="${eclipse.home}" out="${basedir}/target/repo-eclipse.xml" indent="true" />
-
 ----
 
 Builds an indented OBR descriptor from an Eclipse install, with their path relative to the Eclipse install.
 
-
 '''
-
 
 [source]
 ----
-
     <ivy:configure file="ivysettings.xml" />
     <ivy:buildobr resolverName="my-file-resolver" out="${basedir}/target/repo-eclipse.xml" />
-
 ----
 
 Configure an Ivy settings and builds an OBR descriptor from jars resolved by the defined resolver.
 
-
 '''
-
 
 [source]
 ----
-
     <ivy:configure file="ivysettings.xml" />
     <ivy:buildobr cacheName="my-cache" out="${basedir}/target/repo-eclipse.xml" />
-
 ----
 
 Configure an Ivy settings and builds an OBR descriptor from jars contained in the defined cache.
 
-
 '''
-
 
 [source]
 ----
-
     <ivy:configure file="ivysettings.xml" />
     <ivy:resolve file="ivy.xml" />
     <ivy:buildobr out="${basedir}/target-platform-obr.xml" />
-
 ----
 
 Launch a resolve and then build an obr.xml describing the resolved artifacts.

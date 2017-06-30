@@ -101,6 +101,9 @@ pre {
   padding: 0.75em 1.5em;
   font-size: 1em;
 }
+code {
+    background-color: #EEE;
+}
 .form-item {
   margin-top: 1em;
 }
@@ -110,7 +113,11 @@ pre {
 .hide {
   display: none
 }
-
+.imageblock {
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+}
 /*
 ** Page layout blocks / IDs
 */
@@ -350,7 +357,12 @@ table.tableblock td {
 table.tableblock td p:last-child {
     margin: 0px;
 }
-
+table.tableblock .halign-center {
+    text-align: center;
+}
+table.tableblock .valign-middle {
+    vertical-align: middle;
+}
 .note {
     padding: 15px;
     border-style:solid;
