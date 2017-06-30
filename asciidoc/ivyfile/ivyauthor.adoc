@@ -19,13 +19,10 @@
 
 *Tag:* ivyauthor *Parent:* link:../ivyfile/info.html[info]
 
-
-
 Gives information about who has contributed to write this ivy file. It does NOT indicate who 
 is the author of the module itself.
 
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
@@ -33,5 +30,3 @@ is the author of the module itself.
 |name|the name of the author, as a person or a company.|Yes
 |url|an url pointing to where the author can bea reached.|No, but it's a good practice to indicate it
 |=======
-
-

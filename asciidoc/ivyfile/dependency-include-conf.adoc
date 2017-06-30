@@ -21,14 +21,10 @@
 
 Specify a configuration in which the enclosing artifact inclusion should be included.
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |name|the name of the master configuration in which the enclosing artifact should be included|Yes
 |=======
-
-

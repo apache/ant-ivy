@@ -19,9 +19,7 @@
 
 *Tag:* exclude *Parent:* link:../ivyfile/dependency.html[dependency]
 
-This feature gives you more control on a dependency for which you do not control its ivy file. 
-It enables to restrict the artifacts required, by excluding artifacts being published by the dependency or any of its transitive dependencies, 
-even if configuration does not a good separation of published artifacts
+This feature gives you more control on a dependency for which you do not control its ivy file. It enables to restrict the artifacts required, by excluding artifacts being published by the dependency or any of its transitive dependencies, even if configuration does not a good separation of published artifacts
 
 The same principle concerning configuration as for include applies to this exclude feature (see the link:../ivyfile/dependency-include.html[include] feature).
 
@@ -40,23 +38,21 @@ Note that exclusion is always done AFTER inclusion has been done.
 
 == Attributes
 
-
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|org|the organisation of the dependency module or artifact to exclude, or a regexp matching this organisation *__since 1.3__*|No, defaults to '`$$*$$`'
-|module|the name of the dependency module or the artifact to exclude, or a regexp matching this module name *__since 1.3__*|No, defaults to '`$$*$$`'
-|name|the name of an artifact of the dependency module to add to the exclude list, or an expression matching this name (see matcher attribute below)|No, defaults to '`$$*$$`'
-|type|the type of the artifact of the dependency module to add to the exclude list, or a regexp matching this name|No, defaults to '`$$*$$`'
-|ext|the extension of the artifact of the dependency module to add to the exclude list, or an expression matching this name (see matcher attribute below)|No, defaults to type
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to excludes *__since 1.3__*|No, defaults to exactOrRegexp in pre 1.3 ivy files, and exact in 1.3 and superior
+|org|the organisation of the dependency module or artifact to exclude, or a regexp matching this organisation *__since 1.3__*|No, defaults to `$$*$$`
+|module|the name of the dependency module or the artifact to exclude, or a regexp matching this module name *__since 1.3__*|No, defaults to `$$*$$`
+|name|the name of an artifact of the dependency module to add to the exclude list, or an expression matching this name (see `matcher` attribute below)|No, defaults to `$$*$$`
+|type|the type of the artifact of the dependency module to add to the exclude list, or a regexp matching this name|No, defaults to `$$*$$`
+|ext|the extension of the artifact of the dependency module to add to the exclude list, or an expression matching this name (see `matcher` attribute below)|No, defaults to the value of `type`
+|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to excludes *__since 1.3__*|No, defaults to `exactOrRegexp` in pre 1.3 ivy files, and `exact` in 1.3 and superior
 |conf|comma separated list of the master configurations in which this artifact should be excluded.
-    '`$$*$$`' wildcard can be used to designate all configurations of this module|No, defaults to '`$$*$$`', unless nested conf are specified
+
+`$$*$$` wildcard can be used to designate all configurations of this module|No, defaults to `$$*$$`, unless nested conf are specified
 |=======
 
-
 == Child elements
-
 
 [options="header",cols="20%,60%,20%"]
 |=======

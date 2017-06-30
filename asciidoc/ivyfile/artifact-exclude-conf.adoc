@@ -19,18 +19,12 @@
 
 *Tag:* conf *Parent:* link:../ivyfile/artifact-exclude.html[artifact]
 
-
-
 Specify a configuration in which the enclosing artifact exclusion should be included.
 
-
 == Attributes
-
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |name|the name of the master configuration in which the enclosing artifact should be excluded|Yes
 |=======
-
-

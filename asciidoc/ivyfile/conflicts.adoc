@@ -19,24 +19,16 @@
 
 *Tag:* conflicts *Parent:* link:../ivyfile.html[ivy-module]
 
-
-
 *__(since 2.0)__* the conflicts section is deprecated.  Use the link:../ivyfile/conflict.html[conflict] instead.
 
 Container for conflict manager elements, used to indicate how conflicts should be resolved
 for this module. 
 
-
-
 The list of built-in conflict managers available is listed on the link:../settings/conflict-managers.html[conflict manager configuration page].
-
-
 
 Conflicts manager are used during the resolve operation, i.e. when ivy analyse the graph of dependencies
 and download corresponding ivy files and artifacts. The fact to manage conflict at resolve time
 enables to minimize downloads: when a module is evicted by a conflict manager, it is not downloaded.
-
-
 
 There are two things optimized during conflict resolution: download of artifacts and download
 of ivy files. The first is always ensured by ivy, i.e. artifacts of a module evicted will never
@@ -51,10 +43,8 @@ and if this is the case, it asks the conflict manager to resolve the conflict. T
 it does not download its ivy file, and the whole branch is not traversed, which can saves
 a lot of time.
 
-
-
 If this container is not present, a default conflict manager is used for all modules. 
-The current default conflict manager is the "latest-revision" conflict manager.
+The current default conflict manager is the `latest-revision` conflict manager.
 
 == Child elements
 
@@ -64,5 +54,3 @@ The current default conflict manager is the "latest-revision" conflict manager.
 |Element|Description|Cardinality
 |link:../ivyfile/manager.html[manager]|declares a conflict manager for this module|1..n
 |=======
-
-

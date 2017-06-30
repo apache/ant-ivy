@@ -21,25 +21,24 @@
 
 Declares a dependency for this module. A dependency is described by the module on which the current module depends (identified by its name, organisation and revision), and a mapping of configurations.
 
-
 == [[revision]]Fixed and dynamic revisions
 
 The revision can be given as a fixed one (1.5.2, for instance) or as a latest (or dynamic) one. Several possibilities for dynamic revisions are implemented in Ivy:
-
 
 * `latest.integration` +
  selects the latest revision of the dependency module.
 
 * `latest.[any status]` *__since 1.4__* +
  selects the latest revision of the dependency module with at least the specified status. +
-For instance latest.milestone will select the latest version being either a milestone or a release, and latest.release will only selects the latest release. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
+For instance `latest.milestone` will select the latest version being either a `milestone` or a `release`, and `latest.release` will only selects the latest `release`. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
 See also link:../settings/statuses.html[statuses] to see how to configure module statuses.
-* end the revision with a '`+`' +
- selects the latest sub-revision of the dependency module. For instance, 
+
+* end the revision with a `+` +
+selects the latest sub-revision of the dependency module. For instance,
 if the dependency module exists in revision 1.0.3, 1.0.7 and 1.1.2, "1.0.+" will select 1.0.7.
 
 * version ranges *__since 1.4__* +
- mathematical notation for ranges can be used to match a range of version. +
+mathematical notation for ranges can be used to match a range of version. +
 Examples: +
 `[1.0,2.0]` matches all versions greater or equal to 1.0 and lower or equal to 2.0 +
 `[1.0,2.0[` matches all versions greater or equal to 1.0 and lower than 2.0 +
@@ -53,13 +52,11 @@ Examples: +
 *__since 1.4__* If you don't find a way to expression your dependency version constraint among these, you can link:../settings/version-matchers.html[plug your own].
 The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference.html[ivy main concepts] for details about this.
 
-
 == [[revision-constraint]]Revision constraint
 
-*__since 2.0__* The dependency tag supports two revision attributes: rev, corresponding to the default required dependency revision, and revConstraint, corresponding to a dynamic revision constraint applied on this dependency. 
+*__since 2.0__* The `dependency` tag supports two revision attributes: `rev`, corresponding to the default required dependency revision, and `revConstraint`, corresponding to a dynamic revision constraint applied on this dependency.
 
-Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a stic version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the revConstraint attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility. 
-
+Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a stic version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility.
 
 == Configurations mapping
 
@@ -69,120 +66,53 @@ There are several ways to declare this mapping of configurations, choose dependi
 
 The first way to declare this mapping is called the inline mapping. It is maybe the less natural at first, but it's powerful and concise. Inline mapping can take several forms.
 
+=== Specify one configuration name
 
+This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
 
-* Specify one configuration name +
- This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
-For instance, if the current module has defined a configuration named '`runtime`', and the dependency too, then having an inline mapping configuration set to '`runtime`' means that in the runtime master configuration the runtime dependency configuration is required. +
+For instance, if the current module has defined a configuration named '`runtime`', and the dependency too, then having an inline mapping configuration set to '`runtime`' means that in the runtime master configuration the runtime dependency configuration is required.
+
 The link:../ivyfile/configurations.html#defaultconfmapping[examples on the dependency on the configurations page] explain how ivy interprets the conf attribute according to how link:../ivyfile/configurations.html[defaultconfmapping] and link:../ivyfile/configurations.html[defaultconf] is set.
 
+=== Specify a configuration mapping using the `$$->$$` operator
 
+It is separating a comma separated list of master configurations (left operand) of a comma separated list of dependency configurations (right operand).
 
-* Specify a configuration mapping using the `$$->$$` operator separating a comma separated list of master configurations (left operand) of a comma separated list of dependency configurations (right operand). +
-A good way to remember which side is for the master configuration (i.e. the configuration of the module defining the dependency) and which side is for the dependency configuration is to read the '$$->$$' as 'depends on'.
+A good way to remember which side is for the master configuration (i.e. the configuration of the module defining the dependency) and which side is for the dependency configuration is to read the `$$->$$` as "depends on".
 
 In this case, all specified dependency configurations are required in all specified master configurations.
 For instance, `$$A, B, C -> E, F$$` means that dependency configurations E and F are required in master configurations A, B and C.
 
-Note that you can use the wildcard `$$*$$` as a configuration name, meaning that all configurations (either master or dependency public ones depending on the side) are wanted. For instance, '$$* -> B, C$$' means that B & C dependency configurations are required in all master configurations.
+Note that you can use the wildcard `$$*$$` as a configuration name, meaning that all configurations (either master or dependency public ones depending on the side) are wanted. For instance, `$$* -> B, C$$` means that B & C dependency configurations are required in all master configurations.
 
-*__since 1.4__* you can use * wildcard followed by negated configurations to mean all but xxx. For instance, '$$*, !A, !B -> X$$' means that X dependency configuration is required in all master configurations except A and B.
+*__since 1.4__* you can use * wildcard followed by negated configurations to mean all but xxx. For instance, `$$*, !A, !B -> X$$` means that X dependency configuration is required in all master configurations except A and B.
 
-*__since 1.2__* '`@`' also has a special meaning as a right operand of the dependency mapping, it means map to self. This is particularly useful with '$$*$$', '$$*->@$$' meaning that all configurations of the module maps to their equivalent (same name) in the dependency.
+*__since 1.2__* `@` also has a special meaning as a right operand of the dependency mapping, it means map to self. This is particularly useful with `$$*$$`, `$$*->@$$` meaning that all configurations of the module maps to their equivalent (same name) in the dependency.
 
-*__since 1.4__* '`#`' can be used as right side operand to mean 'this' configuration, and thus refers to the configuration being resolved. It is slightly similar to @, except that it takes into account the configuration being actually resolved in case of a configuration extending another one.
+*__since 1.4__* `#` can be used as right side operand to mean _this_ configuration, and thus refers to the configuration being resolved. It is slightly similar to `@`, except that it takes into account the configuration being actually resolved in case of a configuration extending another one.
 
-Example:
-Let's foo be a module with two configurations, A and B, B extending A.
-Then a dependency declaring conf `$$A->#$$` will get A dep conf in its confs A (when resolving A, ivy will find interpret the `#` symbol as A) and B dep conf in its conf B (when resolving B, ivy will interpret the `#` symbol as B, even if this dependency is only required because of the A dependency).
+Example: Let's foo be a module with two configurations, A and B, B extending A. Then a dependency declaring conf `$$A->#$$` will get A dep conf in its confs A (when resolving A, ivy will find interpret the `#` symbol as A) and B dep conf in its conf B (when resolving B, ivy will interpret the `#` symbol as B, even if this dependency is only required because of the A dependency).
 
 If you don't understand really how this works, do not use it :-)
 
-*__since 1.4__* '`%`' can be used as left side operand to mean 'all the other configurations'. This can be usefull when you only have a specific mapping for some configurations and a default mapping for all the others.
-
-Example:
-
-[source]
-----
-test->runtime;%->default
-----
-
-means that the 
-[source]
-----
-test
-----
-
-configuration is mapped to the 
-[source]
-----
-runtime
-----
-
-configuration, but all the other configurations are mapped to the 
-[source]
-----
-default
-----
-
-configuration.
+*__since 1.4__* `%` can be used as left side operand to mean "all the other configurations". This can be usefull when you only have a specific mapping for some configurations and a default mapping for all the others. For instance, `$$test->runtime;%->default$$` means that the `test` configuration is mapped to the `runtime` configuration, but all the other configurations are mapped to the `default` configuration.
 
 *__since 1.3__* a fallback mechanism can be used when you are not sure that the dependency will have the required conf. You can indicate to ivy that you want one configuration, but if it isn't present, use another one. 
 The syntax for specifying this adds the fallback conf between parenthesis right after the required conf. 
-For instance, 
-[source]
-----
-test->runtime(default)
-----
 
-means that in the test configuration of the module the 
-[source]
-----
-runtime
-----
+For instance, `$$test->runtime(default)$$` means that in the test configuration of the module the `runtime` conf of the dependency is required, but if doesn't exist, it will use the `default` conf instead. If `default` conf doesn't exist then it will be considered as an error. Note that the `*` wildcard can be used as fallback conf.
 
-conf of the dependency is required, but if doesn't exist, it will use the 
-[source]
-----
-default
-----
-
-conf instead. If 
-[source]
-----
-default
-----
-
-conf doesn't exist then it will be considered as an error. Note that the 
-[source]
-----
-*
-----
-
-wildcard can be used as fallback conf.
-
-*__since 2.1__* It is also possible to define dependencies on configurations intersection. A configuration intersection is defined using a '`+`' sign to separate the configuration (eg '`A+B`' means the intersection of configuration 'A' and 'B'). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
+*__since 2.1__* It is also possible to define dependencies on configurations intersection. A configuration intersection is defined using a `+` sign to separate the configuration (eg `A+B` means the intersection of configuration A and B). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
 
 Configuration intersections can also be used when specifying the confs to link:../use/resolve.html[resolve]. 
 
-Moreover, the mapping '`$$*->@$$`' is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf `A+B` in a module which defines a dependency with mapping `$$*->@$$`, the mapping `$$*->@$$` is interpreted as `$$A+B->A+B$$` so the intersection of A and B will be resolved in the dependency.
+Moreover, the mapping `$$*->@$$` is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf `A+B` in a module which defines a dependency with mapping `$$*->@$$`, the mapping `$$*->@$$` is interpreted as `$$A+B->A+B$$` so the intersection of A and B will be resolved in the dependency.
 
-*__since 2.1__* you can refer to a group of configurations sharing the same value for an attribute as left side part of the dependency mapping. 
-
-The syntax is 
-
-[source]
-----
-*[att=value]
-----
-
-where _att_ is the name of the attribute shared by the configurations of the group, and _value_ is the value for this attribute that configurations must have to be part of the group. This is especially useful with extra attributes.
+*__since 2.1__* you can refer to a group of configurations sharing the same value for an attribute as left side part of the dependency mapping. The syntax is `*[att=value]` where `att` is the name of the attribute shared by the configurations of the group, and `value` is the value for this attribute that configurations must have to be part of the group. This is especially useful with extra attributes.
 
 For instance, if you have:
-
 [source,xml]
 ----
-
 <configurations>
 	<conf name="red" e:axis="color" />
 	<conf name="blue" e:axis="color" />
@@ -190,71 +120,29 @@ For instance, if you have:
 	<conf name="windows" e:axis="platform" />
 	<conf name="linux" e:axis="platform"/>
 </configurations>
-
 ----
 
 Then you can do:
-
 [source,xml]
 ----
-
 <dependency org="acme" name="foo" rev="2.0" conf="*[axis=platform]->default"/>
-
 ----
 
 To map the windows and linux configurations (the one which have the attribute axis equal to platform) to the default configuration of foo.
 
-*__since 1.4__* you can add simple conditions in the right side of the dependency mapping. This is done by adding a condition between '[' and ']'. If the condition evaluates to 
-[source]
-----
-true
-----
-
-, the mapping is performed. If the condition evaluates to 
-[source]
-----
-false
-----
-
-, the mapping will be ignored. For instance, 
-[source]
-----
-test->[org=A]runtime,[org=B]default
-----
-
-means that the 
-[source]
-----
-test
-----
-
-configuration will be mapped to the 
-[source]
-----
-runtime
-----
-
-conf for the dependencies of organisation 'A' and to the 
-[source]
-----
-default
-----
-
-conf for dependencies of organisation 'B'.
+*__since 1.4__* you can add simple conditions in the right side of the dependency mapping. This is done by adding a condition between `[` and `]`. If the condition evaluates to `true`, the mapping is performed. If the condition evaluates to `false`, the mapping will be ignored. For instance, `$$test->[org=A]runtime,[org=B]default$$` means that the `test` configuration will be mapped to the `runtime` conf for the dependencies of organisation A and to the `default` conf for dependencies of organisation B.
 
 
-* Specify a semi-column separated list of any of the previous specs. +
- In this case, it is the union of the mapping which is kept. For instance, '`$$A -> B; * -> C$$`' means that B conf is needed in A conf and C conf is need in all master conf... so both B & C dep conf are required in A master conf
+=== Specify a semi-column separated list of any of the previous specs.
 
+In this case, it is the union of the mapping which is kept. For instance, `$$A -> B; * -> C$$` means that B conf is needed in A conf and C conf is need in all master conf... so both B & C dep conf are required in A master conf
 
-If you prefer more verbose mapping declaration, everything is also possible with sub elements mapping declaration. 
-
+If you prefer more verbose mapping declaration, everything is also possible with sub elements mapping declaration.
 
 == Artifact restriction
 
 Moreover, the dependency element also supports an artifact restriction feature (since 0.6).
 See link:../ivyfile/dependency-artifact.html[dependency artifact] for details.
-
 
 == Forcing revision
 
@@ -266,7 +154,6 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 
 == Attributes
 
-
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
@@ -274,17 +161,14 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 |name|the module name of the dependency|Yes
 |branch|the branch of the dependency. *__since 1.4__*|No, defaults to the default branch setting for the dependency.
 |rev|the revision of the dependency. See link:#revision[above] for details.|Yes
-|revConstraint|the dynamic revision constraint originally used for this dependency. See link:#revision-constraint[above] for details.|No, defaults to the value of rev
-|force|a boolean to give an indication to conflict manager that this dependency 
-     should be forced to this revision (see link:../ivyfile/conflicts.html[conflicts manager])|No, defaults to false
-|conf|an inline mapping configuration spec (see above for details)|No, defaults to defaultconf attribute of dependencies element if neither conf attribute nor conf children element is given
-|transitive|true to resolve this dependency transitively, false otherwise (*__since 1.2__*)|No, defaults to true
-|changing|true if the dependency artifacts may change without revision change, false otherwise (*__since 1.2__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to false
+|revConstraint|the dynamic revision constraint originally used for this dependency. See link:#revision-constraint[above] for details.|No, defaults to the value of `rev`
+|force|a boolean to give an indication to conflict manager that this dependency should be forced to this revision (see link:../ivyfile/conflicts.html[conflicts manager])|No, defaults to `false`
+|conf|an inline mapping configuration spec (see above for details)|No, defaults to `defaultconf` attribute of dependencies element if neither conf attribute nor conf children element is given
+|transitive|`true` to resolve this dependency transitively, `false` otherwise (*__since 1.2__*)|No, defaults to `true`
+|changing|`true` if the dependency artifacts may change without revision change, false otherwise (*__since 1.2__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to `false`
 |=======
 
-
 == Child elements
-
 
 [options="header",cols="20%,60%,20%"]
 |=======
@@ -294,130 +178,56 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 |link:../ivyfile/artifact-exclude.html[exclude]|defines artifacts exclusion - use only if you do not control dependency ivy file|0..n
 |=======
 
-
-
 == Examples
-
 
 [source,xml]
 ----
-
 <dependency org="jayasoft" name="swtbinding" revision="0.2"/>
-
 ----
 
 Declares a dependency on the module swtbinding from jayasoft in its revision 0.2. All the configuration of this dependency will be included in all configurations of the module in which the dependency is declared.
 
 '''
 
-
 [source,xml]
 ----
-
 <dependency org="jayasoft" name="swtbinding" branch="fix-103" revision="latest.integration"/>
-
 ----
 
 Same as above except that it will take the latest revision on the branch 'fix-103' instead of revision '0.2'.
 
 '''
 
-
 [source,xml]
 ----
-
 <dependency name="mymodule" revision="latest.integration" conf="test->default"/>
-
 ----
 
-Declares a dependency on the module 
-[source]
-----
-mymodule
-----
-
-from the same organisation as the module in which the dependency is declared. The latest available revision of this dependency will be used. This dependency will only be included in the test configuration of the module, and it's only the default configuration of the dependency which will be included.
+Declares a dependency on the module `mymodule` from the same organisation as the module in which the dependency is declared. The latest available revision of this dependency will be used. This dependency will only be included in the test configuration of the module, and it's only the default configuration of the dependency which will be included.
 
 '''
 
-
 [source,xml]
 ----
-
 <dependency org="apache" name="commons-lang" revision="2.0" force="true" conf="default"/>
-
 ----
 
-Declares a dependency on the module 
-[source]
-----
-commons-lang
-----
-
-from apache, in revision 2.0. The revision 2.0 will be used even if another dependency declares itself a dependency on another version of commons-lang. Moreover, if no defaultconfmapping is defined, only the 
-[source]
-----
-default
-----
-
-conf of commons-lang will be used in the 
-[source]
-----
-default
-----
-
-conf of the master module. If 
-[source]
-----
-*->runtime
-----
-
-was declared as defaultconfmapping, then the runtime conf of commons-lang would be included in the default conf of the master module. Note that whatever the defaultconfmapping is, the dependency only be included in the default conf of the master module. The defaultconfmapping only changes the required dependency confs.
+Declares a dependency on the module `commons-lang` from apache, in revision 2.0. The revision 2.0 will be used even if another dependency declares itself a dependency on another version of `commons-lang`. Moreover, if no `defaultconfmapping` is defined, only the `default` conf of `commons-lang` will be used in the `default` conf of the master module. If `$$*->runtime$$` was declared as `defaultconfmapping`, then the `runtime` conf of `commons-lang` would be included in the `default` conf of the master module. Note that whatever the `defaultconfmapping` is, the dependency only be included in the default conf of the master module. The `defaultconfmapping` only changes the required dependency confs.
 
 '''
-
-
-[source]
-----
-
-<dependency org="foo" name="bar" revision="3.0" transitive="false" conf="default->@;runtime,test->runtime"/>
-
-----
-
-Declares a dependency on the module 
-[source]
-----
-bar
-----
-
-from foo, in revision 3.0. The dependencies of bar will themselves not be included due to the setting of transitive. The default dependency conf will be included in the default master conf, and the runtime dependency conf will be included in both the runtime and test master conf.
-
-'''
-
 
 [source,xml]
 ----
+<dependency org="foo" name="bar" revision="3.0" transitive="false" conf="default->@;runtime,test->runtime"/>
+----
 
+Declares a dependency on the module `bar` from foo, in revision 3.0. The dependencies of bar will themselves not be included due to the setting of transitive. The `default` dependency conf will be included in the `default` master conf, and the `runtime` dependency conf will be included in both the `runtime` and `test` master conf.
+
+'''
+
+[source,xml]
+----
 <dependency org="foo" name="bar" revision="3.0" changing="true" conf="compile->runtime(default)"/>
-
 ----
 
-Declares a dependency on the module 
-[source]
-----
-bar
-----
-
-from foo, in revision 3.0. This revision is considered to be able to change (
-[source]
-----
-changing="true"
-----
-
-), so even if it is already in ivy cache, Ivy will check if a revision is a more recent last modified date is available on the repository. The runtime conf of bar is required in the compile conf of the master module, but if bar doesn't define a runtime conf, then the 
-[source]
-----
-default
-----
-
-conf will be used.
+Declares a dependency on the module `bar` from `foo`, in revision 3.0. This revision is considered to be able to change (`changing="true"`), so even if it is already in Ivy's cache, Ivy will check if a revision is a more recent last modified date is available on the repository. The `runtime` conf of bar is required in the `compile` conf of the master module, but if bar doesn't define a `runtime` conf, then the `default` conf will be used.
