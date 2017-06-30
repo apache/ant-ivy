@@ -52,7 +52,7 @@ Then following a few link:../yed.html[simple steps] you can obtain a graph like 
 
 To generate a HTML and graphml report:
 
-[source]
+[source,xml]
 ----
 <report conf="compile" />
 ----
@@ -61,7 +61,7 @@ To generate a HTML and graphml report:
 
 To generate a HTML report only:
 
-[source]
+[source,xml]
 ----
 <report conf="compile" graph="false" />
 ----
@@ -70,14 +70,14 @@ To generate a HTML report only:
 
 To generate an XML report using a custom stylesheet:
 
-[source]
+[source,xml]
 ----
 <report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml" />
 ----
 
 To generate an XML report using a custom stylesheet which needs some parameters:
 
-[source]
+[source,xml]
 ----
 <report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml">
     <param name="param1" expression="value1" /> 

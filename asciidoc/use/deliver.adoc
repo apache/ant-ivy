@@ -94,7 +94,7 @@ It can also be useful if you want to trigger a recursive delivery and then ensur
 
 Deliver an ivy file without the private configurations:
 
-[source]
+[source,xml]
 ----
 <deliver conf="*(public)" />
 ----

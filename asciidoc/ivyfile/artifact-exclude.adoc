@@ -29,13 +29,11 @@ Note that exclusion is always done AFTER inclusion has been done.
 
 *__since 1.3__* This exclude feature can also be used not only to exclude artifacts but also to exclude whole modules. Indeed when you exclude artifacts, it doesn't avoid ivy to search for the module itself, and to resolve the dependencies of the module. But you can also exclude the whole module, which means that the module will not be downloaded at all, and so its own dependencies will not be resolved. For sure, this is usually done to exclude not a direct dependency but an indirect one. To exclude a whole module, you just have to not specify any artifact name, type and ext in your exclude rule. For instance:
 
-[source]
+[source,xml]
 ----
-
 <dependency name="A" rev="1.0">
   <exclude module="B"/>
 </dependency>
-
 ----
 
 *__since 2.0__* A link:../ivyfile/exclude.html[module wide exclude] can also be used to exclude dependencies for the whole module (and not only in the context of one dependency as it is the case here).

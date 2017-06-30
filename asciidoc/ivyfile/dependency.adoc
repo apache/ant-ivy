@@ -180,7 +180,7 @@ where _att_ is the name of the attribute shared by the configurations of the gro
 
 For instance, if you have:
 
-[source]
+[source,xml]
 ----
 
 <configurations>
@@ -195,7 +195,7 @@ For instance, if you have:
 
 Then you can do:
 
-[source]
+[source,xml]
 ----
 
 <dependency org="acme" name="foo" rev="2.0" conf="*[axis=platform]->default"/>
@@ -299,7 +299,7 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 == Examples
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="jayasoft" name="swtbinding" revision="0.2"/>
@@ -311,7 +311,7 @@ Declares a dependency on the module swtbinding from jayasoft in its revision 0.2
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="jayasoft" name="swtbinding" branch="fix-103" revision="latest.integration"/>
@@ -323,7 +323,7 @@ Same as above except that it will take the latest revision on the branch 'fix-10
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <dependency name="mymodule" revision="latest.integration" conf="test->default"/>
@@ -341,7 +341,7 @@ from the same organisation as the module in which the dependency is declared. Th
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="apache" name="commons-lang" revision="2.0" force="true" conf="default"/>
@@ -395,7 +395,7 @@ from foo, in revision 3.0. The dependencies of bar will themselves not be includ
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="foo" name="bar" revision="3.0" changing="true" conf="compile->runtime(default)"/>

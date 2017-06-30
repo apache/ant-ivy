@@ -42,7 +42,7 @@ To know if a module matches the criteria ivy will use the configured link:../con
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:listmodules organisation="apache" module="ivy" revision="*" property="ivy.[revision]" value="found"/>
 ----
@@ -51,7 +51,7 @@ will find all revisions of the module ivy in the org apache, and create one prop
 
 '''
 
-[source]
+[source,xml]
 ----
 <ivy:listmodules organisation="*" module="ivy*" revision="1.0" matcher="glob" property="modules.[module]" value="[organisation]"/>
 ----
@@ -59,7 +59,7 @@ will find all revisions of the module ivy in the org apache, and create one prop
 use the glob matcher to find all modules which name starts with ivy with revision 1.0, and sets for each a property with module name found  and organisation for value.
 
 Example:
-[source]
+[source,properties]
 ----
 modules.ivy=apache
 modules.ivyde=apache

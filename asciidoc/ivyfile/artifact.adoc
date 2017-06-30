@@ -31,7 +31,7 @@ The configurations in which an artifact is published can be configured in two wa
 The two are equivalent, it is only a matter of preference. However, do not mix both for one artifact.
 
 *__since 1.4__* The artifact element has default values for all its attributes, so if you want to declare a default artifact you can just declare it like that:
-[source]
+[source,xml]
 ----
 
 <artifact />
@@ -76,7 +76,7 @@ If this is the only artifact declared, then it's equivalent to having no publica
 == Examples
 
 
-[source]
+[source,xml]
 ----
 
 <artifact />
@@ -89,7 +89,7 @@ Declares an artifact with the name of the module as name, type and ext jar, and 
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <artifact name="foo-src" type="source" ext="zip" conf="src" />
@@ -102,7 +102,7 @@ Declares an artifact foo-src, of type 'source' with extension 'zip', and publish
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <artifact name="foo" url="http://www.acme.com/repository/barbaz/foo-1.2-bar.jar" />

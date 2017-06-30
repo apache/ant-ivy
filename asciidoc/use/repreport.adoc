@@ -54,7 +54,7 @@ Moreover, to be able to list organizations, this task requires an [organisation]
 
 To generate a xml report for all the latest versions of all the modules in your repository:
 
-[source]
+[source,xml]
 ----
 <ivy:repreport />
 ----
@@ -63,7 +63,7 @@ To generate a xml report for all the latest versions of all the modules in your 
 
 To generate a graphml report for all the latest versions of all the modules in your repository:
 
-[source]
+[source,xml]
 ----
 <ivy:repreport xml="false" graph="true" />
 ----
@@ -72,7 +72,7 @@ To generate a graphml report for all the latest versions of all the modules in y
 
 To generate a xml report for all the latest versions of the modules from the organisation foo in your repository:
 
-[source]
+[source,xml]
 ----
 <ivy:repreport organisation="foo" />
 ----
@@ -81,7 +81,7 @@ To generate a xml report for all the latest versions of the modules from the org
 
 To generate a xml report for all the versions on the 1.x stream of the modules named bar* from the organisation foo in your repository:
 
-[source]
+[source,xml]
 ----
 <ivy:repreport organisation="foo" module="bar*" revision="1.+" matcher="glob" />
 ----
@@ -90,7 +90,7 @@ To generate a xml report for all the versions on the 1.x stream of the modules n
 
 To generate an XML report using a custom stylesheet:
 
-[source]
+[source,xml]
 ----
 <ivy:repreport xsl="true" xslfile="my-custom-stylesheet.xsl" xslext="xml" />
 ----
@@ -99,7 +99,7 @@ To generate an XML report using a custom stylesheet:
 
 To generate an XML report using a custom stylesheet which needs some parameters:
 
-[source]
+[source,xml]
 ----
 <ivy:repreport xsl="true" xslfile="my-custom-stylesheet.xsl" xslext="xml">
     <param name="param1" expression="value1" /> 

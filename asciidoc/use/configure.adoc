@@ -56,7 +56,7 @@ It's also possible to configure authentication settings for multiple urls. This 
 
 === Simplest settings
 
-[source]
+[source,xml]
 ----
 <ivy:configure />
 ----
@@ -65,21 +65,21 @@ Use either `${ivy.settings.file}` if it exists, or the link:../samples/ivysettin
 
 === Configure with a file
 
-[source]
+[source,xml]
 ----
 <ivy:configure file="myconffile.xml" />
 ----
 
 === Configure with an url
 
-[source]
+[source,xml]
 ----
 <ivy:configure url="http://mysite.com/myconffile.xml" />
 ----
 
 === Configure multiple URLs which require autentication
 
-[source]
+[source,xml]
 ----
 <ivy:configure file="path/to/my/ivysettings.xml">
   <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />

@@ -30,7 +30,7 @@ See this link:http://www.jaya.free.fr/ivy/doc/articles/ease-multi-module.html[ar
 
 Here is an example of generate file:
 
-[source]
+[source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
@@ -74,14 +74,14 @@ Here is an example of generate file:
 
 == Examples
 
-[source]
+[source,xml]
 ----
 <ivy:artifactreport tofile="${basedir}/path/to/myreport.xml" />
 ----
 
 Generates the artifact report for all configurations resolved during the last resolve call (in the same build).
 
-[source]
+[source,xml]
 ----
 <ivy:artifactreport tofile="${basedir}/path/to/myreport.xml" conf="default"/>
 ----

@@ -67,7 +67,7 @@ This is very useful to build a compile configuration, for instance, forcing the 
 == Examples
 
 
-[source]
+[source,xml]
 ----
 
 <conf name="core" visibility="private" />

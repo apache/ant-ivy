@@ -49,7 +49,7 @@ _WARNING_: Before 2.0, the behavior was to overwrite the properties.  Since 2.0,
 Suppose we have one dependency called `mydep` in revision 1.0 publishing two artifacts: `foo.jar` and `bar.jar`.
 Then:
 
-[source]
+[source,xml]
 ----
 <artifactproperty conf="build"
        name="[module].[artifact]-[revision]" 
@@ -58,7 +58,7 @@ Then:
 
 will set two properties:
 
-[source]
+[source,properties]
 ----
 mydep.foo-1.0 = my/cache/dir/mydep/foo-1.0.jar
 mydep.bar-1.0 = my/cache/dir/mydep/bar-1.0.jar

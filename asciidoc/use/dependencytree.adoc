@@ -43,7 +43,7 @@ __mydep__ has a transitive dependency on __mytransitivedependency__ in revision 
 
 Then:
 
-[source]
+[source,xml]
 ----
 <dependencytree />
 ----

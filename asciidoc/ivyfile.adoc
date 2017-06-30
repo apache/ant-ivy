@@ -21,7 +21,7 @@ Ivy use is entirely based on _module descriptors_ known as "ivy files". Ivy file
 
 Here is the simplest ivy file you can write:
 
-[source]
+[source,xml]
 ----
 
 <ivy-module version="2.0">
@@ -38,7 +38,7 @@ Before beginning the reference itself, it is required to have in mind the termin
 
 For those familiar with xml schema, the schema used to validate ivy files can be found link:http://ant.apache.org/ivy/schemas/ivy.xsd[here]. For those using xsd aware IDE, you can declare the xsd in your ivy files to benefit from code completion / validation:
 
-[source]
+[source,xml]
 ----
 
 <?xml version="1.0" encoding="UTF-8"?>

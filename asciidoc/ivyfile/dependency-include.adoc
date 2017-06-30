@@ -28,7 +28,7 @@ For instance, imagine you have A, B & C master configurations. If you restrict t
 
 Example:
 
-[source]
+[source,xml]
 ----
 
 <dependency org="yourorg" name="yourmodule9" rev="9.1" conf="A,B->default">

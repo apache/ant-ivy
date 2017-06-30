@@ -30,7 +30,7 @@
 
 == Examples
 
-[source]
+[source,xml]
 ----
     <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml" />
 ----

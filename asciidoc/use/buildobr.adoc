@@ -47,7 +47,7 @@ NB: among every listed files or artifacts, only the actually OSGi bundles will b
 
 == Examples
 
-[source]
+[source,xml]
 ----
     <ivy:buildobr baseDir="${eclipse.home}" out="${basedir}/target/repo-eclipse.xml" indent="true" />
 ----
@@ -56,7 +56,7 @@ Builds an indented OBR descriptor from an Eclipse install, with their path relat
 
 '''
 
-[source]
+[source,xml]
 ----
     <ivy:configure file="ivysettings.xml" />
     <ivy:buildobr resolverName="my-file-resolver" out="${basedir}/target/repo-eclipse.xml" />
@@ -66,7 +66,7 @@ Configure an Ivy settings and builds an OBR descriptor from jars resolved by the
 
 '''
 
-[source]
+[source,xml]
 ----
     <ivy:configure file="ivysettings.xml" />
     <ivy:buildobr cacheName="my-cache" out="${basedir}/target/repo-eclipse.xml" />
@@ -76,7 +76,7 @@ Configure an Ivy settings and builds an OBR descriptor from jars contained in th
 
 '''
 
-[source]
+[source,xml]
 ----
     <ivy:configure file="ivysettings.xml" />
     <ivy:resolve file="ivy.xml" />

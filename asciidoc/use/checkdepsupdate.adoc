@@ -41,7 +41,7 @@ __mydep__ has a transitive dependency on __mytransitivedependency__ in revision 
 
 Then:
 
-[source]
+[source,xml]
 ----
 <checkdepsupdate />
 ----
@@ -57,7 +57,7 @@ Dependencies updates available :
 
 Same example with transitive dependencies :
 
-[source]
+[source,xml]
 ----
 <checkdepsupdate showTransitive="true" />
 ----

@@ -41,7 +41,7 @@ When delivering an ivy file with such an inclusion, the included configuration f
 == Examples
 
 
-[source]
+[source,xml]
 ----
 
 <ivy-module version="1.0">
@@ -62,7 +62,7 @@ When delivering an ivy file with such an inclusion, the included configuration f
 
 with included-configurations.xml like this:
 
-[source]
+[source,xml]
 ----
 
 <configurations defaultconfmapping="*->@">

@@ -30,7 +30,7 @@ For instance, imagine you have A, B & C master configurations. If you specify ar
 
 Example:
 
-[source]
+[source,xml]
 ----
 
 <dependency org="yourorg" name="yourmodule9" rev="9.1" conf="A,B->default">
@@ -75,7 +75,7 @@ Example:
 == Examples
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="foo" name="bar" rev="1.0">
@@ -90,7 +90,7 @@ Declares a dependency on module bar which only publish one artifact: baz.jar.
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="foo" name="bar" rev="1.0">
@@ -105,7 +105,7 @@ Same as above, except that if the artifact is not found at its standard location
 '''
 
 
-[source]
+[source,xml]
 ----
 
 <dependency org="foo" name="bar" rev="1.0">
