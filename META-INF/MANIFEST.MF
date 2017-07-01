@@ -109,4 +109,4 @@ Export-Package: org.apache.ivy;version="2.0.0",
  org.apache.ivy.util.filter;version="2.0.0",
  org.apache.ivy.util.url;version="2.0.0"
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: J2SE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
