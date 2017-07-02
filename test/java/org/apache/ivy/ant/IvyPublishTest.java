@@ -128,31 +128,33 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-extends/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
+        checkPublishedFile(published, "ivy-extends-merged.xml");
+    }
 
+    private void checkPublishedFile(File published, String expectedFilename) throws IOException {
         // do a text compare, since we want to test comments as well as structure.
         // we could do a better job of this with xmlunit
+        try (BufferedReader merged = new BufferedReader(new FileReader(published))) {
+            try (BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
+                    .getResourceAsStream(expectedFilename)))) {
+                int lineNo = 1;
+                for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
+                        && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
+                        .readLine()) {
 
-        int lineNo = 1;
+                    // strip timestamps for the comparison
+                    if (mergeLine.contains("<info")) {
+                        mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
+                    }
+                    // discard whitespace-only lines
+                    if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
+                        assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
+                                mergeLine);
+                    }
 
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
+                    ++lineNo;
+                }
             }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
         }
     }
 
@@ -178,32 +180,7 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-extends/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-
-        // do a text compare, since we want to test comments as well as structure.
-        // we could do a better job of this with xmlunit
-
-        int lineNo = 1;
-
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-            }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
-        }
+        checkPublishedFile(published, "ivy-extends-merged.xml");
     }
 
     @Test
@@ -234,32 +211,7 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-extends/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-
-        // do a text compare, since we want to test comments as well as structure.
-        // we could do a better job of this with xmlunit
-
-        int lineNo = 1;
-
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-            }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
-        }
+        checkPublishedFile(published, "ivy-extends-merged.xml");
     }
 
     @Test
@@ -284,32 +236,7 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/child1/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-
-        // do a text compare, since we want to test comments as well as structure.
-        // we could do a better job of this with xmlunit
-
-        int lineNo = 1;
-
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("extends/child1/ivy-child1-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-            }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
-        }
+        checkPublishedFile(published, "extends/child1/ivy-child1-merged.xml");
     }
 
     @Test
@@ -344,32 +271,7 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-minimal/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-
-        // do a text compare, since we want to test comments as well as structure.
-        // we could do a better job of this with xmlunit
-
-        int lineNo = 1;
-
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-minimal-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-            }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
-        }
+        checkPublishedFile(published, "ivy-extends-minimal-merged.xml");
     }
 
     @Test
@@ -410,32 +312,7 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-minimal/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-
-        // do a text compare, since we want to test comments as well as structure.
-        // we could do a better job of this with xmlunit
-
-        int lineNo = 1;
-
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-            }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
-        }
+        checkPublishedFile(published, "ivy-extends-extra-attributes-merged.xml");
     }
 
     @Test
@@ -477,32 +354,7 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-minimal/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-
-        // do a text compare, since we want to test comments as well as structure.
-        // we could do a better job of this with xmlunit
-
-        int lineNo = 1;
-
-        @SuppressWarnings("resource")
-        BufferedReader merged = new BufferedReader(new FileReader(published));
-        BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                .getResourceAsStream("ivy-extends-extra-attributes-merged.xml")));
-        for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                .readLine()) {
-
-            // strip timestamps for the comparison
-            if (mergeLine.contains("<info")) {
-                mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-            }
-            // discard whitespace-only lines
-            if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
-                assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                    mergeLine);
-            }
-
-            ++lineNo;
-        }
+        checkPublishedFile(published, "ivy-extends-extra-attributes-merged.xml");
     }
 
     @Test
