@@ -39,7 +39,7 @@ The configuration of such a resolver is mainly done through ivy and artifact pat
 == Atomic publish support
 
 *__since 2.0__* This resolver supports atomic publish, which is useful for environments with a lot of concurrent publish and resolve actions. The atomic publish relies on the atomicity of the rename operation in the underlying filesystem (which includes NTFS and POSIX based filesystems).
-In this case the resolver starts by publishing the module according to the pattern, but where a `.part` suffix is appended to the revision. Then the publish is committed with a rename to the final location. 
+In this case the resolver starts by publishing the module according to the pattern, but where a `.part` suffix is appended to the revision. Then the publish is committed with a rename to the final location.
 
 *Limitations*
 Atomic publish is currently limited in several ways:
@@ -88,5 +88,3 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |ivy|defines a pattern for ivy files, using the pattern attribute|0..n
 |artifact|defines a pattern for artifacts, using the pattern attribute|1..n
 |=======
-
-

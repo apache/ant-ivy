@@ -83,7 +83,7 @@ contains a directory per module, with each containing:
 ----
 
   <ivy-module version="1.0">
-      <info 
+      <info
           organisation="org.apache.ivy.example"
           module="find"
           status="integration"/>
@@ -92,13 +92,13 @@ contains a directory per module, with each containing:
         <conf name="standalone" extends="core"/>
       </configurations>
       <publications>
-        <artifact name="find" type="jar" conf="core" />
+        <artifact name="find" type="jar" conf="core"/>
       </publications>
       <dependencies>
-        <dependency name="version" rev="latest.integration" conf="core->default" />
-        <dependency name="list" rev="latest.integration" conf="core" />
-        <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="core->default" />
-        <dependency org="commons-cli" name="commons-cli" rev="1.0" conf="standalone->default" />
+        <dependency name="version" rev="latest.integration" conf="core->default"/>
+        <dependency name="list" rev="latest.integration" conf="core"/>
+        <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="core->default"/>
+        <dependency org="commons-cli" name="commons-cli" rev="1.0" conf="standalone->default"/>
       </dependencies>
   </ivy-module>
 
@@ -113,7 +113,7 @@ contains a directory per module, with each containing:
 
   <project name="find" default="compile">
   	<property file="build.properties"/>
-  	
+
   	<import file="${common.dir}/common.xml"/>
   </project>
 
@@ -154,7 +154,7 @@ So, here are some aspects of this common build file:
 <property name="ivy.shared.default.root" value="${repository.dir}/shared"/>
 
 <!-- here is how we would have configured ivy if we had our own ivysettings file
-<ivy:settings file="${common.dir}/ivysettings.xml" id="ivy.instance" />
+<ivy:settings file="${common.dir}/ivysettings.xml" id="ivy.instance"/>
 -->
 
 ----
@@ -171,10 +171,10 @@ Commented out you can see how the settings would have been done if the default s
 
 <target name="resolve" depends="clean-lib, load-ivy" description="--> resolve and retrieve dependencies with ivy">
     <mkdir dir="${lib.dir}"/> <!-- not usually necessary, ivy creates the directory IF there are dependencies -->
-    
+
     <!-- the call to resolve is not mandatory, retrieve makes an implicit call if we don't -->
     <ivy:resolve file="${ivy.file}"/>
-    <ivy:retrieve pattern="${lib.dir}/[artifact].[ext]" />
+    <ivy:retrieve pattern="${lib.dir}/[artifact].[ext]"/>
 </target>
 
 ----
@@ -190,12 +190,12 @@ You should begin to be familiar with using Ivy this way. We call __resolve__ exp
 
 <target name="ivy-new-version" depends="load-ivy" unless="ivy.new.revision">
     <!-- default module version prefix value -->
-    <property name="module.version.prefix" value="${module.version.target}-dev-b" />
-    
+    <property name="module.version.prefix" value="${module.version.target}-dev-b"/>
+
     <!-- asks Ivy for an available version number -->
-    <ivy:info file="${ivy.file}" />
-    <ivy:buildnumber 
-        organisation="${ivy.organisation}" module="${ivy.module}" 
+    <ivy:info file="${ivy.file}"/>
+    <ivy:buildnumber
+        organisation="${ivy.organisation}" module="${ivy.module}"
         revision="${module.version.prefix}" defaultBuildNumber="1" revSep=""/>
 </target>
 
@@ -211,12 +211,11 @@ This target is used to ask Ivy to find a new version for a module. To get detail
 ----
 
 <target name="publish" depends="clean-build, jar" description="--> publish this project in the ivy repository">
-    <ivy:publish artifactspattern="${build.dir}/[artifact].[ext]" 
+    <ivy:publish artifactspattern="${build.dir}/[artifact].[ext]"
                        resolver="shared"
-                       pubrevision="${version}" 
-                       status="release"
-    />
-    <echo message="project ${ant.project.name} released with version ${version}" />
+                       pubrevision="${version}"
+                       status="release"/>
+    <echo message="project ${ant.project.name} released with version ${version}"/>
 </target>
 
 ----
@@ -230,14 +229,13 @@ This target publishes the module to the shared repository, with the revision fou
 ----
 
 <target name="publish-local" depends="local-version, jar" description="--> publish this project in the local ivy repository">
-    <ivy:publish artifactspattern="${build.dir}/[artifact].[ext]" 
+    <ivy:publish artifactspattern="${build.dir}/[artifact].[ext]"
                     resolver="local"
                     pubrevision="${version}"
                     pubdate="${now}"
                     status="integration"
-                    forcedeliver="true"
-    />
-    <echo message="project ${ant.project.name} published locally with version ${version}" />
+                    forcedeliver="true"/>
+    <echo message="project ${ant.project.name} published locally with version ${version}"/>
 </target>
 
 ----
@@ -272,7 +270,7 @@ This target is used when you don't want to use your local version of a module an
 
 Generates both an html report and a graphml report.
 
-For example, to generate a graph like the one shown at the beginning of this tutorial, you just have to follow the instructions given link:../yed.html[here] with the graphml file you will find in 
+For example, to generate a graph like the one shown at the beginning of this tutorial, you just have to follow the instructions given link:../yed.html[here] with the graphml file you will find in
 [source]
 ----
 projects/console/build/

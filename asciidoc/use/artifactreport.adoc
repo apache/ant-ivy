@@ -22,7 +22,7 @@ The `artifactreport` task generates an xml report of all artifacts dependencies 
 
 *__since 2.0__* This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-This report is different from the standard link:../use/report.html[report] which reports all modules and artifacts, whle this report is much simpler and focuses only on artifacts, and gives more information on artifacts, such as the original location and the retrieve location. 
+This report is different from the standard link:../use/report.html[report] which reports all modules and artifacts, while this report is much simpler and focuses only on artifacts, and gives more information on artifacts, such as the original location and the retrieve location.
 
 It is thus easy to use to generate things like a classpath file for an IDE.
 
@@ -76,7 +76,7 @@ Here is an example of generate file:
 
 [source,xml]
 ----
-<ivy:artifactreport tofile="${basedir}/path/to/myreport.xml" />
+<ivy:artifactreport tofile="${basedir}/path/to/myreport.xml"/>
 ----
 
 Generates the artifact report for all configurations resolved during the last resolve call (in the same build).

@@ -45,7 +45,7 @@ Then:
 
 [source,xml]
 ----
-<dependencytree />
+<dependencytree/>
 ----
 
 will display the following tree in the console:

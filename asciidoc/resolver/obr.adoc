@@ -50,7 +50,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 The requirement strategy is defining how the resolver should behave in front of several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
 
 
-    * if the requirement strategy is `first`, among the bundles statifying the requirement, it will shoose the first one. A warn will be logged ahout the choice Ivy has to arbitrarily do. +
+    * if the requirement strategy is `first`, among the bundles satisfying the requirement, it will choose the first one. A warning will be logged about the choice Ivy has to arbitrarily do. +
 
     * if the requirement strategy is `noambiguity`, Ivy will make the resolution fail. +
 
@@ -62,7 +62,7 @@ The requirement strategy is defining how the resolver should behave in front of 
 [source, xml]
 ----
 
-<obr name="felix-repo" repoXmlURL="http://felix.apache.org/obr/releases.xml" />
+<obr name="felix-repo" repoXmlURL="http://felix.apache.org/obr/releases.xml"/>
 
 ----
 
@@ -74,9 +74,8 @@ A simple repository configured to use the Felix OBR.
 [source, xml]
 ----
 
-<obr name="my-osgi-repo" repoXmlFile="${ivy.settings.dir}/obr/obr.xml" requirementStrategy="first" />
+<obr name="my-osgi-repo" repoXmlFile="${ivy.settings.dir}/obr/obr.xml" requirementStrategy="first"/>
 
 ----
 
 A local repository which is trusted to always provide correct dependency for the `Import-Package` requirements.
-

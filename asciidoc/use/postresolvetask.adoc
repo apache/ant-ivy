@@ -54,7 +54,7 @@ The attributes listed are then mostly used only if a resolve is triggered automa
 |changing|indicates that the module may change when resolving in inline mode. See link:../concept.html#change[cache and change management] for details. Ignored when resolving in standard mode. *__(since 2.2.0)__*|No. Defaults to `false`.
 |transitive|`true` to resolve dependencies transitively, `false` otherwise *__since 1.4__*|No. Defaults to `true`
 |resolveMode|the link:../use/resolve.html[resolve mode] to use when an automatic resolve is triggered *__(since 2.1)__*|No. defaults to using the resolve mode set in the link:../settings.html[settings]
-|keep|`true` to keep the results of the automatic resolve in memory, `false` to discard them. When this is `false`, the standard ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to resuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
+|keep|`true` to keep the results of the automatic resolve in memory, `false` to discard them. When this is `false`, the standard ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to reuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
 |haltonfailure|`true` to halt the build on ivy failure, `false` to continue|No. Defaults to `true`
 |validate|`true` to force ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default ivy value (as configured in configuration file)
 |refresh|`true` to force Ivy to resolve dynamic revision in this resolve process, `false` to use cached resolved revision *__since 2.1__*|No. defaults to `false`
@@ -91,7 +91,7 @@ There is one important difference with the ivy.xml's link:../ivyfile/dependencie
 [source,xml]
 ----
 <ivy:cachepath organisation="emma" module="emma" revision="2.0.4217" inline="true" conf="ant" pathid="emma.classpath"/>
-<taskdef resource="emma_ant.properties" classpathref="emma.classpath" /> 
+<taskdef resource="emma_ant.properties" classpathref="emma.classpath"/>
 ----
 
 Resolves the Emma module in version 2.0.4217, constructs an Ant path with the corresponding artifacts, and then define the Emma tasks using this path.

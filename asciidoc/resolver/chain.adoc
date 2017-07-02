@@ -104,4 +104,3 @@ Same as before, except that if a revision is found in the filesystem then ivyrep
 ----
 
 Same as first example, except that once a module is found by either filesystem or ivyrep, then it's the whole chain which will be queried to download the artifacts. So in this case ivy file and artifacts may be split across the two resolvers for the same module.
-

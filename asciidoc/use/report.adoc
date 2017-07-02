@@ -54,7 +54,7 @@ To generate a HTML and graphml report:
 
 [source,xml]
 ----
-<report conf="compile" />
+<report conf="compile"/>
 ----
 
 '''
@@ -63,7 +63,7 @@ To generate a HTML report only:
 
 [source,xml]
 ----
-<report conf="compile" graph="false" />
+<report conf="compile" graph="false"/>
 ----
 
 '''
@@ -72,7 +72,7 @@ To generate an XML report using a custom stylesheet:
 
 [source,xml]
 ----
-<report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml" />
+<report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml"/>
 ----
 
 To generate an XML report using a custom stylesheet which needs some parameters:
@@ -80,7 +80,7 @@ To generate an XML report using a custom stylesheet which needs some parameters:
 [source,xml]
 ----
 <report conf="compile" xslfile="my-custom-stylesheet.xsl" xslext="xml">
-    <param name="param1" expression="value1" /> 
-    <param name="param2" expression="value2" /> 
+    <param name="param1" expression="value1"/>
+    <param name="param2" expression="value2"/>
 </report>
 ----

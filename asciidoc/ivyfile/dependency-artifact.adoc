@@ -19,8 +19,8 @@
 
 *Tag:* artifact *Parent:* link:../ivyfile/dependency.html[dependency]
 
-This feature gives you more control on a dependency for which you do not control its ivy file. 
-It enables to specify the artifacts required, if the dependency has no ivy file. 
+This feature gives you more control on a dependency for which you do not control its ivy file.
+It enables to specify the artifacts required, if the dependency has no ivy file.
 
 Indeed, when a module has no ivy file, it is assumed that it publishes exactly one artifact having the same name as the module itself. But when this module publishes more artifacts, or simply does not respect the name rule, and if you cannot deliver an ivy file for it (because you do not control the repository, for instance - think about maven ibiblio repository, to give no name), then this feature let you specify the artifacts names you want to get.
 

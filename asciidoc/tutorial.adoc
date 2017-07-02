@@ -37,27 +37,26 @@ OK, you've just seen how easy it is to take your first step with Ivy. Go ahead w
 The following tutorials are available:
 
 
-* link:tutorial/start.html[Quick Start] + 
+* link:tutorial/start.html[Quick Start] +
 Guides you through your very first steps with ivy.
 
-* link:tutorial/defaultconf.html[Adjusting default settings] + 
+* link:tutorial/defaultconf.html[Adjusting default settings] +
 Gives you a better understanding of the default settings and shows you how to customize them to your needs.
 
-* link:tutorial/multiple.html[Multiple Resolvers] + 
+* link:tutorial/multiple.html[Multiple Resolvers] +
 Teaches you how to configure Ivy to find its dependencies in multiple places.
 
-* link:tutorial/dual.html[Dual Resolver] + 
+* link:tutorial/dual.html[Dual Resolver] +
 Helps you configure Ivy to find ivy files in one place and artifacts in another.
 
-* link:tutorial/dependence.html[Project dependencies] + 
+* link:tutorial/dependence.html[Project dependencies] +
 A starting point for using Ivy in a multi-project environment.
 
-* link:tutorial/multiproject.html[Using Ivy in multiple projects environment] + 
+* link:tutorial/multiproject.html[Using Ivy in multiple projects environment] +
 A more complex example demonstrating the use of Ant+Ivy in a multi-project environment.
 
 * link:tutorial/conf.html[Using Ivy Module Configurations] +
  Shows you how to use configurations in an ivy file to define sets of artifacts.
 
-* link:tutorial/build-repository.html[Building a repository] + 
+* link:tutorial/build-repository.html[Building a repository] +
 Shows you how to build your own enterprise repository.
-

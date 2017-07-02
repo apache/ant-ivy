@@ -19,7 +19,8 @@
 
 *Tag:* exclude *Parent:* link:../ivyfile/dependencies.html[dependencies]
 
-*__since 2.0__* This feature gives you more control on a dependency for which you do not control its ivy file. It allows to exclude artifacts, modules or organizations from the list of dependencies for the whole module.
+*__since 2.0__* This feature gives you more control on a dependency for which you do not control its ivy file.
+It allows to exclude artifacts, modules or organizations from the list of dependencies for the whole module.
 
 It is very similar to the link:../ivyfile/artifact-exclude.html[dependency exclude] element, except that it applies to a whole module, which can be very useful when a lot of dependencies transitively bring a module you don't want.
 

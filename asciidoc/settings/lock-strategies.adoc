@@ -37,7 +37,7 @@ The following strategies are registered by default:
 
 * *artifact-lock* +
  This strategy acquires a lock whenever a module descriptor or an artifact is downloaded to the cache, which makes a good solution when you want to share your repository cache.
-Note that this strategy is based on file locking, performed by default using the `java.io.File.createNewFile()` atomicity (which is documented as atomic in the javadoc, but not recommended to perform locks). 
+Note that this strategy is based on file locking, performed by default using the `java.io.File.createNewFile()` atomicity (which is documented as atomic in the javadoc, but not recommended to perform locks).
 
 
 * *artifact-lock-nio (__since 2.4__)* +

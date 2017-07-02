@@ -44,7 +44,7 @@ usage: ivy
 ==== resolve options
  -ivy <ivyfile>               use given file as ivy file
  -refresh                     refresh dynamic resolved revisions
- -dependency <organisation> <module> <revision> 
+ -dependency <organisation> <module> <revision>
                               use this instead of ivy file to do the rest of the
                                work with this as a dependency.
  -confs <configurations>      resolve given configurations
@@ -142,7 +142,7 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -dependency apache commons
 
 ----
 
-calls ivy with given ivysettings file and resolve apache `commons-lang 2.0`. 
+calls ivy with given ivysettings file and resolve apache `commons-lang 2.0`.
 
 This is equivalent to:
 
@@ -161,8 +161,7 @@ with `ivy.xml` like this:
 <ivy-module version="1.0">
   <info organisation="org"
        module="standalone"
-       revision="working"
-   />
+       revision="working"/>
   <dependencies>
     <dependency org="apache" name="commons-lang" rev="2.0" conf="default->*"/>
   </dependencies>
@@ -182,7 +181,7 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -ivy path/to/myivy.xml -ca
 
 ----
 
-calls ivy with given ivysettings file and resolves the dependencies found in the given ivy file, and then outputs the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program. 
+calls ivy with given ivysettings file and resolves the dependencies found in the given ivy file, and then outputs the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program.
 
 
 '''
@@ -196,4 +195,4 @@ java -jar ivy.jar -settings path/to/myivysettings.xml -dependency bar foo 2.0 -m
 
 ----
 
-calls ivy with given ivysettings file and resolves the depedency `bar` `foo` `2.0`, and then runs `org.foo.FooMain` class with the resolved artifacts as classpath
+calls ivy with given ivysettings file and resolves the dependency `bar` `foo` `2.0`, and then runs `org.foo.FooMain` class with the resolved artifacts as classpath

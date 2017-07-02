@@ -29,7 +29,7 @@ Source code is available in `src/example/configurations/multi-projects`.
 We have two projects :
   - filter-framework is a library that defines an api to filter String arrays and two implementations of this api.
   - myapp is a very small app that uses filter-framework.
-  
+
 The filter-framework library project produces 3 artifacts:
   - the api jar,
   - an implementation jar with no external dependencies,
@@ -61,7 +61,7 @@ The first project we'll look at in this tutorial is filter-framework. In order t
     <publications>
     	<artifact name="filter-api" type="jar"  conf="api" ext="jar"/>
     	<artifact name="filter-hmimpl" type="jar"  conf="homemade-impl" ext="jar"/>
-    	<artifact name="filter-ccimpl" type="jar"  conf="cc-impl" ext="jar"/>    	
+    	<artifact name="filter-ccimpl" type="jar"  conf="cc-impl" ext="jar"/>
     </publications>
     <dependencies>
         <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="cc-impl->default"/>
@@ -111,13 +111,13 @@ Now that we have shipped (published) our fantastic filter library, we want to us
 
 <ivy-module version="1.0">
     <info organisation="org.apache" module="myapp"/>
-    
+
     <configurations>
-       	<conf name="build" visibility="private" description="compilation only need api jar" />
-    	<conf name="noexternaljar" description="use only company jar" />
-    	<conf name="withexternaljar" description="use company jar and third party jars" />    
+       	<conf name="build" visibility="private" description="compilation only need api jar"/>
+    	<conf name="noexternaljar" description="use only company jar"/>
+    	<conf name="withexternaljar" description="use company jar and third party jars"/>
     </configurations>
-    
+
     <dependencies>
         <dependency org="org.apache" name="filter-framework" rev="latest.integration" conf="build->api; noexternaljar->homemade-impl; withexternaljar->cc-impl"/>
     </dependencies>
@@ -133,11 +133,11 @@ We create 3 configurations that define the different ways we want to use the app
 
 We also defined a dependency on our previously built library. In this dependency, we use configuration mappings to match ours with the dependency's configurations. You can find more information about configuration mapping link:../ivyfile/configurations.html[here]
 
-  
+
 . *build->api* : here we tell Ivy that our *build* configuration depends on the *api* configuration of the dependency +
-  
+
 . *noexternaljar->homemade-impl* : here we tell Ivy that our *noexternaljar* configuration depends on the *homemade-impl* configuration of the dependency. +
-  
+
 . *withexternaljar->cc-impl* : here we tell Ivy that our *withexternaljar* configuration depends on the *cc-impl* configuration of the dependency +
 
 Note that we never declare any of the dependency's artifacts we need in each configuration: it's the dependency module's ivy file which declares the published artifacts and which should be used in each configuration.
@@ -148,9 +148,9 @@ In the Ant `build.xml` file, we defined a 'resolve' target as follow:
 [source]
 ----
 
-<target name="resolve" description="--> retreive dependencies with ivy">
+<target name="resolve" description="--> retrieve dependencies with ivy">
     <ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact].[ext]"/>
-</target>    
+</target>
 
 ----
 

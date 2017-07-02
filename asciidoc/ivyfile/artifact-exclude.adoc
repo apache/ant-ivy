@@ -19,7 +19,9 @@
 
 *Tag:* exclude *Parent:* link:../ivyfile/dependency.html[dependency]
 
-This feature gives you more control on a dependency for which you do not control its ivy file. It enables to restrict the artifacts required, by excluding artifacts being published by the dependency or any of its transitive dependencies, even if configuration does not a good separation of published artifacts
+This feature gives you more control on a dependency for which you do not control its ivy file.
+It enables to restrict the artifacts required, by excluding artifacts being published by the dependency or any of its transitive dependencies,
+even if configuration does not a good separation of published artifacts
 
 The same principle concerning configuration as for include applies to this exclude feature (see the link:../ivyfile/dependency-include.html[include] feature).
 

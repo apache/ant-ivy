@@ -79,4 +79,3 @@ Here is a list of conflict manager types available, which can be used to define 
 |Element|Description|Cardinality
 |any conflict manager|adds a conflict manager to the list of available conflict managers|0..n
 |=======
-

@@ -16,7 +16,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="2.0">
 	<info organisation="myorg"
@@ -24,15 +24,15 @@
 	       revision="myrev"
 	       status="integration"
 	       publication="20041101110000">
-	       
+
 		<license name="MyLicense" url="http://www.my.org/mymodule/mylicense.html"/>
-		
+
 		<ivyauthor name="jayasoft" url="http://www.jayasoft.org/"/>
 		<ivyauthor name="myorg" url="http://www.myorg.org/"/>
 
 		<repository name="ivyrep" url="http://www.jayasoft.fr/org/ivyrep/" pattern="[organisation]/[module]/ivy-[revision].xml" ivys="true" artifacts="false"/>
 
-		<description homepage="http://www.my.org/mymodule/">	       
+		<description homepage="http://www.my.org/mymodule/">
 	This module is <b>great</b> !<br/>
 	You can use it especially with myconf1 and myconf2, and myconf4 is not too bad too.
 		</description>
@@ -41,7 +41,7 @@
 		<conf name="myconf1" description="desc 1"/>
 		<conf name="myconf2" description="desc 2" visibility="public"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>
-		<conf name="myconf4" description="desc 4" extends="myconf1, myconf2"/>		
+		<conf name="myconf4" description="desc 4" extends="myconf1, myconf2"/>
 		<conf name="myoldconf" description="my old desc" deprecated="20050115"/>
 	</configurations>
 	<publications>
@@ -79,7 +79,7 @@
 		<dependency org="yourorg" name="yourmodule8" rev="8.1">
 			<artifact name="yourartifact8-1" type="jar"/>
 			<artifact name="yourartifact8-2" type="jar"/>
-		</dependency>		
+		</dependency>
 
 		<dependency org="yourorg" name="yourmodule9" rev="9.1" conf="myconf1,myconf2,myconf3->default">
 			<artifact name="yourartifact9-1" type="jar" conf="myconf1,myconf2"/>
@@ -87,14 +87,14 @@
 				<conf name="myconf2"/>
 				<conf name="myconf3"/>
 			</artifact>
-		</dependency>		
+		</dependency>
 
 		<dependency org="yourorg" name="yourmodule10" rev="10.1">
 			<include name="your.*" type="jar"/>
 			<include ext="xml"/>
 			<exclude name="toexclude"/>
 		</dependency>
-				
+
 		<conflict org="yourorg" module=".*" manager="all"/>
 		<conflict org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
 	</dependencies>

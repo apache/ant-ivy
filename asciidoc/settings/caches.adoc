@@ -75,9 +75,9 @@ cache to another place in your filesystem). Usually it is a good thing to check 
 ----
 
 <caches>
-  <cache name="mycache" basedir="path/to/my/cache/1" />
-  <cache name="mycache2" basedir="path/to/my/cache/2" />
-</caches> 
+  <cache name="mycache" basedir="path/to/my/cache/1"/>
+  <cache name="mycache2" basedir="path/to/my/cache/2"/>
+</caches>
 
 ----
 

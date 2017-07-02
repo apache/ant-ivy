@@ -44,5 +44,3 @@ this parser is able to parse Maven2 `pom` files
 |Element|Description|Cardinality
 |any module descriptor parser|adds a module descriptor parser to the list of available parsers|0..n
 |=======
-
-

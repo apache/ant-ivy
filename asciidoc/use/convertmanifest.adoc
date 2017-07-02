@@ -32,7 +32,7 @@
 
 [source,xml]
 ----
-    <ivy:convertmanifest manifest="META-INF/MANIFEST.MF" ivyFile="ivy.xml" />
+    <ivy:convertmanifest manifest="META-INF/MANIFEST.MF" ivyFile="ivy.xml"/>
 ----
 
 Just converts a manifest into an `ivy.xml` file.

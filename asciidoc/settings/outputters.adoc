@@ -21,7 +21,7 @@
 
 *Tag:* outputters
 
-Defines a list of report outputters usable in ivy. 
+Defines a list of report outputters usable in ivy.
 
 A report outputter is used at the end of the resolve process to generate a report of how the resolve has been performed.
 
@@ -61,4 +61,3 @@ To see how to define your own report outputter see link:../extend.html[Extending
 |Element|Description|Cardinality
 |any report outputter|adds a report outputter to the list of available ones|0..n
 |=======
-

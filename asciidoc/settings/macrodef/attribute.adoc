@@ -32,6 +32,3 @@ Defines a macrodef attribute. See link:../macrodef.html[macrodef] for details.
 |name|the name of the attribute|Yes
 |default|the default value of the attribute if none is specified|No, by default attribute are required
 |=======
-
-
-

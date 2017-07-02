@@ -54,10 +54,10 @@ For details on how to declare your module configurations, how to declare in whic
 
 During configuration, ivy allows you to define what are called ivy variables. Ivy variables can be seen as ant properties, and are used in a very similar way. In particular, you use a properties tag in the configuration file to load a properties file containing ivy variables and their values.
 
-But the main differences between ant properties and ivy variables are that ivy variables can be overridden, whereas ant 
+But the main differences between ant properties and ivy variables are that ivy variables can be overridden, whereas ant
 properties can't, and that they are defined in separate environments.
 
-Actually all ant properties are imported into ivy variables when the configuration is done (if you call ivy from ant). 
+Actually all ant properties are imported into ivy variables when the configuration is done (if you call ivy from ant).
 This means that if you define an ant property after the call to configure, it will not be available as an ivy variable.
 On the other hand, ivy variables are NOT exported to ant, thus if you define ivy variables in ivy, do not try to use them as ant properties.
 
@@ -69,7 +69,7 @@ Finally, it's also important to be aware of the time of substitution of variable
 
 Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (actually they are first loaded as ant properties and then imported as ivy variables, see link:ant.html[Ant Tasks]), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overridden via ant properties because of this.
 
-Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens. 
+Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens.
 See the Patterns chapter below for what pattern tokens are.
 
 == [[patterns]]Patterns
@@ -81,9 +81,9 @@ First let's give an example. You can for instance configure the file system depe
 a pattern to find artifacts. This pattern can be like this:
 myrepository/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]
 
-This pattern indicates that the repository we use is in a directory called myrepository. 
+This pattern indicates that the repository we use is in a directory called myrepository.
 
-In this directory we have directories having for name the name of the organisation of the module we look for. 
+In this directory we have directories having for name the name of the organisation of the module we look for.
 Then we have a directory per module, each having for name the name of the module.
 Then in module directories we find a directory per artifact type (jars, wars, ivys, ...), in which we find artifacts named by the artifact id, followed by a hyphen, then the revision, a dot, and the artifact extension.
 Not too difficult to understand is it? That's it, you have understood the pattern concept!
@@ -103,7 +103,7 @@ But here are all the tokens currently available:
  the organisation name
 
 * [orgPath] *__(since 2.3)__* +
- the organisation name where '.' has been replaced by '/'. This can be used to configure maven2-like repositories. 
+ the organisation name where '.' has been replaced by '/'. This can be used to configure maven2-like repositories.
 
 * [module] +
  the module name
@@ -140,10 +140,10 @@ So if you surround a token with '(' and ')', any other text which is between the
 
 For instance, suppose the pattern: "abc(def[type]ghi)"
 type = "jar" -> the substituted pattern: abcdefjarghi
-type = null or "" -> the substitued pattern: abc
+type = null or "" -> the substituted pattern: abc
 
 A more real life example:
-The pattern 
+The pattern
 [source]
 ----
 [artifact](-[revision]).[ext]
@@ -216,7 +216,7 @@ Note also that with any matcher, the character '*' has the special meaning of ma
 == [[extra]]Extra attributes
 
 *__since 1.4__*
-Several tags in ivy xml files are extensible with what is called extra attributes. 
+Several tags in ivy xml files are extensible with what is called extra attributes.
 The idea is very simple: if you need some more information to define your modules, you can add the attribute you want and you will then be able to access it as any other attribute in your patterns.
 
 *__since 2.0__*
@@ -239,13 +239,13 @@ Here is an ivy file with the attribute 'color' set to blue:
 
 ----
 
-Then you must use the extra attribute when you declare a dependency on foo.  Those extra attributes 
+Then you must use the extra attribute when you declare a dependency on foo.  Those extra attributes
 will indeed be used as identifiers for the module like the org the name and the revision:
 
 [source]
 ----
 
-<dependency org="apache" name="foo" e:color="blue" rev="1.5+" />
+<dependency org="apache" name="foo" e:color="blue" rev="1.5+"/>
 
 ----
 
@@ -260,7 +260,7 @@ ${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
 
 Note that in patterns you must use the unqualified attribute name (no namespace prefix).
 
-If you don't want to use xml namespaces, it's possible but you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the link:settings/settings.html[settings documentation] to see how to disable validation.
+If you don't want to use xml namespaces, it's possible but you will need to disable ivy file validation, since your files won't fulfill anymore the official ivy xsd. See the link:settings/settings.html[settings documentation] to see how to disable validation.
 
 == [[checksum]]Checksums
 
@@ -283,12 +283,12 @@ If you want to change this default, you can set the variable ivy.checksums. Henc
 === Supported algorithms
 
 *__since 1.4__*
-		
-			
+
+
 * md5 +
-			
+
 * sha1 +
-		
+
 *__since 2.5__*
 Starting 2.5 version, in addition to md5 and sha1, Ivy supports SHA-256, SHA-512 and SHA-384 algorithms, if the Java runtime in which Ivy is running, supports those. For example, Java 6 runtime supports SHA-256 and SHA-512 as standard algorithms. If Ivy 2.5 and later versions are run under Java 6 or higher runtimes, these algorithms are supported by Ivy too.
 
@@ -298,7 +298,7 @@ Starting 2.5 version, in addition to md5 and sha1, Ivy supports SHA-256, SHA-512
 *__since 1.4__*
 When Ivy performs the dependency resolution and some other tasks, it fires events before and after the most important steps. You can listen to these events using Ivy API, or you can even register a trigger to perform a particular action when a particular event occur.
 
-This is a particularly powerful and flexible feature which allows, for example, you to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accuratly, and so on.
+This is a particularly powerful and flexible feature which allows, for example, you to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accurately, and so on.
 
 For more details about events and triggers, see the link:settings/triggers.html[triggers] documentation page in the configuration section of this documentation.
 
@@ -328,7 +328,7 @@ See the link:settings/settings.html[configuration page] to see how to configure 
 
 == Cache and Change Management
 
-Ivy heavily relies on local caching to avoid accessing remote repositories too often, thus saving a lot of network bandwidth and time. 
+Ivy heavily relies on local caching to avoid accessing remote repositories too often, thus saving a lot of network bandwidth and time.
 
 
 === [[cache]]Cache types
@@ -338,7 +338,7 @@ An Ivy cache is composed of two different parts:
 
 * the repository cache +
 The repository cache is where Ivy stores data downloaded from module repositories, along with some meta information concerning these artifacts, like their original location.
-This part of the cache can be shared if you use a well suited link:settings/lock-strategies.html[lock strategy]. 
+This part of the cache can be shared if you use a well suited link:settings/lock-strategies.html[lock strategy].
 
 * the resolution cache +
 This part of the cache is used to store resolution data, which is used by Ivy to reuse the results of a resolve process.
@@ -350,7 +350,7 @@ While there is always only one resolution cache, you can link:settings/caches.ht
 
 === [[change]]Change management
 
-To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and does not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several link:bestpractices.html[good reasons] to follow this principle.	
+To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and does not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several link:bestpractices.html[good reasons] to follow this principle.
 
 However, depending on your current build system and your dependency management strategy, you may prefer to update your modules sometimes. There are two kinds of changes to consider:
 
@@ -374,7 +374,7 @@ So if you want to use changing revisions, use the link:use/publish.html[publish]
 
 As a dependency manager, Ivy has a lot of file related operations, which most of the time use paths or path patterns to locate the file on the filesystem.
 
-These paths can obviously be relative or absolute. We recommend to always use absolute paths, so that you don't have to worry about what is the base of your relative paths. Ivy provides some variables which can be used as the base of your absolute paths. For instance, Ivy has a concept of base directory, which is basically the same as for Ant. You have access to this base directory with the ivy.basedir variable. So if you have a path like 
+These paths can obviously be relative or absolute. We recommend to always use absolute paths, so that you don't have to worry about what is the base of your relative paths. Ivy provides some variables which can be used as the base of your absolute paths. For instance, Ivy has a concept of base directory, which is basically the same as for Ant. You have access to this base directory with the ivy.basedir variable. So if you have a path like
 [source]
 ----
 ${ivy.basedir}/ivy.xml
@@ -396,15 +396,15 @@ If you really want to use relative paths, the base directory used to actually lo
 == [[packaging]]Packaging
 
 
-Most of the artifacts found in a repository are jars. They can be downoaded and used as is. But some other kind of artifacts required some __unpacking__ after being downloaded and before being used. Such artifacts can be zipped folders and packed jars. Ivy supports that kind of artifact with *packaging*.
+Most of the artifacts found in a repository are jars. They can be downloaded and used as is. But some other kind of artifacts required some __unpacking__ after being downloaded and before being used. Such artifacts can be zipped folders and packed jars. Ivy supports that kind of artifact with *packaging*.
 
 A __packaged__ artifact needs to be declared as such in the module descriptor via the attribute link:ivyfile/artifact.html[packaging]. The value of that attribute defined which kind of unpacking algorithm must be used. Here are the list of currently supported algorithms:
 
-    
+
 * `zip`, `jar` or `war`: the artifact will be uncompressed as a folder +
-    
+
 * `pack200`: the artifact will be unpacked to a file via the link:http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html[pack200] algorithm +
-    
+
 * `bundle`: the OSGi artifact will be uncompressed as a folder, and every embedded jar file entry which is packed via the the link:http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html[pack200] algorithm will be unpacked +
 
 
@@ -413,10 +413,10 @@ So, if in an `ivy.xml`, there would be declared a such artifact:
 [source]
 ----
 
-    <artifact name="mymodule" type="jar" ext="jar.pack.gz" packaging="pack200" />
+    <artifact name="mymodule" type="jar" ext="jar.pack.gz" packaging="pack200"/>
 
 ----
 
-A file `mymodule-1.2.3.jar.pack.gz` would be download into the cache, and also uncompressed in the cache to `mymodule-1.2.3.jar`. Then any post resolve task which supports it, like the link:use/cachepath.html[cachepath], will use the uncompressed file instead of the orginal compressed file.
+A file `mymodule-1.2.3.jar.pack.gz` would be download into the cache, and also uncompressed in the cache to `mymodule-1.2.3.jar`. Then any post resolve task which supports it, like the link:use/cachepath.html[cachepath], will use the uncompressed file instead of the original compressed file.
 
 It is possible to chain packing algorithm. The attribute link:ivyfile/artifact.html[packaging] of a artifact expects a comma separated list of packing types, in packing order. For instance, an artifact '`mymodule-1.2.3.jar.pack.gz`' can have the packaging '`jar,pack200`', so it would be uncompressed as a folder '`mymodule-1.2.3`'.

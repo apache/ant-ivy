@@ -33,11 +33,8 @@ Loads a properties file into ivy variables. See the variables chapter above for 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|file|a path to a properties file to load 
+|file|a path to a properties file to load
 .2+|One of these
 |environment|the prefix to use when retrieving environment variables *__(since 2.0)__*
 |override|indicates if the variable found in the properties file should override its previous value, if any *__(since 1.3)__*|No, defaults to true
 |=======
-
-
-

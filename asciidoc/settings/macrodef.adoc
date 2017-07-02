@@ -27,7 +27,7 @@ This task eases the process of creating a new dependency resolver, because it av
 
 It is generally used in combination with the link:../settings/include.html[include] feature to help reuse a macro in multiple settings files.
 
-A macro is defined by declaring an existing resolver within it. Then you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name, and optionally a default value, and are used using the following syntax: 
+A macro is defined by declaring an existing resolver within it. Then you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name, and optionally a default value, and are used using the following syntax:
 
 [source]
 ----
@@ -57,14 +57,14 @@ Example:
 <ivysettings>
   <macrodef name="mymacro">
     <chain>
-      <ibiblio name="ex1" />
-      <ibiblio name="ex2.@{name}" m2compatible="true" />
+      <ibiblio name="ex1"/>
+      <ibiblio name="ex2.@{name}" m2compatible="true"/>
     </chain>
   </macrodef>
-	
+
   <resolvers>
-    <mymacro name="default" />
-    <mymacro name="other" />
+    <mymacro name="default"/>
+    <mymacro name="other"/>
    </resolvers>
 </ivysettings>
 
@@ -78,12 +78,12 @@ This is equivalent to:
 <ivysettings>
   <resolvers>
     <chain name="default">
-      <ibiblio name="default-ex1" />
-      <ibiblio name="ex2.default" m2compatible="true" />
+      <ibiblio name="default-ex1"/>
+      <ibiblio name="ex2.default" m2compatible="true"/>
     </chain>
     <chain name="other">
-      <ibiblio name="other-ex1" />
-      <ibiblio name="ex2.other" m2compatible="true" />
+      <ibiblio name="other-ex1"/>
+      <ibiblio name="ex2.other" m2compatible="true"/>
     </chain>
    </resolvers>
 </ivysettings>
@@ -97,7 +97,7 @@ This is equivalent to:
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|name|name of the resover type created|Yes
+|name|name of the resolver type created|Yes
 |=======
 
 
@@ -164,15 +164,14 @@ A complete example:
       </filesystem>
     </chain>
   </macrodef>
-	
+
   <resolvers>
     <mymacro name="default" mymainrep="path/to/myrep" mysecondrep="path/to/secondrep"/>
-    <mymacro name="other" 
-       mymainrep="path/to/myrep" 
-       mysecondrep="path/to/secondrep" 
+    <mymacro name="other"
+       mymainrep="path/to/myrep"
+       mysecondrep="path/to/secondrep"
        myseconddirlayout="[module]/[type]s"/>
    </resolvers>
 </ivysettings>
 
 ----
-

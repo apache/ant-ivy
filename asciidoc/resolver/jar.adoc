@@ -67,8 +67,8 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 ----
 
 <jar name="my-local-jar-resolver" file="/home/me/myrepo.jar">
-    <ivy pattern="[organisation]/[module]/ivys/ivy-[revision].xml" />
-    <artifact pattern="[organisation]/[module]/[type]s/[artifact]-[revision].[type]" />
+    <ivy pattern="[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <artifact pattern="[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
 </jar>
 
 ----
@@ -82,14 +82,13 @@ A simple local jar repository.
 ----
 
 <jar name="my-remote-jar-resolver" url="http://www.mywebsite.com/dist/myrepo.jar">
-    <ivy pattern="dir_in_jar/subdir_in_jar/[organisation]/[module]/ivys/ivy-[revision].xml" />
-    <ivy pattern="dir_in_jar/another_subdir_in_jar/[organisation]/[module]/ivys/ivy-[revision].xml" />
-    <artifact pattern="dir_in_jar/subdir_in_jar/[organisation]/[module]/[type]s/[artifact]-[revision].[type]" />
-    <artifact pattern="dir_in_jar/another_subdir_in_jar/[organisation]/[module]/[type]s/[artifact]-[revision].[type]" />
-    <artifact pattern="dir_in_jar/yet_another_subdir_in_jar/[organisation]/[module]/[type]s/[artifact]-[revision].[type]" />
+    <ivy pattern="dir_in_jar/subdir_in_jar/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <ivy pattern="dir_in_jar/another_subdir_in_jar/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <artifact pattern="dir_in_jar/subdir_in_jar/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+    <artifact pattern="dir_in_jar/another_subdir_in_jar/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+    <artifact pattern="dir_in_jar/yet_another_subdir_in_jar/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
 </jar>
 
 ----
 
 A remote jar repository with multiple ivy and artifact patterns, patterns pointing in some sub directories in the jar.
-

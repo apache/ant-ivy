@@ -24,10 +24,10 @@ This task is roughly equivalent to:
 
 [source,xml]
 ----
-<delete dir="${ivy.cache.dir}" />
+<delete dir="${ivy.cache.dir}"/>
 ----
 
-Using the regular Ant delete task is more flexible, since it allows to specify the files to delete. But it requires an Ivy settings to be loaded, and settings scoping is possible only by using suffixed ant property for the cache directory. 
+Using the regular Ant delete task is more flexible, since it allows to specify the files to delete. But it requires an Ivy settings to be loaded, and settings scoping is possible only by using suffixed ant property for the cache directory.
 
 This task loads the Ivy settings as any other post settings task, and allows easy scoping with the attribute `settingsRef`.
 
@@ -43,7 +43,7 @@ This task loads the Ivy settings as any other post settings task, and allows eas
 
 [source,xml]
 ----
-<ivy:cleancache />
+<ivy:cleancache/>
 ----
 
 Cleans the cache directory as defined in the loaded settings (by default `~/.ivy2/cache`)

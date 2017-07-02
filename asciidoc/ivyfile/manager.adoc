@@ -23,7 +23,11 @@
 
 Specify a a conflict manager for one or several dependencies.
 
-The way to specify a conflict manager is by giving indication to which dependencies the conflict manager applies (by giving organisation and module names or name regexp), and then specifying the conflict manager, either by giving its name or by specifying a fixed revision list, in which case a fixed conflicts manager is used.
+The way to specify a conflict manager is by giving indication to which dependencies
+the conflict manager applies (by giving organisation and module names or name regexp),
+and then specifying the conflict manager, either by giving its name or by
+specifying a fixed revision list, in which case a fixed conflicts manager is used.
+
 
 See link:../ivyfile/conflicts.html[Conflicts Manager] for details on conflicts manager in general.
 

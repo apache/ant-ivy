@@ -80,7 +80,7 @@ The included ivysettings defines a resolver named default, which is an ivyrep re
   <resolvers>
     <mymacro name="includeworks" mymainrep="included/myrep" mysecondrep="included/secondrep"/>
   </resolvers>
-</ivysettings> 
+</ivysettings>
 
 ----
 

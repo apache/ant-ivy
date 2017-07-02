@@ -48,11 +48,11 @@ This resolver uses Bintray DaaS (Distribution as a Service) platform to retrieve
 [source]
 ----
 
-<bintray />
+<bintray/>
 
 ----
 
-A default, defines a link:https://bintray.com/bintray/jcenter[JCenter] bintray resolver. 
+A default, defines a link:https://bintray.com/bintray/jcenter[JCenter] bintray resolver.
 In most circumstances you won't need any other resolvers as JCenter is already a super-set of many other repositories, including Maven Central.
 
 
@@ -68,5 +68,5 @@ In most circumstances you won't need any other resolvers as JCenter is already a
 
 ----
 
-Defines two resolvers to use a link:https://bintray.com/dsowerby/maven[repository] "maven" of user "dsowerby" (https://dl.bintray.com/dsowerby/maven/) 
+Defines two resolvers to use a link:https://bintray.com/dsowerby/maven[repository] "maven" of user "dsowerby" (https://dl.bintray.com/dsowerby/maven/)
 and link:https://bintray.com/igelgrun/batrak[repository] "batrak" of user "igelgrun" (https://dl.bintray.com/igelgrun/batrak/).

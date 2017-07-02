@@ -35,4 +35,3 @@ See link:../settings/statuses.html[statuses] page for details about how statuses
 |name|name of status defined|Yes
 |integration|true if this is an integration status, false otherwise|No, defaults to false
 |=======
-

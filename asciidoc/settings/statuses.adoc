@@ -62,9 +62,9 @@ NOTE: The statuses order is important, the first is considered the more mature, 
   <status name="gold" integration="false"/>
   <status name="silver" integration="false"/>
   <status name="bronze" integration="true"/>
-</statuses> 
+</statuses>
 
 ----
 
-Defines 3 statuses, `gold`, `silver` and `bronze`. The default status used when none is declared in an ivy file will be `bronze`. 
-It is also considered as an integration status, and thus doesn't trigger any recrusive delivery.
+Defines 3 statuses, `gold`, `silver` and `bronze`. The default status used when none is declared in an ivy file will be `bronze`.
+It is also considered as an integration status, and thus doesn't trigger any recursive delivery.

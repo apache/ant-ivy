@@ -20,7 +20,7 @@
 *__since 2.4__*
 The `fixdeps` task serializes transitively resolved dependencies into an `ivy.xml` file.
 
-The dependencies declared in an `ivy.xml` can be specified as range of revisions. And the transitive dependencies too. As new versions of modules can be added to the repository anytime, resolved versions of ranges can change over time. It is then safer to resolve a range once and stick with the resolved revision. This way a resolve process is highly reproductible.
+The dependencies declared in an `ivy.xml` can be specified as range of revisions. And the transitive dependencies too. As new versions of modules can be added to the repository anytime, resolved versions of ranges can change over time. It is then safer to resolve a range once and stick with the resolved revision. This way a resolve process is highly reproducible.
 
 It is especially useful in a very dynamic environment like the link:../osgi.html[OSGi] one.
 
@@ -48,7 +48,7 @@ This is a link:../use/postresolvetask.html[post resolve task], with all the beha
 |=======
 |Element|Description|Cardinality
 |keep|declares a dependency to keep from being fixed, and keep its original declaration from the original ivy.xml
-    
+
 These elements takes two attributes: +
 * `org`: the organization +
 * `module`: the name of the module|0..n
@@ -58,7 +58,7 @@ These elements takes two attributes: +
 
 [source,xml]
 ----
-<ivy:fixdeps tofile="ivy-fixed.xml" />
+<ivy:fixdeps tofile="ivy-fixed.xml"/>
 ----
 
 Simple fix of some dependencies.
@@ -68,7 +68,7 @@ Simple fix of some dependencies.
 [source,xml]
 ----
 <ivy:fixdeps tofile="ivy-fixed.xml">
-    <keep org="com.acme" module="mymodule" />
+    <keep org="com.acme" module="mymodule"/>
 </ivy:fixdeps>
 ----
 

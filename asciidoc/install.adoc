@@ -26,7 +26,7 @@ Download the version you want here, unpack the downloaded zip file wherever you 
 If you use ant 1.6.0 or superior, you can then simply go to the src/example/hello-ivy dir and run ant: if the build is successful, you have successfully installed Ivy!
 
 If you use ant 1.5.1 or superior, you have to modify the build files in the examples:
-- remove the namespace section at their head: xmlns:ivy="antlib:org.apache.ivy.ant" 
+- remove the namespace section at their head: xmlns:ivy="antlib:org.apache.ivy.ant"
 - add taskdefs for ivy tasks:
 
 [source]
@@ -35,7 +35,7 @@ If you use ant 1.5.1 or superior, you have to modify the build files in the exam
   <taskdef name="ivy-configure" classname="org.apache.ivy.ant.IvyConfigure"/>
   <taskdef name="ivy-resolve" classname="org.apache.ivy.ant.IvyResolve"/>
   <taskdef name="ivy-retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>
-  <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/> 
+  <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/>
 
 ----
 
@@ -45,7 +45,7 @@ You can now run the build, if it is successful, you have successfully installed 
 If the build is not successful, check the FAQ to see what might be the problem with the ivyrep resolver.
 
 
-=== Ivy dependendencies
+=== Ivy dependencies
 
 
 One of the two binary versions of Ivy doesn't include the optional dependencies. To download them using Ivy, all you need is to run the Ant build file provided in the distribution. This will use Ivy itself to download the dependencies. Then you should see the Ivy optional dependencies in the lib directory, organized per configuration (see the ivy.xml for details about the configurations and their use).
@@ -58,19 +58,19 @@ If you want to use Ivy only in your ant build scripts, and have an internet conn
 [source]
 ----
 
-    <property name="ivy.install.version" value="2.1.0-rc2" />
+    <property name="ivy.install.version" value="2.1.0-rc2"/>
     <condition property="ivy.home" value="${env.IVY_HOME}">
-      <isset property="env.IVY_HOME" />
+      <isset property="env.IVY_HOME"/>
     </condition>
-    <property name="ivy.home" value="${user.home}/.ant" />
-    <property name="ivy.jar.dir" value="${ivy.home}/lib" />
-    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+    <property name="ivy.home" value="${user.home}/.ant"/>
+    <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
 
     <target name="download-ivy" unless="offline">
 
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
-        <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+        <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
              dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 

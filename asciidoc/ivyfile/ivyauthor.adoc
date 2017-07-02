@@ -19,7 +19,7 @@
 
 *Tag:* ivyauthor *Parent:* link:../ivyfile/info.html[info]
 
-Gives information about who has contributed to write this ivy file. It does NOT indicate who 
+Gives information about who has contributed to write this ivy file. It does NOT indicate who
 is the author of the module itself.
 
 == Attributes

@@ -110,7 +110,7 @@ __Note for developers__: after the call to this task, a reference to the module 
 |refresh|`true` to force Ivy to resolve dynamic revision in this resolve process, `false` to use cached resolved revision *__since 2.0__*|No. defaults to `false`
 |resolveMode|the resolve mode to use for this dependency resolution process *__since 2.0__*|No. defaults to using the resolve mode set in the link:../settings.html[settings]
 |inline|`true` to use inline mode, false to resolve an ivy file *__since 1.4__*|No. defaults to `false`
-|keep|`true` to keep the results of the resolve in memory, false to discard them. When this is `false`, the standard ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to resuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
+|keep|`true` to keep the results of the resolve in memory, false to discard them. When this is `false`, the standard ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to reuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
 |organisation|the organisation of the module to resolve in inline mode *__since 1.4__*|Yes in inline mode, no otherwise.
 |module|the name of the module to resolve in inline mode *__since 1.4__*|Yes in inline mode, no otherwise.
 |revision|the revision constraint to apply to the module to resolve in inline mode *__since 1.4__*|No. Defaults to `latest.integration` in inline mode, nothing in standard mode.
@@ -164,7 +164,7 @@ Resolve all dependencies declared in path/to/ivy.xml file.
 
 [source,xml]
 ----
-<ivy:resolve file="path/to/ivy.xml" transitive="false" />
+<ivy:resolve file="path/to/ivy.xml" transitive="false"/>
 ----
 
 Same as above, but with transitive dependencies disabled.
@@ -191,7 +191,7 @@ Resolve all dependencies declared in `path/to/ivy.xml` file, but download only `
 
 [source,xml]
 ----
-<ivy:resolve organisation="apache" module="commons-lang" revision="2+" inline="true" />
+<ivy:resolve organisation="apache" module="commons-lang" revision="2+" inline="true"/>
 ----
 
 Resolve the `commons-lang` module revision 2+ from the repository, with its dependencies.
@@ -201,9 +201,9 @@ Resolve the `commons-lang` module revision 2+ from the repository, with its depe
 [source,xml]
 ----
 <ivy:resolve>
-    <dependency org="apache" name="commons-lang" rev="2+" />
-    <dependency org="apache" name="commons-logging" rev="1.1" />
-    <exclude org="apache" module="log4j" />
+    <dependency org="apache" name="commons-lang" rev="2+"/>
+    <dependency org="apache" name="commons-logging" rev="1.1"/>
+    <exclude org="apache" module="log4j"/>
 </ivy:resolve>
 ----
 
@@ -214,7 +214,7 @@ Resolve of both `commons-lang` and `commons-logging`, with their dependencies bu
 [source,xml]
 ----
 <ivy:resolve>
-    <dependency org="org.slf4j" module="slf4j" rev="1.6" conf="api,log4j" />
+    <dependency org="org.slf4j" module="slf4j" rev="1.6" conf="api,log4j"/>
 </ivy:resolve>
 ----
 

@@ -32,7 +32,7 @@ There are two things optimized during conflict resolution: download of artifacts
 That's why the order of dependencies is important for download optimization. Indeed ivy traverses the dependency graph in the order in which dependencies are declared in the ivy files, and each time it encounters a dependency on a module, it first check if there is a conflict on this module, and if this is the case, it asks the conflict manager to resolve the conflict. Then if the module is evicted, it does not download its ivy file, and the whole branch is not traversed, which can saves a lot of time.
 
 If no specific conflict manager is defined, a default conflict manager is used for all modules.
- 
+
 The current default conflict manager is the `latest-revision` conflict manager.
 
 == Attributes

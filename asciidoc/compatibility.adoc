@@ -17,7 +17,7 @@
    under the License.
 ////
 
-== JVM compability
+== JVM compatibility
 
 
 Up to Ivy 2.3.x, a minimum of Java 1.4 is required.
@@ -43,4 +43,3 @@ The required versions of the Apache HttpClient, Jsch or any optional dependency 
 
 
 Ivy does not at this time support multithreaded use. It thus should not be used with the ant `&lt;parallel&gt;` task.
-

@@ -22,7 +22,7 @@
 *__(since 2.0)__* the conflicts section is deprecated.  Use the link:../ivyfile/conflict.html[conflict] instead.
 
 Container for conflict manager elements, used to indicate how conflicts should be resolved
-for this module. 
+for this module.
 
 The list of built-in conflict managers available is listed on the link:../settings/conflict-managers.html[conflict manager configuration page].
 
@@ -37,13 +37,13 @@ ivy needs to know the dependency graph, and to know the dependency graph, it has
 ivy files. But ivy is highly optimized on this too, and it tries to evict modules as soon as possible.
 
 That's why the order of dependencies is important for download optimization. Indeed ivy
-traverses the dependency graph in the order in which dependencies are declared in the ivy files, 
-and each time it encounters a dependency on a module, it first check if there is a conflict on this module, 
+traverses the dependency graph in the order in which dependencies are declared in the ivy files,
+and each time it encounters a dependency on a module, it first check if there is a conflict on this module,
 and if this is the case, it asks the conflict manager to resolve the conflict. Then if the module is evicted,
 it does not download its ivy file, and the whole branch is not traversed, which can saves
 a lot of time.
 
-If this container is not present, a default conflict manager is used for all modules. 
+If this container is not present, a default conflict manager is used for all modules.
 The current default conflict manager is the `latest-revision` conflict manager.
 
 == Child elements

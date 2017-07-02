@@ -33,5 +33,3 @@ Defines the acceptation part of a translation rule. If a name matches this src, 
 |module|the module name to match as a regexp|No, defaults to .*
 |rev|the revision to match as a regexp|No, defaults to .*
 |=======
-
-

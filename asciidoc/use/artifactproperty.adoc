@@ -52,7 +52,7 @@ Then:
 [source,xml]
 ----
 <artifactproperty conf="build"
-       name="[module].[artifact]-[revision]" 
+       name="[module].[artifact]-[revision]"
        value="${cache.dir}/[module]/[artifact]-[revision].[ext]"/>
 ----
 

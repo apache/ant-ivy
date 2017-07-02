@@ -27,7 +27,7 @@ Multiple settings can be defined in a build script. Every task can reference its
 
 All Ivy variables set during the settings are available in the Ant project as long as they were not set in Ant before (Ant properties are immutable).
 
-Moreover, the variables are exposed under two names: the variable name, and the variable name suffixed by dot + the settings id. 
+Moreover, the variables are exposed under two names: the variable name, and the variable name suffixed by dot + the settings id.
 
 For instance, if you load a settings with the id `myid`, and define a variable `my.variable=my.value` in the Ivy settings, both `my.variable` and `my.variable.myid` will now be available as properties in Ant and equal to `my.value`. If you later load another settings with the id `yourid`, and in this settings assign the variable `my.variable` the value `your.value`, in the Ant project you will have:
 [source,properties]
@@ -42,7 +42,7 @@ my.variable.yourid=your.value
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|id|The settings id useable in the `settingsRef` attributes of the ivy task that needs a setting.|No, defaults to `ivy.instance`
+|id|The settings id usable in the `settingsRef` attributes of the ivy task that needs a setting.|No, defaults to `ivy.instance`
 |file|path to the settings file to use
 .2+.^|No. If a file is provided, url is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses a link:../tutorial/defaultconf.html[default settings file]
 |url|url of the settings file to use
@@ -69,7 +69,7 @@ A special attention should be applied when you have a multi-project build with `
 
 [source,xml]
 ----
-<ivy:settings />
+<ivy:settings/>
 ----
 
 Use either `${ivy.settings.file}` if it exists, or the link:../samples/ivysettings-default.xml[default settings file]
@@ -80,23 +80,23 @@ This simplest setting is implicit.
 
 [source,xml]
 ----
-<ivy:settings file="mysettings.xml" />
+<ivy:settings file="mysettings.xml"/>
 ----
 
 === Configure with an url
 
 [source,xml]
 ----
-<ivy:settings url="http://mysite.com/mysettings.xml" />
+<ivy:settings url="http://mysite.com/mysettings.xml"/>
 ----
 
-=== Configure multiple realms which require autentication
+=== Configure multiple realms which require authentication
 
 [source,xml]
 ----
 <ivy:settings file="path/to/my/ivysettings.xml">
-  <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
-  <credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
+  <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd"/>
+  <credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd"/>
 </ivy:settings>
 ----
 
@@ -106,9 +106,9 @@ You can use multiple ivy settings during a build. Then every ivy task should spe
 
 [source,xml]
 ----
- <ivy:settings id="ivy.normal.settings" file="normal_settings.xml" />
- <ivy:settings id="ivy.release.settings" file="release_settings.xml" />
+ <ivy:settings id="ivy.normal.settings" file="normal_settings.xml"/>
+ <ivy:settings id="ivy.release.settings" file="release_settings.xml"/>
 
- <ivy:resolve settingsRef="ivy.normal.settings" />
- <ivy:resolve settingsRef="ivy.release.settings" />
+ <ivy:resolve settingsRef="ivy.normal.settings"/>
+ <ivy:resolve settingsRef="ivy.release.settings"/>
 ----

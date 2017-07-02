@@ -20,7 +20,7 @@
 Constructs an Ant `fileset consisting` of artifacts in Ivy's cache for a configuration (*__since 1.2__*).
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks. Note that this task
-does not rely on retrieve, because built fileset is made of artifacts direcly in Ivy's cache.
+does not rely on retrieve, because built fileset is made of artifacts directly in Ivy's cache.
 
 Please prefer the use of retrieve + standard ant path creation, which make your build
 more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).

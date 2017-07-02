@@ -17,4 +17,4 @@
    under the License.
 ////
 This page has moved. If your browser doesn't automatically redirect to its new location, click
-link:../../settings/caches/cache.html[here].	
+link:../../settings/caches/cache.html[here].

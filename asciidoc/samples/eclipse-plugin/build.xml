@@ -14,64 +14,64 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <project name="eclipse-plugin-build" xmlns:ivy="ivy">
 
     <!-- Load Ivy ant tasks -->
-    <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml" />
-    <!-- If Ivy is not in Ant's classpath, get the jar of Ivy and use the folowing -->
+    <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml"/>
+    <!-- If Ivy is not in Ant's classpath, get the jar of Ivy and use the following -->
     <!-- taskdef rather than the above one -->
-    <!--path id="ivy.classpath"> 
+    <!--path id="ivy.classpath">
         <fileset dir="${basedir}">
-            <include name="ivy.jar" />
+            <include name="ivy.jar"/>
         </fileset>
     </path>
     <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml" classpathref="ivy.classpath" /-->
 
     <!-- Load the properties where is defined the eclipse home -->
-    <property file="${basedir}/ivysettings.properties" />
+    <property file="${basedir}/ivysettings.properties"/>
 
     <target name="clean" description="Clean the build directory">
-        <delete dir="${basedir}/target" />
+        <delete dir="${basedir}/target"/>
     </target>
 
     <target name="buildobr" description="Build the obr index">
         <!-- build the repo.xml which aggregate every metadata of the Eclipse plugins -->
-        <mkdir dir="${basedir}/target" />
-        <ivy:buildobr baseDir="${eclipse.home}" basePath="${eclipse.home}" out="${basedir}/target/repo-eclipse.xml" indent="true" />
+        <mkdir dir="${basedir}/target"/>
+        <ivy:buildobr baseDir="${eclipse.home}" basePath="${eclipse.home}" out="${basedir}/target/repo-eclipse.xml" indent="true"/>
     </target>
 
     <target name="ivy:configure">
         <!-- classical ivy configuration -->
-        <ivy:configure file="ivysettings.xml" />
+        <ivy:configure file="ivysettings.xml"/>
     </target>
 
     <target name="ivy:resolve" depends="ivy:configure">
         <!-- classical resolve and cache-path -->
-        <ivy:resolve file="ivy.xml" conf="*" />
-        <ivy:cachepath pathid="compile.classpath" conf="compile" useOrigin="true" />
+        <ivy:resolve file="ivy.xml" conf="*"/>
+        <ivy:cachepath pathid="compile.classpath" conf="compile" useOrigin="true"/>
     </target>
 
     <target name="compile" depends="ivy:resolve" description="Compile the Eclipse plugin">
-        <mkdir dir="${basedir}/target/classes" />
+        <mkdir dir="${basedir}/target/classes"/>
         <!-- simple javac (WARNING: contrary to the JDT, javac doesn't understand OSGi's accessibility (private packages)) -->
-        <javac srcdir="${basedir}/src" classpathref="compile.classpath" destdir="${basedir}/target/classes" debug="true" includeAntRuntime="false" />
+        <javac srcdir="${basedir}/src" classpathref="compile.classpath" destdir="${basedir}/target/classes" debug="true" includeAntRuntime="false"/>
         <copy todir="${basedir}/target/classes">
             <fileset dir="${basedir}/src">
-                <include name="**" />
-                <exclude name="**/*.java" />
-                <exclude name="**/package.html" />
+                <include name="**"/>
+                <exclude name="**/*.java"/>
+                <exclude name="**/package.html"/>
             </fileset>
             <fileset dir="${basedir}">
-                <include name="plugin.xml" />
+                <include name="plugin.xml"/>
             </fileset>
         </copy>
     </target>
 
     <target name="build" depends="compile" description="Build the Eclipse plugin">
         <!-- simple jaring -->
-        <jar basedir="${basedir}/target/classes" destfile="${basedir}/target/${ant.project.name}.jar" manifest="META-INF/MANIFEST.MF" />
+        <jar basedir="${basedir}/target/classes" destfile="${basedir}/target/${ant.project.name}.jar" manifest="META-INF/MANIFEST.MF"/>
     </target>
 
 </project>

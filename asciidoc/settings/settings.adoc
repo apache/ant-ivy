@@ -31,7 +31,7 @@ _validate_ indicates if ivy files should generally be validated against the xsd 
 
     1. in ant tasks
     2. in resolvers
-    
+
 So if there is a setting in the resolver, it always wins against all other settings.
 
 
@@ -59,4 +59,3 @@ So if there is a setting in the resolver, it always wins against all other setti
 |[line-through]#cacheArtifactPattern#|a pattern to indicate where artifact files should be put in cache. +
     	__Deprecated, we recommend using artifactPattern on the link:../settings/caches.html[caches] tag instead__|No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]
 |=======
-

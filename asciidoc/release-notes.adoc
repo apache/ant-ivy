@@ -27,37 +27,37 @@
 ----
 
 December 21, 2015 - The Apache Ivy project is pleased to announce its 2.5.0 release.
- 
+
 Apache Ivy is a tool for managing (recording, tracking, resolving and
 reporting) project dependencies, characterized by flexibility,
 configurability, and tight integration with Apache Ant.
 
 Key features of this 2.5.0 release are
-* Ivy now uses BoucyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
+* Ivy now uses BouncyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
 * the minimum Java version required is now Java 7
 * TODO
 * TODO
 
 You can download this 2.5.0 release at:
 http://ant.apache.org/ivy/download.cgi
- 
+
 Issues should be reported to:
 https://issues.apache.org/jira/browse/IVY
- 
+
 More information can be found on the website:
 http://ant.apache.org/ivy/
 
 ----
 
 
- 
+
 
 === List of Changes in this Release
 
- 
-For details about the following changes, check our JIRA install at 
+
+For details about the following changes, check our JIRA install at
 http://issues.apache.org/jira/browse/ivy
- 
+
 List of changes since Ivy 2.4.0:
 
 - FIX: Made the maven 'test' configuration public so we can use the test-jar as dependency (link:https://issues.apache.org/jira/browse/IVY-1444[IVY-1444])
@@ -390,5 +390,3 @@ Contributors:
 * Aleksey Zhukov +
 
 * Zhong Wang +
-
-

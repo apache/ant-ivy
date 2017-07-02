@@ -62,18 +62,18 @@ For instance, say you have:
 [source,xml]
 ----
 <configurations defaultconfmapping="conf1->other1;conf2->other2">
-   <conf name="conf1" />
-   <conf name="conf2" extends="conf1" />
+   <conf name="conf1"/>
+   <conf name="conf2" extends="conf1"/>
 </configurations>
 <dependencies>
-   <dependency name="other-module" conf="conf1" />
+   <dependency name="other-module" conf="conf1"/>
 </dependencies>
 ----
 
 When Ivy parses this file, it will construct the following dependency (in-memory only):
 [source,xml]
 ----
-<dependency name="other-module" conf="conf1->other1" />
+<dependency name="other-module" conf="conf1->other1"/>
 ----
 
 So, if you now resolve the `conf2` configuration, you will only get the other1 dependencies of your other-module.
@@ -82,7 +82,7 @@ But when you set `confmappingoverride` to `true`, Ivy will construct the followi
 
 [source,xml]
 ----
-<dependency name="other-module" conf="conf1->other1;conf2->other2" />
+<dependency name="other-module" conf="conf1->other1;conf2->other2"/>
 ----
 
 As you can see, the `defaultmappings` of the extending configurations are also added (although you didn't explicitly defined them)

@@ -21,7 +21,7 @@
 
 *Tag:* property
 
-Defines an ivy variable. 
+Defines an ivy variable.
 
 *__since 1.3__*: The optional override attribute enables you to avoid overriding the previous value of the variable, which makes the definition behave like an ant property, which is particularly useful to define default values (values which are used only if they haven't been defined yet).
 
@@ -33,7 +33,7 @@ Defines an ivy variable.
 |Attribute|Description|Required
 |name|the name of the variable to define|Yes
 |value|the new value the variable must take|Yes
-|override|true if the previous value (if any) of the variable should overriden, false otherwise|No, defaults to true
+|override|true if the previous value (if any) of the variable should overridden, false otherwise|No, defaults to true
 |ifset|the variable will be set only if the provided 'ifset' variable is already set (Since 2.4)|No
 |unlessset|the variable will not be set unless the provided 'unlessset' variable is set (Since 2.4)|No
 |=======
@@ -70,7 +70,7 @@ Sets the variable myvar to the value myvalue only if myvar has not been set yet.
 ----
 
  <properties environment="env"/>
- <property name="ivy.repos.server" value="${env.IVY_SERVER}" override="false" ifset="env.IVY_SERVER" />
+ <property name="ivy.repos.server" value="${env.IVY_SERVER}" override="false" ifset="env.IVY_SERVER"/>
  <property name="ivy.repos.server" value="http://ivy:8081" override="false"/>
 
 ----
