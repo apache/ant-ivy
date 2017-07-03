@@ -17,6 +17,15 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -42,26 +51,13 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
     private IvySettings settings = null;
@@ -1450,34 +1446,5 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(1, artifacts.length);
         assertEquals("mymodule", artifacts[0].getName());
         assertEquals("jar", artifacts[0].getType());
-    }
-
-    /**
-     * Tests that when the <code>location</code> attribute of the <code>extends</code> element of a module descriptor
-     * file, includes any characters that {@link java.net.URI} considers as encoded characters (for example <code>%2F</code>)
-     * then the module descriptor and the location of the parent descriptor, are resolved and parsed correctly.
-     *
-     * @throws Exception
-     * @see <a href="https://issues.apache.org/jira/browse/IVY-1562">IVY-1562</a> for more details
-     */
-    @Test
-    public void testExtendsEncodedLocation() throws Exception {
-        final ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, getClass().getResource("foo%2Fbar/hello/test-ivy-extends.xml"), true);
-        assertNotNull("Parsed module descriptor is null", md);
-        assertEquals("Unexpected org for the parsed module descriptor", "myorg", md.getModuleRevisionId().getOrganisation());
-        assertEquals("Unexpected module name for the parsed module descriptor", "mymodule", md.getModuleRevisionId().getName());
-        assertEquals("Unexpected revision for the parsed module descriptor", "1.0.0", md.getModuleRevisionId().getRevision());
-
-        final Configuration[] confs = md.getConfigurations();
-        assertNotNull("No configurations found in module descriptor", confs);
-        assertEquals("Unexpected number of configurations found in module descriptor", 3, confs.length);
-
-        final Set<String> expectedConfs = new HashSet<>(Arrays.asList("parent-conf1", "parent-conf2", "conf2"));
-        for (final Configuration conf : confs) {
-            assertNotNull("One of the configurations was null in module descriptor", conf);
-            assertTrue("Unexpected configuration " + conf.getName() + " found in parsed module descriptor", expectedConfs.remove(conf.getName()));
-        }
-        assertTrue("Missing configurations " + expectedConfs + " from the parsed module descriptor", expectedConfs.isEmpty());
-
     }
 }

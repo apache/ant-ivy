@@ -670,11 +670,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
             File file = new File(location);
             if (!file.isAbsolute()) {
-                final URL url = settings.getRelativeUrlResolver().getURL(descriptorURL, location);
-                if (!url.getProtocol().equals("file")) {
-                    throw new IOException("Resolved location " + url + ", of parent module descriptor, is not a file");
+                URL url = settings.getRelativeUrlResolver().getURL(descriptorURL, location);
+                try {
+                    file = new File(new URI(url.toExternalForm()));
+                } catch (URISyntaxException e) {
+                    file = new File(url.getPath());
                 }
-                file = new File(url.getPath());
             }
 
             file = FileUtil.normalize(file.getAbsolutePath());
