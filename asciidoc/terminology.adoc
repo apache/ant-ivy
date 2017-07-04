@@ -19,58 +19,38 @@
 
 Here are some terms used in Ivy, with their definitions in Ivy:
 
-
-* link:#organisation[Organisation] +
-
-* link:#module[Module] +
-
-* link:#descriptor[Module Descriptor] +
-
-* link:#artifact[Artifact] +
-
-* link:#type[Type of an artifact] +
-
-* link:#extension[Artifact file name extension] +
-
-* link:#revision[Module Revision] +
-
-* link:#branch[Branch] +
-
-* link:#status[Status of a revision] +
-
-* link:#configurations[Configurations of a module] +
-
-* link:#settings[Ivy Settings] +
-
-* link:#repository[Repository] +
-
-
+* link:#organisation[Organisation]
+* link:#module[Module]
+* link:#descriptor[Module Descriptor]
+* link:#artifact[Artifact]
+* link:#type[Type of an artifact]
+* link:#extension[Artifact file name extension]
+* link:#revision[Module Revision]
+* link:#branch[Branch]
+* link:#status[Status of a revision]
+* link:#configurations[Configurations of a module]
+* link:#settings[Ivy Settings]
+* link:#repository[Repository]
 
 == Overview
 
 The following [[illustration]]illustration shows all the key terminology in one diagram:
 
-
-
 image::images/ivy-terminology.png[]
-
-
-
 
 == [[organisation]]Organisation
 
-An organisation is either a company, an individual, or simply any group of people that produces software. In principle, Ivy handles only a single level of organisation, meaning that they have a flat namespace in Ivy module descriptors. So, with Ivy descriptors, you can only describe a tree-like organisation structure, if you use a hierarchical naming convention. The organisation name is used for keeping together software produced by the same team, just to help locate their published works.
+An `organisation` is either a company, an individual, or simply any group of people that produces software. In principle, Ivy handles only a single level of organisation, meaning that they have a flat namespace in Ivy module descriptors. So, with Ivy descriptors, you can only describe a tree-like organisation structure, if you use a hierarchical naming convention. The organisation name is used for keeping together software produced by the same team, just to help locate their published works.
 
 Often organisations will use their inverted domain name as their organisation name in Ivy, since domain names by definition are unique. A company whose domain name is www.example.com might want to use com.example, or if they had multiple teams, all their organisation names could begin with com.example (e.g. com.example.rd, com.example.infra, com.example.services). The organisation name does neither really have to be an inverted domain name, nor even globally unique, but unique naming is highly recommended. Widely recognized trademark or trade name owners may choose to use their brand name instead.
 
 __Examples: org.apache, ibm, jayasoft__
 
-Note that the Ivy "organisation" is very similar to Maven POM "groupId".
-</dd>
+Note that the Ivy `organisation` is very similar to Maven POM `groupId`.
 
 == [[module]]Module
 
-A module is a self-contained, reusable unit of software that, as a whole unit, follows a revision control scheme.
+A `module` is a self-contained, reusable unit of software that, as a whole unit, follows a revision control scheme.
 
 Ivy is only concerned about the module deliverables known as _artifacts_, and the _module descriptor_ that declares them. These deliverables, for each _revision_ of the module, are managed in _repositories_. In other words, to Ivy, a module is a chain of revisions each comprising a descriptor and one or more artifacts.
 
@@ -88,7 +68,7 @@ And because Ivy accepts pluggable module descriptor parsers, you can use almost 
 
 == [[artifact]]Artifact
 
-An artifact is _a single file_ ready for delivery with the publication of a module revision, as a product of development.
+An `artifact` is _a single file_ ready for delivery with the publication of a module revision, as a product of development.
 
 Compressed package formats are often preferred because they are easier to manage, transfer and store. For the same reasons, only one or a few artifacts per module are commonly used. However, artifacts can be of any file type and any number of them can be declared in a single module.
 
@@ -98,7 +78,7 @@ __Examples: ant-1.7.0-bin.zip, apache-ant-1.7.0-src.tar.gz __
 
 === [[type]]Type of an artifact
 
-The artifact type is a category of a particular kind of artifact specimen. It is a classification based on the intended purpose of an artifact or _why_ it is provided, not a category of packaging format or _how_ the artifact is delivered.
+The artifact `type` is a category of a particular kind of artifact specimen. It is a classification based on the intended purpose of an artifact or _why_ it is provided, not a category of packaging format or _how_ the artifact is delivered.
 
 Although the type of an artifact may (rather accidentally) imply its file format, they are two different concepts. The artifact file name extension is more closely associated with its format. For example, in the case of Java archives the artifact type "jar" indicates that it is indeed a Java archive as per the JAR File specification. The file name extension happens to be "jar" as well. On the other hand, with source code distributions, the artifact type may be "source" while the file name extensions vary from "tar.gz", "zip", "java", "c", or "xml" to pretty much anything. So, the type of an artifact is basically an abstract functional category to explain its purpose, while the artifact file name extension is a more concrete technical indication of its format and, of course, naming.
 
@@ -115,7 +95,6 @@ In some cases the artifact type already implies its file name extension, but not
 __Examples: zip, tar, tar.gz, rar, jar, war, ear, txt, doc, xml, html__
 
 == Module [[revision]]Revision and Status
-
 
 === Module revision
 
@@ -140,12 +119,14 @@ A module's status indicates how stable a module revision can be considered. It c
 
 Three statuses are defined by default in Ivy:
 
+`integration`::
+revisions built by a continuous build, a nightly build, and so on, fall in this category
 
-* *integration*: revisions built by a continuous build, a nightly build, and so on, fall in this category +
+`milestone`::
+revisions delivered to the public but not actually finished fall in this category
 
-* *milestone*: revisions delivered to the public but not actually finished fall in this category +
-
-* *release*: a revision fully tested and labelled fall in this category +
+`release`::
+a revision fully tested and labelled fall in this category
 
 *__Since 1.4__* This list is link:settings/statuses.html[configurable] in your settings file.
 
@@ -162,12 +143,12 @@ For more details on configurations and how they are used in ivy, please refer to
 
 Ivy settings files are xml files used to configure ivy to indicate where the modules can be found and how.
 
-=== __History of settings__
+=== History of settings
 
-__Prior to Ivy 2.0, the settings files were called configuration files and usually named ivyconf.xml. This resulted in confusion between module configurations and Ivy configuration files, so they were renamed to settings files. If you happen to fall on an ivyconf file or something called a configuration file, most of the time it's only unupdated information (documentation, tutorial or article). Feel free to report any problem like this if you find such an inconsistency.__
-
+Prior to Ivy 2.0, the settings files were called configuration files and usually named ivyconf.xml. This resulted in confusion between module configurations and Ivy configuration files, so they were renamed to settings files. If you happen to fall on an ivyconf file or something called a configuration file, most of the time it's only unupdated information (documentation, tutorial or article). Feel free to report any problem like this if you find such an inconsistency.
 
 == [[repository]]Repository
 
 What is called a _repository_ in Ivy is a distribution site location where Ivy is able to find your required modules' artifacts and descriptors (i.e. Ivy files in most cases).
+
 Ivy can be used with complex repositories configured very finely. You can use link:concept.html[Dependency Resolvers] to do so.

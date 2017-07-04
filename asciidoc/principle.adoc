@@ -19,12 +19,11 @@
 
 Now that you have been introduced to the main ivy terminology and concepts, it is time to give some explanation of how ivy works.
 
-
 == Usual cycle of modules between different locations
 
 image::images/main-tasks.png[]
-More details on ant tasks link:ant.html[here].
 
+More details on ant tasks link:ant.html[here].
 
 == Configure
 
@@ -52,7 +51,6 @@ Finally, an xml report is generated in the cache, which allows ivy to easily kno
 
 After this resolve step, two main steps are possible: either build a path with artifacts in the cache, or copy them to another directory structure.
 
-
 == Retrieve
 
 What is called retrieve in ivy is the act of copying artifacts from the cache to another directory structure. This is done using a pattern, which indicates to ivy where the files should be copied.
@@ -67,13 +65,11 @@ In some cases, it is preferable to use artifacts directly from the cache. Ivy is
 
 This can be particularly useful when building plug-ins for IDEs.
 
-
 == Reports
 
 Ivy is also able to generate readable reports describing the dependencies resolution.
 
 This is done with a simple xsl transformation of the xml report generated at resolve time.
-
 
 == Publish
 

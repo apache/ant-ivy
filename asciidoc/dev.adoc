@@ -17,7 +17,6 @@
    under the License.
 ////
 
-
 == Building from source
 
 To build Ivy from source it's really easy.
@@ -25,7 +24,6 @@ To build Ivy from source it's really easy.
 === Requirements
 
 All you need is
-
 
 * an link:http://subversion.tigris.org/[svn] client +
 _to check out Ivy sources from apache svn, not required if you build from sources packaged in a release_
@@ -39,46 +37,35 @@ _ this is not required if you use ant 1.7_
 * a link:http://java.sun.com/[jdk] 1.5 or greater +
 _Build instructions have been successfully tested with sun jdk 1.5.0 and 1.6.0_
 
-
-
 === Procedure
-
 
 ==== Get the source
 
 You can either get the sources from a release, or get them directly from svn. For instance, to get the trunk version:
 
-[source]
+[source,shell]
 ----
-
 svn co https://svn.apache.org/repos/asf/ant/ivy/core/trunk ivy
-
 ----
-
 
 ==== Build
 
 Go to the directory where you get the Ivy sources (you should see a file named build.xml) and run:
 
-[source]
+[source,shell]
 ----
-
 ant
-
 ----
-
 
 ==== Check the result
 
 The ant build will compile the core classes of Ivy and use them to resolve the dependencies (used for some optional features). Then it will compile and run tests with coverage metrics.
 
-If everything goes well, you should see the message
+If everything goes well, you should see the message:
 
-[source]
+[source,shell]
 ----
-
 BUILD SUCCESSFUL
-
 ----
 
 Then you can check the test results in the build/doc/reports/test directory, the jars are in build/artifacts, and the test coverage report in build/doc/reports/coverage
@@ -89,7 +76,6 @@ The Ivy code base is supposed to follow the standard java conventions:
 http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html
 
 This is a work in progress though (see link:https://issues.apache.org/jira/browse/IVY-511[IVY-511]), but patches helping migration to these conventions are welcome.
-
 
 == Developing with eclipse
 
@@ -104,9 +90,7 @@ First call the following ant target in your Ivy workspace:
 
 [source]
 ----
-
 ant eclipse-default
-
 ----
 
 This will resolve the dependencies of Ivy and produce a .classpath using the resolved jars for the build path.
@@ -119,21 +103,18 @@ To do so all you need is call the following ant target in your Ivy workspace:
 
 [source]
 ----
-
 ant eclipse-ivyde
-
 ----
 
 or if you don't have ant installed you can simply copy the file .classpath.ivyde and rename it to .classpath
 Then you can import the project using "Import->Existing project into workspace" as long as you already have latest IvyDE installed.
 
 To install latest IvyDE version compatible with the latest Ivy used to resolve Ivy dependencies, you will need to use a snapshot build, not endorsed by the ASF, available here:
-http://people.apache.org/~xavier/ivyde/snapshot/
+https://builds.apache.org/view/A/view/Ant/job/IvyDE/
 
 Download the file and unzip its content in your eclipse installation directory.
 
-
-=== recommended plugins
+=== Recommended plugins
 
 The Ivy project comes with settings for the link:http://eclipse-cs.sourceforge.net/[checkstyle plugin] we recommend to use to avoid introducing new digression to the checkstyle rules we use.
 If you use this plugin, you will many errors in Ivy. As we said, following strict checkstyle rules is a work in progress and we used to have pretty different code conventions (like using _ as prefix for private attributes), so we still have things to fix. We usually use the filter in the problems view to filter out checkstyle errors from this view, which helps to know what the real compilation problem are.

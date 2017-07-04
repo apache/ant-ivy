@@ -23,11 +23,9 @@ Ivy can be used as a standalone program very easily. All you need is a Java 1.7+
 
 Then here is how to call it:
 
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar -?
-
 ----
 
 It will display usage text as follows:
@@ -94,39 +92,29 @@ usage: ivy
  -?                           display this help
  -deprecated                  show deprecated options
  -version                     displays version information
-
 ----
 
 *__since 1.3__* System properties are included as ivy variables, so you can easily define an ivy variable like this:
 
-[source]
+[source,shell]
 ----
-
 java -Dmyivyvar=myvalue org.apache.ivy.Main [parameters]
-
 ----
-
 
 == Examples
 
-
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar
-
 ----
 
 calls ivy with default configuration using ivy.xml in the current dir
 
 '''
 
-
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar -settings path/to/myivysettings.xml -ivy path/to/myivy.xml
-
 ----
 
 calls ivy with given ivysettings file using given ivy file
@@ -135,29 +123,24 @@ calls ivy with given ivysettings file using given ivy file
 
 *__since 1.3__*
 
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar -settings path/to/myivysettings.xml -dependency apache commons-lang 2.0
-
 ----
 
 calls ivy with given ivysettings file and resolve apache `commons-lang 2.0`.
 
 This is equivalent to:
 
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar -settings path/to/myivysettings.xml -ivy ivy.xml
-
 ----
 
 with `ivy.xml` like this:
 
-[source]
+[source,xml]
 ----
-
 <ivy-module version="1.0">
   <info organisation="org"
        module="standalone"
@@ -166,33 +149,26 @@ with `ivy.xml` like this:
     <dependency org="apache" name="commons-lang" rev="2.0" conf="default->*"/>
   </dependencies>
 </ivy-module>
-
 ----
-
 
 '''
 
 *__since 1.3__*
 
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar -settings path/to/myivysettings.xml -ivy path/to/myivy.xml -cachepath mycachefile.txt
-
 ----
 
 calls ivy with given ivysettings file and resolves the dependencies found in the given ivy file, and then outputs the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program.
-
 
 '''
 
 *__since 1.4__*
 
-[source]
+[source,shell]
 ----
-
 java -jar ivy.jar -settings path/to/myivysettings.xml -dependency bar foo 2.0 -main org.bar.foo.FooMain
-
 ----
 
 calls ivy with given ivysettings file and resolves the dependency `bar` `foo` `2.0`, and then runs `org.foo.FooMain` class with the resolved artifacts as classpath

@@ -36,9 +36,6 @@ body, p, td, li, ul, ol  {
     font-family: Verdana, Helvetica, Arial, sans-serif;
     font-size: small;
 }
-li p {
-    margin: 0;
-}
 h1, h2, h3, h4, h5, h6 {
     color: #7a9438;font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
@@ -81,10 +78,6 @@ a:hover, a:active {
     text-decoration: underline;
     color: #7a9438;
 }
-p {
-    margin: 0 0 1.3em 0;
-    padding: 0;
-}
 blockquote {
     padding: 0 15px 0 15px;
     margin: 15px 50px 15px 50px;
@@ -102,6 +95,23 @@ pre {
 }
 code {
     background-color: #EEE;
+}
+dt {
+    font-weight: bold;
+}
+p {
+    margin: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+ul {
+    margin: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+li p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 #home img {
     padding: 5px 20px 10px 10px;

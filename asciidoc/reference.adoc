@@ -21,37 +21,43 @@ Welcome to the Ivy reference documentation!
 
 If you don't know Ivy at all, take a look at its features, the faq and the link:tutorial.html[tutorials] before digging into this reference documentation.
 
-
 == Reference Overview
 
 This documentation is broken into several parts:
 
+* Introduction
+** link:terminology.html[Terminology]
++
+This part gives you the meaning of some words used all over the Ivy documentation, such as organization, module, configurations, settings, ...
 
-* Introduction +
+** link:concept.html[Main Concepts]
++
+This part introduces the main concepts used in Ivy: dependency resolvers, variables, patterns, and also a good introduction to a central ivy concept: module configurations.
 
-	** link:terminology.html[Terminology] +
-	This part gives you the meaning of some words used all over the Ivy documentation, such as organization, module, configurations, settings, ...
+** link:principle.html[How does it work ?]
++
+As the title suggests, here you will find an explanation of how Ivy does work internally, which can help to better understand and customize its use.
 
-	** link:concept.html[Main Concepts] +
-	This part introduces the main concepts used in Ivy: dependency resolvers, variables, patterns, and also a good introduction to a central ivy concept: module configurations.
+** link:install.html[Installation]
++
+This part describes how to install Ivy.
 
-	** link:principle.html[How does it work ?] +
-	As the title suggests, here you will find an explanation of how Ivy does work internally, which can help to better understand and customize its use.
+** Running
++
+This part describes possibility to control the behavior of Ivy at run time
 
-	** link:install.html[Installation] +
-	This part describes how to install Ivy.
-
-	** Running +
-	This part describes possibility to control the behavior of Ivy at run time
-
-* link:settings.html[Settings Files] +
+* link:settings.html[Settings Files]
++
 This part is dedicated to the specification of the settings file of Ivy (usually called ivysettings.xml). It also gives the list of built-in dependency resolvers available in Ivy.
 
-* link:ivyfile.html[Ivy Files] +
+* link:ivyfile.html[Ivy Files]
++
 This part is the reference for the module descriptors, the Ivy files in which you describe your dependencies. If you have any questions about what can be done or not in an ivy file, you will find the answer here.
 
-* link:ant.html[Ant Tasks] +
+* link:ant.html[Ant Tasks]
++
 This part describes how to use Ivy from ant. It's in this section that all ant tasks provided by Ivy are specified.
 
-* link:standalone.html[Using standalone] +
+* link:standalone.html[Using standalone]
++
 Even though Ivy is most often used from ant, it can also be used from the command line. This page describes how you can do this.

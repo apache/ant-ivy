@@ -17,16 +17,11 @@
    under the License.
 ////
 
-
-
 === Announcement
-
-
 
 [source]
 ----
-
-December 21, 2015 - The Apache Ivy project is pleased to announce its 2.5.0 release.
+XXXX DATE XXXXXX - The Apache Ivy project is pleased to announce its 2.5.0 release.
 
 Apache Ivy is a tool for managing (recording, tracking, resolving and
 reporting) project dependencies, characterized by flexibility,
@@ -46,14 +41,9 @@ https://issues.apache.org/jira/browse/IVY
 
 More information can be found on the website:
 http://ant.apache.org/ivy/
-
 ----
 
-
-
-
 === List of Changes in this Release
-
 
 For details about the following changes, check our JIRA install at
 http://issues.apache.org/jira/browse/ivy
@@ -87,306 +77,161 @@ List of changes since Ivy 2.4.0:
 - NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (link:https://issues.apache.org/jira/browse/IVY-1529[IVY-1529])
 - NEW: Add (conditional) support for SHA-256 SHA-512 and SHA-384 checksum algorithms (link:https://issues.apache.org/jira/browse/IVY-1554[IVY-1554]) (Thanks to Jaikiran Pai)
 
-
 ////
  Samples :
 - NEW: bla bla bla (link:https://issues.apache.org/jira/browse/IVY-1234[IVY-1234]) (Thanks to Jane Doe)
 - IMPROVEMENT: bla bla bla (link:https://issues.apache.org/jira/browse/IVY-1234[IVY-1234]) (Thanks to Jane Doe)
 - FIX: bla bla bla (link:https://issues.apache.org/jira/browse/IVY-1234[IVY-1234]) (Thanks to Jane Doe)
 - DOCUMENTATION: bla bla bla (link:https://issues.apache.org/jira/browse/IVY-1234[IVY-1234]) (Thanks to Jane Doe)
-
 ////
 
-
-
 === Committers and Contributors
-
 
 Here is the list of people who have contributed source code and documentation up to this release. Many thanks to all of them, and also to the whole IvyDE community contributing ideas and feedback, and promoting the use of Apache Ivy !
 
 Committers
 
-* Matt Benson +
-
-* Jean-Louis Boudart +
-
-* Maarten Coene +
-
-* Charles Duffy +
-
-* Xavier Hanin +
-
-* Nicolas Lalevee +
-
-* Jon Schneider +
-
-* Gilles Scokart +
-
+* Matt Benson
+* Jean-Louis Boudart
+* Maarten Coene
+* Charles Duffy
+* Xavier Hanin
+* Nicolas Lalev&#233;e
+* Jon Schneider
+* Gilles Scokart
 
 Contributors:
 
-* Ingo Adler +
-
-* alex322 +
-
-* Mathieu Anquetin +
-
-* Andreas Axelsson +
-
-* Stephane Bailliez +
-
-* Karl Baum +
-
-* Andrew Bernhagen +
-
-* Mikkel Bjerg +
-
-* Per Arnold Blaasmo +
-
-* Jeffrey Blattman +
-
-* Jasper Blues +
-
-* Jim Bonanno +
-
-* Joseph Boyd +
-
-* Dave Brosius +
-
-* Matthieu Brouillard +
-
-* Carlton Brown +
-
-* Mirko Bulovic +
-
-* Ed Burcher +
-
-* Jamie Burns +
-
-* Wei Chen +
-
-* Chris Chilvers +
-
-* Kristian Cibulskis +
-
-* Andrea Bernardo Ciddio +
-
-* Archie Cobbs +
-
-* Flavio Coutinho da Costa +
-
-* Stefan De Boey +
-
-* Mykhailo Delegan +
-
-* Charles Duffy +
-
-* Martin Eigenbrodt +
-
-* Stephen Evanchik +
-
-* Robin Fernandes +
-
-* Gregory Fernandez +
-
-* Danno Ferrin +
-
-* Riccardo Foschia +
-
-* Benjamin Francisoud +
-
-* Wolfgang Frank +
-
-* Jacob Grydholt Jensen +
-
-* John Gibson +
-
-* Mitch Gitman +
-
-* Evgeny Goldin +
-
-* Scott Goldstein +
-
-* Gintautas Grigelionis +
-
-* Pierre H&#228;gnestrand +
-
-* Scott Hebert +
-
-* Tobias Himstedt +
-
-* Aaron Hachez +
-
-* Ben Hale +
-
-* Stephen Haberman +
-
-* Peter Hayes +
-
-* Scott Hebert +
-
-* Payam Hekmat +
-
-* Achim Huegen +
-
-* Ilya +
-
-* Matt Inger +
-
-* Anders Jacobsson +
-
-* Anders Janmyr +
-
-* Steve Jones +
-
-* Christer Jonsson +
-
-* Michael Kebe +
-
-* Matthias Kilian +
-
-* Alexey Kiselev +
-
-* Gregory Kisling +
-
-* Stepan Koltsov +
-
-* Heschi Kreinick +
-
-* Sebastian Krueger +
-
-* Thomas Kurpick +
-
-* Tat Leung +
-
-* Costin Leau +
-
-* Antoine Levy-Lambert +
-
-* Tony Likhite +
-
-* Andrey Lomakin +
-
-* William Lyvers +
-
-* Sakari Maaranen +
-
-* Jan Materne +
-
-* Markus M. May +
-
-* Abel Muino +
-
-* J. Lewis Muir +
-
-* Stephen Nesbitt +
-
-* Joshua Nichols +
-
-* Bernard Niset +
-
-* Ales Nosek +
-
-* David Maplesden +
-
-* Glen Marchesani +
-
-* Phil Messenger +
-
-* Steve Miller +
-
-* Mathias Muller +
-
-* Randy Nott +
-
-* Peter Oxenham +
-
-* Jaikiran Pai +
-
-* Douglas Palmer +
-
-* Jesper Pedersen +
-
-* Emmanuel Pellereau +
-
-* Carsten Pfeiffer +
-
-* Yanus Poluektovich +
-
-* Roshan Punnoose +
-
-* Jean-Baptiste Quenot +
-
-* Carl Quinn +
-
-* Damon Rand +
-
-* Geoff Reedy +
-
-* Torkild U. Resheim +
-
-* Christian Riege +
-
-* Frederic Riviere +
-
-* Jens Rohloff +
-
-* Andreas Sahlbach +
-
-* Brian Sanders +
-
-* Adrian Sandor +
-
-* Michael Scheetz +
-
-* Ben Schmidt +
-
-* Ruslan Shevchenko +
-
-* John Shields +
-
-* Nihal Sinha +
-
-* Gene Smith +
-
-* Michal Srb +
-
-* Colin Stanfill +
-
-* Simon Steiner +
-
-* Johan Stuyts +
-
-* John Tinetti +
-
-* Erwin Tratar +
-
-* Jason Trump +
-
-* David Turner +
-
-* Ernestas Vaiciukevi&#269;ius +
-
-* Tjeerd Verhagen +
-
-* Richard Vowles +
-
-* Sven Walter +
-
-* James P. White +
-
-* Tom Widmer +
-
-* John Williams +
-
-* Chris Wood +
-
-* Patrick Woodworth +
-
-* Jaroslaw Wypychowski +
-
-* Sven Zethelius +
-
-* Aleksey Zhukov +
-
-* Zhong Wang +
+* Ingo Adler
+* alex322
+* Mathieu Anquetin
+* Andreas Axelsson
+* St&#233;phane Bailliez
+* Karl Baum
+* Andrew Bernhagen
+* Mikkel Bjerg
+* Per Arnold Blaasmo
+* Jeffrey Blattman
+* Jasper Blues
+* Jim Bonanno
+* Joseph Boyd
+* Dave Brosius
+* Matthieu Brouillard
+* Carlton Brown
+* Mirko Bulovic
+* Ed Burcher
+* Jamie Burns
+* Wei Chen
+* Chris Chilvers
+* Kristian Cibulskis
+* Andrea Bernardo Ciddio
+* Archie Cobbs
+* Flavio Coutinho da Costa
+* Stefan De Boey
+* Mykhailo Delegan
+* Charles Duffy
+* Martin Eigenbrodt
+* Stephen Evanchik
+* Robin Fernandes
+* Gregory Fernandez
+* Danno Ferrin
+* Riccardo Foschia
+* Benjamin Francisoud
+* Wolfgang Frank
+* Jacob Grydholt Jensen
+* John Gibson
+* Mitch Gitman
+* Evgeny Goldin
+* Scott Goldstein
+* Gintautas Grigelionis
+* Pierre H&#228;gnestrand
+* Scott Hebert
+* Tobias Himstedt
+* Aaron Hachez
+* Ben Hale
+* Stephen Haberman
+* Peter Hayes
+* Scott Hebert
+* Payam Hekmat
+* Achim Huegen
+* Ilya
+* Matt Inger
+* Anders Jacobsson
+* Anders Janmyr
+* Steve Jones
+* Christer Jonsson
+* Michael Kebe
+* Matthias Kilian
+* Alexey Kiselev
+* Gregory Kisling
+* Stepan Koltsov
+* Heschi Kreinick
+* Sebastian Krueger
+* Thomas Kurpick
+* Tat Leung
+* Costin Leau
+* Antoine Levy-Lambert
+* Tony Likhite
+* Andrey Lomakin
+* William Lyvers
+* Sakari Maaranen
+* Jan Materne
+* Markus M. May
+* Abel Muino
+* J. Lewis Muir
+* Stephen Nesbitt
+* Joshua Nichols
+* Bernard Niset
+* Ales Nosek
+* David Maplesden
+* Glen Marchesani
+* Phil Messenger
+* Steve Miller
+* Mathias Muller
+* Randy Nott
+* Peter Oxenham
+* Jaikiran Pai
+* Douglas Palmer
+* Jesper Pedersen
+* Emmanuel Pellereau
+* Carsten Pfeiffer
+* Yanus Poluektovich
+* Roshan Punnoose
+* Jean-Baptiste Quenot
+* Carl Quinn
+* Damon Rand
+* Geoff Reedy
+* Torkild U. Resheim
+* Christian Riege
+* Frederic Riviere
+* Jens Rohloff
+* Andreas Sahlbach
+* Brian Sanders
+* Adrian Sandor
+* Michael Scheetz
+* Ben Schmidt
+* Ruslan Shevchenko
+* John Shields
+* Nihal Sinha
+* Gene Smith
+* Michal Srb
+* Colin Stanfill
+* Simon Steiner
+* Johan Stuyts
+* John Tinetti
+* Erwin Tratar
+* Jason Trump
+* David Turner
+* Ernestas Vaiciukevi&#269;ius
+* Tjeerd Verhagen
+* Richard Vowles
+* Sven Walter
+* James P. White
+* Tom Widmer
+* John Williams
+* Chris Wood
+* Patrick Woodworth
+* Jaroslaw Wypychowski
+* Sven Zethelius
+* Aleksey Zhukov
+* Zhong Wang
