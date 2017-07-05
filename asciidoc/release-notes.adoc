@@ -97,6 +97,7 @@ Committers
 * Charles Duffy
 * Xavier Hanin
 * Nicolas Lalev&#233;e
+* Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
 
@@ -190,7 +191,6 @@ Contributors:
 * Mathias Muller
 * Randy Nott
 * Peter Oxenham
-* Jaikiran Pai
 * Douglas Palmer
 * Jesper Pedersen
 * Emmanuel Pellereau
