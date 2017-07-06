@@ -516,7 +516,7 @@ public class IvyBuildList extends IvyTask {
      */
     @Deprecated
     public boolean isSkipbuildwithoutivy() {
-        return onMissingDescriptor == OnMissingDescriptor.SKIP;
+        return OnMissingDescriptor.SKIP.equals(onMissingDescriptor);
     }
 
     /**

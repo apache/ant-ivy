@@ -112,7 +112,7 @@ public class MatcherLookup {
             }
         }
         // Step 3: (iff key != DEFAULT) find matchers from exact_matchers of DEFAULT
-        if (key != DEFAULT) {
+        if (!DEFAULT.equals(key)) {
             List<MapMatcher> default_exact_matchers = lookup.get(DEFAULT);
             if (default_exact_matchers != null) {
                 for (MapMatcher matcher : default_exact_matchers) {
