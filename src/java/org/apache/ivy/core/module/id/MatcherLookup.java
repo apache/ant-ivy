@@ -57,9 +57,9 @@ public class MatcherLookup {
 
     private static final String DEFAULT = "{org:" + "default" + ", module:" + "default" + "}";
 
-    private Map<String, List<MapMatcher>> lookup = new HashMap<String, List<MapMatcher>>();
+    private Map<String, List<MapMatcher>> lookup = new HashMap<>();
 
-    private List<MapMatcher> non_exact_matchers = new ArrayList<MapMatcher>();
+    private List<MapMatcher> nonExactMatchers = new ArrayList<>();
 
     /**
      * Add matcher.
@@ -73,16 +73,16 @@ public class MatcherLookup {
      */
     public void add(MapMatcher matcher) {
         if (!(matcher.getPatternMatcher() instanceof ExactPatternMatcher)) {
-            non_exact_matchers.add(matcher);
+            nonExactMatchers.add(matcher);
             return;
         }
         String key = key(matcher.getAttributes());
-        List<MapMatcher> exact_matchers = lookup.get(key);
-        if (exact_matchers == null) {
-            exact_matchers = new ArrayList<MapMatcher>();
-            lookup.put(key, exact_matchers);
+        List<MapMatcher> exactMatchers = lookup.get(key);
+        if (exactMatchers == null) {
+            exactMatchers = new ArrayList<>();
+            lookup.put(key, exactMatchers);
         }
-        exact_matchers.add(matcher);
+        exactMatchers.add(matcher);
     }
 
     /**
@@ -92,30 +92,30 @@ public class MatcherLookup {
      * @return a list of matchers that can apply to module withs specified attributes
      */
     public List<MapMatcher> get(Map<String, String> attrs) {
-        List<MapMatcher> matchers = new ArrayList<MapMatcher>();
-        // Step 1: find matchers from non_exact_matchers list
-        if (!non_exact_matchers.isEmpty()) {
-            for (MapMatcher matcher : non_exact_matchers) {
+        List<MapMatcher> matchers = new ArrayList<>();
+        // Step 1: find matchers from nonExactMatchers list
+        if (!nonExactMatchers.isEmpty()) {
+            for (MapMatcher matcher : nonExactMatchers) {
                 if (matcher.matches(attrs)) {
                     matchers.add(matcher);
                 }
             }
         }
-        // Step 2: find matchers from exact_matchers list of key
+        // Step 2: find matchers from exactMatchers list of key
         String key = key(attrs);
-        List<MapMatcher> exact_matchers = lookup.get(key);
-        if (exact_matchers != null) {
-            for (MapMatcher matcher : exact_matchers) {
+        List<MapMatcher> exactMatchers = lookup.get(key);
+        if (exactMatchers != null) {
+            for (MapMatcher matcher : exactMatchers) {
                 if (matcher.matches(attrs)) {
                     matchers.add(matcher);
                 }
             }
         }
-        // Step 3: (iff key != DEFAULT) find matchers from exact_matchers of DEFAULT
+        // Step 3: (iff key != DEFAULT) find matchers from exactMatchers of DEFAULT
         if (!DEFAULT.equals(key)) {
-            List<MapMatcher> default_exact_matchers = lookup.get(DEFAULT);
-            if (default_exact_matchers != null) {
-                for (MapMatcher matcher : default_exact_matchers) {
+            List<MapMatcher> defaultExactMatchers = lookup.get(DEFAULT);
+            if (defaultExactMatchers != null) {
+                for (MapMatcher matcher : defaultExactMatchers) {
                     if (matcher.matches(attrs)) {
                         matchers.add(matcher);
                     }

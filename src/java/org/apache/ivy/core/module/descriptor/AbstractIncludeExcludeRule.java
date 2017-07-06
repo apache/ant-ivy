@@ -35,11 +35,12 @@ public abstract class AbstractIncludeExcludeRule extends UnmodifiableExtendableI
 
     private ArtifactId id;
 
-    private Collection confs = new ArrayList();
+    private final Collection<String> confs = new ArrayList<>();
 
     private PatternMatcher patternMatcher;
 
-    public AbstractIncludeExcludeRule(ArtifactId aid, PatternMatcher matcher, Map extraAttributes) {
+    public AbstractIncludeExcludeRule(ArtifactId aid, PatternMatcher matcher,
+                                      Map<String, String> extraAttributes) {
         super(null, extraAttributes);
         id = aid;
         patternMatcher = matcher;
@@ -81,7 +82,7 @@ public abstract class AbstractIncludeExcludeRule extends UnmodifiableExtendableI
     }
 
     public String[] getConfigurations() {
-        return (String[]) confs.toArray(new String[confs.size()]);
+        return confs.toArray(new String[confs.size()]);
     }
 
     public PatternMatcher getMatcher() {

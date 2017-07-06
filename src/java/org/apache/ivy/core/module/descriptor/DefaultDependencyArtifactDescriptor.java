@@ -29,7 +29,7 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableItem implements
         DependencyArtifactDescriptor, ConfigurationAware {
 
-    private Collection confs = new ArrayList();
+    private final Collection<String> confs = new ArrayList<>();
 
     private URL url;
 
@@ -50,7 +50,7 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
      * @param extraAttributes ditto
      */
     public DefaultDependencyArtifactDescriptor(DependencyDescriptor dd, String name, String type,
-            String ext, URL url, Map extraAttributes) {
+            String ext, URL url, Map<String, String> extraAttributes) {
         super(null, extraAttributes);
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(name, "name");
@@ -109,7 +109,7 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
     }
 
     public String[] getConfigurations() {
-        return (String[]) confs.toArray(new String[confs.size()]);
+        return confs.toArray(new String[confs.size()]);
     }
 
     public URL getUrl() {

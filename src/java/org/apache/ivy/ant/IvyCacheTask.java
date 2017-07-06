@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +43,7 @@ import org.apache.tools.ant.BuildException;
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
     protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException,
-            ParseException, IOException {
+            ParseException {
         Collection<ArtifactDownloadReport> artifacts = getAllArtifactReports();
         List<ArtifactDownloadReport> ret = new ArrayList<>();
         for (ArtifactDownloadReport artifactReport : artifacts) {
@@ -56,8 +55,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         return ret;
     }
 
-    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException,
-            IOException {
+    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException {
         String[] confs = splitConfs(getConf());
         Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
 

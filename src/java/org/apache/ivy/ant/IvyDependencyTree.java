@@ -117,8 +117,7 @@ public class IvyDependencyTree extends IvyPostResolveTask {
 
     private void populateDependencyTree(IvyNode dependency) {
         registerNodeIfNecessary(dependency.getId());
-        for (int i = 0; i < dependency.getAllCallers().length; i++) {
-            Caller caller = dependency.getAllCallers()[i];
+        for (Caller caller : dependency.getAllCallers()) {
             addDependency(caller.getModuleRevisionId(), dependency);
         }
     }

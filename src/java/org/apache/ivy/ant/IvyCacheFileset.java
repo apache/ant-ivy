@@ -167,11 +167,11 @@ public class IvyCacheFileset extends IvyCacheTask {
         if (file1 == null || file2 == null) {
             return null;
         }
-        final Iterator file1Parents = getParents(file1).iterator();
-        final Iterator file2Parents = getParents(file2.getAbsoluteFile()).iterator();
+        final Iterator<File> file1Parents = getParents(file1).iterator();
+        final Iterator<File> file2Parents = getParents(file2.getAbsoluteFile()).iterator();
         File result = null;
         while (file1Parents.hasNext() && file2Parents.hasNext()) {
-            File next = (File) file1Parents.next();
+            File next = file1Parents.next();
             if (next.equals(file2Parents.next())) {
                 result = next;
             } else {

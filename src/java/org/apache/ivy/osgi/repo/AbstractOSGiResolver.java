@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -389,11 +388,12 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             capabilityValues.addAll(moduleByCapabilityValue.keySet());
         } else {
             for (Entry<String, Set<ModuleDescriptor>> entry : moduleByCapabilityValue.entrySet()) {
-                Iterator<ModuleDescriptor> itModules = entry.getValue().iterator();
                 boolean moduleMatchRev = false;
-                while (!moduleMatchRev && itModules.hasNext()) {
-                    ModuleDescriptor md = itModules.next();
+                for (ModuleDescriptor md : entry.getValue()) {
                     moduleMatchRev = rev.equals(md.getRevision());
+                    if (moduleMatchRev) {
+                        break;
+                    }
                 }
                 if (moduleMatchRev) {
                     // at least one module matched, the capability value is ok to add
@@ -403,6 +403,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));

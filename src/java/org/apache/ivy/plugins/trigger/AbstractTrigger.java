@@ -33,7 +33,7 @@ import org.apache.ivy.util.filter.Filter;
  * @since 1.4
  */
 public abstract class AbstractTrigger implements Trigger {
-    private Filter filter;
+    private Filter<IvyEvent> filter;
 
     private String event;
 
@@ -41,14 +41,14 @@ public abstract class AbstractTrigger implements Trigger {
 
     private String matcher = PatternMatcher.EXACT;
 
-    public Filter getEventFilter() {
+    public Filter<IvyEvent> getEventFilter() {
         if (filter == null) {
             filter = createFilter();
         }
         return filter;
     }
 
-    private Filter createFilter() {
+    private Filter<IvyEvent> createFilter() {
         return new IvyEventFilter(getEvent(), getFilter(), getPatternMatcher());
     }
 

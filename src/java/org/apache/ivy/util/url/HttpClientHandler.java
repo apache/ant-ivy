@@ -177,7 +177,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return UNAVAILABLE;
     }
 
-    private boolean checkStatusCode(URL url, HttpMethodBase method) throws IOException {
+    private boolean checkStatusCode(URL url, HttpMethodBase method) {
         int status = method.getStatusCode();
         if (status == HttpStatus.SC_OK) {
             return true;

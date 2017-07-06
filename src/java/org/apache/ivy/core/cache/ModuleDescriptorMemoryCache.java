@@ -37,7 +37,7 @@ class ModuleDescriptorMemoryCache {
 
     private final int maxSize;
 
-    private final LinkedHashMap/* <File,CacheEntry> */valueMap;
+    private final LinkedHashMap<File, CacheEntry> valueMap;
 
     /**
      * Create a cache of the given size
@@ -46,7 +46,7 @@ class ModuleDescriptorMemoryCache {
      */
     public ModuleDescriptorMemoryCache(int size) {
         this.maxSize = size;
-        this.valueMap = new LinkedHashMap(size);
+        this.valueMap = new LinkedHashMap<>(size);
     }
 
     public ModuleDescriptor get(File ivyFile, ParserSettings ivySettings, boolean validated,
@@ -76,7 +76,7 @@ class ModuleDescriptorMemoryCache {
             // cache is disabled
             return null;
         }
-        CacheEntry entry = (CacheEntry) valueMap.get(ivyFile);
+        CacheEntry entry = valueMap.get(ivyFile);
         if (entry != null) {
             if (entry.isStale(validated, ivySettings)) {
                 Message.debug("Entry is found in the ModuleDescriptorCache but entry should be "
@@ -104,7 +104,7 @@ class ModuleDescriptorMemoryCache {
         }
         if (valueMap.size() >= maxSize) {
             Message.debug("ModuleDescriptorCache is full, remove one entry");
-            Iterator it = valueMap.values().iterator();
+            Iterator<CacheEntry> it = valueMap.values().iterator();
             it.next();
             it.remove();
         }

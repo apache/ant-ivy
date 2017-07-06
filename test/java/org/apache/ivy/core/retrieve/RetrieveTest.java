@@ -17,6 +17,12 @@
  */
 package org.apache.ivy.core.retrieve;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
@@ -36,6 +43,7 @@ import org.apache.ivy.core.event.retrieve.StartRetrieveArtifactEvent;
 import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.DefaultMessageLogger;
@@ -46,8 +54,6 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class RetrieveTest {
 
@@ -295,8 +301,9 @@ public class RetrieveTest {
         ModuleRevisionId mrid = md.getModuleRevisionId();
         RetrieveOptions options = getRetrieveOptions();
         options.setConfs(new String[] {"A"});
-        Map artifactsToCopy = ivy.getRetrieveEngine().determineArtifactsToCopy(mrid,
-            "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]", options);
+        Map<ArtifactDownloadReport, Set<String>> artifactsToCopy = ivy.getRetrieveEngine()
+                .determineArtifactsToCopy(mrid,
+                    "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]", options);
         assertEquals(2, artifactsToCopy.size());
 
         options.setConfs(new String[] {"B"});

@@ -257,7 +257,7 @@ public class ManifestParser {
         return new VersionRange(v);
     }
 
-    private static Version versionOf(String v) throws ParseException {
+    private static Version versionOf(String v) {
         if (v == null) {
             return null;
         }

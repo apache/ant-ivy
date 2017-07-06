@@ -50,7 +50,7 @@ public class RequirementAdapter {
         adapter.adapt(info, requirement.isOptional());
     }
 
-    private void extractFilter(OSGiFilter filter) throws UnsupportedFilterException, ParseException {
+    private void extractFilter(OSGiFilter filter) throws UnsupportedFilterException {
         if (filter instanceof AndFilter) {
             AndFilter andFilter = (AndFilter) filter;
             for (OSGiFilter subFilter : andFilter.getSubFilters()) {
@@ -93,7 +93,7 @@ public class RequirementAdapter {
     }
 
     private void parseCompareFilter(CompareFilter compareFilter, boolean not)
-            throws UnsupportedFilterException, ParseException {
+            throws UnsupportedFilterException {
         String att = compareFilter.getLeftValue();
         if (BundleInfo.PACKAGE_TYPE.equals(att) || BundleInfo.BUNDLE_TYPE.equals(att)
                 || BundleInfo.EXECUTION_ENVIRONMENT_TYPE.equals(att) || "symbolicname".equals(att)

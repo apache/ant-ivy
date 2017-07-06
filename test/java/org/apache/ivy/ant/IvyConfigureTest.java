@@ -56,7 +56,6 @@ public class IvyConfigureTest {
         configure.setProject(project);
     }
 
-    @SuppressWarnings("deprecation")
     private Ivy getIvyInstance() {
         IvyTask task = new IvyTask() {
             public void doExecute() throws BuildException {
@@ -65,7 +64,7 @@ public class IvyConfigureTest {
         task.setProject(project);
         task.init();
 
-        Reference ref = new Reference(configure.getSettingsId());
+        Reference ref = new Reference(task.getProject(), configure.getSettingsId());
         // ref.setProject(project);
         task.setSettingsRef(ref);
         return task.getIvyInstance();

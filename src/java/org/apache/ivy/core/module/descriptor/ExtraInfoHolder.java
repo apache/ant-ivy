@@ -26,11 +26,11 @@ public class ExtraInfoHolder {
 
     private String name;
 
-    private Map<String, String> attributes = new LinkedHashMap<String, String>();
+    private Map<String, String> attributes = new LinkedHashMap<>();
 
     private String content;
 
-    private List<ExtraInfoHolder> nestedExtraInfoHolder = new ArrayList<ExtraInfoHolder>();
+    private List<ExtraInfoHolder> nestedExtraInfoHolder = new ArrayList<>();
 
     public ExtraInfoHolder() {
 

@@ -32,14 +32,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ModuleRulesTest {
-    private ModuleRules rules;
+    private ModuleRules<String> rules;
 
-    private Object[] rule;
+    private String[] rule;
 
     @Before
     public void setUp() {
-        rules = new ModuleRules();
-        rule = new Object[10];
+        rules = new ModuleRules<String>();
+        rule = new String[10];
         for (int i = 0; i < rule.length; i++) {
             rule[i] = "RULE_" + i;
         }
@@ -76,9 +76,9 @@ public class ModuleRulesTest {
 
     // test helpers
 
-    private Filter acceptNone() {
-        return new Filter() {
-            public boolean accept(Object o) {
+    private Filter<String> acceptNone() {
+        return new Filter<String>() {
+            public boolean accept(String o) {
                 return false;
             }
 
@@ -88,11 +88,11 @@ public class ModuleRulesTest {
         };
     }
 
-    private Filter acceptSecond() {
-        return new Filter() {
+    private Filter<String> acceptSecond() {
+        return new Filter<String>() {
             private int cpt;
 
-            public boolean accept(Object o) {
+            public boolean accept(String o) {
                 return ++cpt == 2;
             }
 
@@ -102,8 +102,8 @@ public class ModuleRulesTest {
         };
     }
 
-    private Filter acceptAll() {
-        return NoFilter.INSTANCE;
+    private Filter<String> acceptAll() {
+        return NoFilter.instance();
     }
 
     private void assertRule(Object rule, String mrid) {
@@ -111,13 +111,13 @@ public class ModuleRulesTest {
         assertEquals("unexcepted rule for " + mrid, rule, ruleFound);
     }
 
-    private void assertRule(Object rule, String mrid, Filter filter) {
-        Object ruleFound = rules.getRule(ModuleRevisionId.parse(mrid), filter);
+    private void assertRule(String rule, String mrid, Filter<String> filter) {
+        String ruleFound = rules.getRule(ModuleRevisionId.parse(mrid), filter);
         assertEquals("unexcepted rule for " + mrid + " filtered by " + filter, rule, ruleFound);
     }
 
-    private void assertModuleIdRule(Object rule, String mid, Filter filter) {
-        Object ruleFound = rules.getRule(ModuleId.parse(mid), filter);
+    private void assertModuleIdRule(Object rule, String mid, Filter<String> filter) {
+        String ruleFound = rules.getRule(ModuleId.parse(mid), filter);
         assertEquals("unexcepted rule for " + mid + " filtered by " + filter, rule, ruleFound);
     }
 
@@ -126,7 +126,7 @@ public class ModuleRulesTest {
     }
 
     public class MridMatcherBuilder {
-        private Map attributes = new HashMap();
+        private Map<String, String> attributes = new HashMap<>();
 
         private PatternMatcher matcher = ExactPatternMatcher.INSTANCE;
 

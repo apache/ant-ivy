@@ -149,11 +149,12 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
                 new BcKeyFingerprintCalculator());
 
         PGPSecretKey key = null;
-        for (Iterator<PGPSecretKeyRing> it = pgpSec.getKeyRings(); key == null && it.hasNext();) {
+        Iterator<PGPSecretKeyRing> it = pgpSec.getKeyRings();
+        while (key == null && it.hasNext()) {
             PGPSecretKeyRing kRing = it.next();
 
-            for (Iterator<PGPSecretKey> it2 = kRing.getSecretKeys(); key == null
-                    && it2.hasNext();) {
+            Iterator<PGPSecretKey> it2 = kRing.getSecretKeys();
+            while (key == null && it2.hasNext()) {
                 PGPSecretKey k = it2.next();
                 if ((keyId == null) && k.isSigningKey()) {
                     key = k;

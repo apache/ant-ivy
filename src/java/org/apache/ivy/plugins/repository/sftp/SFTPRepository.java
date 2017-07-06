@@ -88,17 +88,11 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     @SuppressWarnings("unchecked")
     public Resource resolveResource(String path) {
         try {
-            ChannelSftp c = getSftpChannel(path);
-
-            // ls() returns a Vector of LsEntry
-            Collection<LsEntry> r = c.ls(getPath(path));
-
+            List<LsEntry> r = getSftpChannel(path).ls(getPath(path));
             if (r != null) {
-                for (LsEntry entry : r) {
-                    SftpATTRS attrs = entry.getAttrs();
-                    return new BasicResource(path, true, attrs.getSize(),
+                SftpATTRS attrs = r.get(0).getAttrs();
+                return new BasicResource(path, true, attrs.getSize(),
                             attrs.getMTime() * MILLIS_PER_SECOND, false);
-                }
             }
         } catch (Exception e) {
             Message.debug("Error while resolving resource " + path, e);
@@ -148,7 +142,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         }
     }
 
-    private void mkdirs(String directory, ChannelSftp c) throws IOException, SftpException {
+    private void mkdirs(String directory, ChannelSftp c) throws SftpException {
         try {
             SftpATTRS att = c.stat(directory);
             if (att != null) {

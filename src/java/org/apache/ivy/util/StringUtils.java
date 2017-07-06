@@ -142,8 +142,7 @@ public final class StringUtils {
             return null;
         }
         StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
+        for (char c : str.toCharArray()) {
             if (c >= SHIFTS.length) {
                 throw new IllegalArgumentException(
                         "encrypt method can only be used with simple characters. '" + c
@@ -166,8 +165,8 @@ public final class StringUtils {
             return null;
         }
         StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            buf.append(decrypt(str.charAt(i)));
+        for (char c : str.toCharArray()) {
+            buf.append(decrypt(c));
         }
         return buf.toString();
     }

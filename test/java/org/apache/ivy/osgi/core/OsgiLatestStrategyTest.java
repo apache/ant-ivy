@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.osgi.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,9 +28,6 @@ import java.util.List;
 
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class OsgiLatestStrategyTest {
 
@@ -53,7 +53,7 @@ public class OsgiLatestStrategyTest {
         ArtifactInfo[] shuffledRevs = shuffled.toArray(new ArtifactInfo[revs.length]);
 
         OsgiLatestStrategy latestRevisionStrategy = new OsgiLatestStrategy();
-        List sorted = latestRevisionStrategy.sort(shuffledRevs);
+        List<ArtifactInfo> sorted = latestRevisionStrategy.sort(shuffledRevs);
         assertEquals(Arrays.asList(revs), sorted);
     }
 

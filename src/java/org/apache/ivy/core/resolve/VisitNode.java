@@ -164,7 +164,7 @@ public class VisitNode {
 
     private Collection<VisitNode> computePath() {
         if (parent != null) {
-            Collection<VisitNode> p = new LinkedHashSet<VisitNode>(parent.getPath());
+            Collection<VisitNode> p = new LinkedHashSet<>(parent.getPath());
             p.add(this);
             return p;
         } else {
@@ -196,7 +196,7 @@ public class VisitNode {
 
     public static VisitNode getRoot(VisitNode parent) {
         VisitNode root = parent;
-        Collection<VisitNode> path = new HashSet<VisitNode>();
+        Collection<VisitNode> path = new HashSet<>();
         path.add(root);
         while (root.getParent() != null && !root.getNode().isRoot()) {
             if (path.contains(root.getParent())) {
@@ -303,7 +303,7 @@ public class VisitNode {
 
     public Collection<VisitNode> getDependencies(String conf) {
         Collection<IvyNode> deps = node.getDependencies(rootModuleConf, conf, requestedConf);
-        Collection<VisitNode> ret = new ArrayList<VisitNode>(deps.size());
+        Collection<VisitNode> ret = new ArrayList<>(deps.size());
         for (IvyNode depNode : deps) {
             ret.add(traverseChild(conf, depNode));
         }

@@ -129,8 +129,7 @@ public class IvyRepositoryReport extends IvyTask {
         }
     }
 
-    private void genreport(ResolutionCacheManager cache, String organisation, String module)
-            throws IOException {
+    private void genreport(ResolutionCacheManager cache, String organisation, String module) {
         // first process the report with xslt
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
@@ -187,7 +186,7 @@ public class IvyRepositoryReport extends IvyTask {
     }
 
     private void gen(ResolutionCacheManager cache, String organisation, String module,
-            String style, String ext) throws IOException {
+            String style, String ext) {
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());

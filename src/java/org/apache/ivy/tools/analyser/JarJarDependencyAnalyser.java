@@ -39,22 +39,20 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
     }
 
     public ModuleDescriptor[] analyze(JarModule[] modules) {
-
         StringBuilder jarjarCmd = new StringBuilder("java -jar \"").append(
             jarjarjarLocation.getAbsolutePath()).append("\" --find --level=jar ");
         Map<String, JarModule> jarModulesMap = new HashMap<>();
         Map<ModuleRevisionId, DefaultModuleDescriptor> mds = new HashMap<>();
 
-        for (int i = 0; i < modules.length; i++) {
-            jarModulesMap.put(modules[i].getJar().getAbsolutePath(), modules[i]);
+        for (JarModule jarModule : modules) {
+            jarModulesMap.put(jarModule.getJar().getAbsolutePath(), jarModule);
             DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(
-                modules[i].getMrid(), new Date(modules[i].getJar().lastModified()));
-            mds.put(modules[i].getMrid(), md);
-            jarjarCmd.append("\"").append(modules[i].getJar().getAbsolutePath()).append("\"");
-            if (i + 1 < modules.length) {
-                jarjarCmd.append(File.pathSeparator);
-            }
+                    jarModule.getMrid(), new Date(jarModule.getJar().lastModified()));
+            mds.put(jarModule.getMrid(), md);
+            jarjarCmd.append("\"").append(jarModule.getJar().getAbsolutePath()).append("\"");
+            jarjarCmd.append(File.pathSeparator);
         }
+        jarjarCmd.setLength(jarjarCmd.length() - 1);
 
         Message.verbose("jarjar command: " + jarjarCmd);
 

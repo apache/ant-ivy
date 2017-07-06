@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.module.descriptor;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -25,9 +24,9 @@ import java.util.Map;
  */
 public class ConfigurationGroup extends Configuration {
 
-    private final Map/* <String, Configuration> */members;
+    private final Map<String, Configuration> members;
 
-    public ConfigurationGroup(String confName, Map /* <String, Configuration> */members) {
+    public ConfigurationGroup(String confName, Map<String, Configuration> members) {
         super(confName);
         this.members = members;
     }
@@ -43,7 +42,7 @@ public class ConfigurationGroup extends Configuration {
      * @return the list of configurations' names this object is an intersection of.
      */
     public String[] getMembersConfigurationNames() {
-        return (String[]) members.keySet().toArray(new String[members.size()]);
+        return members.keySet().toArray(new String[members.size()]);
     }
 
     /**
@@ -56,12 +55,11 @@ public class ConfigurationGroup extends Configuration {
      * @return the member {@link Configuration} object for the given conf name
      */
     public Configuration getMemberConfiguration(String confName) {
-        return (Configuration) members.get(confName);
+        return members.get(confName);
     }
 
     public Visibility getVisibility() {
-        for (Iterator it = members.values().iterator(); it.hasNext();) {
-            Configuration c = (Configuration) it.next();
+        for (Configuration c : members.values()) {
             if (c != null && Visibility.PRIVATE.equals(c.getVisibility())) {
                 return Visibility.PRIVATE;
             }

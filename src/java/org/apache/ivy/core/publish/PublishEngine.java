@@ -118,7 +118,7 @@ public class PublishEngine {
                     tmp.deleteOnExit();
 
                     String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
-                    Set<String> confsToRemove = new HashSet<String>(Arrays.asList(md
+                    Set<String> confsToRemove = new HashSet<>(Arrays.asList(md
                             .getConfigurationsNames()));
                     confsToRemove.removeAll(Arrays.asList(confs));
 
@@ -183,24 +183,24 @@ public class PublishEngine {
 
     public Collection<Artifact> publish(ModuleDescriptor md, Collection<String> srcArtifactPattern,
             DependencyResolver resolver, PublishOptions options) throws IOException {
-        Collection<Artifact> missing = new ArrayList<Artifact>();
-        Set<Artifact> artifactsSet = new LinkedHashSet<Artifact>();
+        Collection<Artifact> missing = new ArrayList<>();
+        Set<Artifact> artifactsSet = new LinkedHashSet<>();
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
-        for (int i = 0; i < confs.length; i++) {
-            Artifact[] artifacts = md.getArtifacts(confs[i]);
+        for (String conf : confs) {
+            Artifact[] artifacts = md.getArtifacts(conf);
             artifactsSet.addAll(Arrays.asList(artifacts));
         }
         Artifact[] extraArtifacts = options.getExtraArtifacts();
         if (extraArtifacts != null) {
-            for (int i = 0; i < extraArtifacts.length; i++) {
-                artifactsSet.add(new MDArtifact(md, extraArtifacts[i].getName(), extraArtifacts[i]
-                        .getType(), extraArtifacts[i].getExt(), extraArtifacts[i].getUrl(),
-                        extraArtifacts[i].getQualifiedExtraAttributes()));
+            for (Artifact extraArtifact : extraArtifacts) {
+                artifactsSet.add(new MDArtifact(md, extraArtifact.getName(), extraArtifact
+                        .getType(), extraArtifact.getExt(), extraArtifact.getUrl(),
+                        extraArtifact.getQualifiedExtraAttributes()));
             }
         }
         // now collects artifacts files
-        Map<Artifact, File> artifactsFiles = new LinkedHashMap<Artifact, File>();
+        Map<Artifact, File> artifactsFiles = new LinkedHashMap<>();
         for (Artifact artifact : artifactsSet) {
             for (String pattern : srcArtifactPattern) {
                 File artifactFile = settings.resolveFile(IvyPatternHelper.substitute(
@@ -211,7 +211,7 @@ public class PublishEngine {
                 }
             }
             if (!artifactsFiles.containsKey(artifact)) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append("missing artifact ").append(artifact).append(":\n");
                 for (String pattern : srcArtifactPattern) {
                     sb.append("\t").append(settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))).append(" file does not exist\n");

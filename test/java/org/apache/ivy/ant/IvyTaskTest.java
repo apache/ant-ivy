@@ -65,7 +65,6 @@ public class IvyTaskTest {
         assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testReferencedSettings() throws MalformedURLException {
         Project p = TestHelper.newProject();
@@ -82,7 +81,7 @@ public class IvyTaskTest {
             }
         };
         task.setProject(p);
-        task.setSettingsRef(new Reference("mySettings"));
+        task.setSettingsRef(new Reference(task.getProject(), "mySettings"));
         Ivy ivy = task.getIvyInstance();
         assertNotNull(ivy);
         IvySettings settings = ivy.getSettings();

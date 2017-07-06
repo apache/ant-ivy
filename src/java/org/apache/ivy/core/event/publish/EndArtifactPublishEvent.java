@@ -30,9 +30,6 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
  */
 public class EndArtifactPublishEvent extends PublishEvent {
 
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = -65690169431499422L;
-
     public static final String NAME = "post-publish-artifact";
 
     public static final String STATUS_SUCCESSFUL = "successful";

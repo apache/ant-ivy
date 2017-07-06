@@ -18,6 +18,7 @@
 package org.apache.ivy.core.retrieve;
 
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -55,7 +56,7 @@ public class RetrieveOptions extends LogOptions {
     /**
      * The filter to apply before retrieving artifacts.
      */
-    private Filter artifactFilter = FilterHelper.NO_FILTER;
+    private Filter<Artifact> artifactFilter = FilterHelper.NO_FILTER;
 
     /**
      * True if a synchronisation of the destination directory should be done, false if a simple copy
@@ -117,11 +118,11 @@ public class RetrieveOptions extends LogOptions {
         return this;
     }
 
-    public Filter getArtifactFilter() {
+    public Filter<Artifact> getArtifactFilter() {
         return artifactFilter;
     }
 
-    public RetrieveOptions setArtifactFilter(Filter artifactFilter) {
+    public RetrieveOptions setArtifactFilter(Filter<Artifact> artifactFilter) {
         this.artifactFilter = artifactFilter;
         return this;
     }

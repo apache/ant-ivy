@@ -143,7 +143,7 @@ public class ManifestHeaderValue {
         /**
          * Do the parsing
          *
-         * @throws ParseException
+         * @throws ParseException if something goes wrong
          */
         void parse() throws ParseException {
             do {

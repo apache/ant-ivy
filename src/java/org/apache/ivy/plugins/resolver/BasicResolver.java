@@ -95,7 +95,6 @@ public abstract class BasicResolver extends AbstractResolver {
      * converted in a message (either error or verbose) and returning null
      * </p>
      */
-    @SuppressWarnings("serial")
     private static class UnresolvedDependencyException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
@@ -660,8 +659,8 @@ public abstract class BasicResolver extends AbstractResolver {
         List<ModuleRevisionId> foundBlacklisted = new ArrayList<>();
         IvyContext context = IvyContext.getContext();
 
-        for (ListIterator<ArtifactInfo> iter = sorted.listIterator(sorted.size()); iter
-                .hasPrevious();) {
+        ListIterator<ArtifactInfo> iter = sorted.listIterator(sorted.size());
+        while (iter.hasPrevious()) {
             ResolvedResource rres = (ResolvedResource) iter.previous();
             // we start by filtering based on information already available,
             // even though we don't even know if the resource actually exist.
@@ -780,7 +779,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     protected void logAttempt(String attempt) {
-        Artifact currentArtifact = (Artifact) IvyContext.getContext().get(getName() + ".artifact");
+        Artifact currentArtifact = IvyContext.getContext().get(getName() + ".artifact");
         if (currentArtifact != null) {
             logArtifactAttempt(currentArtifact, attempt);
         } else {
@@ -795,10 +794,9 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.warn("  " + m);
         }
         for (Map.Entry<Artifact, List<String>> entry : artattempts.entrySet()) {
-            Artifact art = entry.getKey();
             List<String> attempts = entry.getValue();
             if (attempts != null) {
-                Message.warn("  -- artifact " + art + ":");
+                Message.warn("  -- artifact " + entry.getKey() + ":");
                 for (String m : attempts) {
                     Message.warn("  " + m);
                 }

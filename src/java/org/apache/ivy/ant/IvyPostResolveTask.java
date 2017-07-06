@@ -23,6 +23,7 @@ import java.util.HashSet;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -61,7 +62,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     private File file;
 
-    private Filter artifactFilter = null;
+    private Filter<Artifact> artifactFilter = null;
 
     private boolean useOrigin = false;
 
@@ -384,7 +385,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         revision = rev;
     }
 
-    public Filter getArtifactFilter() {
+    public Filter<Artifact> getArtifactFilter() {
         return artifactFilter;
     }
 

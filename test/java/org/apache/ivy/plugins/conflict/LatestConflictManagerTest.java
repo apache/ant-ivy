@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.plugins.conflict;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
@@ -31,9 +34,6 @@ import org.apache.ivy.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class LatestConflictManagerTest {
 
@@ -60,8 +60,8 @@ public class LatestConflictManagerTest {
         ResolveReport report = ivy.resolve(
             LatestConflictManagerTest.class.getResource("ivy-388.xml"), getResolveOptions());
 
-        List deps = report.getDependencies();
-        Iterator dependencies = deps.iterator();
+        List<IvyNode> deps = report.getDependencies();
+        Iterator<IvyNode> dependencies = deps.iterator();
         String[] confs = report.getConfigurations();
         while (dependencies.hasNext()) {
             IvyNode node = (IvyNode) dependencies.next();

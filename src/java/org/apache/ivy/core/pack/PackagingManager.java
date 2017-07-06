@@ -55,7 +55,7 @@ public class PackagingManager implements IvySettingsAware {
                 throw new IllegalStateException("Unsupported archive only packing type '"
                         + packings[i] + "' in the streamed chain: " + packaging);
             }
-            ext = ((StreamPacking) packing).getUnpackedExtension(ext);
+            ext = packing.getUnpackedExtension(ext);
         }
         ArchivePacking packing = settings.getPackingRegistry().get(packings[0]);
         if (packing == null) {
@@ -110,11 +110,10 @@ public class PackagingManager implements IvySettingsAware {
                 }
             }
         }
-        final DefaultArtifact unpacked = new DefaultArtifact(artifact.getModuleRevisionId(),
+
+        return new DefaultArtifact(artifact.getModuleRevisionId(),
                 artifact.getPublicationDate(), artifact.getName(),
                 artifact.getType() + "_unpacked", ext);
-
-        return unpacked;
 
     }
 

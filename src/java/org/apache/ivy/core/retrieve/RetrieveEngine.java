@@ -128,15 +128,15 @@ public class RetrieveEngine {
             report.setRetrieveRoot(fileRetrieveRoot);
             File ivyRetrieveRoot = destIvyPattern == null ? null : settings
                     .resolveFile(IvyPatternHelper.getTokenRoot(destIvyPattern));
-            Collection<File> targetArtifactsStructure = new HashSet<File>();
+            Collection<File> targetArtifactsStructure = new HashSet<>();
             // Set(File) set of all paths which should be present at then end of retrieve (useful
             // for sync)
-            Collection<File> targetIvysStructure = new HashSet<File>(); // same for ivy files
+            Collection<File> targetIvysStructure = new HashSet<>(); // same for ivy files
 
             if (options.isMakeSymlinksInMass()) {
                 // The HashMap is of "destToSrc" because src could go two places, but dest can only
                 // come from one
-                destToSrcMap = new HashMap<File, File>();
+                destToSrcMap = new HashMap<>();
             }
 
             // do retrieve
@@ -217,15 +217,13 @@ public class RetrieveEngine {
                 Collection<String> ignoreList = Arrays.asList(ignorableFilenames);
 
                 Collection<File> existingArtifacts = FileUtil.listAll(fileRetrieveRoot, ignoreList);
-                Collection<File> existingIvys = ivyRetrieveRoot == null ? null : FileUtil.listAll(
+                Collection<File> existingIvys = (ivyRetrieveRoot == null) ? null : FileUtil.listAll(
                     ivyRetrieveRoot, ignoreList);
 
                 if (fileRetrieveRoot.equals(ivyRetrieveRoot)) {
-                    Collection<File> target = targetArtifactsStructure;
-                    target.addAll(targetIvysStructure);
-                    Collection<File> existing = existingArtifacts;
-                    existing.addAll(existingIvys);
-                    sync(target, existing);
+                    targetArtifactsStructure.addAll(targetIvysStructure);
+                    existingArtifacts.addAll(existingIvys);
+                    sync(targetArtifactsStructure, existingArtifacts);
                 } else {
                     sync(targetArtifactsStructure, existingArtifacts);
                     if (existingIvys != null) {
@@ -269,9 +267,7 @@ public class RetrieveEngine {
             } catch (IOException e) {
                 throw e;
             } catch (Exception e) {
-                IOException ioex = new IOException(e.getMessage());
-                ioex.initCause(e);
-                throw ioex;
+                throw new IOException(e.getMessage(), e);
             }
         }
         return confs;
@@ -282,7 +278,7 @@ public class RetrieveEngine {
     }
 
     private void sync(Collection<File> target, Collection<File> existing) {
-        Collection<File> toRemove = new HashSet<File>();
+        Collection<File> toRemove = new HashSet<>();
         for (File file : existing) {
             toRemove.add(file.getAbsoluteFile());
         }
@@ -313,28 +309,25 @@ public class RetrieveEngine {
         // find what we must retrieve where
 
         // ArtifactDownloadReport source -> Set (String copyDestAbsolutePath)
-        final Map<ArtifactDownloadReport, Set<String>> artifactsToCopy = new HashMap<ArtifactDownloadReport, Set<String>>();
+        final Map<ArtifactDownloadReport, Set<String>> artifactsToCopy = new HashMap<>();
         // String copyDestAbsolutePath -> Set (ArtifactRevisionId source)
-        final Map<String, Set<ArtifactRevisionId>> conflictsMap = new HashMap<String, Set<ArtifactRevisionId>>();
+        final Map<String, Set<ArtifactRevisionId>> conflictsMap = new HashMap<>();
         // String copyDestAbsolutePath -> Set (ArtifactDownloadReport source)
-        final Map<String, Set<ArtifactDownloadReport>> conflictsReportsMap = new HashMap<String, Set<ArtifactDownloadReport>>();
+        final Map<String, Set<ArtifactDownloadReport>> conflictsReportsMap = new HashMap<>();
         // String copyDestAbsolutePath -> Set (String conf)
-        final Map<String, Set<String>> conflictsConfMap = new HashMap<String, Set<String>>();
+        final Map<String, Set<String>> conflictsConfMap = new HashMap<>();
 
         XmlReportParser parser = new XmlReportParser();
-        for (int i = 0; i < confs.length; i++) {
-            final String conf = confs[i];
-
+        for (final String conf : confs) {
             File report = cacheManager.getConfigurationResolveReportInCache(options.getResolveId(),
                 conf);
             parser.parse(report);
 
-            Collection<ArtifactDownloadReport> artifacts = new ArrayList<ArtifactDownloadReport>(
+            Collection<ArtifactDownloadReport> artifacts = new ArrayList<>(
                     Arrays.asList(parser.getArtifactReports()));
             if (destIvyPattern != null) {
-                ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds();
-                for (int j = 0; j < mrids.length; j++) {
-                    artifacts.add(parser.getMetadataArtifactReport(mrids[j]));
+                for (ModuleRevisionId rmrid : parser.getRealDependencyRevisionIds()) {
+                    artifacts.add(parser.getMetadataArtifactReport(rmrid));
                 }
             }
             final PackagingManager packagingManager = new PackagingManager();
@@ -377,7 +370,7 @@ public class RetrieveEngine {
                     artifact.getQualifiedExtraAttributes());
                 Set<String> dest = artifactsToCopy.get(adr);
                 if (dest == null) {
-                    dest = new HashSet<String>();
+                    dest = new HashSet<>();
                     artifactsToCopy.put(adr, dest);
                 }
                 String copyDest = settings.resolveFile(destFileName).getAbsolutePath();
@@ -387,24 +380,24 @@ public class RetrieveEngine {
                     destinations = options.getMapper().mapFileName(copyDest);
                 }
 
-                for (int j = 0; j < destinations.length; j++) {
-                    dest.add(destinations[j]);
+                for (String destination : destinations) {
+                    dest.add(destination);
 
-                    Set<ArtifactRevisionId> conflicts = conflictsMap.get(destinations[j]);
+                    Set<ArtifactRevisionId> conflicts = conflictsMap.get(destination);
                     Set<ArtifactDownloadReport> conflictsReports = conflictsReportsMap
-                            .get(destinations[j]);
-                    Set<String> conflictsConf = conflictsConfMap.get(destinations[j]);
+                            .get(destination);
+                    Set<String> conflictsConf = conflictsConfMap.get(destination);
                     if (conflicts == null) {
-                        conflicts = new HashSet<ArtifactRevisionId>();
-                        conflictsMap.put(destinations[j], conflicts);
+                        conflicts = new HashSet<>();
+                        conflictsMap.put(destination, conflicts);
                     }
                     if (conflictsReports == null) {
-                        conflictsReports = new HashSet<ArtifactDownloadReport>();
-                        conflictsReportsMap.put(destinations[j], conflictsReports);
+                        conflictsReports = new HashSet<>();
+                        conflictsReportsMap.put(destination, conflictsReports);
                     }
                     if (conflictsConf == null) {
-                        conflictsConf = new HashSet<String>();
-                        conflictsConfMap.put(destinations[j], conflictsConf);
+                        conflictsConf = new HashSet<>();
+                        conflictsConfMap.put(destination, conflictsConf);
                     }
                     if (conflicts.add(artifact.getId())) {
                         conflictsReports.add(adr);
@@ -420,7 +413,7 @@ public class RetrieveEngine {
             Set<ArtifactRevisionId> artifacts = entry.getValue();
             Set<String> conflictsConfs = conflictsConfMap.get(copyDest);
             if (artifacts.size() > 1) {
-                List<ArtifactDownloadReport> artifactsList = new ArrayList<ArtifactDownloadReport>(
+                List<ArtifactDownloadReport> artifactsList = new ArrayList<>(
                         conflictsReportsMap.get(copyDest));
                 // conflicts battle is resolved by a sort using a conflict resolving policy
                 // comparator which consider as greater a winning artifact

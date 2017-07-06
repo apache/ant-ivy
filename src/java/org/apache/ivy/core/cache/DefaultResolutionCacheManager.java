@@ -195,22 +195,21 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
 
     private void saveLocalParents(ModuleRevisionId baseMrevId, ModuleDescriptor md, File mdFile,
             Properties paths) throws ParseException, IOException {
-        ExtendsDescriptor[] parents = md.getInheritedDescriptors();
-        for (int i = 0; i < parents.length; i++) {
-            if (!parents[i].isLocal()) {
+        for (ExtendsDescriptor parent : md.getInheritedDescriptors()) {
+            if (!parent.isLocal()) {
                 // we store only local parents in the cache!
                 continue;
             }
 
-            ModuleDescriptor parent = parents[i].getParentMd();
+            ModuleDescriptor parentMd = parent.getParentMd();
             ModuleRevisionId pRevId = ModuleRevisionId.newInstance(baseMrevId,
                 baseMrevId.getRevision() + "-parent." + paths.size());
             File parentFile = getResolvedIvyFileInCache(pRevId);
-            parent.toIvyFile(parentFile);
+            parentMd.toIvyFile(parentFile);
 
-            paths.setProperty(mdFile.getName() + "|" + parents[i].getLocation(),
+            paths.setProperty(mdFile.getName() + "|" + parent.getLocation(),
                 parentFile.getAbsolutePath());
-            saveLocalParents(baseMrevId, parent, parentFile, paths);
+            saveLocalParents(baseMrevId, parentMd, parentFile, paths);
         }
     }
 
@@ -226,9 +225,9 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
 
         private ParserSettings delegate;
 
-        private Map parentPaths;
+        private Map<Object, Object> parentPaths;
 
-        public CacheParserSettings(ParserSettings delegate, Map parentPaths) {
+        public CacheParserSettings(ParserSettings delegate, Map<Object, Object> parentPaths) {
             this.delegate = delegate;
             this.parentPaths = parentPaths;
         }
@@ -237,7 +236,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             return delegate.substitute(value);
         }
 
-        public Map substitute(Map strings) {
+        public Map<String, String> substitute(Map<String, String> strings) {
             return delegate.substitute(strings);
         }
 
@@ -288,18 +287,18 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
 
     private static final class MapURLResolver extends RelativeUrlResolver {
 
-        private Map paths;
+        private Map<Object, Object> paths;
 
         private RelativeUrlResolver delegate;
 
-        private MapURLResolver(Map paths, RelativeUrlResolver delegate) {
+        private MapURLResolver(Map<Object, Object> paths, RelativeUrlResolver delegate) {
             this.paths = paths;
             this.delegate = delegate;
         }
 
         public URL getURL(URL context, String url) throws MalformedURLException {
             String path = context.getPath();
-            if (path.indexOf('/') >= 0) {
+            if (path.contains("/")) {
                 String file = path.substring(path.lastIndexOf('/') + 1);
 
                 if (paths.containsKey(file + "|" + url)) {

@@ -150,7 +150,7 @@ public class ArtifactOrigin {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ArtifactOrigin)) {
             return false;
         }
 

@@ -21,7 +21,7 @@ import java.util.List;
 
 public final class MessageLoggerHelper {
     public static void sumupProblems(MessageLogger logger) {
-        List myProblems = logger.getProblems();
+        List<String> myProblems = logger.getProblems();
         if (myProblems.size() > 0) {
             List<String> myWarns = logger.getWarns();
             List<String> myErrors = logger.getErrors();

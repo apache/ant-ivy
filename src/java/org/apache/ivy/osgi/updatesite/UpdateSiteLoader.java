@@ -222,7 +222,7 @@ public class UpdateSiteLoader {
         return true;
     }
 
-    private UpdateSite loadSite(URI repoUri) throws IOException, ParseException, SAXException {
+    private UpdateSite loadSite(URI repoUri) throws IOException, SAXException {
         URI siteUri = normalizeSiteUri(repoUri, null);
         URL u = siteUri.resolve("site.xml").toURL();
 
@@ -262,7 +262,7 @@ public class UpdateSiteLoader {
     }
 
     private UpdateSiteDescriptor loadFromDigest(UpdateSite site) throws IOException,
-            ParseException, SAXException {
+            SAXException {
         URI digestBaseUri = site.getDigestUri();
         if (digestBaseUri == null) {
             digestBaseUri = site.getUri();
@@ -287,8 +287,7 @@ public class UpdateSiteLoader {
         }
     }
 
-    private UpdateSiteDescriptor loadFromSite(UpdateSite site) throws IOException, ParseException,
-            SAXException {
+    private UpdateSiteDescriptor loadFromSite(UpdateSite site) throws IOException, SAXException {
         UpdateSiteDescriptor repoDescriptor = new UpdateSiteDescriptor(site.getUri(),
                 ExecutionEnvironmentProfileProvider.getInstance());
 

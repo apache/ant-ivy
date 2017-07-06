@@ -17,25 +17,25 @@
  */
 package org.apache.ivy.util.filter;
 
-public class OrFilter implements Filter {
-    private Filter op1;
+public class OrFilter<T> implements Filter<T> {
+    private Filter<T> op1;
 
-    private Filter op2;
+    private Filter<T> op2;
 
-    public OrFilter(Filter op1, Filter op2) {
+    public OrFilter(Filter<T> op1, Filter<T> op2) {
         this.op1 = op1;
         this.op2 = op2;
     }
 
-    public Filter getOp1() {
+    public Filter<T> getOp1() {
         return op1;
     }
 
-    public Filter getOp2() {
+    public Filter<T> getOp2() {
         return op2;
     }
 
-    public boolean accept(Object o) {
+    public boolean accept(T o) {
         return op1.accept(o) || op2.accept(o);
     }
 }
