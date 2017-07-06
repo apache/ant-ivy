@@ -473,7 +473,7 @@ public class P2MetadataParser implements XMLInputParser {
                             return;
                         }
                         BundleCapability capability;
-                        if (type == BundleInfo.PACKAGE_TYPE) {
+                        if (BundleInfo.PACKAGE_TYPE.equals(type)) {
                             capability = new ExportPackage(child.name, child.version);
                         } else {
                             capability = new BundleCapability(type, child.name, child.version);
