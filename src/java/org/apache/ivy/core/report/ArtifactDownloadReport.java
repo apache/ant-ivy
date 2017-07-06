@@ -127,7 +127,7 @@ public class ArtifactDownloadReport {
         if (downloadStatus == DownloadStatus.SUCCESSFUL) {
             return "[SUCCESSFUL ] " + artifact + " (" + downloadTimeMillis + "ms)";
         } else if (downloadStatus == DownloadStatus.FAILED) {
-            if (downloadDetails == MISSING_ARTIFACT) {
+            if (MISSING_ARTIFACT.equals(downloadDetails)) {
                 return "[NOT FOUND  ] " + artifact + " (" + downloadTimeMillis + "ms)";
             } else {
                 return "[FAILED     ] " + artifact + ": " + downloadDetails + " ("

@@ -123,6 +123,7 @@ public class ModuleDescriptorMemoryCacheTest {
     public void testVariableChangeInvalidateEntry() throws ParseException, IOException {
         ModuleDescriptorProviderMock providerMock = new ModuleDescriptorProviderMock(md1);
         ModuleDescriptorProviderMock providerMock2 = new ModuleDescriptorProviderMock(md1);
+        ivySettings2.getVariables().setVariable("val", "firstVal", true);
         assertEquals(md1, cache.get(url1, ivySettings2, false, providerMock));
         ivySettings2.getVariables().setVariable("val", "changedVal", true);
         assertEquals(md1, cache.get(url1, ivySettings2, false, providerMock2));

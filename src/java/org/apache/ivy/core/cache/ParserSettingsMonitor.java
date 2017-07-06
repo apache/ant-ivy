@@ -145,7 +145,7 @@ class ParserSettingsMonitor {
 
         public String substitute(String value) {
             String r = delegatedSettings.substitute(value);
-            if (value != null && value != r) {
+            if (value != null && !value.equals(r)) {
                 substitutes.put(value, r);
             }
             return r;
