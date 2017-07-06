@@ -92,7 +92,7 @@ public class XmlReportWriter {
             out.println("\t\t<module organisation=\"" + XMLHelper.escape(mid.getOrganisation())
                     + "\"" + " name=\"" + XMLHelper.escape(mid.getName()) + "\">");
             for (IvyNode dep : report.getNodes(mid)) {
-                ouputRevision(report, out, dependencies, dep);
+                outputRevision(report, out, dependencies, dep);
             }
             out.println("\t\t</module>");
         }
@@ -101,8 +101,8 @@ public class XmlReportWriter {
         out.flush();
     }
 
-    private void ouputRevision(ConfigurationResolveReport report, PrintWriter out,
-            List<ModuleRevisionId> dependencies, IvyNode dep) {
+    private void outputRevision(ConfigurationResolveReport report, PrintWriter out,
+                                List<ModuleRevisionId> dependencies, IvyNode dep) {
         Map<String, String> extraAttributes;
         ModuleDescriptor md = null;
         if (dep.getModuleRevision() != null) {

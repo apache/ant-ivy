@@ -50,7 +50,7 @@ public final class URLHandlerRegistry {
             // http-client-3.x is available
             Class.forName("org.apache.commons.httpclient.params.HttpClientParams");
 
-            Class handler = Class.forName("org.apache.ivy.util.url.HttpClientHandler");
+            Class<?> handler = Class.forName("org.apache.ivy.util.url.HttpClientHandler");
             Message.verbose("jakarta commons httpclient detected: using it for http downloading");
             return (URLHandler) handler.newInstance();
         } catch (ClassNotFoundException e) {

@@ -17,6 +17,17 @@
 
 package org.apache.ivy.core.module.descriptor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.IvyMakePom;
 import org.apache.ivy.util.TestXmlHelper;
@@ -27,16 +38,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.XPathConstants;
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link IvyMakePom}
@@ -106,6 +107,7 @@ public class IvyMakePomTest {
         private final String version;
         private final String scope;
         private final String classifier;
+        @SuppressWarnings("unused")
         private final boolean optional;
 
         private PomDependency(final String groupId, final String artifactId, final String version,
@@ -122,7 +124,6 @@ public class IvyMakePomTest {
             this.classifier = classifier;
             this.optional = optional;
         }
-
 
         static PomDependency parse(final Node dependencyNode) {
             if (dependencyNode == null) {

@@ -85,7 +85,7 @@ public class ModuleDescriptorWrapper {
 
     @Override
     public boolean equals(Object obj) {
-        return !(obj == null || !(obj instanceof ModuleDescriptorWrapper))
+        return obj instanceof ModuleDescriptorWrapper
                 && bundleInfo.equals(((ModuleDescriptorWrapper) obj).bundleInfo);
     }
 

@@ -29,7 +29,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
 
     private String location;
 
-    private List extendsTypes;
+    private final List<String> extendsTypes;
 
     private boolean local;
 
@@ -42,7 +42,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
         this.parent = parent;
         this.location = location;
         this.local = local;
-        this.extendsTypes = new ArrayList(types.length);
+        this.extendsTypes = new ArrayList<>(types.length);
         extendsTypes.addAll(Arrays.asList(types));
     }
 
@@ -63,7 +63,7 @@ public class DefaultExtendsDescriptor implements ExtendsDescriptor {
     }
 
     public String[] getExtendsTypes() {
-        return (String[]) extendsTypes.toArray(new String[extendsTypes.size()]);
+        return extendsTypes.toArray(new String[extendsTypes.size()]);
     }
 
     public boolean isAllInherited() {

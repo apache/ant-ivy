@@ -59,8 +59,8 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
             VersionMatcher matcher, NonMatchingVersionReporter nonMatchingVersionReporter) {
         this.versionMatcher = matcher;
         this.nonMatchingVersionReporter = nonMatchingVersionReporter;
-        this.modulesByModuleId = new HashMap<ModuleId, Collection<ModuleInSort>>();
-        moduleDescriptors = new ArrayList<ModuleInSort>(modulesToSort.size());
+        this.modulesByModuleId = new HashMap<>();
+        moduleDescriptors = new ArrayList<>(modulesToSort.size());
         for (ModuleDescriptor md : modulesToSort) {
             ModuleInSort mdInSort = new ModuleInSort(md);
             moduleDescriptors.add(mdInSort);
@@ -70,7 +70,7 @@ class CollectionOfModulesToSort implements Iterable<ModuleInSort> {
 
     private void addToModulesByModuleId(ModuleDescriptor md, ModuleInSort mdInSort) {
         ModuleId mdId = md.getModuleRevisionId().getModuleId();
-        List<ModuleInSort> mdInSortAsList = new LinkedList<ModuleInSort>();
+        List<ModuleInSort> mdInSortAsList = new LinkedList<>();
         mdInSortAsList.add(mdInSort);
         Collection<ModuleInSort> previousList = modulesByModuleId.put(mdId, mdInSortAsList);
         if (previousList != null) {

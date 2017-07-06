@@ -119,7 +119,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private Boolean useOrigin;
 
-    private ModuleRules<Long> ttlRules = new ModuleRules<Long>();
+    private ModuleRules<Long> ttlRules = new ModuleRules<>();
 
     private Long defaultTTL = null;
 
@@ -127,7 +127,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private PackagingManager packagingManager = new PackagingManager();
 
-    private final List<ConfiguredTTL> configuredTTLs = new ArrayList<ConfiguredTTL>();
+    private final List<ConfiguredTTL> configuredTTLs = new ArrayList<>();
 
     public DefaultRepositoryCacheManager() {
     }
@@ -202,17 +202,17 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     public long getDefaultTTL() {
         if (defaultTTL == null) {
-            defaultTTL = Long.valueOf(parseDuration(settings.getVariable("ivy.cache.ttl.default")));
+            defaultTTL = parseDuration(settings.getVariable("ivy.cache.ttl.default"));
         }
-        return defaultTTL.longValue();
+        return defaultTTL;
     }
 
     public void setDefaultTTL(long defaultTTL) {
-        this.defaultTTL = Long.valueOf(defaultTTL);
+        this.defaultTTL = defaultTTL;
     }
 
     public void setDefaultTTL(String defaultTTL) {
-        this.defaultTTL = Long.valueOf(parseDuration(defaultTTL));
+        this.defaultTTL = parseDuration(defaultTTL);
     }
 
     public String getDataFilePattern() {
@@ -254,7 +254,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void addTTL(Map<String, String> attributes, PatternMatcher matcher, long duration) {
-        ttlRules.defineRule(new MapMatcher(attributes, matcher), new Long(duration));
+        ttlRules.defineRule(new MapMatcher(attributes, matcher), duration);
     }
 
     public void addConfiguredTtl(final Map<String, String> attributes) {
@@ -330,7 +330,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             return getSettings() != null && Boolean
                     .parseBoolean(getSettings().getVariable("ivy.resolver.default.check.modified"));
         }
-        return checkmodified.booleanValue();
+        return checkmodified;
     }
 
     public void setCheckmodified(boolean check) {
@@ -937,7 +937,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     public long getTTL(ModuleRevisionId mrid) {
         Long ttl = ttlRules.getRule(mrid);
-        return ttl == null ? getDefaultTTL() : ttl.longValue();
+        return ttl == null ? getDefaultTTL() : ttl;
     }
 
     @Override
@@ -1128,7 +1128,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 }
             } else {
                 long start = System.currentTimeMillis();
-                origin.setLastChecked(new Long(start));
+                origin.setLastChecked(start);
                 try {
                     ResolvedResource artifactRef = new ResolvedResource(resource,
                             Ivy.getWorkingRevision());
@@ -1216,7 +1216,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             ArtifactOrigin savedOrigin, ArtifactOrigin origin, long ttl) {
         long time = System.currentTimeMillis();
         if (savedOrigin.getLastChecked() != null
-                && (time - savedOrigin.getLastChecked().longValue()) < ttl) {
+                && (time - savedOrigin.getLastChecked()) < ttl) {
             // still in the ttl period, no need to check, trust the cache
             return archiveFile.exists() || !savedOrigin.isExists();
         }
@@ -1224,7 +1224,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             // the the file doesn't exist in the cache, obviously not up to date
             return false;
         }
-        origin.setLastChecked(Long.valueOf(time));
+        origin.setLastChecked(time);
         // check if the local resource is up to date regarding the remote one
         return archiveFile.lastModified() >= resource.getLastModified();
     }
@@ -1580,7 +1580,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private static final class ConfiguredTTL {
         // attributes on the TTL, that don't contribute to module matching
-        private static final Set<String> attributesNotContributingToMatching = new HashSet<String>();
+        private static final Set<String> attributesNotContributingToMatching = new HashSet<>();
         static {
             attributesNotContributingToMatching.add("duration");
             attributesNotContributingToMatching.add("matcher");
@@ -1596,7 +1596,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             if (attributes == null) {
                 this.attributes = Collections.emptyMap();
             } else {
-                final Map<String, String> attrs = new HashMap<String, String>(attributes);
+                final Map<String, String> attrs = new HashMap<>(attributes);
                 for (final String removable : attributesNotContributingToMatching) {
                     attrs.remove(removable);
                 }

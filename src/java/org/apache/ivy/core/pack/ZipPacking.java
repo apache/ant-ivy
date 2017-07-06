@@ -49,9 +49,7 @@ public class ZipPacking extends ArchivePacking {
 
     @Override
     public void unpack(InputStream packed, File dest) throws IOException {
-        ZipInputStream zip = null;
-        try {
-            zip = new ZipInputStream(packed);
+        try (ZipInputStream zip = new ZipInputStream(packed)) {
             ZipEntry entry = null;
             while (((entry = zip.getNextEntry()) != null)) {
                 File f = new File(dest, entry.getName());
@@ -70,14 +68,6 @@ public class ZipPacking extends ArchivePacking {
                 }
 
                 f.setLastModified(entry.getTime());
-            }
-        } finally {
-            if (zip != null) {
-                try {
-                    zip.close();
-                } catch (IOException e) {
-                    // ignore
-                }
             }
         }
     }

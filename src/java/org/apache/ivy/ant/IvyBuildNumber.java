@@ -153,10 +153,10 @@ public class IvyBuildNumber extends IvyTask {
         if (revision == null || revision.length() == 0) {
             revision = "latest.integration";
         } else if (!revision.endsWith("+")) {
-            revision = revision + "+";
+            revision += "+";
         }
         if (!prefix.endsWith(".") && prefix.length() > 0) {
-            prefix = prefix + ".";
+            prefix += ".";
         }
 
         SearchEngine searcher = new SearchEngine(settings);
@@ -205,13 +205,14 @@ public class IvyBuildNumber extends IvyTask {
 
         VersionMatcher matcher = settings.getVersionMatcher();
         LatestStrategy latestStrategy = settings.getLatestStrategy("latest-revision");
-        List sorted = latestStrategy.sort(infos);
+        List<ArtifactInfo> sorted = latestStrategy.sort(infos);
 
         ModuleRevisionId askedMrid = ModuleRevisionId.newInstance(organisation, module, branch,
             revision);
 
         String foundRevision = null;
-        for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
+        ListIterator<ArtifactInfo> iter = sorted.listIterator(sorted.size());
+        while (iter.hasPrevious()) {
             ResolvedModuleRevisionArtifactInfo info = (ResolvedModuleRevisionArtifactInfo) iter
                     .previous();
 

@@ -43,9 +43,9 @@ public class MDArtifact extends AbstractArtifact {
 
     private String ext;
 
-    private List/* <String> */confs = new ArrayList();
+    private final List<String> confs = new ArrayList<>();
 
-    private Map extraAttributes = null;
+    private Map<String, String> extraAttributes = null;
 
     private URL url;
 
@@ -61,7 +61,7 @@ public class MDArtifact extends AbstractArtifact {
     }
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext, URL url,
-            Map extraAttributes) {
+            Map<String, String> extraAttributes) {
         if (md == null) {
             throw new NullPointerException("null module descriptor not allowed");
         }
@@ -109,7 +109,7 @@ public class MDArtifact extends AbstractArtifact {
     }
 
     public String[] getConfigurations() {
-        return (String[]) confs.toArray(new String[confs.size()]);
+        return confs.toArray(new String[confs.size()]);
     }
 
     public void addConfiguration(String conf) {

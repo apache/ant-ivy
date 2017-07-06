@@ -749,8 +749,8 @@ public final class FileUtil {
 
         @Override
         public String toString() {
-            return "Dissected Path [root=" + root + ", remainingPath=" +
-                    remainingPath + "]";
+            return "Dissected Path [root=" + root + ", remainingPath="
+                    + remainingPath + "]";
         }
     }
 }

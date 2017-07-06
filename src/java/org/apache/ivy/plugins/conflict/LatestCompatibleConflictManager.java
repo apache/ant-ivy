@@ -191,13 +191,13 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             settings.getVersionMatcher(), parent, selected, evicted, callerStack);
         if (toBlacklist != null) {
             final StringBuilder blacklisted = new StringBuilder();
-            for (Iterator<IvyNodeBlacklist> iterator = toBlacklist.iterator(); iterator.hasNext();) {
-                IvyNodeBlacklist blacklist = iterator.next();
-                blacklist.getBlacklistedNode().blacklist(blacklist);
-                blacklisted.append(blacklist.getBlacklistedNode());
-                if (iterator.hasNext()) {
+            for (IvyNodeBlacklist blacklist : toBlacklist) {
+                if (blacklisted.length() > 0) {
                     blacklisted.append(" ");
                 }
+                IvyNode blacklistedNode = blacklist.getBlacklistedNode();
+                blacklistedNode.blacklist(blacklist);
+                blacklisted.append(blacklistedNode);
             }
 
             String rootModuleConf = parent.getData().getReport().getConfiguration();

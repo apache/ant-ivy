@@ -67,14 +67,14 @@ public class XmlModuleUpdaterTest {
         XmlModuleDescriptorUpdater.LINE_SEPARATOR = "\n";
         File dest = new File("build/updated-test.xml");
         dest.deleteOnExit();
-        Map resolvedRevisions = new HashMap();
+        Map<ModuleRevisionId, String> resolvedRevisions = new HashMap<>();
         resolvedRevisions.put(
             ModuleRevisionId.newInstance("yourorg", "yourmodule2", "branch1", "2+"), "2.5");
         resolvedRevisions.put(
             ModuleRevisionId.newInstance("yourorg", "yourmodule6", "trunk", "latest.integration"),
             "6.3");
 
-        Map resolvedBranches = new HashMap();
+        Map<ModuleRevisionId, String> resolvedBranches = new HashMap<>();
         resolvedBranches.put(ModuleRevisionId.newInstance("yourorg", "yourmodule3", "3.1"),
             "branch1");
         resolvedBranches.put(
@@ -126,14 +126,14 @@ public class XmlModuleUpdaterTest {
         XmlModuleDescriptorUpdater.LINE_SEPARATOR = "\n";
         File dest = new File("build/updated-test2.xml");
         dest.deleteOnExit();
-        Map resolvedRevisions = new HashMap();
+        Map<ModuleRevisionId, String> resolvedRevisions = new HashMap<>();
         resolvedRevisions.put(
             ModuleRevisionId.newInstance("yourorg", "yourmodule2", "branch1", "2+"), "2.5");
         resolvedRevisions.put(
             ModuleRevisionId.newInstance("yourorg", "yourmodule6", "trunk", "latest.integration"),
             "6.3");
 
-        Map resolvedBranches = new HashMap();
+        Map<ModuleRevisionId, String> resolvedBranches = new HashMap<>();
         resolvedBranches.put(ModuleRevisionId.newInstance("yourorg", "yourmodule3", "3.1"),
             "branch1");
         resolvedBranches.put(
@@ -366,11 +366,13 @@ public class XmlModuleUpdaterTest {
     }
 
     private UpdateOptions getUpdateOptions(String status, String revision) {
-        return getUpdateOptions(new IvySettings(), new HashMap(), status, revision, new Date());
+        return getUpdateOptions(new IvySettings(), new HashMap<ModuleRevisionId, String>(), status,
+            revision, new Date());
     }
 
-    private UpdateOptions getUpdateOptions(IvySettings settings, Map resolvedRevisions,
-            String status, String revision, Date pubdate) {
+    private UpdateOptions getUpdateOptions(IvySettings settings,
+            Map<ModuleRevisionId, String> resolvedRevisions, String status, String revision,
+            Date pubdate) {
         return new UpdateOptions().setSettings(settings).setResolvedRevisions(resolvedRevisions)
                 .setStatus(status).setRevision(revision).setPubdate(pubdate);
     }

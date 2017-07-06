@@ -123,14 +123,14 @@ public class IvyNodeUsage {
     // used to know which configurations of the dependency are required
     // for each root module configuration
     // rootConfName -> confNames
-    private Map<String, Set<String>> rootModuleConfs = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> rootModuleConfs = new HashMap<>();
 
-    private Map<NodeConf, Set<String>> requiredConfs = new HashMap<NodeConf, Set<String>>();
+    private Map<NodeConf, Set<String>> requiredConfs = new HashMap<>();
 
-    private Map<String, Set<Depender>> dependers = new HashMap<String, Set<Depender>>();
+    private Map<String, Set<Depender>> dependers = new HashMap<>();
 
     // rootModuleConf -> black list
-    private Map<String, IvyNodeBlacklist> blacklisted = new HashMap<String, IvyNodeBlacklist>();
+    private Map<String, IvyNodeBlacklist> blacklisted = new HashMap<>();
 
     public IvyNodeUsage(IvyNode node) {
         this.node = node;
@@ -141,12 +141,12 @@ public class IvyNodeUsage {
     }
 
     protected void setRequiredConfs(IvyNode parent, String parentConf, Collection<String> confs) {
-        requiredConfs.put(new NodeConf(parent, parentConf), new HashSet<String>(confs));
+        requiredConfs.put(new NodeConf(parent, parentConf), new HashSet<>(confs));
     }
 
     /**
      * Returns the configurations of the dependency required in a given root module configuration.
-     * 
+     *
      * @param rootModuleConf ditto
      * @return Set&lt;String&gt;
      */
@@ -157,7 +157,7 @@ public class IvyNodeUsage {
     protected Set<String> addAndGetConfigurations(String rootModuleConf) {
         Set<String> depConfs = rootModuleConfs.get(rootModuleConf);
         if (depConfs == null) {
-            depConfs = new HashSet<String>();
+            depConfs = new HashSet<>();
             rootModuleConfs.put(rootModuleConf, depConfs);
         }
         return depConfs;
@@ -197,7 +197,7 @@ public class IvyNodeUsage {
             if (toupdate != null) {
                 toupdate.addAll(set);
             } else {
-                to.put(key, new HashSet<V>(set));
+                to.put(key, new HashSet<>(set));
             }
         }
     }
@@ -205,7 +205,7 @@ public class IvyNodeUsage {
     private <K, V> void addObjectsForConf(K rootModuleConf, V objectToAdd, Map<K, Set<V>> map) {
         Set<V> set = map.get(rootModuleConf);
         if (set == null) {
-            set = new HashSet<V>();
+            set = new HashSet<>();
             map.put(rootModuleConf, set);
         }
         set.add(objectToAdd);
@@ -224,7 +224,7 @@ public class IvyNodeUsage {
         if (dependersInConf == null) {
             return null;
         }
-        Set<DependencyArtifactDescriptor> dependencyArtifacts = new HashSet<DependencyArtifactDescriptor>();
+        Set<DependencyArtifactDescriptor> dependencyArtifacts = new HashSet<>();
         for (Depender depender : dependersInConf) {
             DependencyArtifactDescriptor[] dads = depender.dd
                     .getDependencyArtifacts(depender.dependerConf);
@@ -238,7 +238,7 @@ public class IvyNodeUsage {
         if (dependersInConf == null) {
             return null;
         }
-        Set<IncludeRule> dependencyIncludes = new HashSet<IncludeRule>();
+        Set<IncludeRule> dependencyIncludes = new HashSet<>();
         for (Depender depender : dependersInConf) {
             IncludeRule[] rules = depender.dd.getIncludeRules(depender.dependerConf);
             if (rules == null || rules.length == 0) {
@@ -264,10 +264,10 @@ public class IvyNodeUsage {
      * <p>
      * A blacklisted node should be considered as if it doesn't even exist on the repository.
      * </p>
-     * 
+     *
      * @param rootModuleConf
      *            the root module conf for which we'd like to know if the node is blacklisted
-     * 
+     *
      * @return true if this node is blacklisted int he given root module conf, false otherwise
      * @see #blacklist(IvyNodeBlacklist)
      */
@@ -278,7 +278,7 @@ public class IvyNodeUsage {
     /**
      * Returns the blacklist data of this node in the given root module conf, or <code>null</code>
      * if this node is not blacklisted in this root module conf.
-     * 
+     *
      * @param rootModuleConf
      *            the root module configuration to consider
      * @return the blacklist data if any
@@ -294,7 +294,7 @@ public class IvyNodeUsage {
     /**
      * Indicates if at least one depender has a transitive dependency descriptor for the given root
      * module conf.
-     * 
+     *
      * @param rootModuleConf
      *            the root module conf to consider
      * @return <code>true</code> if at least one depender has a transitive dependency descriptor for

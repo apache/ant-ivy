@@ -158,11 +158,8 @@ public class BuildOBRTask extends IvyCacheTask {
             prepareAndCheck();
             try {
                 it = new ArtifactReportManifestIterable(getArtifactReports(), sourceTypes);
-            } catch (ParseException e) {
+            } catch (ParseException | IOException e) {
                 throw new BuildException("Impossible to parse the artifact reports: "
-                        + e.getMessage(), e);
-            } catch (IOException e) {
-                throw new BuildException("Impossible to read the artifact reports: "
                         + e.getMessage(), e);
             }
         }

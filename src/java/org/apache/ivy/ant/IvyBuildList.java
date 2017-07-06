@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -273,14 +272,12 @@ public class IvyBuildList extends IvyTask {
             sortedModules = keptModules;
         }
         StringBuilder order = new StringBuilder();
-        for (ListIterator<ModuleDescriptor> iter = sortedModules.listIterator(); iter.hasNext();) {
-            ModuleDescriptor md = iter.next();
-            order.append(md.getModuleRevisionId().getModuleId());
-            if (iter.hasNext()) {
+        for (ModuleDescriptor md : sortedModules) {
+            if (order.length() > 0) {
                 order.append(", ");
             }
-            File buildFile = buildFiles.get(md);
-            addBuildFile(path, buildFile);
+            order.append(md.getModuleRevisionId().getModuleId());
+            addBuildFile(path, buildFiles.get(md));
         }
         if (OnMissingDescriptor.TAIL.equals(onMissingDescriptor)) {
             for (File buildFile : noDescriptor) {

@@ -491,8 +491,8 @@ public class Scp {
                 throw new IllegalArgumentException("Invalid mode.");
             }
 
-            for (int i = 0; i < mode.length(); i++) {
-                if (!Character.isDigit(mode.charAt(i))) {
+            for (char c : mode.toCharArray()) {
+                if (!Character.isDigit(c)) {
                     throw new IllegalArgumentException("Invalid mode.");
                 }
             }
@@ -500,10 +500,10 @@ public class Scp {
 
         String cmd = "scp -t ";
         if (mode != null) {
-            cmd = cmd + "-p ";
+            cmd += "-p ";
         }
         if (remoteTargetDir != null && remoteTargetDir.length() > 0) {
-            cmd = cmd + "-d " + remoteTargetDir;
+            cmd += "-d " + remoteTargetDir;
         }
 
         try {
@@ -549,9 +549,9 @@ public class Scp {
      * @throws RemoteScpException
      *             in case of problems on the target system (connection ok)
      */
+    @SuppressWarnings("unused")
     public void get(String remoteFile, OutputStream localTarget) throws IOException,
             RemoteScpException {
-    @SuppressWarnings("unused")
         ChannelExec channel = null;
 
         if ((remoteFile == null) || (localTarget == null)) {

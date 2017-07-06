@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -278,8 +277,8 @@ public final class Main {
                         "working"));
             DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
                     ModuleRevisionId.newInstance(dep[0], dep[1], dep[2]), false, false, true);
-            for (int i = 0; i < confs.length; i++) {
-                dd.addDependencyConfiguration("default", confs[i]);
+            for (String conf : confs) {
+                dd.addDependencyConfiguration("default", conf);
             }
             md.addDependency(dd);
             XmlModuleDescriptorWriter.write(md, ivyfile);
@@ -319,8 +318,8 @@ public final class Main {
         }
         if (line.hasOption("retrieve")) {
             String retrievePattern = settings.substitute(line.getOptionValue("retrieve"));
-            if (retrievePattern.indexOf("[") == -1) {
-                retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
+            if (!retrievePattern.contains("[")) {
+                retrievePattern += "/lib/[conf]/[artifact].[ext]";
             }
             String ivyPattern = settings.substitute(line.getOptionValue("ivypattern"));
             ivy.retrieve(
@@ -366,7 +365,7 @@ public final class Main {
         }
         if (line.hasOption("main")) {
             // check if the option cp has been set
-            List fileList = getExtraClasspathFileList(line);
+            List<File> fileList = getExtraClasspathFileList(line);
 
             // merge -args and left over args
             String[] fargs = line.getOptionValues("args");
@@ -399,13 +398,12 @@ public final class Main {
      * @return a List of files to include as extra classpath entries, or <code>null</code> if no cp
      *         option was provided.
      */
-    private static List/* <File> */getExtraClasspathFileList(CommandLine line) {
-        List fileList = null;
+    private static List<File> getExtraClasspathFileList(CommandLine line) {
+        List<File> fileList = null;
         if (line.hasOption("cp")) {
-            fileList = new ArrayList/* <File> */();
-            String[] cpArray = line.getOptionValues("cp");
-            for (int index = 0; index < cpArray.length; index++) {
-                StringTokenizer tokenizer = new StringTokenizer(cpArray[index],
+            fileList = new ArrayList<>();
+            for (String cp : line.getOptionValues("cp")) {
+                StringTokenizer tokenizer = new StringTokenizer(cp,
                         System.getProperty("path.separator"));
                 while (tokenizer.hasMoreTokens()) {
                     String token = tokenizer.nextToken();
@@ -472,19 +470,18 @@ public final class Main {
             String outFile) {
         try {
             String pathSeparator = System.getProperty("path.separator");
-            StringBuffer buf = new StringBuffer();
-            Collection all = new LinkedHashSet();
+            StringBuilder buf = new StringBuilder();
+            Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
             ResolutionCacheManager cacheMgr = ivy.getResolutionCacheManager();
             XmlReportParser parser = new XmlReportParser();
-            for (int i = 0; i < confs.length; i++) {
+            for (String conf : confs) {
                 String resolveId = ResolveOptions.getDefaultResolveId(md);
-                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, conf);
                 parser.parse(report);
 
                 all.addAll(Arrays.asList(parser.getArtifactReports()));
             }
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
+            for (ArtifactDownloadReport artifact : all) {
                 if (artifact.getLocalFile() != null) {
                     buf.append(artifact.getLocalFile().getCanonicalPath());
                     buf.append(pathSeparator);
@@ -505,13 +502,12 @@ public final class Main {
 
     @SuppressWarnings("resource")
     private static void invoke(Ivy ivy, File cache, ModuleDescriptor md, String[] confs,
-            List fileList, String mainclass, String[] args) {
-        List urls = new ArrayList();
+            List<File> fileList, String mainclass, String[] args) {
+        List<URL> urls = new ArrayList<>();
 
         // Add option cp (extra classpath) urls
         if (fileList != null && fileList.size() > 0) {
-            for (Iterator iter = fileList.iterator(); iter.hasNext();) {
-                File file = (File) iter.next();
+            for (File file : fileList) {
                 try {
                     urls.add(file.toURI().toURL());
                 } catch (MalformedURLException e) {
@@ -521,19 +517,17 @@ public final class Main {
         }
 
         try {
-            Collection all = new LinkedHashSet();
+            Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
             ResolutionCacheManager cacheMgr = ivy.getResolutionCacheManager();
             XmlReportParser parser = new XmlReportParser();
-            for (int i = 0; i < confs.length; i++) {
+            for (String conf : confs) {
                 String resolveId = ResolveOptions.getDefaultResolveId(md);
-                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, conf);
                 parser.parse(report);
 
                 all.addAll(Arrays.asList(parser.getArtifactReports()));
             }
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
-
+            for (ArtifactDownloadReport artifact : all) {
                 if (artifact.getLocalFile() != null) {
                     urls.add(artifact.getLocalFile().toURI().toURL());
                 }
@@ -542,21 +536,19 @@ public final class Main {
             throw new RuntimeException("impossible to build ivy cache path: " + ex.getMessage(), ex);
         }
 
-        URLClassLoader classLoader = new URLClassLoader((URL[]) urls.toArray(new URL[urls.size()]),
+        URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]),
                 Main.class.getClassLoader());
 
         try {
-            Class c = classLoader.loadClass(mainclass);
+            Class<?> c = classLoader.loadClass(mainclass);
 
-            Method mainMethod = c.getMethod("main", new Class[] {String[].class});
+            Method mainMethod = c.getMethod("main", String[].class);
 
             Thread.currentThread().setContextClassLoader(classLoader);
             mainMethod.invoke(null, new Object[] {(args == null ? new String[0] : args)});
         } catch (ClassNotFoundException cnfe) {
             throw new RuntimeException("Could not find class: " + mainclass, cnfe);
-        } catch (SecurityException e) {
-            throw new RuntimeException("Could not find main method: " + mainclass, e);
-        } catch (NoSuchMethodException e) {
+        } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException("Could not find main method: " + mainclass, e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("No permissions to invoke main method: " + mainclass, e);

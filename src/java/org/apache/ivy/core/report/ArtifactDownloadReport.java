@@ -182,14 +182,11 @@ public class ArtifactDownloadReport {
     }
 
     public boolean equals(Object obj) {
+        if (!(obj instanceof ArtifactDownloadReport)) {
+            return false;
+        }
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
         }
         ArtifactDownloadReport other = (ArtifactDownloadReport) obj;
         if (artifact == null) {

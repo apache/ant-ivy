@@ -20,9 +20,11 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -61,7 +63,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     private File file;
 
-    private Filter artifactFilter = null;
+    private Filter<Artifact> artifactFilter = null;
 
     private boolean useOrigin = false;
 
@@ -265,7 +267,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 confs = splitConfs(conf);
             }
 
-            HashSet<String> rconfsSet = new HashSet<>();
+            Set<String> rconfsSet = new HashSet<>();
 
             // for each resolved configuration, check if the report still exists
             ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
@@ -281,7 +283,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 }
             }
 
-            HashSet<String> confsSet = new HashSet<>(Arrays.asList(confs));
+            Set<String> confsSet = new HashSet<>(Arrays.asList(confs));
             Message.debug("resolved configurations:   " + rconfsSet);
             Message.debug("asked configurations:      " + confsSet);
             confsSet.removeAll(rconfsSet);
@@ -384,7 +386,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         revision = rev;
     }
 
-    public Filter getArtifactFilter() {
+    public Filter<Artifact> getArtifactFilter() {
         return artifactFilter;
     }
 

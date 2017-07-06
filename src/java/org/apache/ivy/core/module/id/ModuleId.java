@@ -35,7 +35,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     static final String ENCODE_SEPARATOR = ":#@#:";
 
-    private static final Map<ModuleId, WeakReference<ModuleId>> CACHE = new WeakHashMap<ModuleId, WeakReference<ModuleId>>();
+    private static final Map<ModuleId, WeakReference<ModuleId>> CACHE = new WeakHashMap<>();
 
     /**
      * Returns a ModuleId for the given organization and module name.
@@ -72,7 +72,7 @@ public class ModuleId implements Comparable<ModuleId> {
             }
             if (r == null) {
                 r = moduleId;
-                CACHE.put(r, new WeakReference<ModuleId>(r));
+                CACHE.put(r, new WeakReference<>(r));
             }
         }
 
@@ -85,7 +85,7 @@ public class ModuleId implements Comparable<ModuleId> {
 
     private int hash;
 
-    private Map<String, String> attributes = new HashMap<String, String>();
+    private Map<String, String> attributes = new HashMap<>();
 
     /**
      * Constructor.
@@ -129,11 +129,9 @@ public class ModuleId implements Comparable<ModuleId> {
             return false;
         }
         ModuleId other = (ModuleId) obj;
-        if (other.organisation == null) {
-            return organisation == null && other.name.equals(name);
-        } else {
-            return other.organisation.equals(organisation) && other.name.equals(name);
-        }
+        return (other.organisation == null)
+                ? organisation == null && other.name.equals(name)
+                : other.organisation.equals(organisation) && other.name.equals(name);
     }
 
     @Override

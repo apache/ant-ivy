@@ -41,7 +41,7 @@ public class P2CompositeParser implements XMLInputParser {
         return childLocations;
     }
 
-    public void parse(InputStream in) throws ParseException, IOException, SAXException {
+    public void parse(InputStream in) throws IOException, ParseException, SAXException {
         RepositoryHandler handler = new RepositoryHandler();
         try {
             XMLHelper.parse(in, null, handler, null);

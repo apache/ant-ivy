@@ -167,9 +167,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         .setPubdate(md.getResolvedPublicationDate()).setUpdateBranch(false)
                         .setNamespace(ns));
         } catch (SAXException e) {
-            ParseException ex = new ParseException("exception occurred while parsing " + res, 0);
-            ex.initCause(e);
-            throw ex;
+            ParseException pe = new ParseException("exception occurred while parsing " + res, 0);
+            pe.initCause(e);
+            throw pe;
         } finally {
             if (is != null) {
                 is.close();
@@ -381,10 +381,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (ex instanceof SAXException) {
                     throw (SAXException) ex;
                 }
-                SAXException sax = new SAXException("Problem occurred while parsing ivy file: "
+                throw new SAXException("Problem occurred while parsing ivy file: "
                         + ex.getMessage(), ex);
-                sax.initCause(ex);
-                throw sax;
             }
         }
 
@@ -574,7 +572,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private static Map<String, String> mergeValues(Map<String, String> inherited,
                 Map<String, String> overrides) {
-            LinkedHashMap<String, String> dup = new LinkedHashMap<>(inherited.size()
+            Map<String, String> dup = new LinkedHashMap<>(inherited.size()
                     + overrides.size());
             dup.putAll(inherited);
             dup.putAll(overrides);

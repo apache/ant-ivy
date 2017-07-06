@@ -53,9 +53,9 @@ import org.apache.ivy.util.filter.NoFilter;
  */
 public class ModuleRules<T> {
 
-    private Map<MapMatcher, T> rules = new LinkedHashMap<MapMatcher, T>();
+    private Map<MapMatcher, T> rules = new LinkedHashMap<>();
 
-    private MatcherLookup matcher_lookup = new MatcherLookup();
+    private MatcherLookup matcherLookup = new MatcherLookup();
 
     /**
      * Constructs an empty ModuleRules.
@@ -64,9 +64,9 @@ public class ModuleRules<T> {
     }
 
     private ModuleRules(Map<MapMatcher, T> rules) {
-        this.rules = new LinkedHashMap<MapMatcher, T>(rules);
+        this.rules = new LinkedHashMap<>(rules);
         for (MapMatcher matcher : rules.keySet()) {
-            matcher_lookup.add(matcher);
+            matcherLookup.add(matcher);
         }
     }
 
@@ -83,7 +83,7 @@ public class ModuleRules<T> {
         Checks.checkNotNull(rule, "rule");
 
         rules.put(condition, rule);
-        matcher_lookup.add(condition);
+        matcherLookup.add(condition);
     }
 
     /**
@@ -108,7 +108,7 @@ public class ModuleRules<T> {
      *            the {@link ModuleId} to search the rule for. Must not be <code>null</code>.
      * @return an array of rule objects matching the given {@link ModuleId}.
      */
-    public T[] getRules(ModuleId mid) {
+    public List<T> getRules(ModuleId mid) {
         return getRules(mid.getAttributes(), NoFilter.<T> instance());
     }
 
@@ -172,7 +172,7 @@ public class ModuleRules<T> {
     }
 
     private T getRule(Map<String, String> moduleAttributes, Filter<T> filter) {
-        List<MapMatcher> matchers = matcher_lookup.get(moduleAttributes);
+        List<MapMatcher> matchers = matcherLookup.get(moduleAttributes);
         for (MapMatcher midm : matchers) {
             T rule = rules.get(midm);
             if (filter.accept(rule)) {
@@ -195,23 +195,23 @@ public class ModuleRules<T> {
      *            {@link ModuleRevisionId}. Must not be <code>null</code>.
      * @return an array of rule objects matching the given {@link ModuleRevisionId}.
      */
-    public T[] getRules(ModuleRevisionId mrid, Filter<T> filter) {
+    public List<T> getRules(ModuleRevisionId mrid, Filter<T> filter) {
         Checks.checkNotNull(mrid, "mrid");
         Checks.checkNotNull(filter, "filter");
         Map<String, String> moduleAttributes = mrid.getAttributes();
         return getRules(moduleAttributes, filter);
     }
 
-    private T[] getRules(Map<String, String> moduleAttributes, Filter<T> filter) {
-        List<MapMatcher> matchers = matcher_lookup.get(moduleAttributes);
-        List<T> matchingRules = new ArrayList<T>();
+    private List<T> getRules(Map<String, String> moduleAttributes, Filter<T> filter) {
+        List<MapMatcher> matchers = matcherLookup.get(moduleAttributes);
+        List<T> matchingRules = new ArrayList<>();
         for (MapMatcher midm : matchers) {
             T rule = rules.get(midm);
             if (filter.accept(rule)) {
                 matchingRules.add(rule);
             }
         }
-        return matchingRules.toArray((T[]) new Object[0]);
+        return matchingRules;
     }
 
     /**
@@ -245,8 +245,7 @@ public class ModuleRules<T> {
         return Collections.unmodifiableMap(rules);
     }
 
-    @Override
-    public Object clone() {
-        return new ModuleRules<T>(rules);
+    public ModuleRules<T> clone() {
+        return new ModuleRules<>(rules);
     }
 }

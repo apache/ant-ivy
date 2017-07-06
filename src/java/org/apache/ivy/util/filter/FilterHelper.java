@@ -73,9 +73,9 @@ public final class FilterHelper {
             return col;
         }
         Collection<T> ret = new ArrayList<>(col);
-        for (Iterator<T> iter = ret.iterator(); iter.hasNext();) {
-            T element = iter.next();
-            if (!filter.accept(element)) {
+        Iterator<T> iter = ret.iterator();
+        while (iter.hasNext()) {
+            if (!filter.accept(iter.next())) {
                 iter.remove();
             }
         }

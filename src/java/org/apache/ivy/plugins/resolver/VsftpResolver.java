@@ -20,7 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import org.apache.ivy.plugins.repository.vsftp.VsftpRepository;
 
 /**
- * This resolver uses SecureCRT vsft to access an sftp server. It supports listing and publishing.
+ * This resolver uses SecureCRT vsftp to access an sftp server. It supports listing and publishing.
  * The server host should absolutely be set using setHost, so does the username.
  */
 public class VsftpResolver extends RepositoryResolver {

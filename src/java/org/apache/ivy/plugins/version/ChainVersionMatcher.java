@@ -117,7 +117,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMrid, "foundMrid");
-        for (Iterator<VersionMatcher> iter = matchers.iterator(); iter.hasNext();) {
+        Iterator<VersionMatcher> iter = matchers.iterator();
+        while (iter.hasNext()) {
             VersionMatcher matcher = iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.accept(askedMrid, foundMrid);
@@ -129,7 +130,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMrid, "foundMrid");
-        for (Iterator<VersionMatcher> iter = matchers.iterator(); iter.hasNext();) {
+        Iterator<VersionMatcher> iter = matchers.iterator();
+        while (iter.hasNext()) {
             VersionMatcher matcher = iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.needModuleDescriptor(askedMrid, foundMrid);
@@ -141,7 +143,8 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
         Checks.checkNotNull(askedMrid, "askedMrid");
         Checks.checkNotNull(foundMD, "foundMD");
-        for (Iterator<VersionMatcher> iter = matchers.iterator(); iter.hasNext();) {
+        Iterator<VersionMatcher> iter = matchers.iterator();
+        while (iter.hasNext()) {
             VersionMatcher matcher = iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.accept(askedMrid, foundMD);

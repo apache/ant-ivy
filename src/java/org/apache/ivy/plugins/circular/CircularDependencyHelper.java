@@ -17,7 +17,9 @@
  */
 package org.apache.ivy.plugins.circular;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +30,6 @@ public final class CircularDependencyHelper {
 
     /** CircularDependencyHelper is not designed to be an instance */
     private CircularDependencyHelper() {
-
     }
 
     /**
@@ -56,7 +57,7 @@ public final class CircularDependencyHelper {
     }
 
     public static String formatMessage(final ModuleDescriptor[] descriptors) {
-        return formatMessage(toMrids(descriptors));
+        return formatMessageFromDescriptors(Arrays.asList(descriptors));
     }
 
     /**
@@ -65,21 +66,11 @@ public final class CircularDependencyHelper {
      * @return String
      */
     public static String formatMessageFromDescriptors(List<ModuleDescriptor> loopElements) {
-        ModuleRevisionId[] mrids = new ModuleRevisionId[loopElements.size()];
-        int pos = 0;
-        for (ModuleDescriptor descriptor: loopElements) {
-            mrids[pos] = descriptor.getModuleRevisionId();
-            pos++;
+        List<ModuleRevisionId> mrids = new LinkedList<>();
+        for (ModuleDescriptor descriptor : loopElements) {
+            mrids.add(descriptor.getModuleRevisionId());
         }
-        return formatMessage(mrids);
-    }
-
-    public static ModuleRevisionId[] toMrids(ModuleDescriptor[] descriptors) {
-        ModuleRevisionId[] mrids = new ModuleRevisionId[descriptors.length];
-        for (int i = 0; i < descriptors.length; i++) {
-            mrids[i] = descriptors[i].getModuleRevisionId();
-        }
-        return mrids;
+        return formatMessage(mrids.toArray(new ModuleRevisionId[mrids.size()]));
     }
 
 }

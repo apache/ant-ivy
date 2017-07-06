@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.retrieve.RetrieveReport;
 import org.apache.ivy.util.filter.Filter;
@@ -94,7 +95,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
-            Filter artifactFilter = getArtifactFilter();
+            Filter<Artifact> artifactFilter = getArtifactFilter();
             RetrieveReport report = getIvyInstance().retrieve(
                 getResolvedMrid(),
                 ((RetrieveOptions) new RetrieveOptions().setLog(getLog()))

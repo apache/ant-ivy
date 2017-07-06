@@ -221,7 +221,7 @@ public class VsftpRepository extends AbstractRepository {
         initIvy();
         try {
             if (!parent.endsWith("/")) {
-                parent = parent + "/";
+                parent += "/";
             }
             String response = sendCommand("ls -l " + parent, true, true);
             if (response.startsWith("ls")) {
@@ -229,12 +229,12 @@ public class VsftpRepository extends AbstractRepository {
             }
             String[] lines = response.split("\n");
             List<String> ret = new ArrayList<>(lines.length);
-            for (int i = 0; i < lines.length; i++) {
-                while (lines[i].endsWith("\r") || lines[i].endsWith("\n")) {
-                    lines[i] = lines[i].substring(0, lines[i].length() - 1);
+            for (String line : lines) {
+                while (line.endsWith("\r") || line.endsWith("\n")) {
+                    line = line.substring(0, line.length() - 1);
                 }
-                if (lines[i].trim().length() != 0) {
-                    ret.add(parent + lines[i].substring(lines[i].lastIndexOf(' ') + 1));
+                if (line.trim().length() != 0) {
+                    ret.add(parent + line.substring(line.lastIndexOf(' ') + 1));
                 }
             }
             return ret;
@@ -383,12 +383,13 @@ public class VsftpRepository extends AbstractRepository {
                     try {
                         int c;
                         boolean getPrompt = false;
-                        // the reading is done in a for loop making five attempts to read the stream
+                        // the reading is done in a loop making five attempts to read the stream
                         // if we do not reach the next prompt
-                        for (int attempts = 0; !getPrompt && attempts < MAX_READ_PROMPT_ATTEMPT; attempts++) {
+                        int attempt = 0;
+                        while (!getPrompt && attempt < MAX_READ_PROMPT_ATTEMPT) {
                             while ((c = in.read()) != -1) {
-                                attempts = 0; // we manage to read something, reset numer of
-                                // attempts
+                                // we managed to read something, reset number of attempts
+                                attempt = 0;
                                 response.append((char) c);
                                 if (response.length() >= PROMPT.length()
                                         && response.substring(response.length() - PROMPT.length(),
@@ -405,6 +406,7 @@ public class VsftpRepository extends AbstractRepository {
                                     break;
                                 }
                             }
+                            attempt++;
                         }
                         if (getPrompt) {
                             // wait enough for error stream to be fully read
@@ -457,12 +459,14 @@ public class VsftpRepository extends AbstractRepository {
         } else if (!done[0]) {
             if (reader != null && reader.isAlive()) {
                 reader.interrupt();
-                for (int i = 0; i < MAX_READER_ALIVE_ATTEMPT && reader.isAlive(); i++) {
+                int attempt = 0;
+                while (attempt < MAX_READER_ALIVE_ATTEMPT && reader.isAlive()) {
                     try {
                         Thread.sleep(READER_ALIVE_SLEEP_TIME);
                     } catch (InterruptedException e) {
                         break;
                     }
+                    attempt++;
                 }
                 if (reader.isAlive()) {
                     reader.stop(); // no way to interrupt it non abruptly

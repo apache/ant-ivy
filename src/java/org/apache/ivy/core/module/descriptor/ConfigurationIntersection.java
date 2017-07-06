@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.module.descriptor;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -25,10 +24,10 @@ import java.util.Map;
  */
 public class ConfigurationIntersection extends Configuration {
 
-    private final Map/* <String, Configuration> */intersectedConfs;
+    private final Map<String, Configuration> intersectedConfs;
 
     public ConfigurationIntersection(String confName,
-            Map /* <String, Configuration> */intersectedConfs) {
+            Map<String, Configuration> intersectedConfs) {
         super(confName);
         this.intersectedConfs = intersectedConfs;
     }
@@ -44,7 +43,7 @@ public class ConfigurationIntersection extends Configuration {
      * @return the list of configurations' names this object is an intersection of.
      */
     public String[] getIntersectedConfigurationNames() {
-        return (String[]) intersectedConfs.keySet().toArray(new String[intersectedConfs.size()]);
+        return intersectedConfs.keySet().toArray(new String[intersectedConfs.size()]);
     }
 
     /**
@@ -57,12 +56,11 @@ public class ConfigurationIntersection extends Configuration {
      * @return the intersected {@link Configuration} object for the given conf name
      */
     public Configuration getIntersectedConfiguration(String confName) {
-        return (Configuration) intersectedConfs.get(confName);
+        return intersectedConfs.get(confName);
     }
 
     public Visibility getVisibility() {
-        for (Iterator it = intersectedConfs.values().iterator(); it.hasNext();) {
-            Configuration c = (Configuration) it.next();
+        for (Configuration c : intersectedConfs.values()) {
             if (c != null && Visibility.PRIVATE.equals(c.getVisibility())) {
                 return Visibility.PRIVATE;
             }

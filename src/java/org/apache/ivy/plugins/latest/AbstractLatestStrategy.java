@@ -42,7 +42,8 @@ public abstract class AbstractLatestStrategy implements LatestStrategy {
 
         // the latest revision comes last, use a ListIterator to iterate the
         // sorted list in the reverse direction.
-        for (ListIterator<ArtifactInfo> iter = l.listIterator(l.size()); iter.hasPrevious();) {
+        ListIterator<ArtifactInfo> iter = l.listIterator(l.size());
+        while (iter.hasPrevious()) {
             ArtifactInfo info = iter.previous();
             if (date == null || info.getLastModified() < date.getTime()) {
                 return info;

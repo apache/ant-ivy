@@ -50,9 +50,7 @@ public class ParseUtil {
 
         int expecting = (CHAR | DELIMITER | STARTQUOTE);
 
-        for (int i = 0; i < value.length(); i++) {
-            final char c = value.charAt(i);
-
+        for (final char c : value.toCharArray()) {
             final boolean isDelimiter = (delim.indexOf(c) >= 0);
             final boolean isQuote = (c == '"');
 

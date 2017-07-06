@@ -53,7 +53,7 @@ class ModuleInSort {
 
     private boolean isSorted = false;
 
-    private List<ModuleInSort> loopElements = new LinkedList<ModuleInSort>();
+    private List<ModuleInSort> loopElements = new LinkedList<>();
 
     private boolean isLoopIntermediateElement = false;
 
@@ -113,12 +113,14 @@ class ModuleInSort {
      */
     public boolean checkLoop(ModuleInSort futurCaller, CircularDependencyStrategy depStrategy) {
         if (caller != null) {
-            LinkedList<ModuleRevisionId> elemOfLoop = new LinkedList<ModuleRevisionId>();
+            LinkedList<ModuleRevisionId> elemOfLoop = new LinkedList<>();
             elemOfLoop.add(this.module.getModuleRevisionId());
-            for (ModuleInSort stackEl = futurCaller; stackEl != this; stackEl = stackEl.caller) {
+            ModuleInSort stackEl = futurCaller;
+            while (stackEl != this) {
                 elemOfLoop.add(stackEl.module.getModuleRevisionId());
                 stackEl.isLoopIntermediateElement = true;
                 loopElements.add(stackEl);
+                stackEl = stackEl.caller;
             }
             elemOfLoop.add(this.module.getModuleRevisionId());
             ModuleRevisionId[] mrids = elemOfLoop.toArray(new ModuleRevisionId[elemOfLoop.size()]);
@@ -166,7 +168,7 @@ class ModuleInSort {
     }
 
     /** Log a warning saying that a loop is detected */
-    public static void logLoopWarning(List loopElement) {
+    public static void logLoopWarning(List<ModuleDescriptor> loopElement) {
         Message.warn("circular dependency detected during sort: "
                 + CircularDependencyHelper.formatMessageFromDescriptors(loopElement));
     }

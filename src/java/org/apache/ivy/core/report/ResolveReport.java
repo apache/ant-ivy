@@ -50,16 +50,16 @@ import org.apache.ivy.util.filter.Filter;
 public class ResolveReport {
     private ModuleDescriptor md;
 
-    private Map<String, ConfigurationResolveReport> confReports = new LinkedHashMap<String, ConfigurationResolveReport>();
+    private Map<String, ConfigurationResolveReport> confReports = new LinkedHashMap<>();
 
-    private List<String> problemMessages = new ArrayList<String>();
+    private List<String> problemMessages = new ArrayList<>();
 
     /**
      * the list of all dependencies resolved, ordered from the more dependent to the less dependent
      */
-    private List<IvyNode> dependencies = new ArrayList<IvyNode>();
+    private List<IvyNode> dependencies = new ArrayList<>();
 
-    private List<Artifact> artifacts = new ArrayList<Artifact>();
+    private List<Artifact> artifacts = new ArrayList<>();
 
     private long resolveTime;
 
@@ -101,8 +101,8 @@ public class ResolveReport {
 
     public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr,
             ResolveOptions options) throws IOException {
-        for (int i = 0; i < outputters.length; i++) {
-            outputters[i].output(this, cacheMgr, options);
+        for (ReportOutputter outputter : outputters) {
+            outputter.output(this, cacheMgr, options);
         }
     }
 
@@ -111,7 +111,7 @@ public class ResolveReport {
     }
 
     public IvyNode[] getEvictedNodes() {
-        Collection<IvyNode> all = new LinkedHashSet<IvyNode>();
+        Collection<IvyNode> all = new LinkedHashSet<>();
         for (ConfigurationResolveReport report : confReports.values()) {
             all.addAll(Arrays.asList(report.getEvictedNodes()));
         }
@@ -119,7 +119,7 @@ public class ResolveReport {
     }
 
     public IvyNode[] getUnresolvedDependencies() {
-        Collection<IvyNode> all = new LinkedHashSet<IvyNode>();
+        Collection<IvyNode> all = new LinkedHashSet<>();
         for (ConfigurationResolveReport report : confReports.values()) {
             all.addAll(Arrays.asList(report.getUnresolvedDependencies()));
         }
@@ -161,7 +161,7 @@ public class ResolveReport {
      */
     public ArtifactDownloadReport[] getArtifactsReports(DownloadStatus downloadStatus,
             boolean withEvicted) {
-        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
         for (ConfigurationResolveReport report : confReports.values()) {
             ArtifactDownloadReport[] reports = report.getArtifactsReports(downloadStatus,
                 withEvicted);
@@ -171,7 +171,7 @@ public class ResolveReport {
     }
 
     public ArtifactDownloadReport[] getArtifactsReports(ModuleRevisionId mrid) {
-        Collection<ArtifactDownloadReport> all = new LinkedHashSet<ArtifactDownloadReport>();
+        Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
         for (ConfigurationResolveReport report : confReports.values()) {
             all.addAll(Arrays.asList(report.getDownloadReports(mrid)));
         }
@@ -207,20 +207,18 @@ public class ResolveReport {
     }
 
     public List<String> getAllProblemMessages() {
-        List<String> ret = new ArrayList<String>(problemMessages);
+        List<String> ret = new ArrayList<>(problemMessages);
         for (ConfigurationResolveReport r : confReports.values()) {
-            IvyNode[] unresolved = r.getUnresolvedDependencies();
-            for (int i = 0; i < unresolved.length; i++) {
-                String errMsg = unresolved[i].getProblemMessage();
+            for (IvyNode unresolved : r.getUnresolvedDependencies()) {
+                String errMsg = unresolved.getProblemMessage();
                 if (errMsg.length() > 0) {
-                    ret.add("unresolved dependency: " + unresolved[i].getId() + ": " + errMsg);
+                    ret.add("unresolved dependency: " + unresolved.getId() + ": " + errMsg);
                 } else {
-                    ret.add("unresolved dependency: " + unresolved[i].getId());
+                    ret.add("unresolved dependency: " + unresolved.getId());
                 }
             }
-            ArtifactDownloadReport[] adrs = r.getFailedArtifactsReports();
-            for (int i = 0; i < adrs.length; i++) {
-                ret.add("download failed: " + adrs[i].getArtifact());
+            for (ArtifactDownloadReport adr : r.getFailedArtifactsReports()) {
+                ret.add("download failed: " + adr.getArtifact());
             }
         }
         return ret;
@@ -229,16 +227,15 @@ public class ResolveReport {
     public void setDependencies(List<IvyNode> dependencies, Filter<Artifact> artifactFilter) {
         this.dependencies = dependencies;
         // collect list of artifacts
-        artifacts = new ArrayList<Artifact>();
+        artifacts = new ArrayList<>();
         for (IvyNode dependency : dependencies) {
             if (!dependency.isCompletelyEvicted() && !dependency.hasProblem()) {
                 artifacts.addAll(Arrays.asList(dependency.getSelectedArtifacts(artifactFilter)));
             }
             // update the configurations reports with the dependencies
             // these reports will be completed later with download information, if any
-            String[] dconfs = dependency.getRootModuleConfigurations();
-            for (int j = 0; j < dconfs.length; j++) {
-                ConfigurationResolveReport configurationReport = getConfigurationReport(dconfs[j]);
+            for (String dconf : dependency.getRootModuleConfigurations()) {
+                ConfigurationResolveReport configurationReport = getConfigurationReport(dconf);
                 if (configurationReport != null) {
                     configurationReport.addDependency(dependency);
                 }
@@ -272,8 +269,8 @@ public class ResolveReport {
      * @return a list of ModuleId
      */
     public List<ModuleId> getModuleIds() {
-        List<ModuleId> ret = new ArrayList<ModuleId>();
-        List<IvyNode> sortedDependencies = new ArrayList<IvyNode>(dependencies);
+        List<ModuleId> ret = new ArrayList<>();
+        List<IvyNode> sortedDependencies = new ArrayList<>(dependencies);
         for (IvyNode dependency : sortedDependencies) {
             ModuleId mid = dependency.getResolvedId().getModuleId();
             if (!ret.contains(mid)) {
@@ -329,11 +326,10 @@ public class ResolveReport {
      */
     @SuppressWarnings("unused")
     private String[] getExtendingConfs(String extended) {
-        String[] allConfs = md.getConfigurationsNames();
-        Set<String> extendingConfs = new HashSet<String>();
+        Set<String> extendingConfs = new HashSet<>();
         extendingConfs.add(extended);
-        for (int i = 0; i < allConfs.length; i++) {
-            gatherExtendingConfs(extendingConfs, allConfs[i], extended);
+        for (String conf : md.getConfigurationsNames()) {
+            gatherExtendingConfs(extendingConfs, conf, extended);
         }
         return extendingConfs.toArray(new String[extendingConfs.size()]);
     }
@@ -342,20 +338,20 @@ public class ResolveReport {
         if (extendingConfs.contains(conf)) {
             return true;
         }
-        String[] ext = md.getConfiguration(conf).getExtends();
-        if (ext == null || ext.length == 0) {
+        String[] exts = md.getConfiguration(conf).getExtends();
+        if (exts == null || exts.length == 0) {
             return false;
         }
-        for (int i = 0; i < ext.length; i++) {
-            if (extendingConfs.contains(ext[i])) {
+        for (String ext : exts) {
+            if (extendingConfs.contains(ext)) {
                 extendingConfs.add(conf);
                 return true;
             }
-            if (ext[i].equals(extended)) {
+            if (ext.equals(extended)) {
                 extendingConfs.add(conf);
                 return true;
             }
-            if (gatherExtendingConfs(extendingConfs, ext[i], extended)) {
+            if (gatherExtendingConfs(extendingConfs, ext, extended)) {
                 extendingConfs.add(conf);
                 return true;
             }

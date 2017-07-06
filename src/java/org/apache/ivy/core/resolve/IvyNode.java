@@ -82,7 +82,7 @@ public class IvyNode implements Comparable<IvyNode> {
     private ModuleRevisionId id;
 
     // set only when node has been built or updated from a DependencyDescriptor
-    private Map<IvyNode, DependencyDescriptor> dds = new HashMap<IvyNode, DependencyDescriptor>();
+    private Map<IvyNode, DependencyDescriptor> dds = new HashMap<>();
 
     // Set when data has been loaded only, or when constructed from a module descriptor
     private ModuleDescriptor md;
@@ -96,18 +96,18 @@ public class IvyNode implements Comparable<IvyNode> {
 
     private boolean searched = false;
 
-    private Collection<String> confsToFetch = new HashSet<String>();
+    private Collection<String> confsToFetch = new HashSet<>();
 
-    private Collection<String> fetchedConfigurations = new HashSet<String>();
+    private Collection<String> fetchedConfigurations = new HashSet<>();
 
-    private Collection<String> loadedRootModuleConfs = new HashSet<String>();
+    private Collection<String> loadedRootModuleConfs = new HashSet<>();
 
     // //////// USAGE DATA
 
     private IvyNodeUsage usage = new IvyNodeUsage(this);
 
     // usage information merged from evicted nodes this node is "replacing"
-    private Map<ModuleRevisionId, IvyNodeUsage> mergedUsages = new LinkedHashMap<ModuleRevisionId, IvyNodeUsage>();
+    private Map<ModuleRevisionId, IvyNodeUsage> mergedUsages = new LinkedHashMap<>();
 
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         id = dd.getDependencyRevisionId();
@@ -310,9 +310,9 @@ public class IvyNode implements Comparable<IvyNode> {
                 confs = md.getPublicConfigurationsNames();
             }
         }
-        Collection<IvyNode> deps = new HashSet<IvyNode>();
-        for (int i = 0; i < confs.length; i++) {
-            deps.addAll(getDependencies(rootModuleConf, confs[i], requestedConf));
+        Collection<IvyNode> deps = new HashSet<>();
+        for (String conf : confs) {
+            deps.addAll(getDependencies(rootModuleConf, conf, requestedConf));
         }
         return deps;
     }
@@ -336,10 +336,9 @@ public class IvyNode implements Comparable<IvyNode> {
             throw new IllegalStateException(
                     "impossible to get dependencies when data has not been loaded");
         }
-        DependencyDescriptor[] dds = md.getDependencies();
         // it's important to respect order => LinkedHashMap
-        Map<ModuleRevisionId, IvyNode> dependencies = new LinkedHashMap<ModuleRevisionId, IvyNode>();
-        for (DependencyDescriptor dependencyDescriptor : dds) {
+        Map<ModuleRevisionId, IvyNode> dependencies = new LinkedHashMap<>();
+        for (DependencyDescriptor dependencyDescriptor : md.getDependencies()) {
             DependencyDescriptor dd = data.mediate(dependencyDescriptor);
             String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
             if (dependencyConfigurations.length == 0) {
@@ -423,7 +422,7 @@ public class IvyNode implements Comparable<IvyNode> {
                 // a circular dependency, we cannot be conclusive here
                 return null;
             }
-            return Boolean.valueOf(c.doesCallersExclude(rootModuleConf, artifact, callersStack));
+            return c.doesCallersExclude(rootModuleConf, artifact, callersStack);
         }
         return Boolean.FALSE;
     }
@@ -513,7 +512,7 @@ public class IvyNode implements Comparable<IvyNode> {
             // there are exclusions in the configuration
             List<String> exclusions = Arrays.asList(conf.substring(2).split("\\!"));
 
-            List<String> ret = new ArrayList<String>(Arrays.asList(getDescriptor()
+            List<String> ret = new ArrayList<>(Arrays.asList(getDescriptor()
                     .getPublicConfigurationsNames()));
             ret.removeAll(exclusions);
 
@@ -530,7 +529,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * @return array of configuration names
      */
     public String[] getRequiredConfigurations(IvyNode in, String inConf) {
-        Collection<String> req = new LinkedHashSet<String>();
+        Collection<String> req = new LinkedHashSet<>();
         addAllIfNotNull(req, usage.getRequiredConfigurations(in, inConf));
         for (IvyNodeUsage usage : mergedUsages.values()) {
             addAllIfNotNull(req, usage.getRequiredConfigurations(in, inConf));
@@ -550,7 +549,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * @return array of configuration names
      */
     public String[] getRequiredConfigurations() {
-        Collection<String> required = new ArrayList<String>(confsToFetch.size()
+        Collection<String> required = new ArrayList<>(confsToFetch.size()
                 + fetchedConfigurations.size());
         required.addAll(fetchedConfigurations);
         required.addAll(confsToFetch);
@@ -578,7 +577,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * @return array of configuration names
      */
     public String[] getConfigurations(String rootModuleConf) {
-        Set<String> depConfs = new LinkedHashSet<String>();
+        Set<String> depConfs = new LinkedHashSet<>();
         addAllIfNotNull(depConfs, usage.getConfigurations(rootModuleConf));
         for (IvyNodeUsage usage : mergedUsages.values()) {
             addAllIfNotNull(depConfs, usage.getConfigurations(rootModuleConf));
@@ -598,10 +597,9 @@ public class IvyNode implements Comparable<IvyNode> {
             // remove all given dependency configurations to the set + extended ones
             Configuration c = md.getConfiguration(conf);
             if (conf != null) {
-                String[] exts = c.getExtends();
-                for (int i = 0; i < exts.length; i++) {
-                    discardConf(rootModuleConf, exts[i]); // recursive remove of extended
-                    // configurations
+                // recursive remove of extended configurations
+                for (String ext : c.getExtends()) {
+                    discardConf(rootModuleConf, ext);
                 }
                 depConfs.remove(c.getName());
             } else {
@@ -643,7 +641,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * @return {@link Set} of configuration names
      */
     public Set<String> getRootModuleConfigurationsSet() {
-        Set<String> confs = new LinkedHashSet<String>();
+        Set<String> confs = new LinkedHashSet<>();
         addAllIfNotNull(confs, usage.getRootModuleConfigurations());
         for (IvyNodeUsage usage : mergedUsages.values()) {
             addAllIfNotNull(confs, usage.getRootModuleConfigurations());
@@ -672,7 +670,7 @@ public class IvyNode implements Comparable<IvyNode> {
         if (conf.charAt(0) == '*') {
             return resolveSpecialConfigurations(new String[] {conf});
         }
-        if (conf.indexOf(',') != -1) {
+        if (conf.contains(",")) {
             String[] confs = conf.split(",");
             for (int i = 0; i < confs.length; i++) {
                 confs[i] = confs[i].trim();
@@ -749,7 +747,7 @@ public class IvyNode implements Comparable<IvyNode> {
     }
 
     private Collection<IvyNodeUsage> getAllUsages() {
-        Collection<IvyNodeUsage> usages = new ArrayList<IvyNodeUsage>();
+        Collection<IvyNodeUsage> usages = new ArrayList<>();
         usages.add(usage);
         usages.addAll(mergedUsages.values());
         return usages;
@@ -761,7 +759,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * @return array of {@link Artifact}s
      */
     public Artifact[] getAllArtifacts() {
-        Set<Artifact> ret = new HashSet<Artifact>();
+        Set<Artifact> ret = new HashSet<>();
         for (String rootModuleConf : getRootModuleConfigurationsSet()) {
             ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
         }
@@ -776,7 +774,7 @@ public class IvyNode implements Comparable<IvyNode> {
      * @return array of {@link Artifact}s
      */
     public Artifact[] getSelectedArtifacts(Filter<Artifact> artifactFilter) {
-        Collection<Artifact> ret = new HashSet<Artifact>();
+        Collection<Artifact> ret = new HashSet<>();
         for (String rootModuleConf : getRootModuleConfigurationsSet()) {
             if (!isEvicted(rootModuleConf) && !isBlacklisted(rootModuleConf)) {
                 ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
@@ -807,7 +805,7 @@ public class IvyNode implements Comparable<IvyNode> {
                             + this);
         }
 
-        Set<Artifact> artifacts = new HashSet<Artifact>(); // the set we fill before returning
+        Set<Artifact> artifacts = new HashSet<>(); // the set we fill before returning
 
         // we check if we have dependencyArtifacts includes description for this rootModuleConf
         Set<DependencyArtifactDescriptor> dependencyArtifacts = usage
@@ -817,7 +815,7 @@ public class IvyNode implements Comparable<IvyNode> {
             addArtifactsFromOwnUsage(artifacts, dependencyArtifacts);
             addArtifactsFromMergedUsage(rootModuleConf, artifacts);
         } else {
-            Set<IncludeRule> includes = new LinkedHashSet<IncludeRule>();
+            Set<IncludeRule> includes = new LinkedHashSet<>();
             addAllIfNotNull(includes, usage.getDependencyIncludesSet(rootModuleConf));
             for (IvyNodeUsage usage : mergedUsages.values()) {
                 addAllIfNotNull(includes, usage.getDependencyIncludesSet(rootModuleConf));
@@ -826,19 +824,17 @@ public class IvyNode implements Comparable<IvyNode> {
             if ((dependencyArtifacts == null || dependencyArtifacts.isEmpty())
                     && (includes.isEmpty())) {
                 // no artifacts / includes: we get all artifacts as defined by the descriptor
-                for (int i = 0; i < confs.length; i++) {
-                    artifacts.addAll(Arrays.asList(md.getArtifacts(confs[i])));
+                for (String conf : confs) {
+                    artifacts.addAll(Arrays.asList(md.getArtifacts(conf)));
                 }
             } else {
-                // we have to get only artifacts listed as "includes"
-
+                // we have to get only artifacts listed as "includes";
                 // first we get all artifacts as defined by the module descriptor
                 // and classify them by artifact id
-                Map<ArtifactId, Artifact> allArtifacts = new HashMap<ArtifactId, Artifact>();
-                for (int i = 0; i < confs.length; i++) {
-                    Artifact[] arts = md.getArtifacts(confs[i]);
-                    for (int j = 0; j < arts.length; j++) {
-                        allArtifacts.put(arts[j].getId().getArtifactId(), arts[j]);
+                Map<ArtifactId, Artifact> allArtifacts = new HashMap<>();
+                for (String conf : confs) {
+                    for (Artifact art : md.getArtifacts(conf)) {
+                        allArtifacts.put(art.getId().getArtifactId(), art);
                     }
                 }
 
@@ -849,7 +845,8 @@ public class IvyNode implements Comparable<IvyNode> {
                 addArtifactsFromMergedUsage(rootModuleConf, artifacts);
 
                 // and now we filter according to include rules
-                for (Iterator<IncludeRule> it = includes.iterator(); it.hasNext();) {
+                Iterator<IncludeRule> it = includes.iterator();
+                while (it.hasNext()) {
                     IncludeRule dad = it.next();
                     Collection<Artifact> arts = findArtifactsMatching(dad, allArtifacts);
                     if (arts.isEmpty()) {
@@ -866,8 +863,9 @@ public class IvyNode implements Comparable<IvyNode> {
             }
         }
 
-        // now excludes artifacts that aren't accepted by any caller
-        for (Iterator<Artifact> iter = artifacts.iterator(); iter.hasNext();) {
+        // now exclude artifacts that aren't accepted by any caller
+        Iterator<Artifact> iter = artifacts.iterator();
+        while (iter.hasNext()) {
             Artifact artifact = iter.next();
             boolean excluded = callers.doesCallersExclude(rootModuleConf, artifact);
             if (excluded) {
@@ -892,7 +890,7 @@ public class IvyNode implements Comparable<IvyNode> {
                     .getDependencyArtifactsSet(rootModuleConf);
             if (mergedDependencyArtifacts != null) {
                 for (DependencyArtifactDescriptor dad : mergedDependencyArtifacts) {
-                    Map<String, String> extraAttributes = new HashMap<String, String>(
+                    Map<String, String> extraAttributes = new HashMap<>(
                             dad.getQualifiedExtraAttributes());
                     MDArtifact artifact = new MDArtifact(md, dad.getName(), dad.getType(),
                             dad.getExt(), dad.getUrl(), extraAttributes);
@@ -910,7 +908,7 @@ public class IvyNode implements Comparable<IvyNode> {
 
     private static Collection<Artifact> findArtifactsMatching(IncludeRule rule,
             Map<ArtifactId, Artifact> allArtifacts) {
-        Collection<Artifact> ret = new ArrayList<Artifact>();
+        Collection<Artifact> ret = new ArrayList<>();
         for (Entry<ArtifactId, Artifact> entry : allArtifacts.entrySet()) {
             if (MatcherHelper.matches(rule.getMatcher(), rule.getId(), entry.getKey())) {
                 ret.add(entry.getValue());
@@ -1243,7 +1241,7 @@ public class IvyNode implements Comparable<IvyNode> {
             Message.verbose("BLACKLISTING " + bdata);
         }
 
-        Stack<IvyNode> callerStack = new Stack<IvyNode>();
+        Stack<IvyNode> callerStack = new Stack<>();
         callerStack.push(this);
         clearEvictionDataInAllCallers(bdata.getRootModuleConf(), callerStack);
 

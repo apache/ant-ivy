@@ -150,14 +150,11 @@ public class EditableRepoDescriptor extends RepoDescriptor {
 
     @Override
     public boolean equals(Object obj) {
+        if (!(obj instanceof EditableRepoDescriptor)) {
+            return false;
+        }
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
         }
         EditableRepoDescriptor other = (EditableRepoDescriptor) obj;
         if (modules == null) {

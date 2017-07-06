@@ -17,6 +17,13 @@
  */
 package org.apache.ivy.core.publish;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,12 +44,9 @@ import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class PublishEventsTest {
 
@@ -270,6 +274,13 @@ public class PublishEventsTest {
 
     /**
      * Assert that two Artifact instances refer to the same artifact and contain the same metadata.
+     *
+     * @param message
+     *            String
+     * @param expected
+     *            Artifact
+     * @param actual
+     *            Artifact
      */
     public static void assertSameArtifact(String message, Artifact expected, Artifact actual) {
         assertEquals(message + ": name", expected.getName(), actual.getName());

@@ -60,11 +60,11 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     public static Collection<Configuration> findConfigurationExtending(String conf,
             Configuration[] confs) {
-        Collection<Configuration> extendingConfs = new ArrayList<Configuration>();
-        for (int i = 0; i < confs.length; i++) {
-            if (confs[i] != null && Arrays.asList(confs[i].getExtends()).contains(conf)) {
-                extendingConfs.add(confs[i]);
-                extendingConfs.addAll(findConfigurationExtending(confs[i].getName(), confs));
+        Collection<Configuration> extendingConfs = new ArrayList<>();
+        for (Configuration cf : confs) {
+            if (cf != null && Arrays.asList(cf.getExtends()).contains(conf)) {
+                extendingConfs.add(cf);
+                extendingConfs.addAll(findConfigurationExtending(cf.getName(), confs));
             }
         }
         return extendingConfs;
@@ -219,16 +219,16 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
         Configuration[] configs = md.getConfigurations();
 
-        Set<String> newExtends = new LinkedHashSet<String>();
-        for (int j = 0; j < extendsFrom.length; j++) {
-            if ("*".equals(extendsFrom[j])) {
+        Set<String> newExtends = new LinkedHashSet<>();
+        for (String extend : extendsFrom) {
+            if ("*".equals(extend)) {
                 addOther(configs, null, newExtends);
-            } else if ("*(public)".equals(extendsFrom[j])) {
+            } else if ("*(public)".equals(extend)) {
                 addOther(configs, Visibility.PUBLIC, newExtends);
-            } else if ("*(private)".equals(extendsFrom[j])) {
+            } else if ("*(private)".equals(extend)) {
                 addOther(configs, Visibility.PRIVATE, newExtends);
             } else {
-                newExtends.add(extendsFrom[j]);
+                newExtends.add(extend);
             }
         }
 
@@ -236,10 +236,10 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
     }
 
     private void addOther(Configuration[] allConfigs, Visibility visibility, Set<String> configs) {
-        for (int i = 0; i < allConfigs.length; i++) {
-            String currentName = allConfigs[i].getName();
+        for (Configuration allConfig : allConfigs) {
+            String currentName = allConfig.getName();
             if (!name.equals(currentName)
-                    && ((visibility == null) || visibility.equals(allConfigs[i].getVisibility()))) {
+                    && (visibility == null || visibility.equals(allConfig.getVisibility()))) {
                 configs.add(currentName);
             }
         }

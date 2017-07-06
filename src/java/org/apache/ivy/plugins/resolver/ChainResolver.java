@@ -180,6 +180,7 @@ public class ChainResolver extends AbstractResolver {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         Set<Map<String, String>> result = new HashSet<>();

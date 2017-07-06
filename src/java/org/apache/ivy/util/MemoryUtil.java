@@ -35,7 +35,7 @@ public final class MemoryUtil {
      *            the class to evaluate.
      * @return the estimated size of instance, in bytes.
      */
-    public static long sizeOf(Class clazz) {
+    public static long sizeOf(Class<?> clazz) {
         long size = 0;
         Object[] objects = new Object[SAMPLING_SIZE];
         try {

@@ -164,7 +164,7 @@ public class VfsRepository extends AbstractRepository {
      * @see "Supported File Systems in the jakarta-commons-vfs documentation"
      */
     public List<String> list(String vfsURI) throws IOException {
-        ArrayList<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         Message.debug("list called for URI" + vfsURI);
         FileObject resourceImpl = getVFSManager().resolveFile(vfsURI);
         Message.debug("resourceImpl=" + resourceImpl.toString());

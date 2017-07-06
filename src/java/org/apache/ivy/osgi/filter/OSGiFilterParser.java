@@ -65,7 +65,7 @@ public class OSGiFilterParser {
          *
          * @return OSGiFilter
          *
-         * @throws ParseException
+         * @throws ParseException if something goes wrong
          */
         OSGiFilter parse() throws ParseException {
             return parseFilter();

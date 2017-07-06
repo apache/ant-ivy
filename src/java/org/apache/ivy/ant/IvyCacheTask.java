@@ -56,8 +56,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         return ret;
     }
 
-    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException,
-            IOException {
+    private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException {
         String[] confs = splitConfs(getConf());
         Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
 

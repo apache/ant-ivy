@@ -36,7 +36,7 @@ public class IvyPatternHelperTest {
     @Test(expected = Exception.class)
     public void testCyclicSubstitute() {
         String pattern = "${var}";
-        Map variables = new HashMap();
+        Map<String, String> variables = new HashMap<>();
         variables.put("var", "${othervar}");
         variables.put("othervar", "${var}");
 
@@ -45,7 +45,7 @@ public class IvyPatternHelperTest {
 
     @Test
     public void testOptionalSubstitute() {
-        Map tokens = new HashMap();
+        Map<String, String> tokens = new HashMap<>();
         tokens.put("token", "");
         tokens.put("othertoken", "myval");
         assertEquals("test-myval",

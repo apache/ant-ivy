@@ -412,11 +412,13 @@ public final class XmlModuleDescriptorUpdater {
                     // replace inline revision with resolved parent revision
                     ModuleDescriptor merged = options.getMergedDescriptor();
                     if (merged != null) {
-                        ExtendsDescriptor[] parents = merged.getInheritedDescriptors();
-                        for (int j = 0; value == null && j < parents.length; ++j) {
-                            ModuleRevisionId resolvedId = parents[j].getResolvedParentRevisionId();
+                        for (ExtendsDescriptor parent : merged.getInheritedDescriptors()) {
+                            ModuleRevisionId resolvedId = parent.getResolvedParentRevisionId();
                             if (parentId.equals(resolvedId.getModuleId())) {
                                 value = resolvedId.getRevision();
+                                if (value != null) {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -441,10 +443,9 @@ public final class XmlModuleDescriptorUpdater {
                 buffers.peek().setPrint(true);
                 String extend = substitute(settings, attributes.getValue("extends"));
                 if (extend != null) {
-                    for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
-                            .hasMoreTokens();) {
-                        String current = tok.nextToken();
-                        if (confs.contains(current)) {
+                    StringTokenizer tok = new StringTokenizer(extend, ", ");
+                    while (tok.hasMoreTokens()) {
+                        if (confs.contains(tok.nextToken())) {
                             throw new IllegalArgumentException(
                                     "Cannot exclude a configuration which is extended.");
                         }
@@ -618,7 +619,7 @@ public final class XmlModuleDescriptorUpdater {
                         settings.substitute(attributes.getValue("url")));
                 } else {
                     // TODO : settings can be null, but I don't why.
-                    // Check if the next code is correct in that case
+                    // Check if the following code is correct in that case
                     String fileName = attributes.getValue("file");
                     if (fileName == null) {
                         String urlStr = attributes.getValue("url");
@@ -655,10 +656,9 @@ public final class XmlModuleDescriptorUpdater {
                                 }
                                 String extend = substitute(settings, attributes.getValue("extends"));
                                 if (extend != null) {
-                                    for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
-                                            .hasMoreTokens();) {
-                                        String current = tok.nextToken();
-                                        if (confs.contains(current)) {
+                                    StringTokenizer tok = new StringTokenizer(extend, ", ");
+                                    while (tok.hasMoreTokens()) {
+                                        if (confs.contains(tok.nextToken())) {
                                             throw new IllegalArgumentException("Cannot exclude a "
                                                     + "configuration which is extended.");
                                         }
@@ -806,13 +806,12 @@ public final class XmlModuleDescriptorUpdater {
             return XMLHelper.escape(result);
         }
 
-        private String removeConfigurationsFromMapping(String mapping, List confsToRemove) {
+        private String removeConfigurationsFromMapping(String mapping, List<String> confsToRemove) {
             StringBuilder newMapping = new StringBuilder();
             String mappingSep = "";
-            for (StringTokenizer tokenizer = new StringTokenizer(mapping, ";"); tokenizer
-                    .hasMoreTokens();) {
-                String current = tokenizer.nextToken();
-                String[] ops = current.split("->");
+            StringTokenizer tokenizer = new StringTokenizer(mapping, ";");
+            while (tokenizer.hasMoreTokens()) {
+                String[] ops = tokenizer.nextToken().split("->");
                 List<String> confsToWrite = new ArrayList<>();
                 for (String lh : ops[0].split(",")) {
                     if (!confs.contains(lh.trim())) {
@@ -821,37 +820,31 @@ public final class XmlModuleDescriptorUpdater {
                 }
                 if (!confsToWrite.isEmpty()) {
                     newMapping.append(mappingSep);
-
                     String sep = "";
                     for (String confToWrite : confsToWrite) {
-                        newMapping.append(sep);
-                        newMapping.append(confToWrite);
+                        newMapping.append(sep).append(confToWrite);
                         sep = ",";
                     }
                     if (ops.length == 2) {
-                        newMapping.append("->");
-                        newMapping.append(ops[1]);
+                        newMapping.append("->").append(ops[1]);
                     }
                     mappingSep = ";";
                 }
             }
-
             return newMapping.toString();
         }
 
-        private String removeConfigurationsFromList(String list, List confsToRemove) {
+        private String removeConfigurationsFromList(String list, List<String> confsToRemove) {
             StringBuilder newList = new StringBuilder();
             String listSep = "";
-            for (StringTokenizer tokenizer = new StringTokenizer(list, ","); tokenizer
-                    .hasMoreTokens();) {
+            StringTokenizer tokenizer = new StringTokenizer(list, ",");
+            while (tokenizer.hasMoreTokens()) {
                 String current = tokenizer.nextToken();
                 if (!confsToRemove.contains(current.trim())) {
-                    newList.append(listSep);
-                    newList.append(current);
+                    newList.append(listSep).append(current);
                     listSep = ",";
                 }
             }
-
             return newList.toString();
         }
 
@@ -966,15 +959,12 @@ public final class XmlModuleDescriptorUpdater {
 
             for (Map.Entry<ModuleRevisionId, List<InheritableItem>> entry : inheritedItems
                     .entrySet()) {
-                ModuleRevisionId parent = entry.getKey();
-                List<InheritableItem> list = entry.getValue();
-
                 if (justOpen != null) {
                     out.println(">");
                     justOpen = null; // helps endElement() decide how to write close tags
                 }
-                writeInheritanceComment(itemName, parent);
-                for (InheritableItem item : list) {
+                writeInheritanceComment(itemName, entry.getKey());
+                for (InheritableItem item : entry.getValue()) {
                     out.print(getIndent());
                     printer.print(merged, item, out);
                 }
@@ -1091,8 +1081,8 @@ public final class XmlModuleDescriptorUpdater {
                     && !(mergedConfigurations && mergedDependencies)) {
 
                 // calculate the position of the element in ivy-module
-                int position = moduleElement == null ? MODULE_ELEMENTS.size() : MODULE_ELEMENTS
-                        .indexOf(moduleElement);
+                int position = (moduleElement == null) ? MODULE_ELEMENTS.size()
+                        : MODULE_ELEMENTS.indexOf(moduleElement);
 
                 ModuleDescriptor merged = options.getMergedDescriptor();
 

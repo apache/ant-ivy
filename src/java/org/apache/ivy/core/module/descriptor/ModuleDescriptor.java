@@ -212,7 +212,7 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      * @return all the {@link DependencyDescriptorMediator}s used by this
      * {@link ModuleDescriptor}, as an instance of {@link ModuleRules}.
      */
-    public ModuleRules/* <DependencyDescriptorMediator> */getAllDependencyDescriptorMediators();
+    public ModuleRules<DependencyDescriptorMediator> getAllDependencyDescriptorMediators();
 
     /**
      * @return the list of xml namespaces used by extra attributes, as Map from prefix to namespace

@@ -138,9 +138,9 @@ public class IvyPublishTest {
             try (BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
                     .getResourceAsStream(expectedFilename)))) {
                 int lineNo = 1;
-                for (String mergeLine = merged.readLine(), expectedLine = expected.readLine(); mergeLine != null
-                        && expectedLine != null; mergeLine = merged.readLine(), expectedLine = expected
-                        .readLine()) {
+                String mergeLine = merged.readLine();
+                String expectedLine = expected.readLine();
+                while (mergeLine != null && expectedLine != null) {
 
                     // strip timestamps for the comparison
                     if (mergeLine.contains("<info")) {
@@ -153,6 +153,8 @@ public class IvyPublishTest {
                     }
 
                     ++lineNo;
+                    mergeLine = merged.readLine();
+                    expectedLine = expected.readLine();
                 }
             }
         }

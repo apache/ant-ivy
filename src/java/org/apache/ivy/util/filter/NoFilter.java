@@ -17,18 +17,20 @@
  */
 package org.apache.ivy.util.filter;
 
-public final class NoFilter implements Filter {
+public final class NoFilter<T> implements Filter<T> {
 
+    @SuppressWarnings("rawtypes")
     public static final Filter INSTANCE = new NoFilter();
 
+    @SuppressWarnings("unchecked")
     public static <T> Filter<T> instance() {
-        return INSTANCE;
+        return (Filter<T>) INSTANCE;
     }
 
     private NoFilter() {
     }
 
-    public boolean accept(Object o) {
+    public boolean accept(T o) {
         return true;
     }
 

@@ -210,7 +210,6 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 getClass().getResource("test-bad-version.xml"), true);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -234,8 +233,11 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 + "and myconf4 is not too bad too.", md.getDescription().replaceAll("\r\n", "\n")
                 .replace('\r', '\n'));
 
-        assertEquals(1, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+        assertEquals(1, md.getExtraInfos().size());
+        ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
+        assertEquals("e:someExtra", someExtraElement.getName());
+        assertEquals("56576", someExtraElement.getContent());
+        assertEquals(0, someExtraElement.getAttributes().size());
 
         Configuration[] confs = md.getConfigurations();
         assertNotNull(confs);
@@ -505,24 +507,24 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(rules[1].getConfigurations()));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testFullNoValidation() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test.xml"), false);
         assertNotNull(md);
-        assertEquals(1, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+        assertEquals(1, md.getExtraInfos().size());
+        ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
+        assertEquals("e:someExtra", someExtraElement.getName());
+        assertEquals("56576", someExtraElement.getContent());
+        assertEquals(0, someExtraElement.getAttributes().size());
+        assertEquals(0, someExtraElement.getNestedExtraInfoHolder().size());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testExtraInfos() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extrainfo.xml"), true);
         assertNotNull(md);
-        assertEquals(2, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
         assertEquals(2, md.getExtraInfos().size());
         ExtraInfoHolder firstExtraInfoElement = md.getExtraInfos().get(0);
         assertEquals("e:someExtra", firstExtraInfoElement.getName());
@@ -538,14 +540,11 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, secondExtraInfoElement.getNestedExtraInfoHolder().size());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testExtraInfosNested() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extrainfo-nested.xml"), true);
         assertNotNull(md);
-        assertEquals(4, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
         assertEquals(2, md.getExtraInfos().size());
         ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
         assertEquals("e:someExtra", someExtraElement.getName());

@@ -29,7 +29,7 @@ public interface InstallEngineSettings extends ParserSettings {
 
     DependencyResolver getResolver(String from);
 
-    Collection getResolverNames();
+    Collection<String> getResolverNames();
 
     ReportOutputter[] getReportOutputters();
 
@@ -41,6 +41,6 @@ public interface InstallEngineSettings extends ParserSettings {
 
     PatternMatcher getMatcher(String matcherName);
 
-    Collection getMatcherNames();
+    Collection<String> getMatcherNames();
 
 }

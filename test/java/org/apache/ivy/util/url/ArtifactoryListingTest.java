@@ -17,13 +17,13 @@
  */
 package org.apache.ivy.util.url;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
 public class ArtifactoryListingTest {
     // remote.test
@@ -32,7 +32,7 @@ public class ArtifactoryListingTest {
     public void testWicketListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List content = lister.listAll(new URL(
+        List<URL> content = lister.listAll(new URL(
                 "http://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
         assertNotNull(content);
         assertEquals(5, content.size());

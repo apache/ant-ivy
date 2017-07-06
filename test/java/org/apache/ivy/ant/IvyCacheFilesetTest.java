@@ -17,26 +17,28 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.FileSet;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.*;
 
 public class IvyCacheFilesetTest {
 
@@ -263,7 +265,7 @@ public class IvyCacheFilesetTest {
         );
         assertNotNull(fileset.requireCommonBaseDir(reports));
     }
-    
+
     private ArtifactDownloadReport artifactDownloadReport(File localFile) {
         ArtifactDownloadReport report = new ArtifactDownloadReport(null);
         report.setLocalFile(localFile);

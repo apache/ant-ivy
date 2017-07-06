@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.core.install;
 
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
@@ -32,7 +33,7 @@ public class InstallOptions {
 
     private String[] confs = {"*"};
 
-    private Filter artifactFilter = FilterHelper.NO_FILTER;
+    private Filter<Artifact> artifactFilter = FilterHelper.NO_FILTER;
 
     private String matcherName = PatternMatcher.EXACT;
 
@@ -63,12 +64,12 @@ public class InstallOptions {
         return this;
     }
 
-    public Filter getArtifactFilter() {
+    public Filter<Artifact> getArtifactFilter() {
         return artifactFilter;
     }
 
-    public InstallOptions setArtifactFilter(Filter artifactFilter) {
-        this.artifactFilter = artifactFilter == null ? FilterHelper.NO_FILTER : artifactFilter;
+    public InstallOptions setArtifactFilter(Filter<Artifact> artifactFilter) {
+        this.artifactFilter = (artifactFilter == null) ? FilterHelper.NO_FILTER : artifactFilter;
         return this;
     }
 

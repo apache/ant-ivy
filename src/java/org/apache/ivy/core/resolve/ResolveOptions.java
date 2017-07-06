@@ -175,12 +175,7 @@ public class ResolveOptions extends LogOptions {
      * @see #getConfs(ModuleDescriptor)
      */
     public boolean useSpecialConfs() {
-        for (int i = 0; confs != null && i < confs.length; i++) {
-            if (confs[0].startsWith("*")) {
-                return true;
-            }
-        }
-        return false;
+        return confs != null && confs[0].startsWith("*");
     }
 
     /**

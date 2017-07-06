@@ -23,16 +23,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.CredentialsUtil;
 import org.apache.ivy.util.Message;
 
-import com.jcraft.jsch.ConfigRepository.Config;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.OpenSSHConfig;
 import com.jcraft.jsch.ConfigRepository;
+import com.jcraft.jsch.ConfigRepository.Config;
+import com.jcraft.jsch.OpenSSHConfig;
+import com.jcraft.jsch.Session;
 
 public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
@@ -61,7 +62,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     /**
      * hashmap of user/hosts with credentials. key is hostname, value is Credentials
      **/
-    private static final HashMap<String, Credentials> credentialsCache = new HashMap<>();
+    private static final Map<String, Credentials> credentialsCache = new HashMap<>();
 
     private static final int MAX_CREDENTIALS_CACHE_SIZE = 100;
 
@@ -112,7 +113,6 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
                 keyFile = new File(keyFilePath);
             }
         }
-
 
         if (host == null) {
             throw new IllegalArgumentException(
