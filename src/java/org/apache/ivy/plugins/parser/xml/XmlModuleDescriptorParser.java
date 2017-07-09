@@ -572,7 +572,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private static Map<String, String> mergeValues(Map<String, String> inherited,
                 Map<String, String> overrides) {
-            LinkedHashMap<String, String> dup = new LinkedHashMap<>(inherited.size()
+            Map<String, String> dup = new LinkedHashMap<>(inherited.size()
                     + overrides.size());
             dup.putAll(inherited);
             dup.putAll(overrides);

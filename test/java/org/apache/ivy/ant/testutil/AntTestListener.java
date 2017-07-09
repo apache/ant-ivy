@@ -30,6 +30,9 @@ public class AntTestListener implements BuildListener {
 
     /**
      * Constructs a test listener which will ignore log events above the given level.
+     *
+     * @param logLevel
+     *            ditto
      */
     public AntTestListener(int logLevel) {
         this.logLevel = logLevel;
@@ -37,6 +40,9 @@ public class AntTestListener implements BuildListener {
 
     /**
      * Fired before any targets are started.
+     *
+     * @param event
+     *            BuildEvent
      */
     public void buildStarted(BuildEvent event) {
     }
@@ -45,6 +51,8 @@ public class AntTestListener implements BuildListener {
      * Fired after the last target has finished. This event will still be thrown if an error
      * occurred during the build.
      *
+     * @param event
+     *            BuildEvent
      * @see BuildEvent#getException()
      */
     public void buildFinished(BuildEvent event) {
@@ -53,6 +61,8 @@ public class AntTestListener implements BuildListener {
     /**
      * Fired when a target is started.
      *
+     * @param event
+     *            BuildEvent
      * @see BuildEvent#getTarget()
      */
     public void targetStarted(BuildEvent event) {
@@ -63,6 +73,8 @@ public class AntTestListener implements BuildListener {
      * Fired when a target has finished. This event will still be thrown if an error occurred during
      * the build.
      *
+     * @param event
+     *            BuildEvent
      * @see BuildEvent#getException()
      */
     public void targetFinished(BuildEvent event) {
@@ -72,6 +84,8 @@ public class AntTestListener implements BuildListener {
     /**
      * Fired when a task is started.
      *
+     * @param event
+     *            BuildEvent
      * @see BuildEvent#getTask()
      */
     public void taskStarted(BuildEvent event) {
@@ -82,6 +96,8 @@ public class AntTestListener implements BuildListener {
      * Fired when a task has finished. This event will still be throw if an error occurred during
      * the build.
      *
+     * @param event
+     *            BuildEvent
      * @see BuildEvent#getException()
      */
     public void taskFinished(BuildEvent event) {
@@ -91,6 +107,8 @@ public class AntTestListener implements BuildListener {
     /**
      * Fired whenever a message is logged.
      *
+     * @param event
+     *            BuildEvent
      * @see BuildEvent#getMessage()
      * @see BuildEvent#getPriority()
      */

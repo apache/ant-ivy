@@ -64,7 +64,7 @@ public class LatestConflictManagerTest {
         Iterator<IvyNode> dependencies = deps.iterator();
         String[] confs = report.getConfigurations();
         while (dependencies.hasNext()) {
-            IvyNode node = (IvyNode) dependencies.next();
+            IvyNode node = dependencies.next();
             for (String conf : confs) {
                 if (!node.isEvicted(conf)) {
                     boolean flag1 = report.getConfigurationReport(conf).getDependency(

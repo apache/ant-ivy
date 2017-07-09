@@ -136,7 +136,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         final String suffix = ".xml";
         return getResolutionCacheRoot().listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return (name.startsWith(prefix) && name.endsWith(suffix));
+                return name.startsWith(prefix) && name.endsWith(suffix);
             }
         });
     }

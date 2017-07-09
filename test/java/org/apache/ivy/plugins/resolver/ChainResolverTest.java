@@ -92,7 +92,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         List<DependencyResolver> resolvers = chain.getResolvers();
         assertEquals(size, resolvers.size());
         for (int i = 0; i < resolvers.size(); i++) {
-            DependencyResolver r = (DependencyResolver) resolvers.get(i);
+            DependencyResolver r = resolvers.get(i);
             assertEquals(String.valueOf(i + 1), r.getName());
         }
     }

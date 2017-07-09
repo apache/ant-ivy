@@ -26,7 +26,6 @@ import java.io.PrintStream;
 import java.util.Vector;
 
 import org.apache.ivy.util.FileUtil;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
@@ -37,7 +36,6 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
-
 import org.junit.After;
 import org.junit.Test;
 
@@ -163,6 +161,8 @@ public class AntCallTriggerTest {
      *
      * @param project
      *            The project to add listeners to. Must not be <code>null</code>.
+     * @param level
+     *            log level
      */
     protected void addBuildListeners(Project project, int level) {
 

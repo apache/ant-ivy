@@ -113,7 +113,7 @@ public class XmlSettingsParserTest {
         assertEquals(1, fsInt1.getIvyPatterns().size());
         assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", fsInt1
                 .getIvyPatterns().get(0));
-        assertEquals("int2", ((DependencyResolver) subresolvers.get(1)).getName());
+        assertEquals("int2", subresolvers.get(1).getName());
 
         strategy = fsInt1.getLatestStrategy();
         assertNotNull(strategy);
@@ -149,8 +149,8 @@ public class XmlSettingsParserTest {
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
 
-        assertEquals("mock1", ((DependencyResolver) subresolvers.get(0)).getName());
-        assertEquals("mock2", ((DependencyResolver) subresolvers.get(1)).getName());
+        assertEquals("mock1", subresolvers.get(0).getName());
+        assertEquals("mock2", subresolvers.get(1).getName());
         assertTrue(subresolvers.get(0) instanceof MockResolver);
         assertTrue(subresolvers.get(1) instanceof MockResolver);
     }
@@ -416,7 +416,7 @@ public class XmlSettingsParserTest {
         List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(1, subresolvers.size());
-        shared = (DependencyResolver) subresolvers.get(0);
+        shared = subresolvers.get(0);
         assertEquals("shared", shared.getName());
         assertTrue(shared instanceof FileSystemResolver);
     }

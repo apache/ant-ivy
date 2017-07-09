@@ -101,7 +101,7 @@ public class LatestConflictManager extends AbstractConflictManager {
             }
         }
 
-        ArrayList<IvyNode> unevicted = new ArrayList<>();
+        List<IvyNode> unevicted = new ArrayList<>();
         for (IvyNode node : conflicts) {
             if (!node.isCompletelyEvicted()) {
                 unevicted.add(node);

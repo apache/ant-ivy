@@ -507,7 +507,7 @@ public final class Main {
 
         // Add option cp (extra classpath) urls
         if (fileList != null && fileList.size() > 0) {
-            for (File file: fileList) {
+            for (File file : fileList) {
                 try {
                     urls.add(file.toURI().toURL());
                 } catch (MalformedURLException e) {

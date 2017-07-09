@@ -868,8 +868,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // 2 are inherited from parent. Only the first one is important for this test
 
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-version-other", "5.76"),
-            dds[0].getDependencyRevisionId());// present in the pom using a property defined in the
-                                              // parent
+            dds[0].getDependencyRevisionId());
+        // present in the pom using a property defined in the parent
     }
 
     @Test

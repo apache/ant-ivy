@@ -20,6 +20,7 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -266,7 +267,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 confs = splitConfs(conf);
             }
 
-            HashSet<String> rconfsSet = new HashSet<>();
+            Set<String> rconfsSet = new HashSet<>();
 
             // for each resolved configuration, check if the report still exists
             ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
@@ -282,7 +283,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 }
             }
 
-            HashSet<String> confsSet = new HashSet<>(Arrays.asList(confs));
+            Set<String> confsSet = new HashSet<>(Arrays.asList(confs));
             Message.debug("resolved configurations:   " + rconfsSet);
             Message.debug("asked configurations:      " + confsSet);
             confsSet.removeAll(rconfsSet);

@@ -17,14 +17,15 @@
 
 package org.apache.ivy.util;
 
-import org.w3c.dom.Document;
+import java.io.File;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.File;
+
+import org.w3c.dom.Document;
 
 /**
  * An utility class to help with XML file parsing and XML content handling
@@ -38,7 +39,7 @@ public class TestXmlHelper {
      * @param xmlFile         The XML file to parse
      * @param xPathExpression The XPath expression to evaluate
      * @param returnType      The expected return type of the {@link XPathExpression#evaluate(Object, QName) evaluation}
-     * @return
+     * @return                The result
      * @throws Exception
      */
     public static Object evaluateXPathExpr(final File xmlFile, final XPathExpression xPathExpression, final QName returnType)
@@ -65,7 +66,7 @@ public class TestXmlHelper {
      * @param xmlFile         The XML file to parse
      * @param xpathExpression The XPath expression to evaluate
      * @param returnType      The expected return type of the {@link XPathExpression#evaluate(Object, QName) evaluation}
-     * @return
+     * @return                The result
      * @throws Exception
      */
     public static Object evaluateXPathExpr(final File xmlFile, final String xpathExpression, final QName returnType) throws Exception {

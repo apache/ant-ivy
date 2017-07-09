@@ -401,7 +401,7 @@ public class PomReader {
             if (exclusionsElement == null) {
                 return Collections.emptyList();
             }
-            LinkedList<ModuleId> exclusions = new LinkedList<>();
+            List<ModuleId> exclusions = new LinkedList<>();
             NodeList children = exclusionsElement.getChildNodes();
             for (int i = 0, sz = children.getLength(); i < sz; i++) {
                 Node node = children.item(i);

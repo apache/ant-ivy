@@ -86,7 +86,7 @@ public class VfsResource implements Resource {
      */
     public List<String> getChildren() {
         init();
-        ArrayList<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         try {
             if ((resourceImpl != null) && resourceImpl.exists()
                     && (resourceImpl.getType() == FileType.FOLDER)) {

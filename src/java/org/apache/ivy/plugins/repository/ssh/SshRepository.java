@@ -160,7 +160,7 @@ public class SshRepository extends AbstractSshBasedRepository {
      */
     public List<String> list(String parent) throws IOException {
         Message.debug("SShRepository:list called: " + parent);
-        ArrayList<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         Session session = null;
         ChannelExec channel = null;
         session = getSession(parent);

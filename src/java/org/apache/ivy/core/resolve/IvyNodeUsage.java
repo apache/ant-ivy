@@ -146,7 +146,7 @@ public class IvyNodeUsage {
 
     /**
      * Returns the configurations of the dependency required in a given root module configuration.
-     * 
+     *
      * @param rootModuleConf ditto
      * @return Set&lt;String&gt;
      */
@@ -264,10 +264,10 @@ public class IvyNodeUsage {
      * <p>
      * A blacklisted node should be considered as if it doesn't even exist on the repository.
      * </p>
-     * 
+     *
      * @param rootModuleConf
      *            the root module conf for which we'd like to know if the node is blacklisted
-     * 
+     *
      * @return true if this node is blacklisted int he given root module conf, false otherwise
      * @see #blacklist(IvyNodeBlacklist)
      */
@@ -278,7 +278,7 @@ public class IvyNodeUsage {
     /**
      * Returns the blacklist data of this node in the given root module conf, or <code>null</code>
      * if this node is not blacklisted in this root module conf.
-     * 
+     *
      * @param rootModuleConf
      *            the root module configuration to consider
      * @return the blacklist data if any
@@ -294,7 +294,7 @@ public class IvyNodeUsage {
     /**
      * Indicates if at least one depender has a transitive dependency descriptor for the given root
      * module conf.
-     * 
+     *
      * @param rootModuleConf
      *            the root module conf to consider
      * @return <code>true</code> if at least one depender has a transitive dependency descriptor for

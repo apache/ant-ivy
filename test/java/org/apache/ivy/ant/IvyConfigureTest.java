@@ -17,6 +17,10 @@
  */
 package org.apache.ivy.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.List;
 
@@ -27,17 +31,13 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.*;
 
 public class IvyConfigureTest {
     private IvyConfigure configure;

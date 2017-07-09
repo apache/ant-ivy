@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.lock;
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 final class DeleteOnExitHook {
 
@@ -31,7 +32,7 @@ final class DeleteOnExitHook {
         });
     }
 
-    private static final LinkedHashSet<File> files = new LinkedHashSet<>();
+    private static final Set<File> files = new LinkedHashSet<>();
 
     private DeleteOnExitHook() {
     }

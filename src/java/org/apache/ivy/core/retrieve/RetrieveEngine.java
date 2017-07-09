@@ -349,8 +349,8 @@ public class RetrieveEngine {
                         unpackedArtifact = packagingManager.getUnpackedArtifact(artifact);
                     }
                     if (unpackedArtifact == null) {
-                        throw new RuntimeException("Could not determine unpacked artifact for " + artifact +
-                                " while determining artifacts to copy for module " + mrid);
+                        throw new RuntimeException("Could not determine unpacked artifact for " + artifact
+                                + " while determining artifacts to copy for module " + mrid);
                     }
                     ext = unpackedArtifact.getExt();
                 }

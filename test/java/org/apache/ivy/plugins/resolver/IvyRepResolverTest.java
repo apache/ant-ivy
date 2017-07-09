@@ -45,7 +45,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- * 
+ *
  */
 public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     private IvySettings _settings;
