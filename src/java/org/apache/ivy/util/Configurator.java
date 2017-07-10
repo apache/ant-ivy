@@ -513,7 +513,7 @@ public class Configurator {
                 if (addChild != null) {
                     childClass = addChild.getParameterTypes()[0];
                     if (Map.class == childClass) {
-                        child = new HashMap();
+                        child = new HashMap<>();
                     } else {
                         child = childClass.newInstance();
                     }
@@ -572,7 +572,7 @@ public class Configurator {
         if (addChild != null) {
             if (child == null) {
                 if (Map.class == childClass) {
-                    child = new HashMap();
+                    child = new HashMap<>();
                 } else {
                     child = childClass.newInstance();
                 }

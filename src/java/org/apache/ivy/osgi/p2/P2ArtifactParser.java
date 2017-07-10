@@ -52,7 +52,7 @@ public class P2ArtifactParser implements XMLInputParser {
         this.repoUrl = repoUrl;
     }
 
-    public void parse(InputStream in) throws ParseException, IOException, SAXException {
+    public void parse(InputStream in) throws IOException, SAXException {
         RepositoryHandler handler = new RepositoryHandler(p2Descriptor, repoUrl);
         try {
             XMLHelper.parse(in, null, handler, null);

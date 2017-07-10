@@ -106,8 +106,8 @@ public class ModuleRulesTest {
         return NoFilter.instance();
     }
 
-    private void assertRule(Object rule, String mrid) {
-        Object ruleFound = rules.getRule(ModuleRevisionId.parse(mrid));
+    private void assertRule(String rule, String mrid) {
+        String ruleFound = rules.getRule(ModuleRevisionId.parse(mrid));
         assertEquals("unexcepted rule for " + mrid, rule, ruleFound);
     }
 
@@ -116,7 +116,7 @@ public class ModuleRulesTest {
         assertEquals("unexcepted rule for " + mrid + " filtered by " + filter, rule, ruleFound);
     }
 
-    private void assertModuleIdRule(Object rule, String mid, Filter<String> filter) {
+    private void assertModuleIdRule(String rule, String mid, Filter<String> filter) {
         String ruleFound = rules.getRule(ModuleId.parse(mid), filter);
         assertEquals("unexcepted rule for " + mid + " filtered by " + filter, rule, ruleFound);
     }

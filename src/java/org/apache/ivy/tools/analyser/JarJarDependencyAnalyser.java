@@ -52,7 +52,10 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
             jarjarCmd.append("\"").append(jarModule.getJar().getAbsolutePath()).append("\"");
             jarjarCmd.append(File.pathSeparator);
         }
-        jarjarCmd.setLength(jarjarCmd.length() - 1);
+
+        if (modules.length > 0) {
+            jarjarCmd.setLength(jarjarCmd.length() - 1);
+        }
 
         Message.verbose("jarjar command: " + jarjarCmd);
 

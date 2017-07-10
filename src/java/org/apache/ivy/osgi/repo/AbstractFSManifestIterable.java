@@ -44,9 +44,9 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
         return new FSManifestIterator();
     }
 
-    protected abstract List<T> listBundleFiles(T dir) throws IOException;
+    protected abstract List<T> listBundleFiles(T dir);
 
-    protected abstract List<T> listDirs(T dir) throws IOException;
+    protected abstract List<T> listDirs(T dir);
 
     protected abstract InputStream getInputStream(T f) throws IOException;
 
@@ -86,12 +86,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
                     // so get the next one
                     if (dirs.peek().hasNext()) {
                         currentDir = dirs.peek().next();
-                        try {
-                            bundleCandidates = listBundleFiles(currentDir).iterator();
-                        } catch (IOException e) {
-                            Message.warn("Unlistable dir: " + currentDir, e);
-                            currentDir = null;
-                        }
+                        bundleCandidates = listBundleFiles(currentDir).iterator();
                     } else if (dirs.size() <= 1) {
                         // no next directory, but we are at the root: finished
                         return false;
@@ -127,12 +122,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
                 } else {
                     // no more candidate on the current directory
                     // so lookup in the children directories
-                    try {
-                        dirs.add(listDirs(currentDir).iterator());
-                    } catch (IOException e) {
-                        Message.warn("Unlistable dir: " + currentDir + " (" + e + ")");
-                        dirs.add(Collections.<T> emptyList().iterator());
-                    }
+                    dirs.add(listDirs(currentDir).iterator());
                     currentDir = null;
                 }
             }

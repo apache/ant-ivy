@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.p2;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -41,7 +40,7 @@ public class P2CompositeParser implements XMLInputParser {
         return childLocations;
     }
 
-    public void parse(InputStream in) throws ParseException, IOException, SAXException {
+    public void parse(InputStream in) throws IOException, SAXException {
         RepositoryHandler handler = new RepositoryHandler();
         try {
             XMLHelper.parse(in, null, handler, null);
