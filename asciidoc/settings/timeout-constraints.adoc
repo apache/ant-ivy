@@ -1,0 +1,54 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+= timeout-constraints
+
+*__since 2.5__*
+
+Ivy, internally, communicates with various remote systems for dealing with module descriptors and artifacts. This is done through various link:../concept.html[dependency resolvers] that are configured in the Ivy settings. This communication typically involves opening a connection to the target system and reading content from those systems. As with all remote communication, certain systems can sometimes be slow or even unavailable on some occasions. `timeout-constraints` in Ivy settings allows you to configure timeouts that can then be used by Ivy while communicating with remote systems.
+
+NOTE: Although, timeouts are most likely to be used by dependency resolvers, the setting up of timeouts through the use of `timeout-constraints` doesn't really bother about where those timeouts are used. As such, it's _not_ an error to have `timeout-constraints` within a Ivy settings file which may never be referred to by any resolver.
+
+== Child elements
+
+
+[options="header"]
+|=======
+|Element|Description|Cardinality
+|link:../settings/timeout-constraint.html[timeout-constraint]|defines a new timeout-constraint|0..n
+|=======
+
+
+== Examples
+
+
+[source, xml]
+----
+
+<timeout-constraints>
+        <timeout-constraint name="test-timeout-1" connectionTimeout="100" readTimeout="500"/>
+        <timeout-constraint name="test-timeout-2" readTimeout="20"/>
+        <timeout-constraint name="test-timeout-3" connectionTimeout="400"/>
+        <timeout-constraint name="test-timeout-4"/>
+</timeout-constraints>
+
+----
+
+Defines 4 `timeout-constraint`, each with a name and values for `connectionTimeout` and `readTimeout`. More details about the `timeout-constraint` element is explained in link:../settings/timeout-constraint.html[its documentation].
+

@@ -189,4 +189,18 @@ public final class StringUtils {
         return sb.toString();
     }
 
+    /**
+     * Asserts that the passed <code>value</code> is not null and not an empty {@link String}. The implementation
+     * of this method {@link String#trim() trims} the (non-null) <code>value</code> to check whether the value is an
+     * empty string. If the <code>value</code> is either null or empty, then this method throws an {@link IllegalArgumentException}
+     * with the passed <code>errorMessage</code> as the message in the exception.
+     *
+     * @param value        The value to check for
+     * @param errorMessage The error message
+     */
+    public static void assertNotNullNotEmpty(final String value, final String errorMessage) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
 }

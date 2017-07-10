@@ -25,11 +25,12 @@ import org.apache.ivy.plugins.repository.url.URLRepository;
  */
 public class URLResolver extends RepositoryResolver {
     public URLResolver() {
-        setRepository(new URLRepository());
+        setRepository(new URLRepository(new LazyTimeoutConstraint(this)));
     }
 
     @Override
     public String getTypeName() {
         return "url";
     }
+
 }

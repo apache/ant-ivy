@@ -104,6 +104,13 @@ Any standard resolver can be used in `force` mode, which is used mainly to handl
 By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules `A` and `C`, where `A -> B -> C`, and pick up the local build for `C` without having to publish a local version of `B`.
 *__since 2.0__*
 
+==== timeoutConstraint
+
+*__since 2.5__*
+
+All standard resolvers support the `timeoutConstraint` attribute. The value for this attribute is the name of the link:timeout-constraint.html[timeout-constraint] that's been defined in the Ivy settings.
+
+Resolvers can be optionally configured to use a `timeoutConstraint` so that the timeouts defined on that constraint dictate how the resolvers behave when it comes to dealing with timeouts while establishing connections and reading content, during module descriptor and artifact resolutions.
 
 ==== Maven
 
@@ -130,12 +137,13 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 |namespace|The name of the namespace to which this resolver belongs *__since 1.3__*|No, defaults to 'system'|Yes|Yes
 |checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check *__since 1.3__*|No, defaults to true|No|Yes
 |descriptor|'optional' if a module descriptor (usually an ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor *__since 2.0__*|No, defaults to 'optional'|No (except dual)|Yes
-|allownomd|_DEPRECATED. Use descriptor="required | optional" instead._
+|allownomd|_DEPRECATED. Use descriptor="required \| optional" instead._
     true if the absence of module descriptor (usually an ivy file) is authorised for this resolver, false to refuse modules without module descriptor *__since 1.4__*|No, defaults to true|No (except dual)|Yes
 |checksums|a comma separated list of link:../concept.html#checksum[checksum algorithms] to use both for publication and checking *__since 1.4__*|No, defaults to ${ivy.checksums}|No|Yes
 |latest|The name of the latest strategy to use.|No, defaults to 'default'|Yes|Yes
 |cache|The name of the cache manager to use.|No, defaults to the value of the default attribute of caches|No|Yes
 |signer|The name of the link:../settings/signers.html[detached signature generator] to use when publishing artifacts. *__(since 2.2)__*|No, by default published artifacts will not get signed by Ivy.|No|Yes
+|timeoutConstraint|The name of the link:timeout-constraint.html[timeout-constraint] to use for the resolver. *__(since 2.5)__*|No. In the absence of a `timeoutConstraint`, the resolver's behaviour with timeouts is implementation specific.|No|Yes
 |=======
 
 

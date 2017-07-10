@@ -17,14 +17,15 @@
  */
 package org.apache.ivy.util.url;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
+import org.apache.ivy.util.CopyProgressListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.ivy.util.CopyProgressListener;
 
 /**
  * This class is used to dispatch downloading requests
@@ -37,48 +38,94 @@ public class URLHandlerDispatcher implements URLHandler {
     public URLHandlerDispatcher() {
     }
 
-    public boolean isReachable(URL url) {
-        return getHandler(url.getProtocol()).isReachable(url);
+    @Override
+    public boolean isReachable(final URL url) {
+        return this.isReachable(url, null);
     }
 
-    public boolean isReachable(URL url, int timeout) {
-        return getHandler(url.getProtocol()).isReachable(url, timeout);
+    @Override
+    public boolean isReachable(final URL url, final int timeout) {
+        return this.isReachable(url, createTimeoutConstraints(timeout));
     }
 
-    public long getContentLength(URL url) {
-        return getHandler(url.getProtocol()).getContentLength(url);
+    @Override
+    public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getHandler(url.getProtocol()).isReachable(url, timeoutConstraint);
     }
 
-    public long getContentLength(URL url, int timeout) {
-        return getHandler(url.getProtocol()).getContentLength(url, timeout);
+    @Override
+    public long getContentLength(final URL url) {
+        return this.getContentLength(url, null);
     }
 
-    public long getLastModified(URL url) {
-        return getHandler(url.getProtocol()).getLastModified(url);
+    @Override
+    public long getContentLength(final URL url, final int timeout) {
+        return this.getContentLength(url, createTimeoutConstraints(timeout));
     }
 
-    public long getLastModified(URL url, int timeout) {
-        return getHandler(url.getProtocol()).getLastModified(url, timeout);
+    @Override
+    public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getHandler(url.getProtocol()).getContentLength(url, timeoutConstraint);
     }
 
-    public URLInfo getURLInfo(URL url) {
-        return getHandler(url.getProtocol()).getURLInfo(url);
+    @Override
+    public long getLastModified(final URL url) {
+        return this.getLastModified(url, null);
     }
 
-    public URLInfo getURLInfo(URL url, int timeout) {
-        return getHandler(url.getProtocol()).getURLInfo(url, timeout);
+    @Override
+    public long getLastModified(final URL url, final int timeout) {
+        return this.getLastModified(url, createTimeoutConstraints(timeout));
     }
 
-    public InputStream openStream(URL url) throws IOException {
-        return getHandler(url.getProtocol()).openStream(url);
+    @Override
+    public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getHandler(url.getProtocol()).getLastModified(url, timeoutConstraint);
     }
 
-    public void download(URL src, File dest, CopyProgressListener l) throws IOException {
-        getHandler(src.getProtocol()).download(src, dest, l);
+    @Override
+    public URLInfo getURLInfo(final URL url) {
+        return this.getURLInfo(url, null);
     }
 
-    public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
-        getHandler(dest.getProtocol()).upload(src, dest, l);
+    @Override
+    public URLInfo getURLInfo(final URL url, final int timeout) {
+        return this.getURLInfo(url, createTimeoutConstraints(timeout));
+    }
+
+    @Override
+    public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getHandler(url.getProtocol()).getURLInfo(url, timeoutConstraint);
+    }
+
+    @Override
+    public InputStream openStream(final URL url) throws IOException {
+        return this.openStream(url, null);
+    }
+
+    @Override
+    public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
+        return this.getHandler(url.getProtocol()).openStream(url, timeoutConstraint);
+    }
+
+    @Override
+    public void download(final URL src, final File dest, final CopyProgressListener l) throws IOException {
+        this.download(src, dest, l);
+    }
+
+    @Override
+    public void download(final URL src, final File dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
+        this.getHandler(src.getProtocol()).download(src, dest, listener, timeoutConstraint);
+    }
+
+    @Override
+    public void upload(final File src, final URL dest, final CopyProgressListener l) throws IOException {
+        this.upload(src, dest, l);
+    }
+
+    @Override
+    public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
+        this.getHandler(dest.getProtocol()).upload(src, dest, listener, timeoutConstraint);
     }
 
     public void setRequestMethod(int requestMethod) {
@@ -103,5 +150,20 @@ public class URLHandlerDispatcher implements URLHandler {
 
     public void setDefault(URLHandler default1) {
         defaultHandler = default1;
+    }
+
+    private static TimeoutConstraint createTimeoutConstraints(final int connectionTimeout) {
+        return new TimeoutConstraint() {
+            @Override
+            public int getConnectionTimeout() {
+                return connectionTimeout;
+            }
+
+            @Override
+            public int getReadTimeout() {
+                return -1;
+            }
+
+        };
     }
 }

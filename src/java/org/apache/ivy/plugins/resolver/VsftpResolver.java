@@ -25,7 +25,7 @@ import org.apache.ivy.plugins.repository.vsftp.VsftpRepository;
  */
 public class VsftpResolver extends RepositoryResolver {
     public VsftpResolver() {
-        setRepository(new VsftpRepository());
+        setRepository(new VsftpRepository(new LazyTimeoutConstraint(this)));
     }
 
     @Override

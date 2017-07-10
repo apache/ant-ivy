@@ -62,7 +62,7 @@ public class BasicURLHandlerTest {
 
         // to test ftp we should know of an anonymous ftp site... !
         // assertTrue(handler.isReachable(new URL("ftp://ftp.mozilla.org/pub/dir.sizes")));
-        assertFalse(handler.isReachable(new URL("ftp://ftp.mozilla.org/unknown.file"), connectionTimeoutInMillis));
+        assertFalse(handler.isReachable(new URL("ftp://ftp.mozilla.org/unknown.file"), 5000));
     }
 
     @Test

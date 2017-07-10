@@ -17,26 +17,6 @@
  */
 package org.apache.ivy.core.settings;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessControlException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
@@ -110,8 +90,29 @@ import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.url.URLHandlerRegistry;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessControlException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, ResolverSettings,
@@ -211,6 +212,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private PackingRegistry packingRegistry = new PackingRegistry();
 
     private AbstractWorkspaceResolver workspaceResolver;
+
+    private final Map<String, TimeoutConstraint> timeoutConstraints = new HashMap<>();
 
     public IvySettings() {
         this(new IvyVariableContainerImpl());
@@ -1072,6 +1075,20 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public synchronized void addNamespace(Namespace ns) {
         init(ns);
         namespaces.put(ns.getName(), ns);
+    }
+
+    public void addConfigured(final NamedTimeoutConstraint timeoutConstraint) {
+        if (timeoutConstraint == null) {
+            return;
+        }
+        final String name = timeoutConstraint.getName();
+        StringUtils.assertNotNullNotEmpty(name, "Name of a timeout constraint cannot be null or empty string");
+        this.timeoutConstraints.put(name, timeoutConstraint);
+    }
+
+    @Override
+    public TimeoutConstraint getTimeoutConstraint(final String name) {
+        return this.timeoutConstraints.get(name);
     }
 
     public synchronized void addConfigured(PatternMatcher m) {

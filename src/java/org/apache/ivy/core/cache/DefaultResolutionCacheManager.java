@@ -36,6 +36,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
@@ -282,6 +283,11 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
 
         public String getVariable(String value) {
             return delegate.getVariable(value);
+        }
+
+        @Override
+        public TimeoutConstraint getTimeoutConstraint(final String name) {
+            return this.delegate.getTimeoutConstraint(name);
         }
     }
 

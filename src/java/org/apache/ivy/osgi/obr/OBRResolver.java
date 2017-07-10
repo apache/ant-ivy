@@ -85,7 +85,7 @@ public class OBRResolver extends AbstractOSGiResolver {
                 if (eventManager != null) {
                     getRepository().addTransferListener(eventManager);
                 }
-                Resource obrResource = new URLResource(url);
+                final Resource obrResource = new URLResource(url, this.getTimeoutConstraint());
                 CacheResourceOptions options = new CacheResourceOptions();
                 if (metadataTtl != null) {
                     options.setTtl(metadataTtl);

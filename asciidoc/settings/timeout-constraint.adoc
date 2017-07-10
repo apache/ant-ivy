@@ -1,0 +1,61 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+= timeout-constraint
+
+*Tag:* timeout-constraint
+
+Defines a named timeout constraint that can then be referenced from other places of the Ivy settings file, like the link:resolvers.html[resolvers].
+
+== Attributes
+
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Attribute|Description|Required
+|name|name of timeout constraint|Yes
+|connectionTimeout|An integer value, in milli seconds, that will be used as the timeout while establishing a connection. +
+A value greater than `0` is used literally as the timeout. +
+A value of `0` indicates no timeout and typically translates to wait-forever kind of semantics. +
+A value lesser than `0` lets the users of this timeout constraint decide what semantics to use. That effectively, implies implementation specific semantics|No, defaults to `-1`
+|readTimeout|An integer value, in milli seconds, that will be used as the timeout while reading content from a resource to which an connection has been established. +
+A value greater than `0` is used literally as the timeout. +
+A value of `0` indicates no timeout and typically translates to wait-forever kind of semantics. +
+A value lesser than `0` lets the users of this timeout constraint decide what semantics to use. That effectively, implies implementation specific semantics|No, defaults to `-1`
+|=======
+
+== Examples
+
+[source, xml]
+----
+    <timeout-constraints>
+        <timeout-constraint name="test-timeout-1" connectionTimeout="100" readTimeout="500"/>
+        <timeout-constraint name="test-timeout-2" readTimeout="20"/>
+        <timeout-constraint name="test-timeout-3" connectionTimeout="400"/>
+        <timeout-constraint name="test-timeout-4"/>
+    </timeout-constraints>
+----
+Here we see 4 timeout constraints defined:
+
+    - `test-timeout-1` uses a connection timeout of 200 milli seconds and read timeout of 500 milli seconds.
+    - `test-timeout-2` uses a read timeout of 20 milli seconds and lets the connection timeout default to -1.
+    - `test-timeout-3` uses a connection timeout of 400 milli seconds and lets the read timeout default to -1.
+    - `test-timeout-4` lets both the connection timeout and read timeout default to -1.
+
+
