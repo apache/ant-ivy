@@ -31,6 +31,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 
 public abstract class AbstractURLHandler implements URLHandler {
 
@@ -39,28 +40,49 @@ public abstract class AbstractURLHandler implements URLHandler {
     // the request method to use. TODO: don't use a static here
     private static int requestMethod = REQUEST_METHOD_HEAD;
 
-    public boolean isReachable(URL url) {
-        return getURLInfo(url).isReachable();
+    @Override
+    public boolean isReachable(final URL url) {
+        return this.isReachable(url, null);
     }
 
-    public boolean isReachable(URL url, int timeout) {
-        return getURLInfo(url, timeout).isReachable();
+    @Override
+    public boolean isReachable(final URL url, final int timeout) {
+        return this.isReachable(url, createTimeoutConstraints(timeout));
     }
 
-    public long getContentLength(URL url) {
-        return getURLInfo(url).getContentLength();
+    @Override
+    public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).isReachable();
     }
 
-    public long getContentLength(URL url, int timeout) {
-        return getURLInfo(url, timeout).getContentLength();
+    @Override
+    public long getContentLength(final URL url) {
+        return this.getContentLength(url, null);
     }
 
-    public long getLastModified(URL url) {
-        return getURLInfo(url).getLastModified();
+    @Override
+    public long getContentLength(final URL url, final int timeout) {
+        return this.getContentLength(url, createTimeoutConstraints(timeout));
     }
 
-    public long getLastModified(URL url, int timeout) {
-        return getURLInfo(url, timeout).getLastModified();
+    @Override
+    public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).getContentLength();
+    }
+
+    @Override
+    public long getLastModified(final URL url) {
+        return this.getLastModified(url, null);
+    }
+
+    @Override
+    public long getLastModified(final URL url, final int timeout) {
+        return this.getLastModified(url, createTimeoutConstraints(timeout));
+    }
+
+    @Override
+    public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).getLastModified();
     }
 
     protected String getUserAgent() {
@@ -173,4 +195,17 @@ public abstract class AbstractURLHandler implements URLHandler {
         return result;
     }
 
+    protected static TimeoutConstraint createTimeoutConstraints(final int connectionTimeout) {
+        return new TimeoutConstraint() {
+            @Override
+            public int getConnectionTimeout() {
+                return connectionTimeout;
+            }
+
+            @Override
+            public int getReadTimeout() {
+                return -1;
+            }
+        };
+    }
 }

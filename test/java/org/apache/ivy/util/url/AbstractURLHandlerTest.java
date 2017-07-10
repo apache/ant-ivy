@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.CopyProgressListener;
 
 import org.junit.Test;
@@ -74,6 +75,11 @@ public class AbstractURLHandlerTest {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public void download(final URL src, final File dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
         public URLInfo getURLInfo(URL url) {
             throw new UnsupportedOperationException();
         }
@@ -82,11 +88,26 @@ public class AbstractURLHandlerTest {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
+            throw new UnsupportedOperationException();
+        }
+
         public InputStream openStream(URL url) throws IOException {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
         public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
             throw new UnsupportedOperationException();
         }
 

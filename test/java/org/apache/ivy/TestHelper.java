@@ -17,19 +17,7 @@
  */
 package org.apache.ivy;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.Authenticator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.sun.net.httpserver.HttpServer;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -50,6 +38,21 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestHelper {
 
@@ -370,5 +373,34 @@ public class TestHelper {
             // ignore and return null
             return null;
         }
+    }
+
+    /**
+     * Creates a HTTP server, backed by a local file system, which can be used as a repository to serve Ivy module descriptors
+     * and artifacts.
+     * NOTE: This is supposed to be used only in test cases and only a limited functionality is added in the handler(s) backing the
+     * server
+     *
+     * @param serverAddress           The address to which the server will be bound
+     * @param webAppContext           The context root of the application which will be handling the requests to the server
+     * @param localFilesystemRepoRoot The path to the root directory containing the module descriptors and artifacts
+     * @return
+     * @throws IOException
+     */
+    public static AutoCloseable createHttpServerBackedRepository(final InetSocketAddress serverAddress, final String webAppContext,
+                                                                 final Path localFilesystemRepoRoot) throws IOException {
+        final LocalFileRepoOverHttp handler = new LocalFileRepoOverHttp(webAppContext, localFilesystemRepoRoot);
+        final HttpServer server = HttpServer.create(serverAddress, -1);
+        // setup the handler
+        server.createContext(webAppContext, handler);
+        // start the server
+        server.start();
+        return new AutoCloseable() {
+            @Override
+            public void close() throws Exception {
+                final int delaySeconds = 0;
+                server.stop(delaySeconds);
+            }
+        };
     }
 }

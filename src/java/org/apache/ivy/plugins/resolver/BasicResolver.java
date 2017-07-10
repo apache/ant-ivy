@@ -1037,7 +1037,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     }
                     resource = new FileResource(new FileRepository(), f);
                 } else {
-                    resource = new URLResource(url);
+                    resource = new URLResource(url, this.getTimeoutConstraint());
                 }
                 ret = new ResolvedResource(resource, artifact.getModuleRevisionId().getRevision());
             }

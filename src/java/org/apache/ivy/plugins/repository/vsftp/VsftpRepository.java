@@ -34,6 +34,7 @@ import org.apache.ivy.core.IvyThread;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.plugins.repository.Resource;
@@ -118,6 +119,14 @@ public class VsftpRepository extends AbstractRepository {
     private volatile long errorsLastUpdateTime;
 
     private Ivy ivy = null;
+
+    public VsftpRepository() {
+
+    }
+
+    public VsftpRepository(final TimeoutConstraint timeoutConstraint) {
+        super(timeoutConstraint);
+    }
 
     public Resource getResource(String source) throws IOException {
         initIvy();

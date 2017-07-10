@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 
@@ -56,6 +57,14 @@ public class SshRepository extends AbstractSshBasedRepository {
     private String createDirCommand = "mkdir";
 
     private String publishPermissions = null;
+
+    public SshRepository() {
+
+    }
+
+    public SshRepository(final TimeoutConstraint timeoutConstraint) {
+        super(timeoutConstraint);
+    }
 
     /**
      * create a new resource with lazy initializing

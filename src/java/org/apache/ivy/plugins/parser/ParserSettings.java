@@ -17,18 +17,19 @@
  */
 package org.apache.ivy.plugins.parser;
 
-import java.io.File;
-import java.util.Map;
-
 import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+
+import java.io.File;
+import java.util.Map;
 
 public interface ParserSettings {
 
@@ -60,4 +61,11 @@ public interface ParserSettings {
     Namespace getContextNamespace();
 
     String getVariable(String string);
+
+    /**
+     * @param name The name of the {@link TimeoutConstraint}
+     * @return Returns a {@link TimeoutConstraint} which is identified by the passed <code>name</code>. Returns null
+     * if no such {@link TimeoutConstraint} exists
+     */
+    TimeoutConstraint getTimeoutConstraint(String name);
 }

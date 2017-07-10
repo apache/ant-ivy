@@ -24,13 +24,15 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.repository.LocalizableResource;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class URLResource implements LocalizableResource {
-    private URL url;
+    private final URL url;
+    private final TimeoutConstraint timeoutConstraint;
 
     private boolean init = false;
 
@@ -40,8 +42,13 @@ public class URLResource implements LocalizableResource {
 
     private boolean exists;
 
-    public URLResource(URL url) {
+    public URLResource(final URL url) {
+        this(url, null);
+    }
+
+    public URLResource(final URL url, final TimeoutConstraint timeoutConstraint) {
         this.url = url;
+        this.timeoutConstraint = timeoutConstraint;
     }
 
     public String getName() {
@@ -65,7 +72,7 @@ public class URLResource implements LocalizableResource {
     }
 
     private void init() {
-        URLInfo info = URLHandlerRegistry.getDefault().getURLInfo(url);
+        final URLInfo info = URLHandlerRegistry.getDefault().getURLInfo(url, this.timeoutConstraint);
         contentLength = info.getContentLength();
         lastModified = info.getLastModified();
         exists = info.isReachable();

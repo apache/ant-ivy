@@ -840,7 +840,7 @@ public class ResolveTest {
         // put necessary stuff in cache, and it should now be ok
         File ivyfile = getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"));
         File art = getArchiveFileInCache(ivy, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar");
-        FileUtil.copy(ResolveTest.class.getResource("ivy-mod1.2.xml"), ivyfile, null);
+        FileUtil.copy(ResolveTest.class.getResource("ivy-mod1.2.xml"), ivyfile, null, null);
         FileUtil.copy(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), art, null);
 
         ResolveReport report = ivy.resolve(new File(

@@ -32,6 +32,7 @@ import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.osgi.core.ExecutionEnvironmentProfileProvider;
 import org.apache.ivy.osgi.p2.P2ArtifactParser;
 import org.apache.ivy.osgi.p2.P2CompositeParser;
@@ -57,12 +58,16 @@ public class UpdateSiteLoader {
 
     private final CacheResourceOptions options;
 
+    private final TimeoutConstraint timeoutConstraint;
+
     private int logLevel = Message.MSG_INFO;
 
-    public UpdateSiteLoader(RepositoryCacheManager repositoryCacheManager,
-            EventManager eventManager, CacheResourceOptions options) {
+    public UpdateSiteLoader(final RepositoryCacheManager repositoryCacheManager,
+                            final EventManager eventManager, final CacheResourceOptions options,
+                            final TimeoutConstraint timeoutConstraint) {
         this.repositoryCacheManager = repositoryCacheManager;
         this.options = options;
+        this.timeoutConstraint = timeoutConstraint;
         if (eventManager != null) {
             urlRepository.addTransferListener(eventManager);
         }
@@ -177,7 +182,7 @@ public class UpdateSiteLoader {
         InputStream readIn = null; // the input stream from which the xml should be read
 
         URL contentUrl = repoUri.resolve(baseName + ".jar").toURL();
-        URLResource res = new URLResource(contentUrl);
+        URLResource res = new URLResource(contentUrl, this.timeoutConstraint);
 
         ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
             baseName, baseName, "jar", options, urlRepository);
@@ -185,7 +190,7 @@ public class UpdateSiteLoader {
         if (report.getDownloadStatus() == DownloadStatus.FAILED) {
             // no jar file, try the xml one
             contentUrl = repoUri.resolve(baseName + ".xml").toURL();
-            res = new URLResource(contentUrl);
+            res = new URLResource(contentUrl, this.timeoutConstraint);
 
             report = repositoryCacheManager.downloadRepositoryResource(res, baseName, baseName,
                 "xml", options, urlRepository);
@@ -226,7 +231,7 @@ public class UpdateSiteLoader {
         URI siteUri = normalizeSiteUri(repoUri, null);
         URL u = siteUri.resolve("site.xml").toURL();
 
-        URLResource res = new URLResource(u);
+        final URLResource res = new URLResource(u, this.timeoutConstraint);
         ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
             "site", "updatesite", "xml", options, urlRepository);
         if (report.getDownloadStatus() == DownloadStatus.FAILED) {
@@ -272,7 +277,7 @@ public class UpdateSiteLoader {
         URL digest = digestBaseUri.resolve("digest.zip").toURL();
         Message.verbose("\tReading " + digest);
 
-        URLResource res = new URLResource(digest);
+        final URLResource res = new URLResource(digest, this.timeoutConstraint);
         ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
             "digest", "digest", "zip", options, urlRepository);
         if (report.getDownloadStatus() == DownloadStatus.FAILED) {
@@ -294,7 +299,7 @@ public class UpdateSiteLoader {
         for (EclipseFeature feature : site.getFeatures()) {
             URL url = site.getUri().resolve(feature.getUrl()).toURL();
 
-            URLResource res = new URLResource(url);
+            final URLResource res = new URLResource(url, this.timeoutConstraint);
             ArtifactDownloadReport report = repositoryCacheManager.downloadRepositoryResource(res,
                 feature.getId(), "feature", "jar", options, urlRepository);
             if (report.getDownloadStatus() == DownloadStatus.FAILED) {
