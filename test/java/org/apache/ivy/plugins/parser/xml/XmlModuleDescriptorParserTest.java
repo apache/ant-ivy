@@ -19,12 +19,19 @@ package org.apache.ivy.plugins.parser.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -1446,5 +1453,54 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(1, artifacts.length);
         assertEquals("mymodule", artifacts[0].getName());
         assertEquals("jar", artifacts[0].getType());
+    }
+
+
+    /**
+     * Tests that when the <code>location</code> attribute of the <code>extends</code> element of a module descriptor
+     * file, includes an {@link File#isAbsolute() absolute path} with characters that {@link java.net.URI} considers
+     * as encoded characters (for example <code>%2F</code>) then the module descriptor and the location of
+     * the parent descriptor, are resolved and parsed correctly.
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1562">IVY-1562</a> for more details
+     */
+    @Test
+    public void testExtendsAbsoluteLocation() throws Exception {
+        final URL ivyXML = this.getClass().getResource("foo%2Fbar/hello/test-ivy-extends-absolute.xml");
+        assertNotNull("Ivy xml file is missing", ivyXML);
+        final URL parentIvyXML = this.getClass().getResource("foo%2Fbar/parent-ivy.xml");
+        assertNotNull("Parent Ivy xml file is missing", parentIvyXML);
+        // the ivy xml references a parent ivy xml via extends "location" and expects the parent ivy to be present
+        // at a location under java.io.tmpdir, so we copy over the parent ivy file over there
+        final Path targetDir = Paths.get(System.getProperty("java.io.tmpdir"), "foo%2Fbar");
+        Files.createDirectories(targetDir);
+        final Path parentIvyXMLPath = Paths.get(targetDir.toString(), "parent-ivy.xml");
+        try (final InputStream is = parentIvyXML.openStream()) {
+            Files.copy(is, parentIvyXMLPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        assertTrue("Parent ivy xml file wasn't copied", Files.isRegularFile(parentIvyXMLPath));
+        try {
+            // now start parsing the Ivy xml
+            final ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyXML, true);
+            assertNotNull("Parsed module descriptor is null", md);
+            assertEquals("Unexpected org for the parsed module descriptor", "myorg", md.getModuleRevisionId().getOrganisation());
+            assertEquals("Unexpected module name for the parsed module descriptor", "mymodule", md.getModuleRevisionId().getName());
+            assertEquals("Unexpected revision for the parsed module descriptor", "1.0.0", md.getModuleRevisionId().getRevision());
+
+            final Configuration[] confs = md.getConfigurations();
+            assertNotNull("No configurations found in module descriptor", confs);
+            assertEquals("Unexpected number of configurations found in module descriptor", 3, confs.length);
+
+            final Set<String> expectedConfs = new HashSet<>(Arrays.asList("parent-conf1", "parent-conf2", "conf2"));
+            for (final Configuration conf : confs) {
+                assertNotNull("One of the configurations was null in module descriptor", conf);
+                assertTrue("Unexpected configuration " + conf.getName() + " found in parsed module descriptor", expectedConfs.remove(conf.getName()));
+            }
+            assertTrue("Missing configurations " + expectedConfs + " from the parsed module descriptor", expectedConfs.isEmpty());
+        } finally {
+            // clean up the copied over file
+            Files.delete(parentIvyXMLPath);
+        }
     }
 }
