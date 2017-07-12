@@ -166,9 +166,26 @@
         <replace dir="${output.dir}" token="${ivy.revision}" value="working@apache"/>
     </target>
 
-    <target name="init-asciidoctor" depends="init-ivy" unless="skip.doc">
+    <target name="init-asciidoctor-extensions" depends="init-ivy" unless="skip.doc">
+        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.5" conf="runtime" inline="true"/>
+        <mkdir dir="${build.dir}/asciidoc-extensions/classes"/>
+        <javac srcdir="${doc.src.dir}/templates/extensions/src" destdir="${build.dir}/asciidoc-extensions/classes"
+               debug="true" includeantruntime="no" classpathref="asciidoctorj.path"/>
+        <copy todir="${build.dir}/asciidoc-extensions">
+            <fileset dir="${doc.src.dir}/templates/extensions/src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="init-asciidoctor" depends="init-asciidoctor-extensions" unless="skip.doc">
         <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
-        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path"/>
+        <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path">
+            <classpath>
+                <pathelement location="${build.dir}/asciidoc-extensions/classes" />
+                <path refid="asciidoctor.path" />
+            </classpath>
+        </taskdef>
     </target>
 
     <target name="copy-doc-files" unless="skip.doc">
@@ -185,6 +202,7 @@
             <attribute key="basedir" value="${doc.src.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}"/>
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
         </asciidoctor:convert>
     </target>
 
@@ -237,6 +255,7 @@
         <asciidoctor:convert sourceDirectory="${build.dir}/book" outputDirectory="${doc.build.dir}" backend="xhtml5"
                              templateDir="${doc.src.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
             <attribute key="version" value="${build.version}" />
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
         </asciidoctor:convert>
     </target>
 
