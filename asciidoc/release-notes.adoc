@@ -50,6 +50,7 @@ http://issues.apache.org/jira/browse/ivy
 
 List of changes since Ivy 2.4.0:
 
+- FIX: Local conflict manager didn't handle deeper conflicts in transitive dependencies (link:https://issues.apache.org/jira/browse/IVY-1404[IVY-1404])
 - FIX: Made the maven 'test' configuration public so we can use the test-jar as dependency (link:https://issues.apache.org/jira/browse/IVY-1444[IVY-1444])
 - FIX: NullPointerException in dependencytree with no dependencies (link:https://issues.apache.org/jira/browse/IVY-1539[IVY-1539])
 - FIX: checkIfChanged is not settable attribute for checkdepsupdate ant task (link:https://issues.apache.org/jira/browse/IVY-1549[IVY-1549])

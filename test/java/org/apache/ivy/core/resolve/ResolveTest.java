@@ -410,6 +410,27 @@ public class ResolveTest {
     }
 
     @Test
+    public void testResolveWithConflictManagerDefinedAtHigherLevel() throws Exception {
+        // test case for IVY-1404
+        // #M1;1.0 -> #M2;1.0
+        // #M1;2.0 -> {#M2;1.0 #M3;1.0}
+        // #M2;1.0 -> org1#mod1.2;1.1
+        // #M3;1.0 -> org1#mod1.2;2.0
+        // #M1;1.0 has conflict manager: <conflict org="org1" module="mod1.2" rev="1.1,2.0" />
+
+        ResolveReport report = ivy.resolve(new File(
+                        "test/repositories/1/IVY-1404/M1/ivys/ivy-1.0.xml"),
+                getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        ArtifactDownloadReport[] adrs = report.getConfigurationReport("default")
+                .getDownloadedArtifactsReports();
+        assertEquals(2, adrs.length);
+        assertEquals("1.1", adrs[0].getArtifact().getId().getRevision());
+        assertEquals("2.0", adrs[1].getArtifact().getId().getRevision());
+    }
+
+    @Test
     public void testResolveRequiresDescriptor() throws Exception {
         // mod1.1 depends on mod1.2, mod1.2 has no ivy file
         Ivy ivy = new Ivy();

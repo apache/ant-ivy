@@ -923,7 +923,24 @@ public class ResolveEngine {
         Collection<IvyNode> conflicts = computeConflicts(node, ancestor, conf, toevict,
             resolvedNodes);
 
-        ConflictManager conflictManager = ancestor.getNode().getConflictManager(node.getModuleId());
+        ConflictManager conflictManager = null;
+        for (VisitNode current : ancestor.getPath()) {
+            ModuleDescriptor descriptor = current.getNode().getDescriptor();
+            if (descriptor == null) {
+                throw new IllegalStateException(
+                        "impossible to get conflict manager when data has not been loaded. IvyNode = "
+                                + current.getNode());
+            }
+
+            conflictManager = descriptor.getConflictManager(node.getModuleId());
+            if (conflictManager != null) {
+                break;
+            }
+        }
+
+        if (conflictManager == null) {
+            conflictManager = settings.getConflictManager(node.getModuleId());
+        }
 
         Collection<IvyNode> resolved = resolveConflicts(node, ancestor, conflicts, conflictManager);
 
