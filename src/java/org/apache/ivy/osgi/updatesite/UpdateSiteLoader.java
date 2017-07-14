@@ -173,7 +173,7 @@ public class UpdateSiteLoader {
     }
 
     private boolean readJarOrXml(URI repoUri, String baseName, XMLInputParser reader)
-            throws IOException, SAXException {
+            throws IOException, ParseException, SAXException {
         InputStream readIn = null; // the input stream from which the xml should be read
 
         URL contentUrl = repoUri.resolve(baseName + ".jar").toURL();

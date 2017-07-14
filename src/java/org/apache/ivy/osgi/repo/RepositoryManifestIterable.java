@@ -59,11 +59,11 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable<Strin
         return repo.getResource(f).openStream();
     }
 
-    protected List<String> listBundleFiles(String dir) {
+    protected List<String> listBundleFiles(String dir) throws IOException {
         return asList(ResolverHelper.listAll(repo, dir));
     }
 
-    protected List<String> listDirs(String dir) {
+    protected List<String> listDirs(String dir) throws IOException {
         return asList(ResolverHelper.listAll(repo, dir));
     }
 
