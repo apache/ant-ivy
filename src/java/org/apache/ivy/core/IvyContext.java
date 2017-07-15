@@ -246,10 +246,10 @@ public class IvyContext {
                 return null;
             }
             if (o instanceof List) {
-                if (((List<Object>) o).size() == 0) {
+                if (((List<?>) o).size() == 0) {
                     return null;
                 }
-                return ((List<Object>) o).get(0);
+                return ((List<?>) o).get(0);
             } else {
                 throw new RuntimeException("Cannot top from non List object " + o);
             }
@@ -272,10 +272,10 @@ public class IvyContext {
                 return null;
             }
             if (o instanceof List) {
-                if (((List<Object>) o).size() == 0) {
+                if (((List<?>) o).size() == 0) {
                     return null;
                 }
-                return ((List<Object>) o).remove(0);
+                return ((List<?>) o).remove(0);
             } else {
                 throw new RuntimeException("Cannot pop from non List object " + o);
             }
@@ -301,14 +301,14 @@ public class IvyContext {
                 return false;
             }
             if (o instanceof List) {
-                if (((List<Object>) o).size() == 0) {
+                if (((List<?>) o).size() == 0) {
                     return false;
                 }
-                Object top = ((List<Object>) o).get(0);
+                Object top = ((List<?>) o).get(0);
                 if (!top.equals(expectedValue)) {
                     return false;
                 }
-                ((List<Object>) o).remove(0);
+                ((List<?>) o).remove(0);
                 return true;
             } else {
                 throw new RuntimeException("Cannot pop from non List object " + o);

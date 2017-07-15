@@ -75,9 +75,9 @@ public class ManifestParser {
 
     public static BundleInfo parseJarManifest(InputStream jarStream) throws IOException,
             ParseException {
-    @SuppressWarnings("resource")
         JarInputStream jis = new JarInputStream(jarStream);
         Manifest manifest = jis.getManifest();
+        jis.close();
         if (manifest == null) {
             return null;
         }

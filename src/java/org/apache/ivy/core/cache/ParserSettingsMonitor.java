@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -77,7 +78,7 @@ class ParserSettingsMonitor {
      * Only the info that was actually used is compared.
      */
     public boolean hasChanged(ParserSettings newSettings) {
-        for (Map.Entry<String, String> entry : substitutes.entrySet()) {
+        for (Entry<String, String> entry : substitutes.entrySet()) {
             String key = entry.getKey();
             if (!entry.getValue().equals(newSettings.substitute(key))) {
                 Message.debug("settings variable has changed for : " + key);
@@ -131,7 +132,7 @@ class ParserSettingsMonitor {
 
         public Map<String, String> substitute(Map<String, String> strings) {
             Map<String, String> substituted = new LinkedHashMap<>();
-            for (Map.Entry<String, String> entry : strings.entrySet()) {
+            for (Entry<String, String> entry : strings.entrySet()) {
                 substituted.put(entry.getKey(), substitute(entry.getValue()));
             }
             return substituted;

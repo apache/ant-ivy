@@ -30,7 +30,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.PatternSet;
+import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.util.FileNameMapper;
 
 /**
@@ -128,7 +128,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 fileset.setDir(report.getRetrieveRoot());
 
                 for (File file : report.getRetrievedFiles()) {
-                    PatternSet.NameEntry ne = fileset.createInclude();
+                    NameEntry ne = fileset.createInclude();
                     ne.setName(getPath(report.getRetrieveRoot(), file));
                 }
             }

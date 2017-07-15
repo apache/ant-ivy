@@ -458,7 +458,6 @@ public class Configurator {
         objectStack.push(new ObjectDescriptor(object, name));
     }
 
-    @SuppressWarnings("rawtypes")
     public Object startCreateChild(String name) {
         if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before creating child");
@@ -548,7 +547,6 @@ public class Configurator {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private Object addChild(ObjectDescriptor parentOD, Class<?> childClass, String name,
             Object child)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {

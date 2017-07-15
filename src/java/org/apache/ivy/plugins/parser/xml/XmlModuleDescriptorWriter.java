@@ -74,7 +74,7 @@ public final class XmlModuleDescriptorWriter {
             }
             StringBuilder xmlNamespace = new StringBuilder();
             Map<String, String> namespaces = md.getExtraAttributesNamespaces();
-            for (Map.Entry<String, String> ns : namespaces.entrySet()) {
+            for (Entry<String, String> ns : namespaces.entrySet()) {
                 xmlNamespace.append(" xmlns:").append(ns.getKey()).append("=\"")
                         .append(ns.getValue()).append("\"");
             }
@@ -178,7 +178,7 @@ public final class XmlModuleDescriptorWriter {
         Map<MapMatcher, DependencyDescriptorMediator> mediators = md
                 .getAllDependencyDescriptorMediators().getAllRules();
 
-        for (Map.Entry<MapMatcher, DependencyDescriptorMediator> mediatorRule : mediators.entrySet()) {
+        for (Entry<MapMatcher, DependencyDescriptorMediator> mediatorRule : mediators.entrySet()) {
             MapMatcher matcher = mediatorRule.getKey();
             DependencyDescriptorMediator mediator = mediatorRule.getValue();
 
@@ -326,7 +326,7 @@ public final class XmlModuleDescriptorWriter {
         }
 
         String delim = prefix;
-        for (Map.Entry<String, String> entry : extra.entrySet()) {
+        for (Entry<String, String> entry : extra.entrySet()) {
             out.print(String.format("%s%s=\"%s\"", delim, entry.getKey(),
                     XMLHelper.escape(entry.getValue())));
             delim = " ";

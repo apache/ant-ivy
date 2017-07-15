@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.ivy.core.IvyPatternHelper;
@@ -150,7 +151,7 @@ public class PomReader {
         // Both environment and system properties take precedence over properties set in
         // pom.xml. So we pre-populate our properties with the environment and system properties
         // here
-        for (final Map.Entry<String, String> envEntry : System.getenv().entrySet()) {
+        for (final Entry<String, String> envEntry : System.getenv().entrySet()) {
             // Maven let's users use "env." prefix for environment variables
             this.setProperty("env." + envEntry.getKey(), envEntry.getValue());
         }

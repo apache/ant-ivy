@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -1120,7 +1121,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
     private static String chooseSomeEnvVar() {
         final Map<String, String> env = System.getenv();
-        for (final Map.Entry<String, String> entry : env.entrySet()) {
+        for (final Entry<String, String> entry : env.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {
                 return entry.getKey();
             }

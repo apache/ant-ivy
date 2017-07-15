@@ -57,6 +57,7 @@ import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
@@ -652,13 +653,13 @@ public class ResolveEngine {
         for (IvyNode node : sortedDependencies) {
             if (!node.isCompletelyEvicted()) {
                 for (String conf : confs) {
-                    IvyNodeCallers.Caller[] callers = node.getCallers(conf);
+                    Caller[] callers = node.getCallers(conf);
+                    boolean allEvicted = callers.length > 0;
                     if (settings.debugConflictResolution()) {
                         Message.debug("checking if " + node.getId()
                                 + " is transitively evicted in " + conf);
                     }
-                    boolean allEvicted = callers.length > 0;
-                    for (IvyNodeCallers.Caller caller : callers) {
+                    for (Caller caller : callers) {
                         if (caller.getModuleRevisionId().equals(md.getModuleRevisionId())) {
                             // the caller is the root module itself, it can't be evicted
                             allEvicted = false;

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -618,7 +619,7 @@ public abstract class BasicResolver extends AbstractResolver {
             errors.append("bad status: '").append(md.getStatus()).append("'; ");
             ok = false;
         }
-        for (Map.Entry<String, String> extra : mrid.getExtraAttributes().entrySet()) {
+        for (Entry<String, String> extra : mrid.getExtraAttributes().entrySet()) {
             if (extra.getValue() != null
                     && !extra.getValue().equals(md.getExtraAttribute(extra.getKey()))) {
                 String errorMsg = "bad " + extra.getKey() + " found in " + ivyRef.getResource()
@@ -793,7 +794,7 @@ public abstract class BasicResolver extends AbstractResolver {
         for (String m : ivyattempts) {
             Message.warn("  " + m);
         }
-        for (Map.Entry<Artifact, List<String>> entry : artattempts.entrySet()) {
+        for (Entry<Artifact, List<String>> entry : artattempts.entrySet()) {
             List<String> attempts = entry.getValue();
             if (attempts != null) {
                 Message.warn("  -- artifact " + entry.getKey() + ":");

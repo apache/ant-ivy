@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,7 +129,7 @@ public final class IvyPatternHelper {
             ArtifactOrigin origin, Map<String, String> extraModuleAttributes, Map<String, String> extraArtifactAttributes) {
         Map<String, Object> tokens = new HashMap<>();
         if (extraModuleAttributes != null) {
-            for (Map.Entry<String, String> entry : extraModuleAttributes.entrySet()) {
+            for (Entry<String, String> entry : extraModuleAttributes.entrySet()) {
                 String token = entry.getKey();
                 if (token.indexOf(':') > 0) {
                     token = token.substring(token.indexOf(':') + 1);
@@ -137,7 +138,7 @@ public final class IvyPatternHelper {
             }
         }
         if (extraArtifactAttributes != null) {
-            for (Map.Entry<String, String> entry : extraArtifactAttributes.entrySet()) {
+            for (Entry<String, String> entry : extraArtifactAttributes.entrySet()) {
                 String token = entry.getKey();
                 if (token.indexOf(':') > 0) {
                     token = token.substring(token.indexOf(':') + 1);

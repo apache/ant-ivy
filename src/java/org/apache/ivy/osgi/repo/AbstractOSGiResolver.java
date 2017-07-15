@@ -415,13 +415,12 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             Map<String, Object> criteria) {
         Map<String, String> stringCriteria = new HashMap<>();
         for (Entry<String, Object> entry : criteria.entrySet()) {
-            String key = entry.getKey();
             Object value = entry.getValue();
             if (!(value instanceof String)) {
                 // no support for matcher for now
                 return Collections.emptySet();
             }
-            stringCriteria.put(key, (String) value);
+            stringCriteria.put(entry.getKey(), (String) value);
         }
 
         if (tokens.isEmpty()) {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -49,7 +50,7 @@ public class PackagerResolver extends URLResolver {
 
     private static final String PACKAGER_ARTIFACT_EXT = "xml";
 
-    private final HashMap<ModuleRevisionId, PackagerCacheEntry> packagerCache = new HashMap<>();
+    private final Map<ModuleRevisionId, PackagerCacheEntry> packagerCache = new HashMap<>();
 
     private File buildRoot;
 
@@ -141,7 +142,7 @@ public class PackagerResolver extends URLResolver {
      * @param pattern String
      */
     public void setPackagerPattern(String pattern) {
-        ArrayList<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         list.add(pattern);
         setArtifactPatterns(list);
     }

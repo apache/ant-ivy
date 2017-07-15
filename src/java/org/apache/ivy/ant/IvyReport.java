@@ -49,7 +49,7 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.XSLTProcess;
+import org.apache.tools.ant.taskdefs.XSLTProcess.Param;
 import org.apache.tools.ant.util.JAXPUtils;
 
 /**
@@ -78,7 +78,7 @@ public class IvyReport extends IvyTask {
 
     private String xslext = "html";
 
-    private final List<XSLTProcess.Param> params = new ArrayList<>();
+    private final List<Param> params = new ArrayList<>();
 
     private String resolveId;
 
@@ -321,7 +321,7 @@ public class IvyReport extends IvyTask {
             transformer.setParameter("extension", xslext);
 
             // add the provided XSLT parameters
-            for (XSLTProcess.Param param : params) {
+            for (Param param : params) {
                 transformer.setParameter(param.getName(), param.getExpression());
             }
 
@@ -414,8 +414,8 @@ public class IvyReport extends IvyTask {
         this.xslext = xslext;
     }
 
-    public XSLTProcess.Param createParam() {
-        XSLTProcess.Param result = new XSLTProcess.Param();
+    public Param createParam() {
+        Param result = new Param();
         params.add(result);
         return result;
     }

@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
@@ -110,7 +110,7 @@ public class IvyVar extends IvyTask {
                     }
                 }
             }
-            for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            for (Entry<Object, Object> entry : props.entrySet()) {
                 settings.setVariable(getVarName((String) entry.getKey()), (String) entry.getValue());
             }
         }

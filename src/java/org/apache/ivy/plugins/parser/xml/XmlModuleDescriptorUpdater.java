@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -251,7 +252,7 @@ public final class XmlModuleDescriptorUpdater {
 
         private StringBuffer currentIndent = new StringBuffer();
 
-        private ArrayList<String> indentLevels = new ArrayList<>(); // ArrayList<String>
+        private List<String> indentLevels = new ArrayList<>(); // ArrayList<String>
 
         // true if an ivy-module/info/description element has been found in the published descriptor
         private boolean hasDescription = false;
@@ -777,7 +778,7 @@ public final class XmlModuleDescriptorUpdater {
                 write(" namespace=\"" + namespace + "\"");
             }
 
-            for (Map.Entry<String, String> extra : extraAttributes.entrySet()) {
+            for (Entry<String, String> extra : extraAttributes.entrySet()) {
                 write(" " + extra.getKey() + "=\"" + extra.getValue() + "\"");
             }
         }
@@ -957,8 +958,7 @@ public final class XmlModuleDescriptorUpdater {
                 justOpen = null;
             }
 
-            for (Map.Entry<ModuleRevisionId, List<InheritableItem>> entry : inheritedItems
-                    .entrySet()) {
+            for (Entry<ModuleRevisionId, List<InheritableItem>> entry : inheritedItems.entrySet()) {
                 if (justOpen != null) {
                     out.println(">");
                     justOpen = null; // helps endElement() decide how to write close tags

@@ -38,6 +38,7 @@ import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
+import org.apache.tools.ant.taskdefs.XSLTProcess.Param;
 
 /**
  * Generates a report of dependencies of a set of modules in the repository. The set of modules is
@@ -70,7 +71,7 @@ public class IvyRepositoryReport extends IvyTask {
 
     private String xslext = "html";
 
-    private final List<XSLTProcess.Param> params = new ArrayList<>();
+    private final List<Param> params = new ArrayList<>();
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -142,15 +143,15 @@ public class IvyRepositoryReport extends IvyTask {
 
         xslt.setStyle(xslFile);
 
-        XSLTProcess.Param xslExt = xslt.createParam();
+        Param xslExt = xslt.createParam();
         xslExt.setName("extension");
         xslExt.setExpression(xslext);
 
         // add the provided XSLT parameters
-        for (XSLTProcess.Param param : params) {
-            XSLTProcess.Param realParam = xslt.createParam();
-            realParam.setName(param.getName());
-            realParam.setExpression(param.getExpression());
+        for (Param parm : params) {
+            Param realParam = xslt.createParam();
+            realParam.setName(parm.getName());
+            realParam.setExpression(parm.getExpression());
         }
 
         xslt.execute();
@@ -251,8 +252,8 @@ public class IvyRepositoryReport extends IvyTask {
         this.xslext = xslext;
     }
 
-    public XSLTProcess.Param createParam() {
-        XSLTProcess.Param result = new XSLTProcess.Param();
+    public Param createParam() {
+        Param result = new Param();
         params.add(result);
         return result;
     }

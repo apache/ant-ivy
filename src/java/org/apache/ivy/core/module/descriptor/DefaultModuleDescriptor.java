@@ -53,6 +53,8 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+
 /**
  *
  */
@@ -415,7 +417,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public String[] getPublicConfigurationsNames() {
         List<String> ret = new ArrayList<>();
         for (Configuration conf : configurations.values()) {
-            if (conf.getVisibility() == Configuration.Visibility.PUBLIC) {
+            if (PUBLIC.equals(conf.getVisibility())) {
                 ret.add(conf.getName());
             }
         }

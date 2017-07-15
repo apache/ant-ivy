@@ -23,14 +23,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -41,10 +38,8 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
-import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.PomDependencyDescriptor;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyMgtElement;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomPluginElement;
@@ -55,6 +50,11 @@ import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
+
+import static org.apache.ivy.core.IvyContext.getContext;
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+import static org.apache.ivy.plugins.namespace.NameSpaceHelper.toSystem;
+import static org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.*;
 
 /**
  * A parser for Maven 2 POM.
@@ -125,8 +125,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             domReader.setProperty("project.parent.version", domReader.getParentVersion());
             domReader.setProperty("project.parent.groupId", domReader.getParentGroupId());
 
-            Map<String, String> pomProperties = domReader.getPomProperties();
-            for (Map.Entry<String, String> prop : pomProperties.entrySet()) {
+            for (Entry<String, String> prop : domReader.getPomProperties().entrySet()) {
                 domReader.setProperty(prop.getKey(), prop.getValue());
                 mdBuilder.addProperty(prop.getKey(), prop.getValue());
             }
@@ -145,9 +144,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 parentDescr = parentModule.getDescriptor();
                 if (parentDescr != null) {
-                    Map<String, String> parentPomProps = PomModuleDescriptorBuilder
-                            .extractPomProperties(parentDescr.getExtraInfos());
-                    for (Map.Entry<String, String> prop : parentPomProps.entrySet()) {
+                    for (Entry<String, String> prop :
+                            extractPomProperties(parentDescr.getExtraInfos()).entrySet()) {
                         domReader.setProperty(prop.getKey(), prop.getValue());
                     }
                 }
@@ -187,8 +185,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                                         + " has been relocated",
                                 0);
                     }
-                    for (DependencyDescriptor dd : relocatedModule.getDescriptor()
-                            .getDependencies()) {
+                    for (DependencyDescriptor dd : relocatedModule.getDescriptor().getDependencies()) {
                         mdBuilder.addDependency(dd);
                     }
                 } else {
@@ -199,9 +196,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
                             mdBuilder.getModuleDescriptor(), relocation, true, false, true);
                     /* Map all public dependencies */
-                    Configuration[] m2Confs = PomModuleDescriptorBuilder.MAVEN2_CONFIGURATIONS;
-                    for (Configuration m2Conf : m2Confs) {
-                        if (Visibility.PUBLIC.equals(m2Conf.getVisibility())) {
+                    for (Configuration m2Conf : MAVEN2_CONFIGURATIONS) {
+                        if (PUBLIC.equals(m2Conf.getVisibility())) {
                             dd.addDependencyConfiguration(m2Conf.getName(), m2Conf.getName());
                         }
                     }
@@ -222,9 +218,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     mdBuilder.addExtraInfos(parentDescr.getExtraInfos());
 
                     // add dependency management info from parent
-                    List<PomDependencyMgt> depMgt = PomModuleDescriptorBuilder
-                            .getDependencyManagements(parentDescr);
-                    for (PomDependencyMgt dep : depMgt) {
+                    for (PomDependencyMgt dep : getDependencyManagements(parentDescr)) {
                         if (dep instanceof PomDependencyMgtElement) {
                             dep = domReader.new PomDependencyMgtElement(
                                     (PomDependencyMgtElement) dep);
@@ -233,8 +227,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     }
 
                     // add plugins from parent
-                    for (PomDependencyMgt pomDependencyMgt : PomModuleDescriptorBuilder
-                            .getPlugins(parentDescr)) {
+                    for (PomDependencyMgt pomDependencyMgt : getPlugins(parentDescr)) {
                         mdBuilder.addPlugin(pomDependencyMgt);
                     }
                 }
@@ -303,9 +296,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             ModuleDescriptor importDescr = importModule.getDescriptor();
 
             // add dependency management info from imported module
-            List<PomDependencyMgt> depMgt = PomModuleDescriptorBuilder
-                    .getDependencyManagements(importDescr);
-            for (PomDependencyMgt importedDepMgt : depMgt) {
+            for (PomDependencyMgt importedDepMgt : getDependencyManagements(importDescr)) {
                 mdBuilder.addDependencyMgt(new DefaultPomDependencyMgt(importedDepMgt.getGroupId(),
                         importedDepMgt.getArtifactId(), importedDepMgt.getVersion(),
                         importedDepMgt.getScope(), importedDepMgt.getExcludedModules()));
@@ -387,9 +378,9 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     private ResolvedModuleRevision parseOtherPom(ParserSettings ivySettings,
             ModuleRevisionId parentModRevID) throws ParseException {
         DependencyDescriptor dd = new DefaultDependencyDescriptor(parentModRevID, true);
-        ResolveData data = IvyContext.getContext().getResolveData();
+        ResolveData data = getContext().getResolveData();
         if (data == null) {
-            ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+            ResolveEngine engine = getContext().getIvy().getResolveEngine();
             ResolveOptions options = new ResolveOptions();
             options.setDownload(false);
             data = new ResolveData(engine, options);
@@ -400,7 +391,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             // TODO: Throw exception here?
             return null;
         } else {
-            dd = NameSpaceHelper.toSystem(dd, ivySettings.getContextNamespace());
+            dd = toSystem(dd, ivySettings.getContextNamespace());
             return resolver.getDependency(dd, data);
         }
     }

@@ -21,7 +21,6 @@ import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -394,15 +393,14 @@ public class ManifestHeaderValue {
     }
 
     public String toString() {
-        String string = "";
-        Iterator<ManifestHeaderElement> it = elements.iterator();
-        while (it.hasNext()) {
-            string = string.concat(it.next().toString());
-            if (it.hasNext()) {
-                string = string.concat(",");
+        StringBuilder sb = new StringBuilder();
+        for (ManifestHeaderElement element : elements) {
+            if (sb.length() > 0) {
+                sb.append(",");
             }
+            sb.append(element.toString());
         }
-        return string;
+        return sb.toString();
     }
 
     public static void writeParseException(PrintStream out, String source, ParseException e) {

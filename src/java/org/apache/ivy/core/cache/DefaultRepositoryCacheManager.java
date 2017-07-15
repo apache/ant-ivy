@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -550,7 +551,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     // origin. We must parse the key as we do not know for sure what the original
                     // artifact is named.
                     String ownLocationKey = getLocationKey(artifact);
-                    for (Map.Entry<Object, Object> entry : cdf.entrySet()) {
+                    for (Entry<Object, Object> entry : cdf.entrySet()) {
                         if (entry.getValue().equals(location)
                                 && !ownLocationKey.equals(entry.getKey())) {
                             // found a match, key is

@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -37,6 +37,8 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
 
 /**
  * Parses information about an ivy file and make them available in ant.
@@ -162,7 +164,7 @@ public class IvyInfo extends IvyTask {
         }
 
         Map<String, String> extra = mrid.getExtraAttributes();
-        for (Map.Entry<String, String> entry : extra.entrySet()) {
+        for (Entry<String, String> entry : extra.entrySet()) {
             getProject().setProperty(property + ".extra." + entry.getKey(),
                     entry.getValue());
         }
@@ -174,7 +176,7 @@ public class IvyInfo extends IvyTask {
         List<String> publicConfigsList = new ArrayList<>();
         for (Configuration config : md.getConfigurations()) {
             String name = config.getName();
-            if (Visibility.PUBLIC.equals(config.getVisibility())) {
+            if (PUBLIC.equals(config.getVisibility())) {
                 publicConfigsList.add(name);
             }
 
@@ -196,7 +198,7 @@ public class IvyInfo extends IvyTask {
                 mergeConfs(artifact.getConfigurations()));
 
             Map<String, String> artiExtra = artifact.getExtraAttributes();
-            for (Map.Entry<String, String> entry : artiExtra.entrySet()) {
+            for (Entry<String, String> entry : artiExtra.entrySet()) {
                 getProject().setProperty(property + ".artifact." + id + ".extra." + entry.getKey(),
                     entry.getValue());
             }

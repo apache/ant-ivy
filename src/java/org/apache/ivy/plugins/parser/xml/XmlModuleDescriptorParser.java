@@ -82,6 +82,8 @@ import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.getVisibility;
+
 /**
  * Parses an xml ivy file and output a ModuleDescriptor. For dependency and performance reasons, it
  * uses only the SAX API, which makes the parsing code harder to understand.
@@ -839,9 +841,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                             || Boolean.valueOf(attributes.getValue("transitive"));
                     String deprecated = attributes.getValue("deprecated");
                     Configuration configuration = new Configuration(conf,
-                            Configuration.Visibility.getVisibility((visibility == null) ? "public"
-                                    : visibility), settings.substitute(attributes.getValue("description")),
-                                    (ext == null) ? null : ext.split(","), transitive, deprecated);
+                            getVisibility((visibility == null) ? "public" : visibility),
+                            settings.substitute(attributes.getValue("description")),
+                            (ext == null) ? null : ext.split(","), transitive, deprecated);
                     ExtendableItemHelper.fillExtraAttributes(settings, configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive", "description",
                                 "deprecated"});
