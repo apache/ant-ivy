@@ -17,6 +17,12 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,8 +56,6 @@ import org.apache.ivy.util.MockMessageLogger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -87,7 +91,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         _settings.setVariable("ivy.ibiblio.default.artifact.pattern",
             "[module]/jars/[artifact]-[revision].jar");
         resolver.setSettings(_settings);
-        List l = resolver.getArtifactPatterns();
+        List<String> l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[module]/jars/[artifact]-[revision].jar",
@@ -104,7 +108,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         _settings.load(IBiblioResolverTest.class.getResource("ibiblioresolverconf.xml"));
         IBiblioResolver resolver = (IBiblioResolver) _settings.getResolver("ibiblioA");
         assertNotNull(resolver);
-        List l = resolver.getArtifactPatterns();
+        List<String> l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[module]/[artifact]-[revision].jar", l.get(0));
@@ -114,8 +118,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals(
-            "http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar",
+        assertEquals("http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar",
             l.get(0));
 
         resolver = (IBiblioResolver) _settings.getResolver("ibiblioC");
@@ -203,6 +206,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void testMaven2Listing() throws Exception {
         IBiblioResolver resolver = new IBiblioResolver();

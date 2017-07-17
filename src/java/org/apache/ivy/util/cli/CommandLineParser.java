@@ -101,10 +101,8 @@ public class CommandLineParser {
 
         // print options help
         for (Entry<String, List<Option>> entry : categories.entrySet()) {
-            String category = entry.getKey();
-            pw.println("==== " + category);
-            List<Option> options = entry.getValue();
-            for (Option option : options) {
+            pw.println("==== " + entry.getKey());
+            for (Option option : entry.getValue()) {
                 if (option.isDeprecated() && !showDeprecated) {
                     continue;
                 }

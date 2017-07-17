@@ -174,6 +174,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         return new String[0];
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         return new Map[0];
     }

@@ -321,7 +321,7 @@ public class OBRXMLParser {
 
         static final String CAPABILITY_PROPERTY = "p";
 
-        static final String NAME = "n";
+        static final String CAPABILITY_NAME = "n";
 
         static final String VALUE = "v";
 
@@ -339,7 +339,7 @@ public class OBRXMLParser {
 
         @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
-            name = getRequiredAttribute(atts, NAME);
+            name = getRequiredAttribute(atts, CAPABILITY_NAME);
             value = getRequiredAttribute(atts, VALUE);
             type = atts.getValue(TYPE);
         }
@@ -347,7 +347,7 @@ public class OBRXMLParser {
 
     static class AbstractRequirementHandler extends DelegatingHandler {
 
-        static final String NAME = "name";
+        static final String REQUIREMENT_NAME = "name";
 
         static final String OPTIONAL = "optional";
 
@@ -365,7 +365,7 @@ public class OBRXMLParser {
 
         @Override
         protected void handleAttributes(Attributes atts) throws SAXException {
-            String name = getRequiredAttribute(atts, NAME);
+            String name = getRequiredAttribute(atts, REQUIREMENT_NAME);
 
             String filterText = atts.getValue(FILTER);
             filter = null;

@@ -33,7 +33,7 @@ public class VersionComparator implements Comparator<Version> {
 
     public int compare(Version objA, Version objB) {
         final int val = objA.compareTo(objB);
-        return (reverse ? -val : val);
+        return reverse ? -val : val;
     }
 
 }

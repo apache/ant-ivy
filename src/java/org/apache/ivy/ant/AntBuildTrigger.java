@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -91,7 +92,7 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                     ant.setTarget(target);
                 }
                 Map<String, String> atts = event.getAttributes();
-                for (Map.Entry<String, String> entry : atts.entrySet()) {
+                for (Entry<String, String> entry : atts.entrySet()) {
                     if (entry.getValue() != null) {
                         Property p = ant.createProperty();
                         p.setName(prefix == null ? entry.getKey() : prefix + entry.getKey());

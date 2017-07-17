@@ -19,7 +19,6 @@ package org.apache.ivy.core.cache;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,11 +49,11 @@ class ParserSettingsMonitor {
 
     private ParserSettings delegatedSettings;
 
-    private final Map/* <String,String> */substitutes;
+    private final Map<String, String> substitutes;
 
     public ParserSettingsMonitor(ParserSettings settings) {
         this.delegatedSettings = settings;
-        this.substitutes = new HashMap();
+        this.substitutes = new HashMap<>();
     }
 
     /**
@@ -79,13 +78,10 @@ class ParserSettingsMonitor {
      * Only the info that was actually used is compared.
      */
     public boolean hasChanged(ParserSettings newSettings) {
-        for (Iterator it = substitutes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Entry) it.next();
-            String key = (String) entry.getKey();
-            Object oldValue = entry.getValue();
-            String newValue = newSettings.substitute(key);
-            if (!oldValue.equals(newValue)) {
-                Message.debug("settings variable has changed for : " + entry.getKey());
+        for (Entry<String, String> entry : substitutes.entrySet()) {
+            String key = entry.getKey();
+            if (!entry.getValue().equals(newSettings.substitute(key))) {
+                Message.debug("settings variable has changed for : " + key);
                 return true;
             }
         }
@@ -134,11 +130,10 @@ class ParserSettingsMonitor {
             return delegatedSettings.getContextNamespace();
         }
 
-        public Map substitute(Map strings) {
-            Map substituted = new LinkedHashMap();
-            for (Iterator it = strings.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Map.Entry) it.next();
-                substituted.put(entry.getKey(), substitute((String) entry.getValue()));
+        public Map<String, String> substitute(Map<String, String> strings) {
+            Map<String, String> substituted = new LinkedHashMap<>();
+            for (Entry<String, String> entry : strings.entrySet()) {
+                substituted.put(entry.getKey(), substitute(entry.getValue()));
             }
             return substituted;
         }

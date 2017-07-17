@@ -34,7 +34,7 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     }
 
     public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type,
-            String ext, Map extraAttributes) {
+            String ext, Map<String, String> extraAttributes) {
         return new ArtifactRevisionId(new ArtifactId(mrid.getModuleId(), name, type, ext), mrid,
                 extraAttributes);
     }
@@ -47,7 +47,8 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
         this(artifactId, mrid, null);
     }
 
-    public ArtifactRevisionId(ArtifactId artfId, ModuleRevisionId mdlRevId, Map extraAttributes) {
+    public ArtifactRevisionId(ArtifactId artfId, ModuleRevisionId mdlRevId,
+                              Map<String, String> extraAttributes) {
         super(null, extraAttributes);
         artifactId = artfId;
         mrid = mdlRevId;

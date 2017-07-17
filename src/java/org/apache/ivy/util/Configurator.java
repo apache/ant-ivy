@@ -202,7 +202,7 @@ public class Configurator {
         public Object play(Configurator conf, Map<String, String> attValues,
                            Map<String, List<MacroRecord>> macroRecords) {
             for (Attribute att : attributes.values()) {
-               String val = attValues.get(att.getName());
+                String val = attValues.get(att.getName());
                 if (val == null) {
                     if (att.getDefault() == null) {
                         throw new IllegalArgumentException("attribute " + att.getName()
@@ -393,11 +393,11 @@ public class Configurator {
             return addConfiguredMethods.get(name);
         }
 
-        public Method getAddMethod(Class type) {
+        public Method getAddMethod(Class<?> type) {
             return getTypeMatchingMethod(type, typeAddMethods);
         }
 
-        public Method getAddConfiguredMethod(Class type) {
+        public Method getAddConfiguredMethod(Class<?> type) {
             return getTypeMatchingMethod(type, typeAddConfiguredMethods);
         }
 
@@ -432,13 +432,13 @@ public class Configurator {
     // stack in which the top is current configured object descriptor
     private Stack<ObjectDescriptor> objectStack = new Stack<>();
 
-    private static final List TRUE_VALUES = Arrays.asList("true", "yes", "on");
+    private static final List<String> TRUE_VALUES = Arrays.asList("true", "yes", "on");
 
     public void typeDef(String name, String className) throws ClassNotFoundException {
         typeDef(name, Class.forName(className));
     }
 
-    public void typeDef(String name, Class clazz) {
+    public void typeDef(String name, Class<?> clazz) {
         typedefs.put(name, clazz);
     }
 
@@ -488,7 +488,7 @@ public class Configurator {
             setCurrent(macro, name);
             return macro;
         }
-        Class childClass = typedefs.get(name);
+        Class<?> childClass = typedefs.get(name);
         Method addChild = null;
         try {
             if (childClass != null) {
@@ -512,7 +512,7 @@ public class Configurator {
                 if (addChild != null) {
                     childClass = addChild.getParameterTypes()[0];
                     if (Map.class == childClass) {
-                        child = new HashMap();
+                        child = new HashMap<>();
                     } else {
                         child = childClass.newInstance();
                     }
@@ -547,7 +547,8 @@ public class Configurator {
         }
     }
 
-    private Object addChild(ObjectDescriptor parentOD, Class childClass, String name, Object child)
+    private Object addChild(ObjectDescriptor parentOD, Class<?> childClass, String name,
+            Object child)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
         Object parent = parentOD.getObject();
         if (parent instanceof MacroRecord) {
@@ -569,7 +570,7 @@ public class Configurator {
         if (addChild != null) {
             if (child == null) {
                 if (Map.class == childClass) {
-                    child = new HashMap();
+                    child = new HashMap<>();
                 } else {
                     child = childClass.newInstance();
                 }
@@ -589,6 +590,7 @@ public class Configurator {
         return (od.getObject() instanceof MacroDef);
     }
 
+    @SuppressWarnings("unchecked")
     public void setAttribute(String attributeName, String value) {
         if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before setting attribute");
@@ -726,7 +728,7 @@ public class Configurator {
         macrodefs.put(macrodef.getName(), macrodef);
     }
 
-    public Class getTypeDef(String name) {
+    public Class<?> getTypeDef(String name) {
         return typedefs.get(name);
     }
 

@@ -47,7 +47,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     private static final String REV_STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}\\(\\):@]";
 
-    private static final Map<ModuleRevisionId, WeakReference<ModuleRevisionId>> CACHE = new WeakHashMap<ModuleRevisionId, WeakReference<ModuleRevisionId>>();
+    private static final Map<ModuleRevisionId, WeakReference<ModuleRevisionId>> CACHE = new WeakHashMap<>();
 
     /**
      * Pattern to use to matched mrid text representation.
@@ -157,7 +157,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             }
             if (r == null) {
                 r = moduleRevisionId;
-                CACHE.put(r, new WeakReference<ModuleRevisionId>(r));
+                CACHE.put(r, new WeakReference<>(r));
             }
         }
 
@@ -259,16 +259,15 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
 
     public String encodeToString() {
-        StringBuffer buf = new StringBuffer();
-        Map<String, String> attributes = new HashMap<String, String>(getAttributes());
+        StringBuilder buf = new StringBuilder();
+        Map<String, String> attributes = new HashMap<>(getAttributes());
         attributes.keySet().removeAll(getExtraAttributes().keySet());
         attributes.putAll(getQualifiedExtraAttributes());
 
         for (Entry<String, String> att : attributes.entrySet()) {
-            String attName = att.getKey();
             String value = att.getValue();
-            value = value == null ? NULL_ENCODE : value;
-            buf.append(ENCODE_PREFIX).append(attName).append(ENCODE_SEPARATOR)
+            value = (value == null) ? NULL_ENCODE : value;
+            buf.append(ENCODE_PREFIX).append(att.getKey()).append(ENCODE_SEPARATOR)
                     .append(ENCODE_PREFIX).append(value).append(ENCODE_SEPARATOR);
         }
         return buf.toString();
@@ -280,7 +279,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
                     + "'");
         }
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         for (int i = 0; i < parts.length; i += 2) {
             String attName = parts[i];
             if (!attName.startsWith(ENCODE_PREFIX)) {

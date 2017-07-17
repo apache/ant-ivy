@@ -22,7 +22,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -67,56 +66,47 @@ public class CheckEngine {
             // check publications if possible
             if (resolvername != null) {
                 DependencyResolver resolver = settings.getResolver(resolvername);
-                String[] confs = md.getConfigurationsNames();
-                Set artifacts = new HashSet();
-                for (int i = 0; i < confs.length; i++) {
-                    artifacts.addAll(Arrays.asList(md.getArtifacts(confs[i])));
+                Set<Artifact> artifacts = new HashSet<>();
+                for (String conf : md.getConfigurationsNames()) {
+                    artifacts.addAll(Arrays.asList(md.getArtifacts(conf)));
                 }
-                for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                    Artifact art = (Artifact) iter.next();
-                    if (!resolver.exists(art)) {
-                        Message.info("declared publication not found: " + art);
+                for (Artifact artifact : artifacts) {
+                    if (!resolver.exists(artifact)) {
+                        Message.info("declared publication not found: " + artifact);
                         result = false;
                     }
                 }
             }
 
             // check dependencies
-            DependencyDescriptor[] dds = md.getDependencies();
             ResolveData data = new ResolveData(resolveEngine, new ResolveOptions());
-            for (int i = 0; i < dds.length; i++) {
+            for (DependencyDescriptor dd : md.getDependencies()) {
                 // check master confs
-                String[] masterConfs = dds[i].getModuleConfigurations();
-                for (int j = 0; j < masterConfs.length; j++) {
-                    if (!"*".equals(masterConfs[j].trim())
-                            && md.getConfiguration(masterConfs[j]) == null) {
+                for (String masterConf : dd.getModuleConfigurations()) {
+                    if (!"*".equals(masterConf.trim()) && md.getConfiguration(masterConf) == null) {
                         Message.info("dependency required in non existing conf for " + ivyFile
-                                + " \n\tin " + dds[i] + ": " + masterConfs[j]);
+                                + " \n\tin " + dd + ": " + masterConf);
                         result = false;
                     }
                 }
                 // resolve
-                DependencyResolver resolver = settings
-                        .getResolver(dds[i].getDependencyRevisionId());
-                ResolvedModuleRevision rmr = resolver.getDependency(dds[i], data);
+                DependencyResolver resolver = settings.getResolver(dd.getDependencyRevisionId());
+                ResolvedModuleRevision rmr = resolver.getDependency(dd, data);
                 if (rmr == null) {
-                    Message.info("dependency not found in " + ivyFile + ":\n\t" + dds[i]);
+                    Message.info("dependency not found in " + ivyFile + ":\n\t" + dd);
                     result = false;
                 } else {
-                    String[] depConfs = dds[i].getDependencyConfigurations(md
-                            .getConfigurationsNames());
-                    for (int j = 0; j < depConfs.length; j++) {
-                        if (!Arrays.asList(rmr.getDescriptor().getConfigurationsNames()).contains(
-                            depConfs[j])) {
+                    for (String depConf : dd.getDependencyConfigurations(md.getConfigurationsNames())) {
+                        if (!Arrays.asList(rmr.getDescriptor().getConfigurationsNames())
+                                .contains(depConf)) {
                             Message.info("dependency configuration is missing for " + ivyFile
-                                    + "\n\tin " + dds[i] + ": " + depConfs[j]);
+                                    + "\n\tin " + dd + ": " + depConf);
                             result = false;
                         }
-                        Artifact[] arts = rmr.getDescriptor().getArtifacts(depConfs[j]);
-                        for (int k = 0; k < arts.length; k++) {
-                            if (!resolver.exists(arts[k])) {
+                        for (Artifact art : rmr.getDescriptor().getArtifacts(depConf)) {
+                            if (!resolver.exists(art)) {
                                 Message.info("dependency artifact is missing for " + ivyFile
-                                        + "\n\t in " + dds[i] + ": " + arts[k]);
+                                        + "\n\t in " + dd + ": " + art);
                                 result = false;
                             }
                         }

@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class PackingRegistry {
 
-    private Map<String, ArchivePacking> packings = new HashMap<String, ArchivePacking>();
+    private Map<String, ArchivePacking> packings = new HashMap<>();
 
     public PackingRegistry() {
         // register defaults

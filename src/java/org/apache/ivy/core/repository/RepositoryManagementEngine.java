@@ -22,13 +22,14 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -85,17 +86,17 @@ public class RepositoryManagementEngine {
     /**
      * ModuleDescriptors stored by ModuleRevisionId
      */
-    private Map/* <ModuleRevisionId,ModuleDescriptor> */revisions = new HashMap();
+    private Map<ModuleRevisionId, ModuleDescriptor> revisions = new HashMap<>();
 
     /**
      * ModuleRevisionId for which loading was not possible, with corresponding error message.
      */
-    private Map/* <ModuleRevisionId,String> */errors = new HashMap();
+    private Map<ModuleRevisionId, String> errors = new HashMap<>();
 
     /**
-     * List of ModuleRevisionId per ModuleId.
+     * List of ModuleDescriptor per ModuleId.
      */
-    private Map/* <ModuleId,Collection<ModuleRevisionId>> */modules = new HashMap();
+    private Map<ModuleId, Collection<ModuleDescriptor>> modules = new HashMap<>();
 
     // /////////////////////////////////////////
     // state loaded on #analyze()
@@ -109,12 +110,12 @@ public class RepositoryManagementEngine {
     /**
      * Cache from requested module revision id to actual module revision id.
      */
-    private Map/* <ModuleRevisionId,ModuleRevisionId> */cache = new HashMap();
+    private Map<ModuleRevisionId, ModuleRevisionId> cache = new HashMap<>();
 
     /**
      * list of dependers per ModuleRevisionId.
      */
-    private Map/* <ModuleRevisionId,List<ModuleRevisionId>> */dependers = new HashMap();
+    private Map<ModuleRevisionId, List<ModuleRevisionId>> dependers = new HashMap<>();
 
     // /////////////////////////////////////////
     // dependencies
@@ -148,22 +149,19 @@ public class RepositoryManagementEngine {
         Message.rawinfo("searching modules... ");
         ModuleRevisionId[] mrids = searchModules();
         Message.info("loading repository metadata...");
-        for (int i = 0; i < mrids.length; i++) {
+        for (ModuleRevisionId mrid : mrids) {
             try {
-                loadModuleRevision(mrids[i]);
+                loadModuleRevision(mrid);
             } catch (Exception e) {
                 Message.debug(e);
-                errors.put(mrids[i], e.getMessage());
+                errors.put(mrid, e.getMessage());
             }
         }
         long endTime = System.currentTimeMillis();
-        Message.info("\nrepository loaded: "
-                + modules.size()
-                + " modules; "
-                + revisions.size()
-                + " revisions; "
-                + (settings.dumpMemoryUsage() ? (MemoryUtil.getUsedMemory() - startingMemoryUse)
-                        / KILO + "kB; " : "") + (endTime - startTime) / THOUSAND + "s");
+        Message.info(String.format("\nrepository loaded: %d modules; %d revisions; %s%ss",
+                modules.size(), revisions.size(), settings.dumpMemoryUsage()
+                        ? (MemoryUtil.getUsedMemory() - startingMemoryUse) / KILO + "kB; " : "",
+                (endTime - startTime) / THOUSAND));
         loaded = true;
     }
 
@@ -181,14 +179,11 @@ public class RepositoryManagementEngine {
     public void analyze() {
         ensureLoaded();
         Message.info("\nanalyzing dependencies...");
-        for (Iterator iterator = revisions.values().iterator(); iterator.hasNext();) {
-            ModuleDescriptor md = (ModuleDescriptor) iterator.next();
-            DependencyDescriptor[] dds = md.getDependencies();
-            for (int i = 0; i < dds.length; i++) {
-                ModuleRevisionId dep = getDependency(dds[i]);
+        for (ModuleDescriptor md : revisions.values()) {
+            for (DependencyDescriptor dd : md.getDependencies()) {
+                ModuleRevisionId dep = getDependency(dd);
                 if (dep == null) {
-                    Message.warn("inconsistent repository: declared dependency not found: "
-                            + dds[i]);
+                    Message.warn("inconsistent repository: declared dependency not found: " + dd);
                 } else {
                     getDependers(dep).add(md.getModuleRevisionId());
                 }
@@ -233,30 +228,27 @@ public class RepositoryManagementEngine {
      *             if the repository has not been analyzed yet
      * @see #analyze()
      */
-    public Collection getOrphans() {
+    public Collection<ModuleRevisionId> getOrphans() {
         ensureAnalyzed();
-        Collection orphans = new HashSet(revisions.keySet());
+        Collection<ModuleRevisionId> orphans = new HashSet<>(revisions.keySet());
         orphans.removeAll(dependers.keySet());
         return orphans;
     }
 
     private ModuleRevisionId[] searchModules() {
-        ModuleRevisionId[] mrids = searchEngine.listModules(ModuleRevisionId.newInstance(
+        return searchEngine.listModules(ModuleRevisionId.newInstance(
             PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
             PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION),
             RegexpPatternMatcher.INSTANCE);
-        return mrids;
     }
 
     private ModuleRevisionId getDependency(DependencyDescriptor dd) {
         ModuleRevisionId askedMrid = dd.getDependencyRevisionId();
         VersionMatcher vmatcher = settings.getVersionMatcher();
         if (vmatcher.isDynamic(askedMrid)) {
-            ModuleRevisionId mrid = (ModuleRevisionId) cache.get(askedMrid);
+            ModuleRevisionId mrid = cache.get(askedMrid);
             if (mrid == null) {
-                Collection revs = getAllRevisions(askedMrid);
-                for (Iterator iterator = revs.iterator(); iterator.hasNext();) {
-                    ModuleDescriptor md = (ModuleDescriptor) iterator.next();
+                for (ModuleDescriptor md : getAllRevisions(askedMrid)) {
                     if (vmatcher.needModuleDescriptor(askedMrid, md.getResolvedModuleRevisionId())) {
                         if (vmatcher.accept(askedMrid, md)) {
                             mrid = md.getResolvedModuleRevisionId();
@@ -281,10 +273,10 @@ public class RepositoryManagementEngine {
         }
     }
 
-    private Collection getDependers(ModuleRevisionId id) {
-        Collection depders = (Collection) dependers.get(id);
+    private Collection<ModuleRevisionId> getDependers(ModuleRevisionId id) {
+        List<ModuleRevisionId> depders = dependers.get(id);
         if (depders == null) {
-            depders = new ArrayList();
+            depders = new ArrayList<>();
             dependers.put(id, depders);
         }
         return depders;
@@ -302,13 +294,11 @@ public class RepositoryManagementEngine {
         Message.progress();
     }
 
-    private Collection getAllRevisions(ModuleRevisionId id) {
-        Collection revisions = (Collection) modules.get(id.getModuleId());
+    private Collection<ModuleDescriptor> getAllRevisions(ModuleRevisionId id) {
+        Collection<ModuleDescriptor> revisions = modules.get(id.getModuleId());
         if (revisions == null) {
-            revisions = new TreeSet(new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    ModuleDescriptor md1 = (ModuleDescriptor) o1;
-                    ModuleDescriptor md2 = (ModuleDescriptor) o2;
+            revisions = new TreeSet<>(new Comparator<ModuleDescriptor>() {
+                public int compare(ModuleDescriptor md1, ModuleDescriptor md2) {
                     // we use reverse order compared to latest revision, to have latest revision
                     // first
                     return settings.getDefaultLatestStrategy().sort(new ArtifactInfo[] {md1, md2})

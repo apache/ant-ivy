@@ -34,12 +34,10 @@ import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.CollectionUtils;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.xml.sax.SAXException;
 
 public class UpdateSiteLoaderTest {
@@ -68,9 +66,9 @@ public class UpdateSiteLoaderTest {
         RepoDescriptor site = loader.load(new URI(
                 "http://www.apache.org/dist/ant/ivyde/updatesite/"));
         assertTrue(site.getModules().hasNext());
-        for (Iterator it = site.getModules(); it.hasNext();) {
-            ModuleDescriptor md = ((ModuleDescriptorWrapper) it.next()).getModuleDescriptor();
-            String name = md.getModuleRevisionId().getName();
+        Iterator<ModuleDescriptorWrapper> it = site.getModules();
+        while (it.hasNext()) {
+            String name = it.next().getModuleDescriptor().getModuleRevisionId().getName();
             assertTrue(name, name.startsWith("org.apache.ivy"));
         }
     }

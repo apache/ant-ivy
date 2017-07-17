@@ -82,7 +82,7 @@ public class ResolveData {
     }
 
     public Collection<IvyNode> getNodes() {
-        Collection<IvyNode> nodes = new ArrayList<IvyNode>();
+        Collection<IvyNode> nodes = new ArrayList<>();
         for (VisitData vdata : visitData.values()) {
             nodes.add(vdata.getNode());
         }
@@ -142,19 +142,7 @@ public class ResolveData {
     }
 
     private static boolean isEqual(Object obj1, Object obj2) {
-        if (obj1 == obj2) {
-            return true;
-        }
-
-        if (obj1 == null) {
-            return obj2 == null;
-        }
-
-        if (obj2 == null) {
-            return obj1 == null;
-        }
-
-        return obj1.equals(obj2);
+        return obj1 == obj2 || obj1 != null && obj2 != null && obj1.equals(obj2);
     }
 
     /**
@@ -256,11 +244,10 @@ public class ResolveData {
     }
 
     void blacklist(IvyNode node) {
-        for (Iterator<Entry<ModuleRevisionId, VisitData>> iter = visitData.entrySet().iterator(); iter
-                .hasNext();) {
+        Iterator<Entry<ModuleRevisionId, VisitData>> iter = visitData.entrySet().iterator();
+        while (iter.hasNext()) {
             Entry<ModuleRevisionId, VisitData> entry = iter.next();
-            VisitData vdata = entry.getValue();
-            if (vdata.getNode() == node && !node.getResolvedId().equals(entry.getKey())) {
+            if (entry.getValue().getNode() == node && !node.getResolvedId().equals(entry.getKey())) {
                 // this visit data was associated with the blacklisted node,
                 // we discard this association
                 iter.remove();
@@ -271,22 +258,22 @@ public class ResolveData {
     public boolean isBlacklisted(String rootModuleConf, ModuleRevisionId mrid) {
         IvyNode node = getNode(mrid);
 
-        // if (node == null) {
-        // // search again, now ignore the extra attributes
-        // // TODO: maybe we should search the node that has at least the
-        // // same attributes as mrid
-        // for (Iterator it = visitData.entrySet().iterator(); it.hasNext();) {
-        // Map.Entry entry = (Entry) it.next();
-        // ModuleRevisionId current = (ModuleRevisionId) entry.getKey();
-        // if (current.getModuleId().equals(mrid.getModuleId())
-        // && current.getRevision().equals(mrid.getRevision())) {
-        // VisitData data = (VisitData) entry.getValue();
-        // node = data.getNode();
-        // break;
-        // }
-        // }
-        // }
-        //
+        /*
+        if (node == null) {
+            // search again, now ignore the extra attributes
+            // TODO: maybe we should search the node that has at least the same attributes as mrid
+            for (Entry<ModuleRevisionId, VisitData> entry : visitData.entrySet()) {
+                ModuleRevisionId current = entry.getKey();
+                if (current.getModuleId().equals(mrid.getModuleId())
+                        && current.getRevision().equals(mrid.getRevision())) {
+                    VisitData data = entry.getValue();
+                    node = data.getNode();
+                    break;
+                }
+            }
+        }
+        */
+
         return node != null && node.isBlacklisted(rootModuleConf);
     }
 
@@ -297,7 +284,7 @@ public class ResolveData {
         VisitNode current = getCurrentVisitNode();
         if (current != null) {
             // mediating dd through dependers stack
-            List<VisitNode> dependers = new ArrayList<VisitNode>(current.getPath());
+            List<VisitNode> dependers = new ArrayList<>(current.getPath());
             // the returned path contains the currently visited node, we are only interested in
             // the dependers, so we remove the currently visited node from the end
             dependers.remove(dependers.size() - 1);

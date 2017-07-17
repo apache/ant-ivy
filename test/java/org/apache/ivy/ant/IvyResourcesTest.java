@@ -79,7 +79,7 @@ public class IvyResourcesTest {
         dependency.setName("mod1.2");
         dependency.setRev("2.0");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(1, files.size());
         assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar"),
             files.get(0));
@@ -97,7 +97,7 @@ public class IvyResourcesTest {
         dependency.setName("mod2.3");
         dependency.setRev("0.7");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(5, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));
@@ -124,7 +124,7 @@ public class IvyResourcesTest {
         dependency.setRev("0.10");
         dependency.setConf("A");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(3, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));
@@ -147,7 +147,7 @@ public class IvyResourcesTest {
         dependency.setRev("0.10");
         dependency.setConf("B");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(4, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));
@@ -176,7 +176,7 @@ public class IvyResourcesTest {
         exclude.setOrg("org1");
         exclude.setModule("mod1.1");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(3, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));
@@ -227,7 +227,7 @@ public class IvyResourcesTest {
         IvyDependencyInclude include = dependency.createInclude();
         include.setName("art22-1");
 
-        List files = asList(resources);
+        List<File> files = asList(resources);
         assertEquals(2, files.size());
         assertTrue(files.contains(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar")));

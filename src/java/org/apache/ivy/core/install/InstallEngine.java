@@ -93,28 +93,23 @@ public class InstallEngine {
                     ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE,
                 new NoConflictManager());
 
-            for (int c = 0; c < options.getConfs().length; c++) {
-                final String[] depConfs = options.getConfs();
+            for (String dc : options.getConfs()) {
+                final String depConf = dc.trim();
 
-                for (int j = 0; j < depConfs.length; j++) {
-                    final String depConf = depConfs[j].trim();
+                if (MatcherHelper.isExact(matcher, mrid)) {
+                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid,
+                            false, false, options.isTransitive());
+                    dd.addDependencyConfiguration("default", depConf);
+                    md.addDependency(dd);
+                } else {
+                    ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid, matcher);
 
-                    if (MatcherHelper.isExact(matcher, mrid)) {
-                        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid,
-                                false, false, options.isTransitive());
+                    for (ModuleRevisionId imrid : mrids) {
+                        Message.info("\tfound " + imrid + " to install: adding to the list");
+                        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
+                                imrid, false, false, options.isTransitive());
                         dd.addDependencyConfiguration("default", depConf);
                         md.addDependency(dd);
-                    } else {
-                        ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid,
-                            matcher);
-
-                        for (int i = 0; i < mrids.length; i++) {
-                            Message.info("\tfound " + mrids[i] + " to install: adding to the list");
-                            DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
-                                    mrids[i], false, false, options.isTransitive());
-                            dd.addDependencyConfiguration("default", depConf);
-                            md.addDependency(dd);
-                        }
                     }
                 }
             }
@@ -134,8 +129,8 @@ public class InstallEngine {
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");
-            for (int i = 0; i < dependencies.length; i++) {
-                ModuleDescriptor depmd = dependencies[i].getDescriptor();
+            for (IvyNode dependency : dependencies) {
+                ModuleDescriptor depmd = dependency.getDescriptor();
                 if (depmd != null) {
                     ModuleRevisionId depMrid = depmd.getModuleRevisionId();
                     Message.verbose("installing " + depMrid);
@@ -145,15 +140,15 @@ public class InstallEngine {
 
                         // publish artifacts
                         ArtifactDownloadReport[] artifacts = report.getArtifactsReports(depMrid);
-                        for (int j = 0; j < artifacts.length; j++) {
-                            if (artifacts[j].getLocalFile() != null) {
-                                toResolver.publish(artifacts[j].getArtifact(),
-                                    artifacts[j].getLocalFile(), options.isOverwrite());
+                        for (ArtifactDownloadReport artifact : artifacts) {
+                            if (artifact.getLocalFile() != null) {
+                                toResolver.publish(artifact.getArtifact(), artifact.getLocalFile(),
+                                    options.isOverwrite());
                             }
                         }
 
                         // publish metadata
-                        MetadataArtifactDownloadReport artifactDownloadReport = dependencies[i]
+                        MetadataArtifactDownloadReport artifactDownloadReport = dependency
                                 .getModuleRevision().getReport();
                         File localIvyFile = artifactDownloadReport.getLocalFile();
                         toResolver.publish(depmd.getMetadataArtifact(), localIvyFile,

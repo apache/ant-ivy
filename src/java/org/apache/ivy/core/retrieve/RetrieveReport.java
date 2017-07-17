@@ -28,11 +28,11 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 
 public class RetrieveReport {
 
-    private Collection<File> upToDateFiles = new HashSet<File>();
+    private Collection<File> upToDateFiles = new HashSet<>();
 
-    private Collection<File> copiedFiles = new HashSet<File>();
+    private Collection<File> copiedFiles = new HashSet<>();
 
-    private Map<File, ArtifactDownloadReport> downloadReport = new HashMap<File, ArtifactDownloadReport>();
+    private Map<File, ArtifactDownloadReport> downloadReport = new HashMap<>();
 
     private File retrieveRoot;
 
@@ -74,7 +74,7 @@ public class RetrieveReport {
      * @return Collection&lt;File&gt;
      */
     public Collection<File> getCopiedFiles() {
-        return new ArrayList<File>(copiedFiles);
+        return new ArrayList<>(copiedFiles);
     }
 
     /**
@@ -84,7 +84,7 @@ public class RetrieveReport {
      * @return Collection&lt;File&gt;
      */
     public Collection<File> getUpToDateFiles() {
-        return new ArrayList<File>(upToDateFiles);
+        return new ArrayList<>(upToDateFiles);
     }
 
     /**
@@ -94,7 +94,7 @@ public class RetrieveReport {
      * @return Collection&lt;File&gt;
      */
     public Collection<File> getRetrievedFiles() {
-        Collection<File> result = new ArrayList<File>(upToDateFiles.size() + copiedFiles.size());
+        Collection<File> result = new ArrayList<>(upToDateFiles.size() + copiedFiles.size());
         result.addAll(upToDateFiles);
         result.addAll(copiedFiles);
         return result;

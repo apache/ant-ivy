@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-
 import org.apache.ivy.util.FileUtil;
 import org.junit.Test;
 
@@ -46,7 +45,6 @@ public class FileUtilTest {
         assertEquals("Unexpected normalization of file path " + ivySettingsFile.getAbsolutePath(), ivySettingsFile.getAbsolutePath(), normalizedIvySettingsFile.getAbsolutePath());
         assertTrue(normalizedIvySettingsFile.getAbsolutePath() + " isn't a file", normalizedIvySettingsFile.isFile());
     }
-
 
     /**
      * Tests that {@link FileUtil#normalize(String)} works as expected when passed a path that starts with

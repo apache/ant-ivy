@@ -42,7 +42,7 @@ public class ModuleDescriptorSorter {
 
     private final CollectionOfModulesToSort moduleDescriptors;
 
-    private final List<ModuleDescriptor> sorted = new LinkedList<ModuleDescriptor>();
+    private final List<ModuleDescriptor> sorted = new LinkedList<>();
 
     private final CircularDependencyStrategy circularDepStrategy;
 
@@ -93,8 +93,8 @@ public class ModuleDescriptorSorter {
         Message.debug("Sort dependencies of : " + current.toString()
                 + " / Number of dependencies = " + descriptors.length);
         current.setCaller(caller);
-        for (int i = 0; i < descriptors.length; i++) {
-            ModuleInSort child = moduleDescriptors.getModuleDescriptorDependency(descriptors[i]);
+        for (DependencyDescriptor descriptor : descriptors) {
+            ModuleInSort child = moduleDescriptors.getModuleDescriptorDependency(descriptor);
             if (child != null) {
                 sortModuleDescriptorsHelp(child, current);
             }

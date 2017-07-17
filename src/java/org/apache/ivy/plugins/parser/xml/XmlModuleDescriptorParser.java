@@ -82,6 +82,8 @@ import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.getVisibility;
+
 /**
  * Parses an xml ivy file and output a ModuleDescriptor. For dependency and performance reasons, it
  * uses only the SAX API, which makes the parsing code harder to understand.
@@ -167,9 +169,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         .setPubdate(md.getResolvedPublicationDate()).setUpdateBranch(false)
                         .setNamespace(ns));
         } catch (SAXException e) {
-            ParseException ex = new ParseException("exception occurred while parsing " + res, 0);
-            ex.initCause(e);
-            throw ex;
+            ParseException pe = new ParseException("exception occurred while parsing " + res, 0);
+            pe.initCause(e);
+            throw pe;
         } finally {
             if (is != null) {
                 is.close();
@@ -381,10 +383,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (ex instanceof SAXException) {
                     throw (SAXException) ex;
                 }
-                SAXException sax = new SAXException("Problem occurred while parsing ivy file: "
+                throw new SAXException("Problem occurred while parsing ivy file: "
                         + ex.getMessage(), ex);
-                sax.initCause(ex);
-                throw sax;
             }
         }
 
@@ -574,7 +574,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private static Map<String, String> mergeValues(Map<String, String> inherited,
                 Map<String, String> overrides) {
-            LinkedHashMap<String, String> dup = new LinkedHashMap<>(inherited.size()
+            Map<String, String> dup = new LinkedHashMap<>(inherited.size()
                     + overrides.size());
             dup.putAll(inherited);
             dup.putAll(overrides);
@@ -841,9 +841,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                             || Boolean.valueOf(attributes.getValue("transitive"));
                     String deprecated = attributes.getValue("deprecated");
                     Configuration configuration = new Configuration(conf,
-                            Configuration.Visibility.getVisibility((visibility == null) ? "public"
-                                    : visibility), settings.substitute(attributes.getValue("description")),
-                                    (ext == null) ? null : ext.split(","), transitive, deprecated);
+                            getVisibility((visibility == null) ? "public" : visibility),
+                            settings.substitute(attributes.getValue("description")),
+                            (ext == null) ? null : ext.split(","), transitive, deprecated);
                     ExtendableItemHelper.fillExtraAttributes(settings, configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive", "description",
                                 "deprecated"});

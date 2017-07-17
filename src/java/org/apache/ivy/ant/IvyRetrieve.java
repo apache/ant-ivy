@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.retrieve.RetrieveReport;
 import org.apache.ivy.util.filter.Filter;
@@ -29,7 +30,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.PatternSet;
+import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.util.FileNameMapper;
 
 /**
@@ -94,7 +95,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
-            Filter artifactFilter = getArtifactFilter();
+            Filter<Artifact> artifactFilter = getArtifactFilter();
             RetrieveReport report = getIvyInstance().retrieve(
                 getResolvedMrid(),
                 ((RetrieveOptions) new RetrieveOptions().setLog(getLog()))
@@ -127,7 +128,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 fileset.setDir(report.getRetrieveRoot());
 
                 for (File file : report.getRetrievedFiles()) {
-                    PatternSet.NameEntry ne = fileset.createInclude();
+                    NameEntry ne = fileset.createInclude();
                     ne.setName(getPath(report.getRetrieveRoot(), file));
                 }
             }

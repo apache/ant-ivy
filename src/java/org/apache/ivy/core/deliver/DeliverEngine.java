@@ -24,7 +24,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -115,9 +114,9 @@ public class DeliverEngine {
         md.setResolvedPublicationDate(options.getPubdate());
 
         // 2) parse resolvedRevisions From properties file
-        Map resolvedRevisions = new HashMap(); // Map (ModuleId -> String revision)
-        Map resolvedBranches = new HashMap(); // Map (ModuleId -> String branch)
-        Map dependenciesStatus = new HashMap(); // Map (ModuleId -> String status)
+        Map<ModuleRevisionId, String> resolvedRevisions = new HashMap<>(); // Map (ModuleId -> String revision)
+        Map<ModuleRevisionId, String> resolvedBranches = new HashMap<>(); // Map (ModuleId -> String branch)
+        Map<ModuleRevisionId, String> dependenciesStatus = new HashMap<>(); // Map (ModuleId -> String status)
         File ivyProperties = getCache().getResolvedIvyPropertiesInCache(mrid);
         if (!ivyProperties.exists()) {
             throw new IllegalStateException("ivy properties not found in cache for " + mrid
@@ -128,8 +127,8 @@ public class DeliverEngine {
         props.load(in);
         in.close();
 
-        for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
-            String depMridStr = (String) iter.next();
+        for (Object o : props.keySet()) {
+            String depMridStr = (String) o;
             String[] parts = props.getProperty(depMridStr).split(" ");
             ModuleRevisionId decodedMrid = ModuleRevisionId.decode(depMridStr);
             if (options.isResolveDynamicRevisions()) {
@@ -155,29 +154,23 @@ public class DeliverEngine {
         }
 
         // 3) use pdrResolver to resolve dependencies info
-        Map resolvedDependencies = new HashMap(); // Map (ModuleRevisionId -> String revision)
-        DependencyDescriptor[] dependencies = md.getDependencies();
-        for (int i = 0; i < dependencies.length; i++) {
-            String rev = (String) resolvedRevisions.get(dependencies[i].getDependencyRevisionId());
+        Map<ModuleRevisionId, String> resolvedDependencies = new HashMap<>();
+        // Map (ModuleRevisionId -> String revision)
+        for (DependencyDescriptor dependency : md.getDependencies()) {
+            String rev = resolvedRevisions.get(dependency.getDependencyRevisionId());
             if (rev == null) {
-                rev = dependencies[i].getDependencyRevisionId().getRevision();
+                rev = dependency.getDependencyRevisionId().getRevision();
             }
-            String bra = (String) resolvedBranches.get(dependencies[i].getDependencyRevisionId());
+            String bra = resolvedBranches.get(dependency.getDependencyRevisionId());
             if (bra == null || "null".equals(bra)) {
-                bra = dependencies[i].getDependencyRevisionId().getBranch();
+                bra = dependency.getDependencyRevisionId().getBranch();
             }
-            String depStatus = (String) dependenciesStatus.get(dependencies[i]
-                    .getDependencyRevisionId());
-            ModuleRevisionId mrid2 = null;
-            if (bra == null) {
-                mrid2 = ModuleRevisionId
-                        .newInstance(dependencies[i].getDependencyRevisionId(), rev);
-            } else {
-                mrid2 = ModuleRevisionId.newInstance(dependencies[i].getDependencyRevisionId(),
-                    bra, rev);
-            }
-            resolvedDependencies.put(dependencies[i].getDependencyRevisionId(), options
-                    .getPdrResolver().resolve(md, options.getStatus(), mrid2, depStatus));
+            String depStatus = dependenciesStatus.get(dependency.getDependencyRevisionId());
+            ModuleRevisionId mrid2 = (bra == null)
+                    ? ModuleRevisionId.newInstance(dependency.getDependencyRevisionId(), rev)
+                    : ModuleRevisionId.newInstance(dependency.getDependencyRevisionId(), bra, rev);
+            resolvedDependencies.put(dependency.getDependencyRevisionId(),
+                options.getPdrResolver().resolve(md, options.getStatus(), mrid2, depStatus));
         }
 
         // 4) copy the source resolved ivy to the destination specified,
@@ -188,7 +181,7 @@ public class DeliverEngine {
         Message.info("\tdelivering ivy file to " + publishedIvy);
 
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
-        Set confsToRemove = new HashSet(Arrays.asList(md.getConfigurationsNames()));
+        Set<String> confsToRemove = new HashSet<>(Arrays.asList(md.getConfigurationsNames()));
         confsToRemove.removeAll(Arrays.asList(confs));
 
         try {
@@ -203,7 +196,7 @@ public class DeliverEngine {
                     .setMerge(options.isMerge())
                     .setMergedDescriptor(md)
                     .setConfsToExclude(
-                        (String[]) confsToRemove.toArray(new String[confsToRemove.size()]));
+                            confsToRemove.toArray(new String[confsToRemove.size()]));
             if (!resolvedBranches.isEmpty()) {
                 opts = opts.setResolvedBranches(resolvedBranches);
             }

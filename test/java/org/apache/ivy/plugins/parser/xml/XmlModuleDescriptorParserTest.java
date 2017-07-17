@@ -17,26 +17,9 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
@@ -58,12 +41,29 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
 import static org.junit.Assert.*;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
@@ -210,7 +210,6 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 getClass().getResource("test-bad-version.xml"), true);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -234,19 +233,22 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 + "and myconf4 is not too bad too.", md.getDescription().replaceAll("\r\n", "\n")
                 .replace('\r', '\n'));
 
-        assertEquals(1, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+        assertEquals(1, md.getExtraInfos().size());
+        ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
+        assertEquals("e:someExtra", someExtraElement.getName());
+        assertEquals("56576", someExtraElement.getContent());
+        assertEquals(0, someExtraElement.getAttributes().size());
 
         Configuration[] confs = md.getConfigurations();
         assertNotNull(confs);
         assertEquals(5, confs.length);
 
-        assertConf(md, "myconf1", "desc 1", Configuration.Visibility.PUBLIC, new String[0]);
-        assertConf(md, "myconf2", "desc 2", Configuration.Visibility.PUBLIC, new String[0]);
-        assertConf(md, "myconf3", "desc 3", Configuration.Visibility.PRIVATE, new String[0]);
-        assertConf(md, "myconf4", "desc 4", Configuration.Visibility.PUBLIC, new String[] {
+        assertConf(md, "myconf1", "desc 1", PUBLIC, new String[0]);
+        assertConf(md, "myconf2", "desc 2", PUBLIC, new String[0]);
+        assertConf(md, "myconf3", "desc 3", PRIVATE, new String[0]);
+        assertConf(md, "myconf4", "desc 4", PUBLIC, new String[] {
                 "myconf1", "myconf2"});
-        assertConf(md, "myoldconf", "my old desc", Configuration.Visibility.PUBLIC, new String[0]);
+        assertConf(md, "myoldconf", "my old desc", PUBLIC, new String[0]);
 
         assertArtifacts(md.getArtifacts("myconf1"), new String[] {"myartifact1", "myartifact2",
                 "myartifact3", "myartifact4"});
@@ -505,24 +507,24 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             Arrays.asList(rules[1].getConfigurations()));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testFullNoValidation() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test.xml"), false);
         assertNotNull(md);
-        assertEquals(1, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+        assertEquals(1, md.getExtraInfos().size());
+        ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
+        assertEquals("e:someExtra", someExtraElement.getName());
+        assertEquals("56576", someExtraElement.getContent());
+        assertEquals(0, someExtraElement.getAttributes().size());
+        assertEquals(0, someExtraElement.getNestedExtraInfoHolder().size());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testExtraInfos() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extrainfo.xml"), true);
         assertNotNull(md);
-        assertEquals(2, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
         assertEquals(2, md.getExtraInfos().size());
         ExtraInfoHolder firstExtraInfoElement = md.getExtraInfos().get(0);
         assertEquals("e:someExtra", firstExtraInfoElement.getName());
@@ -538,14 +540,11 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, secondExtraInfoElement.getNestedExtraInfoHolder().size());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testExtraInfosNested() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-extrainfo-nested.xml"), true);
         assertNotNull(md);
-        assertEquals(4, md.getExtraInfo().size());
-        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
         assertEquals(2, md.getExtraInfos().size());
         ExtraInfoHolder someExtraElement = md.getExtraInfos().get(0);
         assertEquals("e:someExtra", someExtraElement.getName());
@@ -841,8 +840,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md.getConfigurations());
         assertEquals(
             Arrays.asList(new Configuration[] {
-                    new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)}),
+                    new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null)}),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -874,9 +873,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md.getConfigurations());
         assertEquals(
             Arrays.asList(new Configuration[] {
-                    new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null),
-                    new Configuration("conf3", Visibility.PUBLIC, "", new String[0], true, null)}),
+                    new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null),
+                    new Configuration("conf3", PUBLIC, "", new String[0], true, null)}),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -910,8 +909,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md.getConfigurations());
         assertEquals(
             Arrays.asList(new Configuration[] {
-                    new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)}),
+                    new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null)}),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -946,8 +945,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md.getConfigurations());
         assertEquals(
             Arrays.asList(new Configuration[] {
-                    new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)}),
+                    new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null)}),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -1454,7 +1453,6 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("mymodule", artifacts[0].getName());
         assertEquals("jar", artifacts[0].getType());
     }
-
 
     /**
      * Tests that when the <code>location</code> attribute of the <code>extends</code> element of a module descriptor

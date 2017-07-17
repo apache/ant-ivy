@@ -155,18 +155,17 @@ public class FileSystemResolver extends RepositoryResolver {
                 Message.info("\tpublish committed: moved " + transactionTempDir + " \n\t\tto "
                         + transactionDestDir);
             } catch (IOException ex) {
-                IOException commitEx;
+                String message;
                 try {
                     getFileRepository().delete(transactionTempDir);
-                    commitEx = new IOException("publish transaction commit error for "
-                            + transactionDestDir + ": rolled back");
+                    message = "publish transaction commit error for "
+                                + transactionDestDir + ": rolled back";
                 } catch (IOException deleteEx) {
-                    commitEx = new IOException("publish transaction commit error for "
-                            + transactionDestDir + ": rollback impossible either, "
-                            + "please remove " + transactionTempDir + " manually");
+                    message = "publish transaction commit error for "
+                                + transactionDestDir + ": rollback impossible either, "
+                                + "please remove " + transactionTempDir + " manually";
                 }
-                commitEx.initCause(ex);
-                throw commitEx;
+                throw new IOException(message, ex);
             } finally {
                 closeTransaction();
             }
@@ -203,9 +202,9 @@ public class FileSystemResolver extends RepositoryResolver {
     protected Collection<String> filterNames(Collection<String> values) {
         if (supportTransaction()) {
             values = super.filterNames(values);
-            for (Iterator<String> iterator = values.iterator(); iterator.hasNext();) {
-                String v = iterator.next();
-                if (v.endsWith(TRANSACTION_DESTINATION_SUFFIX)) {
+            Iterator<String> iterator = values.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().endsWith(TRANSACTION_DESTINATION_SUFFIX)) {
                     iterator.remove();
                 }
             }

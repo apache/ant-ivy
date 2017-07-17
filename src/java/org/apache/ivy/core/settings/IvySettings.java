@@ -118,9 +118,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         ResolveEngineSettings, RetrieveEngineSettings, RepositoryManagementEngineSettings {
     private static final long INTERRUPT_TIMEOUT = 2000;
 
-    private Map<String, Class<?>> typeDefs = new HashMap<String, Class<?>>();
+    private Map<String, Class<?>> typeDefs = new HashMap<>();
 
-    private Map<String, DependencyResolver> resolversMap = new HashMap<String, DependencyResolver>();
+    private Map<String, DependencyResolver> resolversMap = new HashMap<>();
 
     private DependencyResolver defaultResolver;
 
@@ -134,29 +134,29 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private boolean checkUpToDate = true;
 
-    private ModuleRules<ModuleSettings> moduleSettings = new ModuleRules<ModuleSettings>();
+    private ModuleRules<ModuleSettings> moduleSettings = new ModuleRules<>();
 
-    private Map<String, ConflictManager> conflictsManager = new HashMap<String, ConflictManager>();
+    private Map<String, ConflictManager> conflictsManager = new HashMap<>();
 
-    private Map<String, LatestStrategy> latestStrategies = new HashMap<String, LatestStrategy>();
+    private Map<String, LatestStrategy> latestStrategies = new HashMap<>();
 
-    private Map<String, LockStrategy> lockStrategies = new HashMap<String, LockStrategy>();
+    private Map<String, LockStrategy> lockStrategies = new HashMap<>();
 
-    private Map<String, Namespace> namespaces = new HashMap<String, Namespace>();
+    private Map<String, Namespace> namespaces = new HashMap<>();
 
-    private Map<String, PatternMatcher> matchers = new HashMap<String, PatternMatcher>();
+    private Map<String, PatternMatcher> matchers = new HashMap<>();
 
-    private Map<String, ReportOutputter> reportOutputters = new HashMap<String, ReportOutputter>();
+    private Map<String, ReportOutputter> reportOutputters = new HashMap<>();
 
-    private Map<String, VersionMatcher> versionMatchers = new HashMap<String, VersionMatcher>();
+    private Map<String, VersionMatcher> versionMatchers = new HashMap<>();
 
-    private Map<String, CircularDependencyStrategy> circularDependencyStrategies = new HashMap<String, CircularDependencyStrategy>();
+    private Map<String, CircularDependencyStrategy> circularDependencyStrategies = new HashMap<>();
 
-    private Map<String, RepositoryCacheManager> repositoryCacheManagers = new HashMap<String, RepositoryCacheManager>();
+    private Map<String, RepositoryCacheManager> repositoryCacheManagers = new HashMap<>();
 
-    private Map<String, SignatureGenerator> signatureGenerators = new HashMap<String, SignatureGenerator>();
+    private Map<String, SignatureGenerator> signatureGenerators = new HashMap<>();
 
-    private List<Trigger> triggers = new ArrayList<Trigger>();
+    private List<Trigger> triggers = new ArrayList<>();
 
     private IvyVariableContainer variableContainer = new IvyVariableContainerImpl();
 
@@ -174,7 +174,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private ResolutionCacheManager resolutionCacheManager = null;
 
-    private List<String> listingIgnore = new ArrayList<String>();
+    private List<String> listingIgnore = new ArrayList<>();
 
     private boolean repositoriesConfigured;
 
@@ -184,7 +184,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private File baseDir = new File(".").getAbsoluteFile();
 
-    private List<URL> classpathURLs = new ArrayList<URL>();
+    private List<URL> classpathURLs = new ArrayList<>();
 
     private ClassLoader classloader;
 
@@ -224,16 +224,14 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
-            String[] files = ivyTypeDefs.split("\\,");
-            for (int i = 0; i < files.length; i++) {
+            for (String file : ivyTypeDefs.split("\\,")) {
                 try {
-                    typeDefs(
-                        new FileInputStream(Checks.checkAbsolute(files[i].trim(),
+                    typeDefs(new FileInputStream(Checks.checkAbsolute(file.trim(),
                             "ivy.typedef.files")), true);
                 } catch (FileNotFoundException e) {
-                    Message.warn("typedefs file not found: " + files[i].trim());
+                    Message.warn("typedefs file not found: " + file.trim());
                 } catch (IOException e) {
-                    Message.warn("problem with typedef file: " + files[i].trim(), e);
+                    Message.warn("problem with typedef file: " + file.trim(), e);
                 }
             }
         } else {
@@ -390,10 +388,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         try {
             new XmlSettingsParser(this).parse(settingsFile.toURI().toURL());
         } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException(
-                    "given file cannot be transformed to url: " + settingsFile);
-            iae.initCause(e);
-            throw iae;
+            throw new IllegalArgumentException(
+                    "given file cannot be transformed to url: " + settingsFile, e);
         }
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
         Message.verbose("settings loaded (" + (System.currentTimeMillis() - start) + "ms)");
@@ -484,10 +480,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             setVariable("ivy.settings.dir.url", new File(settingsFile.getAbsolutePath())
                     .getParentFile().toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException(
-                    "given file cannot be transformed to url: " + settingsFile);
-            iae.initCause(e);
-            throw iae;
+            throw new IllegalArgumentException(
+                    "given file cannot be transformed to url: " + settingsFile, e);
         }
     }
 
@@ -602,11 +596,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized void addAllVariables(Map<?, ?> variables, boolean overwrite) {
-        for (Map.Entry<?, ?> entry : variables.entrySet()) {
-            String key = entry.getKey().toString();
+        for (Entry<?, ?> entry : variables.entrySet()) {
             Object val = entry.getValue();
             if (val == null || val instanceof String) {
-                setVariable(key, (String) val, overwrite);
+                setVariable(entry.getKey().toString(), (String) val, overwrite);
             }
         }
     }
@@ -633,7 +626,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      *         substituted by their value
      */
     public synchronized Map<String, String> substitute(Map<String, String> strings) {
-        Map<String, String> substituted = new LinkedHashMap<String, String>();
+        Map<String, String> substituted = new LinkedHashMap<>();
         for (Entry<String, String> entry : strings.entrySet()) {
             substituted.put(entry.getKey(), substitute(entry.getValue()));
         }

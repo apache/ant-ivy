@@ -62,7 +62,7 @@ public abstract class AbstractArtifact implements Artifact {
         return getId().getAttribute(attName);
     }
 
-    public Map getAttributes() {
+    public Map<String, String> getAttributes() {
         return getId().getAttributes();
     }
 
@@ -70,11 +70,11 @@ public abstract class AbstractArtifact implements Artifact {
         return getId().getExtraAttribute(attName);
     }
 
-    public Map getExtraAttributes() {
+    public Map<String, String> getExtraAttributes() {
         return getId().getExtraAttributes();
     }
 
-    public Map getQualifiedExtraAttributes() {
+    public Map<String, String> getQualifiedExtraAttributes() {
         return getId().getQualifiedExtraAttributes();
     }
 

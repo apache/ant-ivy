@@ -17,16 +17,16 @@
  */
 package org.apache.ivy.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -109,7 +109,7 @@ public class ConfiguratorTest {
         }
     }
 
-    public static abstract class Housing {
+    public abstract static class Housing {
         private final List<Room> _rooms = new ArrayList<>();
 
         private boolean _isEmpty;

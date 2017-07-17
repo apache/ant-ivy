@@ -24,7 +24,10 @@ public class CacheCleaner {
     /**
      * Delete the directory and all it contains. Previously, we used the ant delete task, but it
      * occasionally failed (access denied) on my machine for unknown reason.
-     **/
+     *
+     * @param toDelete
+     *            File
+     */
     public static void deleteDir(File toDelete) {
         FileUtil.forceDelete(toDelete);
     }

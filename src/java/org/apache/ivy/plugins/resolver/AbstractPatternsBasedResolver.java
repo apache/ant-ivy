@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -92,16 +91,17 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         List<ResolvedResource> resolvedResources = new ArrayList<>();
         Set<String> foundRevisions = new HashSet<>();
         boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
-        boolean stop = false;
-        for (Iterator<String> iter = patternList.iterator(); iter.hasNext() && !stop;) {
-            String pattern = iter.next();
+        for (String pattern : patternList) {
             ResolvedResource rres = findResourceUsingPattern(moduleRevision, pattern, artifact,
                 rmdparser, date);
             if ((rres != null) && !foundRevisions.contains(rres.getRevision())) {
                 // only add the first found ResolvedResource for each revision
                 foundRevisions.add(rres.getRevision());
                 resolvedResources.add(rres);
-                stop = !dynamic; // stop iterating if we are not searching a dynamic revision
+                if (!dynamic) {
+                    // stop iterating if we are not searching a dynamic revision
+                    break;
+                }
             }
         }
 
@@ -158,6 +158,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         return names;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
         Set<Map<String, String>> result = new LinkedHashSet<>();
@@ -201,10 +202,9 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
         Map<String, String> tokenValues = new HashMap<>();
         for (Entry<String, Object> entry : criteria.entrySet()) {
-            String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof String) {
-                tokenValues.put(key, (String) value);
+                tokenValues.put(entry.getKey(), (String) value);
             }
         }
 

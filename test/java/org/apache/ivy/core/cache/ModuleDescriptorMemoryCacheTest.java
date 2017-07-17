@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.core.cache;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -27,10 +30,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 
 public class ModuleDescriptorMemoryCacheTest {
 
@@ -99,8 +98,8 @@ public class ModuleDescriptorMemoryCacheTest {
         ModuleDescriptorProviderMock providerMock3 = new ModuleDescriptorProviderMock(md3);
         cache.get(url1, ivySettings, false, providerMock);
         cache.get(url2, ivySettings, false, providerMock2);
-        cache.get(url3, ivySettings, false, providerMock3);// adding 1
-        cache.get(url1, ivySettings, false, providerMock1b);// and one has been removed
+        cache.get(url3, ivySettings, false, providerMock3); // adding 1
+        cache.get(url1, ivySettings, false, providerMock1b); // and one has been removed
         providerMock1b.assertCalled();
     }
 
@@ -114,7 +113,7 @@ public class ModuleDescriptorMemoryCacheTest {
         cache.get(url2, ivySettings, false, providerMock2);
         cache.get(url1, ivySettings, false, null);
         cache.get(url3, ivySettings, false, providerMock3);
-        cache.get(url1, ivySettings, false, null);// and one has been removed
+        cache.get(url1, ivySettings, false, null); // and one has been removed
         cache.get(url2, ivySettings, false, providerMock2b);
         providerMock2b.assertCalled();
     }

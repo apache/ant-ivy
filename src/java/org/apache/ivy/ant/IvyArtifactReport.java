@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -168,8 +167,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     }
 
     private TransformerHandler createTransformerHandler(FileOutputStream fileOutputStream)
-            throws TransformerFactoryConfigurationError, TransformerConfigurationException,
-            SAXException {
+            throws TransformerConfigurationException {
         SAXTransformerFactory transformerFact = (SAXTransformerFactory) SAXTransformerFactory
                 .newInstance();
         TransformerHandler saxHandler = transformerFact.newTransformerHandler();
@@ -201,8 +199,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     }
 
     private void writeOriginLocationIfPresent(RepositoryCacheManager cache,
-            TransformerHandler saxHandler, ArtifactDownloadReport artifact) throws IOException,
-            SAXException {
+            TransformerHandler saxHandler, ArtifactDownloadReport artifact)
+            throws SAXException {
         ArtifactOrigin origin = artifact.getArtifactOrigin();
         if (!ArtifactOrigin.isUnknown(origin)) {
             String originName = origin.getLocation();

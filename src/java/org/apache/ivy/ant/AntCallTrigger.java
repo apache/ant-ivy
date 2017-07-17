@@ -20,6 +20,7 @@ package org.apache.ivy.ant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -76,7 +77,7 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
             String target = IvyPatternHelper.substituteTokens(getTarget(), attributes);
             call.setTarget(target);
 
-            for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            for (Entry<String, String> entry : attributes.entrySet()) {
                 Property p = call.createParam();
                 p.setName(prefix == null ? entry.getKey() : prefix + entry.getKey());
                 p.setValue(entry.getValue() == null ? "" : entry.getValue());

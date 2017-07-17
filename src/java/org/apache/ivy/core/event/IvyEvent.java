@@ -84,7 +84,7 @@ public class IvyEvent {
         addAttribute("conf", StringUtils.join(confs, ", "));
     }
 
-    protected void addAttributes(Map attributes) {
+    protected void addAttributes(Map<String, String> attributes) {
         this.attributes.putAll(attributes);
     }
 

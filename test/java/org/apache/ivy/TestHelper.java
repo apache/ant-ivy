@@ -17,6 +17,8 @@
  */
 package org.apache.ivy;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -48,8 +50,6 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestHelper {
 
@@ -120,7 +120,7 @@ public class TestHelper {
     /**
      * Returns an array of {@link ModuleRevisionId} corresponding to the given comma separated list
      * of their text representation.
-     * 
+     *
      * @param mrids
      *            the text representation of the {@link ModuleRevisionId}
      * @return an array of {@link ModuleRevisionId}
@@ -134,25 +134,25 @@ public class TestHelper {
      * Parses a string representation of a module descriptor in micro ivy format.
      * <p>
      * Examples:
-     * 
+     *
      * <pre>
      * #A;1
      * </pre>
-     * 
+     *
      * <hr/>
-     * 
+     *
      * <pre>
      * #A;2-> #B;[1.0,1.5]
      * </pre>
-     * 
+     *
      * <hr/>
-     * 
+     *
      * <pre>
      * #A;3-> { #B;[1.0,1.5] #C;[2.0,2.5] }
      * </pre>
-     * 
+     *
      * </p>
-     * 
+     *
      * @param microIvy
      *            the micro ivy description of the module descriptor
      * @return the parsed module descriptor
@@ -197,7 +197,7 @@ public class TestHelper {
     /**
      * Parses a collection of module descriptors in the micro ivy format, separated by double semi
      * columns.
-     * 
+     *
      * @param microIvy
      *            the text representation of the collection of module descriptors
      * @return the collection of module descriptors parsed
@@ -212,7 +212,7 @@ public class TestHelper {
 
     /**
      * Fills a repository with a set of module, using empty files for published artifacts.
-     * 
+     *
      * @param resolver
      *            the resolver to use to publish the modules
      * @param mds
@@ -256,6 +256,8 @@ public class TestHelper {
      * <p>
      * When finished you should call {@link #cleanTestRepository()}
      * </p>
+     *
+     * @return FileSystemResolver
      */
     public static FileSystemResolver newTestRepository() {
         FileSystemResolver testRepository = new FileSystemResolver();
@@ -270,7 +272,7 @@ public class TestHelper {
 
     /**
      * Cleans up the test repository.
-     * 
+     *
      * @see #newTestRepository()
      */
     public static void cleanTestRepository() {
@@ -279,7 +281,7 @@ public class TestHelper {
 
     /**
      * Cleans up the test repository and cache.
-     * 
+     *
      * @see #newTestRepository()
      */
     public static void cleanTest() {
@@ -290,7 +292,7 @@ public class TestHelper {
     /**
      * Init a test resolver as default, useful combined with
      * {@link #fillRepository(DependencyResolver, Collection)}.
-     * 
+     *
      * @param settings
      *            the settings to initialize
      * @return test settings
@@ -304,7 +306,7 @@ public class TestHelper {
 
     /**
      * Create basic resolve data using the given settings
-     * 
+     *
      * @param settings
      *            the settings to use to create the resolve data
      * @return basic resolve data useful for testing
@@ -316,7 +318,7 @@ public class TestHelper {
 
     /**
      * Create basic resolve options using the given settings
-     * 
+     *
      * @param settings
      *            the settings to use to create the resolve options
      * @return the basic resolve options, useful for testing

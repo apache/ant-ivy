@@ -82,16 +82,8 @@ public class Credentials {
     }
 
     public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
+        return o instanceof Credentials && getKey().equals(((Credentials) o).getKey());
 
-        if (o instanceof Credentials) {
-            Credentials c = (Credentials) o;
-            return getKey().equals(c.getKey());
-        }
-
-        return false;
     }
 
     public int hashCode() {

@@ -56,7 +56,7 @@ public class P2MetadataParser implements XMLInputParser {
         this.logLevel = logLevel;
     }
 
-    public void parse(InputStream in) throws ParseException, IOException, SAXException {
+    public void parse(InputStream in) throws IOException, ParseException, SAXException {
         RepositoryHandler handler = new RepositoryHandler(p2Descriptor);
         try {
             XMLHelper.parse(in, null, handler, null);

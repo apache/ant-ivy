@@ -51,13 +51,11 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 originalModuleDescriptor.getModuleRevisionId(),
                 originalModuleDescriptor.getStatus(), originalModuleDescriptor.getPublicationDate());
         // copy configurations
-        for (int i = 0; i < originalModuleDescriptor.getConfigurations().length; i++) {
-            Configuration configuration = originalModuleDescriptor.getConfigurations()[i];
+        for (Configuration configuration : originalModuleDescriptor.getConfigurations()) {
             latestModuleDescriptor.addConfiguration(configuration);
         }
         // clone dependency and add new one with the requested revisionToCheck
-        for (int i = 0; i < originalModuleDescriptor.getDependencies().length; i++) {
-            DependencyDescriptor dependencyDescriptor = originalModuleDescriptor.getDependencies()[i];
+        for (DependencyDescriptor dependencyDescriptor : originalModuleDescriptor.getDependencies()) {
             ModuleRevisionId upToDateMrid = ModuleRevisionId.newInstance(
                 dependencyDescriptor.getDependencyRevisionId(), revisionToCheck);
             latestModuleDescriptor.addDependency(dependencyDescriptor.clone(upToDateMrid));

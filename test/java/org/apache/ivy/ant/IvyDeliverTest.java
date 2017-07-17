@@ -135,10 +135,9 @@ public class IvyDeliverTest {
 
        try (BufferedReader merged = new BufferedReader(new FileReader(delivered));
             BufferedReader expected = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("ivy-extends-merged.xml")))) {
-           for (String mergeLine = merged.readLine(), expectedLine = expected.readLine();
-                mergeLine != null && expectedLine != null;
-                mergeLine = merged.readLine(), expectedLine = expected.readLine()) {
-
+           String mergeLine = merged.readLine();
+           String expectedLine = expected.readLine();
+           while (mergeLine != null && expectedLine != null) {
                mergeLine = mergeLine.trim();
                expectedLine = expectedLine.trim();
 
@@ -148,6 +147,8 @@ public class IvyDeliverTest {
                }
 
                ++lineNo;
+               mergeLine = merged.readLine();
+               expectedLine = expected.readLine();
            }
        }
     }

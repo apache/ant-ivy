@@ -91,7 +91,7 @@ public class XmlSettingsParserTest {
         assertEquals("libraries", defaultResolver.getName());
         assertTrue(defaultResolver instanceof FileSystemResolver);
         FileSystemResolver fsres = (FileSystemResolver) defaultResolver;
-        List ivyPatterns = fsres.getIvyPatterns();
+        List<String> ivyPatterns = fsres.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals("lib/[organisation]/[module]/ivys/ivy-[revision].xml",
@@ -105,7 +105,7 @@ public class XmlSettingsParserTest {
         assertNotNull(internal);
         assertTrue(internal instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) internal;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
         FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
@@ -113,7 +113,7 @@ public class XmlSettingsParserTest {
         assertEquals(1, fsInt1.getIvyPatterns().size());
         assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", fsInt1
                 .getIvyPatterns().get(0));
-        assertEquals("int2", ((DependencyResolver) subresolvers.get(1)).getName());
+        assertEquals("int2", subresolvers.get(1).getName());
 
         strategy = fsInt1.getLatestStrategy();
         assertNotNull(strategy);
@@ -145,12 +145,12 @@ public class XmlSettingsParserTest {
         assertNotNull(internal);
         assertTrue(internal instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) internal;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
 
-        assertEquals("mock1", ((DependencyResolver) subresolvers.get(0)).getName());
-        assertEquals("mock2", ((DependencyResolver) subresolvers.get(1)).getName());
+        assertEquals("mock1", subresolvers.get(0).getName());
+        assertEquals("mock2", subresolvers.get(1).getName());
         assertTrue(subresolvers.get(0) instanceof MockResolver);
         assertTrue(subresolvers.get(1) instanceof MockResolver);
     }
@@ -318,13 +318,13 @@ public class XmlSettingsParserTest {
         assertNotNull(internal);
         assertTrue(internal instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) internal;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
         FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
         assertEquals("fs", fsInt1.getName());
 
-        List ivyPatterns = fsInt1.getIvyPatterns();
+        List<String> ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml",
@@ -357,13 +357,13 @@ public class XmlSettingsParserTest {
         assertNotNull(def);
         assertTrue(def instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) def;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
         FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
         assertEquals("default-fs1", fsInt1.getName());
 
-        List ivyPatterns = fsInt1.getIvyPatterns();
+        List<String> ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
@@ -413,10 +413,10 @@ public class XmlSettingsParserTest {
         assertNotNull(mychain);
         assertTrue(mychain instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) mychain;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(1, subresolvers.size());
-        shared = (DependencyResolver) subresolvers.get(0);
+        shared = subresolvers.get(0);
         assertEquals("shared", shared.getName());
         assertTrue(shared instanceof FileSystemResolver);
     }
@@ -437,7 +437,7 @@ public class XmlSettingsParserTest {
         assertTrue(testResolver instanceof IBiblioResolver);
 
         ChainResolver chain = (ChainResolver) macrores;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(1, subresolvers.size());
         assertEquals(testResolver, subresolvers.get(0));
@@ -466,13 +466,13 @@ public class XmlSettingsParserTest {
         assertNotNull(def);
         assertTrue(def instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) def;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
         FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
         assertEquals("default-fs1", fsInt1.getName());
 
-        List ivyPatterns = fsInt1.getIvyPatterns();
+        List<String> ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
@@ -523,7 +523,7 @@ public class XmlSettingsParserTest {
                 .getResource("ivysettings-include-missing-file.xml"));
     }
 
-   @Test
+    @Test
     public void testIncludeSpecialCharInName() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -533,13 +533,13 @@ public class XmlSettingsParserTest {
         assertNotNull(def);
         assertTrue(def instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) def;
-        List subresolvers = chain.getResolvers();
+        List<DependencyResolver> subresolvers = chain.getResolvers();
         assertNotNull(subresolvers);
         assertEquals(2, subresolvers.size());
         FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
         assertEquals("default-fs1", fsInt1.getName());
 
-        List ivyPatterns = fsInt1.getIvyPatterns();
+        List<String> ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(

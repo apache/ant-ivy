@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.util.List;
 
@@ -41,10 +44,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
-
 /**
- * 
+ *
  */
 public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     private IvySettings _settings;
@@ -76,16 +77,15 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
         _settings.setVariable("ivy.ivyrep.default.ivy.root", "http://www.jayasoft.fr/myivyrep/");
         _settings.setVariable("ivy.ivyrep.default.ivy.pattern",
             "[organisation]/[module]/ivy-[revision].[ext]");
-        _settings
-                .setVariable("ivy.ivyrep.default.artifact.root", "http://www.ibiblio.org/mymaven/");
+        _settings.setVariable("ivy.ivyrep.default.artifact.root",
+            "http://www.ibiblio.org/mymaven/");
         _settings.setVariable("ivy.ivyrep.default.artifact.pattern",
             "[module]/jars/[artifact]-[revision].jar");
         resolver.setSettings(_settings);
-        List l = resolver.getIvyPatterns();
+        List<String> l = resolver.getIvyPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals(
-            "http://www.jayasoft.fr/myivyrep/[organisation]/[module]/ivy-[revision].[ext]",
+        assertEquals("http://www.jayasoft.fr/myivyrep/[organisation]/[module]/ivy-[revision].[ext]",
             l.get(0));
         l = resolver.getArtifactPatterns();
         assertNotNull(l);

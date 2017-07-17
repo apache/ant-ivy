@@ -24,7 +24,7 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 
 public class DefaultExcludeRule extends AbstractIncludeExcludeRule implements ExcludeRule {
 
-    public DefaultExcludeRule(ArtifactId aid, PatternMatcher matcher, Map extraAttributes) {
+    public DefaultExcludeRule(ArtifactId aid, PatternMatcher matcher, Map<String, String> extraAttributes) {
         super(aid, matcher, extraAttributes);
     }
 

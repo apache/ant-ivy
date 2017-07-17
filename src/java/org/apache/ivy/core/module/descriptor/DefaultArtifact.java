@@ -84,12 +84,12 @@ public class DefaultArtifact extends AbstractArtifact {
     }
 
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
-            String ext, Map extraAttributes) {
+            String ext, Map<String, String> extraAttributes) {
         this(mrid, publicationDate, name, type, ext, null, extraAttributes);
     }
 
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
-            String ext, URL url, Map extraAttributes) {
+            String ext, URL url, Map<String, String> extraAttributes) {
         this(ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes),
                 publicationDate, url, false);
     }
