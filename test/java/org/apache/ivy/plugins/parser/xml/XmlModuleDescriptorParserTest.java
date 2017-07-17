@@ -1454,7 +1454,6 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifacts[0].getType());
     }
 
-
     /**
      * Tests that when the <code>location</code> attribute of the <code>extends</code> element of a module descriptor
      * file, includes an {@link File#isAbsolute() absolute path} with characters that {@link java.net.URI} considers
