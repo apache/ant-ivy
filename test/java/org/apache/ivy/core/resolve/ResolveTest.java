@@ -17,23 +17,6 @@
  */
 package org.apache.ivy.core.resolve;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -68,17 +51,35 @@ import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static org.junit.Assert.*;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -1422,7 +1423,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
 
     @Test
@@ -1443,9 +1444,9 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
 
     @Test
@@ -1469,7 +1470,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
 
     @Test
@@ -1490,9 +1491,9 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
 
     @Test
@@ -1516,7 +1517,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
 
     @Test
@@ -1536,8 +1537,8 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org2", "mod2.1", "0.3"))
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1558,7 +1559,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1578,8 +1579,8 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org2", "mod2.1", "0.3"))
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1615,8 +1616,8 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org2", "mod2.1", "0.3"))
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1637,7 +1638,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1657,8 +1658,8 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org2", "mod2.1", "0.3"))
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1678,8 +1679,8 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org2", "mod2.1", "0.3"))
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -1699,8 +1700,8 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org2", "mod2.1", "0.3"))
                 .exists());
         assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
-        assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
     @Test
@@ -2955,7 +2956,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"))
                 .exists());
-        assertTrue(!getIvyFileInCache(ModuleRevisionId.newInstance("org8", "mod8.3", "1.0"))
+        assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org8", "mod8.3", "1.0"))
                 .exists());
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org8", "mod8.1", "1.0"))
                 .exists());
@@ -2972,7 +2973,7 @@ public class ResolveTest {
                 .exists());
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"))
                 .exists());
-        assertTrue(!getIvyFileInCache(ModuleRevisionId.newInstance("org14", "mod14.2", "1.1"))
+        assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org14", "mod14.2", "1.1"))
                 .exists());
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org14", "mod14.3", "1.1"))
                 .exists());
@@ -3648,9 +3649,9 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
 
-        assertTrue(!getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))
+        assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))
                 .exists());
-        assertTrue(!getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
     @Test
@@ -3698,7 +3699,7 @@ public class ResolveTest {
 
         // dependencies
         assertTrue(depIvyFileInCache.exists());
-        assertTrue(!getArchiveFileInCache(ivy, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar")
+        assertFalse(getArchiveFileInCache(ivy, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar")
                 .exists());
     }
 
@@ -4477,8 +4478,8 @@ public class ResolveTest {
 
         Map<String, String> cmap = new HashMap<>();
         cmap.put("classifier", "asl");
-        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
-        , "1.0", "test-classified", "jar", "jar", cmap).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", /* branch */ null,
+            "1.0", "test-classified", "jar", "jar", cmap).exists());
     }
 
     @Test
@@ -4505,8 +4506,8 @@ public class ResolveTest {
 
         Map<String, String> cmap = new HashMap<>();
         cmap.put("classifier", "asl");
-        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
-        , "2.0", "test-classified", "jar", "jar", cmap).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", /* branch */ null,
+            "2.0", "test-classified", "jar", "jar", cmap).exists());
     }
 
     @Test

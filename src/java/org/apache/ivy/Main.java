@@ -324,11 +324,11 @@ public final class Main {
             String ivyPattern = settings.substitute(line.getOptionValue("ivypattern"));
             ivy.retrieve(
                 md.getModuleRevisionId(),
-                retrievePattern,
                 new RetrieveOptions()
                         .setConfs(confs)
                         .setSync(line.hasOption("sync"))
                         .setUseOrigin(line.hasOption("useOrigin"))
+                        .setDestArtifactPattern(retrievePattern)
                         .setDestIvyPattern(ivyPattern)
                         .setArtifactFilter(
                             FilterHelper.getArtifactTypeFilter(line.getOptionValues("types")))

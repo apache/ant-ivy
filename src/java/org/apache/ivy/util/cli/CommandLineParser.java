@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -45,12 +46,11 @@ public class CommandLineParser {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public CommandLineParser addOption(Option option) {
         options.put(option.getName(), option);
         if (!categories.isEmpty()) {
-            ((List<Option>) categories.values().toArray()[categories.values().size() - 1])
-                    .add(option);
+            // LinkedHashMap hides its tail...
+            new LinkedList<>(categories.values()).getLast().add(option);
         }
         return this;
     }

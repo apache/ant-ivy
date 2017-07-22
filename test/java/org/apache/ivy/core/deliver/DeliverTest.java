@@ -17,12 +17,6 @@
  */
 package org.apache.ivy.core.deliver;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.IvyDeliver;
 import org.apache.ivy.ant.IvyResolve;
@@ -32,6 +26,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DeliverTest {
@@ -81,7 +82,7 @@ public class DeliverTest {
         ivyDeliver.doExecute();
 
         String deliverContent = readFile(deliverDir.getAbsolutePath() + "/ivys/ivy-1.0.xml");
-        assertTrue(!deliverContent.contains("rev=\"latest.integration\""));
+        assertFalse(deliverContent.contains("rev=\"latest.integration\""));
         assertTrue(deliverContent.contains("name=\"b\" rev=\"1.5\""));
     }
 

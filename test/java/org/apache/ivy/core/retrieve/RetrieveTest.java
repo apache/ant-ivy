@@ -87,12 +87,14 @@ public class RetrieveTest {
         assertNotNull(md);
 
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
     }
@@ -110,7 +112,8 @@ public class RetrieveTest {
         String pattern = "build/test/retrieve/[module]/[artifact]-[revision].[ext]";
         MockMessageLogger mockLogger = new MockMessageLogger();
         Message.setDefaultLogger(mockLogger);
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.2", "mod1.2",
             "jar", "jar", "default")).exists());
         mockLogger.assertLogDoesntContain("conflict on");
@@ -129,7 +132,8 @@ public class RetrieveTest {
         MockMessageLogger mockLogger = new MockMessageLogger();
         Message.setDefaultLogger(mockLogger);
         try {
-            ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+            ivy.retrieve(md.getModuleRevisionId(),
+                getRetrieveOptions().setDestArtifactPattern(pattern));
             fail("Exception should have been thrown!");
         } catch (RuntimeException e) {
             // expected!
@@ -151,7 +155,8 @@ public class RetrieveTest {
         });
         ModuleDescriptor md = report.getModuleDescriptor();
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         assertEquals(4, events.size());
         assertTrue(events.get(0) instanceof StartRetrieveEvent);
         assertTrue(events.get(1) instanceof StartRetrieveArtifactEvent);
@@ -162,7 +167,8 @@ public class RetrieveTest {
         assertEquals(0, ev.getNbUpToDate());
 
         events.clear();
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         assertEquals(2, events.size());
         assertTrue(events.get(0) instanceof StartRetrieveEvent);
         assertTrue(events.get(1) instanceof EndRetrieveEvent);
@@ -188,10 +194,9 @@ public class RetrieveTest {
             "mod1.2", "jar", "jar", "default")).getCanonicalFile();
         file.getParentFile().mkdirs();
         file.createNewFile();
-        ivy.retrieve(md.getModuleRevisionId(), pattern,
-            getRetrieveOptions().setOverwriteMode("always"));
-        assertEquals(
-            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(),
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setOverwriteMode("always").setDestArtifactPattern(pattern));
+        assertEquals(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(),
             file.lastModified());
     }
 
@@ -205,15 +210,15 @@ public class RetrieveTest {
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
 
-        RetrieveOptions options = getRetrieveOptions().setMakeSymlinks(true);
-
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(pattern));
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(pattern));
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
@@ -232,15 +237,15 @@ public class RetrieveTest {
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
 
-        RetrieveOptions options = getRetrieveOptions().setMakeSymlinksInMass(true);
-
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setMakeSymlinksInMass(true).setDestArtifactPattern(pattern));
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setMakeSymlinksInMass(true).setDestArtifactPattern(pattern));
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
@@ -276,13 +281,15 @@ public class RetrieveTest {
         assertNotNull(md);
 
         String pattern = "build/test/${retrieve.dir}/[module]/[conf]/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         pattern = IvyPatternHelper.substituteVariable(pattern, "retrieve.dir", "retrieve");
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
 
         pattern = "build/test/${retrieve.dir}/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
         pattern = IvyPatternHelper.substituteVariable(pattern, "retrieve.dir", "retrieve");
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
@@ -332,8 +339,8 @@ public class RetrieveTest {
 
         String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
-        RetrieveOptions options = getRetrieveOptions();
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
 
         File dest = new File("build/test/retrieve/packaging/module2/default/jars/module2-1.0");
         assertTrue(dest.exists());
@@ -360,9 +367,8 @@ public class RetrieveTest {
 
         String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
-        RetrieveOptions options = getRetrieveOptions();
-        options.setSync(true);
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setSync(true).setDestArtifactPattern(pattern));
 
         File dest = new File("build/test/retrieve/packaging/module2/default/jars/module2-1.0");
         assertTrue(dest.exists());
@@ -395,8 +401,8 @@ public class RetrieveTest {
 
         final String pattern = "build/test/retrieve/[organization]/[module]/[conf]/[type]s/[artifact]-[revision](.[ext])";
 
-        final RetrieveOptions options = getRetrieveOptions();
-        ivy.retrieve(md.getModuleRevisionId(), pattern, options);
+        ivy.retrieve(md.getModuleRevisionId(),
+            getRetrieveOptions().setDestArtifactPattern(pattern));
 
         final File dest = new File("build/test/retrieve/packaging/module9/default/jars/module9-1.0.jar");
         assertTrue("Retrieved artifact is missing at " + dest.getAbsolutePath(), dest.exists());

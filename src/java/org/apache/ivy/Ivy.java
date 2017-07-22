@@ -543,7 +543,7 @@ public class Ivy {
     // RETRIEVE
     // ///////////////////////////////////////////////////////////////////////
 
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
         pushContext();

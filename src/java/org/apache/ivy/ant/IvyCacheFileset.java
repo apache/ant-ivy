@@ -32,8 +32,8 @@ import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.types.Resource;
 
 /**
- * Creates an ant fileset consisting in all artifacts found during a resolve. Note that this task is
- * not compatible with the useOrigin mode.
+ * Creates an ant fileset consisting in all artifacts found during a resolve. Note that this task
+ * is not compatible with the useOrigin mode.
  */
 public class IvyCacheFileset extends IvyCacheTask {
     private String setid;
@@ -50,8 +50,8 @@ public class IvyCacheFileset extends IvyCacheTask {
         if (useOrigin) {
             throw new UnsupportedOperationException(
                     "the cachefileset task does not support the useOrigin mode, since filesets "
-                            + "require to have only one root directory. Please use the the cachepath "
-                            + "task instead");
+                            + "require to have only one root directory. Please use the the "
+                            + "cachepath task instead");
         }
     }
 
@@ -89,12 +89,13 @@ public class IvyCacheFileset extends IvyCacheTask {
     }
 
     /**
-     * Returns a common base directory, determined from the {@link ArtifactDownloadReport#getLocalFile() local files} of the
-     * passed <code>artifactDownloadReports</code>. If no common base directory can be determined, this method throws a
-     * {@link BuildException}
+     * Returns a common base directory, determined from the
+     * {@link ArtifactDownloadReport#getLocalFile() local files} of the passed
+     * <code>artifactDownloadReports</code>. If no common base directory can be determined, this
+     * method throws a {@link BuildException}
      *
-     * @param artifactDownloadReports The artifact download reports for which the common base directory of the artifacts
-     *                                has to be determined
+     * @param artifactDownloadReports The artifact download reports for which the common base
+     *                                directory of the artifacts has to be determined
      * @return File
      */
     File requireCommonBaseDir(final List<ArtifactDownloadReport> artifactDownloadReports) {
@@ -112,15 +113,15 @@ public class IvyCacheFileset extends IvyCacheTask {
                 base = getBaseDir(base, artifactDownloadReport.getLocalFile());
                 if (base == null) {
                     // fail fast - we couldn't determine a common base directory, throw an error
-                    throw new BuildException("Cannot find a common base directory, from resolved artifacts, " +
-                            "for generating a cache fileset");
+                    throw new BuildException("Cannot find a common base directory, from resolved "
+                            + "artifacts, for generating a cache fileset");
                 }
             }
         }
         if (base == null) {
             // finally, we couldn't determine a common base directory, throw an error
-            throw new BuildException("Cannot find a common base directory, from resolved artifacts, for generating " +
-                    "a cache fileset");
+            throw new BuildException("Cannot find a common base directory, from resolved "
+                    + "artifacts, for generating a cache fileset");
         }
         return base;
     }
@@ -149,19 +150,20 @@ public class IvyCacheFileset extends IvyCacheTask {
     }
 
     /**
-     * Returns the common base directory between the passed <code>file1</code> and <code>file2</code>.
+     * Returns the common base directory between the passed <code>file1</code> and
+     * <code>file2</code>.
      * <p>
-     * The returned base directory will be a parent of both the <code>file1</code> and <code>file2</code> or
-     * it will be <code>null</code>.
+     * The returned base directory will be a parent of both the <code>file1</code> and
+     * <code>file2</code> or it will be <code>null</code>.
      * </p>
      *
      * @param file1
      *            One of the files, for which the common base directory is being sought, may be null.
      * @param file2
      *            The other file for which the common base directory should be returned, may be null.
-     * @return the common base directory between a <code>file1</code> and <code>file2</code>. Returns null
-     *          if no common base directory could be determined or if either <code>file1</code> or <code>file2</code>
-     *          is null
+     * @return the common base directory between a <code>file1</code> and <code>file2</code>. Returns
+     *         null if no common base directory could be determined or if either <code>file1</code>
+     *         or <code>file2</code> is null
      */
     File getBaseDir(final File file1, final File file2) {
         if (file1 == null || file2 == null) {

@@ -378,10 +378,10 @@ public class Ivy14 {
             boolean makeSymlinks) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern,
-                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern)
+                new RetrieveOptions().setConfs(confs).setDestArtifactPattern(destFilePattern)
+                        .setDestIvyPattern(destIvyPattern)
                         .setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(useOrigin)
-                        .setMakeSymlinks(makeSymlinks));
+                        .setMakeSymlinks(makeSymlinks)).getNbrArtifactsCopied();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -392,9 +392,10 @@ public class Ivy14 {
             boolean useOrigin) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern,
-                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern)
-                        .setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(useOrigin));
+                new RetrieveOptions().setConfs(confs).setDestArtifactPattern(destFilePattern)
+                        .setDestIvyPattern(destIvyPattern)
+                        .setArtifactFilter(artifactFilter).setSync(sync)
+                        .setUseOrigin(useOrigin)).getNbrArtifactsCopied();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -404,8 +405,9 @@ public class Ivy14 {
             String destIvyPattern, Filter<Artifact> artifactFilter) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs)
-                        .setDestIvyPattern(destIvyPattern).setArtifactFilter(artifactFilter));
+                new RetrieveOptions().setConfs(confs).setDestArtifactPattern(destFilePattern)
+                        .setDestIvyPattern(destIvyPattern)
+                        .setArtifactFilter(artifactFilter)).getNbrArtifactsCopied();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -415,8 +417,8 @@ public class Ivy14 {
             String destIvyPattern) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern,
-                new RetrieveOptions().setConfs(confs).setDestIvyPattern(destIvyPattern));
+                new RetrieveOptions().setConfs(confs).setDestArtifactPattern(destFilePattern)
+                        .setDestIvyPattern(destIvyPattern)).getNbrArtifactsCopied();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -425,7 +427,8 @@ public class Ivy14 {
     public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs));
+                new RetrieveOptions().setConfs(confs)
+                        .setDestArtifactPattern(destFilePattern)).getNbrArtifactsCopied();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

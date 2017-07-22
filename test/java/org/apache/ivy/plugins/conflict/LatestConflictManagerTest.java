@@ -17,13 +17,6 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
@@ -34,6 +27,13 @@ import org.apache.ivy.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class LatestConflictManagerTest {
 
@@ -178,9 +178,8 @@ public class LatestConflictManagerTest {
                 assertEquals("A revision should be 1.0.0", "1.0.0", mrid.getRevision());
             } else if (mrid.getName().equals("D")) {
                 assertEquals("D revision should be 1.0.0", "1.0.0", mrid.getRevision());
-            }
-            // by transitivity
-            else if (mrid.getName().equals("B")) {
+            } else if (mrid.getName().equals("B")) {
+                // by transitivity
                 assertEquals("B revision should be 1.0.0", "1.0.0", mrid.getRevision());
             } else if (mrid.getName().equals("C")) {
                 assertEquals("C revision should be 1.0.2", "1.0.2", mrid.getRevision());
