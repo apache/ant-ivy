@@ -164,26 +164,24 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         Set<Map<String, String>> result = new LinkedHashSet<>();
 
         // use ivy patterns
-        List<String> ivyPatterns = getIvyPatterns();
         Map<String, Object> subcriteria = new HashMap<>(criteria);
         subcriteria.put(IvyPatternHelper.TYPE_KEY, "ivy");
         subcriteria.put(IvyPatternHelper.EXT_KEY, getModuleDescriptorExtension());
         if (isM2compatible()) {
             convertM2CriteriaForResourceSearch(subcriteria);
         }
-        for (String ivyPattern : ivyPatterns) {
+        for (String ivyPattern : getIvyPatterns()) {
             result.addAll(resolveTokenValues(tokens, ivyPattern, subcriteria, false));
         }
 
         if (isAllownomd()) {
-            List<String> artifactPatterns = getArtifactPatterns();
             subcriteria = new HashMap<>(criteria);
             subcriteria.put(IvyPatternHelper.TYPE_KEY, "jar");
             subcriteria.put(IvyPatternHelper.EXT_KEY, "jar");
             if (isM2compatible()) {
                 convertM2CriteriaForResourceSearch(subcriteria);
             }
-            for (String artifactPattern : artifactPatterns) {
+            for (String artifactPattern : getArtifactPatterns()) {
                 result.addAll(resolveTokenValues(tokens, artifactPattern, subcriteria, true));
             }
         }
@@ -236,10 +234,10 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             return result;
         }
 
-        List<String> vals = new ArrayList<>(Arrays.asList(values));
-        filterNames(vals);
+        List<String> valueList = new ArrayList<>(Arrays.asList(values));
+        filterNames(valueList);
 
-        for (String value : vals) {
+        for (String value : valueList) {
             if ((matcher != null) && !matcher.matches(value)) {
                 continue;
             }

@@ -232,8 +232,6 @@ public final class IvyPatternHelper {
 
         StringBuilder buffer = new StringBuilder();
 
-        char[] chars = pattern.toCharArray();
-
         StringBuffer optionalPart = null;
         StringBuffer tokenBuffer = null;
         boolean insideOptionalPart = false;
@@ -241,8 +239,9 @@ public final class IvyPatternHelper {
         boolean tokenSeen = false;
         boolean tokenHadValue = false;
 
-        for (int i = 0; i < chars.length; i++) {
-            switch (chars[i]) {
+        for (char ch : pattern.toCharArray()) {
+            int i = pattern.indexOf(ch);
+            switch (ch) {
                 case '(':
                     if (insideOptionalPart) {
                         throw new IllegalArgumentException(
@@ -308,13 +307,12 @@ public final class IvyPatternHelper {
 
                 default:
                     if (insideToken) {
-                        tokenBuffer.append(chars[i]);
+                        tokenBuffer.append(ch);
                     } else if (insideOptionalPart) {
-                        optionalPart.append(chars[i]);
+                        optionalPart.append(ch);
                     } else {
-                        buffer.append(chars[i]);
+                        buffer.append(ch);
                     }
-
                     break;
             }
         }

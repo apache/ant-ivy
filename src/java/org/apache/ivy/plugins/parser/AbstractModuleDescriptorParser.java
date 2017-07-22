@@ -137,45 +137,46 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             replaceConfigurationWildcards(md);
             for (String conf : confs) {
                 String[] ops = conf.split("->");
-                if (ops.length == 1) {
-                    String[] modConfs = ops[0].split(",");
-                    if (!useDefaultMappingToGuessRightOperand) {
-                        for (String modConf : modConfs) {
-                            dd.addDependencyConfiguration(modConf.trim(), modConf.trim());
-                        }
-                    } else {
-                        for (String modConf : modConfs) {
-                            String[] depConfs = getDefaultConfMappingDescriptor()
-                                    .getDependencyConfigurations(modConf);
-                            if (depConfs.length > 0) {
-                                for (String depConf : depConfs) {
-                                    String mappedDependency = evaluateConditions ? evaluateCondition(
-                                            depConf.trim(), dd) : depConf.trim();
-                                    if (mappedDependency != null) {
-                                        dd.addDependencyConfiguration(modConf.trim(),
-                                                mappedDependency);
+                switch (ops.length) {
+                    case 1:
+                        for (String modConf : ops[0].split(",")) {
+                            if (useDefaultMappingToGuessRightOperand) {
+                                String[] depConfs = getDefaultConfMappingDescriptor()
+                                        .getDependencyConfigurations(modConf);
+                                if (depConfs.length > 0) {
+                                    for (String depConf : depConfs) {
+                                        String mappedDependency = evaluateConditions ? evaluateCondition(
+                                                depConf.trim(), dd) : depConf.trim();
+                                        if (mappedDependency != null) {
+                                            dd.addDependencyConfiguration(modConf.trim(),
+                                                    mappedDependency);
+                                        }
                                     }
+                                } else {
+                                    // no default mapping found for this configuration, map
+                                    // configuration to itself
+                                    dd.addDependencyConfiguration(modConf.trim(),
+                                            modConf.trim());
                                 }
                             } else {
-                                // no default mapping found for this configuration, map
-                                // configuration to itself
-                                dd.addDependencyConfiguration(modConf.trim(),
-                                        modConf.trim());
+                                dd.addDependencyConfiguration(modConf.trim(), modConf.trim());
                             }
                         }
-                    }
-                } else if (ops.length == 2) {
-                    for (String modConf : ops[0].split(",")) {
-                        for (String depConf : ops[1].split(",")) {
-                            String mappedDependency = evaluateConditions ? evaluateCondition(
-                                    depConf.trim(), dd) : depConf.trim();
-                            if (mappedDependency != null) {
-                                dd.addDependencyConfiguration(modConf.trim(), mappedDependency);
+                        break;
+                    case 2:
+                        for (String modConf : ops[0].split(",")) {
+                            for (String depConf : ops[1].split(",")) {
+                                String mappedDependency = evaluateConditions ? evaluateCondition(
+                                        depConf.trim(), dd) : depConf.trim();
+                                if (mappedDependency != null) {
+                                    dd.addDependencyConfiguration(modConf.trim(), mappedDependency);
+                                }
                             }
                         }
-                    }
-                } else {
-                    addError("invalid conf " + conf + " for " + dd);
+                        break;
+                    default:
+                        addError("invalid conf " + conf + " for " + dd);
+                        break;
                 }
             }
 

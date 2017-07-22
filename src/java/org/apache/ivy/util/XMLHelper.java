@@ -197,8 +197,7 @@ public abstract class XMLHelper {
 
         StringBuilder result = new StringBuilder(text.length());
 
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
+        for (char ch : text.toCharArray()) {
             switch (ch) {
                 case '&':
                     result.append("&amp;");

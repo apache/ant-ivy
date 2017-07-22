@@ -37,7 +37,7 @@ import org.apache.ivy.util.Message;
  * </p>
  */
 public class LogTrigger extends AbstractTrigger {
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private String message = "";
 

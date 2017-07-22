@@ -917,12 +917,11 @@ public abstract class BasicResolver extends AbstractResolver {
     public OrganisationEntry[] listOrganisations() {
         Collection<String> names = findNames(Collections.<String, String> emptyMap(),
             IvyPatternHelper.ORGANISATION_KEY);
-        OrganisationEntry[] ret = new OrganisationEntry[names.size()];
-        int i = 0;
+        List<OrganisationEntry> ret = new ArrayList<>(names.size());
         for (String org : names) {
-            ret[i++] = new OrganisationEntry(this, org);
+            ret.add(new OrganisationEntry(this, org));
         }
-        return ret;
+        return ret.toArray(new OrganisationEntry[names.size()]);
     }
 
     @Override
@@ -930,12 +929,11 @@ public abstract class BasicResolver extends AbstractResolver {
         Map<String, String> tokenValues = new HashMap<>();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
         Collection<String> names = findNames(tokenValues, IvyPatternHelper.MODULE_KEY);
-        ModuleEntry[] ret = new ModuleEntry[names.size()];
-        int i = 0;
+        List<ModuleEntry> ret = new ArrayList<>(names.size());
         for (String name : names) {
-            ret[i++] = new ModuleEntry(org, name);
+            ret.add(new ModuleEntry(org, name));
         }
-        return ret;
+        return ret.toArray(new ModuleEntry[names.size()]);
     }
 
     @Override
@@ -944,12 +942,11 @@ public abstract class BasicResolver extends AbstractResolver {
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, mod.getOrganisation());
         tokenValues.put(IvyPatternHelper.MODULE_KEY, mod.getModule());
         Collection<String> names = findNames(tokenValues, IvyPatternHelper.REVISION_KEY);
-        RevisionEntry[] ret = new RevisionEntry[names.size()];
-        int i = 0;
+        List<RevisionEntry> ret = new ArrayList<>(names.size());
         for (String name : names) {
-            ret[i++] = new RevisionEntry(mod, name);
+            ret.add(new RevisionEntry(mod, name));
         }
-        return ret;
+        return ret.toArray(new RevisionEntry[names.size()]);
     }
 
     protected abstract Collection<String> findNames(Map<String, String> tokenValues, String token);

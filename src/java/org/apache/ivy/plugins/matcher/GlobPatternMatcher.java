@@ -90,8 +90,7 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
         private Boolean calculateExact() {
             Boolean result = Boolean.TRUE;
 
-            char[] expressionChars = expression.toCharArray();
-            for (char ch : expressionChars) {
+            for (char ch : expression.toCharArray()) {
                 if (ch == '*' || ch == '?' || ch == '[' || ch == ']') {
                     result = Boolean.FALSE;
                     break;

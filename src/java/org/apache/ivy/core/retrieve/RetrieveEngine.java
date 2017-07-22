@@ -145,9 +145,8 @@ public class RetrieveEngine {
                     Message.verbose("\tno local file available for " + artifact + ": skipping");
                     continue;
                 }
-                Set<String> paths = artifactAndPaths.getValue();
                 Message.verbose("\tretrieving " + archive);
-                for (String path : paths) {
+                for (String path : artifactAndPaths.getValue()) {
                     IvyContext.getContext().checkInterrupted();
                     File destFile = settings.resolveFile(path);
                     if (!settings.isCheckUpToDate() || !upToDate(archive, destFile, options)) {

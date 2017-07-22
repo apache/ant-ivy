@@ -81,8 +81,7 @@ public class IvyCheck extends IvyTask {
 
                 File fromDir = fs.getDir(getProject());
 
-                String[] srcFiles = ds.getIncludedFiles();
-                for (String srcFile : srcFiles) {
+                for (String srcFile : ds.getIncludedFiles()) {
                     File file = new File(fromDir, srcFile);
                     if (ivy.check(file.toURI().toURL(), resolvername)) {
                         Message.verbose("checked " + file + ": OK");

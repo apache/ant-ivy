@@ -47,9 +47,10 @@ import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
+
+import static org.apache.ivy.util.ConfigurationUtils.replaceWildcards;
 
 public class PublishEngine {
     private PublishEngineSettings settings;
@@ -117,7 +118,7 @@ public class PublishEngine {
                     File tmp = File.createTempFile("ivy", ".xml");
                     tmp.deleteOnExit();
 
-                    String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
+                    String[] confs = replaceWildcards(options.getConfs(), md);
                     Set<String> confsToRemove = new HashSet<>(Arrays.asList(md
                             .getConfigurationsNames()));
                     confsToRemove.removeAll(Arrays.asList(confs));
@@ -128,14 +129,12 @@ public class PublishEngine {
                             tmp,
                             new UpdateOptions()
                                     .setSettings(settings)
-                                    .setStatus(
-                                        options.getStatus() == null ? md.getStatus() : options
-                                                .getStatus())
+                                    .setStatus(options.getStatus() == null ? md.getStatus()
+                                            : options.getStatus())
                                     .setRevision(options.getPubrevision())
                                     .setBranch(options.getPubBranch())
-                                    .setPubdate(
-                                        options.getPubdate() == null ? new Date() : options
-                                                .getPubdate())
+                                    .setPubdate(options.getPubdate() == null ? new Date()
+                                            : options.getPubdate())
                                     .setMerge(options.isMerge())
                                     .setMergedDescriptor(md)
                                     .setConfsToExclude(
@@ -185,11 +184,9 @@ public class PublishEngine {
             DependencyResolver resolver, PublishOptions options) throws IOException {
         Collection<Artifact> missing = new ArrayList<>();
         Set<Artifact> artifactsSet = new LinkedHashSet<>();
-        String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
-        for (String conf : confs) {
-            Artifact[] artifacts = md.getArtifacts(conf);
-            artifactsSet.addAll(Arrays.asList(artifacts));
+        for (String conf : replaceWildcards(options.getConfs(), md)) {
+            artifactsSet.addAll(Arrays.asList(md.getArtifacts(conf)));
         }
         Artifact[] extraArtifacts = options.getExtraArtifacts();
         if (extraArtifacts != null) {
@@ -214,7 +211,8 @@ public class PublishEngine {
                 StringBuilder sb = new StringBuilder();
                 sb.append("missing artifact ").append(artifact).append(":\n");
                 for (String pattern : srcArtifactPattern) {
-                    sb.append("\t").append(settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))).append(" file does not exist\n");
+                    sb.append("\t").append(settings.resolveFile(IvyPatternHelper.substitute(pattern,
+                            artifact))).append(" file does not exist\n");
                 }
                 if (options.isWarnOnMissing() || options.isHaltOnMissing()) {
                     Message.warn(sb.toString());

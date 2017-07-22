@@ -66,15 +66,13 @@ public final class ConfigurationUtils {
             if ("*".equals(conf)) {
                 result.addAll(Arrays.asList(md.getConfigurationsNames()));
             } else if ("*(public)".equals(conf)) {
-                Configuration[] all = md.getConfigurations();
-                for (Configuration cf : all) {
+                for (Configuration cf : md.getConfigurations()) {
                     if (cf.getVisibility().equals(Visibility.PUBLIC)) {
                         result.add(cf.getName());
                     }
                 }
             } else if ("*(private)".equals(conf)) {
-                Configuration[] all = md.getConfigurations();
-                for (Configuration cf : all) {
+                for (Configuration cf : md.getConfigurations()) {
                     if (cf.getVisibility().equals(Visibility.PRIVATE)) {
                         result.add(cf.getName());
                     }

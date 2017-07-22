@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -45,9 +44,8 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
 
     protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException,
             ParseException, IOException {
-        Collection<ArtifactDownloadReport> artifacts = getAllArtifactReports();
         List<ArtifactDownloadReport> ret = new ArrayList<>();
-        for (ArtifactDownloadReport artifactReport : artifacts) {
+        for (ArtifactDownloadReport artifactReport : getAllArtifactReports()) {
             if (getArtifactFilter().accept(artifactReport.getArtifact())) {
                 ret.add(artifactReport);
             }
@@ -70,11 +68,8 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
                     throw new BuildException("bad confs provided: " + conf
                             + " not found among " + Arrays.asList(report.getConfigurations()));
                 }
-                Set<ModuleRevisionId> revisions = configurationReport.getModuleRevisionIds();
-                for (ModuleRevisionId revId : revisions) {
-                    ArtifactDownloadReport[] aReports = configurationReport
-                            .getDownloadReports(revId);
-                    all.addAll(Arrays.asList(aReports));
+                for (ModuleRevisionId revId : configurationReport.getModuleRevisionIds()) {
+                    all.addAll(Arrays.asList(configurationReport.getDownloadReports(revId)));
                 }
             }
         } else {
@@ -91,8 +86,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
                         conf);
                 parser.parse(reportFile);
 
-                ArtifactDownloadReport[] aReports = parser.getArtifactReports();
-                all.addAll(Arrays.asList(aReports));
+                all.addAll(Arrays.asList(parser.getArtifactReports()));
             }
         }
         return all;

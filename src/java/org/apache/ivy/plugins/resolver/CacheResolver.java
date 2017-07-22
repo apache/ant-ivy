@@ -172,8 +172,7 @@ public class CacheResolver extends FileSystemResolver {
         if (getIvyPatterns().isEmpty()) {
             setIvyPatterns(new ArrayList<String>());
             setArtifactPatterns(new ArrayList<String>());
-            RepositoryCacheManager[] caches = getSettings().getRepositoryCacheManagers();
-            for (RepositoryCacheManager cache : caches) {
+            for (RepositoryCacheManager cache : getSettings().getRepositoryCacheManagers()) {
                 if (cache instanceof DefaultRepositoryCacheManager) {
                     DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) cache;
                     addIvyPattern(c.getBasedir().getAbsolutePath() + "/" + c.getIvyPattern());

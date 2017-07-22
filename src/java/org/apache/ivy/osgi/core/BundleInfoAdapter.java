@@ -160,8 +160,7 @@ public class BundleInfoAdapter {
                             PatternMatcher.ANY_EXPRESSION);
                     DefaultExcludeRule rule = new DefaultExcludeRule(id,
                             ExactOrRegexpPatternMatcher.INSTANCE, null);
-                    String[] confs = md.getConfigurationsNames();
-                    for (String conf : confs) {
+                    for (String conf : md.getConfigurationsNames()) {
                         rule.addConfiguration(conf);
                     }
                     md.addExcludeRule(rule);
@@ -277,9 +276,7 @@ public class BundleInfoAdapter {
         org = path.substring(1, i);
         name = path.substring(i + 1);
 
-        String query = uri.getQuery();
-        String[] parameters = query.split("&");
-        for (String parameter : parameters) {
+        for (String parameter : uri.getQuery().split("&")) {
             if (parameter.length() == 0) {
                 continue;
             }

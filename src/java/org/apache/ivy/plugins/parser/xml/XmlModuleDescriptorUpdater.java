@@ -73,7 +73,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class XmlModuleDescriptorUpdater {
     // CheckStyle:StaticVariableName| OFF
     // LINE_SEPARATOR is actually a constant, but we have to modify it for the tests
-    public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static String LINE_SEPARATOR = System.lineSeparator();
 
     // CheckStyle:StaticVariableName| ON
 

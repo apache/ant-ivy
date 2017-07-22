@@ -172,8 +172,7 @@ public class ModuleRules<T> {
     }
 
     private T getRule(Map<String, String> moduleAttributes, Filter<T> filter) {
-        List<MapMatcher> matchers = matcherLookup.get(moduleAttributes);
-        for (MapMatcher midm : matchers) {
+        for (MapMatcher midm : matcherLookup.get(moduleAttributes)) {
             T rule = rules.get(midm);
             if (filter.accept(rule)) {
                 return rule;
@@ -203,9 +202,8 @@ public class ModuleRules<T> {
     }
 
     private List<T> getRules(Map<String, String> moduleAttributes, Filter<T> filter) {
-        List<MapMatcher> matchers = matcherLookup.get(moduleAttributes);
         List<T> matchingRules = new ArrayList<>();
-        for (MapMatcher midm : matchers) {
+        for (MapMatcher midm : matcherLookup.get(moduleAttributes)) {
             T rule = rules.get(midm);
             if (filter.accept(rule)) {
                 matchingRules.add(rule);

@@ -371,8 +371,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public synchronized void typeDefs(Properties p, boolean silentFail) {
         for (Entry<Object, Object> entry : p.entrySet()) {
-            String name = entry.getKey().toString();
-            typeDef(name, entry.getValue().toString(), silentFail);
+            typeDef(entry.getKey().toString(), entry.getValue().toString(), silentFail);
         }
     }
 

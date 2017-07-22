@@ -462,8 +462,8 @@ public class IvyBuildList extends IvyTask {
             Map<ModuleId, ModuleDescriptor> moduleIdMap) {
         for (ModuleDescriptor md : moduleIdMap.values()) {
             for (DependencyDescriptor dep : md.getDependencies()) {
-                ModuleId id = dep.getDependencyId();
-                if (node.getModuleRevisionId().getModuleId().equals(id) && !toKeep.contains(md)) {
+                if (node.getModuleRevisionId().getModuleId().equals(dep.getDependencyId())
+                        && !toKeep.contains(md)) {
                     toKeep.add(md);
                     if (!getOnlydirectdep()) {
                         processFilterNodeFromLeaf(md, toKeep, moduleIdMap);

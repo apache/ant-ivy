@@ -139,9 +139,8 @@ public class XmlSettingsParser extends DefaultHandler {
             }
         });
         // put every type definition from ivy to configurator
-        Map<String, Class<?>> typeDefs = ivy.getTypeDefs();
-        for (String name : typeDefs.keySet()) {
-            configurator.typeDef(name, typeDefs.get(name));
+        for (Map.Entry<String, Class<?>> entry : ivy.getTypeDefs().entrySet()) {
+            configurator.typeDef(entry.getKey(), entry.getValue());
         }
 
         doParse(settings);

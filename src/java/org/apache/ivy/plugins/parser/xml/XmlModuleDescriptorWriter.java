@@ -335,8 +335,7 @@ public final class XmlModuleDescriptorWriter {
 
     private static void printPublications(ModuleDescriptor md, PrintWriter out) {
         out.println("\t<publications>");
-        Artifact[] artifacts = md.getAllArtifacts();
-        for (Artifact artifact : artifacts) {
+        for (Artifact artifact : md.getAllArtifacts()) {
             out.print(String.format("\t\t<artifact name=\"%s\" type=\"%s\" ext=\"%s\" conf=\"%s\"",
                     XMLHelper.escape(artifact.getName()),
                     XMLHelper.escape(artifact.getType()),
@@ -411,8 +410,7 @@ public final class XmlModuleDescriptorWriter {
         }
         if (requireInnerInfoElement(md)) {
             out.println("\t>");
-            ExtendsDescriptor[] parents = md.getInheritedDescriptors();
-            for (ExtendsDescriptor parent : parents) {
+            for (ExtendsDescriptor parent : md.getInheritedDescriptors()) {
                 ModuleRevisionId mrid = parent.getParentRevisionId();
                 out.print(String.format("\t\t<extends organisation=\"%s\" module=\"%s\" revision=\"%s\"",
                         XMLHelper.escape(mrid.getOrganisation()),

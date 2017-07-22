@@ -161,8 +161,7 @@ public class IvyInfo extends IvyTask {
                 Long.toString(md.getPublicationDate().getTime()));
         }
 
-        Map<String, String> extra = mrid.getExtraAttributes();
-        for (Map.Entry<String, String> entry : extra.entrySet()) {
+        for (Map.Entry<String, String> entry : mrid.getExtraAttributes().entrySet()) {
             getProject().setProperty(property + ".extra." + entry.getKey(),
                     entry.getValue());
         }
@@ -195,8 +194,7 @@ public class IvyInfo extends IvyTask {
             getProject().setProperty(property + ".artifact." + id + ".conf",
                 mergeConfs(artifact.getConfigurations()));
 
-            Map<String, String> artiExtra = artifact.getExtraAttributes();
-            for (Map.Entry<String, String> entry : artiExtra.entrySet()) {
+            for (Map.Entry<String, String> entry : artifact.getExtraAttributes().entrySet()) {
                 getProject().setProperty(property + ".artifact." + id + ".extra." + entry.getKey(),
                     entry.getValue());
             }

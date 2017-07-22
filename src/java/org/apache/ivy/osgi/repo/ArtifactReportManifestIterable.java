@@ -72,10 +72,9 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
         public boolean hasNext() {
             while (next == null && it.hasNext()) {
                 ModuleRevisionId mrid = it.next();
-                List<ArtifactDownloadReport> reports = artifactReports.get(mrid);
                 ArtifactDownloadReport jar = null;
                 ArtifactDownloadReport source = null;
-                for (ArtifactDownloadReport report : reports) {
+                for (ArtifactDownloadReport report : artifactReports.get(mrid)) {
                     if (sourceTypes != null && sourceTypes.contains(report.getArtifact().getType())) {
                         source = report;
                     } else {
@@ -124,9 +123,7 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
                     } else {
                         artifact = jar.getLocalFile();
                     }
-                    JarInputStream in = null;
-                    try {
-                        in = new JarInputStream(new FileInputStream(artifact));
+                    try (JarInputStream in = new JarInputStream(new FileInputStream(artifact))) {
                         Manifest manifest = in.getManifest();
                         if (manifest != null) {
                             next = new ManifestAndLocation(manifest, artifact.toURI(), sourceURI);
@@ -137,14 +134,6 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
                         Message.debug("Jar file just removed: " + artifact, e);
                     } catch (IOException e) {
                         Message.warn("Unreadable jar: " + artifact, e);
-                    } finally {
-                        if (in != null) {
-                            try {
-                                in.close();
-                            } catch (IOException e) {
-                                // Don't care
-                            }
-                        }
                     }
                 }
             }

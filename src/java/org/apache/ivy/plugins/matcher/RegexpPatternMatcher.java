@@ -75,8 +75,7 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
         private Boolean calculateExact() {
             Boolean result = Boolean.TRUE;
 
-            char[] expressionChars = expression.toCharArray();
-            for (char ch : expressionChars) {
+            for (char ch : expression.toCharArray()) {
                 if (!Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch) && ('-' != ch)
                         && ('_' != ch)) {
                     result = Boolean.FALSE;

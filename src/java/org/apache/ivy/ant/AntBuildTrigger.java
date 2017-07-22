@@ -90,8 +90,7 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                 if (target != null) {
                     ant.setTarget(target);
                 }
-                Map<String, String> atts = event.getAttributes();
-                for (Map.Entry<String, String> entry : atts.entrySet()) {
+                for (Map.Entry<String, String> entry : event.getAttributes().entrySet()) {
                     if (entry.getValue() != null) {
                         Property p = ant.createProperty();
                         p.setName(prefix == null ? entry.getKey() : prefix + entry.getKey());

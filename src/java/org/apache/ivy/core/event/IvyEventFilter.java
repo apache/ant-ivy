@@ -26,6 +26,9 @@ import org.apache.ivy.util.filter.NoFilter;
 import org.apache.ivy.util.filter.NotFilter;
 import org.apache.ivy.util.filter.OrFilter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A filter implementation filtering {@link IvyEvent} based upon an event name and a filter
  * expression. The name will be matched against the event name using the {@link PatternMatcher} used
@@ -119,9 +122,9 @@ public class IvyEventFilter implements Filter<IvyEvent> {
                     }
                     final String attname = filterExpression.substring(0, index).trim();
                     String[] values = filterExpression.substring(index + 1).trim().split(",");
-                    final Matcher[] matchers = new Matcher[values.length];
-                    for (int i = 0; i < values.length; i++) {
-                        matchers[i] = matcher.getMatcher(values[i].trim());
+                    final List<Matcher> matchers = new ArrayList<>(values.length);
+                    for (String value : values) {
+                        matchers.add(matcher.getMatcher(value.trim()));
                     }
                     return new Filter<IvyEvent>() {
                         public boolean accept(IvyEvent e) {

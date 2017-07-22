@@ -196,10 +196,8 @@ public abstract class AbstractWorkspaceResolver extends AbstractResolver {
         newMd.setResolvedPublicationDate(md.getResolvedPublicationDate());
         newMd.setStatus(md.getStatus());
 
-        List<Artifact> artifacts = createWorkspaceArtifacts(md);
-
         Configuration[] allConfs = md.getConfigurations();
-        for (Artifact af : artifacts) {
+        for (Artifact af : createWorkspaceArtifacts(md)) {
             if (allConfs.length == 0) {
                 newMd.addArtifact(ModuleDescriptor.DEFAULT_CONFIGURATION, af);
             } else {

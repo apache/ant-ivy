@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.ant;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.regex.Pattern;
@@ -198,14 +199,14 @@ public class IvyBuildNumber extends IvyTask {
             revisions = searcher.listModules(depResolver, mrid, patternMatcher);
         }
 
-        ArtifactInfo[] infos = new ArtifactInfo[revisions.length];
-        for (int i = 0; i < revisions.length; i++) {
-            infos[i] = new ResolvedModuleRevisionArtifactInfo(revisions[i]);
+        List<ArtifactInfo> infos = new ArrayList<>(revisions.length);
+        for (ModuleRevisionId rev : revisions) {
+            infos.add(new ResolvedModuleRevisionArtifactInfo(rev));
         }
 
         VersionMatcher matcher = settings.getVersionMatcher();
         LatestStrategy latestStrategy = settings.getLatestStrategy("latest-revision");
-        List<ArtifactInfo> sorted = latestStrategy.sort(infos);
+        List<ArtifactInfo> sorted = latestStrategy.sort(infos.toArray(new ArtifactInfo[revisions.length]));
 
         ModuleRevisionId askedMrid = ModuleRevisionId.newInstance(organisation, module, branch,
             revision);

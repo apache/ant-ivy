@@ -403,8 +403,7 @@ public final class Main {
         if (line.hasOption("cp")) {
             fileList = new ArrayList<>();
             for (String cp : line.getOptionValues("cp")) {
-                StringTokenizer tokenizer = new StringTokenizer(cp,
-                        System.getProperty("path.separator"));
+                StringTokenizer tokenizer = new StringTokenizer(cp, File.pathSeparator);
                 while (tokenizer.hasMoreTokens()) {
                     String token = tokenizer.nextToken();
                     File file = new File(token);
@@ -469,7 +468,6 @@ public final class Main {
     private static void outputCachePath(Ivy ivy, File cache, ModuleDescriptor md, String[] confs,
             String outFile) {
         try {
-            String pathSeparator = System.getProperty("path.separator");
             StringBuilder buf = new StringBuilder();
             Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
             ResolutionCacheManager cacheMgr = ivy.getResolutionCacheManager();
@@ -484,13 +482,14 @@ public final class Main {
             for (ArtifactDownloadReport artifact : all) {
                 if (artifact.getLocalFile() != null) {
                     buf.append(artifact.getLocalFile().getCanonicalPath());
-                    buf.append(pathSeparator);
+                    buf.append(File.pathSeparator);
                 }
             }
 
             PrintWriter writer = new PrintWriter(new FileOutputStream(outFile));
             if (buf.length() > 0) {
-                writer.println(buf.substring(0, buf.length() - pathSeparator.length()));
+                buf.setLength(buf.length() - File.pathSeparator.length());
+                writer.println(buf);
             }
             writer.close();
             System.out.println("cachepath output to " + outFile);

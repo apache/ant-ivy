@@ -254,12 +254,11 @@ public class IvyRepResolver extends URLResolver {
         Map<String, String> tokenValues = new HashMap<>();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
         Collection<String> names = findIvyNames(tokenValues, IvyPatternHelper.MODULE_KEY);
-        ModuleEntry[] ret = new ModuleEntry[names.size()];
-        int i = 0;
+        List<ModuleEntry> ret = new ArrayList<>(names.size());
         for (String name : names) {
-            ret[i] = new ModuleEntry(org, name);
+            ret.add(new ModuleEntry(org, name));
         }
-        return ret;
+        return ret.toArray(new ModuleEntry[names.size()]);
     }
 
     @Override

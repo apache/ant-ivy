@@ -63,7 +63,7 @@ import static org.junit.Assert.*;
 public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     // CheckStyle:MagicNumberCheck OFF
 
-    private static final String FS = System.getProperty("file.separator");
+    private static final String FS = File.separator;
 
     private static final String REL_IVY_PATTERN = "test" + FS + "repositories" + FS + "1" + FS
             + "[organisation]" + FS + "[module]" + FS + "ivys" + FS + "ivy-[revision].xml";

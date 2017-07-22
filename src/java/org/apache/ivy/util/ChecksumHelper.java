@@ -95,8 +95,7 @@ public final class ChecksumHelper {
                 // https://repo1.maven.org/maven2/org/apache/pdfbox/fontbox/0.8.0-incubator/fontbox-0.8.0-incubator.jar.md5
                 if (expected.endsWith(":")) {
                     StringBuilder result = new StringBuilder();
-                    char[] chars = csFileContent.substring(spaceIndex + 1).toCharArray();
-                    for (char ch : chars) {
+                    for (char ch : csFileContent.substring(spaceIndex + 1).toCharArray()) {
                         if (!Character.isWhitespace(ch)) {
                             result.append(ch);
                         }

@@ -149,8 +149,7 @@ public class ConfigurationResolveReport {
         dependencies.put(node.getId(), node);
         dependencies.put(node.getResolvedId(), node);
         List<ArtifactDownloadReport> adrs = new ArrayList<>();
-        Artifact[] artifacts = node.getArtifacts(conf);
-        for (Artifact artifact : artifacts) {
+        for (Artifact artifact : node.getArtifacts(conf)) {
             ArtifactDownloadReport artifactReport = report.getArtifactReport(artifact);
             if (artifactReport != null) {
                 adrs.add(artifactReport);
@@ -199,8 +198,7 @@ public class ConfigurationResolveReport {
 
     private Set<ModuleRevisionId> getEvictedMrids() {
         Set<ModuleRevisionId> evicted = new LinkedHashSet<>();
-        IvyNode[] evictedNodes = getEvictedNodes();
-        for (IvyNode node : evictedNodes) {
+        for (IvyNode node : getEvictedNodes()) {
             evicted.add(node.getId());
         }
         return evicted;

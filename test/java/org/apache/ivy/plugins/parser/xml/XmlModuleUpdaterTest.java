@@ -54,7 +54,7 @@ public class XmlModuleUpdaterTest {
 
     @After
     public void tearDown() {
-        XmlModuleDescriptorUpdater.LINE_SEPARATOR = System.getProperty("line.separator");
+        XmlModuleDescriptorUpdater.LINE_SEPARATOR = System.lineSeparator();
     }
 
     @Test

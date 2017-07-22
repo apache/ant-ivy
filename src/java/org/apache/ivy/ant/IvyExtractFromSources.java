@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -132,9 +131,8 @@ public class IvyExtractFromSources extends Task {
         Writer out = new StringWriter();
         concat.setWriter(out);
         concat.execute();
-        Set<String> importsSet = new HashSet<>(Arrays.asList(out.toString().split("\n")));
         Set<ModuleRevisionId> dependencies = new HashSet<>();
-        for (String pack : importsSet) {
+        for (String pack : out.toString().split("\n")) {
             ModuleRevisionId mrid = getMapping(pack.trim());
             if (mrid != null) {
                 dependencies.add(mrid);

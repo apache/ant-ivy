@@ -341,8 +341,7 @@ public class PomModuleDescriptorBuilder {
             if ("*".equals(excludedModule.getOrganisation()) && "*".equals(excludedModule.getName())) {
                 continue;
             }
-            String[] confs = dd.getModuleConfigurations();
-            for (String conf : confs) {
+            for (String conf : dd.getModuleConfigurations()) {
                 dd.addExcludeRule(conf, new DefaultExcludeRule(new ArtifactId(excludedModule,
                         PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
                         PatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, null));
@@ -559,7 +558,7 @@ public class PomModuleDescriptorBuilder {
         } else {
             for (ExtraInfoHolder extraInfoHolder : md.getExtraInfos()) {
                 String key = extraInfoHolder.getName();
-                if ((key).startsWith(DEPENDENCY_MANAGEMENT)) {
+                if (key.startsWith(DEPENDENCY_MANAGEMENT)) {
                     String[] parts = key.split(EXTRA_INFO_DELIMITER);
                     if (parts.length != DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT) {
                         Message.warn("what seem to be a dependency management extra info "
@@ -645,8 +644,8 @@ public class PomModuleDescriptorBuilder {
         Map<String, String> r = new HashMap<>();
         for (Map.Entry<String, String> extraInfoEntry : extraInfo.entrySet()) {
             if (extraInfoEntry.getKey().startsWith(PROPERTIES)) {
-                String prop = extraInfoEntry.getKey().substring(
-                    PROPERTIES.length() + EXTRA_INFO_DELIMITER.length());
+                String prop = extraInfoEntry.getKey().substring(PROPERTIES.length()
+                        + EXTRA_INFO_DELIMITER.length());
                 r.put(prop, extraInfoEntry.getValue());
             }
         }

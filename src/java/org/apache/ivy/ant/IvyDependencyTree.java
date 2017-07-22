@@ -130,8 +130,7 @@ public class IvyDependencyTree extends IvyPostResolveTask {
 
     private void addDependency(final ModuleRevisionId moduleRevisionId, final IvyNode dependency) {
         registerNodeIfNecessary(moduleRevisionId);
-        final List<IvyNode> dependencyList = dependencies.get(moduleRevisionId);
-        dependencyList.add(dependency);
+        dependencies.get(moduleRevisionId).add(dependency);
     }
 
     public boolean isShowEvicted() {

@@ -311,8 +311,7 @@ public class Configurator {
         public ObjectDescriptor(Object object, String objName) {
             obj = object;
             this.objName = objName;
-            Method[] methods = object.getClass().getMethods();
-            for (Method m : methods) {
+            for (Method m : object.getClass().getMethods()) {
                 if (m.getName().startsWith("create") && m.getParameterTypes().length == 0
                         && !Void.TYPE.equals(m.getReturnType())) {
                     String name = StringUtils
@@ -636,8 +635,7 @@ public class Configurator {
                 convertedValue = fileResolver.resolveFile(value, od.getObjectName() + "."
                         + attributeName);
             } else {
-                convertedValue = paramClass.getConstructor(new Class[] {String.class}).newInstance(
-                        value);
+                convertedValue = paramClass.getConstructor(String.class).newInstance(value);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException("impossible to convert "
@@ -658,7 +656,7 @@ public class Configurator {
         }
         ObjectDescriptor od = objectStack.peek();
         try {
-            od.getObject().getClass().getMethod("addText", new Class[] {String.class})
+            od.getObject().getClass().getMethod("addText", String.class)
                     .invoke(od.getObject(), text);
         } catch (Exception ex) {
             throw new IllegalArgumentException("impossible to add text on "

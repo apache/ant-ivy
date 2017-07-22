@@ -53,6 +53,8 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.findConfigurationExtending;
+
 /**
  *
  */
@@ -507,14 +509,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     private Collection<Artifact> getArtifactsIncludingExtending(String conf) {
-        Collection<Configuration> extendingConfs = Configuration.findConfigurationExtending(conf,
-            getConfigurations());
         Set<Artifact> artifacts = new LinkedHashSet<>();
         Collection<Artifact> arts = artifactsByConf.get(conf);
         if (arts != null) {
             artifacts.addAll(arts);
         }
-        for (Configuration extendingConf : extendingConfs) {
+        for (Configuration extendingConf : findConfigurationExtending(conf, getConfigurations())) {
             arts = artifactsByConf.get(extendingConf.getName());
             if (arts != null) {
                 artifacts.addAll(arts);

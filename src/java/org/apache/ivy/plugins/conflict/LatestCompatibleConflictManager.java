@@ -85,14 +85,12 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         if (versionMatcher.isDynamic(mrid)) {
             while (iter.hasNext()) {
                 IvyNode other = iter.next();
-                if (versionMatcher.isDynamic(other.getResolvedId())) {
+                if (versionMatcher.isDynamic(other.getResolvedId())
+                        || !versionMatcher.accept(mrid, other.getResolvedId())
+                        && !handleIncompatibleConflict(parent, conflicts, node, other)) {
                     // two dynamic versions in conflict, not enough information yet
+                    // or incompatibility found
                     return null;
-                } else if (!versionMatcher.accept(mrid, other.getResolvedId())) {
-                    // incompatibility found
-                    if (!handleIncompatibleConflict(parent, conflicts, node, other)) {
-                        return null;
-                    }
                 }
             }
             // no incompatibility nor dynamic version found, let's return the latest static version
@@ -110,11 +108,10 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             // the first node is a static revision, let's see if all other versions match
             while (iter.hasNext()) {
                 IvyNode other = iter.next();
-                if (!versionMatcher.accept(other.getResolvedId(), mrid)) {
+                if (!versionMatcher.accept(other.getResolvedId(), mrid)
+                        && !handleIncompatibleConflict(parent, conflicts, node, other)) {
                     // incompatibility found
-                    if (!handleIncompatibleConflict(parent, conflicts, node, other)) {
-                        return null;
-                    }
+                    return null;
                 }
             }
             // no incompatibility found, let's return this static version
@@ -258,8 +255,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         Collection<IvyNodeBlacklist> blacklisted = new ArrayList<>();
         IvyNode node = callerStack.peek();
         String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
-        Caller[] callers = node.getCallers(rootModuleConf);
-        for (Caller caller : callers) {
+        for (Caller caller : node.getCallers(rootModuleConf)) {
             IvyNode callerNode = node.findNode(caller.getModuleRevisionId());
             if (callerNode.isBlacklisted(rootModuleConf)) {
                 continue;

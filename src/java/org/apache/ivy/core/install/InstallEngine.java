@@ -102,9 +102,7 @@ public class InstallEngine {
                     dd.addDependencyConfiguration("default", depConf);
                     md.addDependency(dd);
                 } else {
-                    ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid, matcher);
-
-                    for (ModuleRevisionId imrid : mrids) {
+                    for (ModuleRevisionId imrid : searchEngine.listModules(fromResolver, mrid, matcher)) {
                         Message.info("\tfound " + imrid + " to install: adding to the list");
                         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,
                                 imrid, false, false, options.isTransitive());
@@ -139,8 +137,7 @@ public class InstallEngine {
                         toResolver.beginPublishTransaction(depMrid, options.isOverwrite());
 
                         // publish artifacts
-                        ArtifactDownloadReport[] artifacts = report.getArtifactsReports(depMrid);
-                        for (ArtifactDownloadReport artifact : artifacts) {
+                        for (ArtifactDownloadReport artifact : report.getArtifactsReports(depMrid)) {
                             if (artifact.getLocalFile() != null) {
                                 toResolver.publish(artifact.getArtifact(), artifact.getLocalFile(),
                                     options.isOverwrite());

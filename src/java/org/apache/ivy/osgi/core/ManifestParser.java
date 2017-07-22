@@ -273,8 +273,7 @@ public class ManifestParser {
      */
     public static String formatLines(String manifest) {
         StringBuilder buffer = new StringBuilder(manifest.length());
-        String[] lines = manifest.split("\n");
-        for (String line : lines) {
+        for (String line : manifest.split("\n")) {
             if (line.length() <= 72) {
                 buffer.append(line);
                 buffer.append('\n');

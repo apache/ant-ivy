@@ -178,17 +178,16 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
 
     public ResolvedResource[] findCapability(DependencyDescriptor dd, ResolveData data,
             Collection<ModuleDescriptor> mds) {
-        ResolvedResource[] ret = new ResolvedResource[mds.size()];
-        int i = 0;
+        List<ResolvedResource> ret = new ArrayList<>(mds.size());
         for (ModuleDescriptor md : mds) {
             IvyNode node = data.getNode(md.getModuleRevisionId());
             if (node != null && node.getDescriptor() != null) {
                 // already resolved import, no need to go further
                 return new ResolvedResource[] {buildResolvedCapabilityMd(dd, node.getDescriptor())};
             }
-            ret[i++] = buildResolvedCapabilityMd(dd, md);
+            ret.add(buildResolvedCapabilityMd(dd, md));
         }
-        return ret;
+        return ret.toArray(new ResolvedResource[mds.size()]);
     }
 
     private MDResolvedResource buildResolvedCapabilityMd(DependencyDescriptor dd,

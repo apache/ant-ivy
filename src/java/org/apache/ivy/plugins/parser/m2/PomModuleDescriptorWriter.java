@@ -191,8 +191,7 @@ public final class PomModuleDescriptorWriter {
      * Returns the first artifact with the correct name and without a classifier.
      */
     private static Artifact findArtifact(ModuleDescriptor md, String artifactName) {
-        Artifact[] artifacts = md.getAllArtifacts();
-        for (Artifact artifact : artifacts) {
+        for (Artifact artifact : md.getAllArtifacts()) {
             if (artifact.getName().equals(artifactName)
                     && artifact.getAttribute("classifier") == null) {
                 return artifact;
@@ -346,8 +345,7 @@ public final class PomModuleDescriptorWriter {
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
         List<DependencyDescriptor> result = new ArrayList<>();
-        DependencyDescriptor[] dds = md.getDependencies();
-        for (DependencyDescriptor dd : dds) {
+        for (DependencyDescriptor dd : md.getDependencies()) {
             String[] depConfs = dd.getDependencyConfigurations(confs);
             if ((depConfs != null) && (depConfs.length > 0)) {
                 result.add(dd);

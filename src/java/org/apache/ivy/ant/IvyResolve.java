@@ -350,8 +350,9 @@ public class IvyResolve extends IvyTask {
                 settings.setVariable("ivy.module", mdName);
                 getProject().setProperty("ivy.revision", mdRev);
                 settings.setVariable("ivy.revision", mdRev);
-                for (int i = 0; i < md.getInheritedDescriptors().length; i++) {
-                    ExtendsDescriptor parent = md.getInheritedDescriptors()[i];
+                List<ExtendsDescriptor> parents = Arrays.asList(md.getInheritedDescriptors());
+                for (ExtendsDescriptor parent : parents) {
+                    int i = parents.indexOf(parent);
                     String parentOrg = parent.getResolvedParentRevisionId().getOrganisation();
                     String parentModule = parent.getResolvedParentRevisionId().getName();
                     String parentRevision = parent.getResolvedParentRevisionId().getRevision();

@@ -84,8 +84,7 @@ public class P2Descriptor extends EditableRepoDescriptor {
             return;
         }
         for (String bundleId : bundleIds) {
-            Set<ModuleDescriptorWrapper> modules = findModules(BundleInfo.BUNDLE_TYPE, bundleId);
-            for (ModuleDescriptorWrapper mdw : modules) {
+            for (ModuleDescriptorWrapper mdw : findModules(BundleInfo.BUNDLE_TYPE, bundleId)) {
                 String symbolicName = mdw.getBundleInfo().getSymbolicName();
                 Map<Version, BundleInfo> byVersion = sourceTargetBundles.get(symbolicName);
                 if (byVersion == null) {
