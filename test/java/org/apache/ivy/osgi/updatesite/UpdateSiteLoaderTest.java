@@ -53,7 +53,7 @@ public class UpdateSiteLoaderTest {
         cache.mkdirs();
         ivySettings.setDefaultCache(cache);
         CacheResourceOptions options = new CacheResourceOptions();
-        loader = new UpdateSiteLoader(ivySettings.getDefaultRepositoryCacheManager(), null, options);
+        loader = new UpdateSiteLoader(ivySettings.getDefaultRepositoryCacheManager(), null, options, null);
     }
 
     @After

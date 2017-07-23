@@ -25,7 +25,7 @@ import org.apache.ivy.plugins.repository.ssh.SshRepository;
 public class SshResolver extends AbstractSshBasedResolver {
 
     public SshResolver() {
-        setRepository(new SshRepository());
+        setRepository(new SshRepository(new LazyTimeoutConstraint(this)));
     }
 
     /**

@@ -115,8 +115,8 @@ public class UpdateSiteResolver extends AbstractOSGiResolver {
                 }
             }
         });
-        UpdateSiteLoader loader = new UpdateSiteLoader(getRepositoryCacheManager(),
-                getEventManager(), options);
+        final UpdateSiteLoader loader = new UpdateSiteLoader(getRepositoryCacheManager(),
+                getEventManager(), options, this.getTimeoutConstraint());
         loader.setLogLevel(log);
         RepoDescriptor repoDescriptor;
         try {

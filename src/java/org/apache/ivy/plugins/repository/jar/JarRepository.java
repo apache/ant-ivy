@@ -27,6 +27,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.RepositoryCopyProgressListener;
 import org.apache.ivy.plugins.repository.Resource;
@@ -38,6 +39,14 @@ public class JarRepository extends AbstractRepository {
     private RepositoryCopyProgressListener progress = new RepositoryCopyProgressListener(this);
 
     private JarFile jarFile;
+
+    public JarRepository() {
+
+    }
+
+    public JarRepository(final TimeoutConstraint timeoutConstraint) {
+        super(timeoutConstraint);
+    }
 
     public void setJarFile(JarFile jarFile) {
         this.jarFile = jarFile;

@@ -31,6 +31,7 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.impl.StandardFileSystemManager;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.RepositoryCopyProgressListener;
 import org.apache.ivy.plugins.repository.Resource;
@@ -56,6 +57,10 @@ public class VfsRepository extends AbstractRepository {
      * Create a new Ivy VFS Repository Instance
      */
     public VfsRepository() {
+    }
+
+    public VfsRepository(final TimeoutConstraint timeoutConstraint) {
+        super(timeoutConstraint);
     }
 
     private FileSystemManager getVFSManager() throws IOException {

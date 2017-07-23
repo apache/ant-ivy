@@ -296,7 +296,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
         Message.verbose("\tusing url for " + artifact + ": " + url);
         logArtifactAttempt(artifact, url.toExternalForm());
-        Resource resource = new URLResource(url);
+        final Resource resource = new URLResource(url, this.getTimeoutConstraint());
         return new ResolvedResource(resource, artifact.getModuleRevisionId().getRevision());
     }
 

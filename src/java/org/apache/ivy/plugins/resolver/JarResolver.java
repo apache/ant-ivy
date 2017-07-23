@@ -37,7 +37,7 @@ public class JarResolver extends RepositoryResolver {
     private URL url;
 
     public JarResolver() {
-        setRepository(new JarRepository());
+        setRepository(new JarRepository(new LazyTimeoutConstraint(this)));
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JarResolver extends RepositoryResolver {
                 if (eventManager != null) {
                     getRepository().addTransferListener(eventManager);
                 }
-                Resource jarResource = new URLResource(url);
+                Resource jarResource = new URLResource(url, this.getTimeoutConstraint());
                 CacheResourceOptions options = new CacheResourceOptions();
                 report = getRepositoryCacheManager().downloadRepositoryResource(jarResource,
                     "jarrepository", "jar", "jar", options, new URLRepository());

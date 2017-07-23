@@ -26,6 +26,7 @@ import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
@@ -147,6 +148,11 @@ class ParserSettingsMonitor {
 
         public String getVariable(String value) {
             return delegatedSettings.getVariable(value);
+        }
+
+        @Override
+        public TimeoutConstraint getTimeoutConstraint(final String name) {
+            return delegatedSettings.getTimeoutConstraint(name);
         }
     };
 }

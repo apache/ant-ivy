@@ -17,19 +17,6 @@
  */
 package org.apache.ivy.util.url;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -48,10 +35,24 @@ import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -93,8 +94,16 @@ public class HttpClientHandler extends AbstractURLHandler {
         }
     }
 
-    public InputStream openStream(URL url) throws IOException {
-        GetMethod get = doGet(url, 0);
+    @Override
+    public InputStream openStream(final URL url) throws IOException {
+        return this.openStream(url, null);
+    }
+
+    @Override
+    public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
+        final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
+        final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
+        final GetMethod get = doGet(url, connectionTimeout, readTimeout);
         if (!checkStatusCode(url, get)) {
             get.releaseConnection();
             throw new IOException("The HTTP response code for " + url
@@ -103,11 +112,21 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         Header encoding = get.getResponseHeader("Content-Encoding");
         return getDecodingInputStream(encoding == null ? null : encoding.getValue(),
-            get.getResponseBodyAsStream());
+                get.getResponseBodyAsStream());
     }
 
-    public void download(URL src, File dest, CopyProgressListener l) throws IOException {
-        GetMethod get = doGet(src, 0);
+    @Override
+    public void download(final URL src, final File dest, final CopyProgressListener l) throws IOException {
+        this.download(src, dest, l, null);
+    }
+
+    @Override
+    public void download(final URL src, final File dest, final CopyProgressListener listener,
+                         final TimeoutConstraint timeoutConstraint) throws IOException {
+
+        final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
+        final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
+        final GetMethod get = doGet(src, connectionTimeout, readTimeout);
         try {
             // We can only figure the content we got is want we want if the status is success.
             if (!checkStatusCode(src, get)) {
@@ -117,18 +136,28 @@ public class HttpClientHandler extends AbstractURLHandler {
 
             Header encoding = get.getResponseHeader("Content-Encoding");
             InputStream is = getDecodingInputStream(encoding == null ? null : encoding.getValue(),
-                get.getResponseBodyAsStream());
-            FileUtil.copy(is, dest, l);
+                    get.getResponseBodyAsStream());
+            FileUtil.copy(is, dest, listener);
             dest.setLastModified(getLastModified(get));
         } finally {
             get.releaseConnection();
         }
     }
 
-    public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
-        HttpClient client = getClient();
+    @Override
+    public void upload(final File src, final URL dest, final CopyProgressListener l) throws IOException {
+        this.upload(src, dest, l, null);
+    }
 
-        PutMethod put = new PutMethod(normalizeToString(dest));
+    @Override
+    public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
+        final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
+        final HttpClient client = getClient();
+        // TODO: Use the newer way of settings the connection timeout via HttpConnectionManagerParams
+        // once we stop support for HttpClient 2.x version
+        client.setConnectionTimeout(connectionTimeout);
+
+        final PutMethod put = new PutMethod(normalizeToString(dest));
         put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
         put.getParams().setBooleanParameter("http.protocol.expect-continue", true);
         try {
@@ -138,20 +167,29 @@ public class HttpClientHandler extends AbstractURLHandler {
         } finally {
             put.releaseConnection();
         }
+
     }
 
-    public URLInfo getURLInfo(URL url) {
-        return getURLInfo(url, 0);
+    @Override
+    public URLInfo getURLInfo(final URL url) {
+        return this.getURLInfo(url, null);
     }
 
-    @SuppressWarnings("deprecation")
-    public URLInfo getURLInfo(URL url, int timeout) {
+    @Override
+    public URLInfo getURLInfo(final URL url, final int timeout) {
+        return this.getURLInfo(url, createTimeoutConstraints(timeout));
+    }
+
+    @Override
+    public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
+        final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
+        final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
         HttpMethodBase method = null;
         try {
             if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
-                method = doHead(url, timeout);
+                method = doHead(url, connectionTimeout, readTimeout);
             } else {
-                method = doGet(url, timeout);
+                method = doGet(url, connectionTimeout, readTimeout);
             }
             if (checkStatusCode(url, method)) {
                 return new URLInfo(true, getResponseContentLength(method), getLastModified(method),
@@ -246,10 +284,12 @@ public class HttpClientHandler extends AbstractURLHandler {
         return helper.getHttpClientMajorVersion();
     }
 
-    @SuppressWarnings("deprecation")
-    private GetMethod doGet(URL url, int timeout) throws IOException {
-        HttpClient client = getClient();
-        client.setTimeout(timeout);
+    private GetMethod doGet(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
+        final HttpClient client = getClient();
+        // TODO: Use the newer way of settings the connection and read timeout via HttpConnectionManagerParams
+        // once we stop support for HttpClient 2.x version
+        client.setConnectionTimeout(connectionTimeout);
+        client.setTimeout(readTimeout);
 
         GetMethod get = new GetMethod(normalizeToString(url));
         get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
@@ -258,10 +298,12 @@ public class HttpClientHandler extends AbstractURLHandler {
         return get;
     }
 
-    @SuppressWarnings("deprecation")
-    private HeadMethod doHead(URL url, int timeout) throws IOException {
-        HttpClient client = getClient();
-        client.setTimeout(timeout);
+    private HeadMethod doHead(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
+        final HttpClient client = getClient();
+        // TODO: Use the newer way of settings the connection and read timeout via HttpConnectionManagerParams
+        // once we stop support for HttpClient 2.x version
+        client.setConnectionTimeout(connectionTimeout);
+        client.setTimeout(readTimeout);
 
         HeadMethod head = new HeadMethod(normalizeToString(url));
         head.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
@@ -290,18 +332,18 @@ public class HttpClientHandler extends AbstractURLHandler {
                 httpClient.getHostConfiguration().setProxy(proxyHost, proxyPort);
                 if (useProxyAuthentication()) {
                     httpClient.getState().setProxyCredentials(
-                        new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM),
-                        createCredentials(proxyUserName, proxyPasswd));
+                            new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM),
+                            createCredentials(proxyUserName, proxyPasswd));
                 }
             }
 
             // user-agent
             httpClient.getParams().setParameter(HttpMethodParams.USER_AGENT,
-                getUserAgent());
+                    getUserAgent());
 
             // authentication
             httpClient.getParams().setParameter(CredentialsProvider.PROVIDER,
-                new IvyCredentialsProvider());
+                    new IvyCredentialsProvider());
         }
 
         return httpClient;
@@ -376,7 +418,7 @@ public class HttpClientHandler extends AbstractURLHandler {
             String realm = scheme.getRealm();
 
             org.apache.ivy.util.Credentials c = CredentialsStore.INSTANCE.getCredentials(realm,
-                host);
+                    host);
             if (c != null) {
                 return createCredentials(c.getUserName(), c.getPasswd());
             }

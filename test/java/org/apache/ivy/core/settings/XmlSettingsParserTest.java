@@ -17,16 +17,6 @@
  */
 package org.apache.ivy.core.settings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.List;
-
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -47,6 +37,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
+import org.apache.ivy.plugins.resolver.URLResolver;
 import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
@@ -55,8 +46,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 /**
- * TODO write javadoc
+ * Test the parsing of Ivy settings file through the {@link XmlSettingsParser}
  */
 public class XmlSettingsParserTest {
     @Rule
@@ -77,7 +79,7 @@ public class XmlSettingsParserTest {
 
         assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]",
-            settings.getDefaultCacheArtifactPattern());
+                settings.getDefaultCacheArtifactPattern());
 
         LatestStrategy latest = settings.getLatestStrategy("mylatest-revision");
         assertNotNull(latest);
@@ -95,7 +97,7 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals("lib/[organisation]/[module]/ivys/ivy-[revision].xml",
-            ivyPatterns.get(0));
+                ivyPatterns.get(0));
 
         LatestStrategy strategy = fsres.getLatestStrategy();
         assertNotNull(strategy);
@@ -120,15 +122,15 @@ public class XmlSettingsParserTest {
         assertTrue(strategy instanceof LatestTimeStrategy);
 
         assertEquals("libraries",
-            settings.getResolver(ModuleRevisionId.newInstance("unknown", "lib", "1.0")).getName());
+                settings.getResolver(ModuleRevisionId.newInstance("unknown", "lib", "1.0")).getName());
         assertEquals("internal",
-            settings.getResolver(ModuleRevisionId.newInstance("apache", "ant", "1.0")).getName());
+                settings.getResolver(ModuleRevisionId.newInstance("apache", "ant", "1.0")).getName());
         assertEquals("int2",
-            settings.getResolver(ModuleRevisionId.newInstance("apache", "ivy", "2.0")).getName());
+                settings.getResolver(ModuleRevisionId.newInstance("apache", "ivy", "2.0")).getName());
         assertEquals("int1",
-            settings.getResolver(ModuleRevisionId.newInstance("apache", "ivy", "1.0")).getName());
+                settings.getResolver(ModuleRevisionId.newInstance("apache", "ivy", "1.0")).getName());
         assertEquals("int1",
-            settings.getResolver(ModuleRevisionId.newInstance("apache", "ivyde", "1.0")).getName());
+                settings.getResolver(ModuleRevisionId.newInstance("apache", "ivyde", "1.0")).getName());
     }
 
     @Test
@@ -217,7 +219,7 @@ public class XmlSettingsParserTest {
 
         assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]",
-            settings.getDefaultCacheArtifactPattern());
+                settings.getDefaultCacheArtifactPattern());
         assertEquals(true, settings.isDefaultUseOrigin());
 
         DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) settings
@@ -226,13 +228,13 @@ public class XmlSettingsParserTest {
         assertEquals("mycache", c.getName());
         assertEquals(1000, c.getDefaultTTL());
         assertEquals(200,
-            c.getTTL(ModuleRevisionId.newInstance("apache", "ivy", "latest.integration")));
+                c.getTTL(ModuleRevisionId.newInstance("apache", "ivy", "latest.integration")));
         assertEquals(10 * 60 * 1000 + 20 * 1000, // 10m 20s
-            c.getTTL(ModuleRevisionId.newInstance("org1", "A", "A")));
+                c.getTTL(ModuleRevisionId.newInstance("org1", "A", "A")));
         assertEquals(5 * 3600 * 1000, // 5h
-            c.getTTL(ModuleRevisionId.newInstance("org2", "A", "A")));
+                c.getTTL(ModuleRevisionId.newInstance("org2", "A", "A")));
         assertEquals(60 * 3600 * 1000, // 2d 12h = 60h
-            c.getTTL(ModuleRevisionId.newInstance("org3", "A", "A")));
+                c.getTTL(ModuleRevisionId.newInstance("org3", "A", "A")));
         assertEquals(new File("mycache").getCanonicalFile(), c.getBasedir().getCanonicalFile());
         assertEquals(false, c.isUseOrigin());
         assertEquals("no-lock", c.getLockStrategy().getName());
@@ -328,7 +330,7 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml",
-            ivyPatterns.get(0));
+                ivyPatterns.get(0));
 
         DependencyResolver external = settings.getResolver("external");
         assertNotNull(external);
@@ -344,7 +346,7 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml",
-            ivyPatterns.get(0));
+                ivyPatterns.get(0));
     }
 
     @Test
@@ -367,8 +369,8 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
-            "path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
-            ivyPatterns.get(0));
+                "path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+                ivyPatterns.get(0));
 
         FileSystemResolver fsInt2 = (FileSystemResolver) subresolvers.get(1);
         assertEquals("default-fs2", fsInt2.getName());
@@ -377,8 +379,8 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
-            "path/to/secondrep/[organisation]/[module]/[type]s/ivy-[revision].xml",
-            ivyPatterns.get(0));
+                "path/to/secondrep/[organisation]/[module]/[type]s/ivy-[revision].xml",
+                ivyPatterns.get(0));
 
         DependencyResolver other = settings.getResolver("other");
         assertNotNull(other);
@@ -395,7 +397,7 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals("path/to/secondrep/[module]/[type]s/ivy-[revision].xml",
-            ivyPatterns.get(0));
+                ivyPatterns.get(0));
     }
 
     @Test
@@ -476,8 +478,8 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
-            "path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
-            ivyPatterns.get(0));
+                "path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+                ivyPatterns.get(0));
 
         DependencyResolver inc = settings.getResolver("includeworks");
         assertNotNull(inc);
@@ -494,8 +496,8 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
-            "included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
-            ivyPatterns.get(0));
+                "included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+                ivyPatterns.get(0));
 
         // properties defined in included file should be available to including file (IVY-780)
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
@@ -543,8 +545,8 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
-            "path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
-            ivyPatterns.get(0));
+                "path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+                ivyPatterns.get(0));
 
         DependencyResolver inc = settings.getResolver("includeworks");
         assertNotNull(inc);
@@ -561,8 +563,8 @@ public class XmlSettingsParserTest {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertLocationEquals(
-            "included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
-            ivyPatterns.get(0));
+                "included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+                ivyPatterns.get(0));
 
         // properties defined in included file should be available to including file (IVY-780)
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
@@ -584,7 +586,7 @@ public class XmlSettingsParserTest {
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-parser.xml"));
         assertEquals(ModuleDescriptorParserRegistryTest.MyParser.class.getName(),
-            ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
+                ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
 
     @Test
@@ -633,14 +635,14 @@ public class XmlSettingsParserTest {
         settings.setBaseDir(new File("test/base/dir"));
         assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
         assertEquals(new File("test/base/dir").getAbsolutePath(),
-            settings.getVariable("ivy.basedir"));
+                settings.getVariable("ivy.basedir"));
 
         settings = new IvySettings();
         settings.setVariable("basedir", new File("other/base/dir").getAbsolutePath());
         settings.setBaseDir(new File("test/base/dir"));
         assertEquals(new File("other/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
         assertEquals(new File("test/base/dir").getAbsolutePath(),
-            settings.getVariable("ivy.basedir"));
+                settings.getVariable("ivy.basedir"));
     }
 
     /**
@@ -668,9 +670,79 @@ public class XmlSettingsParserTest {
         assertEquals("Unexpected ttl for module " + module2 + " on cache manager", 60000, module2SpecificTTL);
     }
 
+    /**
+     * Tests that the <code>timeout-constraint</code> elements in a Ivy settings file are parsed correctly
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testTimeoutConstraints() throws Exception {
+        final IvySettings settings = new IvySettings();
+        settings.setBaseDir(new File("test/base/dir"));
+        final XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-timeout-constraints.xml"));
+
+        final TimeoutConstraint timeout1 = settings.getTimeoutConstraint("test-timeout-1");
+        assertNotNull("test-timeout-1 timeout constraint is missing", timeout1);
+        assertEquals("Unexpected connection timeout " + timeout1.getConnectionTimeout() + " on time constraint test-timeout-1", 100, timeout1.getConnectionTimeout());
+        assertEquals("Unexpected read timeout " + timeout1.getReadTimeout() + " on time constraint test-timeout-1", 500, timeout1.getReadTimeout());
+
+
+        final TimeoutConstraint timeout2 = settings.getTimeoutConstraint("test-timeout-2");
+        assertNotNull("test-timeout-2 timeout constraint is missing", timeout2);
+        assertEquals("Unexpected connection timeout " + timeout2.getConnectionTimeout() + " on time constraint test-timeout-2", -1, timeout2.getConnectionTimeout());
+        assertEquals("Unexpected read timeout " + timeout2.getReadTimeout() + " on time constraint test-timeout-2", 20, timeout2.getReadTimeout());
+
+
+        final TimeoutConstraint timeout3 = settings.getTimeoutConstraint("test-timeout-3");
+        assertNotNull("test-timeout-3 timeout constraint is missing", timeout3);
+        assertEquals("Unexpected connection timeout " + timeout3.getConnectionTimeout() + " on time constraint test-timeout-3", 400, timeout3.getConnectionTimeout());
+        assertEquals("Unexpected read timeout " + timeout3.getReadTimeout() + " on time constraint test-timeout-3", -1, timeout3.getReadTimeout());
+
+        final TimeoutConstraint timeout4 = settings.getTimeoutConstraint("test-timeout-4");
+        assertNotNull("test-timeout-4 timeout constraint is missing", timeout4);
+        assertEquals("Unexpected connection timeout " + timeout4.getConnectionTimeout() + " on time constraint test-timeout-4", -1, timeout4.getConnectionTimeout());
+        assertEquals("Unexpected read timeout " + timeout4.getReadTimeout() + " on time constraint test-timeout-4", -1, timeout4.getReadTimeout());
+
+    }
+
+    /**
+     * Tests that timeout constraints referenced by resolvers, in an ivy settings file, are processed correctly and the
+     * corresponding resolvers use the right timeout constraints
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testResolverTimeoutConstraintRefs() throws Exception {
+        final IvySettings settings = new IvySettings();
+        settings.setBaseDir(new File("test/base/dir"));
+        final XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-timeout-constraints.xml"));
+
+        final URLResolver resolver1 = (URLResolver) settings.getResolver("urlresolver-1");
+        assertNotNull("Missing resolver urlresolver-1", resolver1);
+        final TimeoutConstraint resolver1Timeouts = resolver1.getTimeoutConstraint();
+        assertNotNull("Timeout constraint missing on resolver " + resolver1.getName(), resolver1Timeouts);
+        assertEquals("Unexpected connection timeout " + resolver1Timeouts.getConnectionTimeout() + " on resolver " + resolver1.getName(), 400, resolver1Timeouts.getConnectionTimeout());
+        assertEquals("Unexpected read timeout " + resolver1Timeouts.getReadTimeout() + " on resolver " + resolver1.getName(), -1, resolver1Timeouts.getReadTimeout());
+
+        final IBiblioResolver resolver2 = (IBiblioResolver) settings.getResolver("ibiblio-resolver");
+        assertNotNull("Missing resolver ibiblio-resolver", resolver2);
+        final TimeoutConstraint resolver2Timeouts = resolver2.getTimeoutConstraint();
+        assertNotNull("Timeout constraint missing on resolver " + resolver2.getName(), resolver2Timeouts);
+        assertEquals("Unexpected connection timeout " + resolver2Timeouts.getConnectionTimeout() + " on resolver " + resolver2.getName(), 100, resolver2Timeouts.getConnectionTimeout());
+        assertEquals("Unexpected read timeout " + resolver2Timeouts.getReadTimeout() + " on resolver " + resolver2.getName(), 500, resolver2Timeouts.getReadTimeout());
+
+        final FileSystemResolver resolver3 = (FileSystemResolver) settings.getResolver("fs");
+        assertNotNull("Missing resolver fs", resolver3);
+        final TimeoutConstraint resolver3Timeouts = resolver3.getTimeoutConstraint();
+        assertNull("No timeout was expected on resolver " + resolver3.getName(), resolver3Timeouts);
+
+    }
+
     public static class MyOutputter implements ReportOutputter {
         public void output(ResolveReport report, ResolutionCacheManager cacheMgr,
-                ResolveOptions options) {
+                           ResolveOptions options) {
         }
 
         public String getName() {
@@ -691,6 +763,6 @@ public class XmlSettingsParserTest {
 
     private void assertLocationEquals(String expected, Object pattern) throws IOException {
         assertEquals(new File(expected).getCanonicalFile(),
-            new File((String) pattern).getCanonicalFile());
+                new File((String) pattern).getCanonicalFile());
     }
 }

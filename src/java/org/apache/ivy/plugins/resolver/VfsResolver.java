@@ -31,7 +31,7 @@ public class VfsResolver extends RepositoryResolver {
     private static final int PASSWORD_GROUP = 2;
 
     public VfsResolver() {
-        setRepository(new VfsRepository());
+        setRepository(new VfsRepository(new LazyTimeoutConstraint(this)));
     }
 
     @Override

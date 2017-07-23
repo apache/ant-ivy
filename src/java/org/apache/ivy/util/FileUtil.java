@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
@@ -271,12 +272,14 @@ public final class FileUtil {
         return true;
     }
 
-    public static void copy(URL src, File dest, CopyProgressListener l) throws IOException {
-        URLHandlerRegistry.getDefault().download(src, dest, l);
+    public static void copy(final URL src, final File dest, final CopyProgressListener listener,
+                            final TimeoutConstraint timeoutConstraint) throws IOException {
+        URLHandlerRegistry.getDefault().download(src, dest, listener, timeoutConstraint);
     }
 
-    public static void copy(File src, URL dest, CopyProgressListener l) throws IOException {
-        URLHandlerRegistry.getDefault().upload(src, dest, l);
+    public static void copy(final File src, final URL dest, final CopyProgressListener listener,
+                            final TimeoutConstraint timeoutConstraint) throws IOException {
+        URLHandlerRegistry.getDefault().upload(src, dest, listener, timeoutConstraint);
     }
 
     public static void copy(InputStream src, File dest, CopyProgressListener l) throws IOException {
