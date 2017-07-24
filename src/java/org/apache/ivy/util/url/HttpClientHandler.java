@@ -352,9 +352,6 @@ class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
             if (authscope == null) {
                 return null;
             }
-            // TODO: check if the credentials are requested for a proxy, in which case, we use the
-            // system configured proxy (system) properties to return the creds
-
             final String realm = authscope.getRealm();
             final String host = authscope.getHost();
             final org.apache.ivy.util.Credentials ivyConfiguredCred = CredentialsStore.INSTANCE.getCredentials(realm, host);
