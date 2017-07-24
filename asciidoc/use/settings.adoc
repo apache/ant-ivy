@@ -55,7 +55,7 @@ my.variable.yourid=your.value
 
 == HTTP Authentication
 
-__Note__: HTTP Authentication can be used only if link:http://jakarta.apache.org/commons/httpclient/[commons-httpclient.jar] is in your classpath
+__Note__: HTTP Authentication can be used only if link:https://hc.apache.org/httpcomponents-client-ga/index.html[HttpComponents HttpClient library] (minimum of 4.5.3 version) and its linke:https://hc.apache.org/httpcomponents-client-4.5.x/dependency-management.html[dependencies] are in your classpath.
 
 If any of the url you use in Ivy (especially in dependency resolvers) need HTTP authentication, then you have to provide the `host`, `realm`, `username` and `passwd` attributes of the configure task. These settings will then be used in any further call to ivy tasks.
 

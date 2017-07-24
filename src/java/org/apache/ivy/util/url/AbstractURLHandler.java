@@ -86,11 +86,7 @@ public abstract class AbstractURLHandler implements URLHandler {
     }
 
     protected String getUserAgent() {
-        String userAgent = System.getProperty("http.agent");
-        if (userAgent == null) {
-            userAgent = "Apache Ivy/" + Ivy.getIvyVersion();
-        }
-        return userAgent;
+        return System.getProperty("http.agent", "Apache Ivy/" + Ivy.getIvyVersion());
     }
 
     protected void validatePutStatusCode(URL dest, int statusCode, String statusMessage)

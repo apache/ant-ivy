@@ -44,7 +44,7 @@
     </publications>
     <dependencies>
         <dependency org="org.apache.ant" name="ant" rev="1.9.9" conf="default,ant"/>
-        <dependency org="commons-httpclient" name="commons-httpclient" rev="3.1" conf="default,httpclient->runtime,master"/>
+        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.3" conf="default,httpclient->runtime,master"/>
         <dependency org="oro" name="oro" rev="2.0.8" conf="default,oro"/>
         <dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs"/>
         <dependency org="com.jcraft" name="jsch" rev="0.1.54" conf="default,sftp"/>
@@ -62,8 +62,10 @@
         <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="test" transitive="false"/>
         <dependency org="xmlunit" name="xmlunit" rev="1.6" conf="test" transitive="false"/>
 
-        <!-- Global exclude for junit and hamcrest -->
+        <!-- Global excludes -->
         <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
         <exclude org="org.hamcrest" module="hamcrest-core" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
+        <!-- Exclude the whole outdated commons-httpclient org -->
+        <exclude org="commons-httpclient" conf="*"/>
     </dependencies>
 </ivy-module>

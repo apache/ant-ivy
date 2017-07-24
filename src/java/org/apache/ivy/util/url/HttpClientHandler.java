@@ -17,24 +17,34 @@
  */
 package org.apache.ivy.util.url;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.auth.AuthPolicy;
-import org.apache.commons.httpclient.auth.AuthScheme;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthSchemeProvider;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.AuthSchemes;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.config.Lookup;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.impl.auth.BasicSchemeFactory;
+import org.apache.http.impl.auth.DigestSchemeFactory;
+import org.apache.http.impl.auth.NTLMSchemeFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
@@ -42,56 +52,81 @@ import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.ProxySelector;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  */
-public class HttpClientHandler extends AbstractURLHandler {
+class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
     private static final SimpleDateFormat LAST_MODIFIED_FORMAT = new SimpleDateFormat(
             "EEE, d MMM yyyy HH:mm:ss z", Locale.US);
 
-    // proxy configuration: obtain from system properties
-    private int proxyPort;
+    // A instance of the HttpClientHandler which gets registered to be closed
+    // when the JVM exits
+    static final HttpClientHandler DELETE_ON_EXIT_INSTANCE;
 
-    private String proxyHost = null;
-
-    private String proxyUserName = null;
-
-    private String proxyPasswd = null;
-
-    private HttpClientHelper httpClientHelper;
-
-    private static HttpClient httpClient;
-
-    public HttpClientHandler() {
-        configureProxy();
+    static {
+        DELETE_ON_EXIT_INSTANCE = new HttpClientHandler();
+        final Thread shutdownHook = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DELETE_ON_EXIT_INSTANCE.close();
+                } catch (Exception e) {
+                    // ignore since this is anyway happening during shutdown of the JVM
+                }
+            }
+        });
+        shutdownHook.setName("ivy-httpclient-shutdown-handler");
+        shutdownHook.setDaemon(true);
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
-    private void configureProxy() {
-        proxyHost = System.getProperty("http.proxyHost");
-        // TODO constant is better ...
-        if (useProxy()) {
-            proxyPort = Integer.parseInt(System.getProperty("http.proxyPort", "80"));
-            proxyUserName = System.getProperty("http.proxyUser");
-            proxyPasswd = System.getProperty("http.proxyPassword");
-            // It seems there is no equivalent in HttpClient for
-            // 'http.nonProxyHosts' property
-            Message.verbose("proxy configured: host=" + proxyHost + " port=" + proxyPort + " user="
-                    + proxyUserName);
-        } else {
-            Message.verbose("no proxy configured");
-        }
+    private final CloseableHttpClient httpClient;
+
+    HttpClientHandler() {
+        this.httpClient = buildUnderlyingClient();
+    }
+
+    private CloseableHttpClient buildUnderlyingClient() {
+        return HttpClients.custom()
+                .setConnectionManager(createConnectionManager())
+                .setRoutePlanner(createProxyRoutePlanner())
+                .setUserAgent(this.getUserAgent())
+                .setDefaultAuthSchemeRegistry(createAuthSchemeRegistry())
+                .setDefaultCredentialsProvider(new IvyCredentialsProvider())
+                .build();
+    }
+
+    private static HttpRoutePlanner createProxyRoutePlanner() {
+        // use the standard JRE ProxySelector to get proxy information
+        Message.verbose("Using JRE standard ProxySelector for configuring HTTP proxy");
+        return new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+    }
+
+    private static Lookup<AuthSchemeProvider> createAuthSchemeRegistry() {
+        return RegistryBuilder.<AuthSchemeProvider>create().register(AuthSchemes.DIGEST, new DigestSchemeFactory())
+                .register(AuthSchemes.BASIC, new BasicSchemeFactory())
+                .register(AuthSchemes.NTLM, new NTLMSchemeFactory())
+                .build();
+    }
+
+    private static HttpClientConnectionManager createConnectionManager() {
+        return new PoolingHttpClientConnectionManager();
+    }
+
+    private static List<String> getAuthSchemePreferredOrder() {
+        return Arrays.asList(AuthSchemes.DIGEST, AuthSchemes.BASIC, AuthSchemes.NTLM);
     }
 
     @Override
@@ -103,16 +138,10 @@ public class HttpClientHandler extends AbstractURLHandler {
     public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
         final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
         final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
-        final GetMethod get = doGet(url, connectionTimeout, readTimeout);
-        if (!checkStatusCode(url, get)) {
-            get.releaseConnection();
-            throw new IOException("The HTTP response code for " + url
-                    + " did not indicate a success." + " See log for more detail.");
-        }
-
-        Header encoding = get.getResponseHeader("Content-Encoding");
-        return getDecodingInputStream(encoding == null ? null : encoding.getValue(),
-                get.getResponseBodyAsStream());
+        final CloseableHttpResponse response = doGet(url, connectionTimeout, readTimeout);
+        this.requireSuccessStatus(HttpGet.METHOD_NAME, url, response);
+        final Header encoding = this.getContentEncoding(response);
+        return getDecodingInputStream(encoding == null ? null : encoding.getValue(), response.getEntity().getContent());
     }
 
     @Override
@@ -126,21 +155,15 @@ public class HttpClientHandler extends AbstractURLHandler {
 
         final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
         final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
-        final GetMethod get = doGet(src, connectionTimeout, readTimeout);
-        try {
+        try (final CloseableHttpResponse response = doGet(src, connectionTimeout, readTimeout)) {
             // We can only figure the content we got is want we want if the status is success.
-            if (!checkStatusCode(src, get)) {
-                throw new IOException("The HTTP response code for " + src
-                        + " did not indicate a success." + " See log for more detail.");
+            this.requireSuccessStatus(HttpGet.METHOD_NAME, src, response);
+            final Header encoding = this.getContentEncoding(response);
+            try (final InputStream is = getDecodingInputStream(encoding == null ? null : encoding.getValue(),
+                    response.getEntity().getContent())) {
+                FileUtil.copy(is, dest, listener);
             }
-
-            Header encoding = get.getResponseHeader("Content-Encoding");
-            InputStream is = getDecodingInputStream(encoding == null ? null : encoding.getValue(),
-                    get.getResponseBodyAsStream());
-            FileUtil.copy(is, dest, listener);
-            dest.setLastModified(getLastModified(get));
-        } finally {
-            get.releaseConnection();
+            dest.setLastModified(getLastModified(response));
         }
     }
 
@@ -152,22 +175,20 @@ public class HttpClientHandler extends AbstractURLHandler {
     @Override
     public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
         final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
-        final HttpClient client = getClient();
-        // TODO: Use the newer way of settings the connection timeout via HttpConnectionManagerParams
-        // once we stop support for HttpClient 2.x version
-        client.setConnectionTimeout(connectionTimeout);
-
-        final PutMethod put = new PutMethod(normalizeToString(dest));
-        put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
-        put.getParams().setBooleanParameter("http.protocol.expect-continue", true);
-        try {
-            put.setRequestEntity(new FileRequestEntity(src));
-            int statusCode = client.executeMethod(put);
-            validatePutStatusCode(dest, statusCode, null);
-        } finally {
-            put.releaseConnection();
+        final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
+        final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(readTimeout)
+                .setConnectTimeout(connectionTimeout)
+                .setAuthenticationEnabled(hasCredentialsConfigured(dest))
+                .setTargetPreferredAuthSchemes(getAuthSchemePreferredOrder())
+                .setProxyPreferredAuthSchemes(getAuthSchemePreferredOrder())
+                .setExpectContinueEnabled(true)
+                .build();
+        final HttpPut put = new HttpPut(normalizeToString(dest));
+        put.setConfig(requestConfig);
+        put.setEntity(new FileEntity(src));
+        try (final CloseableHttpResponse response = this.httpClient.execute(put)) {
+            validatePutStatusCode(dest, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
         }
-
     }
 
     @Override
@@ -184,289 +205,182 @@ public class HttpClientHandler extends AbstractURLHandler {
     public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
         final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();
         final int readTimeout = (timeoutConstraint == null || timeoutConstraint.getReadTimeout() < 0) ? 0 : timeoutConstraint.getReadTimeout();
-        HttpMethodBase method = null;
+        CloseableHttpResponse response = null;
         try {
+            final String httpMethod;
             if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
-                method = doHead(url, connectionTimeout, readTimeout);
+                httpMethod = HttpHead.METHOD_NAME;
+                response = doHead(url, connectionTimeout, readTimeout);
             } else {
-                method = doGet(url, connectionTimeout, readTimeout);
+                httpMethod = HttpGet.METHOD_NAME;
+                response = doGet(url, connectionTimeout, readTimeout);
             }
-            if (checkStatusCode(url, method)) {
-                return new URLInfo(true, getResponseContentLength(method), getLastModified(method),
-                        method.getRequestCharSet());
+            if (checkStatusCode(httpMethod, url, response)) {
+                final HttpEntity responseEntity = response.getEntity();
+                final Charset charSet = ContentType.getOrDefault(responseEntity).getCharset();
+                return new URLInfo(true, responseEntity == null ? 0 : responseEntity.getContentLength(),
+                        getLastModified(response), charSet.name());
             }
-        } catch (HttpException e) {
-            Message.error("HttpClientHandler: " + e.getMessage() + ":" + e.getReasonCode() + "="
-                    + e.getReason() + " url=" + url);
-        } catch (UnknownHostException e) {
-            Message.warn("Host " + e.getMessage() + " not found. url=" + url);
-            Message.info("You probably access the destination server through "
-                    + "a proxy server that is not well configured.");
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
+            // IllegalArgumentException is thrown by HttpClient library to indicate the URL is not valid,
+            // this happens for instance when trying to download a dynamic version (cfr IVY-390)
             Message.error("HttpClientHandler: " + e.getMessage() + " url=" + url);
-        } catch (IllegalArgumentException e) {
-            // thrown by HttpClient to indicate the URL is not valid, this happens for instance
-            // when trying to download a dynamic version (cfr IVY-390)
         } finally {
-            if (method != null) {
-                method.releaseConnection();
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
         return UNAVAILABLE;
     }
 
-    private boolean checkStatusCode(URL url, HttpMethodBase method) {
-        int status = method.getStatusCode();
+    private boolean checkStatusCode(final String httpMethod, final URL sourceURL, final HttpResponse response) {
+        final int status = response.getStatusLine().getStatusCode();
         if (status == HttpStatus.SC_OK) {
             return true;
         }
-
         // IVY-1328: some servers return a 204 on a HEAD request
-        if ("HEAD".equals(method.getName()) && (status == 204)) {
+        if (HttpHead.METHOD_NAME.equals(httpMethod) && (status == 204)) {
             return true;
         }
 
-        Message.debug("HTTP response status: " + status + " url=" + url);
+        Message.debug("HTTP response status: " + status + " url=" + sourceURL);
         if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
             Message.warn("Your proxy requires authentication.");
         } else if (String.valueOf(status).startsWith("4")) {
-            Message.verbose("CLIENT ERROR: " + method.getStatusText() + " url=" + url);
+            Message.verbose("CLIENT ERROR: " + response.getStatusLine().getReasonPhrase() + " url=" + sourceURL);
         } else if (String.valueOf(status).startsWith("5")) {
-            Message.error("SERVER ERROR: " + method.getStatusText() + " url=" + url);
+            Message.error("SERVER ERROR: " + response.getStatusLine().getReasonPhrase() + " url=" + sourceURL);
         }
-
         return false;
     }
 
-    private long getLastModified(HttpMethodBase method) {
-        Header header = method.getResponseHeader("last-modified");
-        if (header != null) {
-            String lastModified = header.getValue();
-            try {
-                return LAST_MODIFIED_FORMAT.parse(lastModified).getTime();
-            } catch (ParseException e) {
-                // ignored
-            }
+    /**
+     * Checks the status code of the response and if it's considered as successful response, then this method just returns back.
+     * Else it {@link CloseableHttpResponse#close() closes the response} and throws an {@link IOException} for the unsuccessful response.
+     *
+     * @param httpMethod The HTTP method that was used for the source request
+     * @param sourceURL  The URL of the source request
+     * @param response   The response to the source request
+     * @throws IOException Thrown if the response was considered unsuccessful
+     */
+    private void requireSuccessStatus(final String httpMethod, final URL sourceURL, final CloseableHttpResponse response) throws IOException {
+        if (this.checkStatusCode(httpMethod, sourceURL, response)) {
+            return;
+        }
+        // this is now considered an unsuccessful response, so close the response and throw an exception
+        try {
+            response.close();
+        } catch (Exception e) {
+            // log and move on
+            Message.debug("Could not close the HTTP response for url=" + sourceURL, e);
+        }
+        throw new IOException("Response to request '" + httpMethod + " " + sourceURL + "' did not indicate a success (see debug log for details)");
+    }
+
+    private Header getContentEncoding(final HttpResponse response) {
+        return response.getFirstHeader("Content-Encoding");
+    }
+
+    private long getLastModified(final HttpResponse response) {
+        final Header header = response.getFirstHeader("last-modified");
+        if (header == null) {
             return System.currentTimeMillis();
-        } else {
-            return System.currentTimeMillis();
         }
-    }
-
-    private long getResponseContentLength(HttpMethodBase head) {
-        return getHttpClientHelper().getResponseContentLength(head);
-    }
-
-    private HttpClientHelper getHttpClientHelper() {
-        if (httpClientHelper == null) {
-            // use commons httpclient 3.0 if available
-            try {
-                HttpMethodBase.class.getMethod("getResponseContentLength");
-                httpClientHelper = new HttpClientHelper3x();
-                Message.verbose("using commons httpclient 3.x helper");
-            } catch (SecurityException e) {
-                Message.verbose("unable to get access to getResponseContentLength of "
-                        + "commons-httpclient HeadMethod. Please use commons-httpclient 3.0 or "
-                        + "use ivy with sufficient security permissions.");
-                Message.verbose("exception: " + e.getMessage());
-                httpClientHelper = new HttpClientHelper2x();
-                Message.verbose("using commons httpclient 2.x helper");
-            } catch (NoSuchMethodException e) {
-                httpClientHelper = new HttpClientHelper2x();
-                Message.verbose("using commons httpclient 2.x helper");
-            }
+        final String lastModified = header.getValue();
+        try {
+            return LAST_MODIFIED_FORMAT.parse(lastModified).getTime();
+        } catch (ParseException e) {
+            // ignored
         }
-        return httpClientHelper;
+        return System.currentTimeMillis();
     }
 
-    public int getHttpClientMajorVersion() {
-        HttpClientHelper helper = getHttpClientHelper();
-        return helper.getHttpClientMajorVersion();
+    private CloseableHttpResponse doGet(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
+        final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(readTimeout)
+                .setConnectTimeout(connectionTimeout)
+                .setAuthenticationEnabled(hasCredentialsConfigured(url))
+                .setTargetPreferredAuthSchemes(getAuthSchemePreferredOrder())
+                .setProxyPreferredAuthSchemes(getAuthSchemePreferredOrder())
+                .build();
+        final HttpGet httpGet = new HttpGet(normalizeToString(url));
+        httpGet.setConfig(requestConfig);
+        httpGet.addHeader("Accept-Encoding", "gzip,deflate");
+        return this.httpClient.execute(httpGet);
     }
 
-    private GetMethod doGet(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
-        final HttpClient client = getClient();
-        // TODO: Use the newer way of settings the connection and read timeout via HttpConnectionManagerParams
-        // once we stop support for HttpClient 2.x version
-        client.setConnectionTimeout(connectionTimeout);
-        client.setTimeout(readTimeout);
-
-        GetMethod get = new GetMethod(normalizeToString(url));
-        get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
-        get.setRequestHeader("Accept-Encoding", "gzip,deflate");
-        client.executeMethod(get);
-        return get;
+    private CloseableHttpResponse doHead(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
+        final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(readTimeout)
+                .setConnectTimeout(connectionTimeout)
+                .setAuthenticationEnabled(hasCredentialsConfigured(url))
+                .setTargetPreferredAuthSchemes(getAuthSchemePreferredOrder())
+                .setProxyPreferredAuthSchemes(getAuthSchemePreferredOrder())
+                .build();
+        final HttpHead httpHead = new HttpHead(normalizeToString(url));
+        httpHead.setConfig(requestConfig);
+        return this.httpClient.execute(httpHead);
     }
 
-    private HeadMethod doHead(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
-        final HttpClient client = getClient();
-        // TODO: Use the newer way of settings the connection and read timeout via HttpConnectionManagerParams
-        // once we stop support for HttpClient 2.x version
-        client.setConnectionTimeout(connectionTimeout);
-        client.setTimeout(readTimeout);
-
-        HeadMethod head = new HeadMethod(normalizeToString(url));
-        head.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
-        client.executeMethod(head);
-        return head;
-    }
-
-    private HttpClient getClient() {
-        if (httpClient == null) {
-            final MultiThreadedHttpConnectionManager connManager = new MultiThreadedHttpConnectionManager();
-            httpClient = new HttpClient(connManager);
-
-            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-                public void run() {
-                    connManager.shutdown();
-                }
-            }));
-
-            List<String> authPrefs = new ArrayList<>(3);
-            authPrefs.add(AuthPolicy.DIGEST);
-            authPrefs.add(AuthPolicy.BASIC);
-            authPrefs.add(AuthPolicy.NTLM); // put it at the end to give less priority (IVY-213)
-            httpClient.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
-
-            if (useProxy()) {
-                httpClient.getHostConfiguration().setProxy(proxyHost, proxyPort);
-                if (useProxyAuthentication()) {
-                    httpClient.getState().setProxyCredentials(
-                            new AuthScope(proxyHost, proxyPort, AuthScope.ANY_REALM),
-                            createCredentials(proxyUserName, proxyPasswd));
-                }
-            }
-
-            // user-agent
-            httpClient.getParams().setParameter(HttpMethodParams.USER_AGENT,
-                    getUserAgent());
-
-            // authentication
-            httpClient.getParams().setParameter(CredentialsProvider.PROVIDER,
-                    new IvyCredentialsProvider());
-        }
-
-        return httpClient;
-    }
-
-    private boolean useProxy() {
-        return proxyHost != null && proxyHost.trim().length() > 0;
-    }
-
-    private boolean useAuthentication(URL url) {
+    private boolean hasCredentialsConfigured(final URL url) {
         return CredentialsStore.INSTANCE.hasCredentials(url.getHost());
     }
 
-    private boolean useProxyAuthentication() {
-        return (proxyUserName != null && proxyUserName.trim().length() > 0);
-    }
-
-    private static final class HttpClientHelper3x implements HttpClientHelper {
-        private static final int VERSION = 3;
-
-        private HttpClientHelper3x() {
+    @Override
+    public void close() throws Exception {
+        if (this.httpClient != null) {
+            this.httpClient.close();
         }
-
-        public long getResponseContentLength(HttpMethodBase method) {
-            return method.getResponseContentLength();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int getHttpClientMajorVersion() {
-            return VERSION;
-        }
-    }
-
-    private static final class HttpClientHelper2x implements HttpClientHelper {
-        private static final int VERSION = 2;
-
-        private HttpClientHelper2x() {
-        }
-
-        public long getResponseContentLength(HttpMethodBase method) {
-            Header header = method.getResponseHeader("Content-Length");
-            if (header != null) {
-                try {
-                    return Integer.parseInt(header.getValue());
-                } catch (NumberFormatException e) {
-                    Message.verbose("Invalid content-length value: " + e.getMessage());
-                }
-            }
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int getHttpClientMajorVersion() {
-            return VERSION;
-        }
-    }
-
-    public interface HttpClientHelper {
-        long getResponseContentLength(HttpMethodBase method);
-
-        int getHttpClientMajorVersion();
     }
 
     private static class IvyCredentialsProvider implements CredentialsProvider {
 
-        public Credentials getCredentials(AuthScheme scheme, String host, int port, boolean proxy)
-                throws CredentialsNotAvailableException {
-            String realm = scheme.getRealm();
+        private final ConcurrentHashMap<AuthScope, Credentials> cachedCreds = new ConcurrentHashMap<>();
 
-            org.apache.ivy.util.Credentials c = CredentialsStore.INSTANCE.getCredentials(realm,
-                    host);
-            if (c != null) {
-                return createCredentials(c.getUserName(), c.getPasswd());
+        @Override
+        public void setCredentials(final AuthScope authscope, final Credentials credentials) {
+            if (authscope == null) {
+                throw new IllegalArgumentException("AuthScope cannot be null");
             }
-
-            return null;
-        }
-    }
-
-    private static Credentials createCredentials(String username, String password) {
-        String user;
-        String domain;
-
-        int backslashIndex = username.indexOf('\\');
-        if (backslashIndex >= 0) {
-            user = username.substring(backslashIndex + 1);
-            domain = username.substring(0, backslashIndex);
-        } else {
-            user = username;
-            domain = System.getProperty("http.auth.ntlm.domain", "");
+            this.cachedCreds.put(authscope, credentials);
         }
 
-        return new NTCredentials(user, password, HostUtil.getLocalHostName(), domain);
-    }
-
-    private static class FileRequestEntity implements RequestEntity {
-        private File file;
-
-        public FileRequestEntity(File file) {
-            this.file = file;
-        }
-
-        public long getContentLength() {
-            return file.length();
-        }
-
-        public String getContentType() {
-            return null;
-        }
-
-        public boolean isRepeatable() {
-            return true;
-        }
-
-        public void writeRequest(OutputStream out) throws IOException {
-            try (InputStream instream = new FileInputStream(file)) {
-                FileUtil.copy(instream, out, null, false);
+        @Override
+        public Credentials getCredentials(final AuthScope authscope) {
+            if (authscope == null) {
+                return null;
             }
+            // TODO: check if the credentials are requested for a proxy, in which case, we use the
+            // system configured proxy (system) properties to return the creds
+
+            final String realm = authscope.getRealm();
+            final String host = authscope.getHost();
+            final org.apache.ivy.util.Credentials ivyConfiguredCred = CredentialsStore.INSTANCE.getCredentials(realm, host);
+            if (ivyConfiguredCred == null) {
+                return null;
+            }
+            return createCredentials(ivyConfiguredCred.getUserName(), ivyConfiguredCred.getPasswd());
+        }
+
+        @Override
+        public void clear() {
+            this.cachedCreds.clear();
+        }
+
+        private static Credentials createCredentials(final String username, final String password) {
+            final String user;
+            final String domain;
+            int backslashIndex = username.indexOf('\\');
+            if (backslashIndex >= 0) {
+                user = username.substring(backslashIndex + 1);
+                domain = username.substring(0, backslashIndex);
+            } else {
+                user = username;
+                domain = System.getProperty("http.auth.ntlm.domain", "");
+            }
+            return new NTCredentials(user, password, HostUtil.getLocalHostName(), domain);
         }
     }
-
 }
