@@ -17,38 +17,35 @@
    under the License.
 ////
 
-=== Announcement
+= Ivy Release Announcement
 
-[source]
-----
 XXXX DATE XXXXXX - The Apache Ivy project is pleased to announce its 2.5.0 release.
 
-Apache Ivy is a tool for managing (recording, tracking, resolving and
-reporting) project dependencies, characterized by flexibility,
-configurability, and tight integration with Apache Ant.
+== What is Ivy?
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
+configurability, and tight integration with link:https://ant.apache.org/[Apache Ant].
 
-Key features of this 2.5.0 release are
-* Ivy now uses BouncyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
-* the minimum Java version required is now Java 7
-* TODO
-* TODO
+== Download
+You can download this release at link:https://ant.apache.org/ivy/download.cgi[]
 
-You can download this 2.5.0 release at:
-http://ant.apache.org/ivy/download.cgi
+Issues should either be discussed in the link:https://ant.apache.org/ivy/mailing-lists.html[Ivy user mailing list] or should be reported to at link:https://issues.apache.org/jira/browse/IVY[]
 
-Issues should be reported to:
-https://issues.apache.org/jira/browse/IVY
+More information about the project can be found on the website link:https://ant.apache.org/ivy/[]
 
-More information can be found on the website:
-http://ant.apache.org/ivy/
-----
+== Key features in this release
 
-=== List of Changes in this Release
+Key features of this 2.5.0 release are:
 
-For details about the following changes, check our JIRA install at
-http://issues.apache.org/jira/browse/ivy
+    * The minimum runtime Java version required is now Java 7
+    * Ivy now uses BouncyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
+    * Ivy now uses HttpComponents HttpClient 4.5.x version for dealing with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient client library is no longer used or supported. (jira:IVY-1563[])
 
-List of changes since Ivy 2.4.0:
+
+== List of Changes in this Release
+
+For details about the following changes, check our JIRA install at link:https://issues.apache.org/jira/browse/IVY[]
+
+*List of changes since Ivy 2.4.0:*
 
 - FIX: Local conflict manager didn't handle deeper conflicts in transitive dependencies (jira:IVY-1404[])
 - FIX: Made the maven 'test' configuration public so we can use the test-jar as dependency (jira:IVY-1444[])
@@ -86,11 +83,11 @@ List of changes since Ivy 2.4.0:
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
 
-=== Committers and Contributors
+== Committers and Contributors
 
 Here is the list of people who have contributed source code and documentation up to this release. Many thanks to all of them, and also to the whole IvyDE community contributing ideas and feedback, and promoting the use of Apache Ivy !
 
-Committers
+*Committers:*
 
 * Matt Benson
 * Jean-Louis Boudart
@@ -102,7 +99,7 @@ Committers
 * Jon Schneider
 * Gilles Scokart
 
-Contributors:
+*Contributors:*
 
 * Ingo Adler
 * alex322
