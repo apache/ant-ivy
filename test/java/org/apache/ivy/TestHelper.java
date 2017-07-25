@@ -18,7 +18,9 @@
 package org.apache.ivy;
 
 import com.sun.net.httpserver.BasicAuthenticator;
+import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
@@ -40,10 +42,11 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-import sun.net.httpserver.AuthFilter;
+
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
@@ -461,4 +464,50 @@ public class TestHelper {
         };
     }
 
+    private static final class AuthFilter extends Filter {
+
+        private final com.sun.net.httpserver.Authenticator authenticator;
+
+        AuthFilter(final com.sun.net.httpserver.Authenticator authenticator) {
+            this.authenticator = authenticator;
+        }
+
+        @Override
+        public void doFilter(final HttpExchange httpExchange, final Chain chain) throws IOException {
+            if (authenticator == null) {
+                chain.doFilter(httpExchange);
+                return;
+            }
+            final com.sun.net.httpserver.Authenticator.Result authResult = this.authenticator.authenticate(httpExchange);
+            if(authResult instanceof com.sun.net.httpserver.Authenticator.Success) {
+                final com.sun.net.httpserver.Authenticator.Success success = (com.sun.net.httpserver.Authenticator.Success)authResult;
+                // auth succeeded - move to next filter
+                chain.doFilter(httpExchange);
+            } else if(authResult instanceof com.sun.net.httpserver.Authenticator.Retry) {
+                final com.sun.net.httpserver.Authenticator.Retry retry = (com.sun.net.httpserver.Authenticator.Retry)authResult;
+                this.drainInput(httpExchange);
+                // send auth retry (401)
+                httpExchange.sendResponseHeaders(retry.getResponseCode(), -1L);
+            } else if(authResult instanceof com.sun.net.httpserver.Authenticator.Failure) {
+                final com.sun.net.httpserver.Authenticator.Failure var7 = (com.sun.net.httpserver.Authenticator.Failure)authResult;
+                this.drainInput(httpExchange);
+                // send auth failure (401)
+                httpExchange.sendResponseHeaders(var7.getResponseCode(), -1L);
+            }
+        }
+
+        private void drainInput(final HttpExchange httpExchange) throws IOException {
+            try (final InputStream is = httpExchange.getRequestBody()) {
+                final byte[] content = new byte[1024];
+                while (is.read(content) != -1) {
+                    // ignore the content
+                }
+            }
+        }
+
+        @Override
+        public String description() {
+            return "AuthFilter";
+        }
+    }
 }
