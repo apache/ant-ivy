@@ -114,7 +114,7 @@ public final class Main {
                             .description("resolve given configurations").create())
                 .addOption(
                     new OptionBuilder("types").arg("types").countArgs(false)
-                            .description("comma separated list of accepted artifact types")
+                            .description("accepted artifact types")
                             .create())
                 .addOption(
                     new OptionBuilder("mode").arg("resolvemode")

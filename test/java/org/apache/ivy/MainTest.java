@@ -17,19 +17,23 @@
  */
 package org.apache.ivy;
 
-import java.io.File;
-
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.ParseException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class MainTest {
 
@@ -125,6 +129,28 @@ public class MainTest {
         String[] leftOver = line.getLeftOverArgs();
         assertNotNull(leftOver);
         assertEquals(0, leftOver.length);
+    }
+
+    /**
+     * Tests that the {@code types} argument to the command line is parsed correctly when it's passed
+     * more than one value for the argument
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1355">IVY-1355</a>
+     */
+    @Test
+    public void testTypes() throws Exception {
+        final String[] params = new String[]{"-settings", "test/repositories/ivysettings.xml", "-retrieve",
+                "build/test/main/retrieve/[module]/[conf]/[artifact]-[revision].[ext]",
+                "-types", "jar", "source"};
+        final CommandLine parsedCommand = Main.getParser().parse(params);
+        final String[] parsedTypes = parsedCommand.getOptionValues("types");
+        assertNotNull("Values for types argument is missing", parsedTypes);
+        assertEquals("Unexpected number of values parsed for types argument", 2, parsedTypes.length);
+        final Set<String> uniqueParsedTypes = new HashSet<>();
+        uniqueParsedTypes.addAll(Arrays.asList(parsedTypes));
+        assertTrue("jar type is missing from the parsed types argument", uniqueParsedTypes.contains("jar"));
+        assertTrue("jar type is missing from the parsed types argument", uniqueParsedTypes.contains("source"));
     }
 
     private void run(String[] args) throws Exception {
