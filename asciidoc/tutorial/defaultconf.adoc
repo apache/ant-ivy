@@ -17,6 +17,8 @@
    under the License.
 ////
 
+= Adjusting default Ivy configurations
+
 Ivy comes bundled with some default settings which makes it pretty simple to use in a typical environment. This tutorial, which is close to a reference document, explains what those default settings are and how they can be adjusted to your needs.
 
 To fully understand the concept of settings and what you can do with them, we suggest reading other tutorials related to settings (like link:../tutorial/multiple.html[Multiple Resolvers] and link:../tutorial/dual.html[Dual Resolver]) or the link:../settings.html[Settings Files] reference documentation.
@@ -27,14 +29,14 @@ To fully understand the concept of settings and what you can do with them, we su
 The default settings include 3 types of repositories:
 
 
-* local +
- a repository which is private to the user.
+    * local +
+     A repository which is private to the user.
 
-* shared +
- a repository which is shared between all the members of a team
+    * shared +
+     A repository which is shared between all the members of a team
 
-* public +
- a public repository on which most modules, and especially third party modules, can be found
+    * public +
+     A public repository on which most modules, and especially third party modules, can be found
 
 
 Note that if you work alone, the distinction between a local and shared repository is not very important, but there are some things you should know to distinguish them.
@@ -45,9 +47,9 @@ Now let's describe each of these repository concepts in more detail. We will des
 
 The local repository is particularly useful when you want to do something without being disturbed by anything else happening in the environment. This means that whenever Ivy is able to locate a module in this repository it will be used, no matter what is available in others.
 
-For instance, if you have a module declaring a dependency on the module __foo__ with a revision of __latest.integration__, then if a revision of __foo__ is found in the local repository, it will be used, _even if a more recent revision is available in other repositories_.
+For instance, if you have a module declaring a dependency on the module `foo` with a revision of `latest.integration`, then if a revision of `foo` is found in the local repository, it will be used, _even if a more recent revision is available in other repositories_.
 
-This may be disturbing for some of you, but imagine you have to implement a new feature on a project, and in order to achieve that you need to modify two modules: you add a new method in module __foo__ and exploit this new method in module __bar__. Then if you publish the module __foo__ to your local repository, you will be sure to get it in your __bar__ module, even if someone else publishes a new revision of __foo__ in the shared repository (this revision not having the new method you are currently adding).
+This may be disturbing for some of you, but imagine you have to implement a new feature on a project, and in order to achieve that you need to modify two modules: you add a new method in module `foo` and exploit this new method in module `bar`. Then if you publish the module `foo` to your local repository, you will be sure to get it in your `bar` module, even if someone else publishes a new revision of `foo` in the shared repository (this revision not having the new method you are currently adding).
 
 But be careful, when you have finished your development and publish it on the shared repository, you will have to clean your local repository to benefit from new versions published in the shared repository.
 
@@ -55,7 +57,7 @@ Note also that modules found in the local repository must be complete, i.e. they
 
 === Shared
 
-As its name suggest, the shared repository is aimed to be shared among a whole development team. It is a place where you can publish your team's private modules, and it's also a place where you can put modules not available in the public repository (sun jars, for instance). You can also put modules here that are simply inaccurate in a public repository (bad or incomplete module descriptors for instance).
+As its name suggest, the shared repository is aimed to be shared among a whole development team. It is a place where you can publish your team's private modules, and it's also a place where you can put modules not available in the public repository. You can also put modules here that are simply inaccurate in a public repository (bad or incomplete module descriptors for instance).
 
 Note that modules can be split across the shared repository and the public one: For example, you can have the module descriptor in the shared repository and the artifacts in the public one.
 
@@ -71,13 +73,13 @@ First, several repositories use the same root in your filesystem. Referenced as 
 
 Note that several things can be done by setting Ivy variables. To set them without defining your own `ivysettings.xml` file, you can:
 
-* set an Ant property before any call to Ivy in your build file if you use Ivy from Ant +
+    * set an Ant property before any call to Ivy in your build file if you use Ivy from Ant +
 
-* set an environment variable if you use Ivy from the command line +
+    * set an environment variable if you use Ivy from the command line +
 
 For example:
 
-[source]
+[source, xml]
 ----
 
 <target name="resolve">
@@ -91,36 +93,21 @@ Next we will show you how to override default values for the different kinds of 
 
 === Local
 
-By default, the local repository lies in `${ivy.default.ivy.user.dir}/local`. This is usually a good place, but you may want to modify it. No problem, you just have to set the following Ivy variable to the directory you want to use:
-[source]
-----
-ivy.local.default.root
-----
+By default, the local repository lies in `${ivy.default.ivy.user.dir}/local`. This is usually a good place, but you may want to modify it. No problem, you just have to set the `ivy.local.default.root` Ivy variable to the directory you want to use:
 
-. For instance:
+For example:
 
 [source]
 ----
 ivy.local.default.root=/opt/ivy/repository/local
 ----
 
-.
-
 If you already have something you would like to use as your local repository, you may also want to modify the layout of this repository. Once again, two variables are available for that:
 
-[source]
-----
-ivy.local.default.ivy.pattern
-----
+    * `ivy.local.default.ivy.pattern` which gives the pattern to find Ivy module descriptor files
+    
+    * `ivy.local.default.artifact.pattern` which gives the pattern to find the artifacts
 
-gives the pattern to find ivy files
-
-[source]
-----
-ivy.local.default.artifact.pattern
-----
-
-gives the pattern to find artifacts
 For example:
 
 [source]
@@ -135,27 +122,12 @@ ivy.local.default.artifact.pattern=[module]/[revision]/[artifact].[ext]
 
 === Shared
 
-By default, the shared repository lies in `${ivy.default.ivy.user.dir}/shared`. This is fine if you work alone, but the shared repository is supposed to be, mmm, shared! So changing this directory is often required, and it is usually modified to point to a network shared directory. You can use the
-[source]
-----
-ivy.shared.default.root
-----
+By default, the shared repository lies in `${ivy.default.ivy.user.dir}/shared`. This is fine if you work alone, but the shared repository is supposed to be, mmm, shared! So changing this directory is often required, and it is usually modified to point to a network shared directory. You can use the `ivy.shared.default.root` variable to specify a different directory. Moreover, you can also configure the layout with variables similar to the ones used for the local repository:
 
-variable to specify a different directory. Moreover, you can also configure the layout with variables similar to the ones used for the local repository:
+    * `ivy.shared.default.ivy.pattern` which gives the pattern to find Ivy module descriptor files
+    
+    * `ivy.shared.default.artifact.pattern` which gives the pattern to find the artifacts
 
-[source]
-----
-ivy.shared.default.ivy.pattern
-----
-
-gives the pattern to find ivy files
-
-[source]
-----
-ivy.shared.default.artifact.pattern
-----
-
-gives the pattern to find artifacts
 For example:
 
 [source]
@@ -170,19 +142,18 @@ ivy.shared.default.artifact.pattern=[organisation]/[module]/[revision]/[artifact
 
 === Public
 
-By default, the public repository is ibiblio in m2 compatible mode (in other words, the maven 2 public repository).
+By default, the public repository is ibiblio in m2 compatible mode (in other words, the Maven 2 public repository).
 
 This repository has the advantage of providing a lot of modules, with metadata for most of them. The quality of metadata is not always perfect, but it's a very good start to use a tool like Ivy and benefit from the power of transitive dependency management.
 
 Despite its ease of use, we suggest reading the link:../bestpractices.html[Best practices] to have a good understanding of the pros and cons of using a public unmanaged repository before depending on such a repository for your enterprise build system.
 
-_In 1.4 version Ivy was using ivyrep as the default resolver, if you want to restore this, set
-ivy.14.compatible=true as an ant property_
+NOTE: In `1.4` version, Ivy was using `ivyrep` as the default resolver, if you want to restore this, set `ivy.14.compatible=true` as an Ant property
 
 
 == Going further
 
-OK, so we have seen how to easily change the settings of the three main repositories. But what if my shared repository is on a web server? What if you don't want to use maven 2 repository as the public repository? What if ...
+OK, so we have seen how to easily change the settings of the three main repositories. But what if my shared repository is on a web server? What if you don't want to use Maven 2 repository as the public repository? What if ...
 
 No problem, Ivy is very flexible and can be configured with specific settings to match your needs and environment. But before considering writing your own settings from scratch, we suggest reading the following where you will learn how to leverage a part of the default settings and adjust the rest.
 
@@ -190,7 +161,7 @@ But before explaining how, you will need to have a quick overview of how Ivy is 
 
 By default, Ivy is configured using an `ivysettings.xml` which is packaged in the Ivy jar. Here is this settings file:
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>
@@ -206,7 +177,7 @@ By default, Ivy is configured using an `ivysettings.xml` which is packaged in th
 
 OK, so not much info here, except a lot of inclusions. These inclusions have been done on purpose so that you can easily change only one part of the ivysettings and easily benefit from the rest. For example, if you want to define your own public resolver, you will just have to configure Ivy with an ivysettings like the following:
 
-[source]
+[source, xml]
 ----
 
 <ivysettings>
@@ -221,9 +192,10 @@ OK, so not much info here, except a lot of inclusions. These inclusions have bee
 ----
 
 Note that only the `ivysettings-public.xml` inclusion has changed to include a homemade public resolver. Note also that this can be used like that thanks to the fact that `${ivy.default.settings.dir}` is a variable which is always set to the place where Ivy's default settings files are (i.e. packaged in the jar).
-To finish this example, you have to write your own ivysettings file (that you will make available at http://myserver/ivy/myivysettings-public.xml in this example) for defining your own public resolver. For instance:
 
-[source]
+To finish this example, you have to write your own ivysettings file (that you will make available at `http://myserver/ivy/myivysettings-public.xml` in this example) for defining your own public resolver. For instance, the contents of such a file could be:
+
+[source, xml]
 ----
 
 <ivysettings>
@@ -238,9 +210,9 @@ To finish this example, you have to write your own ivysettings file (that you wi
 ----
 
 Now the last thing you will need in order to properly take advantage of the default settings is the content of each included ivysettings file:
-*ivysettings-public.xml*
 
-[source]
+.*ivysettings-public.xml*
+[source, xml]
 ----
 
 <ivysettings>
@@ -251,9 +223,8 @@ Now the last thing you will need in order to properly take advantage of the defa
 
 ----
 
-*ivysettings-shared.xml*
-
-[source]
+.*ivysettings-shared.xml*
+[source, xml]
 ----
 
 <ivysettings>
@@ -270,9 +241,8 @@ Now the last thing you will need in order to properly take advantage of the defa
 
 ----
 
-*ivysettings-local.xml*
-
-[source]
+.*ivysettings-local.xml*
+[source, xml]
 ----
 
 <ivysettings>
@@ -289,9 +259,8 @@ Now the last thing you will need in order to properly take advantage of the defa
 
 ----
 
-*ivysettings-main-chain.xml*
-
-[source]
+.*ivysettings-main-chain.xml*
+[source, xml]
 ----
 
 <ivysettings>
@@ -305,9 +274,8 @@ Now the last thing you will need in order to properly take advantage of the defa
 
 ----
 
-*ivysettings-default-chain.xml*
-
-[source]
+.*ivysettings-default-chain.xml*
+[source, xml]
 ----
 
 <ivysettings>

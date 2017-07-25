@@ -17,46 +17,50 @@
    under the License.
 ////
 
+= Ivy Tutorials
+
 The best way to learn is to practice! That's what the Ivy tutorials will help you to do, to discover some of the great Ivy link:https://ant.apache.org/ivy/features.html[features].
 
 For the first tutorial you won't even have to install Ivy (assuming you have Ant and a JDK properly installed), and it shouldn't take more than 30 seconds.
 
-*First Tutorial*
+== First Tutorial
 
 
-. Make sure you have link:http://ant.apache.org/[ant] 1.9.9 or greater and a link:http://java.sun.com[jdk] properly installed +
+    * Make sure you have link:http://ant.apache.org/[Ant] 1.9.9 or greater and a link:https://www.java.com/en/download/[Java JDK] properly installed +
 
-. Copy link:samples/build.xml[this build file] in an empty directory on your local filesystem (and make sure you name it build.xml) +
+    * Copy link:samples/build.xml[this build file] in an empty directory on your local filesystem (and make sure you name it `build.xml`) +
 
-. Open a console in this directory and run "ant". That's it! +
+    * Open a console in this directory and run the command: `ant`. That's it! +
 
-If you have any trouble, check the link:http://ant.apache.org/ivy/faq.html[FAQ]. It is most likely related to your internet connection (proxy anyone?).
+If you have any trouble, check our link:http://ant.apache.org/ivy/faq.html[FAQ].
 
-OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install.html[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the `link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example]` directory).
+OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install.html[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example] directory).
+
+== List of available tutorials
 
 The following tutorials are available:
 
 
-* link:tutorial/start.html[Quick Start] +
-Guides you through your very first steps with ivy.
+    * link:tutorial/start.html[Quick Start] +
+        Guides you through your very first steps with ivy.
 
-* link:tutorial/defaultconf.html[Adjusting default settings] +
-Gives you a better understanding of the default settings and shows you how to customize them to your needs.
+    * link:tutorial/defaultconf.html[Adjusting default settings] +
+        Gives you a better understanding of the default settings and shows you how to customize them to your needs.
 
-* link:tutorial/multiple.html[Multiple Resolvers] +
-Teaches you how to configure Ivy to find its dependencies in multiple places.
+    * link:tutorial/multiple.html[Multiple Resolvers] +
+        Teaches you how to configure Ivy to find its dependencies in multiple places.
 
-* link:tutorial/dual.html[Dual Resolver] +
-Helps you configure Ivy to find ivy files in one place and artifacts in another.
+    * link:tutorial/dual.html[Dual Resolver] +
+        Helps you configure Ivy to find ivy files in one place and artifacts in another.
 
-* link:tutorial/dependence.html[Project dependencies] +
-A starting point for using Ivy in a multi-project environment.
+    * link:tutorial/dependence.html[Project dependencies] +
+        A starting point for using Ivy in a multi-project environment.
 
-* link:tutorial/multiproject.html[Using Ivy in multiple projects environment] +
-A more complex example demonstrating the use of Ant+Ivy in a multi-project environment.
+    * link:tutorial/multiproject.html[Using Ivy in multiple projects environment] +
+        A more complex example demonstrating the use of Ant+Ivy in a multi-project environment.
 
-* link:tutorial/conf.html[Using Ivy Module Configurations] +
- Shows you how to use configurations in an ivy file to define sets of artifacts.
+    * link:tutorial/conf.html[Using Ivy Module Configurations] +
+        Shows you how to use configurations in an ivy file to define sets of artifacts.
 
-* link:tutorial/build-repository.html[Building a repository] +
-Shows you how to build your own enterprise repository.
+    * link:tutorial/build-repository.html[Building a repository] +
+        Shows you how to build your own enterprise repository.
