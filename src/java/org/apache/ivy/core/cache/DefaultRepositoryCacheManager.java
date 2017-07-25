@@ -889,7 +889,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             if (resolvedTime == null) {
                 Message.verbose(getName()
                         + ": inconsistent or old cache: no cached resolved time for " + mrid);
-                saveResolvedRevision(mrid, resolvedRevision);
+                saveResolvedRevision(expectedResolver, mrid, resolvedRevision);
                 return resolvedRevision;
             }
             if (options.isCheckTTL()) {
@@ -907,6 +907,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
     }
 
+    @Deprecated
     public void saveResolvedRevision(ModuleRevisionId mrid, String revision) {
         saveResolvedRevision(null, mrid, revision);
     }

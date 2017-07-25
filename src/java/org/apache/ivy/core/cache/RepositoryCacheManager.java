@@ -176,6 +176,7 @@ public interface RepositoryCacheManager {
      * @deprecated See {@link #saveResolvedRevision(String, ModuleRevisionId, String)} which
      * prevents cache + * thrashing when multiple resolvers store the same dynamicMrid
      */
+    @Deprecated
     void saveResolvedRevision(ModuleRevisionId dynamicMrid, String revision);
 
     /**
