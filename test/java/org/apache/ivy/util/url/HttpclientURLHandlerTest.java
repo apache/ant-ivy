@@ -17,17 +17,24 @@
  */
 package org.apache.ivy.util.url;
 
-import java.io.File;
-import java.net.URL;
-
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.settings.NamedTimeoutConstraint;
 import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -91,7 +98,7 @@ public class HttpclientURLHandlerTest {
                 "http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on&zlib=on"), new File(
                 testDir, "deflate-zlib.txt"));
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on"),
-            new File(testDir, "deflate.txt"));
+                new File(testDir, "deflate.txt"));
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps"), new File(testDir,
                 "a5-gzip.ps"));
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps?deflate=on"), new File(
@@ -99,7 +106,63 @@ public class HttpclientURLHandlerTest {
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf"), new File(testDir,
                 "nh80-gzip.pdf"));
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf?deflate=on"),
-            new File(testDir, "nh80-deflate.pdf"));
+                new File(testDir, "nh80-deflate.pdf"));
+    }
+
+    /**
+     * Tests that the {@link HttpClientHandler}, backed by {@link CredentialsStore Ivy credentials store}
+     * works as expected when it interacts with a HTTP server which requires authentication for accessing resources.
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1336">IVY-1336</a>
+     */
+    @Test
+    public void testCredentials() throws Exception {
+        final CredentialsStore credentialsStore = CredentialsStore.INSTANCE;
+        final String realm = "test-http-client-handler-realm";
+        final String host = "localhost";
+        final Random random = new Random();
+        final String userName = "test-http-user-" + random.nextInt();
+        final String password = "pass-" + random.nextInt();
+        credentialsStore.addCredentials(realm, host, userName, password);
+        final InetSocketAddress serverBindAddr = new InetSocketAddress("localhost", 12345);
+        final String contextRoot = "/testHttpClientHandler";
+        final Path repoRoot = new File("test/repositories").toPath();
+        assertTrue(repoRoot + " is not a directory", Files.isDirectory(repoRoot));
+        // create a server backed by BASIC auth with the set of "allowed" credentials
+        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr, contextRoot,
+                repoRoot, realm, Collections.singletonMap(userName, password))) {
+
+            final File target = new File(testDir, "downloaded.xml");
+            assertFalse("File " + target + " already exists", target.exists());
+            final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/"
+                    + contextRoot + "/ivysettings.xml");
+            // download it
+            handler.download(src, target, null, defaultTimeoutConstraint);
+            assertTrue("File " + target + " was not downloaded from " + src, target.isFile());
+        }
+        // now create a server backed by BASIC auth with a set of credentials that do *not* match with what the
+        // Ivy credentials store will return for a given realm+host combination. i.e. Ivy credentials store
+        // will return back invalid credentials and the server will reject them
+        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr, contextRoot,
+                repoRoot, realm, Collections.singletonMap("other-" + userName, "other-" + password))) {
+
+            final File target = new File(testDir, "should-not-have-been-downloaded.xml");
+            assertFalse("File " + target + " already exists", target.exists());
+            final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/"
+                    + contextRoot + "/ivysettings.xml");
+            // download it (expected to fail)
+            try {
+                handler.download(src, target, null, defaultTimeoutConstraint);
+                Assert.fail("Download from " + src + " was expected to fail due to invalid credentials");
+            } catch (IOException ioe) {
+                // we catch it and check for presence of 401 in the exception message.
+                // It's not exactly an contract that the IOException will have the 401 message but for now
+                // that's how it's implemented and it's fine to check for the presence of that message at the
+                // moment
+                assertTrue("Expected to find 401 error message in exception", ioe.getMessage().contains("401"));
+            }
+        }
     }
 
     private void assertDownloadOK(final URL url, final File file) throws Exception {

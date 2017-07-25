@@ -17,6 +17,8 @@
  */
 package org.apache.ivy;
 
+import com.sun.net.httpserver.BasicAuthenticator;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
@@ -38,6 +40,7 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import sun.net.httpserver.AuthFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -403,4 +407,58 @@ public class TestHelper {
             }
         };
     }
+
+    /**
+     * Creates a HTTP server, backed by a local file system, which can be used as a repository to serve Ivy module descriptors
+     * and artifacts. The context within the server will be backed by {@code BASIC} authentication mechanism with {@code realm}
+     * as the realm and {@code validCredentials} as the credentials that the server will recognize. The server will allow
+     * access to resources, only if the credentials that are provided by the request, belong to these credentials.
+     * <p>
+     * NOTE: This is supposed to be used only in test cases and only a limited functionality is added in the handler(s) backing the
+     * server
+     *
+     * @param serverAddress           The address to which the server will be bound
+     * @param webAppContext           The context root of the application which will be handling the requests to the server
+     * @param localFilesystemRepoRoot The path to the root directory containing the module descriptors and artifacts
+     * @param realm                   The realm to use for the {@code BASIC} auth mechanism
+     * @param validCredentials        A {@link Map} of valid credentials, the key being the user name and the value being the password,
+     *                                that the server will use during the authentication process of the incoming requests
+     * @return
+     * @throws IOException
+     */
+    public static AutoCloseable createBasicAuthHttpServerBackedRepo(final InetSocketAddress serverAddress, final String webAppContext,
+                                                                    final Path localFilesystemRepoRoot, final String realm,
+                                                                    final Map<String, String> validCredentials) throws IOException {
+        final LocalFileRepoOverHttp handler = new LocalFileRepoOverHttp(webAppContext, localFilesystemRepoRoot);
+        final HttpServer server = HttpServer.create(serverAddress, -1);
+        // setup the handler
+        final HttpContext context = server.createContext(webAppContext, handler);
+        // setup basic auth on this context
+        final com.sun.net.httpserver.Authenticator authenticator = new BasicAuthenticator(realm) {
+            @Override
+            public boolean checkCredentials(final String user, final String pass) {
+                if (validCredentials == null) {
+                    return false;
+                }
+                if (!validCredentials.containsKey(user)) {
+                    return false;
+                }
+                final String expectedPass = validCredentials.get(user);
+                return expectedPass != null && expectedPass.equals(pass);
+            }
+        };
+        context.setAuthenticator(authenticator);
+        // setup a auth filter backed by the authenticator
+        context.getFilters().add(new AuthFilter(authenticator));
+        // start the server
+        server.start();
+        return new AutoCloseable() {
+            @Override
+            public void close() throws Exception {
+                final int delaySeconds = 0;
+                server.stop(delaySeconds);
+            }
+        };
+    }
+
 }

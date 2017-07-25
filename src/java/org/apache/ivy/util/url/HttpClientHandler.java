@@ -278,7 +278,8 @@ class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
             // log and move on
             Message.debug("Could not close the HTTP response for url=" + sourceURL, e);
         }
-        throw new IOException("Response to request '" + httpMethod + " " + sourceURL + "' did not indicate a success (see debug log for details)");
+        throw new IOException("Failed response to request '" + httpMethod + " " + sourceURL + "' " + response.getStatusLine().getStatusCode()
+                + " - '" + response.getStatusLine().getReasonPhrase());
     }
 
     private Header getContentEncoding(final HttpResponse response) {
