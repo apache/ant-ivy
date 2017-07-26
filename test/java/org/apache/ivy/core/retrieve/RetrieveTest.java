@@ -413,8 +413,8 @@ public class RetrieveTest {
      * - We then resolve another module, let's call it "irrelevant-B" which has a dependency on "org:foo-bar:2.3.4"
      * <p>
      * - Next, do a new retrieve RT2, on this newly resolved module with
-     * {@link RetrieveOptions#setMakeSymlinks(boolean) symlinks false} and {@link RetrieveOptions#setOverwriteMode(String) overwrite true}
-     * and with the same pattern as before), that translates to a path "a/b/c/foo-bar.jar".
+     * {@link RetrieveOptions#setMakeSymlinks(boolean) symlinks false} and {@link RetrieveOptions#getOverwriteMode()
+     * overwrite semantics enabled} and with the same pattern as before), that translates to a path "a/b/c/foo-bar.jar".
      * <p>
      * When RT2 retrieve is done, we expect the path "a/b/c/foo-bar.jar" will *not* be a symlink and instead be an actual file that represents
      * the org:foo-bar:2.3.4 artifact jar.
@@ -449,7 +449,8 @@ public class RetrieveTest {
         // now do a retrieve of the resolved module
         final String retrievePattern = "build/test/retrieve/symlink-test/[module]/[artifact].[ext]";
         ivy.retrieve(resolve1Report.getModuleDescriptor().getModuleRevisionId(),
-                getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(retrievePattern));
+                getRetrieveOptions().setMakeSymlinks(true).setOverwriteMode(RetrieveOptions.OVERWRITEMODE_ALWAYS)
+                        .setDestArtifactPattern(retrievePattern));
         // we expect org:foo-bar:1.2.3 to have been retrieved
         final Path retrievedArtifactSymlinkPath = Paths.get(IvyPatternHelper.substitute(retrievePattern, "org", "foo-bar",
                 "1.2.3", "foo-bar", "jar", "jar", "default"));
@@ -485,13 +486,14 @@ public class RetrieveTest {
 
         // do the retrieve with symlinks disabled
         ivy.retrieve(resolve2Report.getModuleDescriptor().getModuleRevisionId(),
-                getRetrieveOptions().setMakeSymlinks(false).setDestArtifactPattern(retrievePattern));
+                getRetrieveOptions().setMakeSymlinks(false).setDestArtifactPattern(retrievePattern)
+                        .setOverwriteMode(RetrieveOptions.OVERWRITEMODE_ALWAYS));
         // we expect org:foo-bar:2.3.4 to have been retrieved
         final Path secondRetrieveArtifactPath = Paths.get(IvyPatternHelper.substitute(retrievePattern, "org", "foo-bar",
                 "2.3.4", "foo-bar", "jar", "jar", "default"));
         assertTrue("Artifact wasn't retrieved to " + secondRetrieveArtifactPath, Files.exists(secondRetrieveArtifactPath));
-//        assertFalse("Artifact retrieved at " + secondRetrieveArtifactPath + " wasn't expected to be a " +
-//                "symlink", Files.isSymbolicLink(secondRetrieveArtifactPath));
+        assertFalse("Artifact retrieved at " + secondRetrieveArtifactPath + " wasn't expected to be a " +
+                "symlink", Files.isSymbolicLink(secondRetrieveArtifactPath));
 
         // get hold of the contents of the retrieved artifact
         final byte[] secondRetrievedArtifactContents = Files.readAllBytes(secondRetrieveArtifactPath);
@@ -511,7 +513,7 @@ public class RetrieveTest {
         return new RetrieveOptions();
     }
 
-    private ResolveOptions getResolveOptions(String[] confs) {
+    private ResolveOptions getResolveOptions(final String[] confs) {
         return new ResolveOptions().setConfs(confs);
     }
 
