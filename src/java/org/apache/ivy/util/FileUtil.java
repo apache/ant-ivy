@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.util;
 
+import org.apache.ivy.core.settings.TimeoutConstraint;
+import org.apache.ivy.util.url.URLHandlerRegistry;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -29,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,9 +48,6 @@ import java.util.jar.Pack200.Unpacker;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
-
-import org.apache.ivy.core.settings.TimeoutConstraint;
-import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
  * Utility class used to deal with file related operations, like copy, full reading, symlink, ...
@@ -174,7 +175,7 @@ public final class FileUtil {
         return copy(src, dest, l, false);
     }
 
-    public static boolean prepareCopy(File src, File dest, boolean overwrite) throws IOException {
+    public static boolean prepareCopy(final File src, final File dest, final boolean overwrite) throws IOException {
         if (src.isDirectory()) {
             if (dest.exists()) {
                 if (!dest.isDirectory()) {
@@ -188,11 +189,25 @@ public final class FileUtil {
         }
         // else it is a file copy
         if (dest.exists()) {
+            // If overwrite is specified as "true" and the dest file happens to be a
+            // symlink, we delete the "link" (a.k.a unlink it). This is for cases
+            // like https://issues.apache.org/jira/browse/IVY-1498 where not unlinking
+            // the existing symlink can lead to potentially overwriting the wrong "target" file
+            // TODO: This behaviour is intentionally hardcoded here for now, since I don't
+            // see a reason (yet) to expose it as a param of this method. If any use case arises
+            // we can have this behaviour decided by the callers of this method, by passing a value for this
+            // param
+            final boolean unlinkSymlinkIfOverwrite = true;
             if (!dest.isFile()) {
                 throw new IOException("impossible to copy: destination is not a file: " + dest);
             }
             if (overwrite) {
-                if (!dest.canWrite()) {
+                if (Files.isSymbolicLink(dest.toPath()) && unlinkSymlinkIfOverwrite) {
+                    // unlink (a.k.a delete the symlink path)
+                    dest.delete();
+                } else if (!dest.canWrite()) {
+                    // if the file *isn't* "writable" (see javadoc of File.canWrite() on what that means)
+                    // we delete it.
                     dest.delete();
                 } // if dest is writable, the copy will overwrite it without requiring a delete
             } else {
