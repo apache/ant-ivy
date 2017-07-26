@@ -68,6 +68,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Infinite loop in dependencytree (jira:IVY-1540[]) (Thanks to Jaikiran Pai)
 - FIX: HTTP issue: Basic authentication is stuck in 401 loop (jira:IVY-1336[])
 - FIX: command line: -types seems to not accept comma [jira:IVY-1355[]]
+- FIX: Mixed use of symlinks leads to cache corruption [jira:IVY-1498[]] (Thanks to Stephen Haberman)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
