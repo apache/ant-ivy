@@ -33,7 +33,7 @@ Two parsers are available by default and thus do not need to be declared in this
  this is the parser used for ivy xml files. This parser is used for resources that aren't accepted by any other parser.
 
 * pom parser +
-this parser is able to parse Maven2 `pom` files
+this parser is able to parse Maven 2 `pom` files
 
 
 == Child elements
