@@ -39,7 +39,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|m2compatible|True if this resolver should be maven2 compatible, false otherwise *__since 1.3__*|No, defaults to false
+|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise *__since 1.3__*|No, defaults to false
 |=======
 
 

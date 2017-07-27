@@ -40,10 +40,10 @@ Main targets:
 
  clean-cache            --> clean the cache
  clean-repo             --> clean the destination repository
- maven2                 --> install module from maven 2 repository
- maven2-deps            --> install module from maven 2 repository with dependencies
- maven2-namespace       --> install module from maven 2 using namespaces
- maven2-namespace-deps  --> install module with dependencies from maven2 repo using namespaces
+ maven2                 --> install module from Maven 2 repository
+ maven2-deps            --> install module from Maven 2 repository with dependencies
+ maven2-namespace       --> install module from Maven 2 using namespaces
+ maven2-namespace-deps  --> install module with dependencies from Maven 2 repository using namespaces
 Default target: basic
 
 ----

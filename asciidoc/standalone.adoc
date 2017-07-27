@@ -37,7 +37,7 @@ usage: ivy
  -settings <settingsfile>     use given file for settings
  -cache <cachedir>            use given directory for cache
  -novalidate                  do not validate ivy files against xsd
- -m2compatible                use maven2 compatibility
+ -m2compatible                use Maven 2 compatibility
 
 ==== resolve options
  -ivy <ivyfile>               use given file as ivy file

@@ -207,7 +207,7 @@ The packager.xml document element can contain the following child tags.
 |Element|Description|Cardinality
 |property|Set an ant property|0..n
 |resource|Define a resource to download and (optionally) unpack|0..n
-|m2resource|Define a Maven2 resource to download and (optionally) unpack|0..n
+|m2resource|Define a Maven 2 resource to download and (optionally) unpack|0..n
 |build|Specify ant tasks that ultimately result in each artifact being placed into artifacts/[type]s/[artifact].[ext]|0..1
 |=======
 
@@ -244,9 +244,9 @@ The resource XML tag supports the following attributes:
 The resource XML tag may contain child elements. An url tag with an href attribute specifies an alternate URL for the resource (see TestNG example above). Any other tags will be included as children of an automatically generated fileset tag.
 
 
-== Maven2 Resources
+== Maven 2 Resources
 
-Special support is included for maven2 resources. For these resources, use the m2resource tag instead of the resource tag. Each m2resource tag specifies one or more artifacts that are downloaded from the Maven2 repository.
+Special support is included for Maven 2 resources. For these resources, use the m2resource tag instead of the resource tag. Each m2resource tag specifies one or more artifacts that are downloaded from the Maven 2 repository.
 
 
 == M2Resource XML Elements
@@ -285,7 +285,7 @@ The artifact children of m2resource tags support the following attributes:
 
 
 
-Below is an example of packaging instructions for the link:http://commons.apache.org/email/[Apache Commons Email] module. Note that no build tag is required because all of the maven2 artifacts are usable directly (i.e., without unpacking anything).
+Below is an example of packaging instructions for the link:http://commons.apache.org/email/[Apache Commons Email] module. Note that no build tag is required because all of the Maven 2 artifacts are usable directly (i.e., without unpacking anything).
 
 [source]
 ----
