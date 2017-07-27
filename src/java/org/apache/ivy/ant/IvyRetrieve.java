@@ -95,17 +95,19 @@ public class IvyRetrieve extends IvyPostResolveTask {
 
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
-            Filter<Artifact> artifactFilter = getArtifactFilter();
-            RetrieveReport report = getIvyInstance().retrieve(
-                getResolvedMrid(),
-                ((RetrieveOptions) new RetrieveOptions().setLog(getLog()))
-                        .setConfs(splitConfs(getConf())).setDestArtifactPattern(pattern)
-                        .setDestIvyPattern(ivypattern).setArtifactFilter(artifactFilter)
-                        .setSync(sync).setOverwriteMode(getOverwriteMode())
-                        .setUseOrigin(isUseOrigin()).setMakeSymlinks(symlink)
-                        .setMakeSymlinksInMass(symlinkmass).setResolveId(getResolveId())
-                        .setMapper(mapper == null ? null : new MapperAdapter(mapper)));
-
+            final Filter<Artifact> artifactFilter = getArtifactFilter();
+            final RetrieveOptions retrieveOptions = (RetrieveOptions) new RetrieveOptions().setLog(getLog());
+            retrieveOptions.setConfs(splitConfs(getConf())).setDestArtifactPattern(pattern)
+                    .setDestIvyPattern(ivypattern).setArtifactFilter(artifactFilter)
+                    .setSync(sync).setOverwriteMode(getOverwriteMode())
+                    .setUseOrigin(isUseOrigin()).setMakeSymlinks(symlink)
+                    .setResolveId(getResolveId())
+                    .setMapper(mapper == null ? null : new MapperAdapter(mapper));
+            // only set this if the user has explicitly enabled this deprecated option
+            if (symlinkmass) {
+                retrieveOptions.setMakeSymlinksInMass(symlinkmass);
+            }
+            final RetrieveReport report = getIvyInstance().retrieve(getResolvedMrid(), retrieveOptions);
             int targetsCopied = report.getNbrArtifactsCopied();
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
@@ -171,7 +173,9 @@ public class IvyRetrieve extends IvyPostResolveTask {
      * Option to create symlinks in one mass action, instead of separately.
      *
      * @param symlinkmass boolean
+     * @deprecated Starting 2.5, symlinking in mass isn't supported
      */
+    @Deprecated
     public void setSymlinkmass(boolean symlinkmass) {
         this.symlinkmass = symlinkmass;
     }

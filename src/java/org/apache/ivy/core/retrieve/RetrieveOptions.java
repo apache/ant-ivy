@@ -19,6 +19,7 @@ package org.apache.ivy.core.retrieve;
 
 import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -78,10 +79,7 @@ public class RetrieveOptions extends LogOptions {
      */
     private boolean makeSymlinks = false;
 
-    /**
-     * True if symbolic links should be created all at once, instead of one at a time. Works only on
-     * OS supporting with both "sh" (a shell) and "ln" (the link command).
-     */
+    @Deprecated
     private boolean makeSymlinksInMass = false;
 
     /**
@@ -155,11 +153,18 @@ public class RetrieveOptions extends LogOptions {
     }
 
     public boolean isMakeSymlinks() {
-        return makeSymlinks;
+        // we also do a check on makeSymlinkInMass just to allow backward compatibility for a version
+        // or so, to allow users time to move away from symlinkinmass option
+        return makeSymlinks || makeSymlinksInMass;
     }
 
+    @Deprecated
+    /**
+     * @deprecated Starting 2.5, creating symlinks in mass is no longer supported and this
+     * method will always return false
+     */
     public boolean isMakeSymlinksInMass() {
-        return makeSymlinksInMass;
+        return false;
     }
 
     public RetrieveOptions setMakeSymlinks(boolean makeSymlinks) {
@@ -167,8 +172,14 @@ public class RetrieveOptions extends LogOptions {
         return this;
     }
 
+    @Deprecated
+    /**
+     * @deprecated Starting 2.5, creating symlinks in mass is no longer supported and this
+     * method plays no role in creation of symlinks. Use {@link #setMakeSymlinks(boolean)} instead
+     */
     public RetrieveOptions setMakeSymlinksInMass(boolean makeSymlinksInMass) {
         this.makeSymlinksInMass = makeSymlinksInMass;
+        Message.warn("symlinkmass option has been deprecated and will no longer be supported");
         return this;
     }
 

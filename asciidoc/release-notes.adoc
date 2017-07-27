@@ -73,6 +73,8 @@ For details about the following changes, check our JIRA install at link:https://
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
 - IMPROVEMENT: Update bouncycastle to 1.52 (jira:IVY-1521[]) (Thanks to Michal Srb)
+- IMPROVEMENT: `symlinkmass` option of retrieve task has been deprecated in this release and will no longer be supported since, starting this version of Ivy, Ivy uses Java standard API(s) for symlink management and as such doesn't spawn a process to execute symlink creation shell commands, like it used to do eariler. The `symlinkmass` option was previously there to launch just one single process instead of multiple processes for symlink creation. Now with the usage of the Java standard API(s), this option no longer is relevant.
+
 
 - NEW: Lets ssh-based resolvers use an ~/.ssh/config file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
 - NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (jira:IVY-1529[])

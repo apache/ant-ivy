@@ -29,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -38,14 +37,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.jar.Pack200.Unpacker;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
@@ -64,111 +60,25 @@ public final class FileUtil {
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
-    private static final Pattern ALLOWED_PATH_PATTERN = Pattern.compile("[\\w-./\\\\:~ %\\(\\)]+");
-
-    public static void symlinkInMass(Map<File, File> destToSrcMap, boolean overwrite)
+    /**
+     * Creates a symbolic link at {@code link} whose target will be the {@code target}. Depending on the underlying
+     * filesystem, this method may not always be able to create a symbolic link, in which case this method returns
+     * {@code false}.
+     *
+     * @param target    The {@link File} which will be the target of the symlink being created
+     * @param link      The path to the symlink that needs to be created
+     * @param overwrite {@code true} if any existing file at {@code link} has to be overwritten. False otherwise
+     * @return Returns true if the symlink was successfully created. Returns false if the symlink creation couldn't
+     * be done
+     * @throws IOException
+     */
+    public static boolean symlink(final File target, final File link, final boolean overwrite)
             throws IOException {
-        // This pattern could be more forgiving if somebody wanted it to be... but this should
-        // satisfy 99+% of all needs, without letting unsafe operations be done.
-        // If a path is not allowed, then skip this mass option.
-        // NOTE: A space inside the path is allowed (I can't control other programmers who like them
-        // in their working directory names)... but trailing spaces on file names will be checked
-        // otherwise and refused.
-        try {
-            StringBuilder sb = new StringBuilder();
-
-            for (Entry<File, File> entry : destToSrcMap.entrySet()) {
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-                File destFile = entry.getKey();
-                File srcFile = entry.getValue();
-                if (!ALLOWED_PATH_PATTERN.matcher(srcFile.getAbsolutePath()).matches()) {
-                    throw new IOException("Unsafe file to 'mass' symlink: '"
-                            + srcFile.getAbsolutePath() + "'");
-                }
-                if (!ALLOWED_PATH_PATTERN.matcher(destFile.getAbsolutePath()).matches()) {
-                    throw new IOException("Unsafe file to 'mass' symlink to: '"
-                            + destFile.getAbsolutePath() + "'");
-                }
-
-                // Add to our buffer of commands
-                sb.append(String.format("ln -s -f \"%s\"  \"%s\";",
-                        srcFile.getAbsolutePath(), destFile.getAbsolutePath()));
-            }
-
-            String commands = sb.toString();
-            // Run the buffer of commands we have built.
-            Runtime runtime = Runtime.getRuntime();
-            Message.verbose("executing \"sh\" of:\n\t" + commands.replaceAll("\n", "\n\t"));
-            Process process = runtime.exec("sh");
-            OutputStream os = process.getOutputStream();
-            os.write(commands.getBytes("UTF-8"));
-            os.flush();
-            os.close();
-
-            if (process.waitFor() != 0) {
-                InputStream errorStream = process.getErrorStream();
-                InputStreamReader isr = new InputStreamReader(errorStream);
-                BufferedReader br = new BufferedReader(isr);
-
-                StringBuilder error = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    error.append(line);
-                    error.append('\n');
-                }
-
-                throw new IOException("error running ln commands with 'sh':\n" + error);
-            }
-        } catch (InterruptedException x) {
-            Thread.currentThread().interrupt();
+        if (!prepareCopy(target, link, overwrite)) {
+            return false;
         }
-    }
-
-    public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite)
-            throws IOException {
-        if (!prepareCopy(src, dest, overwrite)) {
-            return;
-        }
-        try {
-            Runtime runtime = Runtime.getRuntime();
-            Message.verbose("executing 'ln -s -f " + src.getAbsolutePath() + " " + dest.getPath()
-                    + "'");
-            Process process = runtime.exec(new String[] {"ln", "-s", "-f", src.getAbsolutePath(),
-                    dest.getPath()});
-
-            if (process.waitFor() != 0) {
-                InputStream errorStream = process.getErrorStream();
-                InputStreamReader isr = new InputStreamReader(errorStream);
-                BufferedReader br = new BufferedReader(isr);
-
-                StringBuilder error = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    error.append(line);
-                    error.append('\n');
-                }
-
-                throw new IOException("error symlinking " + src + " to " + dest + ":\n" + error);
-            }
-
-            // check if the creation of the symbolic link was successful
-            if (!dest.exists()) {
-                throw new IOException("error symlinking: " + dest + " doesn't exists");
-            }
-
-            // check if the result is a true symbolic link
-            if (dest.getAbsolutePath().equals(dest.getCanonicalPath())) {
-                dest.delete(); // just make sure we do delete the invalid symlink!
-                throw new IOException("error symlinking: " + dest + " isn't a symlink");
-            }
-        } catch (IOException e) {
-            Message.verbose("symlink failed; falling back to copy", e);
-            copy(src, dest, l, overwrite);
-        } catch (InterruptedException x) {
-            Thread.currentThread().interrupt();
-        }
+        Files.createSymbolicLink(link.toPath(), target.getAbsoluteFile().toPath());
+        return true;
     }
 
     public static boolean copy(File src, File dest, CopyProgressListener l) throws IOException {

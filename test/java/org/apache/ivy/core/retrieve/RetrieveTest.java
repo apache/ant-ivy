@@ -38,12 +38,14 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -61,6 +63,36 @@ import static org.junit.Assert.fail;
 public class RetrieveTest {
 
     private Ivy ivy;
+
+    private static boolean systemHasSymlinkAbility;
+
+    @BeforeClass
+    public static void beforeClass() {
+        final List<File> tmpFilesCreated = new ArrayList<>();
+        // create a dummy symlink and see if it works fine
+        try {
+            final File tmpDir = Files.createTempDirectory(null).toFile();
+            tmpFilesCreated.add(tmpDir);
+
+            final Path tmpFile = Files.createTempFile(tmpDir.toPath(), null, null);
+            tmpFilesCreated.add(tmpFile.toFile());
+
+            final File symlinkedFile = new File(tmpDir, "symlinked-test-file");
+            tmpFilesCreated.add(symlinkedFile);
+
+            // attempt to create the symlink
+            Files.createSymbolicLink(symlinkedFile.toPath(), tmpFile);
+            systemHasSymlinkAbility = true;
+        } catch (IOException ioe) {
+            Message.info("Current system is considered as not having symlink ability due to failure to create a test symlink", ioe);
+            systemHasSymlinkAbility = false;
+        }
+        // delete on exit, the tmp files we created
+        for (final File file : tmpFilesCreated) {
+            file.deleteOnExit();
+        }
+    }
+
 
     @Before
     public void setUp() throws Exception {
@@ -216,22 +248,24 @@ public class RetrieveTest {
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
         ivy.retrieve(md.getModuleRevisionId(),
             getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(pattern));
-        assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
+        assertLinkOrExists(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
         ivy.retrieve(md.getModuleRevisionId(),
             getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(pattern));
-        assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
+        assertLinkOrExists(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
 
+    /**
+     * This test is here to just test the deprecated {@code symlinkmass} option for retrieve task.
+     * A version or two down the line, after 2.5 release, we can remove this test and the option altogether
+     *
+     * @throws Exception
+     */
     @Test
     public void testRetrieveWithSymlinksMass() throws Exception {
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            return;
-        }
-
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURI().toURL(),
@@ -243,18 +277,31 @@ public class RetrieveTest {
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
         ivy.retrieve(md.getModuleRevisionId(),
             getRetrieveOptions().setMakeSymlinksInMass(true).setDestArtifactPattern(pattern));
-        assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
+        assertLinkOrExists(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
         ivy.retrieve(md.getModuleRevisionId(),
             getRetrieveOptions().setMakeSymlinksInMass(true).setDestArtifactPattern(pattern));
-        assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
+        assertLinkOrExists(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
     }
 
-    private void assertLink(final String filename) throws IOException {
-        assertTrue(filename + " was expected to be a symlink", Files.isSymbolicLink(Paths.get(filename)));
+    /**
+     * If the system {@link #systemHasSymlinkAbility has symlink ability} then asserts that the passed {@code filePath}
+     * is a {@link Files#isSymbolicLink(Path) symbolic link}. Else asserts that the {@code filePath}
+     * {@link Files#exists(Path, LinkOption...) exists}
+     *
+     * @param filePath
+     * @throws IOException
+     */
+    private void assertLinkOrExists(final String filePath) throws IOException {
+        if (systemHasSymlinkAbility) {
+            assertTrue(filePath + " was expected to be a symlink", Files.isSymbolicLink(Paths.get(filePath)));
+            return;
+        }
+        Message.info("System doesn't have symlink ability so checking if path " + filePath + " exists instead of checking for it to be a symlink");
+        assertTrue("Missing " + filePath, Files.exists(Paths.get(filePath)));
     }
 
     @Test
@@ -452,14 +499,12 @@ public class RetrieveTest {
                 getRetrieveOptions().setMakeSymlinks(true).setOverwriteMode(RetrieveOptions.OVERWRITEMODE_ALWAYS)
                         .setDestArtifactPattern(retrievePattern));
         // we expect org:foo-bar:1.2.3 to have been retrieved
-        final Path retrievedArtifactSymlinkPath = Paths.get(IvyPatternHelper.substitute(retrievePattern, "org", "foo-bar",
-                "1.2.3", "foo-bar", "jar", "jar", "default"));
-        assertTrue("Artifact wasn't retrieved to " + retrievedArtifactSymlinkPath, Files.exists(retrievedArtifactSymlinkPath));
-        assertTrue("Artifact retrieved at " + retrievedArtifactSymlinkPath + " was expected to be a " +
-                "symlink", Files.isSymbolicLink(retrievedArtifactSymlinkPath));
+        final String retrievedArtifactSymlinkPath = IvyPatternHelper.substitute(retrievePattern, "org", "foo-bar",
+                "1.2.3", "foo-bar", "jar", "jar", "default");
+        assertLinkOrExists(retrievedArtifactSymlinkPath);
 
         // get hold of the contents of the retrieved artifact
-        final byte[] retrievedArtifactContent = Files.readAllBytes(retrievedArtifactSymlinkPath);
+        final byte[] retrievedArtifactContent = Files.readAllBytes(Paths.get(retrievedArtifactSymlinkPath));
         // compare it to the contents of org:foo-bar:1.2.3 artifact in repo cache. Should be the same
         assertTrue("Unexpected content in the retrieved artifact at " + retrievedArtifactSymlinkPath,
                 Arrays.equals(fooBar123ArtifactContentsInCache, retrievedArtifactContent));
@@ -489,9 +534,10 @@ public class RetrieveTest {
                 getRetrieveOptions().setMakeSymlinks(false).setDestArtifactPattern(retrievePattern)
                         .setOverwriteMode(RetrieveOptions.OVERWRITEMODE_ALWAYS));
         // we expect org:foo-bar:2.3.4 to have been retrieved
-        final Path secondRetrieveArtifactPath = Paths.get(IvyPatternHelper.substitute(retrievePattern, "org", "foo-bar",
-                "2.3.4", "foo-bar", "jar", "jar", "default"));
+        final Path secondRetrieveArtifactPath = new File(IvyPatternHelper.substitute(retrievePattern, "org", "foo-bar",
+                "2.3.4", "foo-bar", "jar", "jar", "default")).toPath();
         assertTrue("Artifact wasn't retrieved to " + secondRetrieveArtifactPath, Files.exists(secondRetrieveArtifactPath));
+        // expected to be a regular file and not a symlink
         assertFalse("Artifact retrieved at " + secondRetrieveArtifactPath + " wasn't expected to be a " +
                 "symlink", Files.isSymbolicLink(secondRetrieveArtifactPath));
 

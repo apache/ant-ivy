@@ -120,7 +120,6 @@ public class RetrieveEngine {
         }
 
         try {
-            Map<File, File> destToSrcMap = null;
             Map<ArtifactDownloadReport, Set<String>> artifactsToCopy = determineArtifactsToCopy(
                 mrid, destFilePattern, options);
             File fileRetrieveRoot = settings.resolveFile(IvyPatternHelper
@@ -132,12 +131,6 @@ public class RetrieveEngine {
             // Set(File) set of all paths which should be present at then end of retrieve (useful
             // for sync)
             Collection<File> targetIvysStructure = new HashSet<>(); // same for ivy files
-
-            if (options.isMakeSymlinksInMass()) {
-                // The HashMap is of "destToSrc" because src could go two places, but dest can only
-                // come from one
-                destToSrcMap = new HashMap<>();
-            }
 
             // do retrieve
             long totalCopiedSize = 0;
@@ -160,29 +153,27 @@ public class RetrieveEngine {
                     if (!settings.isCheckUpToDate() || !upToDate(archive, destFile, options)) {
                         Message.verbose("\t\tto " + destFile);
                         if (this.eventManager != null) {
-                            // There is no unitary event for the mass sym linking.
-                            // skip the event declaration.
-                            if (!options.isMakeSymlinksInMass()) {
-                                this.eventManager.fireIvyEvent(new StartRetrieveArtifactEvent(
-                                        artifact, destFile));
-                            }
+                            this.eventManager.fireIvyEvent(new StartRetrieveArtifactEvent(artifact, destFile));
                         }
-                        if (options.isMakeSymlinksInMass()) {
-                            if (FileUtil.prepareCopy(archive, destFile, true)) {
-                                destToSrcMap.put(destFile, archive);
+                        if (options.isMakeSymlinks()) {
+                            boolean symlinkCreated;
+                            try {
+                                symlinkCreated = FileUtil.symlink(archive, destFile,  true);
+                            } catch (IOException ioe) {
+                                symlinkCreated = false;
+                                // warn about the inability to create a symlink
+                                Message.warn("symlink creation failed at path " + destFile, ioe);
                             }
-                        } else if (options.isMakeSymlinks()) {
-                            FileUtil.symlink(archive, destFile, null, true);
+                            if (!symlinkCreated) {
+                                // since symlink creation failed, let's attempt to an actual copy instead
+                                Message.info("Attempting a copy operation (since symlink creation failed) at path " + destFile);
+                                FileUtil.copy(archive, destFile, null, true);
+                            }
                         } else {
                             FileUtil.copy(archive, destFile, null, true);
                         }
                         if (this.eventManager != null) {
-                            // There is no unitary event for the mass sym linking.
-                            // skip the event declaration.
-                            if (!options.isMakeSymlinksInMass()) {
-                                this.eventManager.fireIvyEvent(new EndRetrieveArtifactEvent(
-                                        artifact, destFile));
-                            }
+                            this.eventManager.fireIvyEvent(new EndRetrieveArtifactEvent(artifact, destFile));
                         }
                         totalCopiedSize += FileUtil.getFileLength(destFile);
                         report.addCopiedFile(destFile, artifact);
@@ -203,11 +194,6 @@ public class RetrieveEngine {
                         }
                     }
                 }
-            }
-
-            if (options.isMakeSymlinksInMass()) {
-                Message.verbose("\tMass symlinking " + destToSrcMap.size() + " files");
-                FileUtil.symlinkInMass(destToSrcMap, true);
             }
 
             if (options.isSync()) {
