@@ -110,7 +110,7 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public void download(final URL src, final File dest, final CopyProgressListener l) throws IOException {
-        this.download(src, dest, l);
+        this.download(src, dest, l, null);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public void upload(final File src, final URL dest, final CopyProgressListener l) throws IOException {
-        this.upload(src, dest, l);
+        this.upload(src, dest, l, null);
     }
 
     @Override
