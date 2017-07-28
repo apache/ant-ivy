@@ -17,6 +17,7 @@
  */
 package org.apache.ivy;
 
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.ParseException;
@@ -27,6 +28,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -151,6 +155,31 @@ public class MainTest {
         uniqueParsedTypes.addAll(Arrays.asList(parsedTypes));
         assertTrue("jar type is missing from the parsed types argument", uniqueParsedTypes.contains("jar"));
         assertTrue("jar type is missing from the parsed types argument", uniqueParsedTypes.contains("source"));
+    }
+
+    /**
+     * Tests that the {@code overwriteMode} passed for the retrieve command works as expected
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testRetrieveOverwriteMode() throws Exception {
+        final String[] args = new String[]{"-settings", "test/repositories/ivysettings.xml", "-retrieve",
+                "build/test/main/retrieve/overwrite-test/[artifact].[ext]",
+                "-overwriteMode", "different",
+                "-ivy", "test/repositories/1/org/mod1/ivys/ivy-5.0.xml"};
+        final CommandLine parsedCommand = Main.getParser().parse(args);
+        final String parsedOverwriteMode = parsedCommand.getOptionValue("overwriteMode");
+        assertEquals("Unexpected overwriteMode parsed", RetrieveOptions.OVERWRITEMODE_DIFFERENT, parsedOverwriteMode);
+        // create a dummy file which we expect the retrieve task to overwrite
+        final Path retrieveArtifactPath = Paths.get("build/test/main/retrieve/overwrite-test/foo-bar.jar");
+        Files.createDirectories(retrieveArtifactPath.getParent());
+        Files.write(retrieveArtifactPath, new byte[0]);
+        assertEquals("Unexpected content at " + retrieveArtifactPath, 0, Files.readAllBytes(retrieveArtifactPath).length);
+        // issue the retrieve (which retrieves the org:foo-bar:2.3.4 artifact)
+        run(args);
+        // expect the existing jar to be overwritten
+        assertTrue("Content at " + retrieveArtifactPath + " was not overwritten by retrieve task", Files.readAllBytes(retrieveArtifactPath).length > 0);
     }
 
     private void run(String[] args) throws Exception {

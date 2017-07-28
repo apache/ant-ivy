@@ -46,7 +46,7 @@ usage: ivy
                               use this instead of ivy file to do the rest of the
                                work with this as a dependency.
  -confs <configurations>      resolve given configurations
- -types <types>               comma separated list of accepted artifact types
+ -types <types>               accepted artifact types
  -mode <resolvemode>          the resolve mode to use
  -notransitive                do not resolve dependencies transitively
 
@@ -55,6 +55,7 @@ usage: ivy
  -ivypattern <pattern>        use given pattern to copy the ivy files
  -sync                        use sync mode for retrieve
  -symlink                     create symbolic links
+ -overwriteMode <overwriteMode> use given overwrite mode for retrieve
 
 ==== cache path options
  -cachepath <cachepathfile>   outputs a classpath consisting of all dependencies

@@ -81,7 +81,7 @@ public final class Main {
                     new OptionBuilder("novalidate").description(
                         "do not validate ivy files against xsd").create())
                 .addOption(
-                    new OptionBuilder("m2compatible").description("use maven2 compatibility")
+                    new OptionBuilder("m2compatible").description("use Maven 2 compatibility")
                             .create())
                 .addOption(
                     new OptionBuilder("conf").arg("settingsfile").deprecated()
@@ -134,7 +134,9 @@ public final class Main {
                     new OptionBuilder("sync").description("use sync mode for retrieve").create())
                 .addOption(
                     new OptionBuilder("symlink").description("create symbolic links").create())
-
+                .addOption(new OptionBuilder("overwriteMode").arg("overwriteMode")
+                        .description("use given overwrite mode for retrieve")
+                        .create())
                 .addCategory("cache path options")
                 .addOption(
                     new OptionBuilder("cachepath")
@@ -330,6 +332,7 @@ public final class Main {
                         .setUseOrigin(line.hasOption("useOrigin"))
                         .setDestArtifactPattern(retrievePattern)
                         .setDestIvyPattern(ivyPattern)
+                        .setOverwriteMode(line.getOptionValue("overwriteMode"))
                         .setArtifactFilter(
                             FilterHelper.getArtifactTypeFilter(line.getOptionValues("types")))
                         .setMakeSymlinks(line.hasOption("symlink"))
