@@ -22,13 +22,7 @@ import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -261,7 +255,7 @@ public class BasicURLHandler extends AbstractURLHandler {
 
     @Override
     public void upload(final File source, final URL dest, final CopyProgressListener l) throws IOException {
-        this.upload(source, dest, l);
+        this.upload(source, dest, l, null);
     }
 
     @Override
