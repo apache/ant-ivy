@@ -109,14 +109,14 @@ public class ApacheURLLister {
         }
 
         URLHandler urlHandler = URLHandlerRegistry.getDefault();
-        URLInfo urlInfo = urlHandler.getURLInfo(url);
+        URLInfo urlInfo = urlHandler.getURLInfo(url, null);
         if (urlInfo == URLHandler.UNAVAILABLE) {
             return urlList; // not found => return empty list
         }
         // here, urlInfo is valid
         String charset = urlInfo.getBodyCharset();
 
-        InputStream contentStream = urlHandler.openStream(url);
+        InputStream contentStream = urlHandler.openStream(url, null);
         BufferedReader r = null;
         if (charset == null) {
             r = new BufferedReader(new InputStreamReader(contentStream));

@@ -118,7 +118,7 @@ public abstract class XMLHelper {
 
     public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
-        InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
+        InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL, null);
         try {
             InputSource inSrc = new InputSource(xmlStream);
             inSrc.setSystemId(toSystemId(xmlURL));
@@ -148,7 +148,7 @@ public abstract class XMLHelper {
         InputStream schemaStream = null;
         try {
             if (schema != null) {
-                schemaStream = URLHandlerRegistry.getDefault().openStream(schema);
+                schemaStream = URLHandlerRegistry.getDefault().openStream(schema, null);
             }
             SAXParser parser = XMLHelper.newSAXParser(schema, schemaStream, loadExternalDtds);
 
