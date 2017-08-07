@@ -313,11 +313,12 @@ public class OBRResolverTest {
         genericTestResolve(jarName, conf, expectedMrids, null);
     }
 
-    @SuppressWarnings("resource")
     private void genericTestResolve(String jarName, String conf, ModuleRevisionId[] expectedMrids,
             ModuleRevisionId[] expected2Mrids) throws Exception {
-        Manifest manifest = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
-                + jarName)).getManifest();
+        JarInputStream jis = new JarInputStream(
+                new FileInputStream("test/test-repo/bundlerepo/" + jarName));
+        Manifest manifest = jis.getManifest();
+        jis.close();
         BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
         bundleInfo.addArtifact(new BundleArtifact(false, new File("test/test-repo/bundlerepo/"
                 + jarName).toURI(), null));
@@ -346,10 +347,11 @@ public class OBRResolverTest {
         assertEquals(expected, actual);
     }
 
-    @SuppressWarnings("resource")
     private void genericTestFailingResolve(String jarName, String conf) throws Exception {
-        Manifest manifest = new JarInputStream(new FileInputStream("test/test-repo/bundlerepo/"
-                + jarName)).getManifest();
+        JarInputStream jis = new JarInputStream(
+                new FileInputStream("test/test-repo/bundlerepo/" + jarName));
+        Manifest manifest = jis.getManifest();
+        jis.close();
         BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
         bundleInfo.addArtifact(new BundleArtifact(false, new File("test/test-repo/bundlerepo/"
                 + jarName).toURI(), null));
