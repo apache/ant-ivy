@@ -22,6 +22,8 @@ import java.net.URL;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
+import static org.apache.ivy.util.url.AbstractURLHandler.createTimeoutConstraints;
+
 /**
  * TODO write javadoc
  */
@@ -40,7 +42,7 @@ public class IBiblioHelper {
             long best = -1;
             for (int i = 0; i < mirrors.length; i++) {
                 long start = System.currentTimeMillis();
-                if (handler.isReachable(new URL(mirrors[i]), 500)) {
+                if (handler.isReachable(new URL(mirrors[i]), createTimeoutConstraints(500))) {
                     long took = System.currentTimeMillis() - start;
                     System.out.println("reached " + mirrors[i] + " in " + took + "ms");
                     if (best == -1 || took < best) {

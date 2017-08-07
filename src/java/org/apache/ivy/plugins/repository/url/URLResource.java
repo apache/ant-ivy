@@ -107,7 +107,7 @@ public class URLResource implements LocalizableResource {
     }
 
     public InputStream openStream() throws IOException {
-        return URLHandlerRegistry.getDefault().openStream(url);
+        return URLHandlerRegistry.getDefault().openStream(url, null);
     }
 
     public File getFile() {
