@@ -22,7 +22,13 @@ import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
