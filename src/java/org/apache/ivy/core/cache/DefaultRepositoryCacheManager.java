@@ -1423,7 +1423,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         // it's important to say the origin is not local to make sure it won't ever be used for
         // anything else than original token
         return new ArtifactOrigin(DefaultArtifact.newIvyArtifact(mrid, null), false,
-                getIvyFileInCache(mrid).getPath());
+                getIvyFileInCacheLocation(mrid));
+    }
+
+    private String getIvyFileInCacheLocation(ModuleRevisionId mrid) {
+        File ivyFileInCache = getIvyFileInCache(mrid);
+        try {
+            return ivyFileInCache.toURI().toURL().toExternalForm();
+        } catch (MalformedURLException e) {
+            return ivyFileInCache.getPath();
+        }
     }
 
     private Artifact getDefaultMetadataArtifact(ModuleRevisionId mrid) {
