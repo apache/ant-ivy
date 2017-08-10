@@ -1452,10 +1452,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     private ArtifactOrigin getDefaultMetadataArtifactOrigin(ModuleRevisionId mrid) {
+        final String location;
+        try {
+            location = this.getIvyFileInCache(mrid).toURI().toURL().toExternalForm();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Failed to determine artifact origin for " + mrid);
+        }
         // it's important to say the origin is not local to make sure it won't ever be used for
         // anything else than original token
-        return new ArtifactOrigin(DefaultArtifact.newIvyArtifact(mrid, null), false,
-                getIvyFileInCache(mrid).getPath());
+        return new ArtifactOrigin(DefaultArtifact.newIvyArtifact(mrid, null), false, location);
     }
 
     private Artifact getDefaultMetadataArtifact(ModuleRevisionId mrid) {
