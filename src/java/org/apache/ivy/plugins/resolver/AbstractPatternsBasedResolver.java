@@ -200,10 +200,9 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
         Map<String, String> tokenValues = new HashMap<>();
         for (Entry<String, Object> entry : criteria.entrySet()) {
-            String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof String) {
-                tokenValues.put(key, (String) value);
+                tokenValues.put(entry.getKey(), (String) value);
             }
         }
 

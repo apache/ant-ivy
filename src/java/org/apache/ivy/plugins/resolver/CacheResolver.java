@@ -42,6 +42,7 @@ import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
+@Deprecated
 public class CacheResolver extends FileSystemResolver {
     public CacheResolver() {
     }

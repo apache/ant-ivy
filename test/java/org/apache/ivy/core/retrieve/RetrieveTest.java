@@ -93,7 +93,6 @@ public class RetrieveTest {
         }
     }
 
-
     @Before
     public void setUp() throws Exception {
         ivy = Ivy.newInstance();
@@ -264,6 +263,7 @@ public class RetrieveTest {
      *
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testRetrieveWithSymlinksMass() throws Exception {
         // mod1.1 depends on mod1.2

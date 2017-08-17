@@ -32,6 +32,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class URLResource implements LocalizableResource {
     private final URL url;
+
     private final TimeoutConstraint timeoutConstraint;
 
     private boolean init = false;

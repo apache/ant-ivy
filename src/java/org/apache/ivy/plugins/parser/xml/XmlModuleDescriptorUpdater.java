@@ -251,7 +251,7 @@ public final class XmlModuleDescriptorUpdater {
 
         private StringBuffer currentIndent = new StringBuffer();
 
-        private ArrayList<String> indentLevels = new ArrayList<>(); // ArrayList<String>
+        private List<String> indentLevels = new ArrayList<>(); // ArrayList<String>
 
         // true if an ivy-module/info/description element has been found in the published descriptor
         private boolean hasDescription = false;

@@ -480,6 +480,7 @@ public class TestHelper {
             }
             final com.sun.net.httpserver.Authenticator.Result authResult = this.authenticator.authenticate(httpExchange);
             if(authResult instanceof com.sun.net.httpserver.Authenticator.Success) {
+                @SuppressWarnings("unused")
                 final com.sun.net.httpserver.Authenticator.Success success = (com.sun.net.httpserver.Authenticator.Success)authResult;
                 // auth succeeded - move to next filter
                 chain.doFilter(httpExchange);

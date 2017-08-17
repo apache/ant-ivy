@@ -609,11 +609,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the unique prefix key as a string.
      */
     private String getPrefixKey(Artifact artifact) {
+        // use just some visual cue;
         // use the hashcode as a uuid for the artifact (fingers crossed)
-        int hashCode = artifact.getId().hashCode();
-        // use just some visual cue
-        return "artifact:" + artifact.getName() + "#" + artifact.getType() + "#"
-                + artifact.getExt() + "#" + hashCode;
+        return String.format("artifact:%s#%s#%s#%d", artifact.getName(), artifact.getType(),
+                artifact.getExt(), artifact.getId().hashCode());
     }
 
     /**
@@ -624,8 +623,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the key to be used to reference the artifact location.
      */
     private String getLocationKey(Artifact artifact) {
-        String prefix = getPrefixKey(artifact);
-        return prefix + ".location";
+        return getPrefixKey(artifact) + ".location";
     }
 
     /**
@@ -636,8 +634,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the key to be used to reference the artifact locality.
      */
     private String getIsLocalKey(Artifact artifact) {
-        String prefix = getPrefixKey(artifact);
-        return prefix + ".is-local";
+        return getPrefixKey(artifact) + ".is-local";
     }
 
     /**
@@ -648,8 +645,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the key to be used to reference the artifact's last check date.
      */
     private String getLastCheckedKey(Artifact artifact) {
-        String prefix = getPrefixKey(artifact);
-        return prefix + ".lastchecked";
+        return getPrefixKey(artifact) + ".lastchecked";
     }
 
     /**
@@ -660,8 +656,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the key to be used to reference the existence of the artifact.
      */
     private String getExistsKey(Artifact artifact) {
-        String prefix = getPrefixKey(artifact);
-        return prefix + ".exists";
+        return getPrefixKey(artifact) + ".exists";
     }
 
     /**
@@ -672,8 +667,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the key to be used to reference the original artifact.
      */
     private String getOriginalKey(Artifact artifact) {
-        String prefix = getPrefixKey(artifact);
-        return prefix + ".original";
+        return getPrefixKey(artifact) + ".original";
     }
 
     private PropertiesFile getCachedDataFile(ModuleDescriptor md) {
@@ -894,9 +888,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             }
             if (options.isCheckTTL()) {
                 long expiration = Long.parseLong(resolvedTime) + getTTL(mrid);
-                if (expiration > 0 // negative expiration means that Long.MAX_VALUE has been
-                                   // exceeded
-                        && System.currentTimeMillis() > expiration) {
+                // negative expiration means that Long.MAX_VALUE has been exceeded
+                if (expiration > 0 && System.currentTimeMillis() > expiration) {
                     Message.verbose(getName() + ": cached resolved revision expired for " + mrid);
                     return null;
                 }
@@ -1517,10 +1510,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private boolean isCheckmodified(DependencyDescriptor dd, ModuleRevisionId requestedRevisionId,
             CacheMetadataOptions options) {
-        if (options.isCheckmodified() != null) {
-            return options.isCheckmodified();
-        }
-        return isCheckmodified();
+        return options.isCheckmodified() == null ? isCheckmodified() : options.isCheckmodified();
     }
 
     public void clean() {

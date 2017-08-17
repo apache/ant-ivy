@@ -63,7 +63,6 @@ public class ChainResolver extends AbstractResolver {
         public long getLastModified() {
             return rmr.getPublicationDate().getTime();
         }
-
     }
 
     private boolean returnFirst = false;
@@ -176,7 +175,6 @@ public class ChainResolver extends AbstractResolver {
                 return result;
             }
         }
-
         return null;
     }
 
@@ -236,7 +234,6 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
-
         getFirstResolver().publish(artifact, src, overwrite);
     }
 
@@ -345,5 +342,4 @@ public class ChainResolver extends AbstractResolver {
     public boolean isDual() {
         return dual;
     }
-
 }

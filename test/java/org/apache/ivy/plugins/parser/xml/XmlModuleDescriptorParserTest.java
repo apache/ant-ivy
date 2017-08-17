@@ -58,7 +58,6 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -1453,7 +1452,6 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("mymodule", artifacts[0].getName());
         assertEquals("jar", artifacts[0].getType());
     }
-
 
     /**
      * Tests that when the <code>location</code> attribute of the <code>extends</code> element of a module descriptor

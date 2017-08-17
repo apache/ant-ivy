@@ -24,7 +24,6 @@ import org.apache.ivy.util.StringUtils;
  */
 public class NamedTimeoutConstraint implements TimeoutConstraint {
 
-
     private String name;
 
     private int connectionTimeout = -1;
@@ -32,7 +31,6 @@ public class NamedTimeoutConstraint implements TimeoutConstraint {
     private int readTimeout = -1;
 
     public NamedTimeoutConstraint() {
-
     }
 
     public NamedTimeoutConstraint(final String name) {

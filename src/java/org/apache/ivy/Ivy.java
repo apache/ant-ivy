@@ -118,7 +118,7 @@ public class Ivy {
      *
      * @see Ivy#execute(org.apache.ivy.Ivy.IvyCallback)
      */
-    public static interface IvyCallback {
+    public interface IvyCallback {
         /**
          * Executes Ivy related job within an {@link IvyContext}
          *
@@ -128,7 +128,7 @@ public class Ivy {
          *            the {@link IvyContext} in which this callback is executed
          * @return the result of this job, <code>null</code> if there is no result
          */
-        public Object doInIvyContext(Ivy ivy, IvyContext context);
+        Object doInIvyContext(Ivy ivy, IvyContext context);
     }
 
     private static final int KILO = 1024;

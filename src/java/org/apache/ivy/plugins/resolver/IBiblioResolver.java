@@ -189,7 +189,7 @@ public class IBiblioResolver extends URLResolver {
                         // we have found a timestamp, so this is a snapshot unique version
                         String rev = mrid.getRevision();
                         rev = rev.substring(0, rev.length() - "SNAPSHOT".length());
-                        rev = rev + timestamp.toString() + "-" + buildNumer.toString();
+                        rev += timestamp.toString() + "-" + buildNumer.toString();
 
                         return rev;
                     }

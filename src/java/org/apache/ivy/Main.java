@@ -226,6 +226,7 @@ public final class Main {
         }
     }
 
+    @SuppressWarnings("deprecation")
     static void run(CommandLineParser parser, String[] args) throws Exception {
         // parse the command line arguments
         CommandLine line = parser.parse(args);

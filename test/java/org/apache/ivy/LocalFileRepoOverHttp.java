@@ -70,6 +70,7 @@ final class LocalFileRepoOverHttp implements HttpHandler {
             throw new IOException("Cannot handle " + httpExchange.getRequestMethod() + " HTTP method");
         }
         final OutputStream responseStream = httpExchange.getResponseBody();
+        @SuppressWarnings("unused")
         final int numBytes = this.serve(httpExchange, localFilePath, responseStream);
         responseStream.close();
     }

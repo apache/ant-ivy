@@ -30,7 +30,6 @@ import org.apache.ivy.util.MockMessageLogger;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import static org.junit.Assert.assertEquals;
 
 public class WarnCircularDependencyStrategyTest {
@@ -38,7 +37,6 @@ public class WarnCircularDependencyStrategyTest {
 
     private MessageLoggerEngine loggerEngine;
     private MockMessageLogger mockMessageLogger;
-
 
     @Before
     public void setUp() {

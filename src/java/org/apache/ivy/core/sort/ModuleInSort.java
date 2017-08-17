@@ -113,7 +113,7 @@ class ModuleInSort {
      */
     public boolean checkLoop(ModuleInSort futurCaller, CircularDependencyStrategy depStrategy) {
         if (caller != null) {
-            LinkedList<ModuleRevisionId> elemOfLoop = new LinkedList<>();
+            List<ModuleRevisionId> elemOfLoop = new LinkedList<>();
             elemOfLoop.add(this.module.getModuleRevisionId());
             ModuleInSort stackEl = futurCaller;
             while (stackEl != this) {

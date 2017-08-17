@@ -91,7 +91,7 @@ the organisation name
 
 `[orgPath]`::
 *__(since 2.3)__* +
-the organisation name where '.' has been replaced by '/'. This can be used to configure maven2-like repositories.
+the organisation name where '.' has been replaced by '/'. This can be used to configure Maven 2-like repositories.
 
 `[module]`::
 the module name

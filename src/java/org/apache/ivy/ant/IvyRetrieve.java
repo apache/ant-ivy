@@ -84,6 +84,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         this.setId = setId;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void doExecute() throws BuildException {
         prepareAndCheck();

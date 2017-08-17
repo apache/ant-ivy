@@ -18,7 +18,6 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ import org.apache.tools.ant.BuildException;
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
     protected List<ArtifactDownloadReport> getArtifactReports() throws BuildException,
-            ParseException, IOException {
+            ParseException {
         List<ArtifactDownloadReport> ret = new ArrayList<>();
         for (ArtifactDownloadReport artifactReport : getAllArtifactReports()) {
             if (getArtifactFilter().accept(artifactReport.getArtifact())) {

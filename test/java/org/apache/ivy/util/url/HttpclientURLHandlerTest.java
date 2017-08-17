@@ -48,6 +48,7 @@ public class HttpclientURLHandlerTest {
     private File testDir;
 
     private HttpClientHandler handler;
+
     private final TimeoutConstraint defaultTimeoutConstraint;
 
     {
@@ -79,6 +80,7 @@ public class HttpclientURLHandlerTest {
         assertFalse("URL resource was expected to be unreachable", handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), defaultTimeoutConstraint));
     }
 
+    @SuppressWarnings("resource")
     @Test
     public void testGetURLInfo() throws Exception {
         // IVY-390

@@ -252,9 +252,7 @@ public class PublishEngine {
             resolver.beginPublishTransaction(md.getModuleRevisionId(), options.isOverwrite());
             // for each declared published artifact in this descriptor, do:
             for (Entry<Artifact, File> entry : artifactsFiles.entrySet()) {
-                Artifact artifact = entry.getKey();
-                File artifactFile = entry.getValue();
-                publish(artifact, artifactFile, resolver, options.isOverwrite());
+                publish(entry.getKey(), entry.getValue(), resolver, options.isOverwrite());
             }
             resolver.commitPublishTransaction();
             successfullyPublished = true;

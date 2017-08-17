@@ -405,7 +405,8 @@ public class XmlSettingsParser extends DefaultHandler {
                         if (!optionalInclude) {
                             throw ioe;
                         }
-                        Message.verbose("Skipping inclusion of optional URL " + propFilePath + " due to IOException - " + ioe.getMessage());
+                        Message.verbose("Skipping inclusion of optional URL " + propFilePath
+                                + " due to IOException - " + ioe.getMessage());
                         return;
                     }
                     Message.verbose("including url: " + settingsURL.toString());
@@ -435,7 +436,8 @@ public class XmlSettingsParser extends DefaultHandler {
                     if (!optionalInclude) {
                         throw ioe;
                     }
-                    Message.verbose("Skipping inclusion of optional file " + propFilePath + " due to IOException - " + ioe.getMessage());
+                    Message.verbose("Skipping inclusion of optional file " + propFilePath
+                            + " due to IOException - " + ioe.getMessage());
                     return;
                 }
             }
@@ -445,7 +447,8 @@ public class XmlSettingsParser extends DefaultHandler {
                 if (!optionalInclude) {
                     throw ioe;
                 }
-                Message.verbose("Skipping inclusion of optional settings URL " + settingsURL + " due to IOException - " + ioe.getMessage());
+                Message.verbose("Skipping inclusion of optional settings URL " + settingsURL
+                        + " due to IOException - " + ioe.getMessage());
                 return;
             }
         } finally {

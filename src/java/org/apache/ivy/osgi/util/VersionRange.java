@@ -79,7 +79,7 @@ public class VersionRange {
         /**
          * Do the parsing
          *
-         * @throws ParseException
+         * @throws ParseException if something goes wrong
          */
         void parse() throws ParseException {
             boolean range = parseStart();
@@ -306,7 +306,7 @@ public class VersionRange {
         return startVersion.equals(endVersion);
     }
 
-    public boolean contains(String versionStr) throws ParseException {
+    public boolean contains(String versionStr) {
         return contains(new Version(versionStr));
     }
 

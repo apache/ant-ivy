@@ -105,8 +105,7 @@ public class BuildOBRTask extends IvyCacheTask {
                 && !sourceTypes.isEmpty()) {
             StringBuilder buffer = new StringBuilder(getType());
             for (String sourceType : sourceTypes) {
-                buffer.append(",");
-                buffer.append(sourceType);
+                buffer.append(",").append(sourceType);
             }
             setType(buffer.toString());
         }
@@ -158,7 +157,7 @@ public class BuildOBRTask extends IvyCacheTask {
             prepareAndCheck();
             try {
                 it = new ArtifactReportManifestIterable(getArtifactReports(), sourceTypes);
-            } catch (ParseException | IOException e) {
+            } catch (ParseException e) {
                 throw new BuildException("Impossible to parse the artifact reports: "
                         + e.getMessage(), e);
             }

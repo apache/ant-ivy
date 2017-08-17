@@ -22,6 +22,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -108,7 +109,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
         return new FileInputStream(f);
     }
 
-    protected List<File> listBundleFiles(File dir) {
+    protected List<File> listBundleFiles(File dir) throws IOException {
         return Arrays.asList(dir.listFiles(new FileFilter() {
             public boolean accept(File f) {
                 return f.isFile() && bundleFilter.accept(f.getParentFile(), f.getName());
@@ -116,7 +117,7 @@ public class FSManifestIterable extends AbstractFSManifestIterable<File> {
         }));
     }
 
-    protected List<File> listDirs(File dir) {
+    protected List<File> listDirs(File dir) throws IOException {
         return Arrays.asList(dir.listFiles(new FileFilter() {
             public boolean accept(File f) {
                 return f.isDirectory() && (dirFilter == null || dirFilter.accept(f.getParentFile(), f.getName()));

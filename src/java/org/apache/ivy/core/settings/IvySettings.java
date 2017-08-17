@@ -599,10 +599,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public synchronized void addAllVariables(Map<?, ?> variables, boolean overwrite) {
         for (Map.Entry<?, ?> entry : variables.entrySet()) {
-            String key = entry.getKey().toString();
             Object val = entry.getValue();
             if (val == null || val instanceof String) {
-                setVariable(key, (String) val, overwrite);
+                setVariable(entry.getKey().toString(), (String) val, overwrite);
             }
         }
     }

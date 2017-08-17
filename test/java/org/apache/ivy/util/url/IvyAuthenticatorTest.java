@@ -91,7 +91,6 @@ public class IvyAuthenticatorTest {
         assertTrue("Unexpected password", Arrays.equals("dummy".toCharArray(), auth.getPassword()));
     }
 
-
     private class TestAuthenticator extends Authenticator {
 
         private String expectedHost;

@@ -96,10 +96,8 @@ public class ConfigurationResolveReport {
             try {
                 XmlReportParser parser = new XmlReportParser();
                 parser.parse(previousReportFile);
-                List<ModuleRevisionId> previousDeps = Arrays.asList(parser
-                        .getDependencyRevisionIds());
-                HashSet<ModuleRevisionId> previousDepSet = new HashSet<>(
-                        previousDeps);
+                Set<ModuleRevisionId> previousDepSet = new HashSet<>(
+                        Arrays.asList(parser.getDependencyRevisionIds()));
                 hasChanged = !previousDepSet.equals(getModuleRevisionIds());
             } catch (Exception e) {
                 Message.warn("Error while parsing configuration resolve report "

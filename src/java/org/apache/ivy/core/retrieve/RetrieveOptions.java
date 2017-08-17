@@ -154,7 +154,7 @@ public class RetrieveOptions extends LogOptions {
 
     public boolean isMakeSymlinks() {
         // we also do a check on makeSymlinkInMass just to allow backward compatibility for a version
-        // or so, to allow users time to move away from symlinkinmass option
+        // or so, to allow users time to move away from symlinkmass option
         return makeSymlinks || makeSymlinksInMass;
     }
 
@@ -172,11 +172,11 @@ public class RetrieveOptions extends LogOptions {
         return this;
     }
 
-    @Deprecated
     /**
      * @deprecated Starting 2.5, creating symlinks in mass is no longer supported and this
      * method plays no role in creation of symlinks. Use {@link #setMakeSymlinks(boolean)} instead
      */
+    @Deprecated
     public RetrieveOptions setMakeSymlinksInMass(boolean makeSymlinksInMass) {
         this.makeSymlinksInMass = makeSymlinksInMass;
         Message.warn("symlinkmass option has been deprecated and will no longer be supported");

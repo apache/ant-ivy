@@ -399,7 +399,7 @@ public class PomModuleDescriptorBuilder {
                     exclusionPrefix + index,
                     excludedModule.getOrganisation() + EXTRA_INFO_DELIMITER
                             + excludedModule.getName());
-                index += 1;
+                index++;
             }
         }
         // dependency management info is also used for version mediation of transitive dependencies
@@ -423,7 +423,7 @@ public class PomModuleDescriptorBuilder {
         if (pluginExtraInfo == null) {
             pluginExtraInfo = pluginValue;
         } else {
-            pluginExtraInfo = pluginExtraInfo + "|" + pluginValue;
+            pluginExtraInfo += "|" + pluginValue;
         }
         extraInfoByTagName.setContent(pluginExtraInfo);
     }
@@ -655,8 +655,8 @@ public class PomModuleDescriptorBuilder {
     public static Map<String, String> extractPomProperties(List<ExtraInfoHolder> extraInfos) {
         Map<String, String> r = new HashMap<>();
         for (ExtraInfoHolder extraInfoHolder : extraInfos) {
-            if ((extraInfoHolder.getName()).startsWith(PROPERTIES)) {
-                String prop = (extraInfoHolder.getName()).substring(PROPERTIES.length()
+            if (extraInfoHolder.getName().startsWith(PROPERTIES)) {
+                String prop = extraInfoHolder.getName().substring(PROPERTIES.length()
                         + EXTRA_INFO_DELIMITER.length());
                 r.put(prop, extraInfoHolder.getContent());
             }

@@ -117,7 +117,6 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
         assertLogContaining("\\- org1#mod1.2;2.2");
     }
 
-
     /**
      * Tests that dependency tree task doesn't run into an infinite loop due to circular dependencies
      *
