@@ -60,9 +60,8 @@ public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester
         assertEquals("1.0.0", md.getModuleRevisionId().getRevision());
 
         assertNotNull(md.getConfigurations());
-        assertEquals(
-            Arrays.asList(new Configuration[] {new Configuration("default"),
-                    new Configuration("optional"), new Configuration("transitive-optional")}),
+        assertEquals(Arrays.asList(new Configuration("default"),
+                new Configuration("optional"), new Configuration("transitive-optional")),
             Arrays.asList(md.getConfigurations()));
 
         assertEquals(0, md.getAllArtifacts().length);

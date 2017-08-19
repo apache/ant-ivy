@@ -17,12 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.GregorianCalendar;
-
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -34,11 +28,19 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for DualResolver
@@ -125,7 +127,7 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
 
         assertNotNull(rmr);
         assertEquals(dual, rmr.getArtifactResolver());
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), ivyResolver.askedDeps);
         assertTrue(artifactResolver.askedDeps.isEmpty());
     }
 
@@ -144,8 +146,8 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
 
         assertNotNull(rmr);
         assertEquals(artifactResolver, rmr.getResolver());
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), artifactResolver.askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), ivyResolver.askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), artifactResolver.askedDeps);
     }
 
     @Test
@@ -162,7 +164,7 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
 
         assertNull(rmr);
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), artifactResolver.askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), ivyResolver.askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), artifactResolver.askedDeps);
     }
 }

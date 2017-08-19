@@ -124,8 +124,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[0].askedDeps);
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[1].askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), resolvers[0].askedDeps);
+        assertEquals(Collections.<DependencyDescriptor> singletonList(dd), resolvers[1].askedDeps);
         assertTrue(resolvers[2].askedDeps.isEmpty());
     }
 
@@ -140,7 +140,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                     new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
                 MockResolver.buildMockResolver(settings, "3", true,
-                    new GregorianCalendar(2005, 1, 25).getTime()), // younger -> should the one kept
+                    new GregorianCalendar(2005, 1, 25).getTime()),
+                    // younger -> should the one kept
                 MockResolver.buildMockResolver(settings, "4", false, null),
                 MockResolver.buildMockResolver(settings, "5", true,
                     new GregorianCalendar(2005, 1, 22).getTime()),
@@ -157,7 +158,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("3", rmr.getResolver().getName());
-        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Collections.<DependencyDescriptor> singletonList(dd);
         for (MockResolver resolver : resolvers) {
             assertEquals(ddAsList, resolver.askedDeps);
         }
@@ -180,9 +181,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "4", false, null),
                 MockResolver.buildMockResolver(settings, "5", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
-                // should the
-                // one kept
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                    // latest -> should the one kept
                 MockResolver.buildMockResolver(settings, "6", true,
                     ModuleRevisionId.newInstance("org", "mod", "3"),
                     new GregorianCalendar(2005, 1, 18).getTime()),
@@ -197,7 +197,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
-        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Collections.<DependencyDescriptor> singletonList(dd);
         for (MockResolver resolver : resolvers) {
             assertEquals(ddAsList, resolver.askedDeps);
         }
@@ -214,13 +214,13 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "2", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
                     new GregorianCalendar(2005, 1, 22).getTime(), true),
-                // latest -> but default
+                    // latest -> but default
                 MockResolver.buildMockResolver(settings, "3", false, null),
                 MockResolver.buildMockResolver(settings, "4", false, null),
                 MockResolver.buildMockResolver(settings, "5", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
                     new GregorianCalendar(2005, 1, 22).getTime()),
-                // latest -> should be the one kept
+                    // latest -> should be the one kept
                 MockResolver.buildMockResolver(settings, "6", false, null),
                 MockResolver.buildMockResolver(settings, "7", false, null)};
         for (MockResolver resolver : resolvers) {
@@ -233,7 +233,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
-        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Collections.<DependencyDescriptor> singletonList(dd);
         for (int i = 0; i < 5; i++) {
             assertEquals(ddAsList, resolvers[i].askedDeps);
         }
@@ -254,19 +254,16 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                     new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime(), true), // latest
-                // ->
-                // but
-                // default
+                    new GregorianCalendar(2005, 1, 22).getTime(), true),
+                    // latest -> but default
                 MockResolver.buildMockResolver(settings, "3", true,
                     ModuleRevisionId.newInstance("org", "mod", "2"),
                     new GregorianCalendar(2005, 1, 25).getTime()),
                 MockResolver.buildMockResolver(settings, "4", false, null),
                 MockResolver.buildMockResolver(settings, "5", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
-                    new GregorianCalendar(2005, 1, 22).getTime()), // latest ->
-                // should the
-                // one kept
+                    new GregorianCalendar(2005, 1, 22).getTime()),
+                    // latest -> should the one kept
                 MockResolver.buildMockResolver(settings, "6", true,
                     ModuleRevisionId.newInstance("org", "mod", "3"),
                     new GregorianCalendar(2005, 1, 18).getTime()),
@@ -281,7 +278,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
-        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Collections.<DependencyDescriptor> singletonList(dd);
         for (MockResolver resolver : resolvers) {
             assertEquals(ddAsList, resolver.askedDeps);
         }
@@ -298,12 +295,12 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                 MockResolver.buildMockResolver(settings, "2", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
                     new GregorianCalendar(2005, 1, 22).getTime(), true),
-                // default
+                    // default
                 MockResolver.buildMockResolver(settings, "3", false, null),
                 MockResolver.buildMockResolver(settings, "4", true,
                     ModuleRevisionId.newInstance("org", "mod", "4"),
                     new GregorianCalendar(2005, 1, 22).getTime()),
-                // not default -> should be the one kept
+                    // not default -> should be the one kept
                 MockResolver.buildMockResolver(settings, "5", false, null)};
         for (MockResolver resolver : resolvers) {
             chain.add(resolver);
@@ -315,7 +312,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("4", rmr.getResolver().getName());
-        List<DependencyDescriptor> ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        List<DependencyDescriptor> ddAsList = Collections.<DependencyDescriptor> singletonList(dd);
         for (int i = 0; i < 4; i++) {
             assertEquals("invalid asked dependencies for " + resolvers[i], ddAsList,
                 resolvers[i].askedDeps);
@@ -385,7 +382,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
         chain.getDependency(dd, data);
         // should not have asked any dependency, should have hit the cache
-        assertEquals(Collections.EMPTY_LIST, resolvers[0].askedDeps);
+        assertEquals(Collections.emptyList(), resolvers[0].askedDeps);
     }
 
     public void testReturnFirst() throws Exception {
@@ -399,7 +396,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
                     new GregorianCalendar(2005, 1, 20).getTime()),
                 MockResolver.buildMockResolver(settings, "2", false, null),
                 MockResolver.buildMockResolver(settings, "3", true,
-                    new GregorianCalendar(2005, 1, 25).getTime()), // younger -> should the one kept
+                    new GregorianCalendar(2005, 1, 25).getTime()),
+                    // younger -> should the one kept
                 MockResolver.buildMockResolver(settings, "4", false, null),
                 MockResolver.buildMockResolver(settings, "5", true,
                     new GregorianCalendar(2005, 1, 22).getTime()),

@@ -772,8 +772,7 @@ public class XmlSettingsParserTest {
         }
     }
 
-    private void assertLocationEquals(String expected, Object pattern) throws IOException {
-        assertEquals(new File(expected).getCanonicalFile(),
-                new File((String) pattern).getCanonicalFile());
+    private void assertLocationEquals(String expected, String pattern) throws IOException {
+        assertEquals(new File(expected).getCanonicalFile(), new File(pattern).getCanonicalFile());
     }
 }

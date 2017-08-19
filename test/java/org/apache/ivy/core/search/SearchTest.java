@@ -47,7 +47,7 @@ public class SearchTest {
         otherTokenValues.put(IvyPatternHelper.MODULE_KEY, "test-metadata");
         String[] revs = ivy.listTokenValues(IvyPatternHelper.REVISION_KEY, otherTokenValues);
 
-        assertEquals(new HashSet<>(Arrays.asList(new String[]{"1.0", "1.1"})),
+        assertEquals(new HashSet<>(Arrays.asList("1.0", "1.1")),
                 new HashSet<>(Arrays.asList(revs)));
     }
 
@@ -62,7 +62,7 @@ public class SearchTest {
         otherTokenValues.put(IvyPatternHelper.MODULE_KEY, "test-metadata");
         String[] revs = ivy.listTokenValues(IvyPatternHelper.REVISION_KEY, otherTokenValues);
 
-        assertEquals(new HashSet<>(Arrays.asList(new String[]{"1.0", "1.1", "1.2"})),
+        assertEquals(new HashSet<>(Arrays.asList("1.0", "1.1", "1.2")),
                 new HashSet<>(Arrays.asList(revs)));
     }
 

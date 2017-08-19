@@ -17,6 +17,10 @@
  */
 package org.apache.ivy;
 
+import com.sun.net.httpserver.Authenticator.Failure;
+import com.sun.net.httpserver.Authenticator.Result;
+import com.sun.net.httpserver.Authenticator.Retry;
+import com.sun.net.httpserver.Authenticator.Success;
 import com.sun.net.httpserver.BasicAuthenticator;
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpContext;
@@ -168,8 +172,8 @@ public class TestHelper {
                 new Date());
         }
 
-        Pattern oneDependencyPattern = Pattern.compile("(" + mridPattern.pattern() + ")\\s*->\\s*("
-                + mridPattern.pattern() + ")");
+        Pattern oneDependencyPattern = Pattern.compile(String.format("(%s)\\s*->\\s*(%s)",
+                mridPattern.pattern(), mridPattern.pattern()));
         m = oneDependencyPattern.matcher(microIvy);
         if (m.matches()) {
             DefaultModuleDescriptor md = DefaultModuleDescriptor.newBasicInstance(
@@ -179,8 +183,8 @@ public class TestHelper {
             return md;
         }
 
-        String p = "(" + mridPattern.pattern() + ")\\s*->\\s*\\{\\s*((?:" + mridPattern.pattern()
-                + ",?\\s+)*" + mridPattern.pattern() + ")?\\s*\\}";
+        String p = String.format("(%s)\\s*->\\s*\\{\\s*((?:%s,?\\s+)*%s)?\\s*\\}",
+                mridPattern.pattern(), mridPattern.pattern(), mridPattern.pattern());
         Pattern multipleDependenciesPattern = Pattern.compile(p);
         m = multipleDependenciesPattern.matcher(microIvy);
         if (m.matches()) {
@@ -471,22 +475,22 @@ public class TestHelper {
                 chain.doFilter(httpExchange);
                 return;
             }
-            final com.sun.net.httpserver.Authenticator.Result authResult = this.authenticator.authenticate(httpExchange);
-            if(authResult instanceof com.sun.net.httpserver.Authenticator.Success) {
+            final Result authResult = this.authenticator.authenticate(httpExchange);
+            if (authResult instanceof Success) {
                 @SuppressWarnings("unused")
-                final com.sun.net.httpserver.Authenticator.Success success = (com.sun.net.httpserver.Authenticator.Success)authResult;
+                final Success success = (Success) authResult;
                 // auth succeeded - move to next filter
                 chain.doFilter(httpExchange);
-            } else if(authResult instanceof com.sun.net.httpserver.Authenticator.Retry) {
-                final com.sun.net.httpserver.Authenticator.Retry retry = (com.sun.net.httpserver.Authenticator.Retry)authResult;
+            } else if (authResult instanceof Retry) {
+                final Retry retry = (Retry) authResult;
                 this.drainInput(httpExchange);
                 // send auth retry (401)
                 httpExchange.sendResponseHeaders(retry.getResponseCode(), -1L);
-            } else if(authResult instanceof com.sun.net.httpserver.Authenticator.Failure) {
-                final com.sun.net.httpserver.Authenticator.Failure var7 = (com.sun.net.httpserver.Authenticator.Failure)authResult;
+            } else if (authResult instanceof Failure) {
+                final Failure failure = (Failure) authResult;
                 this.drainInput(httpExchange);
                 // send auth failure (401)
-                httpExchange.sendResponseHeaders(var7.getResponseCode(), -1L);
+                httpExchange.sendResponseHeaders(failure.getResponseCode(), -1L);
             }
         }
 

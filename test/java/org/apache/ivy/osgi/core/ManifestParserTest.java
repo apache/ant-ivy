@@ -17,16 +17,20 @@
  */
 package org.apache.ivy.osgi.core;
 
+import org.apache.ivy.osgi.util.VersionRange;
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ivy.osgi.util.VersionRange;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ManifestParserTest {
 
@@ -83,9 +87,8 @@ public class ManifestParserTest {
         List<String> cp = bundleInfo.getClasspath();
         assertNotNull(cp);
         assertEquals(4, cp.size());
-        assertEquals(
-            Arrays.asList(new String[] {"lib/ant-antlr.jar", "lib/ant-apache-bcel.jar",
-                    "lib/ant-apache-bsf.jar", "lib/ant-apache-log4j.jar"}), cp);
+        assertEquals(Arrays.asList("lib/ant-antlr.jar", "lib/ant-apache-bcel.jar",
+                "lib/ant-apache-bsf.jar", "lib/ant-apache-log4j.jar"), cp);
 
         in = this.getClass()
                 .getResourceAsStream("/org/apache/ivy/osgi/core/MANIFEST_classpath2.MF");
@@ -97,7 +100,7 @@ public class ManifestParserTest {
         cp = bundleInfo.getClasspath();
         assertNotNull(cp);
         assertEquals(1, cp.size());
-        assertEquals(Arrays.asList(new String[] {"."}), cp);
+        assertEquals(Collections.singletonList("."), cp);
     }
 
     @Test

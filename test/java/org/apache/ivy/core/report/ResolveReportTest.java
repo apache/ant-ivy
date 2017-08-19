@@ -19,6 +19,7 @@ package org.apache.ivy.core.report;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.apache.ivy.Ivy;
@@ -102,7 +103,7 @@ public class ResolveReportTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         assertEquals(mrid, fixedMd.getModuleRevisionId());
 
-        assertEquals(Arrays.asList(new String[] {"default"}),
+        assertEquals(Collections.singletonList("default"),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
         assertEquals(1, fixedMd.getDependencies().length);
@@ -123,7 +124,7 @@ public class ResolveReportTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.1", "0.3");
         assertEquals(mrid, fixedMd.getModuleRevisionId());
 
-        assertEquals(Arrays.asList(new String[] {"default"}),
+        assertEquals(Collections.singletonList("default"),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
         assertEquals(2, fixedMd.getDependencies().length);
@@ -152,7 +153,7 @@ public class ResolveReportTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org6", "mod6.2", "0.3");
         assertEquals(mrid, fixedMd.getModuleRevisionId());
 
-        assertEquals(Arrays.asList(new String[] {"default", "extension"}),
+        assertEquals(Arrays.asList("default", "extension"),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
         assertEquals(2, fixedMd.getDependencies().length);
@@ -179,7 +180,7 @@ public class ResolveReportTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.2");
         assertEquals(mrid, fixedMd.getModuleRevisionId());
 
-        assertEquals(Arrays.asList(new String[] {"default", "compile"}),
+        assertEquals(Arrays.asList("default", "compile"),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
         assertEquals(1, fixedMd.getDependencies().length);
@@ -198,12 +199,12 @@ public class ResolveReportTest {
         assertNotNull(report);
         assertFalse(report.hasError());
         ModuleDescriptor fixedMd = report.toFixedModuleDescriptor(ivy.getSettings(),
-            Arrays.asList(new ModuleId[] {ModuleId.newInstance("org1", "mod1.2")}));
+                Collections.singletonList(ModuleId.newInstance("org1", "mod1.2")));
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.2");
         assertEquals(mrid, fixedMd.getModuleRevisionId());
 
-        assertEquals(Arrays.asList(new String[] {"default", "compile"}),
+        assertEquals(Arrays.asList("default", "compile"),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
         assertEquals(1, fixedMd.getDependencies().length);
@@ -222,12 +223,12 @@ public class ResolveReportTest {
         assertNotNull(report);
         assertFalse(report.hasError());
         ModuleDescriptor fixedMd = report.toFixedModuleDescriptor(ivy.getSettings(),
-            Arrays.asList(new ModuleId[] {ModuleId.newInstance("org1", "mod1.2")}));
+                Collections.singletonList(ModuleId.newInstance("org1", "mod1.2")));
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.9", "0.6");
         assertEquals(mrid, fixedMd.getModuleRevisionId());
 
-        assertEquals(Arrays.asList(new String[] {"default", "compile"}),
+        assertEquals(Arrays.asList("default", "compile"),
             Arrays.asList(fixedMd.getConfigurationsNames()));
 
         assertEquals(2, fixedMd.getDependencies().length);

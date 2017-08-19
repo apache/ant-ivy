@@ -82,8 +82,7 @@ public class SortTest {
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {
                 {md1, md2, md3, md4}};
 
-        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
-        for (List<ModuleDescriptor> toSort : permutations) {
+        for (List<ModuleDescriptor> toSort : getAllLists(md1, md3, md2, md4)) {
             assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -106,8 +105,7 @@ public class SortTest {
                 {md2, md3, md4, md1}, {md3, md4, md1, md2}, {md4, md1, md2, md3},
                 {md1, md2, md3, md4}};
 
-        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
-        for (List<ModuleDescriptor> toSort : permutations) {
+        for (List<ModuleDescriptor> toSort : getAllLists(md1, md3, md2, md4)) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -123,8 +121,7 @@ public class SortTest {
                 // {md3, md1, md2, md4}
                 // we don't have this solution. The loops appear has one contiguous element.
         };
-        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
-        for (List<ModuleDescriptor> toSort : permutations) {
+        for (List<ModuleDescriptor> toSort : getAllLists(md1, md3, md2, md4)) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -143,8 +140,7 @@ public class SortTest {
         addDependency(md3, "md4", "rev4");
         addDependency(md4, "md1", "rev1");
         addDependency(md4, "md2", "rev2");
-        List<ModuleDescriptor> toSort = Arrays.asList(new ModuleDescriptor[] {md1, md2, md3, md4});
-        sortModuleDescriptors(toSort, nonMatchReporter);
+        sortModuleDescriptors(Arrays.<ModuleDescriptor> asList(md1, md2, md3, md4), nonMatchReporter);
         // If it ends, it's ok.
     }
 
@@ -191,8 +187,7 @@ public class SortTest {
         CircularDependencyReporterMock circularDepReportMock = new CircularDependencyReporterMock();
         settings.setCircularDependencyStrategy(circularDepReportMock);
 
-        List<ModuleDescriptor> toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
-        sortModuleDescriptors(toSort, nonMatchReporter);
+        sortModuleDescriptors(Arrays.<ModuleDescriptor> asList(md4, md3, md2, md1), nonMatchReporter);
 
         circularDepReportMock.validate();
     }
@@ -212,8 +207,7 @@ public class SortTest {
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {
                 {md1, md2, md3, md4}};
 
-        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
-        for (List<ModuleDescriptor> toSort : permutations) {
+        for (List<ModuleDescriptor> toSort : getAllLists(md1, md3, md2, md4)) {
             assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -237,8 +231,7 @@ public class SortTest {
         DefaultModuleDescriptor[][] possibleOrder = new DefaultModuleDescriptor[][] {
                 {md1, md2, md3, md4}};
 
-        Collection<List<ModuleDescriptor>> permutations = getAllLists(md1, md3, md2, md4);
-        for (List<ModuleDescriptor> toSort : permutations) {
+        for (List<ModuleDescriptor> toSort : getAllLists(md1, md3, md2, md4)) {
             assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
@@ -353,30 +346,30 @@ public class SortTest {
             ModuleDescriptor c, ModuleDescriptor d) {
         final int nbOfList = 24;
         Collection<List<ModuleDescriptor>> r = new ArrayList<>(nbOfList);
-        r.add(Arrays.asList(new ModuleDescriptor[] {a, b, c, d}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {a, b, d, c}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {a, c, b, d}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {a, c, d, b}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {a, d, b, c}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {a, d, c, b}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {b, a, c, d}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {b, a, d, c}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {b, c, a, d}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {b, c, d, a}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {b, d, a, c}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {b, d, c, a}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {c, b, a, d}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {c, b, d, a}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {c, a, b, d}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {c, a, d, b}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {c, d, b, a}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {c, d, a, b}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {d, b, c, a}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {d, b, a, c}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {d, c, b, a}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {d, c, a, b}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {d, a, b, c}));
-        r.add(Arrays.asList(new ModuleDescriptor[] {d, a, c, b}));
+        r.add(Arrays.asList(a, b, c, d));
+        r.add(Arrays.asList(a, b, d, c));
+        r.add(Arrays.asList(a, c, b, d));
+        r.add(Arrays.asList(a, c, d, b));
+        r.add(Arrays.asList(a, d, b, c));
+        r.add(Arrays.asList(a, d, c, b));
+        r.add(Arrays.asList(b, a, c, d));
+        r.add(Arrays.asList(b, a, d, c));
+        r.add(Arrays.asList(b, c, a, d));
+        r.add(Arrays.asList(b, c, d, a));
+        r.add(Arrays.asList(b, d, a, c));
+        r.add(Arrays.asList(b, d, c, a));
+        r.add(Arrays.asList(c, b, a, d));
+        r.add(Arrays.asList(c, b, d, a));
+        r.add(Arrays.asList(c, a, b, d));
+        r.add(Arrays.asList(c, a, d, b));
+        r.add(Arrays.asList(c, d, b, a));
+        r.add(Arrays.asList(c, d, a, b));
+        r.add(Arrays.asList(d, b, c, a));
+        r.add(Arrays.asList(d, b, a, c));
+        r.add(Arrays.asList(d, c, b, a));
+        r.add(Arrays.asList(d, c, a, b));
+        r.add(Arrays.asList(d, a, b, c));
+        r.add(Arrays.asList(d, a, c, b));
         return r;
     }
 
