@@ -90,6 +90,8 @@
             <path refid="lib.classpath"/>
         </path>
         <path id="test.classpath">
+            <!-- The element below is used by Jenkins jobs -->
+            <pathelement location="${coverage.classes.dir}"/>
             <fileset dir="${lib.dir}">
                 <include name="*.jar"/>
                 <exclude name="ant.jar"/>
