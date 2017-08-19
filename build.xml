@@ -90,7 +90,6 @@
             <path refid="lib.classpath"/>
         </path>
         <path id="test.classpath">
-            <pathelement location="${coverage.classes.dir}"/>
             <fileset dir="${lib.dir}">
                 <include name="*.jar"/>
                 <exclude name="ant.jar"/>
@@ -99,6 +98,10 @@
             <pathelement location="${core.classes.build.dir}"/>
             <pathelement location="${ant.classes.build.dir}"/>
             <pathelement location="${optional.classes.build.dir}"/>
+            <pathelement path="${test.build.dir}"/>
+        </path>
+        <path id="javadoc.test.classpath">
+            <path refid="run.classpath"/>
             <pathelement path="${test.build.dir}"/>
         </path>
     </target>
@@ -515,6 +518,22 @@
             <fileset dir="${src.dir}" includes="**/*.java"/>
             <arg value="-tag"/>
             <arg value="pre:a:Precondition:"/>
+        </javadoc>
+    </target>
+
+    <target name="javadoc-test" depends="init" unless="skip.javadoc">
+        <tstamp>
+            <format pattern="2007-yyyy" property="years"/>
+        </tstamp>
+        <property name="copyright" value="Copyright &amp;copy;${years} The Apache Software Foundation, Licensed under &lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0.txt&quot;&gt;Apache License, Version 2.0&lt;/a&gt;."/>
+        <property name="title" value="Apache Ivy&amp;trade; dependency manager ${target.ivy.version} API"/>
+        <javadoc destdir="${test.javadoc.build.dir}"
+                 useexternalfile="true"
+                 windowtitle="Apache Ivy&amp;trade;"
+                 doctitle="${title}"
+                 bottom="${copyright}"
+                 classpathref="javadoc.test.classpath">
+            <fileset dir="${test.dir}" includes="**/*.java"/>
         </javadoc>
     </target>
 

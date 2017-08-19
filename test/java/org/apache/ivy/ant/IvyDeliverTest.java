@@ -297,9 +297,14 @@ public class IvyDeliverTest {
             md.getModuleRevisionId());
     }
 
+    /**
+     * Test case for IVY-404.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-404">IVY-404</a>
+     */
     @Test
     public void testWithBranch() throws Exception {
-        // test case for IVY-404
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-branch.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -358,9 +363,14 @@ public class IvyDeliverTest {
             dds[0].getDynamicConstraintDependencyRevisionId());
     }
 
+    /**
+     * Test case for IVY-415.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-415">IVY-415</a>
+     */
     @Test
     public void testWithExtraAttributes() throws Exception {
-        // test case for IVY-415
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
         IvyResolve res = new IvyResolve();
         res.setValidate(false);
@@ -432,10 +442,15 @@ public class IvyDeliverTest {
             expectedFileSet, actualFileSet);
     }
 
+    /**
+     * Test case for IVY-707.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-707">IVY-707</a>
+     */
     @Test
     public void testWithDynEvicted2() throws Exception {
         // same as previous but dynamic dependency is placed after the one causing the conflict
-        // test case for IVY-707
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-dyn-evicted2.xml");
         IvyResolve res = new IvyResolve();
         res.setValidate(false);

@@ -127,7 +127,7 @@ public class IvyInstallTest {
     }
 
     /**
-     * Normal case; no confs set (should use the default->* configuration).
+     * Normal case; no confs set (should use the default-&gt;* configuration).
      */
     @Test
     public void testInstallWithConfsDefaultSettings() {
@@ -147,7 +147,10 @@ public class IvyInstallTest {
     }
 
     /**
-     * Test retrieving artifacts under only the master and runtime configuration.
+     * Test case for IVY-1313.
+     * Retrieve artifacts only for the master and runtime configuration.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1313">IVY-1313</a>
      */
     @Test
     public void testInstallWithConfsRuntimeOnly() {
@@ -167,9 +170,14 @@ public class IvyInstallTest {
         assertFalse(new File("build/test/install/org1/mod3/jars/mod3-1.0.jar").exists());
     }
 
+    /**
+     * Test case for IVY-1324.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1324">IVY-1324</a>
+     */
     @Test
     public void testInstallWithClassifiers() throws Exception {
-        // IVY-1324
         project.setProperty("ivy.settings.url", new File("test/repositories/m2/ivysettings.xml")
                 .toURI().toURL().toExternalForm());
         install.setOrganisation("org.apache");
@@ -236,6 +244,11 @@ public class IvyInstallTest {
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
 
+    /**
+     * Test case for IVY-843.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-843">IVY-843</a>
+     */
     @Test
     public void testIVY843() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-IVY843.xml");
@@ -288,9 +301,9 @@ public class IvyInstallTest {
     }
 
     /**
-     * Installing a module with namespace coordinates instead of system one should fail.
+     * Installing a module with namespace coordinates instead of system one must fail.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testInstallWithNamespace2() throws Exception {
@@ -323,7 +336,7 @@ public class IvyInstallTest {
     /**
      * Fail on unknown dependency when haltonfailure=true.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testDependencyNotFoundFailure() throws Exception {

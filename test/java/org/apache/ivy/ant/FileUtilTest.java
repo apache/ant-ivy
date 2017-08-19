@@ -36,7 +36,7 @@ public class FileUtilTest {
     /**
      * Tests that {@link FileUtil#normalize(String)} works as expected for some basic file paths
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testSimpleNormalize() throws Exception {
@@ -50,7 +50,7 @@ public class FileUtilTest {
      * Tests that {@link FileUtil#normalize(String)} works as expected when passed a path that starts with
      * {@link File#listRoots() filesystem roots}
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testNormalizeOfFileSystemRootPath() throws Exception {

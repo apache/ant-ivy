@@ -261,7 +261,7 @@ public class XmlSettingsParserTest {
     /**
      * Test of resolver referencing a non existent cache.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testInvalidCache() throws Exception {
@@ -400,9 +400,14 @@ public class XmlSettingsParserTest {
                 ivyPatterns.get(0));
     }
 
+    /**
+     * Test case for IVY-319.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-319">IVY-319</a>
+     */
     @Test
     public void testMacroAndRef() throws Exception {
-        // test case for IVY-319
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-macro+ref.xml"));
@@ -423,9 +428,14 @@ public class XmlSettingsParserTest {
         assertTrue(shared instanceof FileSystemResolver);
     }
 
+    /**
+     * Test case for IVY-860.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-860">IVY-860</a>
+     */
     @Test
     public void testMacroAndRef2() throws Exception {
-        // test case for IVY-860
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-macro+ref2.xml"));
@@ -646,10 +656,11 @@ public class XmlSettingsParserTest {
     }
 
     /**
-     * Tests that a <code>&lt;ttl&gt;</code> containing the <code>matcher</code> attribute, in a ivy settings file,
-     * works as expected.
+     * Test case for IVY-1495.
+     * <code>&lt;ttl&gt;</code> containing the <code>matcher</code> attribute,
+     * in an ivy settings file, must work as expected.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1495">IVY-1495</a>
      */
     @Test
@@ -673,7 +684,7 @@ public class XmlSettingsParserTest {
     /**
      * Tests that the <code>timeout-constraint</code> elements in a Ivy settings file are parsed correctly
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testTimeoutConstraints() throws Exception {
@@ -707,10 +718,10 @@ public class XmlSettingsParserTest {
     }
 
     /**
-     * Tests that timeout constraints referenced by resolvers, in an ivy settings file, are processed correctly and the
-     * corresponding resolvers use the right timeout constraints
+     * Tests that timeout constraints referenced by resolvers, in an ivy settings file, are
+     * processed correctly and the corresponding resolvers use the right timeout constraints
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testResolverTimeoutConstraintRefs() throws Exception {

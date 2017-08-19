@@ -75,6 +75,12 @@ public class IvyInfoTest {
         assertNull(info.getProject().getProperty("ivy.configuration.private.desc"));
     }
 
+    /**
+     * Test case for IVY-726.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-726">IVY-726</a>
+     */
     @Test
     public void testIVY726() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
@@ -83,6 +89,12 @@ public class IvyInfoTest {
         assertTrue(info.getProject().getProperty("ivy.extra.branch") == null);
     }
 
+    /**
+     * Test case for IVY-395.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-395">IVY-395</a>
+     */
     @Test
     public void testIVY395() throws Exception {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-artifact-info.xml"));

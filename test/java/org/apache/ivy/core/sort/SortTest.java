@@ -90,8 +90,10 @@ public class SortTest {
 
     /**
      * Sorter does not throw circular dependency, circular dependencies are handled at resolve time
-     * only. However the sort respect the transitive order when it is unambiguous. (if A depends
-     * transitively of B, but B doesn't depends transitively on A then B always comes before A).
+     * only. However the sort respect the transitive order when it is unambiguous. (If A depends
+     * transitively of B, but B doesn't depends transitively on A, then B always comes before A.)
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testCircularDependency() throws Exception {
@@ -127,7 +129,12 @@ public class SortTest {
         }
     }
 
-    // Test IVY-624
+    /**
+     * Test case for IVY-624
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-624">IVY-624</a>
+     */
     @Test
     public void testCircularDependencyInfiniteLoop() throws Exception {
         addDependency(md1, "md2", "rev2");
@@ -213,8 +220,8 @@ public class SortTest {
 
     /**
      * When the version asked by a dependency is not compatible with the version declared in the
-     * module to order, the two modules should be considered as independent NB: I'm sure of what
-     * 'compatible' means !
+     * module to order, the two modules should be considered as independent.
+     * NB: I'm sure of what 'compatible' means !
      */
     @Test
     public void testDifferentVersionNotConsidered() {
@@ -339,7 +346,9 @@ public class SortTest {
         fail(errorMessage.toString());
     }
 
-    /** Returns a collection of lists that contains the elements a,b,c and d */
+    /**
+     * Returns a collection of lists that contains the elements a, b, c and d
+     */
     private Collection<List<ModuleDescriptor>> getAllLists(ModuleDescriptor a, ModuleDescriptor b,
             ModuleDescriptor c, ModuleDescriptor d) {
         final int nbOfList = 24;

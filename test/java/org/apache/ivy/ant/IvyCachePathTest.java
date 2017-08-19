@@ -135,7 +135,7 @@ public class IvyCachePathTest {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {

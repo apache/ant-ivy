@@ -89,9 +89,14 @@ public class IvyRetrieveTest {
             "mod3.2", "jar", "jar", "private")).exists());
     }
 
+    /**
+     * Test case for IVY-992.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-992">IVY-992</a>
+     */
     @Test
     public void testValidateInIvySettings() throws Exception {
-        // cfr IVY-992
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
         retrieve.getSettings().setValidate(false);
         retrieve.execute();
@@ -222,9 +227,14 @@ public class IvyRetrieveTest {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    /**
+     * Test case for IVY-304.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-304">IVY-304</a>
+     */
     @Test
     public void testUseOrigin() throws Exception {
-        // test case for IVY-304
         // first we do a resolve with useOrigin=true in another project
         Project project = TestHelper.newProject();
         project.init();
@@ -268,6 +278,12 @@ public class IvyRetrieveTest {
             "ivy", "ivy", "xml")).exists());
     }
 
+    /**
+     * Test case for IVY-631.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-631">IVY-631</a>
+     */
     @Test
     public void testRetrieveWithOriginalNamePattern() throws Exception {
         retrieve.setFile(new File("test/java/org/apache/ivy/ant/ivy-631.xml"));
@@ -282,7 +298,7 @@ public class IvyRetrieveTest {
     /**
      * Retrieve without previous resolve must fail.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailureWithoutAPreviousResolve() throws Exception {
@@ -295,7 +311,7 @@ public class IvyRetrieveTest {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
@@ -392,9 +408,13 @@ public class IvyRetrieveTest {
         assertFalse(new File("build/test/lib/default/unknown").exists());
     }
 
+    /**
+     * Test case for IVY-315.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-315">IVY-315</a>
+     */
     @Test
     public void testDoubleRetrieveWithDifferentConfigurations() {
-        // IVY-315
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-doubleretrieve.xml");
 
         retrieve.setConf("compile");

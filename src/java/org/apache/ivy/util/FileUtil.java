@@ -70,7 +70,7 @@ public final class FileUtil {
      * @param overwrite {@code true} if any existing file at {@code link} has to be overwritten. False otherwise
      * @return Returns true if the symlink was successfully created. Returns false if the symlink creation couldn't
      * be done
-     * @throws IOException
+     * @throws IOException if {@link Files#createSymbolicLink} fails
      */
     public static boolean symlink(final File target, final File link, final boolean overwrite)
             throws IOException {

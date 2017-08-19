@@ -40,7 +40,7 @@ public class TestXmlHelper {
      * @param xPathExpression The XPath expression to evaluate
      * @param returnType      The expected return type of the {@link XPathExpression#evaluate(Object, QName) evaluation}
      * @return                The result
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     public static Object evaluateXPathExpr(final File xmlFile, final XPathExpression xPathExpression, final QName returnType)
             throws Exception {
@@ -67,7 +67,7 @@ public class TestXmlHelper {
      * @param xpathExpression The XPath expression to evaluate
      * @param returnType      The expected return type of the {@link XPathExpression#evaluate(Object, QName) evaluation}
      * @return                The result
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     public static Object evaluateXPathExpr(final File xmlFile, final String xpathExpression, final QName returnType) throws Exception {
         return evaluateXPathExpr(xmlFile, XPathFactory.newInstance().newXPath().compile(xpathExpression), returnType);

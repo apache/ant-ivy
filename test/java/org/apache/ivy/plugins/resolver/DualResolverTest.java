@@ -87,8 +87,8 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
     /**
      * Test fails due to bad resolver configuration.
      *
-     * @throws IOException
-     * @throws ParseException
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
      */
     @Test(expected = ParseException.class)
     public void testFromBadConf() throws IOException, ParseException {
@@ -99,7 +99,7 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
     /**
      * Test fails due to bad resolver configuration
      *
-     * @throws ParseException
+     * @throws ParseException if something goes wrong
      */
     @Test(expected = IllegalStateException.class)
     public void testBad() throws ParseException {

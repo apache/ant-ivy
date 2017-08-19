@@ -200,8 +200,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     /**
      * Test must fail because of bad version.
      *
-     * @throws IOException
-     * @throws ParseException
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
      */
     @Test(expected = ParseException.class)
     public void testBadVersion() throws IOException, ParseException {
@@ -1090,9 +1090,10 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     /**
-     * IVY-442: test for parser failure.
+     * Test case for IVY-442: expect parser failure.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-442">IVY-442</a>
      */
     @Test(expected = ParseException.class)
     public void testWithNonExistingConfigInDependency() throws Exception {
@@ -1103,7 +1104,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     /**
      * Test for parser failure.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = ParseException.class)
     public void testWithNonExistingConfigInPublications() throws Exception {
@@ -1112,9 +1113,10 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     /**
-     * IVY-441: test for parser failure.
+     * Test case for IVY-441: expect parser failure.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-441">IVY-441</a>
      */
     @Test(expected = ParseException.class)
     public void testWithExistingConfigsInPublicationsSeparatedBySemiColon() throws Exception {
@@ -1459,8 +1461,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
      * as encoded characters (for example <code>%2F</code>) then the module descriptor and the location of
      * the parent descriptor, are resolved and parsed correctly.
      *
-     * @throws Exception
-     * @see <a href="https://issues.apache.org/jira/browse/IVY-1562">IVY-1562</a> for more details
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1562">IVY-1562</a>
      */
     @Test
     public void testExtendsAbsoluteLocation() throws Exception {

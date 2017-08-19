@@ -120,7 +120,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testInlineForNonExistingModule() throws Exception {
@@ -135,7 +135,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
@@ -147,7 +147,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     /**
      * Test must fail because of missing configurations.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testFailureWithMissingConfigurations() throws Exception {
@@ -163,7 +163,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailureOnBadDependencyIvyFile() throws Exception {
@@ -175,7 +175,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
@@ -215,9 +215,13 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertFalse(project.getProperty("ivy.resolved.configurations").contains("default"));
     }
 
+    /**
+     * Test case for IVY-396.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-396">IVY-396</a>
+     */
     @Test
     public void testResolveWithAbsoluteFile() {
-        // IVY-396
         File ivyFile = new File("test/java/org/apache/ivy/ant/ivy-simple.xml");
         dependencyUpdateChecker.getProject().setProperty("ivy.dep.file", ivyFile.getAbsolutePath());
         dependencyUpdateChecker.execute();
@@ -226,9 +230,13 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         // ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
 
+    /**
+     * Test case for IVY-396.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-396">IVY-396</a>
+     */
     @Test
     public void testResolveWithRelativeFile() {
-        // IVY-396
         dependencyUpdateChecker.getProject().setProperty("ivy.dep.file",
             "test/java/org/apache/ivy/ant/ivy-simple.xml");
         dependencyUpdateChecker.execute();

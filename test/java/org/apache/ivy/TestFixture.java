@@ -34,25 +34,26 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 /**
  * Fixture easing the development of tests requiring to set up a simple repository with some
- * modules, using micro ivy format to describe the repository. <br/>
+ * modules, using micro ivy format to describe the repository.
+ * <p>
  * Example of use:
- *
+ * </p>
  * <pre>
  * public class MyTest {
  *     private TestFixture fixture;
  *
- *     @Before
+ *     &#64;Before
  *     public void setUp() throws Exception {
  *         fixture = new TestFixture();
  *         // additional setup here
  *     }
  *
- *     @After
+ *     &#64;After
  *     public void tearDown() throws Exception {
  *         fixture.clean();
  *     }
  *
- *     @Test
+ *     &#64;Test
  *     public void testXXX() throws Exception {
  *         fixture.addMD(&quot;#A;1-&gt; { #B;[1.5,1.6] #C;2.5 }&quot;).addMD(&quot;#B;1.5-&gt;#D;2.0&quot;)
  *                 .addMD(&quot;#B;1.6-&gt;#D;2.0&quot;).addMD(&quot;#C;2.5-&gt;#D;[1.0,1.6]&quot;).addMD(&quot;#D;1.5&quot;)

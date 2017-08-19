@@ -222,9 +222,14 @@ public class IvyConfigureTest {
         assertEquals("value", configure.getProject().getProperty("ivy.test.variable.this.id"));
     }
 
+    /**
+     * Test case for IVY-601.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-601">IVY-601</a>
+     */
     @Test
     public void testIncludeTwice() throws Exception {
-        // IVY-601
         configure.setFile(new File("test/java/org/apache/ivy/ant/ivysettings-include-twice.xml"));
 
         configure.execute();
@@ -270,7 +275,7 @@ public class IvyConfigureTest {
     /**
      * Calling settings twice with the same id with override=notallowed must fail
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testOverrideNotAllowed() throws Exception {
@@ -295,7 +300,7 @@ public class IvyConfigureTest {
     /**
      * Settings override with invalid value must fail.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testInvalidOverride() throws Exception {
@@ -310,7 +315,7 @@ public class IvyConfigureTest {
      * Tests that if the Ivy settings file <code>include</code>s another file as <code>optional</code>,
      * then the absence of that file doesn't lead to failures
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testOptionalFileInclude() throws Exception {

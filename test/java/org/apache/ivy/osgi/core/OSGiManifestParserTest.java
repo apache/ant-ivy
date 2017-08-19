@@ -72,10 +72,10 @@ public class OSGiManifestParserTest extends AbstractModuleDescriptorParserTester
     }
 
     /**
-     * Tests that the {@link OSGiManifestParser#parseDescriptor(ParserSettings, URL, Resource, boolean)} works fine for descriptors
-     * that are backed by {@link FileResource}
+     * Tests that the {@link OSGiManifestParser#parseDescriptor(ParserSettings, URL, Resource, boolean)}
+     * works fine for descriptors that are backed by {@link FileResource}
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testFileResource() throws Exception {

@@ -80,10 +80,15 @@ public class HttpclientURLHandlerTest {
         assertFalse("URL resource was expected to be unreachable", handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), defaultTimeoutConstraint));
     }
 
+    /**
+     * Test case for IVY-390.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-390">IVY-390</a>
+     */
     @SuppressWarnings("resource")
     @Test
     public void testGetURLInfo() throws Exception {
-        // IVY-390
         URLHandler handler = new HttpClientHandler();
         URLInfo info = handler
                 .getURLInfo(new URL(
@@ -115,7 +120,7 @@ public class HttpclientURLHandlerTest {
      * Tests that the {@link HttpClientHandler}, backed by {@link CredentialsStore Ivy credentials store}
      * works as expected when it interacts with a HTTP server which requires authentication for accessing resources.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1336">IVY-1336</a>
      */
     @Test

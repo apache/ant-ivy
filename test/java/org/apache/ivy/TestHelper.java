@@ -43,7 +43,6 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -144,24 +143,18 @@ public class TestHelper {
      * Parses a string representation of a module descriptor in micro ivy format.
      * <p>
      * Examples:
-     *
+     * </p>
      * <pre>
      * #A;1
      * </pre>
-     *
-     * <hr/>
-     *
+     * <hr>
      * <pre>
-     * #A;2-> #B;[1.0,1.5]
+     * #A;2-&gt; #B;[1.0,1.5]
      * </pre>
-     *
-     * <hr/>
-     *
+     * <hr>
      * <pre>
-     * #A;3-> { #B;[1.0,1.5] #C;[2.0,2.5] }
+     * #A;3-&gt; { #B;[1.0,1.5] #C;[2.0,2.5] }
      * </pre>
-     *
-     * </p>
      *
      * @param microIvy
      *            the micro ivy description of the module descriptor
@@ -391,8 +384,8 @@ public class TestHelper {
      * @param serverAddress           The address to which the server will be bound
      * @param webAppContext           The context root of the application which will be handling the requests to the server
      * @param localFilesystemRepoRoot The path to the root directory containing the module descriptors and artifacts
-     * @return
-     * @throws IOException
+     * @return AutoCloseable
+     * @throws IOException if something goes wrong
      */
     public static AutoCloseable createHttpServerBackedRepository(final InetSocketAddress serverAddress, final String webAppContext,
                                                                  final Path localFilesystemRepoRoot) throws IOException {
@@ -426,8 +419,8 @@ public class TestHelper {
      * @param realm                   The realm to use for the {@code BASIC} auth mechanism
      * @param validCredentials        A {@link Map} of valid credentials, the key being the user name and the value being the password,
      *                                that the server will use during the authentication process of the incoming requests
-     * @return
-     * @throws IOException
+     * @return AutoCloseable
+     * @throws IOException if something goes wrong
      */
     public static AutoCloseable createBasicAuthHttpServerBackedRepo(final InetSocketAddress serverAddress, final String webAppContext,
                                                                     final Path localFilesystemRepoRoot, final String realm,

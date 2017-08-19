@@ -70,6 +70,12 @@ public class DeliverTest {
         cache.mkdirs();
     }
 
+    /**
+     * Test case for IVY-1111.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1111">IVY-1111</a>
+     */
     @Test
     public void testIVY1111() throws Exception {
         Project project = ivyDeliver.getProject();

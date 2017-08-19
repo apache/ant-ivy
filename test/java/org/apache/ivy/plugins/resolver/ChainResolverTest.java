@@ -326,9 +326,14 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    /**
+     * Test case for IVY-206.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-206">IVY-206</a>
+     */
     @Test
     public void testFixedWithDefaultAndRealResolver() throws Exception {
-        // test case for IVY-206
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);
@@ -416,9 +421,14 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    /**
+     * Test case for IVY-389.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-389">IVY-389</a>
+     */
     @Test
     public void testReturnFirstWithDefaultAndCacheAndRealResolver() throws Exception {
-        // test case for IVY-389
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
                 ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
 
@@ -437,10 +447,14 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertEquals(true, rmr.getDescriptor().isDefault());
     }
 
+    /**
+     * Test case for IVY-207.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-207">IVY-207</a>
+     */
     public void testReturnFirstWithCheckModifiedAndDefaultAndCacheAndRealResolver()
             throws Exception {
-        // test case for IVY-207
-
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
                 ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), false);
 

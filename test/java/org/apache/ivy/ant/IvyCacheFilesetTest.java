@@ -112,7 +112,7 @@ public class IvyCacheFilesetTest {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() throws Exception {
@@ -124,7 +124,7 @@ public class IvyCacheFilesetTest {
     /**
      * Test must fail with default haltonfailure setting.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testInvalidPattern() throws Exception {
@@ -202,10 +202,11 @@ public class IvyCacheFilesetTest {
     }
 
     /**
-     * Tests that the {@link IvyCacheFileset} fails with an exception if it can't determine a common base directory
-     * while dealing with cached artifacts
+     * Test case for IVY-1475.
+     * {@link IvyCacheFileset} must fail with an exception if it cannot determine
+     * a common base directory while dealing with cached artifacts.
      *
-     * @see <a href="https://issues.apache.org/jira/browse/IVY-1475">IVY-1475</a> for more details
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1475">IVY-1475</a>
      */
     @Test
     public void getBaseDirNoCommonBaseDir() {

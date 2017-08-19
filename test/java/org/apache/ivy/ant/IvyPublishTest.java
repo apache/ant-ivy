@@ -160,12 +160,17 @@ public class IvyPublishTest {
         }
     }
 
+    /**
+     * Test case for IVY-1248.
+     *
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
+     */
     @Test
     public void testMergeParentWithoutPublishingParent() throws IOException, ParseException {
         // here we directly publish a module extending ivy-multiconf.xml,
         // the module parent is not published not yet in cache
-        // See : IVY-1248
-
         // update=true implies merge=true
         // project.setProperty("ivy.dep.file",
         // "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
@@ -185,13 +190,18 @@ public class IvyPublishTest {
         checkPublishedFile(published, "ivy-extends-merged.xml");
     }
 
+    /**
+     * Test case for IVY-1248.
+     * Here we directly publish a module extending ivy-multiconf.xml,
+     * the module parent is not published not yet in cache.
+     *
+     * @throws IOException if something goes wrong
+     * @throws ParseException if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
+     */
     @Test
     public void testMergeParentWithoutPublishingParentForceDeliver()
             throws IOException, ParseException {
-        // here we directly publish a module extending ivy-multiconf.xml,
-        // the module parent is not published not yet in cache
-        // See : IVY-1248
-
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
@@ -218,8 +228,6 @@ public class IvyPublishTest {
 
     @Test
     public void testMergeParentWithoutLocationAttribute() throws IOException, ParseException {
-        // See : IVY-XXX
-
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/extends/child1/ivy-child1.xml"));
@@ -711,7 +719,7 @@ public class IvyPublishTest {
     /**
      * Test must not publish ivy file with bad revision.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testBadNoDeliver() throws Exception {

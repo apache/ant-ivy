@@ -158,11 +158,12 @@ public class RetrieveOptions extends LogOptions {
         return makeSymlinks || makeSymlinksInMass;
     }
 
-    @Deprecated
     /**
+     * @return false
      * @deprecated Starting 2.5, creating symlinks in mass is no longer supported and this
      * method will always return false
      */
+    @Deprecated
     public boolean isMakeSymlinksInMass() {
         return false;
     }
@@ -173,6 +174,8 @@ public class RetrieveOptions extends LogOptions {
     }
 
     /**
+     * @param makeSymlinksInMass ditto
+     * @return RetrieveOptions
      * @deprecated Starting 2.5, creating symlinks in mass is no longer supported and this
      * method plays no role in creation of symlinks. Use {@link #setMakeSymlinks(boolean)} instead
      */

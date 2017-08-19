@@ -62,9 +62,13 @@ public class IvyAntSettingsBuildFileTest {
                 buildRule.getProject().getReference("ivy.instance"));
     }
 
+    /**
+     * Test case for IVY-925.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-925">IVY-925</a>
+     */
     @Test
     public void testSettingsWithIdIvyInstance() {
-        // IVY-925
         buildRule.executeTarget("testSettingsWithPropertyAsId");
         ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
@@ -72,9 +76,13 @@ public class IvyAntSettingsBuildFileTest {
         assertEquals(1, report.getDependencies().size());
     }
 
+    /**
+     * Test case for IVY-924.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-924">IVY-924</a>
+     */
     @Test
     public void testStackOverflow() {
-        // IVY-924
         buildRule.configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFileStackOverflow.xml");
         buildRule.executeTarget("testStackOverflow");
         ResolveReport report = buildRule.getProject().getReference("ivy.resolved.report");

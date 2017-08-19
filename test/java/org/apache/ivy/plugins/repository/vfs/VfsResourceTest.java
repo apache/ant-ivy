@@ -48,6 +48,8 @@ public class VfsResourceTest {
 
     /**
      * Validate VFSResource creation for a valid VFS URI pointing to an physically existing file
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testCreateResourceThatExists() throws Exception {
@@ -87,6 +89,8 @@ public class VfsResourceTest {
     /**
      * Validating that resource can be created for files which don't physically exists - e.g.
      * resources that are going to created.
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testCreateResourceThatDoesntExist() throws Exception {
@@ -112,6 +116,8 @@ public class VfsResourceTest {
 
     /**
      * Validate VFSResource creation when given a poorly formed VFS identifier
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testBadURI() throws Exception {
@@ -132,6 +138,8 @@ public class VfsResourceTest {
 
     /**
      * Validate getChildren when given a VFS URI for a directory
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testListFolderChildren() throws Exception {
@@ -165,6 +173,8 @@ public class VfsResourceTest {
     /**
      * Validate that we don't get any results when we query a VFSResource file object for its
      * children
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testListFileChildren() throws Exception {
@@ -179,6 +189,8 @@ public class VfsResourceTest {
     /**
      * Validate that we don't get any results if we ask an IMAGINARY VFSResource - a nonexistent
      * file - for a list of its children
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testListImaginary() throws Exception {

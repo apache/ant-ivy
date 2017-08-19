@@ -136,10 +136,11 @@ public class MainTest {
     }
 
     /**
-     * Tests that the {@code types} argument to the command line is parsed correctly when it's passed
-     * more than one value for the argument
+     * Test case for IVY-1355.
+     * {@code types} argument to the command line must be parsed correctly when it's passed
+     * more than one value for the argument.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1355">IVY-1355</a>
      */
     @Test
@@ -160,7 +161,7 @@ public class MainTest {
     /**
      * Tests that the {@code overwriteMode} passed for the retrieve command works as expected
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testRetrieveOverwriteMode() throws Exception {

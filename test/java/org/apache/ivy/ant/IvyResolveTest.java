@@ -62,6 +62,12 @@ public class IvyResolveTest {
         TestHelper.cleanCache();
     }
 
+    /**
+     * Test case for IVY-1455.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1455">IVY-1455</a>
+     */
     @Test
     public void testIVY1455() throws Exception {
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1455/ivysettings.xml");
@@ -87,6 +93,12 @@ public class IvyResolveTest {
         parallel.execute();
     }
 
+    /**
+     * Test case for IVY-779.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-779">IVY-779</a>
+     */
     @Test
     public void testIVY779() throws Exception {
         Project project = TestHelper.newProject();
@@ -122,9 +134,14 @@ public class IvyResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-630.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-630">IVY-630</a>
+     */
     @Test
     public void testResolveWithoutIvyFile() throws Exception {
-        // IVY-630
         resolve.getProject().setProperty("ivy.settings.file",
             "test/repositories/IVY-630/ivysettings.xml");
 
@@ -444,9 +461,13 @@ public class IvyResolveTest {
         assertFalse(project.getProperty("ivy.resolved.configurations").contains("default"));
     }
 
+    /**
+     * Test case for IVY-396.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-396">IVY-396</a>
+     */
     @Test
     public void testResolveWithAbsoluteFile() {
-        // IVY-396
         File ivyFile = new File("test/java/org/apache/ivy/ant/ivy-simple.xml");
         resolve.getProject().setProperty("ivy.dep.file", ivyFile.getAbsolutePath());
         resolve.execute();
@@ -455,9 +476,13 @@ public class IvyResolveTest {
             ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
 
+    /**
+     * Test case for IVY-396.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-396">IVY-396</a>
+     */
     @Test
     public void testResolveWithRelativeFile() {
-        // IVY-396
         resolve.getProject().setProperty("ivy.dep.file",
             "test/java/org/apache/ivy/ant/ivy-simple.xml");
         resolve.execute();
@@ -615,7 +640,7 @@ public class IvyResolveTest {
     /**
      * Test a failing resolve.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testChildsFail() throws Exception {

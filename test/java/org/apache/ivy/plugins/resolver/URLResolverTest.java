@@ -383,7 +383,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
     /**
      * Tests that the timeout constraint set on the URL resolver is used correctly by the resolver
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testTimeoutConstraint() throws Exception {

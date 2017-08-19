@@ -189,10 +189,10 @@ public class XmlModuleDescriptorWriterTest {
     /**
      * Test that the transitive attribute is written for non-transitive configurations.
      *
-     * <code><conf ... transitive="false" ... /></code>
+     * <code>&lt;conf ... transitive="false" ... /&gt;</code>
      *
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1207">IVY-1207</a>
-     * @throws Exception
      */
     @Test
     public void testTransitiveAttributeForNonTransitiveConfs() throws Exception {
@@ -219,8 +219,8 @@ public class XmlModuleDescriptorWriterTest {
      * This is the default and writing it will only add noise and cause a deviation from the known
      * behavior (before fixing IVY-1207).
      *
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1207">IVY-1207</a>
-     * @throws Exception
      */
     @Test
     public void testTransitiveAttributeNotWrittenForTransitiveConfs() throws Exception {

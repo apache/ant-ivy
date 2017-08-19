@@ -33,7 +33,7 @@ public class ApacheURLListerTest {
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testRetrieveListing() throws Exception {
@@ -62,7 +62,7 @@ public class ApacheURLListerTest {
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testRetrieveListingWithSpaces() throws Exception {

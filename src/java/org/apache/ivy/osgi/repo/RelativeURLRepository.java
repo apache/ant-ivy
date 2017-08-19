@@ -40,7 +40,7 @@ public class RelativeURLRepository extends URLRepository {
 
     /**
      *
-     * @param baseUrl
+     * @param baseUrl ditto
      * @deprecated Since 2.5. Use {@link #RelativeURLRepository(URL, TimeoutConstraint)} instead
      */
     @Deprecated

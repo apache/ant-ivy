@@ -95,9 +95,10 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     }
 
     /**
-     * IVY-625: should fail if no ivyroot specified.
+     * Test case for IVY-625. Must fail if no ivyroot specified.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-625">IVY-625</a>
      */
     @Test
     public void testMandatoryRoot() throws Exception {

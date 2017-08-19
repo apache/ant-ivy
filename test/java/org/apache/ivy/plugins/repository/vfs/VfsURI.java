@@ -128,7 +128,7 @@ public class VfsURI {
     /**
      * Return a well-formed VFS Resource identifier
      *
-     * @return <code>String<code> representing a well formed VFS resource identifier
+     * @return <code>String</code> representing a well formed VFS resource identifier
      */
     public String getVfsURI() {
         StringBuilder uri = new StringBuilder();

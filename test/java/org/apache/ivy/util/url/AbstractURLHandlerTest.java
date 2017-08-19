@@ -32,7 +32,10 @@ import static org.junit.Assert.assertEquals;
 public class AbstractURLHandlerTest {
 
     /**
-     * JUnit test for IVY-923.
+     * Test case for IVY-923.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-923">IVY-923</a>
      */
     @Test
     public void testNormalizeToStringWithSpaceURL() throws Exception {
@@ -43,7 +46,10 @@ public class AbstractURLHandlerTest {
     }
 
     /**
-     * JUnit test for IVY-923.
+     * Test case for IVY-923.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-923">IVY-923</a>
      */
     @Test
     public void testNormalizeToStringWithPlusCharacter() throws Exception {

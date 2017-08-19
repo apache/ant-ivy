@@ -67,7 +67,7 @@ public class StrictConflictManagerTest {
     /**
      * Resolve must fail with a conflict.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = StrictConflictException.class)
     public void testConflictResolve() throws Exception {
@@ -78,7 +78,7 @@ public class StrictConflictManagerTest {
     /**
      * Resolve must fail with a conflict.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = StrictConflictException.class)
     public void testConflictWithDynamicRevisionResolve() throws Exception {

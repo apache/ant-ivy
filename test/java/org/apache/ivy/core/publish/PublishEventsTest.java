@@ -178,6 +178,8 @@ public class PublishEventsTest {
 
     /**
      * Test a simple artifact publish, without errors or overwrite settings.
+     *
+     * @throws IOException if something goes wrong
      */
     @Test
     public void testPublishNoOverwrite() throws IOException {
@@ -197,6 +199,8 @@ public class PublishEventsTest {
 
     /**
      * Test a simple artifact publish, with overwrite set to true.
+     *
+     * @throws IOException if something goes wrong
      */
     @Test
     public void testPublishWithOverwrite() throws IOException {
@@ -220,6 +224,8 @@ public class PublishEventsTest {
 
     /**
      * Test an attempted publish with an invalid data file path.
+     *
+     * @throws IOException if something goes wrong
      */
     @Test
     public void testPublishMissingFile() throws IOException {

@@ -376,7 +376,12 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[1].getDependencyRevisionId());
     }
 
-    // IVY-392
+    /**
+     * Test case for IVY-392.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-392">IVY-392</a>
+     */
     @Test
     public void testDependenciesWithInactiveProfile() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
@@ -451,9 +456,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             md.getModuleRevisionId());
     }
 
+    /**
+     * Test case for IVY-425.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-425">IVY-425</a>
+     */
     @Test
     public void testVariables() throws Exception {
-        // test case for IVY-425
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("spring-hibernate3-2.0.2.pom"), false);
         assertNotNull(md);
@@ -469,9 +479,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[10].getDependencyRevisionId());
     }
 
+    /**
+     * Test case for IVY-423.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-423">IVY-423</a>
+     */
     @Test
     public void testDependenciesInProfile() throws Exception {
-        // test case for IVY-423
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("mule-module-builders-1.3.3.pom"), false);
         assertNotNull(md);
@@ -481,9 +496,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             md.getModuleRevisionId());
     }
 
+    /**
+     * Test case for IVY-424.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-424">IVY-424</a>
+     */
     @Test
     public void testIVY424() throws Exception {
-        // test case for IVY-424
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("shale-tiger-1.1.0-SNAPSHOT.pom"), false);
         assertNotNull(md);
@@ -634,9 +654,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             excludeAllTransitiveDepsDescriptor.isTransitive());
     }
 
+    /**
+     * Test case for IVY-417.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-417">IVY-417</a>
+     */
     @Test
     public void testWithPlugins() throws Exception {
-        // test case for IVY-417
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("mule-1.3.3.pom"), false);
         assertNotNull(md);
@@ -683,7 +708,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
      * Tests that if a module doesn't have a license specified, then parent pom's license (if any)
      * is used for the child module
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testLicenseFromParent() throws Exception {
@@ -704,7 +729,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
      * Tests that if a project explicitly specifies the licenses, then the licenses (if any) from
      * its parent pom aren't applied to the child project
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testOverriddenLicense() throws Exception {
@@ -1059,10 +1084,11 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     /**
-     * Tests that a pom.xml which has references to properties that are either set via environment variables or system
-     * properties, has its properties evaluated correctly.
+     * Test case for IVY-1561.
+     * A pom.xml which has references to properties that are either set via environment variables
+     * or system properties, must have its properties evaluated correctly.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1561">IVY-1561</a>
      */
     @Test

@@ -165,9 +165,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+    /**
+     * Test case for IVY-676.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-676">IVY-676</a>
+     */
     @Test
     public void testFindIvyFileRefWithMultipleIvyPatterns() throws Exception {
-        // cfr IVY-676
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
@@ -263,7 +268,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
     /**
      * Tests that <code>SHA-256</code> algorithm can be used for checksums on resolvers
-     * @throws Exception
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testSHA256Checksum() throws Exception {
@@ -294,7 +300,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     /**
      * Tests that <code>SHA-512</code> algorithm can be used for checksums on resolvers
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testSHA512Checksum() throws Exception {
@@ -887,7 +893,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     /**
      * Publishing with transaction=true and an unsupported pattern must fail.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testUnsupportedTransaction() throws Exception {
@@ -916,7 +922,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     /**
      * Publishing with transaction=true and an unsupported combination of patterns must fail.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testUnsupportedTransaction2() throws Exception {
@@ -948,7 +954,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     /**
      * Publishing with transaction=true and overwrite mode must fail.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testUnsupportedTransaction3() throws Exception {

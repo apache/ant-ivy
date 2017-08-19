@@ -350,9 +350,14 @@ public class ResolveTest {
         assertTrue(report.hasError());
     }
 
+    /**
+     * Test case for IVY-258.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-258">IVY-258</a>
+     */
     @Test
     public void testResolveNoRevisionNowhere() throws Exception {
-        // test case for IVY-258
         // module1 depends on latest version of module2, which contains no revision in its ivy file,
         // nor in the pattern
         Ivy ivy = new Ivy();
@@ -367,9 +372,14 @@ public class ResolveTest {
         assertFalse(report.hasError());
     }
 
+    /**
+     * Test case for IVY-448.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-448">IVY-448</a>
+     */
     @Test
     public void testResolveWithConflictManagerPerModule() throws Exception {
-        // test case for IVY-448
         // all modules from myorg
         // module1
         // -> module2-1.0
@@ -391,9 +401,14 @@ public class ResolveTest {
                 .exists());
     }
 
+    /**
+     * Test case for IVY-465.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-465">IVY-465</a>
+     */
     @Test
     public void testResolveWithConflictManagerDefinedInModule() throws Exception {
-        // test case for IVY-465
         // #M1;1.0 -> #M2;1.0
         // #M2;1.0 -> {org1#mod1.2;1.1 org1#mod1.2;2.0} with
         // <conflict org="org1" module="mod1.2" rev="1.1,2.0" />
@@ -410,9 +425,14 @@ public class ResolveTest {
         assertEquals("2.0", adrs[1].getArtifact().getId().getRevision());
     }
 
+    /**
+     * Test case for IVY-1404.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1404">IVY-1404</a>
+     * @throws Exception if something goes wrong
+     */
     @Test
     public void testResolveWithConflictManagerDefinedAtHigherLevel() throws Exception {
-        // test case for IVY-1404
         // #M1;1.0 -> #M2;1.0
         // #M1;2.0 -> {#M2;1.0 #M3;1.0}
         // #M2;1.0 -> org1#mod1.2;1.1
@@ -457,9 +477,14 @@ public class ResolveTest {
                 .getArtifactsNumber());
     }
 
+    /**
+     * Test case for IVY-198.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-198">IVY-198</a>
+     * @throws Exception if something goes wrong
+     */
     @Test
     public void testResolveWithSlashes() throws Exception {
-        // test case for IVY-198
         // module depends on mod1.2
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-198.xml"),
             getResolveOptions(new String[] {"*"}));
@@ -1153,10 +1178,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-240.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-240">IVY-240</a>
+     */
     @Test
     public void testResolveMultipleExtendsAndConfs() throws Exception {
-        // Test case for IVY-240
-        //
         // mod6.3 1.1 has four confs libraries, run (extends libraries), compile (extends run) and
         // test (extends libraries)
         // mod6.3 depends on mod6.2 2.0 in conf (run->default)
@@ -1189,10 +1218,14 @@ public class ResolveTest {
         assertContainsArtifact("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar", crr);
     }
 
+    /**
+     * Test case for IVY-188.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-188">IVY-188</a>
+     */
     @Test
     public void testResolveMultipleConfsWithLatest() throws Exception {
-        // Test case for IVY-188
-        //
         // mod6.2 has two confs compile and run
         // depends on mod6.1 in conf (compile->default)
         // depends on mod1.2 latest (which is 2.2) in conf (run->default)
@@ -1216,10 +1249,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-173.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-173">IVY-173</a>
+     */
     @Test
     public void testResolveMultipleConfsWithConflicts() throws Exception {
-        // Test case for IVY-173
-        //
         // mod6.2 has two confs compile and run
         // depends on mod1.2 2.1 in conf (compile->default)
         // depends on mod1.1 1.0 in conf (*->default)
@@ -1305,9 +1342,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-261.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-261">IVY-261</a>
+     */
     @Test
     public void testResolveSeveralDefaultWithArtifacts() throws Exception {
-        // test case for IVY-261
         // mod1.6 depends on
         // mod1.4, which depends on mod1.3 and selects one of its artifacts
         // mod1.3 and selects two of its artifacts
@@ -1323,9 +1365,14 @@ public class ResolveTest {
                 .exists());
     }
 
+    /**
+     * Test case for IVY-537.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-537">IVY-537</a>
+     */
     @Test
     public void testResolveConflictsWithArtifacts() throws Exception {
-        // test case for IVY-537
         // #mod2.6;0.12 -> {#mod1.6;1.0.4 #mod2.5;0.6.2 }
         // #mod1.6;1.0.4 -> #mod1.3;3.0 artifacts A and B
         // #mod2.5;0.6.2 -> #mod1.3;3.1 artifact C
@@ -1343,9 +1390,14 @@ public class ResolveTest {
                 .exists());
     }
 
+    /**
+     * Test case for IVY-283.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-283">IVY-283</a>
+     */
     @Test
     public void testResolveSeveralDefaultWithArtifactsAndConfs() throws Exception {
-        // test case for IVY-283
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-283/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy.xml"),
@@ -1366,9 +1418,14 @@ public class ResolveTest {
                 .exists());
     }
 
+    /**
+     * Second test case for IVY-283.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-283">IVY-283</a>
+     */
     @Test
     public void testResolveSeveralDefaultWithArtifactsAndConfs2() throws Exception {
-        // second test case for IVY-283
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/IVY-283/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy-d.xml"),
@@ -1583,9 +1640,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-541.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-541">IVY-541</a>
+     */
     @Test
     public void testResolveWithIncludeArtifactsTransitive() throws Exception {
-        // test case for IVY-541
         // mod2.6 depends on mod2.3 and mod2.1
         // mod2.3 depends on mod2.1 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
@@ -1753,7 +1815,10 @@ public class ResolveTest {
     }
 
     /**
-     * Testcase for IVY-1131.
+     * Test case for IVY-1131.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1131">IVY-1131</a>
      */
     @Test
     public void testResolveTransitiveDependenciesWithOverrideAndDynamicResolveMode()
@@ -2138,9 +2203,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-264.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-264">IVY-264</a>
+     */
     @Test
     public void testResolveConflict3() throws Exception {
-        // test case for IVY-264
         // a depends on x latest, y latest, z latest
         // x and z depends on commons-lang 1.0.1
         // y depends on commons-lang 2.0
@@ -2190,7 +2260,10 @@ public class ResolveTest {
     }
 
     /**
-     * Test IVY-618.
+     * Test case for IVY-618.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-618">IVY-618</a>
      */
     @Test
     public void testResolveConflictFromPoms() throws Exception {
@@ -2230,9 +2303,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-199.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-199">IVY-199</a>
+     */
     @Test
     public void testTransitiveEviction2() throws Exception {
-        // IVY-199
         // mod4.1 v 4.13 depends on
         // - mod3.2 v 1.2.1 which depends on
         // - mod3.1 v 1.0 which depends on mod1.2 v 2.0
@@ -2249,9 +2327,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-590.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-590">IVY-590</a>
+     */
     @Test
     public void testTransitiveEvictionWithExtendingConf() throws Exception {
-        // IVY-590
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-590.xml"),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
@@ -2385,11 +2468,16 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-681.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-681">IVY-681</a>
+     */
     @Test
     public void testEvictWithConf3() throws Exception {
         // same as first one but the conf requested in evicted module is no longer present in
         // selected revision
-        // test case for IVY-681
 
         // mod6.1 r1.4 depends on
         // mod5.1 r4.3 conf A
@@ -2413,10 +2501,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-861.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-861">IVY-861</a>
+     */
     @Test
     public void testFailWithMissingConf() throws Exception {
-        // test case for IVY-861
-
         // mod6.1 r1.5 depends on
         // mod5.1 [1.0,4.3] conf unknown which doesn't exist in mod5.1;4.3
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.5.xml"),
@@ -2530,6 +2622,12 @@ public class ResolveTest {
             crr.getDownloadReports(ModuleRevisionId.newInstance("org5", "mod5.1", "4.2")).length);
     }
 
+    /**
+     * Test case for IVY-644.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-644">IVY-644</a>
+     */
     @Test
     public void testMultipleEviction() throws Exception {
 
@@ -2568,9 +2666,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-193.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-193">IVY-193</a>
+     */
     @Test
     public void testResolveForceAfterConflictSolved() throws Exception {
-        // IVY-193
         // mod4.1 v 4.9 depends on
         // - mod3.2 v 1.1 which depends on mod1.2 v 2.0
         // - mod3.1 v 1.1 which depends on mod1.2 v 2.1
@@ -2593,9 +2696,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-193.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-193">IVY-193</a>
+     */
     @Test
     public void testResolveForceAfterDependencyExist() throws Exception {
-        // IVY-193
         // mod4.1 v 4.10 depends on
         // - mod3.1 v 1.0.1 which depends on mod1.2 v 2.0 and forces it
         // - mod3.2 v 1.2 which depends on mod1.2 v 2.1 and on mod3.1 v1.0.1
@@ -2611,9 +2719,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-193.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-193">IVY-193</a>
+     */
     @Test
     public void testResolveForceInDepOnly() throws Exception {
-        // IVY-193
         // mod4.1 v 4.11 depends on
         // - mod1.2 v 2.0
         // - mod3.2 v 1.3 which depends on
@@ -2633,9 +2746,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "1.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-193.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-193">IVY-193</a>
+     */
     @Test
     public void testResolveForceInDepOnly2() throws Exception {
-        // IVY-193
         // mod4.1 v 4.12 depends on
         // - mod3.1 v1.0 which depends on
         // - mod1.2 v 2.0
@@ -2770,9 +2888,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-182.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-182">IVY-182</a>
+     */
     @Test
     public void testResolveForceWithDynamicRevisionsAndCyclicDependencies() throws Exception {
-        // IVY-182
         // * has no revision
         // * declares conf compile, test extends compile,
         // * depends on
@@ -2831,9 +2954,15 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-130.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-130">IVY-130</a>
+     */
     @Test
     public void testResolveContradictoryConflictResolution2() throws Exception {
-        // BUG IVY-130 : only mod1.2 v2.0 should be resolved and not v2.1 (because of force)
+        // Only mod1.2 v2.0 should be resolved and not v2.1 (because of force)
         // mod10.1 v 1.1 depends on
         // - mod1.2 v 2.0 and forces it
         // - mod4.1 v 4.3
@@ -3060,12 +3189,16 @@ public class ResolveTest {
                 .exists());
     }
 
+    /**
+     * Test case for IVY-602.
+     * Verify that latest.integration dependencies can be resolved when using a resolver with
+     * multiple patterns, when only the first pattern finds something
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-602">IVY-602</a>
+     */
     @Test
     public void testLatestWithMultiplePatterns() throws Exception {
-        // The test verify that latest.integration dependencies can be resolved
-        // when using a resolver with multiple patterns, when only the first pattern
-        // finds something - test case for IVY-602
-
         // mod9.2 depends on latest.integration of mod6.2
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-IVY602.xml"));
@@ -3220,10 +3353,15 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(depId).exists());
     }
 
+    /**
+     * Test case for IVY-318.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-318">IVY-318</a>
+     */
     @Test
     public void testLatestMilestone2() throws Exception {
         // mod9.2 depends on latest.milestone of mod6.2, but there is no milestone
-        // test case for IVY-318
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org9/mod9.2/ivys/ivy-1.2.xml"),
             getResolveOptions(new String[] {"default"}));
@@ -3237,6 +3375,12 @@ public class ResolveTest {
         assertEquals(0, crr.getArtifactsNumber());
     }
 
+    /**
+     * Test case for IVY-56.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-56">IVY-56</a>
+     */
     @Test
     public void testIVY56() throws Exception {
         Ivy ivy = new Ivy();
@@ -3251,6 +3395,12 @@ public class ResolveTest {
         }
     }
 
+    /**
+     * Test case for IVY-214.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-214">IVY-214</a>
+     */
     @Test
     public void testIVY214() throws Exception {
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-214.xml"),
@@ -3263,6 +3413,12 @@ public class ResolveTest {
                 .getArtifactsNumber());
     }
 
+    /**
+     * Test case for IVY-218.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-218">IVY-218</a>
+     */
     @Test
     public void testIVY218() throws Exception {
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-218.xml"),
@@ -3275,6 +3431,12 @@ public class ResolveTest {
                 .getArtifactsNumber());
     }
 
+    /**
+     * Test case for IVY-729.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-729">IVY-729</a>
+     */
     @Test
     public void testIVY729() throws Exception {
         Ivy ivy = new Ivy();
@@ -3289,7 +3451,7 @@ public class ResolveTest {
      * Circular dependency: mod6.3 depends on mod6.2, which itself depends on mod6.3;
      * circular dependency strategy set to error.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testCircular() throws Exception {
@@ -3322,7 +3484,7 @@ public class ResolveTest {
      * Circular dependency: mod 9.1 (no revision) depends on mod9.2, which depends on mod9.1 2.+;
      * circular dependency strategy set to error.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testCircular2() throws Exception {
@@ -3344,7 +3506,8 @@ public class ResolveTest {
      * Circular dependency: mod6.3 depends on mod6.2, which itself depends on mod6.3,
      * in both configuration default and test; circular dependency strategy set to error.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-400">IVY-400</a>
      */
     @Test
     public void testCircular3() throws Exception {
@@ -3465,6 +3628,12 @@ public class ResolveTest {
                 .exists());
     }
 
+    /**
+     * Test case for IVY-1178.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1178">IVY-1178</a>
+     */
     @Test
     public void testIVY1178() throws Exception {
         Ivy ivy = new Ivy();
@@ -3492,6 +3661,12 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("myorg", "modE", "1.1", "modE", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-1236.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1236">IVY-1236</a>
+     */
     @Test
     public void testIVY1236() throws Exception {
         Ivy ivy = new Ivy();
@@ -3510,6 +3685,12 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("myorg", "modB", "1.0", "modB-A", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-1233.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1233">IVY-1233</a>
+     */
     @Test
     public void testIVY1233() throws Exception {
         Ivy ivy = new Ivy();
@@ -3526,6 +3707,12 @@ public class ResolveTest {
         assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("test", "c", "3.0")));
     }
 
+    /**
+     * Test case for IVY-1333.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1333">IVY-1333</a>
+     */
     @Test
     public void testIVY1333() throws Exception {
         Ivy ivy = new Ivy();
@@ -3546,6 +3733,12 @@ public class ResolveTest {
             "1.0.0.m4", extra)));
     }
 
+    /**
+     * Test case for IVY-1347.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1347">IVY-1347</a>
+     */
     @Test
     public void testIVY1347() throws Exception {
         Ivy ivy = new Ivy();
@@ -3566,6 +3759,12 @@ public class ResolveTest {
         assertEquals(ModuleRevisionId.newInstance("foo", "parent", "1.0"), parent);
     }
 
+    /**
+     * Test case for IVY-999.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-999">IVY-999</a>
+     */
     @Test
     public void testIVY999() throws Exception {
         Ivy ivy = new Ivy();
@@ -3581,6 +3780,12 @@ public class ResolveTest {
         assertFalse(modRevIds.contains(ModuleRevisionId.newInstance("junit", "junit", "3.8")));
     }
 
+    /**
+     * Test case for IVY-1366.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1366">IVY-1366</a>
+     */
     @Test
     public void testIVY1366() throws Exception {
         Ivy ivy = new Ivy();
@@ -3654,9 +3859,14 @@ public class ResolveTest {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-105.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-105">IVY-105</a>
+     */
     @Test
     public void testTransitiveSetting2() throws Exception {
-        // test case for IVY-105
         // mod2.7 depends on mod1.1 and mod2.4
         // mod2.4 depends on mod1.1 with transitive set to false
         // mod1.1 depends on mod1.2
@@ -3747,6 +3957,12 @@ public class ResolveTest {
     // about configuration mapping and eviction
     // /////////////////////////////////////////////////////////
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping1() throws Exception {
         Ivy ivy = new Ivy();
@@ -3764,6 +3980,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.2", "c-bt", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping2() throws Exception {
         Ivy ivy = new Ivy();
@@ -3781,6 +4003,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping3() throws Exception {
         Ivy ivy = new Ivy();
@@ -3798,6 +4026,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping4() throws Exception {
         Ivy ivy = new Ivy();
@@ -3815,6 +4049,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping5() throws Exception {
         Ivy ivy = new Ivy();
@@ -3832,6 +4072,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping6() throws Exception {
         Ivy ivy = new Ivy();
@@ -3849,6 +4095,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-84.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-84">IVY-84</a>
+     */
     @Test
     public void testConfigurationMapping7() throws Exception {
         Ivy ivy = new Ivy();
@@ -3866,6 +4118,12 @@ public class ResolveTest {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);
     }
 
+    /**
+     * Test case for IVY-97.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-97">IVY-97</a>
+     */
     @Test
     public void testIVY97() throws Exception {
         // mod9.2 depends on mod9.1 and mod1.2
@@ -4454,9 +4712,14 @@ public class ResolveTest {
         }
     }
 
+    /**
+     * Test case for IVY-418.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-418">IVY-418</a>
+     */
     @Test
     public void testResolveMaven2Classifiers() throws Exception {
-        // test case for IVY-418
         // test-classifier depends on test-classified with classifier asl
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
@@ -4482,9 +4745,14 @@ public class ResolveTest {
             "1.0", "test-classified", "jar", "jar", cmap).exists());
     }
 
+    /**
+     * Test case for IVY-1041.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1041">IVY-1041</a>
+     */
     @Test
     public void testResolveMaven2ClassifiersWithoutPOM() throws Exception {
-        // test case for IVY-1041
         // test-classifier depends on test-classified with classifier asl
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
@@ -4532,9 +4800,14 @@ public class ResolveTest {
         assertTrue(jarFileInCache.length() != sourceFileInCache.length());
     }
 
+    /**
+     * Test case for IVY-1138.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1138">IVY-1138</a>
+     */
     @Test
     public void testResolveMaven2GetSourcesWithSrcClassifier() throws Exception {
-        // IVY-1138
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-m2-with-src.xml"),
@@ -4663,9 +4936,14 @@ public class ResolveTest {
             "jar").exists());
     }
 
+    /**
+     * Test case for IVY-1186.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1186">IVY-1186</a>
+     */
     @Test
     public void testResolveMaven2ParentPomWithNamespace() throws Exception {
-        // Cfr IVY-1186
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/parentPom/ivysettings-namespace.xml"));
 
@@ -4820,9 +5098,14 @@ public class ResolveTest {
             "jar").exists());
     }
 
+    /**
+     * Test case for IVY-1376.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1376">IVY-1376</a>
+     */
     @Test
     public void testResolveMaven2ParentPomDependencyManagementWithImport() throws Exception {
-        // IVY-1376
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
         ivy.getSettings().setDefaultResolver("parentChain");
@@ -4848,9 +5131,14 @@ public class ResolveTest {
             "jar").exists());
     }
 
+    /**
+     * Test case for IVY-501.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-501">IVY-501</a>
+     */
     @Test
     public void testResolveMaven2Snapshot1() throws Exception {
-        // test case for IVY-501
         // here we test maven SNAPSHOT versions handling,
         // with m2 snapshotRepository/uniqueVersion set to true
         Ivy ivy = new Ivy();
@@ -4869,9 +5157,14 @@ public class ResolveTest {
             "test-SNAPSHOT1", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-1036.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1036">IVY-1036</a>
+     */
     @Test
     public void testResolveMaven2Snapshot1AsLatestIntegration() throws Exception {
-        // test case for IVY-1036
         // here we test maven SNAPSHOT versions handling,
         // with m2 snapshotRepository/uniqueVersion set to true
         // but retrieving by latest.integration
@@ -4891,9 +5184,14 @@ public class ResolveTest {
             "test-SNAPSHOT1", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-501.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-501">IVY-501</a>
+     */
     @Test
     public void testResolveMaven2Snapshot2() throws Exception {
-        // test case for IVY-501
         // here we test maven SNAPSHOT versions handling,
         // without m2 snapshotRepository/uniqueVersion set to true
         Ivy ivy = new Ivy();
@@ -4912,9 +5210,14 @@ public class ResolveTest {
             "test-SNAPSHOT2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-1036.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1036">IVY-1036</a>
+     */
     @Test
     public void testResolveMaven2Snapshot2AsLatestIntegration() throws Exception {
-        // test case for IVY-1036
         // here we test maven SNAPSHOT versions handling,
         // with m2 snapshotRepository/uniqueVersion set to true
         // but retrieving by latest.integration
@@ -5047,6 +5350,12 @@ public class ResolveTest {
         assertTrue(getIvyFileInCache(mrid).exists());
     }
 
+    /**
+     * Test case for IVY-1151.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1151">IVY-1151</a>
+     */
     @Test
     public void testIVY151() throws Exception {
         Ivy ivy = new Ivy();
@@ -5101,9 +5410,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-168.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-168">IVY-168</a>
+     */
     @Test
     public void testTransitiveConfMapping() throws Exception {
-        // IVY-168
         // mod13.3 depends on mod13.2 which depends on mod13.1
         // each module has two confs: j2ee and compile
         // each module only publishes one artifact in conf compile
@@ -5148,9 +5462,14 @@ public class ResolveTest {
         assertEquals("another", resolveModRevId.getExtraAttribute("eatt2"));
     }
 
+    /**
+     * Test case for IVY-773.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-773">IVY-773</a>
+     */
     @Test
     public void testExtraAttributes2() throws Exception {
-        // test case for IVY-773
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
@@ -5170,9 +5489,14 @@ public class ResolveTest {
         assertTrue(new File(cache, "apache/module2/task2/1976/module2-linux.jar").exists());
     }
 
+    /**
+     * Test case for IVY-745.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-745">IVY-745</a>
+     */
     @Test
     public void testExtraAttributes3() throws Exception {
-        // test case for IVY-745
         MockMessageLogger mockLogger = new MockMessageLogger();
         Ivy ivy = new Ivy();
         ivy.getLoggerEngine().setDefaultLogger(mockLogger);
@@ -5188,10 +5512,15 @@ public class ResolveTest {
         mockLogger.assertLogContains("expected='task2' found='null'");
     }
 
+    /**
+     * Second test case for IVY-745.¨
+     * Now we disable consistency checking, everything must work fine.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-745">IVY-745</a>
+     */
     @Test
     public void testExtraAttributes4() throws Exception {
-        // second test case for IVY-745: now we disable consistency checking, everything should work
-        // fine
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
@@ -5291,10 +5620,14 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache(ivy, "bar#bar2#trunk;2", "bar2", "jar", "jar").exists());
     }
 
+    /**
+     * Test case for IVY-717.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-717">IVY-717</a>
+     */
     @Test
     public void testBranches6() throws Exception {
-        // test case for IVY-717
-
         // bar1;4 -> foo#foo1#${ivy.branch};5
         // foo#foo1#branch1;5 -> foo#foo2#${ivy.branch};1
         // foo#foo1#trunk;5 -> {}
@@ -5597,6 +5930,12 @@ public class ResolveTest {
         assertFalse(report.hasError());
     }
 
+    /**
+     * Test case for IVY-956.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-956">IVY-956</a>
+     */
     @Test(expected = StrictConflictException.class)
     public void testIVY956() throws Exception {
         ivy.getSettings().setDefaultConflictManager(
@@ -5605,6 +5944,12 @@ public class ResolveTest {
                 getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
     }
 
+    /**
+     * Test case for IVY-1159.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
+     */
     @Test
     public void testIVY1159_orderIsModAModB() throws Exception {
         testIVY1159("ivy-depsorder_modA_then_modB.xml", false);
@@ -5621,6 +5966,12 @@ public class ResolveTest {
             dds[1].getDependencyRevisionId());
     }
 
+    /**
+     * Test case for IVY-1159.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
+     */
     @Test
     public void testIVY1159_orderIsModAModBReplaceForced() throws Exception {
         testIVY1159("ivy-depsorder_modA_then_modB.xml", true);
@@ -5637,6 +5988,12 @@ public class ResolveTest {
             dds[1].getDependencyRevisionId());
     }
 
+    /**
+     * Test case for IVY-1159.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
+     */
     @Test
     public void testIVY1159_orderIsModBModA() throws Exception {
         testIVY1159("ivy-depsorder_modB_then_modA.xml", false);
@@ -5653,6 +6010,12 @@ public class ResolveTest {
             dds[1].getDependencyRevisionId());
     }
 
+    /**
+     * Test case for IVY-1159.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
+     */
     @Test
     public void testIVY1159_orderIsModBModAReplaceForced() throws Exception {
         testIVY1159("ivy-depsorder_modB_then_modA.xml", true);
@@ -5702,6 +6065,12 @@ public class ResolveTest {
         ivy.deliver(pubrev, deliveryPattern, dopts);
     }
 
+    /**
+     * Test case for IVY-1300.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1300">IVY-1300</a>
+     */
     @Test
     public void testIVY1300() throws Exception {
         ivy = Ivy.newInstance();

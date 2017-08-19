@@ -180,9 +180,14 @@ public class IvyBuildNumberTest {
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
+    /**
+     * Test case for IVY-1037.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1037">IVY-1037</a>
+     */
     @Test
     public void testChainResolver() throws Exception {
-        // IVY-1037
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1037/ivysettings.xml");
 

@@ -109,11 +109,12 @@ public interface URLHandler {
      * <p>
      * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the <code>url</code>
      * is needed
+     * </p>
      *
      * @param url                The URL to access
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @return
+     * @return boolean
      * @since 2.5
      */
     boolean isReachable(URL url, TimeoutConstraint timeoutConstraint);
@@ -147,7 +148,7 @@ public interface URLHandler {
      * @param url                The URL to access
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @return
+     * @return long
      * @since 2.5
      */
     long getContentLength(URL url, TimeoutConstraint timeoutConstraint);
@@ -178,11 +179,12 @@ public interface URLHandler {
      * <p>
      * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the <code>url</code>
      * is needed
+     * </p>
      *
      * @param url                The URL to access
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @return
+     * @return long
      * @since 2.5
      */
     long getLastModified(URL url, TimeoutConstraint timeoutConstraint);
@@ -213,15 +215,15 @@ public interface URLHandler {
      * @param url                The URL for which the information is to be retrieved
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @return
+     * @return URLInfo
      * @since 2.5
      */
     URLInfo getURLInfo(URL url, TimeoutConstraint timeoutConstraint);
 
     /**
-     * @param url
-     * @return
-     * @throws IOException
+     * @param url ditto
+     * @return InputStream
+     * @throws IOException if something goes wrong
      * @deprecated Use {@link #openStream(URL, TimeoutConstraint)} instead
      */
     @Deprecated
@@ -233,17 +235,17 @@ public interface URLHandler {
      * @param url                The URL to which an {@link InputStream} has to be opened
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @return
-     * @throws IOException
+     * @return InputStream
+     * @throws IOException if something goes wrong
      * @since 2.5
      */
     InputStream openStream(URL url, TimeoutConstraint timeoutConstraint) throws IOException;
 
     /**
-     * @param src
-     * @param dest
-     * @param l
-     * @throws IOException
+     * @param src URL
+     * @param dest File
+     * @param l CopyProgressListener
+     * @throws IOException if something goes wrong
      * @deprecated Use {@link #download(URL, File, CopyProgressListener, TimeoutConstraint)} instead
      */
     @Deprecated
@@ -257,16 +259,16 @@ public interface URLHandler {
      * @param listener           The listener that will be notified of the download progress
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @throws IOException
+     * @throws IOException if something goes wrong
      * @since 2.5
      */
     void download(URL src, File dest, CopyProgressListener listener, TimeoutConstraint timeoutConstraint) throws IOException;
 
     /**
-     * @param src
-     * @param dest
-     * @param l
-     * @throws IOException
+     * @param src File
+     * @param dest URL
+     * @param l CopyProgressListener
+     * @throws IOException if something goes wrong
      * @deprecated Use {@link #upload(File, URL, CopyProgressListener, TimeoutConstraint)} instead
      */
     @Deprecated
@@ -280,7 +282,7 @@ public interface URLHandler {
      * @param listener           The listener that will be notified of the upload progress
      * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
      *                           are implementation specific
-     * @throws IOException
+     * @throws IOException if something goes wrong
      * @since 2.5
      */
     void upload(File src, URL dest, CopyProgressListener listener, TimeoutConstraint timeoutConstraint) throws IOException;

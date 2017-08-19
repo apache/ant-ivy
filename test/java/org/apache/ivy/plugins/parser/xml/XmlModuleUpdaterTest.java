@@ -337,7 +337,12 @@ public class XmlModuleUpdaterTest {
         }
     }
 
-    // IVY-1356
+    /**
+     * Test case for IVY-1356.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1356">IVY-1356</a>
+     */
     @Test
     public void testMergedUpdateWithExtendsAndExcludes() throws Exception {
         URL url = XmlModuleUpdaterTest.class.getResource("test-extends-dependencies-exclude.xml");

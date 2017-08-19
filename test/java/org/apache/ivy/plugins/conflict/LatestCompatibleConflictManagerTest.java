@@ -139,7 +139,7 @@ public class LatestCompatibleConflictManagerTest {
     /**
      * Resolve must fail with a conflict.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = StrictConflictException.class)
     public void testConflict() throws Exception {
@@ -152,7 +152,7 @@ public class LatestCompatibleConflictManagerTest {
     /**
      * Resolve must fail with a conflict.
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = StrictConflictException.class)
     public void testDynamicRootConflict() throws Exception {

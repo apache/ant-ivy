@@ -29,19 +29,29 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Testing Testing was the single biggest hurdle I faced. I have tried to provide a complete test
+ * Testing was the single biggest hurdle I faced. I have tried to provide a complete test
  * suite that covers all protocols and which can be easily extended. It does differ - somewhat - in
  * structure from the resolver/repository test suites. Setting up smb, ftp, sftp will undoubtedly be
- * your biggest headache (it was mine). Here are a few notes about the setup: - the VFS test suite
- * uses the build/test/repositories area - when setting samba, sftp, etc. the corresponding user
- * needs both read and write privileges. - the tests assume that the user and password is the same
- * for all services. - a limited amount of configuration is available by setting the following
- * properties in the ivy.properties file: * vfs.host * vfs.username * vfs.password * vfs.samba_share
- * Running the test requires that commons-io and ant.jar are on the classpath. Also, I would
- * recommend that at some time the tests be converted from straight junit to something which betters
- * supports functional testing. Although somewhat crude I am using jsystem
+ * your biggest headache (it was mine). Here are a few notes about the setup:
+ * <ul>
+ * <li>the VFS test suite uses the build/test/repositories area;
+ * when setting samba, sftp, etc. the corresponding user needs both read and write privileges.</li>
+ * <li>the tests assume that the user and password is the same for all services.</li>
+ * <li>a limited amount of configuration is available by setting the following properties in the
+ * <code>ivy.properties</code> file:</li>
+ * </ul>
+ * <pre>
+ *   vfs.host
+ *   vfs.username
+ *   vfs.password
+ *   vfs.samba_share
+ * </pre>
+ * Running the test requires that commons-io and ant jars are on the classpath. Also, I would
+ * recommend that at some time the tests be converted from straight junit to something which better
+ * supports functional testing. Although somewhat crude, I am using jsystem
  * (http://jsystemtest.sourceforge.net/) in other projects and am finding it a much better solution
- * than straight junit. Stephen Nesbitt
+ * than straight junit.
+ * <p>Stephen Nesbitt</p>
  */
 public class VfsRepositoryTest {
     private VfsRepository repo = null;
@@ -70,7 +80,7 @@ public class VfsRepositoryTest {
     /**
      * Basic validation of happy path put - valid VFS URI and no conflict with existing file
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testPutValid() throws Exception {
@@ -98,7 +108,7 @@ public class VfsRepositoryTest {
     /**
      * Validate that we can overwrite an existing file
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testPutOverwriteTrue() throws Exception {
@@ -133,7 +143,7 @@ public class VfsRepositoryTest {
     /**
      * Validate that we put will respect a request not to overwrite an existing file
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test(expected = IOException.class)
     public void testPutOverwriteFalse() throws Exception {
@@ -152,7 +162,7 @@ public class VfsRepositoryTest {
     /**
      * Test the retrieval of an artifact from the repository creating a new artifact
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testGetNoExisting() throws Exception {
@@ -178,7 +188,7 @@ public class VfsRepositoryTest {
     /**
      * Test the retrieval of an artifact from the repository overwriting an existing artifact
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testGetOverwriteExisting() throws Exception {
@@ -209,6 +219,8 @@ public class VfsRepositoryTest {
     /**
      * Validate that we get a non null Resource instance when passed a well-formed VfsURI pointing
      * to an existing file
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testGetResourceValidExist() throws Exception {
@@ -227,6 +239,8 @@ public class VfsRepositoryTest {
     /**
      * Validate that we get a non null Resource instance when passed a well-formed VfsURI pointing
      * to a non-existent file.
+     *
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testGetResourceValidNoExist() throws Exception {

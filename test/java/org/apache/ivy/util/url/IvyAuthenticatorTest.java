@@ -67,7 +67,7 @@ public class IvyAuthenticatorTest {
      * relevant requesting information, including the {@link Authenticator#getRequestingURL() requesting URL} and
      * {@link Authenticator#getRequestorType() request type}
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1557">IVY-1557</a>
      */
     @Test

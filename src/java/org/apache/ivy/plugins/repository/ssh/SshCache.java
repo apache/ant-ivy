@@ -263,6 +263,7 @@ public final class SshCache {
      * @param session
      *            to connect to
      * @return channelSftp or null if not successful (channel not existent or dead)
+     * @throws IOException should never happen
      */
     public ChannelSftp getChannelSftp(Session session) throws IOException {
         ChannelSftp channel = null;
