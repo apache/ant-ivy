@@ -80,11 +80,11 @@ public class LatestRevisionStrategyTest {
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         LatestRevisionStrategy.SpecialMeaning specialMeaning = new LatestRevisionStrategy.SpecialMeaning();
         specialMeaning.setName("pre");
-        specialMeaning.setValue(new Integer(-2));
+        specialMeaning.setValue(-2);
         latestRevisionStrategy.addConfiguredSpecialMeaning(specialMeaning);
         specialMeaning = new LatestRevisionStrategy.SpecialMeaning();
         specialMeaning.setName("QA");
-        specialMeaning.setValue(new Integer(4));
+        specialMeaning.setValue(4);
         latestRevisionStrategy.addConfiguredSpecialMeaning(specialMeaning);
         Collections.sort(shuffled, latestRevisionStrategy.new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);

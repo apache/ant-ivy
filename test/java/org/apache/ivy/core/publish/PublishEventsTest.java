@@ -371,7 +371,7 @@ public class PublishEventsTest {
                 // we test file separately, since it is hard to guarantee an exact path match, but we
                 // want to make sure that both paths point to the same canonical location on the
                 // filesystem
-                String filePath = event.getAttributes().get("file").toString();
+                String filePath = event.getAttributes().get("file");
                 assertEquals("event declares correct value for file",
                     expectedData.getCanonicalPath(), new File(filePath).getCanonicalPath());
             } catch (IOException ioe) {

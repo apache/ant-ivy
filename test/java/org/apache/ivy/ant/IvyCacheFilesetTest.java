@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivy.TestHelper;
@@ -235,7 +236,7 @@ public class IvyCacheFilesetTest {
         // we expect a BuildException when we try to find a (non-existent) common base dir
         // across file system roots
         expExc.expect(BuildException.class);
-        List<ArtifactDownloadReport> reports = Arrays.asList();
+        List<ArtifactDownloadReport> reports = Collections.emptyList();
         fileset.requireCommonBaseDir(reports);
         fail("A BuildException was expected when trying to find a common base dir.");
     }

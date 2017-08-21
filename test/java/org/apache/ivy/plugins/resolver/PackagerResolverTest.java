@@ -92,7 +92,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         cleanupTempDirs();
     }
 
-    protected void cleanupTempDirs() throws Exception {
+    protected void cleanupTempDirs() {
         FileUtil.forceDelete(workdir);
     }
 

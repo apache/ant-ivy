@@ -20,7 +20,7 @@ package org.apache.ivy.core.publish;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -93,7 +93,7 @@ public class PublishEngineTest {
         new Thread() {
             public void run() {
                 try {
-                    engine.publish(md, Arrays.asList("build/test/publish/module/[artifact].[ext]"),
+                    engine.publish(md, Collections.singletonList("build/test/publish/module/[artifact].[ext]"),
                         resolver, new PublishOptions().setSrcIvyPattern("build/test/publish/module/[artifact].[ext]"));
                     synchronized (PublishEngineTest.this) {
                         counter[0]++;

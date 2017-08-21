@@ -293,9 +293,8 @@ public class RetrieveTest {
      * {@link Files#exists(Path, LinkOption...) exists}
      *
      * @param filePath
-     * @throws IOException if something goes wrong
      */
-    private void assertLinkOrExists(final String filePath) throws IOException {
+    private void assertLinkOrExists(final String filePath) {
         if (systemHasSymlinkAbility) {
             assertTrue(filePath + " was expected to be a symlink", Files.isSymbolicLink(Paths.get(filePath)));
             return;
@@ -496,7 +495,7 @@ public class RetrieveTest {
         assertTrue("Artifact file for " + fooBar123Mrid + " isn't a file, in cache at " + fooBar123ArtifactInCache,
                 fooBar123ArtifactInCache.isFile());
         final byte[] fooBar123ArtifactContentsInCache = Files.readAllBytes(fooBar123ArtifactInCache.toPath());
-        assertTrue("Artifact content was empty at " + fooBar123ArtifactContentsInCache, fooBar123ArtifactContentsInCache.length > 0);
+        assertTrue("Artifact content was empty at " + new String(fooBar123ArtifactContentsInCache), fooBar123ArtifactContentsInCache.length > 0);
 
 
         // now do a retrieve of the resolved module
@@ -533,7 +532,7 @@ public class RetrieveTest {
         assertTrue("Artifact file for " + fooBar234Mrid + " isn't a file, in cache at " + foobar234InCache,
                 foobar234InCache.isFile());
         final byte[] foobar234CacheFileContents = Files.readAllBytes(foobar234InCache.toPath());
-        assertTrue("Artifact content was empty at " + foobar234CacheFileContents, foobar234CacheFileContents.length > 0);
+        assertTrue("Artifact content was empty at " + new String(foobar234CacheFileContents), foobar234CacheFileContents.length > 0);
 
         // do the retrieve with symlinks disabled
         ivy.retrieve(resolve2Report.getModuleDescriptor().getModuleRevisionId(),

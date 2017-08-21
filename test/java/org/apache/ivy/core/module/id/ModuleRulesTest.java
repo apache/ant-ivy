@@ -38,7 +38,7 @@ public class ModuleRulesTest {
 
     @Before
     public void setUp() {
-        rules = new ModuleRules<String>();
+        rules = new ModuleRules<>();
         rule = new String[10];
         for (int i = 0; i < rule.length; i++) {
             rule[i] = "RULE_" + i;

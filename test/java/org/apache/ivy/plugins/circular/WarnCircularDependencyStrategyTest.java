@@ -27,6 +27,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.util.MessageLoggerEngine;
 import org.apache.ivy.util.MockMessageLogger;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,7 +48,8 @@ public class WarnCircularDependencyStrategyTest {
         loggerEngine = setupMockLogger(mockMessageLogger);
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         resetMockLogger(loggerEngine);
         // pop the context we setup before
         IvyContext.popContext();
