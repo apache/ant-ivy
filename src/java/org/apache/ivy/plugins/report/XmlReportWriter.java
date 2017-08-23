@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -49,6 +50,7 @@ import org.apache.ivy.util.XMLHelper;
 public class XmlReportWriter {
 
     static final String REPORT_ENCODING = "UTF-8";
+    private static final String SEPARATOR = " ";
 
     public void output(ConfigurationResolveReport report, OutputStream stream) {
         output(report, new String[] {report.getConfiguration()}, stream);
@@ -74,11 +76,7 @@ public class XmlReportWriter {
         if (mrid.getBranch() != null) {
             out.println("\t\tbranch=\"" + XMLHelper.escape(mrid.getBranch()) + "\"");
         }
-        Map<String, String> extraAttributes = mrid.getExtraAttributes();
-        for (Map.Entry<String, String> entry : extraAttributes.entrySet()) {
-            out.println("\t\textra-" + entry.getKey() + "=\""
-                    + XMLHelper.escape(entry.getValue()) + "\"");
-        }
+        out.println(extraToString(mrid.getExtraAttributes(), "\t\t"));
         out.println("\t\tconf=\"" + XMLHelper.escape(report.getConfiguration()) + "\"");
         out.println("\t\tconfs=\"" + XMLHelper.escape(StringUtils.join(confs, ", ")) + "\"");
         out.println("\t\tdate=\"" + DateUtil.format(report.getDate()) + "\"/>");
@@ -142,10 +140,7 @@ public class XmlReportWriter {
         }
         extraAttributes = (md != null) ? md.getExtraAttributes() : dep.getResolvedId()
                 .getExtraAttributes();
-        for (Map.Entry<String, String> entry : extraAttributes.entrySet()) {
-            details.append(" extra-").append(entry.getKey()).append("=\"")
-                    .append(XMLHelper.escape(entry.getValue())).append("\"");
-        }
+        details.append(extraToString(extraAttributes, SEPARATOR));
         out.println(String.format("\t\t\t<revision name=\"%s\"%s%s downloaded=\"%s\" searched=\"%s\"%s conf=\"%s\" position=\"%d\">",
                 XMLHelper.escape(dep.getResolvedId().getRevision()),
                 (dep.getResolvedId().getBranch() == null) ? "" : " branch=\""
@@ -158,14 +153,9 @@ public class XmlReportWriter {
         if (md != null) {
             License[] licenses = md.getLicenses();
             for (License license : licenses) {
-                String lurl;
-                if (license.getUrl() != null) {
-                    lurl = " url=\"" + XMLHelper.escape(license.getUrl()) + "\"";
-                } else {
-                    lurl = "";
-                }
-                out.println("\t\t\t\t<license name=\"" + XMLHelper.escape(license.getName()) + "\""
-                        + lurl + "/>");
+                out.println(String.format("\t\t\t\t<license name=\"%s\"%s/>",
+                        XMLHelper.escape(license.getName()),
+                        license.getUrl() == null ? "" : " url=\"" + XMLHelper.escape(license.getUrl()) + "\""));
             }
         }
         outputMetadataArtifact(out, dep);
@@ -173,6 +163,18 @@ public class XmlReportWriter {
         outputCallers(report, out, dep);
         outputArtifacts(report, out, dep);
         out.println("\t\t\t</revision>");
+    }
+
+    private String extraToString(Map<String, String> extraAttributes, String prefix) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : extraAttributes.entrySet()) {
+            if (sb.length() > 0 && !SEPARATOR.equals(prefix)) {
+                sb.append(System.lineSeparator());
+            }
+            sb.append(prefix).append("extra-").append(entry.getKey()).append("=\"")
+                    .append(XMLHelper.escape(entry.getValue())).append("\"");
+        }
+        return sb.toString();
     }
 
     private void outputEvictionInformation(ConfigurationResolveReport report, PrintWriter out,
@@ -219,24 +221,17 @@ public class XmlReportWriter {
     }
 
     private void outputCallers(ConfigurationResolveReport report, PrintWriter out, IvyNode dep) {
-        Caller[] callers = dep.getCallers(report.getConfiguration());
-        for (Caller caller : callers) {
-            StringBuilder callerDetails = new StringBuilder();
-            Map<String, String> callerExtraAttributes = caller.getDependencyDescriptor()
-                    .getExtraAttributes();
-            for (Map.Entry<String, String> entry : callerExtraAttributes.entrySet()) {
-                callerDetails.append(" extra-").append(entry.getKey()).append("=\"")
-                        .append(XMLHelper.escape(entry.getValue())).append("\"");
-            }
-
+        for (Caller caller : dep.getCallers(report.getConfiguration())) {
+            final DependencyDescriptor dependencyDescriptor = caller.getDependencyDescriptor();
             out.println(String.format("\t\t\t\t<caller organisation=\"%s\" name=\"%s\" conf=\"%s\" rev=\"%s\" rev-constraint-default=\"%s\" rev-constraint-dynamic=\"%s\" callerrev=\"%s\"%s/>",
                     XMLHelper.escape(caller.getModuleRevisionId().getOrganisation()),
                     XMLHelper.escape(caller.getModuleRevisionId().getName()),
                     XMLHelper.escape(toString(caller.getCallerConfigurations())),
                     XMLHelper.escape(caller.getAskedDependencyId(dep.getData()).getRevision()),
-                    XMLHelper.escape(caller.getDependencyDescriptor().getDependencyRevisionId().getRevision()),
-                    XMLHelper.escape(caller.getDependencyDescriptor().getDynamicConstraintDependencyRevisionId().getRevision()),
-                    XMLHelper.escape(caller.getModuleRevisionId().getRevision()), callerDetails));
+                    XMLHelper.escape(dependencyDescriptor.getDependencyRevisionId().getRevision()),
+                    XMLHelper.escape(dependencyDescriptor.getDynamicConstraintDependencyRevisionId().getRevision()),
+                    XMLHelper.escape(caller.getModuleRevisionId().getRevision()),
+                    extraToString(dependencyDescriptor.getExtraAttributes(), SEPARATOR)));
         }
     }
 
@@ -246,10 +241,7 @@ public class XmlReportWriter {
             out.print("\t\t\t\t\t<artifact name=\"" + XMLHelper.escape(adr.getName())
                     + "\" type=\"" + XMLHelper.escape(adr.getType()) + "\" ext=\""
                     + XMLHelper.escape(adr.getExt()) + "\"");
-            for (Map.Entry<String, String> entry : adr.getArtifact().getExtraAttributes().entrySet()) {
-                out.print(" extra-" + entry.getKey() + "=\""
-                        + XMLHelper.escape(entry.getValue()) + "\"");
-            }
+            out.print(extraToString(adr.getArtifact().getExtraAttributes(), SEPARATOR));
             out.print(" status=\"" + XMLHelper.escape(adr.getDownloadStatus().toString()) + "\"");
             out.print(" details=\"" + XMLHelper.escape(adr.getDownloadDetails()) + "\"");
             out.print(" size=\"" + adr.getSize() + "\"");

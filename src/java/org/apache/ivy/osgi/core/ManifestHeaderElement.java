@@ -19,7 +19,6 @@ package org.apache.ivy.osgi.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -88,26 +87,19 @@ public class ManifestHeaderElement {
     }
 
     public String toString() {
-        String string = "";
-        Iterator<String> itValues = values.iterator();
-        while (itValues.hasNext()) {
-            string = string.concat(itValues.next());
-            if (itValues.hasNext()) {
-                string = string.concat(";");
+        StringBuilder sb = new StringBuilder();
+        for (String value : values) {
+            if (sb.length() > 0) {
+                sb.append(";");
             }
+            sb.append(value);
         }
         for (Entry<String, String> directive : directives.entrySet()) {
-            string = string.concat(";");
-            string = string.concat(directive.getKey());
-            string = string.concat(":=");
-            string = string.concat(directive.getValue());
+            sb.append(";").append(directive.getKey()).append(":=").append(directive.getValue());
         }
         for (Entry<String, String> attribute : attributes.entrySet()) {
-            string = string.concat(";");
-            string = string.concat(attribute.getKey());
-            string = string.concat("=");
-            string = string.concat(attribute.getValue());
+            sb.append(";").append(attribute.getKey()).append("=").append(attribute.getValue());
         }
-        return string;
+        return sb.toString();
     }
 }
