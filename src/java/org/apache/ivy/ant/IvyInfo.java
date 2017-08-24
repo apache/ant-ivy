@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -37,6 +36,8 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
 
 /**
  * Parses information about an ivy file and make them available in ant.
@@ -173,7 +174,7 @@ public class IvyInfo extends IvyTask {
         List<String> publicConfigsList = new ArrayList<>();
         for (Configuration config : md.getConfigurations()) {
             String name = config.getName();
-            if (Visibility.PUBLIC.equals(config.getVisibility())) {
+            if (PUBLIC.equals(config.getVisibility())) {
                 publicConfigsList.add(name);
             }
 

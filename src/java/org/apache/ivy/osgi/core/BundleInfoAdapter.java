@@ -34,7 +34,6 @@ import java.util.jar.Manifest;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
@@ -49,6 +48,8 @@ import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+
 public class BundleInfoAdapter {
 
     public static final String CONF_NAME_DEFAULT = "default";
@@ -58,13 +59,13 @@ public class BundleInfoAdapter {
     public static final String CONF_NAME_OPTIONAL = "optional";
 
     public static final Configuration CONF_OPTIONAL = new Configuration(CONF_NAME_OPTIONAL,
-            Visibility.PUBLIC, "Optional dependencies", new String[] {CONF_NAME_DEFAULT}, true,
+            PUBLIC, "Optional dependencies", new String[] {CONF_NAME_DEFAULT}, true,
             null);
 
     public static final String CONF_NAME_TRANSITIVE_OPTIONAL = "transitive-optional";
 
     public static final Configuration CONF_TRANSITIVE_OPTIONAL = new Configuration(
-            CONF_NAME_TRANSITIVE_OPTIONAL, Visibility.PUBLIC, "Optional dependencies",
+            CONF_NAME_TRANSITIVE_OPTIONAL, PUBLIC, "Optional dependencies",
             new String[] {CONF_NAME_OPTIONAL}, true, null);
 
     public static final String CONF_USE_PREFIX = "use_";
@@ -113,7 +114,7 @@ public class BundleInfoAdapter {
             }
             confDependencies[i] = CONF_NAME_DEFAULT;
             md.addConfiguration(new Configuration(CONF_USE_PREFIX + exportPackage.getName(),
-                    Visibility.PUBLIC, "Exported package " + exportPackage.getName(),
+                    PUBLIC, "Exported package " + exportPackage.getName(),
                     confDependencies, true, null));
         }
 
@@ -326,7 +327,7 @@ public class BundleInfoAdapter {
             if (BundleInfo.PACKAGE_TYPE.equals(type)) {
                 // declare the configuration for the package
                 conf = CONF_USE_PREFIX + name;
-                md.addConfiguration(new Configuration(CONF_USE_PREFIX + name, Visibility.PUBLIC,
+                md.addConfiguration(new Configuration(CONF_USE_PREFIX + name, PUBLIC,
                         "Exported package " + name, new String[] {CONF_NAME_DEFAULT}, true, null));
                 dd.addDependencyConfiguration(conf, conf);
             }

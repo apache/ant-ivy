@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -40,6 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -199,7 +199,7 @@ public class XmlModuleDescriptorWriterTest {
         // Given a ModuleDescriptor with a non-transitive configuration
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(
                 "myorg", "myname"), "1.0"), "integration", new Date());
-        Configuration conf = new Configuration("conf", Visibility.PUBLIC, "desc", null, false, null);
+        Configuration conf = new Configuration("conf", PUBLIC, "desc", null, false, null);
         md.addConfiguration(conf);
 
         // When the ModuleDescriptor is written
@@ -227,7 +227,7 @@ public class XmlModuleDescriptorWriterTest {
         // Given a ModuleDescriptor with a transitive configuration
         DefaultModuleDescriptor md = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(
                 "myorg", "myname"), "1.0"), "integration", new Date());
-        Configuration conf = new Configuration("conf", Visibility.PUBLIC, "desc", null, true, null);
+        Configuration conf = new Configuration("conf", PUBLIC, "desc", null, true, null);
         md.addConfiguration(conf);
 
         // When the ModuleDescriptor is written

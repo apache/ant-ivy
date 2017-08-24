@@ -61,6 +61,9 @@ import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+
 public class IvyNode implements Comparable<IvyNode> {
     private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 
@@ -461,8 +464,7 @@ public class IvyNode implements Comparable<IvyNode> {
                     }
                     return false;
                 }
-                if (shouldBePublic && !isRoot()
-                        && c.getVisibility() != Configuration.Visibility.PUBLIC) {
+                if (shouldBePublic && !isRoot() && !PUBLIC.equals(c.getVisibility())) {
                     confsToFetch.remove(conf);
                     if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
                         Message.verbose("configuration required by evicted revision is not visible in "
@@ -660,8 +662,7 @@ public class IvyNode implements Comparable<IvyNode> {
         String defaultConf = getDefaultConf(conf);
         conf = getMainConf(conf);
         if ((md.getConfiguration(conf) == null)
-                || Configuration.Visibility.PRIVATE.equals(md.getConfiguration(conf)
-                        .getVisibility())) {
+                || PRIVATE.equals(md.getConfiguration(conf).getVisibility())) {
             if ("".equals(defaultConf)) {
                 return new String[0];
             }

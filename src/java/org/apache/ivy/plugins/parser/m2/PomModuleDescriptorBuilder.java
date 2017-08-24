@@ -32,7 +32,6 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -56,6 +55,8 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+
 /**
  * Build a module descriptor. This class handle the complexity of the structure of an ivy
  * ModuleDescriptor and isolate the PomModuleDescriptorParser from it.
@@ -65,47 +66,41 @@ public class PomModuleDescriptorBuilder {
     private static final int DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT = 4;
 
     public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
-            new Configuration("default", Visibility.PUBLIC,
+            new Configuration("default", PUBLIC,
                     "runtime dependencies and master artifact can be used with this conf",
                     new String[] {"runtime", "master"}, true, null),
-            new Configuration("master", Visibility.PUBLIC,
+            new Configuration("master", PUBLIC,
                     "contains only the artifact published by this module itself, "
                             + "with no transitive dependencies", new String[0], true, null),
-            new Configuration("compile", Visibility.PUBLIC,
+            new Configuration("compile", PUBLIC,
                     "this is the default scope, used if none is specified. "
                             + "Compile dependencies are available in all classpaths.",
                     new String[0], true, null),
-            new Configuration(
-                    "provided",
-                    Visibility.PUBLIC,
+            new Configuration("provided", PUBLIC,
                     "this is much like compile, but indicates you expect the JDK or a container "
                             + "to provide it. "
                             + "It is only available on the compilation classpath, and is not transitive.",
                     new String[0], true, null),
-            new Configuration("runtime", Visibility.PUBLIC,
+            new Configuration("runtime", PUBLIC,
                     "this scope indicates that the dependency is not required for compilation, "
                             + "but is for execution. It is in the runtime and test classpaths, "
                             + "but not the compile classpath.", new String[] {"compile"}, true,
                     null),
-            new Configuration(
-                    "test",
-                    Visibility.PUBLIC,
+            new Configuration("test", PUBLIC,
                     "this scope indicates that the dependency is not required for normal use of "
                             + "the application, and is only available for the test compilation and "
                             + "execution phases.", new String[] {"runtime"}, true, null),
-            new Configuration(
-                    "system",
-                    Visibility.PUBLIC,
+            new Configuration("system", PUBLIC,
                     "this scope is similar to provided except that you have to provide the JAR "
                             + "which contains it explicitly. The artifact is always available and is not "
                             + "looked up in a repository.", new String[0], true, null),
-            new Configuration("sources", Visibility.PUBLIC,
+            new Configuration("sources", PUBLIC,
                     "this configuration contains the source artifact of this module, if any.",
                     new String[0], true, null),
-            new Configuration("javadoc", Visibility.PUBLIC,
+            new Configuration("javadoc", PUBLIC,
                     "this configuration contains the javadoc artifact of this module, if any.",
                     new String[0], true, null),
-            new Configuration("optional", Visibility.PUBLIC, "contains all optional dependencies",
+            new Configuration("optional", PUBLIC, "contains all optional dependencies",
                     new String[0], true, null)};
 
     static final Map<String, ConfMapper> MAVEN2_CONF_MAPPING = new HashMap<>();

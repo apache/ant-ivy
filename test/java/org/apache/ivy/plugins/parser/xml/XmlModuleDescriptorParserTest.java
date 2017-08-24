@@ -17,26 +17,9 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
@@ -63,6 +46,24 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
 import static org.junit.Assert.*;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
@@ -242,12 +243,12 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(confs);
         assertEquals(5, confs.length);
 
-        assertConf(md, "myconf1", "desc 1", Configuration.Visibility.PUBLIC, new String[0]);
-        assertConf(md, "myconf2", "desc 2", Configuration.Visibility.PUBLIC, new String[0]);
-        assertConf(md, "myconf3", "desc 3", Configuration.Visibility.PRIVATE, new String[0]);
-        assertConf(md, "myconf4", "desc 4", Configuration.Visibility.PUBLIC, new String[] {
+        assertConf(md, "myconf1", "desc 1", PUBLIC, new String[0]);
+        assertConf(md, "myconf2", "desc 2", PUBLIC, new String[0]);
+        assertConf(md, "myconf3", "desc 3", PRIVATE, new String[0]);
+        assertConf(md, "myconf4", "desc 4", PUBLIC, new String[] {
                 "myconf1", "myconf2"});
-        assertConf(md, "myoldconf", "my old desc", Configuration.Visibility.PUBLIC, new String[0]);
+        assertConf(md, "myoldconf", "my old desc", PUBLIC, new String[0]);
 
         assertArtifacts(md.getArtifacts("myconf1"), new String[] {"myartifact1", "myartifact2",
                 "myartifact3", "myartifact4"});
@@ -834,8 +835,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations
         assertNotNull(md.getConfigurations());
         assertEquals(
-            Arrays.asList(new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)),
+            Arrays.asList(new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null)),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -866,9 +867,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations and added the one defined in the file itself
         assertNotNull(md.getConfigurations());
         assertEquals(
-            Arrays.asList(new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null),
-                    new Configuration("conf3", Visibility.PUBLIC, "", new String[0], true, null)),
+            Arrays.asList(new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null),
+                    new Configuration("conf3", PUBLIC, "", new String[0], true, null)),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -901,8 +902,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations
         assertNotNull(md.getConfigurations());
         assertEquals(
-            Arrays.asList(new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)),
+            Arrays.asList(new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null)),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -936,8 +937,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations
         assertNotNull(md.getConfigurations());
         assertEquals(
-            Arrays.asList(new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
-                    new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)),
+            Arrays.asList(new Configuration("conf1", PUBLIC, "", new String[0], true, null),
+                    new Configuration("conf2", PRIVATE, "", new String[0], true, null)),
             Arrays.asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();

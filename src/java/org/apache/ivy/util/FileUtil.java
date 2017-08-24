@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
-import java.util.jar.Pack200.Unpacker;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
+
+import static java.util.jar.Pack200.newUnpacker;
 
 /**
  * Utility class used to deal with file related operations, like copy, full reading, symlink, ...
@@ -584,17 +584,16 @@ public final class FileUtil {
             in = new GZIPInputStream(in);
         }
 
-        Unpacker unpacker = Pack200.newUnpacker();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         JarOutputStream jar = new JarOutputStream(baos);
-        unpacker.unpack(new UncloseInputStream(in), jar);
+        newUnpacker().unpack(new UncloseInputStream(in), jar);
         jar.close();
         return new ByteArrayInputStream(baos.toByteArray());
     }
 
     /**
      * Wrap an input stream and do not close the stream on call to close(). Used to avoid closing a
-     * {@link ZipInputStream} used with {@link Unpacker#unpack(File, JarOutputStream)}
+     * {@link ZipInputStream} used with {@link Pack200.Unpacker#unpack(File, JarOutputStream)}
      */
     private static final class UncloseInputStream extends InputStream {
 

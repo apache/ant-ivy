@@ -22,8 +22,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
 
 /**
  * Class containing several utility methods for working with configurations.
@@ -67,13 +69,13 @@ public final class ConfigurationUtils {
                 result.addAll(Arrays.asList(md.getConfigurationsNames()));
             } else if ("*(public)".equals(conf)) {
                 for (Configuration cf : md.getConfigurations()) {
-                    if (cf.getVisibility().equals(Visibility.PUBLIC)) {
+                    if (PUBLIC.equals(cf.getVisibility())) {
                         result.add(cf.getName());
                     }
                 }
             } else if ("*(private)".equals(conf)) {
                 for (Configuration cf : md.getConfigurations()) {
-                    if (cf.getVisibility().equals(Visibility.PRIVATE)) {
+                    if (PRIVATE.equals(cf.getVisibility())) {
                         result.add(cf.getName());
                     }
                 }

@@ -25,11 +25,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -40,7 +38,6 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.PomDependencyDescriptor;
@@ -55,6 +52,9 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
+import static org.apache.ivy.core.IvyContext.getContext;
+import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+import static org.apache.ivy.plugins.namespace.NameSpaceHelper.toSystem;
 import static org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.MAVEN2_CONFIGURATIONS;
 import static org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.extractPomProperties;
 import static org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.getDependencyManagements;
@@ -202,7 +202,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             mdBuilder.getModuleDescriptor(), relocation, true, false, true);
                     /* Map all public dependencies */
                     for (Configuration m2Conf : MAVEN2_CONFIGURATIONS) {
-                        if (Visibility.PUBLIC.equals(m2Conf.getVisibility())) {
+                        if (PUBLIC.equals(m2Conf.getVisibility())) {
                             dd.addDependencyConfiguration(m2Conf.getName(), m2Conf.getName());
                         }
                     }
@@ -383,9 +383,9 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     private ResolvedModuleRevision parseOtherPom(ParserSettings ivySettings,
             ModuleRevisionId parentModRevID) throws ParseException {
         DependencyDescriptor dd = new DefaultDependencyDescriptor(parentModRevID, true);
-        ResolveData data = IvyContext.getContext().getResolveData();
+        ResolveData data = getContext().getResolveData();
         if (data == null) {
-            ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+            ResolveEngine engine = getContext().getIvy().getResolveEngine();
             ResolveOptions options = new ResolveOptions();
             options.setDownload(false);
             data = new ResolveData(engine, options);
@@ -396,7 +396,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             // TODO: Throw exception here?
             return null;
         } else {
-            dd = NameSpaceHelper.toSystem(dd, ivySettings.getContextNamespace());
+            dd = toSystem(dd, ivySettings.getContextNamespace());
             return resolver.getDependency(dd, data);
         }
     }
