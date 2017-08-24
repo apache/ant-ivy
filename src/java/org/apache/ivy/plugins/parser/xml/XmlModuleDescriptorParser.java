@@ -89,8 +89,8 @@ import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.get
  * uses only the SAX API, which makes the parsing code harder to understand.
  */
 public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
-    static final String[] DEPENDENCY_REGULAR_ATTRIBUTES = new String[] {"org", "name", "branch",
-            "branchConstraint", "rev", "revConstraint", "force", "transitive", "changing", "conf"};
+    static final List<String> DEPENDENCY_REGULAR_ATTRIBUTES = Arrays.asList("org", "name", "branch",
+            "branchConstraint", "rev", "revConstraint", "force", "transitive", "changing", "conf");
 
     private static final XmlModuleDescriptorParser INSTANCE = new XmlModuleDescriptorParser();
 
@@ -845,8 +845,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                             settings.substitute(attributes.getValue("description")),
                             (ext == null) ? null : ext.split(","), transitive, deprecated);
                     ExtendableItemHelper.fillExtraAttributes(settings, configuration, attributes,
-                        new String[] {"name", "visibility", "extends", "transitive", "description",
-                                "deprecated"});
+                        Arrays.asList("name", "visibility", "extends", "transitive", "description",
+                                "deprecated"));
                     getMd().addConfiguration(configuration);
                     break;
                 case State.PUB:
@@ -954,7 +954,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String url = settings.substitute(attributes.getValue("url"));
                 artifact = new MDArtifact(getMd(), artName, type, ext, url == null ? null
                         : new URL(url), ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, new String[] {"ext", "type", "name", "conf"}));
+                    attributes, Arrays.asList("ext", "type", "name", "conf")));
                 String confs = settings.substitute(attributes.getValue("conf"));
                 // only add confs if they are specified. if they aren't, endElement will
                 // handle this
@@ -1013,9 +1013,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     module,
                     branch,
                     revision,
-                    ExtendableItemHelper.getExtraAttributes(settings, attributes, new String[] {
+                    ExtendableItemHelper.getExtraAttributes(settings, attributes, Arrays.asList(
                             "organisation", "module", "revision", "status", "publication",
-                            "branch", "namespace", "default", "resolver"})));
+                            "branch", "namespace", "default", "resolver"))));
 
             String namespace = settings.substitute(attributes.getValue("namespace"));
             if (namespace != null) {
@@ -1107,7 +1107,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             if (state == State.DEP_ARTIFACT) {
                 String url = settings.substitute(attributes.getValue("url"));
                 Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, new String[] {"name", "type", "ext", "url", "conf"});
+                    attributes, Arrays.asList("name", "type", "ext", "url", "conf"));
                 confAware = new DefaultDependencyArtifactDescriptor(dd, name, type, ext,
                         url == null ? null : new URL(url), extraAtt);
             } else if (state == State.ARTIFACT_INCLUDE) {
@@ -1118,8 +1118,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
                 Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, new String[] {"org", "module", "name", "type", "ext", "matcher",
-                            "conf"});
+                    attributes, Arrays.asList("org", "module", "name", "type", "ext", "matcher",
+                            "conf"));
                 confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
             } else { // _state == ARTIFACT_EXCLUDE || EXCLUDE
                 PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
@@ -1129,8 +1129,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
                 Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, new String[] {"org", "module", "name", "type", "ext", "matcher",
-                            "conf"});
+                    attributes, Arrays.asList("org", "module", "name", "type", "ext", "matcher",
+                            "conf"));
                 confAware = new DefaultExcludeRule(aid, matcher, extraAtt);
             }
             String confs = settings.substitute(attributes.getValue("conf"));

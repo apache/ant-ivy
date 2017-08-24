@@ -20,6 +20,7 @@ package org.apache.ivy.core.module.descriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -74,7 +75,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
     private String description;
 
-    private String[] extendsFrom;
+    private Set<String> extendsFrom;
 
     private Visibility visibility;
 
@@ -95,9 +96,9 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
     }
 
     public Configuration(Configuration source, ModuleRevisionId sourceModule) {
-        this(source.getAttributes(), source.getQualifiedExtraAttributes(), source.getName(), source
-                .getVisibility(), source.getDescription(), source.getExtends(), source
-                .isTransitive(), source.getDeprecated(), sourceModule);
+        this(source.getAttributes(), source.getQualifiedExtraAttributes(), source.getName(),
+                source.getVisibility(), source.getDescription(), source.getExtends(),
+                source.isTransitive(), source.getDeprecated(), sourceModule);
     }
 
     /**
@@ -122,7 +123,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
     }
 
     private Configuration(Map<String, String> attributes, Map<String, String> extraAttributes,
-            String name, Visibility visibility, String description, String[] ext,
+            String name, Visibility visibility, String description, String[] exts,
             boolean transitive, String deprecated, ModuleRevisionId sourceModule) {
         super(attributes, extraAttributes);
 
@@ -135,12 +136,12 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
         this.name = name;
         this.visibility = visibility;
         this.description = description;
-        if (ext == null) {
-            extendsFrom = new String[0];
+        if (exts == null) {
+            extendsFrom = Collections.emptySet();
         } else {
-            extendsFrom = new String[ext.length];
-            for (int i = 0; i < ext.length; i++) {
-                extendsFrom[i] = ext[i].trim();
+            extendsFrom = new LinkedHashSet<>();
+            for (String ext : exts) {
+                extendsFrom.add(ext.trim());
             }
         }
         this.transitive = transitive;
@@ -168,7 +169,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
      * @return Returns the extends. May be empty, but never null.
      */
     public String[] getExtends() {
-        return extendsFrom;
+        return extendsFrom.toArray(new String[extendsFrom.size()]);
     }
 
     /**
@@ -232,7 +233,7 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
             }
         }
 
-        this.extendsFrom = newExtends.toArray(new String[newExtends.size()]);
+        this.extendsFrom = newExtends;
     }
 
     private void addOther(Configuration[] allConfigs, Visibility visibility, Set<String> configs) {

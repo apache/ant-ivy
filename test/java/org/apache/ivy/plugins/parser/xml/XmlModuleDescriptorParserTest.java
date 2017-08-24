@@ -371,7 +371,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("11.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet<>(Collections.singletonList("*")),
+        assertEquals(Collections.singleton("*"),
             new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertEquals(Collections.singletonList("myconf1"),
             Arrays.asList(dd.getDependencyConfigurations("myconf1")));
@@ -447,7 +447,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("10.1", dd.getDependencyRevisionId().getRevision());
-        assertEquals(new HashSet<>(Collections.singletonList("*")),
+        assertEquals(Collections.singleton("*"),
             new HashSet<>(Arrays.asList(dd.getModuleConfigurations())));
         assertDependencyArtifactIncludeRules(dd, new String[] {"myconf1"}, new String[] {"your.*",
                 PatternMatcher.ANY_EXPRESSION});

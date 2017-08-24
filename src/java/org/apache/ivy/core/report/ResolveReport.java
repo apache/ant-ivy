@@ -322,16 +322,16 @@ public class ResolveReport {
      * specified one.
      *
      * @param extended String
-     * @return String[]
+     * @return Set of String
      */
     @SuppressWarnings("unused")
-    private String[] getExtendingConfs(String extended) {
+    private Set<String> getExtendingConfs(String extended) {
         Set<String> extendingConfs = new HashSet<>();
         extendingConfs.add(extended);
         for (String conf : md.getConfigurationsNames()) {
             gatherExtendingConfs(extendingConfs, conf, extended);
         }
-        return extendingConfs.toArray(new String[extendingConfs.size()]);
+        return extendingConfs;
     }
 
     private boolean gatherExtendingConfs(Set<String> extendingConfs, String conf, String extended) {

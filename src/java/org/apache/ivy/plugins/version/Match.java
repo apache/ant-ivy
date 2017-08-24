@@ -17,8 +17,9 @@
  */
 package org.apache.ivy.plugins.version;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -76,16 +77,16 @@ public class Match {
     public Matcher getPatternMatcher(ModuleRevisionId askedMrid) {
         String revision = askedMrid.getRevision();
 
-        String[] args = split(getArgs());
-        String[] argValues = getRevisionArgs(revision);
+        List<String> args = split(getArgs());
+        List<String> argValues = getRevisionArgs(revision);
 
-        if (args.length != argValues.length) {
+        if (args.size() != argValues.size()) {
             return new NoMatchMatcher();
         }
 
         Map<String, String> variables = new HashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            variables.put(args[i], argValues[i]);
+        for (String arg : args) {
+            variables.put(arg, argValues.get(args.indexOf(arg)));
         }
 
         String pattern = getPattern();
@@ -95,33 +96,32 @@ public class Match {
         return pMatcher.getMatcher(pattern);
     }
 
-    private String[] getRevisionArgs(String revision) {
+    private List<String> getRevisionArgs(String revision) {
         int bracketStartIndex = revision.indexOf('(');
         if (bracketStartIndex == -1) {
-            return new String[0];
+            return Collections.emptyList();
         }
 
         int bracketEndIndex = revision.indexOf(')');
         if (bracketEndIndex <= (bracketStartIndex + 1)) {
-            return new String[0];
+            return Collections.emptyList();
         }
 
-        String args = revision.substring(bracketStartIndex + 1, bracketEndIndex);
-        return split(args);
+        return split(revision.substring(bracketStartIndex + 1, bracketEndIndex));
     }
 
-    private static String[] split(String string) {
+    private static List<String> split(String string) {
         if (string == null) {
-            return new String[0];
+            return Collections.emptyList();
         }
 
         StringTokenizer tokenizer = new StringTokenizer(string, ", ");
-        List<String> tokens = new ArrayList<>();
+        List<String> tokens = new LinkedList<>();
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
 
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens;
     }
 
     private static class NoMatchMatcher implements Matcher {

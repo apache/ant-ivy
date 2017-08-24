@@ -18,8 +18,8 @@
 package org.apache.ivy.util.extendable;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -40,6 +40,12 @@ public final class ExtendableItemHelper {
         return ret;
     }
 
+    @Deprecated
+    public static Map<String, String> getExtraAttributes(ParserSettings settings,
+                                                         Attributes attributes, String[] ignoredAttNames) {
+        return getExtraAttributes(settings, attributes, Arrays.asList(ignoredAttNames));
+    }
+
     /**
      * Extract from the XML attribute the extra Ivy ones
      *
@@ -50,19 +56,24 @@ public final class ExtendableItemHelper {
      * @return Map&lt;String,String&gt;
      */
     public static Map<String, String> getExtraAttributes(ParserSettings settings,
-            Attributes attributes, String[] ignoredAttNames) {
+            Attributes attributes, List<String> ignoredAttNames) {
         Map<String, String> ret = new HashMap<>();
-        Collection<String> ignored = Arrays.asList(ignoredAttNames);
         for (int i = 0; i < attributes.getLength(); i++) {
-            if (!ignored.contains(attributes.getQName(i))) {
+            if (!ignoredAttNames.contains(attributes.getQName(i))) {
                 ret.put(attributes.getQName(i), settings.substitute(attributes.getValue(i)));
             }
         }
         return ret;
     }
 
+    @Deprecated
     public static void fillExtraAttributes(ParserSettings settings, DefaultExtendableItem item,
-            Attributes attributes, String[] ignoredAttNames) {
+                                           Attributes attributes, String[] ignoredAttNames) {
+        fillExtraAttributes(settings, item, attributes, Arrays.asList(ignoredAttNames));
+    }
+
+    public static void fillExtraAttributes(ParserSettings settings, DefaultExtendableItem item,
+            Attributes attributes, List<String> ignoredAttNames) {
         Map<String, String> att = getExtraAttributes(settings, attributes, ignoredAttNames);
         for (Entry<String, String> entry : att.entrySet()) {
             item.setExtraAttribute(entry.getKey(), entry.getValue());

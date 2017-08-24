@@ -163,7 +163,7 @@ public final class IvyPatternHelper {
             tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(origin));
         }
 
-        return substituteTokens(pattern, tokens);
+        return substituteTokens(pattern, tokens, false);
     }
 
     // CheckStyle:ParameterNumber ON
@@ -218,9 +218,15 @@ public final class IvyPatternHelper {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static String substituteTokens(String pattern, Map tokens) {
-        Map<String, Object> tokensCopy = new HashMap<>(tokens);
+    // This is a cludge to reconcile different values passed to the method
+    public static String substituteTokens(String pattern, Map<String, String> tokens) {
+        Map<String, Object> tokensCopy = new HashMap<>();
+        tokensCopy.putAll(tokens);
+        return substituteTokens(pattern, tokensCopy, true);
+    }
+
+    private static String substituteTokens(String pattern, Map<String, Object> tokens, boolean external) {
+        Map<String, Object> tokensCopy = external ? tokens : new HashMap<>(tokens);
         if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_KEY2)) {
             tokensCopy.put(ORGANISATION_KEY2, tokensCopy.get(ORGANISATION_KEY));
         }

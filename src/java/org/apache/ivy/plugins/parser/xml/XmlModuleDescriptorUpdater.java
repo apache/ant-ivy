@@ -749,9 +749,9 @@ public final class XmlModuleDescriptorUpdater {
 
             // if necessary translate mrid using optional namespace argument
             ModuleRevisionId localMid = ModuleRevisionId.newInstance(organisation, module, branch,
-                rev, ExtendableItemHelper
-                        .getExtraAttributes(settings, attributes, new String[] {"organisation",
-                                "module", "revision", "status", "publication", "namespace"}));
+                rev, ExtendableItemHelper.getExtraAttributes(settings, attributes,
+                            Arrays.asList("organisation", "module", "revision", "status",
+                                    "publication", "namespace")));
             ModuleRevisionId systemMid = (ns == null) ? localMid : ns.getToSystemTransformer()
                     .transform(localMid);
 
