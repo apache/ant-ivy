@@ -20,6 +20,8 @@ package org.apache.ivy.core.module.descriptor;
 
 import org.junit.Test;
 
+import static org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor.replaceSelfFallbackPattern;
+import static org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor.replaceThisFallbackPattern;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -31,15 +33,11 @@ public class DefaultDependencyDescriptorTest {
      */
     @Test
     public void testReplaceSelfFallbackPattern() {
-        String replacedConf = DefaultDependencyDescriptor.replaceSelfFallbackPattern("@(default)",
-            "compile");
-        assertEquals("compile(default)", replacedConf);
+        assertEquals("compile(default)", replaceSelfFallbackPattern("@(default)", "compile"));
 
-        replacedConf = DefaultDependencyDescriptor.replaceSelfFallbackPattern("default", "compile");
-        assertNull(replacedConf);
+        assertNull(replaceSelfFallbackPattern("default", "compile"));
 
-        replacedConf = DefaultDependencyDescriptor.replaceSelfFallbackPattern("@", "runtime");
-        assertEquals("runtime", "runtime");
+        assertEquals("runtime", replaceSelfFallbackPattern("@", "runtime"));
 
     }
 
@@ -49,15 +47,11 @@ public class DefaultDependencyDescriptorTest {
      */
     @Test
     public void testReplaceThisFallbackPattern() {
-        String replacedConf = DefaultDependencyDescriptor.replaceThisFallbackPattern("#(default)",
-            "compile");
-        assertEquals("compile(default)", replacedConf);
+        assertEquals("compile(default)", replaceThisFallbackPattern("#(default)", "compile"));
 
-        replacedConf = DefaultDependencyDescriptor.replaceThisFallbackPattern("default", "compile");
-        assertNull(replacedConf);
+        assertNull(replaceThisFallbackPattern("default", "compile"));
 
-        replacedConf = DefaultDependencyDescriptor.replaceThisFallbackPattern("#", "runtime");
-        assertEquals("runtime", "runtime");
+        assertEquals("runtime", replaceThisFallbackPattern("#", "runtime"));
 
     }
 
