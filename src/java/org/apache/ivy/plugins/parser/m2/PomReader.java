@@ -119,7 +119,7 @@ public class PomReader {
 
     public PomReader(final URL descriptorURL, final Resource res) throws IOException, SAXException {
         InputStream stream = new AddDTDFilterInputStream(
-                URLHandlerRegistry.getDefault().openStream(descriptorURL));
+                URLHandlerRegistry.getDefault().openStream(descriptorURL, null));
         InputSource source = new InputSource(stream);
         source.setSystemId(XMLHelper.toSystemId(descriptorURL));
         try {

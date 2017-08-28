@@ -191,7 +191,7 @@ public abstract class AbstractURLHandler implements URLHandler {
         return result;
     }
 
-    protected static TimeoutConstraint createTimeoutConstraints(final int connectionTimeout) {
+    public static TimeoutConstraint createTimeoutConstraints(final int connectionTimeout) {
         return new TimeoutConstraint() {
             @Override
             public int getConnectionTimeout() {
