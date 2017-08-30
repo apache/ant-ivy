@@ -26,8 +26,8 @@ body  {
     margin: 8px auto;
     padding: 0;
     width: 98%;
-    color: #000;
-    background-color: #fff;
+    color: black;
+    background-color: white;
     border-radius: 5px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -37,15 +37,16 @@ body, p, td, li, ul, ol  {
     font-size: small;
 }
 h1, h2, h3, h4, h5, h6 {
-    color: #7a9438;font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
+    color: #7a9438;
+    font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
 h1 {
     color: #7a9438;
-    background-color: #fff;
+    background-color: white;
     background: none;
 }
 h2 {
-    color: #fff;
+    color: white;
     background-color: #7a9438;
     padding-left: 10px;
     font-size: 1.6em;
@@ -85,7 +86,7 @@ blockquote {
     font-size: 1.2em;
     line-height: 1.3em;
     font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
-  color: #696969;
+    color: dimgray;
 }
 pre {
     padding: 0.75em 1.5em;
@@ -94,7 +95,7 @@ pre {
     border: 1px solid #ddd;
 }
 code {
-    background-color: #EEE;
+    background-color: #eee;
 }
 dt {
     font-weight: bold;
@@ -122,27 +123,27 @@ li p {
 #navcontainer  {
     color: white;
     margin-left: 20px;
-    background-color:#7a9438;
+    background-color: #7a9438;
 }
 #navcontainer  a {
     color: white;
     text-decoration: none;
 }
 #nav {
-    background-color:#7a9438;
+    background-color: #7a9438;
 }
 #nav ul {
-    background-color:#7a9438;
+    background-color: #7a9438;
     border-top: 1px solid #7a9438;
     border-right: 1px solid #7a9438;
     border-bottom: 1px solid #7a9438;
     border-left: 0.75em solid #7a9438;
 }
 #nav li a {
-    color: #fff;
+    color: white;
 }
 #nav .title {
-    color: #fff;
+    color: white;
     background: #7a9438;
     border-top: 0;
     border-right: 0;
@@ -150,7 +151,7 @@ li p {
     border-left: 0;
 }
 #nav li li a {
-    background: #fff;
+    background: white;
     color: #7a9438;
     border-top: 0;
     border-right: 0;
@@ -161,7 +162,7 @@ li p {
     background: #9ebf47;
 }
 #top-menu {
-    background-color:#7a9438;
+    background-color: #7a9438;
     border-top: 3px solid #9ebf47;
     border-bottom: 3px solid #9ebf47;
 }
@@ -207,12 +208,12 @@ li p {
     font-weight: 700;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    color: #000;
+    color: black;
     background-color: #eee;
     font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, Verdana, sans-serif;
 }
 #content {
-    table-layout:fixed;
+    table-layout: fixed;
 }
 .block h2 {
     margin: 5px 0px 0px 0px;
@@ -220,13 +221,15 @@ li p {
     font-size: 1.2em;
     font-weight: 700;
     border-top-left-radius: 5px;
-    border-top-right-radius: 5px;color: #000;
+    border-top-right-radius: 5px;
+    color: black;
     background-color: #eee;
 }
 .block .content {
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
-    margin-bottom: 10px;background-color: #fff;
+    margin-bottom: 10px;
+    background-color: white;
     border: 1px solid #eee;
 }
 #main {
@@ -254,20 +257,20 @@ table.tableblock {
     margin-bottom: 10px;
 }
 table.tableblock thead {
-    background-color: #DEE4CD;
-    border: 1px solid #7A9437;
+    background-color: #dee4cd;
+    border: 1px solid #7a9437;
 }
 table.tableblock th {
     font-family: monospace;
-    border: 1px solid #7A9437;
+    border: 1px solid #7a9437;
     padding: 5px;
 }
 table.tableblock tbody {
-    background-color: #FFFFFF;
-    border: 1px solid #7A9437;
+    background-color: white;
+    border: 1px solid #7a9437;
 }
 table.tableblock td {
-    border: 1px dotted #7A9437;
+    border: 1px dotted #7a9437;
     padding: 5px;
 }
 table.tableblock td p:last-child {
@@ -281,49 +284,52 @@ table.tableblock .valign-middle {
 }
 .note {
     padding: 15px;
-    border-style:solid;
-    border-width:1px;
-    border-color: #F0D88D;
-    background-color: #FCFCCA;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #f0d88d;
+    background-color: #fcfcca;
     margin: 10px;
 }
 .note .title {
-    display:none;
+    display: none;
 }
 .warning:before {
-    content: url(../images/warning.svg)
+    font-size: 1.25rem;
+    color: red;
+    margin: 10px;
+    content: '\0026A0';
 }
 .warning {
-    border-style:solid;
-    border-width:1px;
-    border-color: #F0D88D;
-    background-color: #FCFCCA;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #f0d88d;
+    background-color: #fcfcca;
     margin: 10px;
 }
 .warning .title {
-    display:none;
+    display: none;
 }
 #treemenu {
     padding-left: 10px;
+}
+.treeview .hitarea {
+    cursor: pointer;
 }
 .treeview ul {
     margin: 0;
     padding: 0;
 }
 .treeview li {
-    background: white url(../images/bullet.gif) no-repeat left center;
+    background: white url('data:image/svg+xml;utf-8,<svg version="1.1" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" fill="%237a9438"/></svg>') no-repeat left center;
     list-style-type: none;
     padding-left: 22px;
     margin-bottom: 3px;
 }
 .treeview li.submenu {
-    background: white url(../images/closed.gif) no-repeat left 1px;
-}
-.treeview .hitarea {
-    cursor: pointer;
+    background: white url('data:image/svg+xml;utf-8,<svg version="1.1" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="2,2 14,2 8,14" fill="%237a9438"/></svg>') no-repeat left 1px;
 }
 .treeview li.collapsable, .treeview li.open {
-    background: white url(../images/open.gif) no-repeat left 1px;
+    background: white url('data:image/svg+xml;utf-8,<svg version="1.1" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="2,2 2,14 14,8" fill="%237a9438"/></svg>') no-repeat left 1px;
 }
 .treeview ul.closed {
     display: none;
@@ -342,5 +348,5 @@ table.tableblock .valign-middle {
     color: #7a9438;
 }
 #book {
-    background-color: #FFFFFF;
+    background-color: white;
 }
