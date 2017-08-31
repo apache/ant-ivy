@@ -161,51 +161,6 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
             l.get(0));
     }
 
-    @Test
-    public void testIBiblio() throws Exception {
-        String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
-        if (ibiblioRoot == null) {
-            return;
-        }
-
-        IBiblioResolver resolver = new IBiblioResolver();
-        resolver.setRoot(ibiblioRoot);
-        resolver.setName("test");
-        resolver.setSettings(_settings);
-        assertEquals("test", resolver.getName());
-
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-fileupload", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
-        assertNotNull(rmr);
-        assertEquals(mrid, rmr.getId());
-
-        DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                "commons-fileupload", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(1, report.getArtifactsReports().length);
-
-        ArtifactDownloadReport ar = report.getArtifactReport(artifact);
-        assertNotNull(ar);
-
-        assertEquals(artifact, ar.getArtifact());
-        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-
-        // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(1, report.getArtifactsReports().length);
-
-        ar = report.getArtifactReport(artifact);
-        assertNotNull(ar);
-
-        assertEquals(artifact, ar.getArtifact());
-        assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void testMaven2Listing() throws Exception {
@@ -264,87 +219,6 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
                 .assertLogContains("tried http://unknown.host.comx/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.pom");
         mockMessageImpl
                 .assertLogContains("tried http://unknown.host.comx/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
-    }
-
-    @Test
-    public void testIBiblioArtifacts() throws Exception {
-        String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
-        if (ibiblioRoot == null) {
-            return;
-        }
-
-        IBiblioResolver resolver = new IBiblioResolver();
-        resolver.setRoot(ibiblioRoot);
-        resolver.setName("test");
-        resolver.setSettings(_settings);
-        assertEquals("test", resolver.getName());
-
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "nanning", "0.9");
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mrid, false);
-        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(),
-                "nanning-profiler", "jar", "jar"), ExactPatternMatcher.INSTANCE, null));
-        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(),
-                "nanning-trace", "jar", "jar"), ExactPatternMatcher.INSTANCE, null));
-        ResolvedModuleRevision rmr = resolver.getDependency(dd, _data);
-        assertNotNull(rmr);
-        assertEquals(mrid, rmr.getId());
-
-        DefaultArtifact profiler = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                "nanning-profiler", "jar", "jar");
-        DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                "nanning-trace", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {profiler, trace},
-            downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(2, report.getArtifactsReports().length);
-
-        ArtifactDownloadReport ar = report.getArtifactReport(profiler);
-        assertNotNull(ar);
-
-        assertEquals(profiler, ar.getArtifact());
-        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-
-        ar = report.getArtifactReport(trace);
-        assertNotNull(ar);
-
-        assertEquals(trace, ar.getArtifact());
-        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-
-        // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {profiler, trace}, downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(2, report.getArtifactsReports().length);
-
-        ar = report.getArtifactReport(profiler);
-        assertNotNull(ar);
-
-        assertEquals(profiler, ar.getArtifact());
-        assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
-
-        ar = report.getArtifactReport(trace);
-        assertNotNull(ar);
-
-        assertEquals(trace, ar.getArtifact());
-        assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
-    }
-
-    @Test
-    public void testUnknown() throws Exception {
-        String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
-        if (ibiblioRoot == null) {
-            return;
-        }
-
-        IBiblioResolver resolver = new IBiblioResolver();
-        resolver.setRoot(ibiblioRoot);
-        resolver.setName("test");
-        resolver.setSettings(_settings);
-
-        assertNull(resolver.getDependency(
-            new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("unknown", "unknown",
-                "1.0"), false), _data));
     }
 
 }
