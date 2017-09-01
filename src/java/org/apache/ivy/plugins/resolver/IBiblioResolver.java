@@ -17,19 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -47,10 +34,23 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.plugins.version.MavenTimedSnapshotVersionMatcher;
 import org.apache.ivy.util.ContextualSAXHandler;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * IBiblioResolver is a resolver which can be used to resolve dependencies found in the ibiblio
@@ -64,8 +64,10 @@ public class IBiblioResolver extends URLResolver {
 
     private static final String M2_PATTERN = "[organisation]/[module]/" + M2_PER_MODULE_PATTERN;
 
+    @Deprecated
     public static final String DEFAULT_PATTERN = "[module]/[type]s/[artifact]-[revision].[ext]";
 
+    @Deprecated
     public static final String DEFAULT_ROOT = "http://www.ibiblio.org/maven/";
 
     public static final String DEFAULT_M2_ROOT = "https://repo1.maven.org/maven2/";
@@ -88,25 +90,22 @@ public class IBiblioResolver extends URLResolver {
 
     @Override
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
-        if (isM2compatible() && isUsepoms()) {
-            ModuleRevisionId mrid = dd.getDependencyRevisionId();
-            mrid = convertM2IdForResourceSearch(mrid);
-
-            ResolvedResource rres = null;
-            if (dd.getDependencyRevisionId().getRevision().endsWith("SNAPSHOT")) {
-                rres = findSnapshotDescriptor(dd, data, mrid);
-                if (rres != null) {
-                    return rres;
-                }
-            }
-
-            rres = findResourceUsingPatterns(mrid, getIvyPatterns(),
-                DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data),
-                data.getDate());
-            return rres;
-        } else {
+        if (!isM2compatible() || !isUsepoms()) {
             return null;
         }
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        mrid = convertM2IdForResourceSearch(mrid);
+        final String revision = dd.getDependencyRevisionId().getRevision();
+        final MavenTimedSnapshotVersionMatcher.MavenSnapshotRevision snapshotRevision = MavenTimedSnapshotVersionMatcher.computeIfSnapshot(revision);
+        if (snapshotRevision != null) {
+            final ResolvedResource rres = findSnapshotDescriptor(dd, data, mrid, snapshotRevision);
+            if (rres != null) {
+                return rres;
+            }
+        }
+        return findResourceUsingPatterns(mrid, getIvyPatterns(),
+                DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data),
+                data.getDate());
     }
 
     @Override
@@ -116,99 +115,133 @@ public class IBiblioResolver extends URLResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        ResolvedResource rres = null;
-        if (artifact.getId().getRevision().endsWith("SNAPSHOT") && isM2compatible()) {
-            rres = findSnapshotArtifact(artifact, date, mrid);
+        final String revision = artifact.getId().getRevision();
+        final MavenTimedSnapshotVersionMatcher.MavenSnapshotRevision snapshotRevision = MavenTimedSnapshotVersionMatcher.computeIfSnapshot(revision);
+        if (snapshotRevision != null) {
+            final ResolvedResource rres = findSnapshotArtifact(artifact, date, mrid, snapshotRevision);
             if (rres != null) {
                 return rres;
             }
         }
         return findResourceUsingPatterns(mrid, getArtifactPatterns(), artifact,
-            getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
+                getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }
 
-    private ResolvedResource findSnapshotArtifact(Artifact artifact, Date date,
-            ModuleRevisionId mrid) {
-        String rev = findSnapshotVersion(mrid);
-        if (rev != null) {
-            // replace the revision token in file name with the resolved revision
-            String pattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + rev);
-            return findResourceUsingPattern(mrid, pattern, artifact, getDefaultRMDParser(artifact
-                    .getModuleRevisionId().getModuleId()), date);
-        }
-        return null;
-    }
-
-    private ResolvedResource findSnapshotDescriptor(DependencyDescriptor dd, ResolveData data,
-            ModuleRevisionId mrid) {
-        String rev = findSnapshotVersion(mrid);
-        if (rev != null) {
-            // here it would be nice to be able to store the resolved snapshot version, to avoid
-            // having to follow the same process to download artifacts
-
-            Message.verbose("[" + rev + "] " + mrid);
-
-            // replace the revision token in file name with the resolved revision
-            String pattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + rev);
-            return findResourceUsingPattern(mrid, pattern,
-                DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data),
-                data.getDate());
-        }
-        return null;
-    }
-
-    private String findSnapshotVersion(ModuleRevisionId mrid) {
+    private ResolvedResource findSnapshotArtifact(final Artifact artifact, final Date date,
+                                                  final ModuleRevisionId mrid, final MavenTimedSnapshotVersionMatcher.MavenSnapshotRevision snapshotRevision) {
         if (!isM2compatible()) {
             return null;
         }
+        final String snapshotArtifactPattern;
+        if (snapshotRevision.isTimestampedSnapshot()) {
+            Message.debug(mrid + " has been identified as a (Maven) timestamped snapshot revision");
+            // this is a Maven timestamped snapshot revision. Something like 1.0.0-<timestampedRev>
+            // We now get the base revision from it, which is "1.0.0" and append the "-SNAPSHOT" to it.
+            final String inferredSnapshotRevision = snapshotRevision.getBaseRevision() + "-SNAPSHOT";
+            // we replace the "/[revision]" in the descriptor pattern with the "inferred" snapshot revision
+            // which is like "1.0.0-SNAPSHOT".
+            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            snapshotArtifactPattern = getWholePattern().replaceFirst("/\\[revision\\]", "/" + inferredSnapshotRevision);
+        } else {
+            // it's not a timestamped revision, but a regular snapshot. Try and find
+            // any potential timestamped revisions of this regular snapshot, by looking into the maven metadata
+            final String timestampedRev = findTimestampedSnapshotVersion(mrid);
+            if (timestampedRev == null) {
+                // no timestamped snapshots found and instead this is just a regular snapshot
+                // version. So let's just fallback to our logic of finding resources using configured
+                // artifact pattern(s)
+                return null;
+            }
+            Message.verbose(mrid + " has been identified as a snapshot revision which has a timestamped snapshot revision " + timestampedRev);
+            // we have found a timestamped revision for a snapshot. So we replace the "-[revision]" in the artifact file name to use the
+            // timestamped revision.
+            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            snapshotArtifactPattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + timestampedRev);
+        }
+        return findResourceUsingPattern(mrid, snapshotArtifactPattern, artifact, getDefaultRMDParser(artifact
+                .getModuleRevisionId().getModuleId()), date);
+    }
 
-        if (shouldUseMavenMetadata(getWholePattern())) {
-            InputStream metadataStream = null;
-            try {
-                String metadataLocation = IvyPatternHelper.substitute(root
-                        + "[organisation]/[module]/[revision]/maven-metadata.xml", mrid);
-                Resource metadata = getRepository().getResource(metadataLocation);
-                if (metadata.exists()) {
-                    metadataStream = metadata.openStream();
-                    final StringBuffer timestamp = new StringBuffer();
-                    final StringBuffer buildNumer = new StringBuffer();
-                    XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
-                        @Override
-                        public void endElement(String uri, String localName, String qName)
-                                throws SAXException {
-                            if ("metadata/versioning/snapshot/timestamp".equals(getContext())) {
-                                timestamp.append(getText());
-                            }
-                            if ("metadata/versioning/snapshot/buildNumber".equals(getContext())) {
-                                buildNumer.append(getText());
-                            }
-                            super.endElement(uri, localName, qName);
+    private ResolvedResource findSnapshotDescriptor(final DependencyDescriptor dd, final ResolveData data,
+                                                    final ModuleRevisionId mrid,
+                                                    final MavenTimedSnapshotVersionMatcher.MavenSnapshotRevision snapshotRevision) {
+        if (!isM2compatible()) {
+            return null;
+        }
+        final String snapshotDescriptorPattern;
+        if (snapshotRevision.isTimestampedSnapshot()) {
+            Message.debug(mrid + " has been identified as a (Maven) timestamped snapshot revision");
+            // this is a Maven timestamped snapshot revision. Something like 1.0.0-<timestampedRev>
+            // We now get the base revision from it, which is "1.0.0" and append the "-SNAPSHOT" to it.
+            final String inferredSnapshotRevision = snapshotRevision.getBaseRevision() + "-SNAPSHOT";
+            // we replace the "/[revision]" in the descriptor pattern with the "inferred" snapshot revision
+            // which is like "1.0.0-SNAPSHOT".
+            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            snapshotDescriptorPattern = getWholePattern().replaceFirst("/\\[revision\\]", "/" + inferredSnapshotRevision);
+        } else {
+            // it's not a timestamped revision, but a regular snapshot. Try and find
+            // any potential timestamped revisions of this regular snapshot, by looking into the maven metadata
+            final String timestampedRev = findTimestampedSnapshotVersion(mrid);
+            if (timestampedRev == null) {
+                // no timestamped snapshots found and instead this is just a regular snapshot
+                // version. So let's just fallback to our logic of finding resources using configured
+                // Ivy pattern(s)
+                return null;
+            }
+            Message.verbose(mrid + " has been identified as a snapshot revision which has a timestamped snapshot revision " + timestampedRev);
+            // we have found a timestamped revision for a snapshot. So we replace the "-[revision]" in the artifact file name to use the
+            // timestamped revision.
+            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            snapshotDescriptorPattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + timestampedRev);
+        }
+        // find the descriptor using the snapshot descriptor pattern
+        return findResourceUsingPattern(mrid, snapshotDescriptorPattern,
+                DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data),
+                data.getDate());
+    }
+
+    private String findTimestampedSnapshotVersion(final ModuleRevisionId mrid) {
+        if (!isM2compatible()) {
+            return null;
+        }
+        if (!shouldUseMavenMetadata(getWholePattern())) {
+            return null;
+        }
+        try {
+            final String metadataLocation = IvyPatternHelper.substitute(root
+                    + "[organisation]/[module]/[revision]/maven-metadata.xml", mrid);
+            final Resource metadata = getRepository().getResource(metadataLocation);
+            if (!metadata.exists()) {
+                Message.verbose("\tmaven-metadata not available for: " + mrid);
+                return null;
+            }
+            try (final InputStream metadataStream = metadata.openStream();) {
+                final StringBuffer timestamp = new StringBuffer();
+                final StringBuffer buildNumer = new StringBuffer();
+                XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
+                    @Override
+                    public void endElement(String uri, String localName, String qName)
+                            throws SAXException {
+                        if ("metadata/versioning/snapshot/timestamp".equals(getContext())) {
+                            timestamp.append(getText());
                         }
-                    }, null);
-                    if (timestamp.length() > 0) {
-                        // we have found a timestamp, so this is a snapshot unique version
-                        String rev = mrid.getRevision();
-                        rev = rev.substring(0, rev.length() - "SNAPSHOT".length());
-                        rev += timestamp.toString() + "-" + buildNumer.toString();
+                        if ("metadata/versioning/snapshot/buildNumber".equals(getContext())) {
+                            buildNumer.append(getText());
+                        }
+                        super.endElement(uri, localName, qName);
+                    }
+                }, null);
+                if (timestamp.length() > 0) {
+                    // we have found a timestamp, so this is a snapshot unique version
+                    String rev = mrid.getRevision();
+                    rev = rev.substring(0, rev.length() - "SNAPSHOT".length());
+                    rev += timestamp.toString() + "-" + buildNumer.toString();
 
-                        return rev;
-                    }
-                } else {
-                    Message.verbose("\tmaven-metadata not available: " + metadata);
-                }
-            } catch (IOException e) {
-                Message.verbose("impossible to access maven metadata file, ignored", e);
-            } catch (SAXException | ParserConfigurationException e) {
-                Message.verbose("impossible to parse maven metadata file, ignored", e);
-            } finally {
-                if (metadataStream != null) {
-                    try {
-                        metadataStream.close();
-                    } catch (IOException e) {
-                        // ignored
-                    }
+                    return rev;
                 }
             }
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            Message.debug("impossible to access maven metadata file, ignored", e);
         }
         return null;
     }
@@ -281,10 +314,8 @@ public class IBiblioResolver extends URLResolver {
      * Sets the root of the maven like repository. The maven like repository is necessarily an http
      * repository.
      *
-     * @param root
-     *            the root of the maven like repository
-     * @throws IllegalArgumentException
-     *             if root does not start with "http://"
+     * @param root the root of the maven like repository
+     * @throws IllegalArgumentException if root does not start with "http://"
      */
     public void setRoot(String root) {
         if (root == null) {
@@ -303,7 +334,7 @@ public class IBiblioResolver extends URLResolver {
         if (isM2compatible() && isUsepoms()) {
             setIvyPatterns(Collections.singletonList(getWholePattern()));
         } else {
-            setIvyPatterns(Collections.<String> emptyList());
+            setIvyPatterns(Collections.<String>emptyList());
         }
         setArtifactPatterns(Collections.singletonList(getWholePattern()));
     }
@@ -344,7 +375,7 @@ public class IBiblioResolver extends URLResolver {
              * has been done in the given pattern
              */
             String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
-                M2_PER_MODULE_PATTERN, Collections.singletonMap(IvyPatternHelper.EXT_KEY, "pom"));
+                    M2_PER_MODULE_PATTERN, Collections.singletonMap(IvyPatternHelper.EXT_KEY, "pom"));
             if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
                 /*
                  * the given pattern already contain resolved org and module, we just have to
@@ -352,10 +383,10 @@ public class IBiblioResolver extends URLResolver {
                  * maven metadata file location
                  */
                 String metadataLocation = pattern.substring(0,
-                    pattern.lastIndexOf(partiallyResolvedM2PerModulePattern))
+                        pattern.lastIndexOf(partiallyResolvedM2PerModulePattern))
                         + "maven-metadata.xml";
                 List<String> revs = listRevisionsWithMavenMetadata(getRepository(),
-                    metadataLocation);
+                        metadataLocation);
                 if (revs != null) {
                     return revs.toArray(new String[revs.size()]);
                 }
@@ -395,7 +426,7 @@ public class IBiblioResolver extends URLResolver {
 
     @Override
     protected ResolvedResource[] listResources(Repository repository, ModuleRevisionId mrid,
-            String pattern, Artifact artifact) {
+                                               String pattern, Artifact artifact) {
         if (shouldUseMavenMetadata(pattern)) {
             List<String> revs = listRevisionsWithMavenMetadata(repository, mrid.getModuleId()
                     .getAttributes());
@@ -407,14 +438,14 @@ public class IBiblioResolver extends URLResolver {
 
                     String patternForRev = pattern;
                     if (rev.endsWith("SNAPSHOT")) {
-                        String snapshotVersion = findSnapshotVersion(historicalMrid);
+                        String snapshotVersion = findTimestampedSnapshotVersion(historicalMrid);
                         if (snapshotVersion != null) {
                             patternForRev = pattern.replaceFirst("\\-\\[revision\\]", "-"
                                     + snapshotVersion);
                         }
                     }
                     String resolvedPattern = IvyPatternHelper.substitute(patternForRev,
-                        historicalMrid, artifact);
+                            historicalMrid, artifact);
                     try {
                         Resource res = repository.getResource(resolvedPattern);
                         if (res != null) {
@@ -425,8 +456,8 @@ public class IBiblioResolver extends URLResolver {
                         }
                     } catch (IOException e) {
                         Message.warn(
-                            "impossible to get resource from name listed by maven-metadata.xml:"
-                                    + rres, e);
+                                "impossible to get resource from name listed by maven-metadata.xml:"
+                                        + rres, e);
                     }
                 }
                 return rres.toArray(new ResolvedResource[rres.size()]);
@@ -441,14 +472,14 @@ public class IBiblioResolver extends URLResolver {
     }
 
     private List<String> listRevisionsWithMavenMetadata(Repository repository,
-            Map<String, String> tokenValues) {
+                                                        Map<String, String> tokenValues) {
         String metadataLocation = IvyPatternHelper.substituteTokens(root
                 + "[organisation]/[module]/maven-metadata.xml", tokenValues);
         return listRevisionsWithMavenMetadata(repository, metadataLocation);
     }
 
     private List<String> listRevisionsWithMavenMetadata(Repository repository,
-            String metadataLocation) {
+                                                        String metadataLocation) {
         List<String> revs = null;
         InputStream metadataStream = null;
         try {
@@ -489,7 +520,7 @@ public class IBiblioResolver extends URLResolver {
 
     @Override
     protected void findTokenValues(Collection<String> names, List<String> patterns,
-            Map<String, String> tokenValues, String token) {
+                                   Map<String, String> tokenValues, String token) {
         if (IvyPatternHelper.REVISION_KEY.equals(token)) {
             if (shouldUseMavenMetadata(getWholePattern())) {
                 List<String> revs = listRevisionsWithMavenMetadata(getRepository(), tokenValues);

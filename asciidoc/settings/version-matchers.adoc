@@ -140,3 +140,61 @@ The version pattern matcher allows for more flexibility in pattern matching at t
 
 The version pattern matcher may contain more than one match element.  The matcher will attempt to match a dependency revision against each match in sequence, checking the revision tag (e.g. foo(..)) and then the pattern.
 Matcher types may be one of "regexp", "exact", "glob", or "exactOrRegexp".  Glob pattern matching requires Apache ORO 2.0.8 or higher to be on the classpath.
+
+
+=== Maven timestamped snapshot version matcher
+
+Maven has the notion of timestamped snapshots, which essentially are snapshot versions of a particular Maven artifact, but have a specific timestamp associated with them so that the snapshot revision (which by nature are changing over time), can be traced back to the exact artifacts. Maven allows other artifacts to depend on such timestamped snapshots.
+
+*Starting Ivy 2.5 version*, Ivy too allows such timestamped dependencies to be part of the module's dependencies. For such dependencies to be properly parsed and resolved, a `maven-tsnap-vm` version matcher needs to be configured in the Ivy settings and link:../resolver/ibiblio.html[ibiblio resolver] must be one of the resolvers that used for dependency resolution.
+
+NOTE: Maven has a specific syntax for timestamped snapshot versions and only such versions are understood by Ivy
+
+Configuring the `maven-tsnap-vm` can be done as follows in the Ivy settings file:
+
+[source,xml]
+----
+<ivysettings>
+    <version-matchers ...>
+        <maven-tsnap-vm/>
+    </version-matchers>
+    ...
+----
+
+
+An example timestamped snapshot dependency in an Ivy module would look like:
+
+[source,xml]
+----
+
+<ivy-module version="2.4">
+    <info organisation="org.apache.ivy"
+          module="maven-snapshot-deps-test"
+          revision="1.2.3"
+    />
+    <dependencies>
+
+        <dependency org="org.apache.ivy.maven-snapshot-test" name="foo-bar" rev="5.6.7-20170911.130943-1" />
+    </dependencies>
+</ivy-module>
+----
+
+Notice the `5.6.7-20170911.130943-1` revision on the `foo-bar` dependency - that represents a timestamped snapshot. For this Ivy module to be resolved correctly, the Ivy settings file should be both backed by the `maven-tsnap-vm` version matcher and a `m2compatible` `ibiblio` resolver, so the settings file would typically look like:
+
+[source,xml]
+----
+<ivysettings>
+    <settings defaultResolver="m2"/>
+    <caches defaultCacheDir="${user.home}/.ivy/cache/" />
+    <version-matchers usedefaults="true">
+        <maven-tsnap-vm/>
+    </version-matchers>
+
+    <resolvers>
+        <ibiblio name="m2" m2compatible="true" useMavenMetadata="true" root="file://${user.home}/.m2" />
+    </resolvers>
+
+</ivysettings>
+
+----
+

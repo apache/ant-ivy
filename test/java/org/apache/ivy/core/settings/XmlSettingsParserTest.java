@@ -40,6 +40,7 @@ import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.resolver.URLResolver;
 import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
+import org.apache.ivy.plugins.version.MavenTimedSnapshotVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.junit.Rule;
@@ -308,6 +309,23 @@ public class XmlSettingsParserTest {
         ChainVersionMatcher chain = (ChainVersionMatcher) v;
         assertEquals(5, chain.getMatchers().size());
         assertTrue(chain.getMatchers().contains(mock));
+    }
+
+    /**
+     * Tests that the {@code maven-tsnap-vm} version matcher, configured in the settings file,
+     * is parsed correctly
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testMavenTimedSnapshotVersionMatcher() throws Exception {
+        final IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-maven-tsnap-vmatcher.xml"));
+
+        final VersionMatcher mavenTSnapVersionMatcher = settings.getVersionMatcher(new MavenTimedSnapshotVersionMatcher().getName());
+        assertNotNull("Maven timestamped snapshot version matcher is missing", mavenTSnapVersionMatcher);
+        assertTrue("Unexpected type for Maven timestamped snapshot version matcher", mavenTSnapVersionMatcher instanceof MavenTimedSnapshotVersionMatcher);
     }
 
     @Test
