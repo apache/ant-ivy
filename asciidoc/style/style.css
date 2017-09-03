@@ -324,6 +324,7 @@ table.tableblock .valign-middle {
     list-style-type: none;
     padding-left: 22px;
     margin-bottom: 3px;
+    color: #7a9438;
 }
 .treeview li.submenu {
     background: white url('data:image/svg+xml;utf-8,<svg version="1.1" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="2,2 14,2 8,14" fill="%237a9438"/></svg>') no-repeat left 1px;
