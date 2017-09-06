@@ -18,11 +18,11 @@
 ////
 
 *__since 1.4__*
-Finds the list of modules in the repository matching some criteria and set a corresponding list of properties in ant.
+Finds the list of modules in the repository matching some criteria and sets a corresponding list of properties in Ant.
 
 The criteria is set by given patterns matching the organisation, name branch and revision of the modules to find.
 
-To know if a module matches the criteria ivy will use the configured link:../concept.html#matcher[pattern matcher].
+To know if a module matches the criteria, Ivy will use the configured link:../concept.html#matcher[pattern matcher].
 
 == Attributes
 
@@ -36,8 +36,8 @@ To know if a module matches the criteria ivy will use the configured link:../con
 |matcher|the name of the pattern matcher to use for matching the modules fields|No. Defaults to `exactOrRegexp`.
 |property|the pattern of the property to set when a module is found|Yes
 |value|The pattern of the value to set when a module is found|Yes
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
-|resolver|The name of the resolver to use for searching the modules *__(since 2.2.0)__*|No, all available resolvers will be used by default.
+|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|resolver|The name of the resolver to use for searching the modules *__(since 2.2)__*|No, all available resolvers will be used by default.
 |=======
 
 == Examples

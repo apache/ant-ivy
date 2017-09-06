@@ -103,7 +103,7 @@ So OSGi capabilities of bundles in a repo will be gathered directly from the man
 === Export-Package
 
 
-Exported package, are declaring capabilities of the bundle in term of package. But they also declare dependencies between the declared package via the parameter `use`. These dependencies have to be declared in the ivy.xml. And we will use Ivy link:../terminology.html#configurations[module configurations] for that.
+Exported packages are declaring capabilities of the bundle in term of packages. But they also declare dependencies between the declared package via the parameter `use`. These dependencies have to be declared in the ivy.xml. And we will use Ivy link:../terminology.html#configurations[module configurations] for that.
 
 First, each exported package will be declared in the ivy.xml as a configuration. The name of the configuration will start will `use_` and will end with the name of that package.
 
@@ -137,7 +137,7 @@ a|
 == OSGi Requirements / Ivy dependencies
 
 
-In OSGi there are different kind of dependencies, which is an OSGi bundle repository documentation is called a "requirement". The problem is that Ivy understands only one kind of requirement, so we use here some extra attribute to declare those different kind of dependency.
+In OSGi there are different kinds of dependencies, which in an OSGi bundle repository documentation is called a "requirement". The problem is that Ivy understands only one kind of requirement, so we use here some extra attribute to declare those different kinds of dependencies.
 
 
 === Require-Bundle
@@ -237,4 +237,4 @@ a|
 
 Ivy doesn't support the header `Fragment-Host`.
 
-The workaround is to manually specify, as dependencies in the ivy.xml the bundles, which would fit to be the extensions of the host bundle.
+The workaround is to manually specify, as dependencies in the ivy.xml, the bundles which would fit to be the extensions of the host bundle.

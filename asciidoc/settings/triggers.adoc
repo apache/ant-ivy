@@ -33,7 +33,7 @@ Ivy supports 3 type of triggers out of the box:
      calls a target in the same build as the original one whenever a particular event occurs.
 
     * ant-build +
-     calls an ant build which may be in another ant build script.
+     calls an Ant build which may be in another Ant build script.
 
     * log +
      echo a message, usually in a file
@@ -453,8 +453,8 @@ Ivy comes with 3 built-in triggers:
 [options="header",cols="15%,50%"]
 |=======
 |Name|Description
-|ant-build|Triggers an ant build. Note that by default the ant build is triggered only once per build file, the property onlyonce can be set to false to change this.
-|ant-call|Calls a target in the current ant build.
+|ant-build|Triggers an Ant build. Note that by default the ant build is triggered only once per build file, the property onlyonce can be set to false to change this.
+|ant-call|Calls a target in the current Ant build.
 |log|Logs a message on the console or in a log file.
 |=======
 
@@ -495,8 +495,8 @@ Among these attributes, you will find how to select when the trigger should be p
 
 ----
 
-Triggers an ant build of the ant file `${ivy.settings.dir}/[module]/build.xml` (where `[module]` is replaced by the name of the dependency resolved) with the target "publish", just before resolving a dependency with a `latest.integration` revision.
-Note that by default the ant build is triggered only once per build file. See below to see how to trigger the build more than once.
+Triggers an Ant build of the Ant file `${ivy.settings.dir}/[module]/build.xml` (where `[module]` is replaced by the name of the dependency resolved) with the target "publish", just before resolving a dependency with a `latest.integration` revision.
+Note that by default the Ant build is triggered only once per build file. See below to see how to trigger the build more than once.
 
 '''
 
@@ -527,7 +527,7 @@ Same as before, but this time the builds will be triggered as many time as the d
 
 ----
 
-Triggers an ant call of the target unzip just after downloading a zip artifact, prefixing all parameters to the target with `dep`.
+Triggers an Ant call of the target unzip just after downloading a zip artifact, prefixing all parameters to the target with `dep`.
 Here is how the target can look like:
 
 [source, xml]

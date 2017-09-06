@@ -17,7 +17,7 @@
  * The "treeview" class is added if not already present.
  *
  * To hide branches on first display, mark their li elements with
- * the class "closed". If the "collapsed" option is used, mark intially open
+ * the class "closed". If the "collapsed" option is used, mark initially open
  * branches with class "open".
  *
  * @example .treeview, .treeview ul { 

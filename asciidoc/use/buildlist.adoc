@@ -17,27 +17,27 @@
    under the License.
 ////
 
-The `buildlist` task enable to obtain a `filelist` of files (usually `build.xml` files) ordered according to Ivy dependency information from the least dependent to the most one, or the inverse. (*__since 1.2__*)
+The `buildlist` task enables to obtain a `filelist` of files (usually `build.xml` files) ordered according to Ivy dependency information from the least dependent to the most one, or the inverse. (*__since 1.2__*)
 
 This is particularly useful combined with `subant`, to build a set of interrelated projects being sure that a dependency will be built before any module depending on it.
 
-When the `ivy.xml` of the modules that you want to order doesn't contains a link:../ivyfile/info.html[revision] numbers, the `rev` attributes declared in the dependency is not used.
-When the `ivy.xml` of the modules that you want to order contains a link:../ivyfile/info.html[revision] numbers, the revision numbers are used. If the revision number doesn't match a dependency description a warning is logged and the modules is considered as different modules.
+When the `ivy.xml` of the modules that you want to order doesn't contain link:../ivyfile/info.html[revision] numbers, the `rev` attributes declared in the dependencies are not used.
+When the `ivy.xml` of the modules that you want to order contains link:../ivyfile/info.html[revision] numbers, the revision numbers are used. If the revision number doesn't match a dependency description, a warning is logged and the modules are considered to be different modules.
 
-*__since 1.3__* A `root` attribute can also be used to include, among all the modules found, only the one that are dependencies (either direct or transitive) of a root module. This can also be used with the `excluderoot` attribute, which when set to `true` will exclude the root itself from the list.
+*__since 1.3__* A `root` attribute can also be used to include, among all the modules found, only the ones that are dependencies (either direct or transitive) of a root module. This can also be used with the `excluderoot` attribute, which when set to `true` will exclude the root itself from the list.
 
-*__since 1.4.1__* A `leaf` attribute can also be used to include, among all the modules found, only the one that have dependencies (either direct or transitive) on a leaf module. This can also be used with the `excludeleaf` attribute, which when set to `true` will exclude the leaf itself from the list.
+*__since 1.4.1__* A `leaf` attribute can also be used to include, among all the modules found, only the ones that have dependencies (either direct or transitive) on a leaf module. This can also be used with the `excludeleaf` attribute, which when set to `true` will exclude the leaf itself from the list.
 
-*__since 1.4__* The `ivy.sorted.modules` property is set in the ant at the end of the task with a comma separated list of ordered modules. This can be useful for debug or information purpose.
+*__since 1.4__* The `ivy.sorted.modules` property is set in Ant project at the end of the task with a comma separated list of ordered modules. This can be useful for debug or information purpose.
 
 *__since 2.0__* The `root` and `leaf` attributes can be a delimited list of modules to use as roots.  These modules, and all their dependencies will be included in the build list.
 
-*__since 2.0__* By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will appear before the modules in the loop.  This guarantee that if there is a dependency path between a module A and a module B (but no dependency path from B to A), B will always appear before A even if A is included in a loop in the provided set of modules to sort.
-Note that circular dependency can also trigger a failure depending on the value configured in the `circularDependencyStrategy` of your link:../settings/conf.html#circularDependencyStrategy[settings]
+*__since 2.0__* By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will appear before the modules in the loop. This guarantees that if there is a dependency path between a module A and a module B (but no dependency path from B to A), B will always appear before A even if A is included in a loop in the provided set of modules to sort.
+Note that a circular dependency can also trigger a failure depending on the value configured in the `circularDependencyStrategy` of your link:../settings/conf.html#circularDependencyStrategy[settings]
 
-*__since 2.0__* When you are specifying `root` or `leaf` modules you can limit the resulting list to only direct dependencies of the roots modules or to modules that directly depends on your leaf modules.
+*__since 2.0__* When you are specifying `root` or `leaf` modules you can limit the resulting list to only direct dependencies of the root modules or to modules that directly depends on your leaf modules.
 
-*__since 2.0__* You can also specify a `restartFrom` modules.  The difference with `root` or `leaf`, is that you get a list starting at the `restartFrom` module followed by all the modules that would be after if the parameter would not be there (even if there is no dependency between the `restartFrom` and the following module).
+*__since 2.0__* You can also specify a `restartFrom` modules.  The difference with `root` or `leaf` is that you get a list starting at the `restartFrom` module followed by all the modules that would be after if the parameter would not be there (even if there is no dependency between the `restartFrom` and the following module).
 
 == Attributes
 
@@ -45,7 +45,7 @@ Note that circular dependency can also trigger a failure depending on the value 
 |=======
 |Attribute|Description|Required
 |reference|the reference of the path to set|Yes
-|ivyfilepath|the relative path from files to order to corresponding ivy files|No. Defaults to `${ivy.buildlist.ivyfilepath}`
+|ivyfilepath|the relative path from files to order to corresponding Ivy files|No. Defaults to `${ivy.buildlist.ivyfilepath}`
 |root|*__since 2.0__* the names of the modules which should be considered as the root of the buildlist.
 
 *__since 1.3__* Was limited to only one module name before 2.0.|No. Defaults to no root (all modules are used in the build list)
@@ -55,12 +55,12 @@ Note that circular dependency can also trigger a failure depending on the value 
 |onlydirectdep|*__since 2.0__* `true` if the
 resulting list should be restricted to direct dependencies of root modules or modules that directly depends on the leaf modules.
 
-This field is ignored when neither root neither leaf is filled.
+This field is ignored when neither root nor leaf is filled.
      |No. Defaults to no `false`
 |delimiter|*__since 2.0__* delimiter to use when specifying multiple module names in the root and leaf properties.|No. Defaults to the comma (`,`) character.
 |excludeleaf|*__since 1.4.1__* `true` if the leaf defined should be excluded from the list|No. Defaults to `false`
-|haltonerror|`true` to halt the build when an invalid ivy file is encountered, false to continue|No. Defaults to `true`
-|skipbuildwithoutivy|Deprecated, use `onMissingDescriptor` instead. `true` to skip files of the fileset with no corresponding ivy file, `false` otherwise. If `false` the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.|No. Defaults to `false`
+|haltonerror|`true` to halt the build when an invalid Ivy file is encountered, false to continue|No. Defaults to `true`
+|skipbuildwithoutivy|__Deprecated, use `onMissingDescriptor` instead.__ `true` to skip files of the fileset with no corresponding Ivy file, `false` otherwise. If `false` the file with no corresponding Ivy file will be considered as independent of the other and put at the beginning of the built filelist.|No. Defaults to `false`
 |onMissingDescriptor|*__since 2.0__* Specify the action to take when no module descriptor file is found for a file of the fileset. Possible values are: +
 * `head`: put at the head of the built filelist. +
 * `tail`: put at the tail of the built filelist. +
@@ -71,7 +71,7 @@ This field is ignored when neither root neither leaf is filled.
 |reverse|`true` to obtain the list in the reverse order, i.e. from the most dependent to the least one|No. Defaults to default `false`
 |restartFrom|*__since 2.0__* The name of the module which should be considered as the starting point in the buildlist. This allows for the build to be started at any point in the dependency chain.
 |No. Defaults to `*` meaning no restart point (all modules are used in the build list).
-|settingsRef|*__since 2.0__* A reference to the ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
+|settingsRef|*__since 2.0__* A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
 |=======
 
 == Parameters specified as nested elements
@@ -107,7 +107,7 @@ This list can then be used like that:
     </ivy:buildlist>
 ----
 
-Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an ivy directory relative to those build files. The list is sorted from the most dependent to the least one.
+Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an Ivy directory relative to those build files. The list is sorted from the most dependent to the least one.
 
 '''
 
@@ -118,7 +118,7 @@ Builds a list of `build.xml` files sorted according to the `ivy.xml` files found
     </ivy:buildlist>
 ----
 
-Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an ivy directory relative to those build files. Only `build.xml` files of modules which are dependencies of `myapp` (either direct or transitive) are put in the result list.
+Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an Ivy directory relative to those build files. Only `build.xml` files of modules which are dependencies of `myapp` (either direct or transitive) are put in the result list.
 
 '''
 
@@ -129,4 +129,4 @@ Builds a list of `build.xml` files sorted according to the `ivy.xml` files found
     </ivy:buildlist>
 ----
 
-Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an ivy directory relative to those build files. Only `build.xml` files of modules which have dependencies (direct or transitive) on `mymodule` are put in the result list.
+Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an Ivy directory relative to those build files. Only `build.xml` files of modules which have dependencies (direct or transitive) on `mymodule` are put in the result list.

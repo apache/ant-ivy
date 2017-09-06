@@ -36,7 +36,7 @@ The default settings include 3 types of repositories:
      A repository which is shared between all the members of a team
 
     * public +
-     A public repository on which most modules, and especially third party modules, can be found
+     A public repository in which most modules, and especially third party modules, can be found
 
 
 Note that if you work alone, the distinction between a local and shared repository is not very important, but there are some things you should know to distinguish them.
@@ -57,17 +57,17 @@ Note also that modules found in the local repository must be complete, i.e. they
 
 === Shared
 
-As its name suggest, the shared repository is aimed to be shared among a whole development team. It is a place where you can publish your team's private modules, and it's also a place where you can put modules not available in the public repository. You can also put modules here that are simply inaccurate in a public repository (bad or incomplete module descriptors for instance).
+As its name suggest, the shared repository is aimed to be shared among the whole development team. It is a place where you can publish your team's private modules, and it's also a place where you can put modules not available in the public repository. You can also put modules here that are simply inaccurate in a public repository (bad or incomplete module descriptors, for instance).
 
-Note that modules can be split across the shared repository and the public one: For example, you can have the module descriptor in the shared repository and the artifacts in the public one.
+Note that modules can be split across the shared repository and the public one: for example, you can have the module descriptor in the shared repository and the artifacts in the public one.
 
 === Public
 
-The public repository is the place where most modules can be found, but which sometimes lack the information you need. It's usually a repository available through an internet connection only, even if this is not mandatory.
+The public repository is the place where most modules can be found, but which sometimes lack the information you need. It's usually a repository available through an Internet connection only, even if this is not mandatory.
 
 == Setting up the repositories
 
-Now that we have seen the objective of each of the three repositories, let's see how they are setup and how to configure them to fit your needs.
+Now that we have seen the objective of each of the three repositories, let's see how they are set up and how to configure them to fit your needs.
 
 First, several repositories use the same root in your filesystem. Referenced as `${ivy.default.ivy.user.dir}`, this is by default the directory `.ivy2` in your user home.
 

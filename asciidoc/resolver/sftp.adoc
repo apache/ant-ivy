@@ -28,23 +28,23 @@
 
 *__since 1.4__*
 
-This resolver can be used when your ivy repository is located on a server accessible via sftp. The secured nature of sftp and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
+This resolver can be used when your Ivy repository is located on a server accessible via SFTP. The secured nature of SFTP and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
-If your server supports ssh but not sftp, there is also an link:../resolver/ssh.html[ssh resolver].
+If your server supports SSH but not SFTP, there is also an link:../resolver/ssh.html[SSH resolver].
 
-Note that sftp is also supported by vfs, so you can use a vfs resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the vfs resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use ant input task for example before calling ivy.
+Note that SFTP is also supported by VFS, so you can use a VFS resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the VFS resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use ant input task for example before calling Ivy.
 
 All necessary connection parameters can be set here via attributes, or via an OpenSSH-style config file specified by `sshConfig`.
-However all attributes defined in the pattern url of the resolver will have higher priority and will overwrite the values given here. To specify connection parameters in the pattern, you have to specify a full url and not just a path as pattern.
-e.g. pattern="/path/to/my/repos/[artifact].[ext]" will use all connection parameters from this class
-e.g. pattern="sftp://myserver.com/path/to/my/repos/[artifact].[ext]" will use all parameters from the attributes with the exception of the host, which will be "myserver.com"
-e.g. pattern="sftp://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[ext]" will use only the keyFile and keyFilePassword from the attributes (if needed). Rest will come from the url.
+However all attributes defined in the pattern URL of the resolver will have higher priority and will overwrite the values given here. To specify connection parameters in the pattern, you have to specify a full URL and not just a path as pattern.
+e.g. `pattern="/path/to/my/repos/[artifact].[ext]"` will use all connection parameters from this class
+e.g. `pattern="sftp://myserver.com/path/to/my/repos/[artifact].[ext]"` will use all parameters from the attributes with the exception of the host, which will be "myserver.com"
+e.g. `pattern="sftp://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[ext]"` will use only the keyFile and keyFilePassword from the attributes (if needed). Rest will come from the URL.
 
 
 
-Note that the authentication features of this resolver are exactly the same as the ssh resolver. Choosing between the two is often a matter of server implementation. If your server supports sftp, usually it's preferable.
+Note that the authentication features of this resolver are exactly the same as the SSH resolver. Choosing between the two is often a matter of server implementation. If your server supports SFTP, usually it's preferable.
 
-Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as ssh client, which is a popular java ssh client, used for example in Eclipse.
+Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as SSH client, which is a popular Java SSH client, used for example in Eclipse.
 
 
 == Attributes
@@ -60,8 +60,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |keyFilePassword|the password used to protect the key file|No, will prompt for password if keyFile authentication is used and if it is password encrypted
 |host|The host to connect to|No, defaults to host given on the patterns, fail if none is set
 |port|The port to connect to|No, defaults to 22
-|sshConfig|Path to an OpenSSH-style config file containing additional
-            configuration|No
+|sshConfig|Path to an OpenSSH-style config file containing additional configuration|No
 |=======
 
 
@@ -71,7 +70,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|ivy|defines a pattern for Ivy files, using the pattern attribute|0..n
 |artifact|defines a pattern for artifacts, using the pattern attribute|1..n
 |=======
 
@@ -105,7 +104,7 @@ Will connect to myhost.com using myuser and prompt for the password.
 
 ----
 
-Will connect to myhost.com using user and password provided with ivy variables.
+Will connect to myhost.com using user and password provided with Ivy variables.
 
 '''
 
@@ -120,7 +119,7 @@ Will connect to myhost.com using user and password provided with ivy variables.
 
 ----
 
-Will connect to yourserver.com on port 8022 with user 'user' and password 'geheim' for authentication for ivy files, and to myserver.com on port 8022 using user 'user' and password 'secret' for the artifacts.
+Will connect to yourserver.com on port 8022 with user 'user' and password 'geheim' for authentication for Ivy files, and to myserver.com on port 8022 using user 'user' and password 'secret' for the artifacts.
 
 '''
 
@@ -135,7 +134,7 @@ Will connect to yourserver.com on port 8022 with user 'user' and password 'gehei
 
 ----
 
-Will connect to yourserver.com on port 8022 with user 'user' and use keyFile `path/to/key/file` for `keyFile` and the value of password variable for `keyFilePassword` authentication for ivy files, and to myserver.com on port 8022 using user 'user' with the same keyFile/keyFilePassword pair for the artifacts.
+Will connect to yourserver.com on port 8022 with user 'user' and use keyFile `path/to/key/file` for `keyFile` and the value of password variable for `keyFilePassword` authentication for Ivy files, and to myserver.com on port 8022 using user 'user' with the same keyFile/keyFilePassword pair for the artifacts.
 
 
 [source, xml]

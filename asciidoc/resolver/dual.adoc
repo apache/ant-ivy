@@ -23,11 +23,11 @@
 |=======
 |Tag|dual
 |Handle latest|depends on sub resolvers
-|Handle publish|delegates to ivy sub resolver if artifact to publish is of "ivy" type, to artifact sub resolver otherwise
+|Handle publish|delegates to Ivy sub resolver if artifact to publish is of "ivy" type, to artifact sub resolver otherwise
 |=======
 
 
-This resolver delegates its job to one resolver for ivy files and another for artifacts.
+This resolver delegates its job to one resolver for Ivy files and another for artifacts.
 
 
 == Attributes
@@ -41,5 +41,5 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|any resolver|two resolvers, the first being the ivy resolver, the second the artifact resolver|2
+|any resolver|two resolvers, the first being the Ivy resolver, the second the artifact resolver|2
 |=======

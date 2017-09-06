@@ -23,7 +23,7 @@
 ====
 Note that this feature is considered as *experimental*.
 
-It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+It should work with a simple configuration but may not with complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 
 ====
 
@@ -52,7 +52,7 @@ First you need a project (basically a folder) in which you will manage your targ
 
 In the build there is a target: `update-dependencies`. This target will do a resolve with the `ivy.xml` and will generate an `ivy-fixed.xml` from the resolved dependencies. This `ivy-fixed.xml` file contains only fixed non transitive dependencies (see the link:../use/fixdeps.html[fixdeps] task for further info). With that `ivy-fixed.xml` file, subsequent dependency resolutions are then reproducible and will always generate the same set of artifacts.
 
-Once generated, it is recommended to share that `ivy-fixed.xml` file into you version control system (subversion, git, etc...). The target `update-dependencies` is then to be launched each time you edit the `ivy.xml`, when you want to change the content of your target platform.
+Once generated, it is recommended to share that `ivy-fixed.xml` file into your version control system (Git, Subversion, etc...). The target `update-dependencies` must then be launched each time you edit the `ivy.xml`, when you want to change the content of your target platform.
 
 The second target `generate-target-platform` will generate an `obr.xml`, a OSGi Bundle repository descriptor. This file will list every artifact which has been resolved by the `ivy-fixed.xml`. Then each of your bundles you develop will do its resolve against that `obr.xml` (see the link:../resolver/obr.html[obr resolver]).
 

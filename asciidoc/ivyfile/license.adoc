@@ -27,6 +27,6 @@ Gives information about a license of the described module.
 |=======
 |Attribute|Description|Required
 |name|the name of the license. Try to respect spelling when using a classical license.|Yes
-|url|an url pointing to the license text.|No, but it's a good practice to indicate it
+|url|an URL pointing to the license text.|No, but it's a good practice to indicate it
 |=======
 

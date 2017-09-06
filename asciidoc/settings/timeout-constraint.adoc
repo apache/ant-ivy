@@ -30,14 +30,14 @@ Defines a named timeout constraint that can then be referenced from other places
 |=======
 |Attribute|Description|Required
 |name|name of timeout constraint|Yes
-|connectionTimeout|An integer value, in milli seconds, that will be used as the timeout while establishing a connection. +
+|connectionTimeout|An integer value, in milliseconds, that will be used as the timeout while establishing a connection. +
 A value greater than `0` is used literally as the timeout. +
 A value of `0` indicates no timeout and typically translates to wait-forever kind of semantics. +
-A value lesser than `0` lets the users of this timeout constraint decide what semantics to use. That effectively, implies implementation specific semantics|No, defaults to `-1`
-|readTimeout|An integer value, in milli seconds, that will be used as the timeout while reading content from a resource to which an connection has been established. +
+A value less than `0` lets the users of this timeout constraint decide what semantics to use. That effectively, implies implementation specific semantics|No, defaults to `-1`
+|readTimeout|An integer value, in milliseconds, that will be used as the timeout while reading content from a resource to which an connection has been established. +
 A value greater than `0` is used literally as the timeout. +
 A value of `0` indicates no timeout and typically translates to wait-forever kind of semantics. +
-A value lesser than `0` lets the users of this timeout constraint decide what semantics to use. That effectively, implies implementation specific semantics|No, defaults to `-1`
+A value less than `0` lets the users of this timeout constraint decide what semantics to use. That effectively, implies implementation specific semantics|No, defaults to `-1`
 |=======
 
 == Examples

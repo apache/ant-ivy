@@ -23,7 +23,7 @@
 ====
 Note that this feature is considered as *experimental*.
 
-It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+It should work with a simple configuration but may not with complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 ====
 
 
@@ -33,7 +33,7 @@ This page describes how to build an Eclipse&#153; plugin with Apache Ivy&#153; a
 == Quick setup
 
 
-In few steps, we will setup a build to compile and package an Eclipse plugin.
+In a few steps, we will set up a build to compile and package an Eclipse plugin.
 
     * download this link:../samples/eclipse-plugin/ivy.xml[ivy.xml], this link:../samples/eclipse-plugin/ivysettings.xml[ivysettings.xml], this link:../samples/eclipse-plugin/ivysettings.properties[ivysettings.properties], this link:../samples/eclipse-plugin/build.xml[build.xml], and put them into your plugin folder
 
@@ -93,6 +93,6 @@ When building an Eclipse plugin, we are relying on a "target platform", the Ecli
 
 Ivy needs an aggregation of the OSGi metadata in order to resolve a such repository. The Ant task link:../use/buildobr.html[buildobr] builds a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". In the above example, the file is built in `target/repo-eclipse.xml`.
 
-The plugin to be built has a `ivy.xml` file describing its dependencies to be used by Ivy. Since the actual dependencies are in the `MANIFEST.MF` file, in the `ivy.xml` file we specify that it extends `META-INF/MANIFEST.MF`. So there not much dependencies specified in the `ivy.xml`. But as Ivy doesn't support the `Bundle-Fragment` OSGi feature, the `ivy.xml` can help specify the missing dependencies.
+The plugin to be built has a `ivy.xml` file describing its dependencies to be used by Ivy. Since the actual dependencies are in the `MANIFEST.MF` file, in the `ivy.xml` file we specify that it extends `META-INF/MANIFEST.MF`. So there are few dependencies specified in the `ivy.xml`. But as Ivy doesn't support the `Bundle-Fragment` OSGi feature, the `ivy.xml` can help specify the missing dependencies.
 
-Having this setup, it is then a standard Ant+Ivy build. Ivy computes the classpath to be then used by the `javac` tasks. Note that `javac` is not aware of the OSGi metadata and is then incapable of failing to compile if private packages are accessed.
+Having this setup, it is then a standard Ant+Ivy build. Ivy computes the classpath to be used by the `javac` tasks. Note that `javac` is not aware of the OSGi metadata and is then incapable of failing to compile if private packages are accessed.

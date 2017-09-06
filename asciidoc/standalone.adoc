@@ -95,7 +95,7 @@ usage: ivy
  -version                     displays version information
 ----
 
-*__since 1.3__* System properties are included as ivy variables, so you can easily define an ivy variable like this:
+*__since 1.3__* System properties are included as Ivy variables, so you can easily define an Ivy variable like this:
 
 [source,shell]
 ----
@@ -109,7 +109,7 @@ java -Dmyivyvar=myvalue org.apache.ivy.Main [parameters]
 java -jar ivy.jar
 ----
 
-calls ivy with default configuration using ivy.xml in the current dir
+calls Ivy with default configuration using ivy.xml in the current dir
 
 '''
 
@@ -118,7 +118,7 @@ calls ivy with default configuration using ivy.xml in the current dir
 java -jar ivy.jar -settings path/to/myivysettings.xml -ivy path/to/myivy.xml
 ----
 
-calls ivy with given ivysettings file using given ivy file
+calls Ivy with given Ivy settings file using given Ivy file
 
 '''
 
@@ -129,7 +129,7 @@ calls ivy with given ivysettings file using given ivy file
 java -jar ivy.jar -settings path/to/myivysettings.xml -dependency apache commons-lang 2.0
 ----
 
-calls ivy with given ivysettings file and resolve apache `commons-lang 2.0`.
+calls Ivy with given Ivy settings file and resolve apache `commons-lang 2.0`.
 
 This is equivalent to:
 
@@ -161,7 +161,7 @@ with `ivy.xml` like this:
 java -jar ivy.jar -settings path/to/myivysettings.xml -ivy path/to/myivy.xml -cachepath mycachefile.txt
 ----
 
-calls ivy with given ivysettings file and resolves the dependencies found in the given ivy file, and then outputs the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program.
+calls Ivy with given Ivy settings file and resolves the dependencies found in the given Ivy file, and then outputs the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any Java program.
 
 '''
 
@@ -172,4 +172,4 @@ calls ivy with given ivysettings file and resolves the dependencies found in the
 java -jar ivy.jar -settings path/to/myivysettings.xml -dependency bar foo 2.0 -main org.bar.foo.FooMain
 ----
 
-calls ivy with given ivysettings file and resolves the dependency `bar` `foo` `2.0`, and then runs `org.foo.FooMain` class with the resolved artifacts as classpath
+calls Ivy with given Ivy settings file and resolves the dependency `bar` `foo` `2.0`, and then runs `org.foo.FooMain` class with the resolved artifacts as classpath.

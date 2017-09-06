@@ -19,14 +19,14 @@
 
 *__since 2.3__* From a set of jar artifacts, this task generates an OBR (OSGi Bundle Repository) descriptor. It could be then used by the link:../resolver/obr.html[obr resolver].
 
-The set of jars which will be described by the OBR can be defined in 4 exclusive ways:
+The set of jars which will be described by OBR can be defined in 4 mutually exclusive ways:
 
 * via an Ivy resolver: every jar listed by the resolver will be taken into account
 * by defining a root directory: every jar found recursively in that folder will be taken into account
 * via the name of an Ivy cache: every artifact contained in the cache will be taken into account
-* *__since 2.4__* via a resolve: this task is a link:../use/postresolvetask.html[post resolve task] (with all the behaviour and attributes common to all post resolve tasks), thus ever artifact which has been resolved will be taken into account; it is especially useful for building a link:../osgi/target-platform.html[target platform]
+* *__since 2.4__* via a resolve: this task is a link:../use/postresolvetask.html[post resolve task] (with all the behaviour and attributes common to all post resolve tasks), thus every artifact which has been resolved will be taken into account; it is especially useful for building a link:../osgi/target-platform.html[target platform]
 
-NB: among every listed files or artifacts, only the actually OSGi bundles will be described by the OBR descriptor; the other files are ignored.
+NB: among every listed file or artifact, only the actually OSGi bundles will be described by the OBR descriptor; the other files are ignored.
 
 == Attributes
 
@@ -38,11 +38,11 @@ NB: among every listed files or artifacts, only the actually OSGi bundles will b
 |out|the location of the descriptor file to generate|Yes
 |resolverName|the name of the resolver from which the jars should be to gathered|No
 |cacheName|the name of the cache from which the jars should be to gathered|No
-|baseDir|the folder into which the jars should be gather recursively|No
-|sourceType|if used as a post resolve task, `sourceType` define the type of artifacts which should be considered as source artifacts|No. Defaults to `source,sources,src`
-|encoding|The encoding of the resulting xml file|No. Defaults to `UTF-8`
-|indent|Specify if the xml result file should be indented|No. Defaults to `true`
-|quiet|Log as debug rather than warning the rejected jars as they are ill-formed|No. Defaults to `false`
+|baseDir|the folder into which the jars should be gathered recursively|No
+|sourceType|if used as a post resolve task, `sourceType` defines the type of artifacts which should be considered as source artifacts|No. Defaults to `source,sources,src`
+|encoding|The encoding of the resulting XML file|No. Defaults to `UTF-8`
+|indent|Specify if the XML result file should be indented|No. Defaults to `true`
+|quiet|Log the rejected jars that are ill-formed as debug rather than warning|No. Defaults to `false`
 |=======
 
 == Examples
@@ -62,7 +62,7 @@ Builds an indented OBR descriptor from an Eclipse install, with their path relat
     <ivy:buildobr resolverName="my-file-resolver" out="${basedir}/target/repo-eclipse.xml"/>
 ----
 
-Configure an Ivy settings and builds an OBR descriptor from jars resolved by the defined resolver.
+Configures Ivy settings and builds an OBR descriptor from jars resolved by the defined resolver.
 
 '''
 
@@ -72,7 +72,7 @@ Configure an Ivy settings and builds an OBR descriptor from jars resolved by the
     <ivy:buildobr cacheName="my-cache" out="${basedir}/target/repo-eclipse.xml"/>
 ----
 
-Configure an Ivy settings and builds an OBR descriptor from jars contained in the defined cache.
+Configures Ivy settings and builds an OBR descriptor from jars contained in the defined cache.
 
 '''
 
@@ -83,4 +83,4 @@ Configure an Ivy settings and builds an OBR descriptor from jars contained in th
     <ivy:buildobr out="${basedir}/target-platform-obr.xml"/>
 ----
 
-Launch a resolve and then build an obr.xml describing the resolved artifacts.
+Launches a resolve and then builds an obr.xml describing the resolved artifacts.

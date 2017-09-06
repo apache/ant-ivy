@@ -45,8 +45,8 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|ivyroot|the root of the ivy repository.|Yes, but may be provided through ${ivy.ivyrep.default.ivy.root} *__since 2.0__*
-|ivypattern|a pattern describing the layout of the ivy repository.|No, defaults to ${ivy.ivyrep.default.ivy.pattern}
+|ivyroot|the root of the Ivy repository.|Yes, but may be provided through ${ivy.ivyrep.default.ivy.root} *__since 2.0__*
+|ivypattern|a pattern describing the layout of the Ivy repository.|No, defaults to ${ivy.ivyrep.default.ivy.pattern}
 |artroot|the root of the artifacts repository.|No, defaults to ${ivy.ivyrep.default.artifact.root}
 |artpattern|a pattern describing the layout of the artifacts repository.|No, defaults to ${ivy.ivyrep.default.artifact pattern}
 |=======
@@ -62,4 +62,4 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 
 ----
 
-Looks for ivy files on and ivyrep like web site located at `http://ivyrep.mycompany.com`.
+Looks for Ivy files in an ivyrep like web site located at `http://ivyrep.mycompany.com`.

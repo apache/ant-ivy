@@ -29,9 +29,9 @@ Ivy is a tool for managing (recording, tracking, resolving and reporting) projec
 
 Ivy is open source and released under a very permissive link:http://www.apache.org/licenses/[Apache License].
 
-Ivy has a lot of powerful link:https://ant.apache.org/ivy/features.html[features], the most popular and useful being its flexibility, integration with ant, and its strong transitive dependencies management engine.
+Ivy has a lot of powerful link:https://ant.apache.org/ivy/features.html[features], the most popular and useful being its flexibility, integration with Ant, and its strong transitive dependencies management engine.
 
-The transitive dependencies management is a feature which lets you get dependencies of your dependencies, transitively. In order to address this general problem, ivy needs to find metadata about your modules, usually in an link:ivyfile.html[ivy file]. To find the metadata and your dependencies' artifacts (usually jars), Ivy can be configured to use a lot of different link:settings/resolvers.html[repositories].
+The transitive dependencies management is a feature which lets you get dependencies of your dependencies, transitively. In order to address this general problem, Ivy needs to find metadata about your modules, usually in an link:ivyfile.html[Ivy file]. To find the metadata and your dependencies' artifacts (usually jars), Ivy can be configured to use a lot of different link:settings/resolvers.html[repositories].
 
 == About this doc
 
@@ -69,8 +69,8 @@ The tutorials is the best way to begin to play with Ivy. You will easily and qui
 
 link:reference.html[Reference]::
 The reference documentation gives you all the details of Ivy.
-The introduction part is particularly useful: it defines some vocabulary, explains main concepts such as dependency resolvers and patterns, and gives an overview of how ivy works internally.
-It's also in the reference doc that you will find all you always dreamed to know about ivy settings, ivy files, and ivy use (especially with ant).
+The introduction part is particularly useful: it defines some vocabulary, explains main concepts such as dependency resolvers and patterns, and gives an overview of how Ivy works internally.
+It's also in the reference doc that you will find all you always dreamed to know about Ivy settings, Ivy files, and Ivy use (especially with Ant).
 
 link:dev.html[Developer doc]::
-The developers's doc is useful for users who would like to extend Ivy or build it from source. It's also the documentation used by the Ivy team, so you will also find information about how we make releases.
+The developer doc is useful for users who would like to extend Ivy or build it from source. It's also the documentation used by the Ivy team, so you will also find information about how we make releases.

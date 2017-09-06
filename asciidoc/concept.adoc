@@ -19,18 +19,18 @@
 
 == [[dependency-resolver]]Dependency Resolver
 
-A dependency resolver is a pluggable class in ivy which is used to:
+A dependency resolver is a pluggable class in Ivy which is used to:
 
-* find dependencies' ivy files
+* find dependencies' Ivy files
 * download dependencies' artifacts
 
-The notion of artifact "downloading" is large: an artifact can be on a web site, or on the local file system of your machine. The download is thus the act of bring a file from a repository to the ivy cache.
+The notion of artifact "downloading" is large: an artifact can be on a web site, or on the local file system of your machine. The download is thus the act of bring a file from a repository to the Ivy cache.
 
-Moreover, the fact that it is the responsibility of the resolver to find ivy files and download artifacts helps to implement various resolving strategies.
+Moreover, the fact that it is the responsibility of the resolver to find Ivy files and download artifacts helps to implement various resolving strategies.
 
 As you see, a dependency resolver can be thought of as a class responsible for describing a repository.
 
-If you want to see which resolvers are available in ivy, you can go to the link:settings/resolvers.html[resolvers configuration page].
+If you want to see which resolvers are available in Ivy, you can go to the link:settings/resolvers.html[resolvers configuration page].
 
 == [[configurations]]Module configurations explained
 
@@ -38,37 +38,36 @@ Module configurations are described in the terminology page as _a way to use or 
 
 When you define a way to use or construct a module, you are able to define which artifacts are published by this module in this configuration, and you are also able to define which dependencies are needed in this configuration.
 
-Moreover, because dependencies in ivy are expressed on modules and not on artifacts, it is important to be able to define which configurations of the dependency are required in the configuration you define of your module. That's what is called *configuration mapping*.
+Moreover, because dependencies in Ivy are expressed on modules and not on artifacts, it is important to be able to define which configurations of the dependency are required in the configuration you define of your module. That's what is called *configuration mapping*.
 
-If you use only simple modules and do not want to worry about configurations, you don't have to worry about them. They're still there under the hood because ivy can't work without configurations. But most of the time if you declare nothing, ivy assumes that the artifacts of your module are published in all configurations, and that all the dependencies' configurations are required in all configurations. And it works in simple cases. But whenever you want to separate things within a module, or get more control over things published and get better dependencies resolution, configurations will meet most of your needs.
+If you use only simple modules and do not want to worry about configurations, you don't have to worry about them. They're still there under the hood because Ivy can't work without configurations. But most of the time if you declare nothing, Ivy assumes that the artifacts of your module are published in all configurations, and that all the dependencies' configurations are required in all configurations. And it works in simple cases. But whenever you want to separate things within a module, or get more control over things published and get better dependencies resolution, configurations will meet most of your needs.
 
-For details on how to declare your module configurations, how to declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to link:ivyfile.html[ivy file documentation]. The link:tutorial/conf.html[configurations tutorial] is also a good place to go to learn more about this concept.
+For details on how to declare your module configurations, how to declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to link:ivyfile.html[Ivy file documentation]. The link:tutorial/conf.html[configurations tutorial] is also a good place to go to learn more about this concept.
 
 == [[variables]]Variables
 
-During configuration, ivy allows you to define what are called ivy variables. Ivy variables can be seen as ant properties, and are used in a very similar way. In particular, you use a properties tag in the configuration file to load a properties file containing ivy variables and their values.
+During configuration, Ivy allows you to define what are called Ivy variables. Ivy variables can be seen as Ant properties, and are used in a very similar way. In particular, you use a properties tag in the settings file to load a properties file containing Ivy variables and their values.
 
-But the main differences between ant properties and ivy variables are that ivy variables can be overridden, whereas ant properties can't, and that they are defined in separate environments.
+But the main differences between Ant properties and Ivy variables are that Ivy variables can be overridden, whereas Ant properties can't, and that they are defined in separate environments.
 
-Actually all ant properties are imported into ivy variables when the configuration is done (if you call ivy from ant).
-This means that if you define an ant property after the call to configure, it will not be available as an ivy variable.
-On the other hand, ivy variables are NOT exported to ant, thus if you define ivy variables in ivy, do not try to use them as ant properties.
+Actually all Ant properties are imported into Ivy variables when the configuration is done (if you call Ivy from Ant).
+This means that if you define an Ant property after the call to configure, it will not be available as an Ivy variable.
+On the other hand, Ivy variables are NOT exported to Ant, thus if you define Ivy variables in Ivy, do not try to use them as Ant properties.
 
-To use ivy variables, you just have to follow the same syntax as for ant properties: `${variablename}` where `variablename` is the name of the variable.
+To use Ivy variables, you just have to follow the same syntax as for Ant properties: `${variablename}` where `variablename` is the name of the variable.
 
-Finally, it's also important to be aware of the time of substitution of variables. This substitution is done as soon as possible. This means that when ivy encounters a reference to a variable, it tries to substitute it if such a variable is defined. Consequently, *any later modification of the variable will not alter the value already substituted*.
+Finally, it's also important to be aware of the time of substitution of variables. This substitution is done as soon as possible. This means that when Ivy encounters a reference to a variable, it tries to substitute it if such a variable is defined. Consequently, *any later modification of the variable will not alter the value already substituted*.
 
-Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (actually they are first loaded as ant properties and then imported as ivy variables, see link:ant.html[Ant Tasks]), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overridden via ant properties because of this.
+Moreover, in an Ant environment, a bunch of variables are going to be set by default via the Ant property file loading mechanism (actually they are first loaded as Ant properties and then imported as Ivy variables, see link:ant.html[Ant Tasks]), and even in the Ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overridden via Ant properties because of this.
 
-Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens.
+Moreover, it's also important to understand the difference between Ivy variables and Ivy pattern tokens.
 See the Patterns chapter below for what pattern tokens are.
 
 == [[patterns]]Patterns
 
-Ivy patterns are used in many dependency resolvers and ivy tasks, and are a simple way to structure the way ivy works.
+Ivy patterns are used in many dependency resolvers and Ivy tasks, and are a simple way to structure the way Ivy works.
 
-First let's give an example. You can for instance configure the file system dependency resolver by giving it
-a pattern to find artifacts. This pattern can be like this:
+First let's give an example. You can, for instance, configure the file system dependency resolver by giving it a pattern to find artifacts. This pattern can be like this:
 `myrepository/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]`
 
 This pattern indicates that the repository we use is in a directory called myrepository.
@@ -118,7 +117,7 @@ the configuration name
 *__(since 1.4)__* +
 the original artifact name (including the extension)
 
-The difference between type and extension is explained in the ivy file documentation.
+The difference between type and extension is explained in the Ivy file documentation.
 
 *__since 1.2__* `[organization]` can be used instead of `[organisation]`.
 
@@ -142,14 +141,14 @@ The pattern `[artifact](-[revision]).[ext]` lets you accept both `myartifact-1.0
 
 Ivy often needs to know which revision between two is considered the "latest". To know that, it uses the concept of latest strategy. Indeed, there are several ways to consider a revision to be the latest. You can choose an existing one or plug in your own.
 
-But before knowing which revision is the latest, ivy needs to be able to consider several revisions of a module. Thus ivy has to get a list of files in a directory, and it uses the dependency resolver for that. So check if the dependency resolver you use is compatible with latest revisions before wondering why ivy does not manage to get your latest revision.
+But before knowing which revision is the latest, Ivy needs to be able to consider several revisions of a module. Thus Ivy has to get a list of files in a directory, and it uses the dependency resolver for that. So check if the dependency resolver you use is compatible with latest revisions before wondering why Ivy does not manage to get your latest revision.
 
-Finally, in order to get several revisions of a module, most of the time you need to use the `[revision]` token in your pattern so that ivy gets all the files which match the pattern, whatever the revision is. It's only then that the latest strategy is used to determine which of the revisions is the latest one.
+Finally, in order to get several revisions of a module, most of the time you need to use the `[revision]` token in your pattern so that Ivy gets all the files which match the pattern, whatever the revision is. It's only then that the latest strategy is used to determine which of the revisions is the latest one.
 
 Ivy has three built-in latest strategies:
 
 `latest-time`::
-This compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it has the drawback of being costly to compute for distant repositories. If you use ivyrep, for example, ivy has to ask the http server what is the date of each ivy file before knowing which is the latest.
+This compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it has the drawback of being costly to compute for distant repositories. If you use ivyrep, for example, Ivy has to ask the HTTP server what is the date of each Ivy file before knowing which is the latest.
 
 `latest-revision`::
 This compares the revisions as strings, using an algorithm close to the one used in the php version_compare function.
@@ -171,7 +170,7 @@ A list of revisions is said to be in conflict if they correspond to the same mod
 
 The list of available conflict managers is available on the link:settings/conflict-managers.html[conflict manager configuration page].
 
-For more details on how to setup your conflict managers by module, see the link:ivyfile/conflicts.html[conflicts] section in the ivy file reference.
+For more details on how to setup your conflict managers by module, see the link:ivyfile/conflicts.html[conflicts] section in the Ivy file reference.
 
 == [[matcher]]Pattern matcher
 
@@ -184,7 +183,7 @@ Ivy uses a pluggable pattern matcher to match those object names. 3 are defined 
 This matcher matches only using strings
 
 `regexp`::
-This matcher lets you use a regular expression as supported by the Pattern class of java 1.4 or greater
+This matcher lets you use a regular expression as supported by the Pattern class of Java 1.4 or greater
 
 `glob`::
 This matcher lets you use a Unix-like glob matcher, i.e. where the only meta characters are `*` which matches any sequence of characters and `?` which matches exactly one character. Note that this matcher is available only with jakarta oro 2.0.8 in your classpath.
@@ -194,13 +193,13 @@ Note also that with any matcher, the character '*' has the special meaning of ma
 == [[extra]]Extra attributes
 
 *__since 1.4__*
-Several tags in ivy xml files are extensible with what is called extra attributes.
+Several tags in Ivy XML files are extensible with what is called extra attributes.
 The idea is very simple: if you need some more information to define your modules, you can add the attribute you want and you will then be able to access it as any other attribute in your patterns.
 
 *__since 2.0__*
-It's possible and recommended to use xml namespaces for your extra attributes. Using an Ivy extra namespace is the easiest way to add your own extra attributes.
+It's possible and recommended to use XML namespaces for your extra attributes. Using an Ivy extra namespace is the easiest way to add your own extra attributes.
 
-Example: here is an ivy file with the attribute `color` set to blue:
+Example: here is an Ivy file with the attribute `color` set to blue:
 
 [source,xml]
 ----
@@ -214,8 +213,7 @@ Example: here is an ivy file with the attribute `color` set to blue:
 </ivy-module>
 ----
 
-Then you must use the extra attribute when you declare a dependency on `foo`.  Those extra attributes
-will indeed be used as identifiers for the module like the `org`, the `name` and the `revision`:
+Then you must use the extra attribute when you declare a dependency on `foo`. Those extra attributes will indeed be used as identifiers for the module like the `org`, the `name` and the `revision`:
 
 [source,xml]
 ----
@@ -231,7 +229,7 @@ ${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
 
 Note that in patterns you must use the unqualified attribute name (no namespace prefix).
 
-If you don't want to use xml namespaces, it's possible but you will need to disable ivy file validation, since your files won't fulfill anymore the official ivy xsd. See the link:settings/settings.html[settings documentation] to see how to disable validation.
+If you don't want to use XML namespaces, it's possible but you will need to disable Ivy file validation, since your files won't fulfill anymore the official Ivy XSD. See the link:settings/settings.html[settings documentation] to see how to disable validation.
 
 == [[checksum]]Checksums
 
@@ -243,7 +241,7 @@ Globally, use the ivy.checksums variable to list the check to be done.
 On each resolver you can use the checksums attribute to override the global setting.
 
 The setting is a comma separated list of checksum algorithms to use.
-During checking (at download time), the first checksum found is checked, and that's all. This means that if you have a `"SHA-256, sha1, md5"` setting, then if ivy finds a SHA-256 file, it will compare the downloaded file SHA-256 against this SHA-256, and if the comparison is ok, it will assume the file is ok. If no SHA-256 file is found, it will look for an sha1 file. If that isn't found, then it checks for md5 and so on. If none is found no checking is done.
+During checking (at download time), the first checksum found is checked, and that's all. This means that if you have a `"SHA-256, sha1, md5"` setting, then if Ivy finds a SHA-256 file, it will compare the downloaded file SHA-256 against this SHA-256, and if the comparison is ok, it will assume the file is ok. If no SHA-256 file is found, it will look for an sha1 file. If that isn't found, then it checks for md5 and so on. If none is found no checking is done.
 During publish, all listed checksum algorithms are computed and uploaded.
 
 By default checksum algorithms are `"sha1, md5"`.
@@ -323,7 +321,7 @@ In this case, setting `checkModified="true"` on your dependency resolver will be
 
 ==== Changes in artifacts
 
-Some people, especially those coming from maven 2 land, like to use one special revision to handle often updated modules. In maven 2 this is called a SNAPSHOT version, and some argue that it helps save disk space to keep only one version for the high number of intermediary builds you can make whilst developing.
+Some people, especially those coming from Maven 2 land, like to use one special revision to handle often updated modules. In Maven 2, this is called a SNAPSHOT version, and some argue that it helps save disk space to keep only one version for the high number of intermediary builds you can make whilst developing.
 
 Ivy supports this kind of approach with the notion of "changing revision". A changing revision is just that: a revision for which Ivy should consider that the artifacts may change over time. To handle this, you can either specify a dependency as changing on the link:ivyfile/dependency.html[dependency] tag, or use the `changingPattern` and `changingMatcher` attributes on your link:settings/resolvers.html[resolvers] to indicate which revision or group of revisions should be considered as changing.
 

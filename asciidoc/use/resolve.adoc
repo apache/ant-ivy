@@ -17,21 +17,21 @@
    under the License.
 ////
 
-The resolve task actually resolve dependencies described in an link:../ivyfile.html[ivy file], and put the resolved dependencies in the ivy cache.
-If configure has not been called before resolve is called, a default configuration will be used (equivalent to call configure with no attributes).
+The resolve task actually resolve dependencies described in an link:../ivyfile.html[Ivy file], and put the resolved dependencies in the Ivy cache.
+If configure has not been called before resolve is called, a default configuration will be used (equivalent to calling configure without attributes).
 
-After the call to this task, four properties are set in ant:
+After the call to this task, four properties are set in Ant:
 
-* `ivy.organisation`: set to the organisation name found in the ivyfile which was used for resolve
-* `ivy.module`: set to the module name found in the ivyfile which was used for resolve
-* `ivy.revision`: set to the revision name found in the ivyfile which was used for resolve, or a generated revision name if no revision was specified in the file
+* `ivy.organisation`: set to the organisation name found in the Ivy file which was used for resolve
+* `ivy.module`: set to the module name found in the Ivy file which was used for resolve
+* `ivy.revision`: set to the revision name found in the Ivy file which was used for resolve, or a generated revision name if no revision was specified in the file
 * `ivy.resolved.configurations`: set to the comma separated list of configurations resolved
 
 *Since 1.2:*
 An additional property is set to `true` if the resolved dependencies are changes since the last resolve, and to `false` otherwise: `ivy.deps.changed`.
 
 *Since 2.0:*
-The property `ivy.deps.changed` will not be set (and not be computed) if you set the parameter `checkIfChanged` to `false`. (by default it is `true` to keep backward compatibility).  This allow to optimize your build when you have multi-module build with multiple configurations.
+The property `ivy.deps.changed` will not be set (and not be computed) if you set the parameter `checkIfChanged` to `false`. (By default, it is `true` to keep backward compatibility).  This allows to optimize your build when you have multi-module build with multiple configurations.
 
 *Since 2.0:*
 In addition, if the `resolveId` attribute has been set, the following properties are set as well:
@@ -45,15 +45,15 @@ In addition, if the `resolveId` attribute has been set, the following properties
 *Since 2.4*
 If current module extends other modules:
 
-* `ivy.parents.count`: number of parents module
-* `ivy.parent[__index__].organisation`: set to the organisation name found in the parent ivyfile which was used for resolve
-* `ivy.parent[__index__].module`: set to the module name found in the parent ivyfile which was used for resolve
-* `ivy.parent[__index__].revision`: set to the revision name found in the parent ivyfile which was used for resolve
-* `ivy.parent[__index__].branch`: set to the branch name found in the parent ivyfile which was used for resolve
+* `ivy.parents.count`: number of parent modules
+* `ivy.parent[__index__].organisation`: set to the organisation name found in the parent Ivy file which was used for resolve
+* `ivy.parent[__index__].module`: set to the module name found in the parent Ivy file which was used for resolve
+* `ivy.parent[__index__].revision`: set to the revision name found in the parent Ivy file which was used for resolve
+* `ivy.parent[__index__].branch`: set to the branch name found in the parent Ivy file which was used for resolve
 
 Where __index__ represent the index of extends module.
 
-When ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:
+When Ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:
 
 [source]
 ----
@@ -72,7 +72,7 @@ This table gives some statistics about the dependency resolution. Each line corr
 * `modules`
 ** `number`: the total number of dependency modules resolved in this configuration, including transitive ones
 ** `search`: the number of dependency modules that required a repository access. The repository access is needed if the module is not yet in cache, or if a latest version is required, or in some other cases (depending on `checkModified`, for instance)
-** `dwnlded`: the number of dependency ivy files downloaded from the repository. This number can be less than the total number of modules even with a clean cache, if no ivy file is provided for some dependencies.
+** `dwnlded`: the number of dependency Ivy files downloaded from the repository. This number can be less than the total number of modules even with a clean cache, if no Ivy file is provided for some dependencies.
 ** `evicted`: the number of dependency module evicted by conflict managers.
 * `artifacts`
 ** `number`: the total number of artifacts resolved in the given configuration.
@@ -80,9 +80,9 @@ This table gives some statistics about the dependency resolution. Each line corr
 
 == Inline mode
 
-*__since 1.4__* The inline mode allow to call a resolve without an ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an Ant task for example. When `inline` is set to `true`, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
+*__since 1.4__* The inline mode allows to call a resolve without an Ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an Ant task for example. When `inline` is set to `true`, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
 
-*Remark:* if you want the standard ivy properties to be set or to reuse the results of an inline resolve by other post-resolve tasks like `retrieve`, `cachepath`, `report`...,  you must set the keep attribute to `true`!
+*Remark:* if you want the standard Ivy properties to be set or to reuse the results of an inline resolve by other post-resolve tasks like `retrieve`, `cachepath`, `report`...,  you must set the keep attribute to `true`!
 
 == Resolve mode
 
@@ -97,32 +97,32 @@ Two modes are available:
 
 During resolve, Ivy creates a file in the link:../settings/caches.html[resolution cache]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same `resolveId`.
 
-__Note for developers__: after the call to this task, a reference to the module descriptor resolved is put in the ant project under the id `ivy.resolved.descriptor`.
+__Note for developers__: after the call to this task, a reference to the module descriptor resolved is put in the Ant project under the id `ivy.resolved.descriptor`.
 
 == Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|file|path to the ivy file to use for resolution|No. Defaults to `${ivy.dep.file}` or nothing in inline mode
+|file|path to the Ivy file to use for resolution|No. Defaults to `${ivy.dep.file}` or nothing in inline mode
 |conf|a comma separated list of the configurations to resolve, or `$$*$$`.
 *__Since 2.0__*, you can also use `$$*(private)$$`, `$$*(public)$$`.  Note that when `inline` is `true`, the configuration `$$*$$` is equivalent as `$$*(public)$$`.|No. Defaults to `${ivy.configurations}`
 |refresh|`true` to force Ivy to resolve dynamic revision in this resolve process, `false` to use cached resolved revision *__since 2.0__*|No. defaults to `false`
 |resolveMode|the resolve mode to use for this dependency resolution process *__since 2.0__*|No. defaults to using the resolve mode set in the link:../settings.html[settings]
-|inline|`true` to use inline mode, false to resolve an ivy file *__since 1.4__*|No. defaults to `false`
-|keep|`true` to keep the results of the resolve in memory, false to discard them. When this is `false`, the standard ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to reuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
+|inline|`true` to use inline mode, false to resolve an Ivy file *__since 1.4__*|No. defaults to `false`
+|keep|`true` to keep the results of the resolve in memory, false to discard them. When this is `false`, the standard Ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to reuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
 |organisation|the organisation of the module to resolve in inline mode *__since 1.4__*|Yes in inline mode, no otherwise.
 |module|the name of the module to resolve in inline mode *__since 1.4__*|Yes in inline mode, no otherwise.
 |revision|the revision constraint to apply to the module to resolve in inline mode *__since 1.4__*|No. Defaults to `latest.integration` in inline mode, nothing in standard mode.
-|branch|the name of the branch to resolve in inline mode *__(since 2.1.0)__*|Defaults to no branch in inline mode, nothing in standard mode.
+|branch|the name of the branch to resolve in inline mode *__(since 2.1)__*|Defaults to no branch in inline mode, nothing in standard mode.
 |changing|indicates that the module may change when resolving in inline mode. See link:../concept.html#change[cache and change management] for details. Ignored when resolving in standard mode. *__(since 1.4)__*|No. Defaults to `false`.
 |type|comma separated list of accepted artifact types (*__since 1.2__*)|No. defaults to `${ivy.resolve.default.type.filter}`
-|haltonfailure|`true` to halt the build on ivy failure, false to continue|No. Defaults to `true`
+|haltonfailure|`true` to halt the build on Ivy failure, false to continue|No. Defaults to `true`
 |failureproperty|the name of the property to set if the resolve failed *__since 1.4__*|No. No property is set by default.
 |transitive|`true` to resolve dependencies transitively, `false` otherwise *__since 1.4__*|No. Defaults to `true`
 |showprogress|`true` to show dots while downloading, `false` otherwise|No. Defaults to `true`
-|validate|`true` to force ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default ivy value (as configured in configuration file)
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in settings)
+|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
 |resolveId|An id which can be used later to refer to the results of this resolve *__(since 2.0)__*|No, defaults to `[org]-[module]`.
 |log|the log setting to use during the resolve process. *__(since 2.0)__*
 

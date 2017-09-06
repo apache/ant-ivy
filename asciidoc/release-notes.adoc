@@ -28,7 +28,7 @@ configurability, and tight integration with link:https://ant.apache.org/[Apache 
 == Download
 You can download this release at link:https://ant.apache.org/ivy/download.cgi[]
 
-Issues should either be discussed in the link:https://ant.apache.org/ivy/mailing-lists.html[Ivy user mailing list] or should be reported to at link:https://issues.apache.org/jira/browse/IVY[]
+Issues should either be discussed in the link:https://ant.apache.org/ivy/mailing-lists.html[Ivy user mailing list] or reported at link:https://issues.apache.org/jira/browse/IVY[]
 
 More information about the project can be found on the website link:https://ant.apache.org/ivy/[]
 
@@ -38,7 +38,7 @@ Key features of this 2.5.0 release are:
 
     * The minimum runtime Java version required is now Java 7
     * Ivy now uses BouncyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
-    * Ivy now uses HttpComponents HttpClient 4.5.x version for dealing with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient client library is no longer used or supported. (jira:IVY-1563[])
+    * Ivy now uses HttpComponents HttpClient 4.5.x version when dealing with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient library is no longer used or supported. (jira:IVY-1563[])
 
 
 == List of Changes in this Release
@@ -48,7 +48,7 @@ For details about the following changes, check our JIRA install at link:https://
 *List of changes since Ivy 2.4.0:*
 
 - FIX: Local conflict manager didn't handle deeper conflicts in transitive dependencies (jira:IVY-1404[])
-- FIX: Made the maven 'test' configuration public so we can use the test-jar as dependency (jira:IVY-1444[])
+- FIX: Made the Maven 'test' configuration public so we can use the test-jar as dependency (jira:IVY-1444[])
 - FIX: NullPointerException in dependencytree with no dependencies (jira:IVY-1539[])
 - FIX: checkIfChanged is not settable attribute for checkdepsupdate ant task (jira:IVY-1549[])
 - FIX: ArrayIndexOutOfBoundsException when using a p2 repository for dependencies (jira:IVY-1504[])
@@ -74,11 +74,11 @@ For details about the following changes, check our JIRA install at link:https://
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
 - IMPROVEMENT: Update bouncycastle to 1.52 (jira:IVY-1521[]) (Thanks to Michal Srb)
-- IMPROVEMENT: `symlinkmass` option of retrieve task has been deprecated in this release and will no longer be supported since, starting this version of Ivy, Ivy uses Java standard API(s) for symlink management and as such doesn't spawn a process to execute symlink creation shell commands, like it used to do eariler. The `symlinkmass` option was previously there to launch just one single process instead of multiple processes for symlink creation. Now with the usage of the Java standard API(s), this option no longer is relevant.
+- IMPROVEMENT: `symlinkmass` option of retrieve task has been deprecated in this release and will no longer be supported since, starting this version of Ivy, Ivy uses Java standard API(s) for symlink management and as such doesn't spawn a process to execute symlink creation shell commands, like it used to do earlier. The `symlinkmass` option was previously there to launch just one single process instead of multiple processes for symlink creation. Now with the usage of the Java standard API(s), this option no longer is relevant.
 - IMPROVEMENT: Ivy command line now supports passing `overwriteMode` option to `retrieve` task (jira:IVY-1447[])
 
 
-- NEW: Lets ssh-based resolvers use an ~/.ssh/config file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
+- NEW: Lets SSH-based resolvers use an ~/.ssh/config file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
 - NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (jira:IVY-1529[])
 - NEW: Add (conditional) support for SHA-256 SHA-512 and SHA-384 checksum algorithms (jira:IVY-1554[]) (Thanks to Jaikiran Pai)
 

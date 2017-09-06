@@ -321,21 +321,21 @@
                               },
                               {
                                 "id":"resolver/packager",
-                                "title":"Packager resolver",
+                                "title":"Packager Resolver",
                                 "children": [
 
                                   ]
                               },
                               {
                                 "id":"resolver/filesystem",
-                                "title":"File System resolver",
+                                "title":"File System Resolver",
                                 "children": [
 
                                   ]
                               },
                               {
                                 "id":"resolver/url",
-                                "title":"Url Resolver",
+                                "title":"URL Resolver",
                                 "children": [
 
                                   ]
@@ -349,35 +349,35 @@
                               },
                               {
                                 "id":"resolver/dual",
-                                "title":"Dual resolver",
+                                "title":"Dual Resolver",
                                 "children": [
 
                                   ]
                               },
                               {
                                 "id":"resolver/sftp",
-                                "title":"sftp resolver",
+                                "title":"SFTP Resolver",
                                 "children": [
 
                                   ]
                               },
                               {
                                 "id":"resolver/ssh",
-                                "title":"ssh resolver",
+                                "title":"SSH Resolver",
                                 "children": [
 
                                   ]
                               },
                               {
                                 "id":"resolver/vfs",
-                                "title":"vfs resolver",
+                                "title":"VFS Resolver",
                                 "children": [
 
                                   ]
                               },
                               {
                                 "id":"resolver/jar",
-                                "title":"Jar resolver",
+                                "title":"Jar Resolver",
                                 "children": [
 
                                   ]
@@ -442,13 +442,6 @@
                         {
                           "id":"settings/outputters",
                           "title":"outputters",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"settings/signers",
-                          "title":"signers",
                           "children": [
 
                             ]
@@ -838,6 +831,19 @@
                             ]
                         },
                         {
+                          "id":"use/report",
+                          "title":"report",
+                          "children": [
+                              {
+                                "id":"yed",
+                                "title":"Using yEd to layout report graphs",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
                           "id":"use/repreport",
                           "title":"repreport",
                           "children": [
@@ -863,19 +869,6 @@
                           "title":"retrieve",
                           "children": [
 
-                            ]
-                        },
-                        {
-                          "id":"use/report",
-                          "title":"report",
-                          "children": [
-                              {
-                                "id":"yed",
-                                "title":"Using yEd to layout report graphs",
-                                "children": [
-
-                                  ]
-                              }
                             ]
                         },
                         {

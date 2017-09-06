@@ -31,7 +31,7 @@ Therefore we recommend adding ivy files for all the modules in your repository. 
 
 == Use your own enterprise repository
 
-This is usually not a valid recommendation for open source projects, but for the enterprise world we strongly suggest to avoid relying on a public repository like maven ibiblio or ivyrep. Why? Well, there are a couple of reasons:
+This is usually not a valid recommendation for open source projects, but for the enterprise world we strongly suggest to avoid relying on a public repository like Maven ibiblio or ivyrep. Why? Well, there are a couple of reasons:
 
 === Control
 
@@ -59,7 +59,7 @@ Ivy is very flexible and can accommodate a lot of existing repositories, using t
 
 == Public ivysettings.xml with public repositories
 
-If you create a public repository, provide a URL to the link:settings.html[ivysettings.xml] file. It's pretty easy to do, and if someone wants to leverage your repository, he will just have to load it with link:use/settings.html[settings] with the URL of your ivysettings.xml file, or link:settings/include.html[include] it in its own configuration file, which makes it really easy to combine several public repositories.
+If you create a public repository, provide a URL to the link:settings.html[ivysettings.xml] file. It's pretty easy to do, and if someone wants to leverage your repository, (s)he will just have to load it with link:use/settings.html[settings] with the URL of your ivysettings.xml file, or link:settings/include.html[include] it in its own settings file, which makes it really easy to combine several public repositories.
 
 == Dealing with integration versions
 
@@ -72,7 +72,7 @@ So, how can you deal with these, possibly numerous, integration versions?
 There are basically two ways to deal with them, both ways being supported by Ivy:
 
 use a naming convention like a special suffix::
-the idea is pretty simple, each time you publish a new integration of your module you give the same name to the version (in maven world this is for example 1.0-SNAPSHOT). The dependency manager should then be aware that this version is special because it changes over time, so that it does not trust its local cache if it already has the version, but checks the date of the version on the repository and sees if it has changed. In Ivy this is supported using the link:ivyfile/dependency.html[changing attribute] on a dependency or by configuring the link:settings/resolvers.html[changing pattern] to use for all your modules.
+the idea is pretty simple, each time you publish a new integration of your module you give the same name to the version (in Maven world this is for example 1.0-SNAPSHOT). The dependency manager should then be aware that this version is special because it changes over time, so that it does not trust its local cache if it already has the version, but checks the date of the version on the repository and sees if it has changed. In Ivy this is supported using the link:ivyfile/dependency.html[changing attribute] on a dependency or by configuring the link:settings/resolvers.html[changing pattern] to use for all your modules.
 
 automatically create a new version for each::
 in this case you use either a build number or a timestamp to publish each new integration version with a new version name. Then you can use one of the numerous ways in Ivy to link:ivyfile/dependency.html[express a version constraint]. Usually selecting the very latest one (using 'latest.integration' as version constraint) is enough.
@@ -110,7 +110,7 @@ you want to use a custom task in your ant build::
 Without ivy you usually either copy the custom task jar in ant lib, which requires maintenance of your workstation installation, or use a manual copy or download and a taskdef with the appropriate classpath, which is better. But if you have several custom tasks, or if they have themselves dependencies, it can become cumbersome. Using Ivy with an inline dependency is an elegant way to solve this problem.
 
 you want to easily deploy an application::
-If you already build your application and its modules using Ivy, it is really easy to leverage your ivy repository to download your application and all its dependencies on the local filesystem, ready to be executed. If you also put your configuration files as artifacts in your repository (maybe packaged as a zip), the whole installation process can rely on ivy, easing the automatic installation of *any* version of your application available in your repository!
+If you already build your application and its modules using Ivy, it is really easy to leverage your ivy repository to download your application and all its dependencies on the local filesystem, ready to be executed. If you also put your settings files as artifacts in your repository (maybe packaged as a zip), the whole installation process can rely on Ivy, easing the automatic installation of *any* version of your application available in your repository!
 
 == Hire an expert
 

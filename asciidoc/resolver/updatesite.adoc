@@ -29,10 +29,10 @@
 
 *__since 2.3__*
 
-This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.
+This resolver is one of the resolvers which support link:../osgi.html[OSGi&#153;] dependencies.
 It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.
 
-This resolver supports old style Eclipse updatesite, based on simply a site.xml. It also supports Eclipse P2 repositories.
+This resolver supports old style Eclipse updatesite, based on a single file, site.xml. It also supports Eclipse P2 repositories.
 
 
 == Attributes
@@ -49,7 +49,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |=======
 
 
-The requirement strategy is defining how the resolver should behave in front of several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
+The requirement strategy is defining how the resolver should behave when facing several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
 
 
     * if the requirement strategy is `first`, among the bundles satisfying the requirement, it will choose the first one. A warning will be logged about the choice Ivy has to arbitrarily do. +

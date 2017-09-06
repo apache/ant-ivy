@@ -62,7 +62,7 @@ A _module descriptor_ is a generic way of identifying what describes a module: t
 
 The most common module descriptors in Ivy are link:ivyfile.html[Ivy Files], xml files with an Ivy specific syntax, and usually called ivy.xml.
 
-But since Ivy is also compatible with maven 2 metadata format (called pom, for Project Object Model), pom files fall into the category of module descriptors.
+But since Ivy is also compatible with Maven 2 metadata format (called POM, for Project Object Model), POM files fall into the category of module descriptors.
 
 And because Ivy accepts pluggable module descriptor parsers, you can use almost whatever you want as module descriptors.
 
@@ -84,7 +84,7 @@ Although the type of an artifact may (rather accidentally) imply its file format
 
 Defining appropriate artifact types for a module is up to its development organisation. Common choices may include: "jar", "binary", "bin", "rc", "exe", "dll", "source", "src", "config", "conf", "cfg", "doc", "api", "spec", "manual", "man", "data", "var", "resource", "res", "sql", "schema", "deploy", "install", "setup", "distrib", "distro", "distr", "dist", "bundle", etc.
 
-Module descriptors are not really artifacts, but they are comparable to an artifact type, i.e. "descriptor" (an ivy file or a Maven POM).
+Module descriptors are not really artifacts, but they are comparable to an artifact type, i.e. "descriptor" (an Ivy file or a Maven POM).
 
 Electronic signatures or digests are not really artifacts themselves, but can be found with them in repositories. They also are comparable to an artifact type, i.e. "digest" (md5 or sha1).
 

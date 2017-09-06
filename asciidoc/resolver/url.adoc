@@ -22,12 +22,12 @@
 []
 |=======
 |Tag|url
-|Handle latest|yes with http urls (and apache server) and with file urls, no with other urls
-|Handle publish|yes with http urls whose destination supports publishing (as of Ivy 2.0)
+|Handle latest|yes with HTTP URLs (and Apache server) and with file URLs, no with other URLs
+|Handle publish|yes with HTTP URLs whose destination supports publishing (as of Ivy 2.0)
 |=======
 
 
-This resolver is one of the most generic. In fact, most of the previous resolvers can be obtained by a particular configuration of this one. Indeed it uses urls to find ivy files and artifacts. The urls it uses are defined through ivy and artifact children, each giving a pattern to find ivy files or artifacts.
+This resolver is one of the most generic. In fact, most of the previous resolvers can be obtained by a particular configuration of this one. Indeed it uses URLs to find Ivy files and artifacts. The URLs it uses are defined through Ivy and artifact children, each giving a pattern to find Ivy files or artifacts.
 
 *Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
 
@@ -49,7 +49,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|ivy|defines a pattern for Ivy files, using the pattern attribute|0..n
 |artifact|defines a pattern for artifacts, using the pattern attribute|1..n
 |=======
 
@@ -69,4 +69,4 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 
 ----
 
-Looks for ivy files in one place and for artifacts in two places: with or without revision in name (revision being already in the directory structure).
+Looks for Ivy files in one place and for artifacts in two places: with or without revision in name (revision being already in the directory structure).

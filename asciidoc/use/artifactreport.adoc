@@ -18,7 +18,7 @@
 ////
 
 *__since 1.4__*
-The `artifactreport` task generates an xml report of all artifacts dependencies resolved by the last link:../use/resolve.html[resolve] task call during the same build.
+The `artifactreport` task generates an XML report of all artifact dependencies resolved by the last link:../use/resolve.html[resolve] task call during the same build.
 
 *__since 2.0__* This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
@@ -28,7 +28,7 @@ It is thus easy to use to generate things like a classpath file for an IDE.
 
 See this link:http://www.jaya.free.fr/ivy/doc/articles/ease-multi-module.html[article by Johan Stuyts] (who contributed this task) to see how he uses this task.
 
-Here is an example of generate file:
+Here is an example of generated file:
 
 [source,xml]
 ----
@@ -66,10 +66,10 @@ Here is an example of generate file:
 |=======
 |Attribute|Description|Required
 |tofile|the file to which the report should be written|Yes
-|pattern|the retrieve pattern to use to fill the retrieve location information about the artifacts|No. Defaults to `${ivy.retrieve.pattern}`.
+|pattern|the retrieve pattern to use for adding the retrieve location information about the artifacts|No. Defaults to `${ivy.retrieve.pattern}`.
 |conf|a comma separated list of the configurations to use to generate the report|No. Defaults to the configurations resolved by the last resolve call
-|haltonfailure|`true` to halt the build on ivy failure, `false` to continue|No. Defaults to `true`
-|settingsRef|A reference to the ivy settings that must be used by this task *(since 2.0)*|No, `ivy.instance` is taken by default.
+|haltonfailure|`true` to halt the build on Ivy failure, `false` to continue|No. Defaults to `true`
+|settingsRef|A reference to Ivy settings that must be used by this task *(since 2.0)*|No, `ivy.instance` is taken by default.
 |=======
 
 == Examples

@@ -34,7 +34,7 @@ So with a standard ivy.xml, you can express some dependency on some OSGi bundle 
 
 With OSGi we can declare different kind of capabilities of a bundle which can match different kind of requirements of some other bundles (`Require-Bundle`/`Bundle-SymbolicName`, `Import-Package`/`Export-Package`, `Import-Service`/`Export-Service`). In Ivy we only have one kind of requirement and one kind of capability: the symbolic name of the bundle. Due to that restriction Ivy may not resolve exactly how we would expect with OSGi.  The runtime of Ivy won't be as smart as a pure OSGi dependency manager. But we think that the mapping is working for most of the use cases involving OSGi dependencies management.
 
-Details on the mapping of the OSGi dependency model into Ivy's one can be found in that link:osgi/osgi-mapping.html[page].
+Details on the mapping of the OSGi dependency model into Ivy's one can be found in this link:osgi/osgi-mapping.html[page].
 
 
 == Repository descriptor based resolvers

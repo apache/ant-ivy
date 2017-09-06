@@ -21,7 +21,7 @@ Display dependency updates on the console. This task can also show transitive de
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-Please prefer the use of retrieve + standard ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
+Please prefer the use of retrieve + standard Ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
 
 == Attributes
 
@@ -30,7 +30,7 @@ Please prefer the use of retrieve + standard ant path creation, which make your 
 |Attribute|Description|Required
 |revisionToCheck|target revision to check|No. Defaults to `latest.integration`
 |download|specify if artifact should be downloaded when new updates are found|No. Defaults to `false`
-|checkIfChanged|When set to `true`, the resolve will compare the result with the last resolution done on this module, with those configurations in order to define the property ivy.deps.changed.  Put it to false may provides slightly better performance.|No, default to `false`
+|checkIfChanged|When set to `true`, the resolve will compare the result with the last resolution done on this module, with those configurations in order to define the property `ivy.deps.changed`. Put it to false may provides slightly better performance.|No, default to `false`
 |showTransitive|set to `true` if you want to see potential updates on transitive dependencies|No. Defaults to `false`
 |=======
 

@@ -17,7 +17,7 @@
    under the License.
 ////
 
-This tutorial introduces the use of module configurations in ivy files. Ivy module configurations are indeed a very important concept. Someone even told me one day that using Ivy without using configurations is like eating a good cheese without touching the glass of Chateau Margaux 1976 you have just poured :-)
+This tutorial introduces the use of module configurations in Ivy files. Ivy module configurations are indeed a very important concept. Someone even told me one day that using Ivy without using configurations is like eating a good cheese without touching the glass of Chateau Margaux 1976 you have just poured :-)
 
 More seriously, configurations in Ivy can be better understood as views on your module, and you will see how they can be used effectively here.
 
@@ -26,11 +26,13 @@ Reference documentation on configurations can be found link:../terminology.html[
 == Introduction
 
 Source code is available in `src/example/configurations/multi-projects`.
-We have two projects :
+We have two projects:
+
   - filter-framework is a library that defines an api to filter String arrays and two implementations of this api.
   - myapp is a very small app that uses filter-framework.
 
 The filter-framework library project produces 3 artifacts:
+
   - the api jar,
   - an implementation jar with no external dependencies,
   - a second implementation jar that needs commons-collections to perform.
@@ -40,7 +42,7 @@ The application only needs the api jar to compile and can use either of the two 
 
 == The library project
 
-The first project we'll look at in this tutorial is filter-framework. In order to have a fine-grained artifacts publication definition, we defined several configurations, each which maps to a set of artifacts that other projects can make use of.
+The first project we'll look at in this tutorial is filter-framework. In order to have a fine-grained artifact publication definition, we defined several configurations, each of which maps to a set of artifacts that other projects can make use of.
 
 === The ivy.xml file
 
@@ -75,7 +77,7 @@ The first project we'll look at in this tutorial is filter-framework. In order t
 
 === Explanation
 
-As you can see, we defined 4 configurations, with 3 being public and 1 private. (the  junit dependency for testing).
+As you can see, we defined 4 configurations, with 3 being public and 1 private (the JUnit dependency for testing).
 The 2 implementation configurations, *homemade-impl* and *cc-impl* extend the *api* configuration so that all artifacts defined in *api* will also be part of the extending configuration.
 
 In the publications tag, we defined the artifacts we produce (jars in this case) and we assign them to a configuration. When others use our library they will have a flexible way to ask for what they need.
@@ -140,7 +142,7 @@ We also defined a dependency on our previously built library. In this dependency
 
 . *withexternaljar->cc-impl* : here we tell Ivy that our *withexternaljar* configuration depends on the *cc-impl* configuration of the dependency +
 
-Note that we never declare any of the dependency's artifacts we need in each configuration: it's the dependency module's ivy file which declares the published artifacts and which should be used in each configuration.
+Note that we never declare any of the dependency's artifacts we need in each configuration: it's the dependency module's Ivy file that declares the published artifacts which should be used in each configuration.
 
 In the Ant `build.xml` file, we defined a 'resolve' target as follow:
 
@@ -186,7 +188,7 @@ When we call this target, Ivy will do a resolve using our `ivy.xml` file in the 
 ----
 
 
-As you can see, for each configuration we have now a set of jars.
+As you can see, we have a set of jars for each configuration now.
 
 Let's try to launch our app.
 
@@ -219,4 +221,4 @@ Nice! We got the same result, but we can see that the implementation classes are
 
 == Conclusion
 
-*You should use configurations as often as possible.* Configurations are a very important concept in Ivy. They allow you to group artifacts and give the group a meaning. When you write ivy files for projects that are intended for use by others, use configurations to allow people to get only what they need, without having to specify them one by one in their own dependency list.
+*You should use configurations as often as possible.* Configurations are a very important concept in Ivy. They allow you to group artifacts and give the group a meaning. When you write Ivy files for projects that are intended for use by others, use configurations to allow people to get only what they need, without having to specify them one by one in their own dependency list.

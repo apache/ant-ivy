@@ -21,13 +21,12 @@
 
 In this tutorial, you will see one of the simplest ways to use Ivy. With no specific settings, Ivy uses the Maven 2 repository to resolve the dependencies you declare in an Ivy file. Let's have a look at the content of the files involved.
 
-_You'll find this tutorial's sources in the ivy distribution in the src/example/hello-ivy directory._
+_You'll find this tutorial's sources in the Ivy distribution in the src/example/hello-ivy directory._
 
 
 == The ivy.xml file
 
-This file is used to describe the dependencies of the project on other libraries.
-Here is the sample:
+This file describes the dependencies of the project on other libraries. Here is the sample:
 
 [source, xml]
 ----
@@ -42,9 +41,9 @@ Here is the sample:
 
 ----
 
-The format of this file should pretty easy to understand, but let's give some details about what is declared here. First, the root element `ivy-module`, with the `version` attribute used to tell Ivy which version of Ivy this file uses.
+The format of this file should be pretty easy to understand, but let's discuss some details about what is declared here. First, the root element is `ivy-module`, with the `version` attribute telling Ivy which lowest version of Ivy this file is compatible with.
 
-Then there is an `info` tag, which is used to give information about the module for which we are defining dependencies. Here we define only the `organization` and `module` name. You are free to choose whatever you want for them, but we recommend avoiding spaces for both.
+Then there is an `info` tag, which provides information about the module for which we are defining dependencies. Here we define only the `organization` and `module` names. You are free to choose whatever you want for them, but we recommend avoiding spaces for both.
 
 Finally, the `dependencies` section lets you define dependencies. In this example, this module depends on two libraries: `commons-lang` and `commons-cli`. As you can see, we use the `org` and `name` attributes to define the organization and module name of the dependencies we need. The `rev` attribute is used to specify the version of the module you depend on.
 
@@ -66,7 +65,7 @@ If you want more details on what you can do in Ivy files, you can have a look at
 == The build.xml file
 
 The corresponding build file contains a set of targets, allowing you to resolve dependencies declared in the Ivy file, to compile and run the sample code, produce a report of dependency resolution, and clean the cache or the project.
-You can use the standard `ant -p` to get the list of available targets. Feel free to have a look at the whole file, but here is the part relevant to dependency resolution:
+You can use the standard `ant -p` command to get the list of available targets. Feel free to have a look at the whole file, but here is the part relevant to dependency resolution:
 
 [source, xml]
 ----
@@ -85,7 +84,7 @@ You can use the standard `ant -p` to get the list of available targets. Feel fre
 
 ----
 
-As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly link:../install.html[installed] is to define an XML namespace in your Ant file (xmlns:ivy="antlib:org.apache.ivy.ant"). Then all the link:../ant.html[Ivy ant tasks] will be available in this namespace.
+As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly link:../install.html[installed] is to define an XML namespace in your Ant file (xmlns:ivy="antlib:org.apache.ivy.ant"`). Then all the link:../ant.html[Ivy Ant tasks] will be available in this namespace.
 
 Here we use only one task: the link:../use/retrieve.html[retrieve] task. With no attributes, it will use default settings and look for a file named `ivy.xml` for the dependency definitions. That's exactly what we want, so we need nothing more than that.
 
@@ -108,7 +107,7 @@ include::asciidoc/tutorial/log/hello-ivy-1.txt[]
 == What happened ?
 
 Without any settings, Ivy retrieves files from the Maven 2 repository. That's what happened here.
-The resolve task has found the `commons-lang` and `commons-cli` modules in the Maven 2 central repository, identified that `commons-cli` depends on `commons-logging` and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a `.ivy2/cache` directory). Finally, the retrieve task copies the resolved jars from the ivy cache to the default library directory of the project: the `lib` dir (you can change this easily by setting the pattern attribute on the link:../use/retrieve.html[retrieve] task).
+The resolve task has found the `commons-lang` and `commons-cli` modules in the Maven 2 central repository, identified that `commons-cli` depends on `commons-logging` and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a `.ivy2/cache` directory). Finally, the retrieve task copies the resolved jars from the Ivy cache to the default library directory of the project: the `lib` dir (you can change this easily by setting the pattern attribute on the link:../use/retrieve.html[retrieve] task).
 
 You might say that the task took a long time just to write out a "Hello Ivy!" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
 
@@ -124,4 +123,4 @@ Great! The cache was used, so no download was needed and the build was instantan
 
 And now, if you want to generate a report detailing all the dependencies of your module, you can call the report target, and check the generated file in the build directory. You should obtain something looking like link:../samples/apache-hello-ivy-default.html[this].
 
-As you can see, using Ivy to resolve dependencies stored in the Maven 2 repository is extremely easy. Now you can go on with the next tutorials to learn more about link:../tutorial/conf.html[how to use module configurations] which is a very powerful Ivy specific feature. Other tutorials are also available where you will learn how to use Ivy settings to leverage a possibly complex enterprise repository. It may also be a good time to start reading the link:../reference.html[reference documentation], and especially the introduction material which gives a good overview of Ivy. The link:../bestpractices.html[best practices] page is also a must read to start thinking about how to use Ant+Ivy to build a clean and robust build system.
+As you can see, using Ivy to resolve dependencies stored in the Maven 2 repository is extremely easy. Now you can go on with the other tutorials to learn more about link:../tutorial/conf.html[how to use module configurations] which is a very powerful Ivy specific feature. More tutorials are also available where you will learn how to use Ivy settings to leverage a possibly complex enterprise repository. It may also be a good time to start reading the link:../reference.html[reference documentation], and especially the introduction material which gives a good overview of Ivy. The link:../bestpractices.html[best practices] page is also a must read to start thinking about how to use Ant+Ivy to build a clean and robust build system.

@@ -29,7 +29,7 @@
     </path>
     <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml" classpathref="ivy.classpath" /-->
 
-    <!-- Load Bnd ant tasks -->
+    <!-- Load Bnd Ant tasks -->
     <taskdef uri="bnd" resource="org/apache/ivy/ant/antlib.xml"/>
     <!-- If Bnd is not in Ant's classpath, get the jar of Bnd and use the following -->
     <!-- taskdef rather than the above one -->

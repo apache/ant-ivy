@@ -21,7 +21,7 @@
 
 *Tag:* src
 
-Defines the acceptation part of a translation rule. If a name matches this src, it will be translated using the dest part.
+Defines the matching part of a translation rule. If a name matches this src, it will be translated using the dest part.
 
 == Attributes
 

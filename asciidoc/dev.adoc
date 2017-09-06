@@ -26,13 +26,13 @@ To build Ivy from source it's really easy.
 All you need is
 
 * an link:http://subversion.tigris.org/[svn] client +
-_to check out Ivy sources from apache svn, not required if you build from sources packaged in a release_
+_to check out Ivy sources from Apache svn, not required if you build from sources packaged in a release_
 
 * link:http://ant.apache.org/[Apache Ant] 1.6.0 or greater +
-_We recommend either ant 1.6.5 or 1.7.0_
+_We recommend either Ant 1.6.5 or 1.7.0_
 
-* link:http://junit.org[junit] 3.8.2 jar in your ant lib +
-_ this is not required if you use ant 1.7_
+* link:http://junit.org[junit] 3.8.2 jar in your Ant lib +
+_ this is not required if you use Ant 1.7_
 
 * a link:http://java.sun.com/[jdk] 1.5 or greater +
 _Build instructions have been successfully tested with sun jdk 1.5.0 and 1.6.0_
@@ -59,7 +59,7 @@ ant
 
 ==== Check the result
 
-The ant build will compile the core classes of Ivy and use them to resolve the dependencies (used for some optional features). Then it will compile and run tests with coverage metrics.
+The Ant build will compile the core classes of Ivy and use them to resolve the dependencies (used for some optional features). Then it will compile and run tests with coverage metrics.
 
 If everything goes well, you should see the message:
 
@@ -72,21 +72,21 @@ Then you can check the test results in the build/doc/reports/test directory, the
 
 == Coding conventions
 
-The Ivy code base is supposed to follow the standard java conventions:
+The Ivy code base is supposed to follow the standard Java conventions:
 http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html
 
 This is a work in progress though (see link:https://issues.apache.org/jira/browse/IVY-511[IVY-511]), but patches helping migration to these conventions are welcome.
 
 == Developing with eclipse
 
-Even though you can develop Ivy with your IDE of choice, we support eclipse development by providing ad hoc metadata.
+Even though you can develop Ivy with your IDE of choice, we support Eclipse development by providing ad hoc metadata.
 
 We currently provide two options:
 
 === Eclipse alone
 
-To develop with a simple eclipse install all you need is eclipse 3.1 or greater, with no particular plugin.
-First call the following ant target in your Ivy workspace:
+To develop with a simple Eclipse install all you need is Eclipse 4.2 or greater, with no particular plugin.
+First call the following Ant target in your Ivy workspace:
 
 [source]
 ----
@@ -98,25 +98,25 @@ Then you can use the "Import->Existing project into workspace" eclipse feature t
 
 === Eclipse + IvyDE
 
-You can also leverage the latest IvyDE version to be able to easily resolve the ivy dependencies from Eclipse.
-To do so all you need is call the following ant target in your Ivy workspace:
+You can also leverage the latest IvyDE version to be able to easily resolve the Ivy dependencies from Eclipse.
+To do so all you need is call the following Ant target in your Ivy workspace:
 
 [source]
 ----
 ant eclipse-ivyde
 ----
 
-or if you don't have ant installed you can simply copy the file .classpath.ivyde and rename it to .classpath
+or if you don't have Ant installed you can simply copy the file .classpath.ivyde and rename it to .classpath +
 Then you can import the project using "Import->Existing project into workspace" as long as you already have latest IvyDE installed.
 
 To install latest IvyDE version compatible with the latest Ivy used to resolve Ivy dependencies, you will need to use a snapshot build, not endorsed by the ASF, available here:
 https://builds.apache.org/view/A/view/Ant/job/IvyDE/
 
-Download the file and unzip its content in your eclipse installation directory.
+Download the file and unzip its content in your Eclipse installation directory.
 
 === Recommended plugins
 
-The Ivy project comes with settings for the link:http://eclipse-cs.sourceforge.net/[checkstyle plugin] we recommend to use to avoid introducing new digression to the checkstyle rules we use.
-If you use this plugin, you will many errors in Ivy. As we said, following strict checkstyle rules is a work in progress and we used to have pretty different code conventions (like using _ as prefix for private attributes), so we still have things to fix. We usually use the filter in the problems view to filter out checkstyle errors from this view, which helps to know what the real compilation problem are.
+The Ivy project comes with settings for the link:http://eclipse-cs.sourceforge.net/[Checkstyle plugin] we recommend to use to avoid introducing a new digression to the Checkstyle rules we use.
+If you use this plugin, you will see many errors in Ivy. As we said, following strict Checkstyle rules is a work in progress and we used to have pretty different code conventions (like using _ as prefix for private attributes), so we still have things to fix. We usually use the filter in the problems view to filter out Checkstyle errors from this view, which helps to know what the real compilation problem are.
 
 Besides this plugin we also recommend to use a subversion plugin, link:http://www.eclipse.org/subversive/[subversive] or link:http://subclipse.tigris.org[subclipse] being the two options currently available in the open source landscape.

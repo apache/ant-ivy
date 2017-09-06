@@ -24,12 +24,12 @@ The dependencies declared in an `ivy.xml` can be specified as range of revisions
 
 It is especially useful in a very dynamic environment like the link:../osgi.html[OSGi] one.
 
-In a multi project environment some dependencies still need to be maintained loose: the one between the projects. These dependencies, as soon as they are declared in the original ivy.xml, can be kept from being fixed. In order to do so, use the inner element `keep`.
+In a multi project environment some dependencies still need to be maintained loose: the ones between the projects. These dependencies, as soon as they are declared in the original ivy.xml, can be kept from being fixed. In order to do so, use the inner element `keep`.
 
 The recommended setup is then to:
 
 * have an `ivy-spec.xml` in your project which specifies the dependencies, with ranges if needed
-* have an Ant target which resolve the `ivy-spec.xml` and call `fixdeps` to generate an `ivy.xml`. This target should then only be called after `ivy-spec.xml` is modified. The generated `ivy.xml` can safely be shared in a version control repository (svn, git,...).
+* have an Ant target which resolves the `ivy-spec.xml` and call `fixdeps` to generate an `ivy.xml`. This target should then only be called after `ivy-spec.xml` is modified. The generated `ivy.xml` can safely be shared in a version control repository (Git, Subversion, ...).
 * make the entire build workflow based on the resolve of the generated `ivy.xml`
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
@@ -39,7 +39,7 @@ This is a link:../use/postresolvetask.html[post resolve task], with all the beha
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|tofile|The location of the ivy file to generate|Yes
+|tofile|The location of the Ivy file to generate|Yes
 |=======
 
 == Child elements

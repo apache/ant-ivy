@@ -18,7 +18,7 @@
 -->
 <project name="eclipse-plugin-build" xmlns:ivy="ivy">
 
-    <!-- Load Ivy ant tasks -->
+    <!-- Load Ivy Ant tasks -->
     <taskdef uri="ivy" resource="org/apache/ivy/ant/antlib.xml"/>
     <!-- If Ivy is not in Ant's classpath, get the jar of Ivy and use the following -->
     <!-- taskdef rather than the above one -->

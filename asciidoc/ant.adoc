@@ -17,11 +17,11 @@
    under the License.
 ////
 
-The main and most frequent way to use Ivy is from an Ant build file. However, Ivy can also be called as a standalone application
+The main and most frequent way to use Ivy is from an Ant build file. However, Ivy can also be run as a standalone application.
 
-If you use ant version *1.6.0* or superior, you just have to add Ivy's namespace to your project (`xmlns:ivy="antlib:org.apache.ivy.ant"` attribute of your project tag), and you can call Ivy tasks.
+If you use Ant version *1.6.0* or superior, you just have to add Ivy's namespace to your project (`xmlns:ivy="antlib:org.apache.ivy.ant"` attribute of your project tag), and you can call Ivy tasks.
 
-If you want to make your build handle ivy.jar in either ant lib dir or a local lib dir, you can use a taskdef like this:
+If you want to make your build handle ivy.jar in either Ant lib dir or a local lib dir, you can use a taskdef like this:
 
 [source,xml]
 ----
@@ -32,9 +32,9 @@ If you want to make your build handle ivy.jar in either ant lib dir or a local l
          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
 ----
 
-Combined with the antlib definition in the project namespace, it will load Ivy classes either from your ant lib or a local directory (`path/to/dir/with/ivy/jar` in this example).
+Combined with the antlib definition in the project namespace, it will load Ivy classes either from your Ant lib or a local directory (`path/to/dir/with/ivy/jar` in this example).
 
-If you use ant *1.5.1* or superior, you have to define the tasks you use in your build file. For instance:
+If you use Ant *1.5.1* or superior, you have to define the tasks you use in your build file. For instance:
 
 [source,xml]
 ----
@@ -45,22 +45,22 @@ If you use ant *1.5.1* or superior, you have to define the tasks you use in your
   <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/>
 ----
 
-_Note_: the tasks listed above are non exhaustive. For a complete list of tasks with the corresponding classes, see the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/ant/antlib.xml[antlib.xml] file in git or the version you use.
+_Note_: the tasks listed above are non exhaustive. For a complete list of tasks with the corresponding classes, see the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/ant/antlib.xml[antlib.xml] file in Git repository or the jar file you use.
 
-Then you can use the tasks, but check their name, following samples assume you use the ivy namespace (ivy:xxx tasks), whereas with ant 1.5 you cannot use namespace, and should therefore use ivy-xxx tasks if you have followed the taskdefs above.
+Then you can use the tasks, but check their name, following samples assume you use the Ivy namespace (ivy:xxx tasks), whereas with Ant 1.5 you cannot use namespace, and should therefore use ivy-xxx tasks if you have added the taskdefs as above.
 
-If you use an ant version lower than 1.5.1, you can not use the ivy tasks... you should then call ivy as any external program.
+If you use an Ant version lower than 1.5.1, you can not use the Ivy tasks... you should then run Ivy as any external program.
 
-== Calling ivy from ant: first steps
+== Calling Ivy from Ant: first steps
 
-Once your build file is ok to call ivy tasks, the simplest way to use ivy is to call the ivy retrieve task with no parameters:
+Once your build file is ok to call Ivy tasks, the simplest way to use Ivy is to call the Ivy retrieve task with no parameters:
 
 [source,xml]
 ----
 <ivy:retrieve/>
 ----
 
-This calls ivy with default values, which might be ok in several projects. In fact, it is equivalent to:
+This calls Ivy with default values, which might be ok in several projects. In fact, it is equivalent to:
 
 [source,xml]
 ----
@@ -73,13 +73,13 @@ This calls ivy with default values, which might be ok in several projects. In fa
 </target>
 ----
 
-Those 3 tasks follow the 3 main steps of the ivy retrieving dependencies process:
+Those 3 tasks follow the 3 main steps of the Ivy retrieving dependencies process:
 
-* First the configure task tells it how it can find dependencies giving it a path to an link:settings.html[xml settings file].
-* Then the resolve task actually resolves dependencies described by an link:ivyfile.html[ivy file], and puts those dependencies in the ivy cache (a directory configured in the settings file).
-* Finally the retrieve task copies dependencies from the cache to anywhere you want in your file system. You can then use those dependencies to make your classpath with standard ant paths.
+* First the configure task tells it how it can find dependencies giving it a path to an link:settings.html[settings XML file].
+* Then the resolve task actually resolves dependencies described by an link:ivyfile.html[Ivy file], and puts those dependencies in the Ivy cache (a directory configured in the settings file).
+* Finally the retrieve task copies dependencies from the cache to anywhere you want in your file system. You can then use those dependencies to make your classpath with standard Ant paths.
 
-To understand more accurately the behaviour of ivy tasks, one should know that a property file is loaded in ant by ivy at the beginning of the configure call. This property file contains the following properties:
+To understand more accurately the behaviour of Ivy tasks, one should know that a property file is loaded in Ant by Ivy at the beginning of the configure call. This property file contains the following properties:
 
 [source]
 ----
@@ -107,22 +107,22 @@ ivy.buildlist.ivyfilepath = ivy.xml
 ivy.checksums=sha1,md5
 ----
 
-_For the latest version of these properties, you can check the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/core/settings/ivy.properties[git version]._
+_For the latest version of these properties, you can check the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/core/settings/ivy.properties[Git version]._
 
 *__since 2.0__* After calling the first Ivy task, the property `ivy.version` will be available and contains the version of the used Ivy library.
 
 
 == Ivy tasks attributes : generalities
 
-Some tasks attributes values may be given through different places. The three possible places are :
+Some tasks attributes values may be set in different places. The three possible places are :
 
 . task attribute
-. ivy instance
+. Ivy instance
 . project property
 
-The places are queried in this order, so anything set in task attribute will overwrite what would have been found in ivy instance, for example.
+The places are queried in this order, so anything set in task attribute will override what would have been found in Ivy instance, for example.
 
-The Ivy instance considered here is an instance of the class `Ivy`, which is setup by a call to the configure task, and then reused for other tasks. Because most of the tasks need an Ivy instance, they first check if one is available (i.e. configure has been called), and if none is available, then a default configure is called and the resulting Ivy instance is used in the remaining tasks (unless another configure is called).
+The Ivy instance considered here is an instance of the class `Ivy`, which is set up by a call to the configure task, and then reused for other tasks. Because most of the tasks need an Ivy instance, they first check if one is available (i.e. configure has been called), and if none is available, then a default configure is called and the resulting Ivy instance is used in the remaining tasks (unless another configure is called).
 
 It isn't generally necessary to understand this, but it can lead to some issues if you forget to call configure before another task and if the configure step was required in your environment.
 

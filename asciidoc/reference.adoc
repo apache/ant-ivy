@@ -32,7 +32,7 @@ This part gives you the meaning of some words used all over the Ivy documentatio
 
 ** link:concept.html[Main Concepts]
 +
-This part introduces the main concepts used in Ivy: dependency resolvers, variables, patterns, and also a good introduction to a central ivy concept: module configurations.
+This part introduces the main concepts used in Ivy: dependency resolvers, variables, patterns, and explains a central Ivy concept: module configurations.
 
 ** link:principle.html[How does it work ?]
 +
@@ -52,12 +52,12 @@ This part is dedicated to the specification of the settings file of Ivy (usually
 
 * link:ivyfile.html[Ivy Files]
 +
-This part is the reference for the module descriptors, the Ivy files in which you describe your dependencies. If you have any questions about what can be done or not in an ivy file, you will find the answer here.
+This part is the reference for the module descriptors, the Ivy files in which you describe your dependencies. If you have any questions about what can be done or not in an Ivy file, you will find the answer here.
 
 * link:ant.html[Ant Tasks]
 +
-This part describes how to use Ivy from ant. It's in this section that all ant tasks provided by Ivy are specified.
+This part describes how to use Ivy from Ant. It's in this section that all Ant tasks provided by Ivy are specified.
 
 * link:standalone.html[Using standalone]
 +
-Even though Ivy is most often used from ant, it can also be used from the command line. This page describes how you can do this.
+Even though Ivy is most often used from Ant, it can also be used from the command line. This page describes how you can do this.

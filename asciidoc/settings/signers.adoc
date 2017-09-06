@@ -23,7 +23,7 @@
 
 *__since 2.2__*
 
-Defines a list of detached signature generators usable in ivy. Each generator is identified by its name, given as an attribute.
+Defines a list of detached signature generators usable in Ivy. Each generator is identified by its name, given as an attribute.
 The child tags used to configure the signature generator must be equal to the name of a signature generator type (either built-in or added with the typedef tag).
 
 Ivy supports the following signature generator out of the box:
@@ -53,7 +53,7 @@ Ivy supports the following signature generator out of the box:
 
 This generator is capable of generating an OpenPGP compatible ASCII armored detached signature.
 
-*Remark:* This generator uses the link:http://www.bouncycastle.org/java.html[BouncyCastle OpenPGP] library. Before this generator can be used, these libraries must be available on Ivy's classpath.
+*Remark:* This generator uses the link:http://www.bouncycastle.org/java.html[BouncyCastle OpenPGP] library. Before this generator can be used, the library and its JCE provider library must be available on Ivy's classpath.
 
 
 

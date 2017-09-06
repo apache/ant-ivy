@@ -23,7 +23,7 @@
 
 Defines the list of available statuses. *__since 1.4__*
 
-By default, ivy has 3 statuses: `release`, `milestone` and `integration`. By adding a statuses section to your ivysettings file, you define the statuses you want to use. Note that in this case if you still want to have ivy default statuses you will have to declare them.
+By default, Ivy has 3 statuses: `release`, `milestone` and `integration`. By adding a statuses section to your ivysettings file, you define the statuses you want to use. Note that in this case, if you still want to have Ivy default statuses, you will have to declare them.
 
 The `integration` property on each status is only used for recursive delivery, an integration dependency being delivered if the caller is not in integration state itself.
 
@@ -38,7 +38,7 @@ NOTE: The statuses order is important, the first is considered the more mature, 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|default|the name of the status to use when none is declared in an ivy file|No, defaults to the last status declared
+|default|the name of the status to use when none is declared in an Ivy file|No, defaults to the last status declared
 |=======
 
 
@@ -66,5 +66,5 @@ NOTE: The statuses order is important, the first is considered the more mature, 
 
 ----
 
-Defines 3 statuses, `gold`, `silver` and `bronze`. The default status used when none is declared in an ivy file will be `bronze`.
-It is also considered as an integration status, and thus doesn't trigger any recursive delivery.
+Defines 3 statuses, `gold`, `silver` and `bronze`. The default status used when none is declared in an Ivy file will be `bronze`.
+It is also considered an integration status, and thus doesn't trigger any recursive delivery.

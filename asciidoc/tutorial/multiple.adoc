@@ -33,7 +33,7 @@ This tutorial is an example of how modules can be retrieved by multiple resolver
 
 In Ivy, the use of multiple resolvers is supported by a compound resolver called the chain resolver.
 
-In our example, we will simply show you how to use two resolvers, one on a local repository and one using the Maven2 repository.
+In our example, we will simply show you how to use two resolvers, one for a local repository and one using the Maven 2 repository.
 
 
 == Project Description
@@ -48,11 +48,11 @@ It depends on two libraries: Apache's `commons-lang` and a custom library named 
 Here is the content of the project:
 
 
-    * build.xml: the ant build file for the project +
+    * build.xml: the Ant build file for the project +
 
     * ivy.xml: the Ivy project file +
 
-    * src\example\Hello.java: the only class of the project +
+    * src/example/Hello.java: the only class of the project +
 
 Let's have a look at the *ivy.xml* file:
 
@@ -63,7 +63,7 @@ include::src/example/chained-resolvers/chainedresolvers-project/ivy.xml[]
 
 ----
 
-As we'd expect, the ivy file declares this module to be dependent on the two libraries it uses: `commons-lang` and `test`. Note that we didn't specify the `org` for the dependency `test`. When we exclude `org`, Ivy assumes it is in the same `org` as the declaring module. (in this example, it's `org.apache`).
+As we'd expect, the Ivy file declares this module to be dependent on the two libraries it uses: `commons-lang` and `test`. Note that we didn't specify the `org` for the dependency `test`. When we exclude `org`, Ivy assumes it is in the same `org` as the declaring module. (in this example, it's `org.apache`).
 
 
 === The Ivy Settings
@@ -103,7 +103,7 @@ That's it, we have just configured a chain of resolvers!
 
 === Step 1: Preparation
 
-Open a DOS or shell window, and go to the `src/example/chained-resolvers` directory.
+Open a shell (or command line) window, and go to the `src/example/chained-resolvers` directory.
 
 
 
@@ -119,7 +119,7 @@ This will clean up the entire project directory tree and Ivy cache. You can do t
 
 In almost all examples, we provide a `clean` target, as the default target. Since most examples use the same Ivy cache, you will clean the whole Ivy cache each time you call this target.
 
-Cleaning the Ivy cache is something you can do without fear (except performance): it's only a cache, so everything can be (and should be) obtained again from repositories. This may sound strange to those coming from Maven 2 land. But remember that in Ivy, the cache is not a local repository and the two are completely isolated.
+Cleaning the Ivy cache is something you can do without fear (except for performance): it's only a cache, so everything can be (and should be) obtained again from repositories. This may sound strange to those coming from Maven 2 land. But remember that in Ivy, the cache is not a local repository and the two are completely isolated.
 
 ====
 

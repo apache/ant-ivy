@@ -67,7 +67,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 
 ----
 
-Both a filesystem and ivyrep will be used to look for ivy files. If a dynamic revision is required, then both the filesystem and ivyrep will be queried to find the most recent revision among the two resolvers. Once the most recent revision is found in one resolver, it's the same resolver which will be used to download artifacts.
+Both a filesystem and ivyrep will be used to look for Ivy files. If a dynamic revision is required, then both the filesystem and ivyrep will be queried to find the most recent revision among the two resolvers. Once the most recent revision is found in one resolver, it's the same resolver which will be used to download artifacts.
 
 '''
 
@@ -85,7 +85,7 @@ Both a filesystem and ivyrep will be used to look for ivy files. If a dynamic re
 
 ----
 
-Same as before, except that if a revision is found in the filesystem then ivyrep will not be queried: its the filesystem which will be used for both the ivy file and the artifacts.
+Same as before, except that if a revision is found in the filesystem then ivyrep will not be queried: its the filesystem which will be used for both the Ivy file and the artifacts.
 
 '''
 
@@ -103,4 +103,4 @@ Same as before, except that if a revision is found in the filesystem then ivyrep
 
 ----
 
-Same as first example, except that once a module is found by either filesystem or ivyrep, then it's the whole chain which will be queried to download the artifacts. So in this case ivy file and artifacts may be split across the two resolvers for the same module.
+Same as first example, except that once a module is found by either filesystem or ivyrep, then it's the whole chain which will be queried to download the artifacts. So in this case Ivy file and artifacts may be split across the two resolvers for the same module.

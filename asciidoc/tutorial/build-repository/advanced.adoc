@@ -23,17 +23,17 @@ Now that you have seen how simple it is to create your own repository from an ex
 
 == On the road to a professional repository
 
-In this section, you will learn how to build a *professional* repository. What is a *professional* repository? Our vision is to say that a good quality repository must follow clear rules about projects naming and must offer correct, usable, configurations and verified project descriptors. In order to achieve those goals, we think that you have to build your own repository.
-We have seen in the previous example, that we could use some public repositories to begin to build our own repository. Nevertheless, the result is not always the expected one, especially concerning the naming rules used.
+In this section, you will learn how to build a *professional* repository. What is a *professional* repository? Our vision is to say that a good quality repository must follow clear rules about project naming and must offer correct, usable configurations and verified project descriptors. In order to achieve those goals, we believe that you have to build your own repository.
+We have seen in the previous example, that we could use some public repositories to begin building our own repository. Nevertheless, the result is not always the expected one, especially concerning the naming rules used.
 
-This problem is pretty normal when you have an existing repository, and want to benefit from large public repositories which do not follow the same naming conventions. It also shows up because many public repositories do not use a  consistent naming scheme. For example, why don't all the apache commons modules use the org.apache.commons organization? Well.. for historical reasons. But if you setup your own repository, you may not want to suffer from the mistakes of history.
+This problem is pretty normal when you have an existing repository, and want to benefit from large public repositories which do not follow the same naming conventions. It also shows up because many public repositories do not use a  consistent naming scheme. For example, why don't all the Apache commons modules use the org.apache.commons organization? Well... for historical reasons. But if you set up your own repository, you may not want to suffer from the mistakes of history.
 
 Fortunately, Ivy has a very powerful answer to this problem: link:../../settings/namespaces.html[namespaces].
 
 
 == Using namespaces
 
-If you look at the repository built with the link:../../tutorial/build-repository/basic.html[previous tutorial], you will see exactly what we were talking about: all apache commons modules use their own name as their organization.
+If you look at the repository built with the link:../../tutorial/build-repository/basic.html[previous tutorial], you will see exactly what we were talking about: all Apache commons modules use their own name as their organization.
 
 So let's see what Ivy can do using namespaces (we will dig into details later):
 
@@ -56,7 +56,7 @@ include::asciidoc/tutorial/log/myrepository-content-namespace.txt[]
 ----
 
 
-We can even have a look at the commons-lang ivy file in our repository:
+We can even have a look at the commons-lang Ivy file in our repository:
 
 [source]
 ----
@@ -97,12 +97,12 @@ A namespace is defined by a set of rules. These rules are based on regular expre
 
 For the namespace we call __maven2__, we have declared several rules. Below is one of the rules:
 
-==== rule handling the imported apache maven1 projects
+==== rule handling the imported Apache Maven 1 projects
 
 
 [source]
 ----
-<rule>	<!-- imported apache maven1 projects -->
+<rule>	<!-- imported apache maven 1 projects -->
 	<fromsystem>
 	    <src org="apache" module=".+"/>
 
@@ -137,7 +137,7 @@ To understand namespaces,
 
 * *fromsystem :* we define here that the projects defined in the system namespace under the organization called "apache" are transformed into the destination namespace into projects whose organization is named with the module name, whatever the revision is. For example, the project apache#commons-lang;1.0  in the system namespace will be translated into commons-lang#commons-lang;1.0 in the maven2 resolver namespace. +
 
-* *tosystem :* we define here the reverse mapping, i.e. how to translate _apache_ projects from maven 2 repo into apache projects in the system namespace. The rule used here tells Ivy that all projects matching `commons-.+` (see it as java regular expression) for their organization name and module name are transformed into projects whose organisation is `apache` with the module name as it was found. The same kind of rule is defined for others apache projects like ant, etc. +
+* *tosystem :* we define here the reverse mapping, i.e. how to translate _apache_ projects from Maven 2 repo into Apache projects in the system namespace. The rule used here tells Ivy that all projects matching `commons-.+` (see it as Java regular expression) for their organization name and module name are transformed into projects whose organisation is `apache` with the module name as it was found. The same kind of rule is defined for other Apache projects like Ant, etc. +
 
 
 OK, you should now get the idea behind namespaces, so go ahead and look at the `ivysettings-advanced.xml` file in this example. You can test the installation of a module and its dependencies using namespaces.

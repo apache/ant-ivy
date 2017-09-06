@@ -21,15 +21,15 @@
 
 *Tag:* settings
 
-Configures some important ivy info: default resolver, latest strategy, conflict manager and some others.
+Configures some important Ivy info: default resolver, latest strategy, conflict manager and some others.
 
 The default resolver is used whenever nothing else is configured in the modules section of the settings file. It should give the name of a dependency resolver defined in the link:../settings/resolvers.html[resolvers] section of the settings file.
 
 The default latest strategy and conflict manager can also be configured here.
 
-_validate_ indicates if ivy files should generally be validated against the xsd or not. This setting is only a default value, and can be overridden:
+_validate_ indicates if Ivy files should generally be validated against the Ivy XSD or not. This setting is only a default value, and can be overridden:
 
-    1. in ant tasks
+    1. in Ant tasks
     2. in resolvers
 
 So if there is a setting in the resolver, it always wins against all other settings.
@@ -47,14 +47,14 @@ So if there is a setting in the resolver, it always wins against all other setti
 |defaultBranch|the default branch to use for all modules, except if they have a link:../settings/module.html[module specific branch setting]. *__since 1.4__*|No, defaults to no default branch
 |defaultResolveMode|the default link:../use/resolve.html[resolve mode] to use for all modules, except if they have a link:../settings/module.html[module specific resolve mode setting]. *__since 2.0__*|No, defaults to 'default'
 |[[circularDependencyStrategy]]circularDependencyStrategy|the name of the link:../concept.html#circular[circular dependency strategy] to use *__since 1.4__*|No, defaults to warn
-|validate|Indicates if ivy files should be validated against ivy.xsd or not.|No, defaults to true
-|useRemoteConfig|true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (*__since 1.2__*)|No, defaults to false
+|validate|Indicates if Ivy files should be validated against ivy.xsd or not.|No, defaults to true
+|useRemoteConfig|true to configure ivyrep and ibiblio resolver from a remote settings file (updated with changes in those repository structure if any) (*__since 1.2__*)|No, defaults to false
 |httpRequestMethod|specifies the HTTP method to use to retrieve information about an URL. Possible values are 'GET' and 'HEAD'. This setting can be used to solve problems with firewalls and proxies. (*__since 2.0__*)|No, defaults to 'HEAD'
 |[line-through]#defaultCache#|a path to a directory to use as default basedir for both resolution and repository cache(s). +
 	    __Deprecated, we recommend using defaultCacheDir on the link:../settings/caches.html[caches] tag instead__|No, defaults to .ivy2/cache in user home
 |[line-through]#checkUpToDate#|Indicates if date should be checked before retrieving artifacts from cache. +
     	__Deprecated, we recommend using overwriteMode on the link:../use/retrieve.html[retrieve] task instead__|No, defaults to true
-|[line-through]#cacheIvyPattern#|a pattern to indicate where ivy files should be put in cache. +
+|[line-through]#cacheIvyPattern#|a pattern to indicate where Ivy files should be put in cache. +
     	__Deprecated, we recommend using ivyPattern on the link:../settings/caches.html[caches] tag instead__|No, defaults to [organisation]/[module]/ivy-[revision].xml
 |[line-through]#cacheArtifactPattern#|a pattern to indicate where artifact files should be put in cache. +
     	__Deprecated, we recommend using artifactPattern on the link:../settings/caches.html[caches] tag instead__|No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]

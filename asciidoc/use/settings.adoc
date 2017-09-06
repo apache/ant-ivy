@@ -19,7 +19,7 @@
 
 *__(since 2.0)__*
 
-The settings declaration is used to configure Ivy with an xml settings file. The difference with the link:../use/configure.html[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
+The settings declaration is used to configure Ivy with a settings XML file. The difference with the link:../use/configure.html[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance, when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
 
 See link:../settings.html[Settings Files] for details about the settings file itself.
 
@@ -42,10 +42,10 @@ my.variable.yourid=your.value
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|id|The settings id usable in the `settingsRef` attributes of the ivy task that needs a setting.|No, defaults to `ivy.instance`
+|id|The settings id usable in the `settingsRef` attributes of the Ivy task that needs a setting.|No, defaults to `ivy.instance`
 |file|path to the settings file to use
-.2+.^|No. If a file is provided, url is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses a link:../tutorial/defaultconf.html[default settings file]
-|url|url of the settings file to use
+.2+.^|No. If a file is provided, URL is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses a link:../tutorial/defaultconf.html[default settings file]
+|url|URL of the settings file to use
 |host|HTTP authentication host
 .4+.^|No, unless authentication is required
 |realm|HTTP authentication realm
@@ -55,13 +55,13 @@ my.variable.yourid=your.value
 
 == HTTP Authentication
 
-__Note__: HTTP Authentication can be used only if link:https://hc.apache.org/httpcomponents-client-ga/index.html[HttpComponents HttpClient library] (minimum of 4.5.3 version) and its linke:https://hc.apache.org/httpcomponents-client-4.5.x/dependency-management.html[dependencies] are in your classpath.
+__Note__: HTTP authentication can be used only if link:https://hc.apache.org/httpcomponents-client-ga/index.html[HttpComponents HttpClient library] (minimum of 4.5.3 version) and its link:https://hc.apache.org/httpcomponents-client-4.5.x/dependency-management.html[dependencies] are in your classpath.
 
-If any of the url you use in Ivy (especially in dependency resolvers) need HTTP authentication, then you have to provide the `host`, `realm`, `username` and `passwd` attributes of the configure task. These settings will then be used in any further call to ivy tasks.
+If any of the URLs you use in Ivy (especially in dependency resolvers) needs HTTP authentication, then you have to provide the `host`, `realm`, `username` and `passwd` attributes of the configure task. These settings will then be used in any further call to Ivy tasks.
 
 == Multiple classloader
 
-A special attention should be applied when you have a multi-project build with `subant` call, using ivy task loaded by a `typedef`.  Indeed in this situation, it is possible to pass settings reference to a subbuild.  When you do that, you should take of the classloader.  The ivy task of your `subant` should not be defined in a different classloader than the parent one.  This can be achieved by using the `loader` parameter of the antlib declaration, or avoid to reload the ivy antlib in the subbuild (place the `taskdef` in a target only executed when the antlib is not yet loaded).
+A special attention should be applied when you have a multi-project build with `subant` call, using Ivy task loaded by a `typedef`.  Indeed in this situation, it is possible to pass settings reference to a subbuild.  When you do that, you should take care of the classloader.  The Ivy task of your `subant` should not be defined in a different classloader than the parent one.  This can be achieved by using the `loader` parameter of the antlib declaration, or avoid to reload the Ivy antlib in the subbuild (place the `taskdef` in a target only executed when the antlib is not yet loaded).
 
 == Examples
 
@@ -83,7 +83,7 @@ This simplest setting is implicit.
 <ivy:settings file="mysettings.xml"/>
 ----
 
-=== Configure with an url
+=== Configure with an URL
 
 [source,xml]
 ----
@@ -102,7 +102,7 @@ This simplest setting is implicit.
 
 === Configure 2 different settings
 
-You can use multiple ivy settings during a build. Then every ivy task should specify the settings it uses using the `settingsRef` attribute.
+You can use multiple Ivy settings during a build. Then every Ivy task should specify the settings it uses using the `settingsRef` attribute.
 
 [source,xml]
 ----

@@ -22,14 +22,14 @@
 []
 |=======
 |Tag|mirroredurl
-|Handle latest|yes with http urls (and apache server) and with file urls, no with other urls
+|Handle latest|yes with HTTP URLs (and Apache server) and with file URLs, no with other URLs
 |Handle publish|no
 |=======
 
 
 *__since 2.3__*
 
-This resolver can resolve dependencies against several mirrors of the same repository. From a list of mirror urls, it will iteratively try to resolve the dependencies against each one.
+This resolver can resolve dependencies against several mirrors of the same repository. From a list of mirror URLs, it will iteratively try to resolve the dependencies against each one.
 
 
 == Attributes
@@ -40,7 +40,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |=======
 |Attribute|Description|Required
 |m2compatible|True if this resolver should be Maven 2 compatible, false otherwise|No, defaults to false
-|mirrorListUrl|The url where to retrieve the list of mirror urls.|Yes
+|mirrorListUrl|The URL where to retrieve the list of mirror URLs.|Yes
 |=======
 
 
@@ -50,7 +50,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|ivy|defines a pattern for ivy files, using the pattern attribute|0..n
+|ivy|defines a pattern for Ivy files, using the pattern attribute|0..n
 |artifact|defines a pattern for artifacts, using the pattern attribute|1..n
 |=======
 
@@ -86,7 +86,7 @@ It will resolve first on the `repo1` and if failing it will fall back on `repo2`
 '''
 
 
-The mirror list can be retrieved from a geo-location aware url:
+The mirror list can be retrieved from a geo-location aware URL:
 
 [source, xml]
 ----

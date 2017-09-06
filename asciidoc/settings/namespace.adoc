@@ -21,7 +21,7 @@
 
 Defines a new namespace. A namespace is identified by a name, which can be referenced by one of the link:../settings/resolvers.html[resolvers].
 
-An overview of Namespaces is given in the link:../settings/namespaces.html[namespaces] documentation.
+An overview of namespaces is given in the link:../settings/namespaces.html[namespaces] documentation.
 
 A namespace mainly consists of a list of rules, each rule defining a translation between a system namespace and the defined namespace, and vice versa.
 

@@ -24,8 +24,8 @@
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|pomFile|the location of the pom.xml to convert|Yes
-|ivyFile|the location of the ivy.xml to generate|Yes
+|pomFile|the location of the `pom.xml` to convert|Yes
+|ivyFile|the location of the `ivy.xml` to generate|Yes
 |=======
 
 == Examples
@@ -35,4 +35,4 @@
     <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml"/>
 ----
 
-Just convert an pom.xml file into an ivy.xml.
+Just convert a `pom.xml` file into an `ivy.xml`.

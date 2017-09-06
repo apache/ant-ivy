@@ -23,7 +23,7 @@ The conventions have been adopted with Ivy 2.0 are the following:
 
 [options="header"]
 |=======
-| what | pattern | exemple
+| what | pattern | example
 | a module without revision | `[organisation]`#`[module]` | `org.apache.ant#ant`
 | a module with revision | `[organisation]`#`[module]`$$;$$`[revision]` | `org.apache.ant#ant;1.7.0`
 | a module with (some) configurations | `[organisation]`#`[module]`[`[confs]`] | `org.apache.ant#ant[master,compile,build]`
@@ -65,7 +65,7 @@ module C revision 2.5 depends on module D with the version constraint [1.0,1.6].
 
 As you can see, using text conventions is much more concise.
 
-Another benefit is that these conventions are usually used in Ivy console output, and can also be used in some cases to be parsed into Ivy objects (we use it for test cases for instance). To make sure text parsing works fine, we recommend using only a limited range of characters for each attributes of your module identifiers.
+Another benefit is that these conventions are usually used in Ivy console output, and can also be used in some cases to be parsed into Ivy objects (we use it for test cases, for instance). To make sure text parsing works fine, we recommend using only a limited range of characters for each attributes of your module identifiers.
 
 Here is the recommended characters set for each attribute:
 

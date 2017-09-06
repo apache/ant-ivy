@@ -23,7 +23,7 @@ This is a link:../use/postresolvetask.html[post resolve task], with all the beha
 
 If you want to make your build more independent from Ivy, you could consider using the link:../use/retrieve.html[retrieve task]. Once the artifacts are properly retrieved, you can use standard Ant path creation which makes Ivy not necessary any more.
 
-Built path is registered in ant with a given id, and can thus be used like any other Ant path using `refid`.
+Built path is registered in the Ant project with a given id, and can thus be used like any other Ant path using `refid`.
 
 == Attributes
 
@@ -33,7 +33,7 @@ Built path is registered in ant with a given id, and can thus be used like any o
 |pathid|the id to reference the built path|Yes
 |conf|a comma separated list of the configurations to put in the created path|No. Defaults to the configurations resolved by the last resolve call, or `*` if no resolve was explicitly called
 |type|comma separated list of artifact types to accept in the path, `$$*$$` for all (*__since 1.2__*)|No. Defaults to `*`
-|settingsRef|*__(since 2.0)__* A reference to the ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
+|settingsRef|*__(since 2.0)__* A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
 |=======
 
 == Examples
@@ -62,4 +62,4 @@ Same as before but will use the original location for local artifacts, and the c
 <taskdef resource="emma_ant.properties" classpathref="emma.classpath"/>
 ----
 
-Resolves the Emma module in version 2.0.4217, constructs an Ant path with the corresponding artifacts, and then define the Emma tasks using this path.
+Resolves the Emma module in version 2.0.4217, constructs an Ant path with the corresponding artifacts, and then defines the Emma tasks using this path.

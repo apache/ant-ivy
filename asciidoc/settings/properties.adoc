@@ -22,7 +22,7 @@
 *Tag:* properties
 
 
-Loads a properties file into ivy variables. See the variables chapter above for details about ivy variables.
+Loads a properties file into Ivy variables. See the variables chapter above for details about Ivy variables.
 
 *__Since 2.0__*: it is possible to access environment variables. This can be done by specifying the environment attribute. This attribute specifies the prefix which can be used to access these environment variables. For instance, if you specify `environment="env"`, you can access the `PATH` environment variable with the `env.PATH` property name.
 

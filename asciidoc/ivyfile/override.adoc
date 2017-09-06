@@ -23,9 +23,9 @@
 
 Specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency.
 
-This can be useful when a direct dependency is bringing a transitive dependency for which you want to change the revision, without actually declaring a dependency on it (because the module doesn't actually depend on it) and without using conflict management for this purpose (maybe because there is no conflict at all, or because you want to by pass conflict management for this particular transitive dependency).
+This can be useful when a direct dependency is bringing a transitive dependency for which you want to change the revision, without actually declaring a dependency on it (because the module doesn't actually depend on it) and without using conflict management for this purpose (maybe because there is no conflict at all, or because you want to bypass conflict management for this particular transitive dependency).
 
-Overriding is done before any else, in a phase called dependency descriptor mediation. The transitive dependency then behave exactly as if it were declared with the new value.
+Overriding is done before any else, in a phase called dependency descriptor mediation. The transitive dependency then behaves exactly as if it were declared with the new value.
 
 Note that even though no attribute is required, it makes no sense to set no attributes at all. It would mean that overriding is triggered for all transitive dependencies, but doesn't override anything. Most of the time, at least org or module should be set to override only a subset of transitive dependencies, and at least branch or rev should be set to actually override something.
 

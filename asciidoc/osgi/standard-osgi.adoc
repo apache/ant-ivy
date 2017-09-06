@@ -37,7 +37,7 @@ It should work with simple configuration but may not in complex ones. If you hav
 
 This page describes how to build an OSGi&#153; bundle with Apache Ivy&#153;. In this use case, we just basically want to compute a classpath to compile, optionally one for testing too, and then publish our bundle in a OSGi aware repository.
 
-In oder to produce OSGi metadata of sufficient quality and to avoid maintaining them manually, the link:http://bndtools.org/[bnd] tool will be used. The approach taken is then an "Ivy file first" approach. The dependencies will be specified in the `ivy.xml` file, the `MANIFEST.MF` being generated from the computed classpath.
+In order to produce OSGi metadata of sufficient quality and to avoid maintaining them manually, the link:http://bndtools.org/[bnd] tool will be used. The approach taken is then an "Ivy file first" approach. The dependencies will be specified in the `ivy.xml` file, the `MANIFEST.MF` being generated from the computed classpath.
 
 
 

@@ -26,11 +26,11 @@ Declares a dependency for this module. A dependency is described by the module o
 The revision can be given as a fixed one (1.5.2, for instance) or as a latest (or dynamic) one. Several possibilities for dynamic revisions are implemented in Ivy:
 
 * `latest.integration` +
- selects the latest revision of the dependency module.
+selects the latest revision of the dependency module.
 
 * `latest.[any status]` *__since 1.4__* +
- selects the latest revision of the dependency module with at least the specified status. +
-For instance `latest.milestone` will select the latest version being either a `milestone` or a `release`, and `latest.release` will only selects the latest `release`. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
+selects the latest revision of the dependency module with at least the specified status. +
+For instance, `latest.milestone` will select the latest version being either a `milestone` or a `release`, and `latest.release` will only selects the latest `release`. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the Ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
 See also link:../settings/statuses.html[statuses] to see how to configure module statuses.
 
 * end the revision with a `+` +
@@ -50,13 +50,13 @@ Examples: +
 `(,2.0[` matches all versions lower than 2.0  +
 
 *__since 1.4__* If you don't find a way to expression your dependency version constraint among these, you can link:../settings/version-matchers.html[plug your own].
-The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference.html[ivy main concepts] for details about this.
+The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference.html[Ivy main concepts] for details about this.
 
 == [[revision-constraint]]Revision constraint
 
 *__since 2.0__* The `dependency` tag supports two revision attributes: `rev`, corresponding to the default required dependency revision, and `revConstraint`, corresponding to a dynamic revision constraint applied on this dependency.
 
-Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a static version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility.
+Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a static version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This ensures better metadata in the repository while still allowing easier build reproducibility.
 
 == Configurations mapping
 
@@ -68,11 +68,11 @@ The first way to declare this mapping is called the inline mapping. It is maybe 
 
 === Specify one configuration name
 
-This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
+This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this Ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
 
 For instance, if the current module has defined a configuration named '`runtime`', and the dependency too, then having an inline mapping configuration set to '`runtime`' means that in the runtime master configuration the runtime dependency configuration is required.
 
-The link:../ivyfile/configurations.html#defaultconfmapping[examples on the dependency on the configurations page] explain how ivy interprets the conf attribute according to how link:../ivyfile/configurations.html[defaultconfmapping] and link:../ivyfile/configurations.html[defaultconf] is set.
+The link:../ivyfile/configurations.html#defaultconfmapping[examples on the dependency on the configurations page] explain how Ivy interprets the conf attribute according to how link:../ivyfile/configurations.html[defaultconfmapping] and link:../ivyfile/configurations.html[defaultconf] is set.
 
 === Specify a configuration mapping using the `$$->$$` operator
 
@@ -91,13 +91,13 @@ Note that you can use the wildcard `$$*$$` as a configuration name, meaning that
 
 *__since 1.4__* `#` can be used as right side operand to mean _this_ configuration, and thus refers to the configuration being resolved. It is slightly similar to `@`, except that it takes into account the configuration being actually resolved in case of a configuration extending another one.
 
-Example: Let's foo be a module with two configurations, A and B, B extending A. Then a dependency declaring conf `$$A->#$$` will get A dep conf in its confs A (when resolving A, ivy will find interpret the `#` symbol as A) and B dep conf in its conf B (when resolving B, ivy will interpret the `#` symbol as B, even if this dependency is only required because of the A dependency).
+Example: Let's foo be a module with two configurations, A and B, B extending A. Then a dependency declaring conf `$$A->#$$` will get A dep conf in its confs A (when resolving A, Ivy will find interpret the `#` symbol as A) and B dep conf in its conf B (when resolving B, Ivy will interpret the `#` symbol as B, even if this dependency is only required because of the A dependency).
 
 If you don't understand really how this works, do not use it :-)
 
 *__since 1.4__* `%` can be used as left side operand to mean "all the other configurations". This can be useful when you only have a specific mapping for some configurations and a default mapping for all the others. For instance, `$$test->runtime;%->default$$` means that the `test` configuration is mapped to the `runtime` configuration, but all the other configurations are mapped to the `default` configuration.
 
-*__since 1.3__* a fallback mechanism can be used when you are not sure that the dependency will have the required conf. You can indicate to ivy that you want one configuration, but if it isn't present, use another one. 
+*__since 1.3__* a fallback mechanism can be used when you are not sure that the dependency will have the required conf. You can indicate to Ivy that you want one configuration, but if it isn't present, use another one.
 The syntax for specifying this adds the fallback conf between parenthesis right after the required conf. 
 
 For instance, `$$test->runtime(default)$$` means that in the test configuration of the module the `runtime` conf of the dependency is required, but if doesn't exist, it will use the `default` conf instead. If `default` conf doesn't exist then it will be considered as an error. Note that the `*` wildcard can be used as fallback conf.
@@ -174,8 +174,8 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 |=======
 |Element|Description|Cardinality
 |link:../ivyfile/dependency-conf.html[conf]|defines configuration mapping has sub element|0..n
-|link:../ivyfile/dependency-artifact.html[artifact / include]|defines artifacts inclusion - use only if you do not control dependency ivy file|0..n
-|link:../ivyfile/artifact-exclude.html[exclude]|defines artifacts exclusion - use only if you do not control dependency ivy file|0..n
+|link:../ivyfile/dependency-artifact.html[artifact / include]|defines artifacts inclusion - use only if you do not control dependency Ivy file|0..n
+|link:../ivyfile/artifact-exclude.html[exclude]|defines artifacts exclusion - use only if you do not control dependency Ivy file|0..n
 |=======
 
 == Examples

@@ -24,7 +24,7 @@
 Defines a list of link:../concept.html#conflict[conflicts managers] usable in Ivy. Each conflict manager is identified by its name, given as an attribute.
 The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in or added with the `typedef` tag).
 
-Here is a list of built-in conflicts managers (which do not require anything in the configuration file):
+Here is a list of built-in conflicts managers (which do not require anything in the settings file):
 
 
     * all +
@@ -67,7 +67,7 @@ Here is a list of conflict manager types available, which can be used to define 
 
 
     * regexp-cm +
-    This conflict manager is based on a regular expression and throws an exception (i.e. causes a build failure) when a conflict is found with versions with different matching group. For instance if a conflict is found between 1.2.x and 1.3.y it will throw an exception if the regular expression is `(.*)\.\d`, because the matching group will match different strings (1.2 and 1.3). 1.2.1 and 1.2.2 won't throw an exception with the same regular expression. The regular expression is set using the `regexp` attribute. A `ignoreNonMatching` attribute can also be set to simply warn when a version is found which does not match the regular expression, instead of throwing an exception.
+    This conflict manager is based on a regular expression and throws an exception (i.e. causes a build failure) when a conflict is found with versions with different matching group. For instance, if a conflict is found between 1.2.x and 1.3.y it will throw an exception if the regular expression is `(.*)\.\d`, because the matching group will match different strings (1.2 and 1.3). 1.2.1 and 1.2.2 won't throw an exception with the same regular expression. The regular expression is set using the `regexp` attribute. A `ignoreNonMatching` attribute can also be set to simply warn when a version is found which does not match the regular expression, instead of throwing an exception.
 
 
 

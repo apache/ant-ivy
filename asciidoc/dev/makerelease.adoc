@@ -72,7 +72,7 @@ If the release script is successful, release artifacts will be waiting for you i
 ==== 5. Verify the release
 
 Check that all zips can be opened correctly, and that running `ant` after unzipping the source distribution works properly.
-You can also do a smoke test with the generated ivy.jar, to see if it is able to resolve properly a basic module (for instance you can run some tutorials provided in the src/example directory in all distributions).
+You can also do a smoke test with the generated ivy.jar, to see if it is able to resolve properly a basic module (for instance, you can run some tutorials provided in the src/example directory in all distributions).
 
 ==== 6. Sign the artifacts
 
@@ -117,7 +117,7 @@ svn commit build/distrib/dist -m 'Ivy 2.4.0 distribution'
 
 ==== 9. Publish the Maven artifact to Nexus
 
-Having your GPG key ID, its password, your apache ID and the associated password, just launch ant and enter the information as required:
+Having your GPG key ID, its password, your apache ID and the associated password, just launch Ant and enter the information as required:
 
 [source,shell]
 ----
@@ -164,7 +164,7 @@ The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-iv
 
 The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION at revision ${svn-rev-of-the-check-in}
 
-The staging maven repository is availble there: https://repository.apache.org/content/repositories/orgapacheant-XXXX
+The staging Maven repository is available there: https://repository.apache.org/content/repositories/orgapacheant-XXXX
 
 The Eclipse updatesite has been build there: https://dist.apache.org/repos/dist/dev/ant/ivyde/updatesite/ivy-2.0.0.beta1_20141213170938/
 

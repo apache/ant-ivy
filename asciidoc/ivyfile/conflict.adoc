@@ -26,14 +26,12 @@ The way to specify a conflict manager is by giving indication to which dependenc
 
 The list of built-in conflict managers available is listed on the link:../settings/conflict-managers.html[conflict manager configuration page].
 
-Conflicts manager are used during the resolve operation, i.e. when ivy analyse the graph of dependencies and download corresponding ivy files and artifacts. The fact to manage conflict at resolve time enables to minimize downloads: when a module is evicted by a conflict manager, it is not downloaded.
+Conflicts manager are used during the resolve operation, i.e. when Ivy analyse the graph of dependencies and download corresponding Ivy files and artifacts. The fact to manage conflict at resolve time enables to minimize downloads: when a module is evicted by a conflict manager, it is not downloaded.
 
-There are two things optimized during conflict resolution: download of artifacts and download of ivy files. The first is always ensured by ivy, i.e. artifacts of a module evicted will never be downloaded. The second is not as simple to handle because to know what are the conflicts ivy needs to know the dependency graph, and to know the dependency graph, it has to download ivy files. But ivy is highly optimized on this too, and it tries to evict modules as soon as possible.
-That's why the order of dependencies is important for download optimization. Indeed ivy traverses the dependency graph in the order in which dependencies are declared in the ivy files, and each time it encounters a dependency on a module, it first check if there is a conflict on this module, and if this is the case, it asks the conflict manager to resolve the conflict. Then if the module is evicted, it does not download its ivy file, and the whole branch is not traversed, which can saves a lot of time.
+There are two things optimized during conflict resolution: download of artifacts and download of Ivy files. The first is always ensured by Ivy, i.e. artifacts of a module evicted will never be downloaded. The second is not as simple to handle because in order to know what the conflicts are, Ivy needs to know the dependency graph, and in order to know the dependency graph, it has to download Ivy files. But Ivy is highly optimized for this too, and it tries to evict modules as soon as possible.
+That's why the order of dependencies is important for download optimization. Indeed, Ivy traverses the dependency graph in the order in which dependencies are declared in the Ivy files, and each time it encounters a dependency on a module, it first checks if there is a conflict on this module, and if this is the case, it asks the conflict manager to resolve the conflict. Then if the module is evicted, it does not download its Ivy file, and the whole branch is not traversed, which can saves a lot of time.
 
-If no specific conflict manager is defined, a default conflict manager is used for all modules.
-
-The current default conflict manager is the `latest-revision` conflict manager.
+If no specific conflict manager is defined, a default conflict manager is used for all modules. The current default conflict manager is the `latest-revision` conflict manager.
 
 == Attributes
 

@@ -48,10 +48,10 @@ For each module set, you can configure:
 |Attribute|Description|Required
 |organisation|the organisation to match to apply the rule.|No, defaults to *
 |name|the module's name to match to apply the rule.|No, defaults to *
-|revision|the module's revision to match to apply the rule. Note that the version may not be resolved yet (be latest.integration for instance), so be very careful when using this attribute. *__since 2.0__*|No, defaults to *
+|revision|the module's revision to match to apply the rule. Note that the version may not be resolved yet (be `latest.integration`, for instance), so be very careful when using this attribute. *__since 2.0__*|No, defaults to *
 |_any extra attribute_|an extra attribute to match to apply the rule. *__since 2.0__*|No, defaults to *
 |matcher|the link:../concept.html#matcher[matcher] to use to match the modules to which the resolver should be applied *__since 1.3__*|No, defaults to exactOrRegexp
-|resolver|the name of the resolver to apply. The resolver must have been defined in the resolvers section of the configuration file.|No
+|resolver|the name of the resolver to apply. The resolver must have been defined in the resolvers section of the settings file.|No
 |conflict-manager|the name of the conflict manager to apply. *__since 1.4__*|No
 |branch|the default branch to apply. *__since 1.4__*|No
 |resolveMode|the resolve mode to use. *__since 2.0__*|No

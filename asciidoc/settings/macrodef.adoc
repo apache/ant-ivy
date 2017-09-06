@@ -21,7 +21,7 @@
 
 *Tag:* macrodef
 
-Defines a new dependency resolver type based upon another. This definition is very similar to the macrodef feature of ant for defining macro tasks. *__since 1.3__*
+Defines a new dependency resolver type based upon another. This definition is very similar to the macrodef feature of Ant for defining macro tasks. *__since 1.3__*
 
 This task eases the process of creating a new dependency resolver, because it avoids writing Java code.
 
@@ -37,7 +37,7 @@ A macro is defined by declaring an existing resolver within it. Then you can use
 
 == Resolvers names
 
-Since you can use the same macro several times it can define several resolvers (in a chain for instance), the resolver names need to be chosen carefully to avoid name conflicts (each resolver must have a unique name).
+Since you can use the same macro several times it can define several resolvers (in a chain, for instance), the resolver names need to be chosen carefully to avoid name conflicts (each resolver must have a unique name).
 
 Here is how Ivy deals with the names of the resolvers defined in a macro:
 

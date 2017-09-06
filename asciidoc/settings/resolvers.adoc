@@ -21,7 +21,7 @@
 
 *Tag:* resolvers
 
-Defines a list of dependency resolvers usable in ivy. Each dependency resolver is identified by its name, given as an attribute.
+Defines a list of dependency resolvers usable in Ivy. Each dependency resolver is identified by its name, given as an attribute.
 
 The child tag used for the dependency resolver must be equal to a name of a dependency resolver type (either built-in or added with the typedef tag).
 
@@ -61,17 +61,17 @@ Here is the list of built-in resolvers:
 [options="header",cols="15%,50%,35%"]
 |=======
 |Name|Type|Description
-|link:../resolver/ivyrep.html[IvyRep]|Standard|Finds ivy files on ivyrep and artifacts on ibiblio.
+|link:../resolver/ivyrep.html[IvyRep]|Standard|Finds Ivy files on ivyrep and artifacts on ibiblio.
 |link:../resolver/ibiblio.html[IBiblio]|Standard|Finds artifacts on ibiblio.
-|link:../resolver/packager.html[Packager]|Standard|Finds ivy files and packaging instructions via URLs, then creates artifacts by following the instructions.
-|link:../resolver/filesystem.html[FileSystem]|Standard|This very performant resolver finds ivy files and artifacts in your file system.
-|link:../resolver/url.html[Url]|Standard|Finds ivy files and artifacts in any repository accessible with urls.
-|link:../resolver/vfs.html[Vfs]|Standard|Finds ivy files and artifacts in any repository accessible with link:http://jakarta.apache.org/commons/vfs/[apache commons vfs].
-|link:../resolver/ssh.html[ssh]|Standard|Finds ivy files and artifacts in any repository accessible with ssh.
-|link:../resolver/sftp.html[sftp]|Standard|Finds ivy files and artifacts in any repository accessible with sftp.
-|link:../resolver/jar.html[Jar]|Standard|Finds ivy files and artifacts within a specified jar.
+|link:../resolver/packager.html[Packager]|Standard|Finds Ivy files and packaging instructions via URLs, then creates artifacts by following the instructions.
+|link:../resolver/filesystem.html[FileSystem]|Standard|This very performant resolver finds Ivy files and artifacts in your file system.
+|link:../resolver/url.html[URL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs.
+|link:../resolver/vfs.html[VFS]|Standard|Finds Ivy files and artifacts in any repository accessible with link:http://jakarta.apache.org/commons/vfs/[Apache Commons VFS].
+|link:../resolver/ssh.html[SSH]|Standard|Finds Ivy files and artifacts in any repository accessible with SSH.
+|link:../resolver/sftp.html[SFTP]|Standard|Finds Ivy files and artifacts in any repository accessible with SFTP.
+|link:../resolver/jar.html[Jar]|Standard|Finds Ivy files and artifacts within a specified jar.
 |link:../resolver/chain.html[Chain]|Composite|Delegates the finding to a chain of sub resolvers.
-|link:../resolver/dual.html[Dual]|Composite|Delegates the finding of ivy files to one resolver and of artifacts to another.
+|link:../resolver/dual.html[Dual]|Composite|Delegates the finding of Ivy files to one resolver and of artifacts to another.
 |link:../resolver/obr.html[OBR]|Standard|Resolve modules as OSGi bundles listed by an OSGi obr.xml.
 |link:../resolver/updatesite.html[Eclipse updatesite]|Standard|Resolve modules as OSGi bundles which are hosted on an Eclipse update site.
 |=======
@@ -89,7 +89,7 @@ All resolvers of the same type share some common features and attributes detaile
 
 All standard resolvers support several options for validation.
 
-The `validate` attribute is used to configure if ivy files should be checked against the ivy file xml schema.
+The `validate` attribute is used to configure if Ivy files should be checked against the Ivy file XML schema.
 
 The `checkconsistency` attribute allows you to enable or disable consistency checking between what is expected by Ivy when it finds a module descriptor, and what the module descriptor actually contains.
 
@@ -117,8 +117,8 @@ Resolvers can be optionally configured to use a `timeoutConstraint` so that the 
 
 Any resolver which is able to parse a Maven pom.xml file has to detect the related sources or javadocs artifacts. This often involves several network connections even if neither the sources nor the javadoc are requested to be downloaded.
 
-*__since 2.5__* Setting the property `ivy.maven.lookup.sources` to `false` disable the lookup of the sources artifact.
-And setting the property `ivy.maven.lookup.javadoc` to `false` disable the lookup of the javadoc artifact.
+*__since 2.5__* Setting the property `ivy.maven.lookup.sources` to `false` disables the lookup of the sources artifact.
+And setting the property `ivy.maven.lookup.javadoc` to `false` disables the lookup of the javadoc artifact.
 
 
 === Attributes
@@ -128,17 +128,17 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 |=======
 |Attribute|Description|Required|Composite|Standard
 |name|the name which identifies the resolver|Yes|Yes|Yes
-|validate|indicates if resolved ivy files should be validated against ivy xsd|No, defaults to call setting|Yes|Yes
+|validate|indicates if resolved Ivy files should be validated against Ivy XSD|No, defaults to call setting|Yes|Yes
 |force|Indicates if this resolver should be used in force mode (see above). *__since 2.0__*|No, defaults to false|No|Yes
-|checkmodified|Indicates if this resolver should check lastmodified date to know if an ivy file is up to date.|No, defaults to ${ivy.resolver.default.check.modified}|No|Yes
+|checkmodified|Indicates if this resolver should check lastmodified date to know if an Ivy file is up to date.|No, defaults to ${ivy.resolver.default.check.modified}|No|Yes
 |changingPattern|Indicates for which revision pattern this resolver should check lastmodified date to know if an artifact file is up to date. *__since 1.4__*. See link:../concept.html#change[cache and change management] for details.|No, defaults to none|Yes|Yes
 |changingMatcher|The name of the link:../concept.html#matcher[pattern matcher] to use to match a revision against the configured changingPattern. *__since 1.4__*. See link:../concept.html#change[cache and change management] for details.|No, defaults to exactOrRegexp|Yes|Yes
 |alwaysCheckExactRevision|Indicates if this resolver should check the given revision even if it's a special one (like latest.integration). *__since 1.3__*|No, defaults to ${ivy.default.always.check.exact.revision}|No|Yes
 |namespace|The name of the namespace to which this resolver belongs *__since 1.3__*|No, defaults to 'system'|Yes|Yes
 |checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check *__since 1.3__*|No, defaults to true|No|Yes
-|descriptor|'optional' if a module descriptor (usually an ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor *__since 2.0__*|No, defaults to 'optional'|No (except dual)|Yes
-|allownomd|_DEPRECATED. Use descriptor="required \| optional" instead._
-    true if the absence of module descriptor (usually an ivy file) is authorised for this resolver, false to refuse modules without module descriptor *__since 1.4__*|No, defaults to true|No (except dual)|Yes
+|descriptor|'optional' if a module descriptor (usually an Ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor *__since 2.0__*|No, defaults to 'optional'|No (except dual)|Yes
+|allownomd|__Deprecated. Use descriptor="required \| optional" instead.__
+    true if the absence of module descriptor (usually an Ivy file) is authorised for this resolver, false to refuse modules without module descriptor *__since 1.4__*|No, defaults to true|No (except dual)|Yes
 |checksums|a comma separated list of link:../concept.html#checksum[checksum algorithms] to use both for publication and checking *__since 1.4__*|No, defaults to ${ivy.checksums}|No|Yes
 |latest|The name of the latest strategy to use.|No, defaults to 'default'|Yes|Yes
 |cache|The name of the cache manager to use.|No, defaults to the value of the default attribute of caches|No|Yes
@@ -171,4 +171,4 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disable the looku
 
 ----
 
-Defines a filesystem resolver, named `1`, which is then used in two chains, the first which combines the filesystem resolver with an ivyrep resolver, and second which combines the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver `1` will use a cache named `cache-1` which should have been defined under the caches element.
+Defines a filesystem resolver, named `1`, which is then used in two chains, the first combining the filesystem resolver with an ivyrep resolver, and second combining the filesystem resolver with an ibiblio resolver, which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them). Resolver `1` will use a cache named `cache-1` which should have been defined in the caches element.

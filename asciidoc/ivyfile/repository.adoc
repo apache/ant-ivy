@@ -27,8 +27,8 @@ Gives information about a public repository where the module can be found. This 
 |=======
 |Attribute|Description|Required
 |name|the name of the repository. Try to respect spelling for common repositories (ibiblio, ivyrep, ...)|Yes
-|url|an url pointing to the repository.|Yes
-|pattern|an ivy pattern to find modules on this repository|No, but it's recommended to indicate it.
-|ivys|`true` if ivy file can be found on this repository|No, defaults to `false`.
+|url|an URL pointing to the repository.|Yes
+|pattern|an Ivy pattern to find modules on this repository|No, but it's recommended to indicate it.
+|ivys|`true` if Ivy file can be found on this repository|No, defaults to `false`.
 |artifacts|`true` if module artifacts can be found on this repository|No, defaults to `false`.
 |=======

@@ -22,14 +22,14 @@
 []
 |=======
 |Tag|packager
-|Handle latest|yes with http urls (and apache server) and with file urls, no with other urls
+|Handle latest|yes with HTTP URLs (and Apache server) and with file URLs, no with other URLs
 |Handle publish|no
 |=======
 
 
 *__Since 2.0__*.
 
-This resolver accesses ivy files and "packaging instructions" from an online "packager" repository. "Packager" repositories contain no actual artifacts. To get the artifacts, the packaging instructions are downloaded from the repository and executed locally. These instructions specify additional resource(s) to download and how to create the artifacts from them, for example, by downloading a project's original distribution archive directly from their web site and extracting the desired artifacts.
+This resolver accesses Ivy files and "packaging instructions" from an online "packager" repository. "Packager" repositories contain no actual artifacts. To get the artifacts, the packaging instructions are downloaded from the repository and executed locally. These instructions specify additional resource(s) to download and how to create the artifacts from them, for example, by downloading a project's original distribution archive directly from their web site and extracting the desired artifacts.
 
 Packager repositories allow the creation of Ivy repositories that require neither the participation of any of the modules' creators nor setting up a huge mirror site.
 
@@ -37,13 +37,13 @@ Packager repositories allow the creation of Ivy repositories that require neithe
 The Packager resolver supports a "resource cache", where downloaded archives can be stored to avoid duplicate downloads. This cache is entirely separate from the link:../concept.html#cache[normal Ivy cache]: it is "private" to the Packager resolver, and it stores unmodified original software archives, not Ivy artifacts. See the `resourceCache` attribute below for details.
 
 
-The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using link:https://ant.apache.org/[Ant]. Therefore, Ant must be available as an executable on the platform. The ant task executes in a separate ant project and so is not affected by properties, etc. that may be set in any existing ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
+The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using link:https://ant.apache.org/[Ant]. Therefore, Ant must be available as an executable on the platform. The Ant task executes in a separate Ant project and so is not affected by properties, etc. that may be set in any existing Ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
 
 For security reasons, the XSLT transform ensures that
 
     a. all downloaded archives have verified SHA1 checksums (including cached resources); and
 
-    b. only a very limited set of ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
+    b. only a very limited set of Ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
 
 
 The Packager resolver is based on the link:url.html[URL resolver] and is configured similarly, except the artifact child tags specify where to find the packager.xml files, rather than the artifacts themselves.
@@ -60,11 +60,11 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |buildRoot|Defines the root of the temporary build directory hierarchy|Yes
 |resourceCache|Directory where downloaded resources should be cached|No; defaults to none
 |resourceURL|Ivy pattern that specifies a base URL to use for downloading __all__ resources; overrides the URLs in the packaging instructions|No; defaults to none
-|restricted|True if this resolver should only allow "safe" ant tasks in the packaging instructions. *Warning:* setting `restricted` to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.|No; defaults to true
-|verbose|True to run ant with the -verbose flag|No; defaults to false
-|quiet|True to run ant with the -quiet flag|No; defaults to false
+|restricted|True if this resolver should only allow "safe" Ant tasks in the packaging instructions. *Warning:* setting `restricted` to false creates a security problem due to Ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.|No; defaults to true
+|verbose|True to run Ant with the -verbose flag|No; defaults to false
+|quiet|True to run Ant with the -quiet flag|No; defaults to false
 |validate|True if this resolver should validate (via XSD) the downloaded XML packaging instructions|No; defaults to true
-|preserveBuildDirectories|True if this resolver should not delete the temporary build directories in which the ant tasks are executed (for debugging purposes)|No; defaults to false
+|preserveBuildDirectories|True if this resolver should not delete the temporary build directories in which the Ant tasks are executed (for debugging purposes)|No; defaults to false
 |=======
 
 
@@ -105,30 +105,13 @@ Configure a resourceURL in situations where you don't want to rely on (or wait f
 ----
 
 Defines a packager resolver which points to the `http://ivyroundup.googlecode.com/` online repository. Builds will occur in a subdirectory of
-[source]
-----
-${user.home}/.ivy2/packager/build
-----
-
-downloaded resources will be cached in
-[source]
-----
-${user.home}/.ivy2/packager/cache
-----
-
-and the mirror site
-[source]
-----
-ftp://mirror.example.com/pub/resources/[organisation]/[module]/
-----
-
-will be tried first for all resources.
+`${user.home}/.ivy2/packager/build`, downloaded resources will be cached in `${user.home}/.ivy2/packager/cache` and the mirror site `ftp://mirror.example.com/pub/resources/[organisation]/[module]/` will be tried first for all resources.
 
 
 == Packaging Instructions
 
 
-The goal of the packaging instructions is to download the required archives, extract the artifacts, and put the artifacts into a subdirectory. Each artifact should be written to `artifacts/[type]s/[artifact].[ext]` when the ant build completes.
+The goal of the packaging instructions is to download the required archives, extract the artifacts, and put the artifacts into a subdirectory. Each artifact should be written to `artifacts/[type]s/[artifact].[ext]` when the Ant build completes.
 
 
 Below is an example of packaging instructions for link:http://testng.org/[TestNG]:
@@ -183,15 +166,15 @@ Of course, packaging instructions must produce artifacts consistent with those l
 
 == Build-time properties
 
-This resolver ensures following ant properties are defined when it executes the ant build task.
+This resolver ensures following Ant properties are defined when it executes the Ant build task.
 
 [options="header",cols="15%,50%"]
 |=======
 |Property|Description
-|ivy.packager.organisation|Organization of the ivy module whose artifacts are being built
-|ivy.packager.module|Module of the ivy module whose artifacts are being built
-|ivy.packager.revision|Revision of the ivy module whose artifacts are being built
-|ivy.packager.branch|Branch of the ivy module whose artifacts are being built
+|ivy.packager.organisation|Organization of the Ivy module whose artifacts are being built
+|ivy.packager.module|Module of the Ivy module whose artifacts are being built
+|ivy.packager.revision|Revision of the Ivy module whose artifacts are being built
+|ivy.packager.branch|Branch of the Ivy module whose artifacts are being built
 |ivy.packager.resourceCache|The configured `resourceCache` if any; otherwise not defined
 |ivy.packager.resourceURL|The resolved `resourceURL` pattern if any; otherwise not defined
 |=======
@@ -205,20 +188,20 @@ The packager.xml document element can contain the following child tags.
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|property|Set an ant property|0..n
+|property|Set an Ant property|0..n
 |resource|Define a resource to download and (optionally) unpack|0..n
 |m2resource|Define a Maven 2 resource to download and (optionally) unpack|0..n
-|build|Specify ant tasks that ultimately result in each artifact being placed into artifacts/[type]s/[artifact].[ext]|0..1
+|build|Specify Ant tasks that ultimately result in each artifact being placed into artifacts/[type]s/[artifact].[ext]|0..1
 |=======
 
 
 
-Which ant tasks are allowed within the build tag is controlled by the `restricted` configuration attribute. When true (the default), only the following ant tasks are allowed: copy, jar, mkdir, move, tar, unjar, untar, unwar, unzip, war, and zip. When false, all ant tasks are allowed.
+Which Ant tasks are allowed within the build tag is controlled by the `restricted` configuration attribute. When true (the default), only the following Ant tasks are allowed: copy, jar, mkdir, move, tar, unjar, untar, unwar, unzip, war, and zip. When false, all Ant tasks are allowed.
 
 
 
 
-*Warning:* setting `restricted` to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.
+*Warning:* setting `restricted` to false creates a security problem due to Ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.
 
 
 

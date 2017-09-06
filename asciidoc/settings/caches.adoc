@@ -32,10 +32,9 @@ By default, Ivy defines one repository cache instance, called `default-cache`, w
 
 Since repository cache implementations are pluggable, you can either define new cache instances based on the default implementation provided in Ivy using the link:../settings/caches/cache.html[cache] child element, or use custom cache implementations using child elements as you have defined using link:../settings/typedef.html[typedef].
 
-`ivyPattern` and `artifactPattern` are used to configure the default way Ivy stores ivy files and artifacts in repository cache(s). Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended. These patterns are relative to the repository cache base directory.
+`ivyPattern` and `artifactPattern` are used to configure the default way Ivy stores Ivy files and artifacts in repository cache(s). Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended. These patterns are relative to the repository cache base directory.
 
-`checkUpToDate` indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from
-cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's most of the time a local copy.
+`checkUpToDate` indicates to Ivy if it must check date of artifacts before retrieving them (i.e. copying them from cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's most of the time a local copy.
 
 
 == Attributes
@@ -48,7 +47,7 @@ cache to another place in your filesystem). Usually it is a good thing to check 
 |defaultCacheDir|a path to a directory to use as default basedir for both resolution and repository cache(s)|No, defaults to .ivy2/cache in the user's home directory
 |resolutionCacheDir|the path of the directory to use for all resolution cache data|No, defaults to defaultCacheDir
 |repositoryCacheDir|the path of the default directory to use for repository cache data. *This should not point to a directory used as a repository!*|No, defaults to defaultCacheDir
-|ivyPattern|default pattern used to indicate where ivy files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/ivy-[revision].xml
+|ivyPattern|default pattern used to indicate where Ivy files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/ivy-[revision].xml
 |artifactPattern|default pattern used to indicate where artifact files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]
 |[line-through]#checkUpToDate#|Indicates if date should be checked before retrieving artifacts from cache.
     	__Deprecated, we recommend using overwriteMode on the link:../use/retrieve.html[retrieve] task instead__|No, defaults to true

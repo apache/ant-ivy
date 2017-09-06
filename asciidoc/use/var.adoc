@@ -17,11 +17,11 @@
    under the License.
 ////
 
-Sets a variable (by name and value), or set of variables (from file or url) in Ivy.
+Sets a variable (by name and value), or set of variables (from file or URL) in Ivy.
 
 Variables are case sensitive.
 
-Contrary to ant properties, ivy variables are mutable. But a problem with this is that you do not control when
+Contrary to Ant properties, Ivy variables are mutable. But a problem with this is that you do not control when
 variables are substituted, and usually it is done as soon as possible. So changing the value of a variable will
 have no effect if it has already been substituted. Consequently, *using this task is NOT recommended*.
 
@@ -34,9 +34,9 @@ See link:../reference.html[reference] page for details about Ivy variables.
 |Attribute|Description|Required
 |name|the name of the variable to set|No
 |value|the value of the variable to set|Yes when using the name attribute
-|file|the filename of the property file to load as ivy variables
+|file|the filename of the property file to load as Ivy variables
 .2+.^|One of these, when *not* using the name attribute
-|url|the url from which to read ivy variables
+|url|the URL from which to read Ivy variables
 |prefix|Prefix to apply to variables. A dot (`.`) is appended to the prefix if not specified.|No
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
 |=======

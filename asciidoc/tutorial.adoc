@@ -30,7 +30,7 @@ For the first tutorial you won't even have to install Ivy (assuming you have Ant
 
     * Copy link:samples/build.xml[this build file] in an empty directory on your local filesystem (and make sure you name it `build.xml`) +
 
-    * Open a console in this directory and run the command: `ant`. That's it! +
+    * Open a console in that directory and run the command: `ant`. That's it! +
 
 If you have any trouble, check our link:http://ant.apache.org/ivy/faq.html[FAQ].
 
@@ -42,7 +42,7 @@ The following tutorials are available:
 
 
     * link:tutorial/start.html[Quick Start] +
-        Guides you through your very first steps with ivy.
+        Guides you through your very first steps with Ivy.
 
     * link:tutorial/defaultconf.html[Adjusting default settings] +
         Gives you a better understanding of the default settings and shows you how to customize them to your needs.
@@ -51,7 +51,7 @@ The following tutorials are available:
         Teaches you how to configure Ivy to find its dependencies in multiple places.
 
     * link:tutorial/dual.html[Dual Resolver] +
-        Helps you configure Ivy to find ivy files in one place and artifacts in another.
+        Helps you configure Ivy to find Ivy files in one place and artifacts in another.
 
     * link:tutorial/dependence.html[Project dependencies] +
         A starting point for using Ivy in a multi-project environment.
@@ -60,7 +60,7 @@ The following tutorials are available:
         A more complex example demonstrating the use of Ant+Ivy in a multi-project environment.
 
     * link:tutorial/conf.html[Using Ivy Module Configurations] +
-        Shows you how to use configurations in an ivy file to define sets of artifacts.
+        Shows you how to use configurations in an Ivy file to define sets of artifacts.
 
     * link:tutorial/build-repository.html[Building a repository] +
         Shows you how to build your own enterprise repository.

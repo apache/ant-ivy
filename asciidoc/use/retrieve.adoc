@@ -36,11 +36,11 @@ For instance, for the pattern `lib/[conf]/[artifact].[ext]`, the root will be `l
 |=======
 |Attribute|Description|Required
 |pattern|the pattern to use to copy the dependencies|No. Defaults to `${ivy.retrieve.pattern}`
-|ivypattern|the pattern to use to copy the ivy files of dependencies *__since 1.3__*|No. Dependencies ivy files are not retrieved by default.
+|ivypattern|the pattern to use to copy the Ivy files of dependencies *__since 1.3__*|No. Dependency Ivy files are not retrieved by default.
 |conf|a comma separated list of the configurations to retrieve|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
 |sync|`true` to synchronize the destination, false to just make a copy *__since 1.4__*|No. Defaults to `false`
 |type|comma separated list of accepted artifact types *__since 1.4__*|No. All artifact types are accepted by default.
-|overwriteMode|option to configure when the destination file should be overwritten if it exist *__(since 2.2.0)__*.
+|overwriteMode|option to configure when the destination file should be overwritten if it exists *__(since 2.2)__*.
 
 Possible values are: +
 * `newer`: overwrite the destination file if a more recent one is available (based on timestamp) +
@@ -54,8 +54,8 @@ Possible values are: +
     filesystem supports symbolic links, creation of such symbolic links may or may not work. +
     If this option is set to `true` and symbolic link creation fails, then the retrieve task will attempt to do a regular copy of the artifact which failed symlink creation.
     *__(since 2.0)__*|No. Defaults to `false`
-|symlinkmass| *__Deprecated since 2.5__* This option is no longer supported or relevant starting 2.5 version of Ivy|No. Defaults to `false`
-|settingsRef|A reference to the ivy settings that must be used by this task *__(since 2.0)__*|No, defaults ot `ivy.instance`.
+|symlinkmass| *__Deprecated since 2.5__* This option is no longer supported or relevant.|No. Defaults to `false`
+|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults ot `ivy.instance`.
 |log|the log setting to use during the resolve and retrieve process. *__(since 2.0)__*
 
 Available options are the same as for link:../use/resolve.html[resolve] when used to trigger resolve automatically (see link:../use/postresolvetask.html[postresolvetask]), or the following for the retrieve process only: +
@@ -83,7 +83,7 @@ Retrieves dependencies using default parameters. This usually retrieves all the 
 ----
 
 Retrieves all dependencies of the last resolve call to a lib directory, dependencies being separated in directories named by configuration, each conf directory containing corresponding artifacts without the revision.
-For instance, if the ivy file declares two configurations default and test, the resulting lib dir could look like this:
+For instance, if the Ivy file declares two configurations default and test, the resulting lib dir could look like this:
 
 [source]
 ----
@@ -106,7 +106,7 @@ Note that if a dependency is required in the two configurations, it will be copi
 
 Same as before, but with synchronisation enabled.
 
-For instance, if the ivy file declares two configurations default and test, the resulting lib dir could look like this:
+For instance, if the Ivy file declares two configurations default and test, the resulting lib dir could look like this:
 
 [source]
 ----
@@ -138,9 +138,7 @@ With no synchronisation, commons-logging would not have been removed by the call
 <ivy:retrieve pattern="${lib.dir}/[type]/[artifact]-[revision].[ext]" conf="runtime"/>
 ----
 
-Retrieves only the dependencies of the `runtime`.
-
-configuration in directories named by artifact type. The resulting lib dir could look like this:
+Retrieves only the dependencies of the `runtime`. Dependencies separated in directories named by artifact type. The resulting lib dir could look like this:
 
 [source]
 ----
@@ -196,7 +194,7 @@ lib
 <ivy:retrieve organisation="foo" module="bar" inline="true" pattern="${my.install.dir}/[artifact].[ext]"/>
 ----
 
-Resolves and retrieve the latest version of the module bar and its dependencies in the directory pointed by `${my.install.dir}`.
+Resolves and retrieves the latest version of the module bar and its dependencies in the directory pointed by `${my.install.dir}`.
 
 '''
 

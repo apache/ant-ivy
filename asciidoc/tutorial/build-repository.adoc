@@ -17,16 +17,16 @@
    under the License.
 ////
 
-The link:../use/install.html[install] Ant task lets you copy a module or a set of modules from one repository to another. This is very useful to build and maintain an enterprise or team repository. If you don't want to give access to the public maven 2 repository to the developers on your team (to keep control over which modules are in use in your company or your team for instance), it can sometimes become tiresome to answer the developers request to add new modules or new versions by hand.
+The link:../use/install.html[install] Ant task lets you copy a module or a set of modules from one repository to another. This is very useful to build and maintain an enterprise or team repository. If you don't want to give access to the public Maven 2 repository to the developers on your team (to keep control over which modules are in use in your company or your team, for instance), it can sometimes become tiresome to answer the developers request to add new modules or new versions by hand.
 
-Fortunately the link:../use/install.html[install] task is here to help: you can use specific settings for your repository maintenance build which will be used to maintain your target enterprise repository. These settings will point to another repository (for instance the maven 2 public repository) so that you will just have to ask Ivy to install the modules you want with a simple command line.
+Fortunately the link:../use/install.html[install] task is here to help: you can use specific settings for your repository maintenance build which will be used to maintain your target enterprise repository. These settings will point to another repository (for instance, the Maven 2 public repository) so that you will just have to ask Ivy to install the modules you want with a simple command line.
 
 To demonstrate this, we will first use a basic ivy settings file to show how it works, and then we will use the advanced link:../settings/namespaces.html[namespaces] features to demonstrate how to deal with naming mismatches between the source and target repository.
 
 
 == The project used
 
-The project that we will use is pretty simple. It is composed of an Ant build file, and two ivy settings files.
+The project that we will use is pretty simple. It is composed of an Ant build file, and two Ivy settings files.
 
 Here are the public targets that we will use:
 
@@ -54,6 +54,6 @@ Default target: basic
 
 This project is accessible in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example/build-a-ivy-repository[src/example/build-a-ivy-repository]
 
-Next steps:
-link:../tutorial/build-repository/basic.html[Basic repository copy]
+Next steps: +
+link:../tutorial/build-repository/basic.html[Basic repository copy] +
 link:../tutorial/build-repository/advanced.html[Using namespaces]

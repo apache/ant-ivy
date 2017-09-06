@@ -25,7 +25,7 @@ Another initiative to manage OSGi&#153; dependencies is the project link:https:/
 == A different approach
 
 
-Apache Felix Sigil is at its core about managing OSGi dependencies, not directly related to Ivy. Most of it core feature is about the implementation of the not yet released OBR (OSGi Bundle Repository) specification. It then provides integration layers with several tools so that developers can use the OBR API. It provides an Eclipse plugin and there are the Ant/Ivy tasks and resolvers.
+Apache Felix Sigil is at its core about managing OSGi dependencies, not directly related to Ivy. Most of its core feature is about the implementation of the not yet released OBR (OSGi Bundle Repository) specification. It then provides integration layers with several tools so that developers can use the OBR API. It provides an Eclipse plugin and there are the Ant/Ivy tasks and resolvers.
 
 On the other hand the built-in OSGi capabilities in Ivy are targeted towards users already familiar with Ivy and link:http://ant.apache.org/ivy/links.html[tools around it] like link:http://ant.apache.org/ivy/ivyde[Apache IvyDE&#153;]. So with a minimum amount of effort, they can get OSGi dependency management.
 
@@ -47,6 +47,6 @@ The immediate consequence of this difference is that the built-in resolver is pr
 === Source of metadata
 
 
-Apache Felix Sigil has its own format about specifying the OSGi dependencies. Whereas Ivy requires an `ivysettings.xml` and an `ivy.xml`, Sigil requires a `sigil-repos.properties` and a `sigil.properties`. Then if you want to use the Sigil resolver in Ivy, you will need 4 files, the 2 Ivy ones and the 2 Sigil ones, as described in the Sigil quickstart link:https://cwiki.apache.org/confluence/display/FELIX/Apache+Felix+Sigil+Ivy+Quickstart[here].
+Apache Felix Sigil has its own format for specifying the OSGi dependencies. Whereas Ivy requires an `ivysettings.xml` and an `ivy.xml`, Sigil requires a `sigil-repos.properties` and a `sigil.properties`. Then if you want to use the Sigil resolver in Ivy, you will need 4 files, the 2 Ivy ones and the 2 Sigil ones, as described in the Sigil quickstart link:https://cwiki.apache.org/confluence/display/FELIX/Apache+Felix+Sigil+Ivy+Quickstart[here].
 
 To support OSGi directly in Ivy, you just need to add an extra namespace in the `ivy.xml`, and in the `ivysettings.xml` just declare the proper resolver and latest revision strategy.

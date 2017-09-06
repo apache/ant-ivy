@@ -29,7 +29,7 @@
 
 *__since 2.3__*
 
-This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies. As part of the OSGi specification resides the OBR (OSGi Bundle Repository). The OBR defines the aggregation of the OSGi metadata of every bundle included in an repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
+This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies. A part of the OSGi specification defines OBR (OSGi Bundle Repository). OBR aggregates the OSGi metadata of every bundle included in a repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
 
 
 == Attributes
@@ -47,7 +47,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |=======
 
 
-The requirement strategy is defining how the resolver should behave in front of several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
+The requirement strategy is defining how the resolver should behave when facing several choices. In the OSGi dependency model, an `Import-Package` requirement can be satisfied by several different bundles. So when resolving such requirement, Ivy will first look into the already resolved bundles if one provides that package. If it fails to find one, then two behaviours can occur:
 
 
     * if the requirement strategy is `first`, among the bundles satisfying the requirement, it will choose the first one. A warning will be logged about the choice Ivy has to arbitrarily do. +

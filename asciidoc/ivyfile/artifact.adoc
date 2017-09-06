@@ -48,12 +48,12 @@ If this is the only artifact declared, then it's equivalent to having no publica
 |=======
 |Attribute|Description|Required
 |name|the name of the published artifact. This name must not include revision.|No, defaults to the name of the module
-|type|the type of the published artifact. It's usually its extension, but not necessarily. For instance, ivy files are of type `ivy` but have `xml` extension|No, defaults to `jar`
+|type|the type of the published artifact. It's usually its extension, but not necessarily. For instance, Ivy files are of type `ivy` but have `xml` extension|No, defaults to `jar`
 |ext|the extension of the published artifact|No, defaults to the value of `type`
 |conf|comma separated list of public configurations in which this artifact is published.
 
 `$$*$$` wildcard can be used to designate all public configurations of this module|No, defaults to `defaultconf` attribute value on parent publications element.
-|url|a url at which this artifact can be found if it isn't located at the standard location in the repository *__since 1.4__*|No, defaults to no url
+|url|an URL at which this artifact can be found if it isn't located at the standard location in the repository *__since 1.4__*|No, defaults to no URL
 |packaging|a comma separated list of link:../concept.html#packaging[packaging] types *__since 2.4__*|No, defaults to no packaging
 |=======
 
@@ -90,4 +90,4 @@ Declares an artifact `foo-src`, of type `source` with extension `zip`, and publi
 <artifact name="foo" url="http://www.acme.com/repository/barbaz/foo-1.2-bar.jar"/>
 ----
 
-Declares an artifact `foo`, of type and extension `jar'` located at the url `$$http://www.acme.com/repository/barbaz/foo-1.2-bar.jar$$`. This url will only be used if the artifact cannot be found at its standard location.
+Declares an artifact `foo`, of type and extension `jar'` located at the URL `$$http://www.acme.com/repository/barbaz/foo-1.2-bar.jar$$`. This URL will only be used if the artifact cannot be found at its standard location.
