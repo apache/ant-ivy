@@ -63,7 +63,7 @@ Some useful variables are available for use in settings files:
  the URL pointing to the settings file. This is set both when it has been loaded as a file or a URL.
 
 
-*__since 1.4__* Note that all link:https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#getProperties()[Java system properties] are available as ivy variables in your settings file.
+*__since 1.4__* Note that all link:https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#getProperties()[Java system properties] are available as Ivy variables in your settings file.
 
 
 == Settings file structure
@@ -116,7 +116,7 @@ The settings file is structured in some parts and left open in others. In fact, 
 
 *Tag:* ivysettings
 
-Root tag of any ivysettings file.
+Root tag of any Ivy settings file.
 
 === Child elements
 
@@ -137,7 +137,7 @@ Root tag of any ivysettings file.
 |link:settings/namespaces.html[namespaces]|defines new namespaces|0..1
 |link:settings/macrodef.html[macrodef]|defines a new macro resolver|0..n
 |link:settings/resolvers.html[resolvers]|defines dependency resolvers|0..1
-|link:settings/conflict-managers.html[conflict-managers]|defines conflicts managers|0..1
+|link:settings/conflict-managers.html[conflict-managers]|defines conflict managers|0..1
 |link:settings/modules.html[modules]|defines rules between modules and dependency resolvers|0..1
 |link:settings/outputters.html[outputters]|defines the list of available report outputters|0..1
 |link:settings/statuses.html[statuses]|defines the list of available statuses|0..1

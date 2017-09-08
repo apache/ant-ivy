@@ -148,10 +148,10 @@ Finally, in order to get several revisions of a module, most of the time you nee
 Ivy has three built-in latest strategies:
 
 `latest-time`::
-This compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it has the drawback of being costly to compute for distant repositories. If you use ivyrep, for example, Ivy has to ask the HTTP server what is the date of each Ivy file before knowing which is the latest.
+This compares the revision dates to know which is the latest. While this is often a good strategy in terms of pertinence, it has the drawback of being costly to compute for distant repositories. If you use ivyrep, for example, Ivy has to ask the HTTP server what is the date of each Ivy file before knowing which is the latest.
 
 `latest-revision`::
-This compares the revisions as strings, using an algorithm close to the one used in the php version_compare function.
+This compares the revisions as strings, using an algorithm close to the one used in the PHP `version_compare` function.
 +
 This algorithm takes into account special meanings of some text. For instance, with this strategy, 1.0-dev1 is considered before 1.0-alpha1, which in turn is before 1.0-rc1, which is before 1.0, which is before 1.0.1.
 
@@ -186,7 +186,7 @@ This matcher matches only using strings
 This matcher lets you use a regular expression as supported by the Pattern class of Java 1.4 or greater
 
 `glob`::
-This matcher lets you use a Unix-like glob matcher, i.e. where the only meta characters are `*` which matches any sequence of characters and `?` which matches exactly one character. Note that this matcher is available only with jakarta oro 2.0.8 in your classpath.
+This matcher lets you use a Unix-like glob matcher, i.e. where the only meta characters are `*` which matches any sequence of characters and `?` which matches exactly one character. Note that this matcher is available only with Jakarta ORO 2.0.8 in your classpath.
 
 Note also that with any matcher, the character '*' has the special meaning of matching anything. This is particularly useful with default values which do not depend on the matcher.
 
@@ -204,12 +204,12 @@ Example: here is an Ivy file with the attribute `color` set to blue:
 [source,xml]
 ----
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="apache"
-	       module="foo"
-	       e:color="blue"
-	       status="integration"
-	       revision="1.59"
-	/>
+    <info organisation="apache"
+          module="foo"
+          e:color="blue"
+          status="integration"
+          revision="1.59"
+    />
 </ivy-module>
 ----
 

@@ -50,9 +50,9 @@ Since repository cache implementations are pluggable, you can either define new 
 |ivyPattern|default pattern used to indicate where Ivy files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/ivy-[revision].xml
 |artifactPattern|default pattern used to indicate where artifact files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]
 |[line-through]#checkUpToDate#|Indicates if date should be checked before retrieving artifacts from cache.
-    	__Deprecated, we recommend using overwriteMode on the link:../use/retrieve.html[retrieve] task instead__|No, defaults to true
+__Deprecated, we recommend using overwriteMode on the link:../use/retrieve.html[retrieve] task instead__|No, defaults to true
 |useOrigin|the default value to use for useOrigin for caches in which it isn't specifically defined.
-    	Use true to avoid the copy of local artifacts to the cache and use directly their original location.|No, defaults to false
+Use true to avoid the copy of local artifacts to the cache and use directly their original location.|No, defaults to false
 |lockStrategy|the name of the default link:../settings/lock-strategies.html[lock strategy] to use when accessing repository cache(s)|No, defaults to _no-lock_
 |=======
 

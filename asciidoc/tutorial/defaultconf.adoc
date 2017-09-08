@@ -175,7 +175,7 @@ By default, Ivy is configured using an `ivysettings.xml` which is packaged in th
 
 ----
 
-OK, so not much info here, except a lot of inclusions. These inclusions have been done on purpose so that you can easily change only one part of the ivysettings and easily benefit from the rest. For example, if you want to define your own public resolver, you will just have to configure Ivy with an ivysettings like the following:
+OK, so not much info here, except a lot of inclusions. These inclusions have been done on purpose so that you can easily change only one part of the Ivy settings and easily benefit from the rest. For example, if you want to define your own public resolver, you will just have to configure Ivy with the settings like the following:
 
 [source, xml]
 ----
@@ -193,7 +193,7 @@ OK, so not much info here, except a lot of inclusions. These inclusions have bee
 
 Note that only the `ivysettings-public.xml` inclusion has changed to include a homemade public resolver. Note also that this can be used like that thanks to the fact that `${ivy.default.settings.dir}` is a variable which is always set to the place where Ivy's default settings files are (i.e. packaged in the jar).
 
-To finish this example, you have to write your own ivysettings file (that you will make available at `http://myserver/ivy/myivysettings-public.xml` in this example) for defining your own public resolver. For instance, the contents of such a file could be:
+To finish this example, you have to write your own Ivy settings file (that you will make available at `http://myserver/ivy/myivysettings-public.xml` in this example) for defining your own public resolver. For instance, the contents of such a file could be:
 
 [source, xml]
 ----
@@ -209,7 +209,7 @@ To finish this example, you have to write your own ivysettings file (that you wi
 
 ----
 
-Now the last thing you will need in order to properly take advantage of the default settings is the content of each included ivysettings file:
+Now the last thing you will need in order to properly take advantage of the default settings is the content of each included Ivy settings file:
 
 .*ivysettings-public.xml*
 [source, xml]

@@ -24,7 +24,7 @@ If this container is not present, it is assumed that the module has no dependenc
 
 This container provides two similar behaviors described below. (See link:../ivyfile/configurations.html[configurations doc page] for more details about these behaviors).
 
-*__since 1.1__* `defaultconf` defines the `conf` attribute to use when no conf is defined for a dependency in this ivy file. It is only used when no conf mapping is defined, and has no influence in other cases.
+*__since 1.1__* `defaultconf` defines the `conf` attribute to use when no conf is defined for a dependency in this Ivy file. It is only used when no conf mapping is defined, and has no influence in other cases.
 
 *__since 1.3__* `defaultconfmapping` influences the way that a conf mapping with no mapped conf is interpreted.
 

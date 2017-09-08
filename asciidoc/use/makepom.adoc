@@ -29,7 +29,7 @@ It is possible to specify a template file defining the structure of the generate
 
 * properties like `${property.name}` are replaced if they are defined in Ant or by the `ivy:makepom` task (see below for the standard properties)
 * lines containing the string `SKIP_LINE` are skipped.
-* the defined dependencies will be added to the first `<dependencies>` element encountered in the POM template. If the template doesn't contain a `<dependencies>` element, it is generated a the end of the POM.
+* the defined dependencies will be added to the first `<dependencies>` element encountered in the POM template. If the template doesn't contain a `<dependencies>` element, it is generated at the end of the POM.
 
 The `ivy:makepom` task defines following properties that can be used in the template.
 

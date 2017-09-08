@@ -22,7 +22,7 @@
 This feature gives you more control on a dependency for which you do not control its Ivy file.
 It enables to specify the artifacts required, if the dependency has no Ivy file.
 
-Indeed, when a module has no Ivy file, it is assumed that it publishes exactly one artifact having the same name as the module itself. But when this module publishes more artifacts, or simply does not respect the name rule, and if you cannot deliver an Ivy file for it (because you do not control the repository, for instance - think about Maven ibiblio repository, to give no name), then this feature let you specify the artifacts names you want to get.
+Indeed, when a module has no Ivy file, it is assumed that it publishes exactly one artifact having the same name as the module itself. But when this module publishes more artifacts, or simply does not respect the name rule, and if you cannot deliver an Ivy file for it (because you do not control the repository, for instance - think about Maven ibiblio repository, to give no name), then this feature lets you specify the artifact names you want to get.
 
 Each artifact specification can be given in the context of particular master configurations. By default, if no configuration is specified, artifacts specification apply to all master configurations. But you can specify that a specification applies only to one or several master configurations, using either inline or nested conf specification. In this case, do not forget that if you do not specify any specification for a particular configuration, then no specification will apply for this configuration and it will be resolved not taking into account any specification.
 

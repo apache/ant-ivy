@@ -166,7 +166,7 @@ Of course, packaging instructions must produce artifacts consistent with those l
 
 == Build-time properties
 
-This resolver ensures following Ant properties are defined when it executes the Ant build task.
+This resolver ensures that the following Ant properties are defined when it executes the Ant build task.
 
 [options="header",cols="15%,50%"]
 |=======

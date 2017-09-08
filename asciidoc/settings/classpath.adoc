@@ -23,7 +23,7 @@
 
 Includes a jar in the classpath used to load plugins. *__since 1.4__*
 
-This let you add Ivy plugins without relying on an external classpath (the Ant classpath, for instance), therefore easing the use of Ivy in multiple execution environments (Ant, standalone, IDE plugins, ...).
+This lets you add Ivy plugins without relying on an external classpath (the Ant classpath, for instance), therefore easing the use of Ivy in multiple execution environments (Ant, standalone, IDE plugins, ...).
 
 
 == Attributes

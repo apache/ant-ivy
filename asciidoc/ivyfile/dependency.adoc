@@ -30,7 +30,7 @@ selects the latest revision of the dependency module.
 
 * `latest.[any status]` *__since 1.4__* +
 selects the latest revision of the dependency module with at least the specified status. +
-For instance, `latest.milestone` will select the latest version being either a `milestone` or a `release`, and `latest.release` will only selects the latest `release`. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the Ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
+For instance, `latest.milestone` will select the latest version being either a `milestone` or a `release`, and `latest.release` will only select the latest `release`. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the Ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
 See also link:../settings/statuses.html[statuses] to see how to configure module statuses.
 
 * end the revision with a `+` +
@@ -114,11 +114,11 @@ For instance, if you have:
 [source,xml]
 ----
 <configurations>
-	<conf name="red" e:axis="color"/>
-	<conf name="blue" e:axis="color"/>
+    <conf name="red" e:axis="color"/>
+    <conf name="blue" e:axis="color"/>
 
-	<conf name="windows" e:axis="platform"/>
-	<conf name="linux" e:axis="platform"/>
+    <conf name="windows" e:axis="platform"/>
+    <conf name="linux" e:axis="platform"/>
 </configurations>
 ----
 
@@ -147,8 +147,8 @@ See link:../ivyfile/dependency-artifact.html[dependency artifact] for details.
 == Forcing revision
 
 Finally, the dependency element also supports an a force attribute (since 0.8), which gives an indication
-to conflicts manager to force the revision of a dependency to the one given here.
-See link:../ivyfile/conflicts.html[conflicts manager] for details.
+to conflict manager to force the revision of a dependency to the one given here.
+See link:../ivyfile/conflicts.html[conflict manager] for details.
 
 *__since 1.4__* this tag supports link:../concept.html#extra[extra attributes]
 
@@ -162,7 +162,7 @@ See link:../ivyfile/conflicts.html[conflicts manager] for details.
 |branch|the branch of the dependency. *__since 1.4__*|No, defaults to the default branch setting for the dependency.
 |rev|the revision of the dependency. See link:#revision[above] for details.|Yes
 |revConstraint|the dynamic revision constraint originally used for this dependency. See link:#revision-constraint[above] for details.|No, defaults to the value of `rev`
-|force|a boolean to give an indication to conflict manager that this dependency should be forced to this revision (see link:../ivyfile/conflicts.html[conflicts manager])|No, defaults to `false`
+|force|a boolean to give an indication to conflict manager that this dependency should be forced to this revision (see link:../ivyfile/conflicts.html[conflict manager])|No, defaults to `false`
 |conf|an inline mapping configuration spec (see above for details)|No, defaults to `defaultconf` attribute of dependencies element if neither conf attribute nor conf children element is given
 |transitive|`true` to resolve this dependency transitively, `false` otherwise (*__since 1.2__*)|No, defaults to `true`
 |changing|`true` if the dependency artifacts may change without revision change, false otherwise (*__since 1.2__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to `false`

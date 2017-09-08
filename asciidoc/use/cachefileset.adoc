@@ -22,8 +22,7 @@ Constructs an Ant `fileset` consisting of artifacts in Ivy's cache for a configu
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks. Note that this task
 does not rely on retrieve, because the built fileset is made of artifacts directly in Ivy's cache.
 
-Please prefer the use of retrieve + standard Ant path creation, which make your build
-more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
+Please prefer the use of retrieve + standard Ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
 
 Built `fileset` is registered in Ant project with a given id, and can thus be used like any other Ant `fileset` using
 `refid`.

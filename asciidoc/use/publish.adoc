@@ -25,7 +25,7 @@ All the artifacts must have been created _before_ calling this task. It does not
 
 The target repository is given through the name of a resolver declared in current Ivy settings. See link:../settings.html[Settings Files] for details about resolver supporting artifact publishing.
 
-It also publishes the delivered Ivy file (except if you don't want), and even deliver it, if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery. See the illustration below:
+It also publishes the delivered Ivy file (except if you don't want), and even delivers it, if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery. See the illustration below:
 
 image::../images/ivy-publish-fc.png[]
 

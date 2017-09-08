@@ -34,7 +34,7 @@ The child tag used for the dependency resolver must be equal to a name of a depe
 
 ----
 
-Note that this works only if the resolver has already been defined and *NOT* if it is defined later in the ivysettings file.
+Note that this works only if the resolver has already been defined and *NOT* if it is defined later in the Ivy settings file.
 
 == Child elements
 

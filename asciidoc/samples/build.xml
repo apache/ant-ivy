@@ -27,7 +27,7 @@
         for the Java source code "generation" :-) (see generate-src target)
 
         To run copy this file in an empty directory, open a shell (or command line) window
-        in this directory and run "ant". It will download ivy and then use it to resolve
+        in this directory and run "ant". It will download Ivy and then use it to resolve
         the dependency of the class which is itself "contained" in this build script.
 
         After a successful build run "ant" again and you will see the build will be
@@ -74,12 +74,12 @@
 
     <!-- =================================
           target: go
-                    Go ivy, go!
+                    Go Ivy, go!
          ================================= -->
     <target name="go" depends="install-ivy, generate-src"
             description="--> resolve dependencies, compile and run the project">
         <echo message="using ivy to resolve commons-lang 2.1..."/>
-        <!-- here comes the magic line: asks ivy to resolve a dependency on
+        <!-- here comes the magic line: asks Ivy to resolve a dependency on
              commons-lang 2.1 and to build an Ant path with it from its cache -->
         <ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1"
                        pathid="lib.path.id" inline="true"/>

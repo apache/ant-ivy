@@ -32,7 +32,7 @@ This resolver can be used when your Ivy repository is located on a server access
 
 If your server supports SSH but not SFTP, there is also an link:../resolver/ssh.html[SSH resolver].
 
-Note that SFTP is also supported by VFS, so you can use a VFS resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the VFS resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use ant input task for example before calling Ivy.
+Note that SFTP is also supported by VFS, so you can use a VFS resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the VFS resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use Ant input task, for example, before calling Ivy.
 
 All necessary connection parameters can be set here via attributes, or via an OpenSSH-style config file specified by `sshConfig`.
 However all attributes defined in the pattern URL of the resolver will have higher priority and will overwrite the values given here. To specify connection parameters in the pattern, you have to specify a full URL and not just a path as pattern.

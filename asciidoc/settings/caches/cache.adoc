@@ -27,7 +27,7 @@ Defines a repository cache instance based on the default repository cache implem
 
 The default repository cache implementation caches files on the local filesystem in subdirectories of a configured base directory.
 
-By default also, the parsed module descriptor read from the cache are kept in a memory cache in case they are reused. This may enhance the performance of multi-module build, provided that all modules are build using the same Ivy instance. The size of this memory cache is configurable in terms of number of module descriptors. A size of 0 means no memory caching.
+By default also, the parsed module descriptors read from the cache are kept in a memory cache in case they are reused. This may enhance the performance of multi-module build, provided that all modules are built using the same Ivy instance. The size of this memory cache is configurable in terms of number of module descriptors. A size of 0 means no memory caching.
 
 
 == Attributes

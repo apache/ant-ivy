@@ -85,25 +85,25 @@ contains a directory per module, with each containing:
 [source]
 ----
 
-  <ivy-module version="1.0">
-      <info
-          organisation="org.apache.ivy.example"
-          module="find"
-          status="integration"/>
-      <configurations>
+<ivy-module version="1.0">
+    <info
+        organisation="org.apache.ivy.example"
+        module="find"
+        status="integration"/>
+    <configurations>
         <conf name="core"/>
         <conf name="standalone" extends="core"/>
-      </configurations>
-      <publications>
+    </configurations>
+    <publications>
         <artifact name="find" type="jar" conf="core"/>
-      </publications>
-      <dependencies>
+    </publications>
+    <dependencies>
         <dependency name="version" rev="latest.integration" conf="core->default"/>
         <dependency name="list" rev="latest.integration" conf="core"/>
         <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="core->default"/>
         <dependency org="commons-cli" name="commons-cli" rev="1.0" conf="standalone->default"/>
-      </dependencies>
-  </ivy-module>
+    </dependencies>
+</ivy-module>
 
 ----
 
@@ -114,11 +114,11 @@ contains a directory per module, with each containing:
 [source]
 ----
 
-  <project name="find" default="compile">
-  	<property file="build.properties"/>
+<project name="find" default="compile">
+    <property file="build.properties"/>
 
-  	<import file="${common.dir}/common.xml"/>
-  </project>
+    <import file="${common.dir}/common.xml"/>
+</project>
 
 ----
 
@@ -152,11 +152,11 @@ So, here are some aspects of this common build file:
 [source]
 ----
 
-<!-- setup ivy default configuration with some custom info -->
+<!-- setup Ivy default configuration with some custom info -->
 <property name="ivy.local.default.root" value="${repository.dir}/local"/>
 <property name="ivy.shared.default.root" value="${repository.dir}/shared"/>
 
-<!-- here is how we would have configured ivy if we had our own ivysettings file
+<!-- here is how we would have configured Ivy if we had our own Ivy settings file
 <ivy:settings file="${common.dir}/ivysettings.xml" id="ivy.instance"/>
 -->
 
@@ -172,8 +172,8 @@ Commented out you can see how the settings would have been done if the default s
 [source]
 ----
 
-<target name="resolve" depends="clean-lib, load-ivy" description="--> resolve and retrieve dependencies with ivy">
-    <mkdir dir="${lib.dir}"/> <!-- not usually necessary, ivy creates the directory IF there are dependencies -->
+<target name="resolve" depends="clean-lib, load-ivy" description="--> resolve and retrieve dependencies with Ivy">
+    <mkdir dir="${lib.dir}"/> <!-- not usually necessary, Ivy creates the directory IF there are dependencies -->
 
     <!-- the call to resolve is not mandatory, retrieve makes an implicit call if we don't -->
     <ivy:resolve file="${ivy.file}"/>
@@ -215,9 +215,9 @@ This target is used to ask Ivy to find a new version for a module. To get detail
 
 <target name="publish" depends="clean-build, jar" description="--> publish this project in the ivy repository">
     <ivy:publish artifactspattern="${build.dir}/[artifact].[ext]"
-                       resolver="shared"
-                       pubrevision="${version}"
-                       status="release"/>
+                 resolver="shared"
+                 pubrevision="${version}"
+                 status="release"/>
     <echo message="project ${ant.project.name} released with version ${version}"/>
 </target>
 
@@ -233,11 +233,11 @@ This target publishes the module to the shared repository, with the revision fou
 
 <target name="publish-local" depends="local-version, jar" description="--> publish this project in the local ivy repository">
     <ivy:publish artifactspattern="${build.dir}/[artifact].[ext]"
-                    resolver="local"
-                    pubrevision="${version}"
-                    pubdate="${now}"
-                    status="integration"
-                    forcedeliver="true"/>
+                 resolver="local"
+                 pubrevision="${version}"
+                 pubdate="${now}"
+                 status="integration"
+                 forcedeliver="true"/>
     <echo message="project ${ant.project.name} published locally with version ${version}"/>
 </target>
 
@@ -252,7 +252,7 @@ This is very similar to the publish task, except that this publishes the revisio
 ----
 
 <target name="clean-local" description="--> cleans the local repository for the current module">
-   <delete dir="${ivy.local.default.root}/${ant.project.name}"/>
+    <delete dir="${ivy.local.default.root}/${ant.project.name}"/>
 </target>
 
 ----
@@ -271,9 +271,9 @@ This target is used when you don't want to use your local version of a module an
 
 ----
 
-Generates both an html report and a graphml report.
+Generates both an HTML report and a GraphML report.
 
-For example, to generate a graph like the one shown at the beginning of this tutorial, you just have to follow the instructions given link:../yed.html[here] with the graphml file you will find in `projects/console/build` after having called report in the console project, and that's it, you have a clear overview of all your app dependencies!
+For example, to generate a graph like the one shown at the beginning of this tutorial, you just have to follow the instructions given link:../yed.html[here] with the GraphML file you will find in `projects/console/build` after having called report in the console project, and that's it, you have a clear overview of all your app dependencies!
 
 
 == Playing with the projects
@@ -293,7 +293,7 @@ This gives you an idea of what you can do here. To make sure you have at least o
 
 You will see that Ivy calls the publish target on all the modules, following the order of the dependencies, so that a dependee is always built and published before its depender. Feel free to make changes in the source code of a module (changing a method name, for instance) and in the module using the method, then call publish-all to see how the change in the dependee is compiled first, published, and then available to the depender which can compile successfully.
 
-Then you can go in one of the example project directories (like `projects/find` for instance), and run `ant -p`:
+Then you can go in one of the example project directories (like `projects/find`, for instance), and run `ant -p`:
 
 [source,shell]
 ----

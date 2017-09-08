@@ -21,7 +21,7 @@ The link:../use/install.html[install] Ant task lets you copy a module or a set o
 
 Fortunately the link:../use/install.html[install] task is here to help: you can use specific settings for your repository maintenance build which will be used to maintain your target enterprise repository. These settings will point to another repository (for instance, the Maven 2 public repository) so that you will just have to ask Ivy to install the modules you want with a simple command line.
 
-To demonstrate this, we will first use a basic ivy settings file to show how it works, and then we will use the advanced link:../settings/namespaces.html[namespaces] features to demonstrate how to deal with naming mismatches between the source and target repository.
+To demonstrate this, we will first use a basic Ivy settings file to show how it works, and then we will use the advanced link:../settings/namespaces.html[namespaces] features to demonstrate how to deal with naming mismatches between the source and target repository.
 
 
 == The project used

@@ -21,10 +21,10 @@
 
 *Tag:* include
 
-Includes another ivysettings file as if it were part of this one. *__since 1.3__*
+Includes another Ivy settings file as if it were part of this one. *__since 1.3__*
 
 
-The included ivysettings file has to be a complete well formed ivysettings file, i.e. it does have to include the `<ivysettings>` tag.
+The included Ivy settings file has to be a complete well formed Ivy settings file, i.e. it does have to include the `<ivysettings>` tag.
 
 
 == Attributes
@@ -33,8 +33,8 @@ The included ivysettings file has to be a complete well formed ivysettings file,
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|url|a URL to the ivysettings file to include|Yes, unless file is specified
-|file|a path to the ivysettings file to include|Yes, unless url is specified
+|url|a URL to the Ivy settings file to include|Yes, unless file is specified
+|file|a path to the Ivy settings file to include|Yes, unless url is specified
 |optional|indicates whether Ivy should throw an error if the specified file doesn't exist. *__(Since 2.4)__*.|No, default to false
 |=======
 
@@ -67,7 +67,7 @@ with ivysettings-default.xml:
 
 ----
 
-The included ivysettings defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value `path/to/rep` in the included file, but because the attribute overwrite is set to false, it will not override the value given in the main ivysettings including this one, so the value used for myrepository will be `path/to/my/real/rep`.
+The included Ivy settings defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value `path/to/rep` in the included file, but because the attribute overwrite is set to false, it will not override the value given in the main Ivy settings including this one, so the value used for myrepository will be `path/to/my/real/rep`.
 
 '''
 
@@ -84,5 +84,5 @@ The included ivysettings defines a resolver named default, which is an ivyrep re
 
 ----
 
-with ivysettings-macro.xml being the ivysettings example given on the link:../settings/macrodef.html[macrodef documentation page].
+with ivysettings-macro.xml being the Ivy settings example given on the link:../settings/macrodef.html[macrodef documentation page].
 This lets us easily reuse the custom macro resolver.

@@ -453,7 +453,7 @@ Ivy comes with 3 built-in triggers:
 [options="header",cols="15%,50%"]
 |=======
 |Name|Description
-|ant-build|Triggers an Ant build. Note that by default the ant build is triggered only once per build file, the property onlyonce can be set to false to change this.
+|ant-build|Triggers an Ant build. Note that by default the Ant build is triggered only once per build file, the property onlyonce can be set to false to change this.
 |ant-call|Calls a target in the current Ant build.
 |log|Logs a message on the console or in a log file.
 |=======

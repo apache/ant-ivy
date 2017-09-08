@@ -25,27 +25,24 @@ To build Ivy from source it's really easy.
 
 All you need is
 
-* an link:http://subversion.tigris.org/[svn] client +
-_to check out Ivy sources from Apache svn, not required if you build from sources packaged in a release_
+* an link:https://git-scm.com/downloads[Git] client +
+_to check out Ivy sources from Apache Git, not required if you build from sources packaged in a release_
 
-* link:http://ant.apache.org/[Apache Ant] 1.6.0 or greater +
-_We recommend either Ant 1.6.5 or 1.7.0_
+* link:http://ant.apache.org/[Apache Ant] 1.9.0 or greater +
+_We recommend the latest version of Ant_
 
-* link:http://junit.org[junit] 3.8.2 jar in your Ant lib +
-_ this is not required if you use Ant 1.7_
-
-* a link:http://java.sun.com/[jdk] 1.5 or greater +
-_Build instructions have been successfully tested with sun jdk 1.5.0 and 1.6.0_
+* a link:http://www.oracle.com/technetwork/java/javase/downloads/index.html[JDK] 7 or greater +
+_Build instructions have been successfully tested with Oracle JDK 7 and 8_
 
 === Procedure
 
 ==== Get the source
 
-You can either get the sources from a release, or get them directly from svn. For instance, to get the trunk version:
+You can either get the sources from a release, or get them directly from Git:
 
 [source,shell]
 ----
-svn co https://svn.apache.org/repos/asf/ant/ivy/core/trunk ivy
+git clone git://git.apache.org/ant-ivy.git
 ----
 
 ==== Build
@@ -72,8 +69,8 @@ Then you can check the test results in the build/doc/reports/test directory, the
 
 == Coding conventions
 
-The Ivy code base is supposed to follow the standard Java conventions:
-http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html
+The Ivy code base is supposed to follow Java Code Conventions:
+http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html
 
 This is a work in progress though (see link:https://issues.apache.org/jira/browse/IVY-511[IVY-511]), but patches helping migration to these conventions are welcome.
 

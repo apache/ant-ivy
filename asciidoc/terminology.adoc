@@ -60,7 +60,7 @@ __Examples: hibernate-entitymanager, ant__
 
 A _module descriptor_ is a generic way of identifying what describes a module: the identifier (organisation, module name, branch and revision), the published artifacts, possible configurations and their dependencies.
 
-The most common module descriptors in Ivy are link:ivyfile.html[Ivy Files], xml files with an Ivy specific syntax, and usually called ivy.xml.
+The most common module descriptors in Ivy are link:ivyfile.html[Ivy Files], XML files with an Ivy specific syntax, and usually called ivy.xml.
 
 But since Ivy is also compatible with Maven 2 metadata format (called POM, for Project Object Model), POM files fall into the category of module descriptors.
 
@@ -135,13 +135,13 @@ a revision fully tested and labelled fall in this category
 A _module configuration_ is a way to use or construct a module. If the same module has different dependencies based on how it's used, those distinct dependency-sets are called its configurations in Ivy.
 
 Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server).
-Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in ivy.
+Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in Ivy.
 
-For more details on configurations and how they are used in ivy, please refer to the link:concept.html[main concepts page].
+For more details on configurations and how they are used in Ivy, please refer to the link:concept.html[main concepts page].
 
 == [[settings]]Ivy Settings
 
-Ivy settings files are xml files used to configure ivy to indicate where the modules can be found and how.
+Ivy settings files are XML files used to configure Ivy to indicate where the modules can be found and how.
 
 === History of settings
 

@@ -29,7 +29,7 @@ The latest strategies which are included in Ivy by default are:
 
 
 * latest-time +
- compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it's drawback is that it can be slow when dealing with remote repositories. If you use ivyrep, for example, Ivy has to ask the HTTP server for the date of each Ivy file before knowing which is the latest.
+ compares the revision dates to know which is the latest. While this is often a good strategy in terms of pertinence, its drawback is that it can be slow when dealing with remote repositories. If you use ivyrep, for example, Ivy has to ask the HTTP server for the date of each Ivy file before knowing which is the latest.
 
 * latest-revision +
  compares the revisions as strings, using an algorithm close to the one used in PHP `version_compare` function.
@@ -53,7 +53,7 @@ This algorithm takes into account the special meaning of some text. For instance
 
 == latest-revision
 
-*__since 1.4__* The latest-revision can now be configured to handle more words with special meanings than the one defined in PHP `version_compare function.
+*__since 1.4__* The latest-revision can now be configured to handle more words with special meanings than the one defined in PHP `version_compare` function.
 
 Here is an example of how you can do so:
 

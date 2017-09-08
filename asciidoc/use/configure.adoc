@@ -17,7 +17,7 @@
    under the License.
 ////
 
-The `configure` task is used to configure Ivy with an settings XML file.
+The `configure` task is used to configure Ivy with a settings XML file.
 
 See link:../settings.html[Settings Files] for details about the settings file itself.
 

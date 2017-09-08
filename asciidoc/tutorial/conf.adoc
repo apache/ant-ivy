@@ -28,16 +28,16 @@ Reference documentation on configurations can be found link:../terminology.html[
 Source code is available in `src/example/configurations/multi-projects`.
 We have two projects:
 
-  - filter-framework is a library that defines an api to filter String arrays and two implementations of this api.
+  - filter-framework is a library that defines an API to filter String arrays and two implementations of this API.
   - myapp is a very small app that uses filter-framework.
 
 The filter-framework library project produces 3 artifacts:
 
-  - the api jar,
+  - the API jar,
   - an implementation jar with no external dependencies,
   - a second implementation jar that needs commons-collections to perform.
 
-The application only needs the api jar to compile and can use either of the two implementations at runtime.
+The application only needs the API jar to compile and can use either of the two implementations at runtime.
 
 
 == The library project
@@ -55,15 +55,15 @@ The first project we'll look at in this tutorial is filter-framework. In order t
 <ivy-module version="1.0">
     <info organisation="org.apache" module="filter-framework"/>
     <configurations>
-    	<conf name="api"  description="only provide filter framework API"/>
-    	<conf name="homemade-impl" extends="api" description="provide a home made implementation of our api"/>
-    	<conf name="cc-impl" extends="api" description="provide an implementation that use apache common collection framework"/>
-    	<conf name="test" extends="cc-impl" visibility="private" description="for testing our framework"/>
+        <conf name="api" description="only provide filter framework API"/>
+        <conf name="homemade-impl" extends="api" description="provide a home made implementation of our API"/>
+        <conf name="cc-impl" extends="api" description="provide an implementation that use apache common collection framework"/>
+        <conf name="test" extends="cc-impl" visibility="private" description="for testing our framework"/>
     </configurations>
     <publications>
-    	<artifact name="filter-api" type="jar"  conf="api" ext="jar"/>
-    	<artifact name="filter-hmimpl" type="jar"  conf="homemade-impl" ext="jar"/>
-    	<artifact name="filter-ccimpl" type="jar"  conf="cc-impl" ext="jar"/>
+        <artifact name="filter-api" type="jar" conf="api" ext="jar"/>
+        <artifact name="filter-hmimpl" type="jar" conf="homemade-impl" ext="jar"/>
+        <artifact name="filter-ccimpl" type="jar" conf="cc-impl" ext="jar"/>
     </publications>
     <dependencies>
         <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="cc-impl->default"/>
@@ -115,9 +115,9 @@ Now that we have shipped (published) our fantastic filter library, we want to us
     <info organisation="org.apache" module="myapp"/>
 
     <configurations>
-       	<conf name="build" visibility="private" description="compilation only need api jar"/>
-    	<conf name="noexternaljar" description="use only company jar"/>
-    	<conf name="withexternaljar" description="use company jar and third party jars"/>
+        <conf name="build" visibility="private" description="compilation only need API jar"/>
+        <conf name="noexternaljar" description="use only company jar"/>
+        <conf name="withexternaljar" description="use company jar and third party jars"/>
     </configurations>
 
     <dependencies>

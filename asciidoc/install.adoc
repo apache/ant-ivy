@@ -28,7 +28,7 @@ If you use Ant 1.6.0 or superior, you can then simply go to the `src/example/hel
 If you use Ant 1.5.1 or superior, you have to modify the build files in the examples:
 
 - remove the namespace section at their head: `xmlns:ivy="antlib:org.apache.ivy.ant"`
-- add taskdefs for ivy tasks:
+- add taskdefs for Ivy tasks:
 
 [source,xml]
 ----

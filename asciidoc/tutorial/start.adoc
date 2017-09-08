@@ -77,14 +77,14 @@ You can use the standard `ant -p` command to get the list of available targets. 
     <!-- =================================
           target: resolve
          ================================= -->
-    <target name="resolve" description="--> retrieve dependencies with ivy">
+    <target name="resolve" description="--> retrieve dependencies with Ivy">
         <ivy:retrieve/>
     </target>
 </project>
 
 ----
 
-As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly link:../install.html[installed] is to define an XML namespace in your Ant file (xmlns:ivy="antlib:org.apache.ivy.ant"`). Then all the link:../ant.html[Ivy Ant tasks] will be available in this namespace.
+As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly link:../install.html[installed] is to define an XML namespace in your Ant file (`xmlns:ivy="antlib:org.apache.ivy.ant"`). Then all the link:../ant.html[Ivy Ant tasks] will be available in this namespace.
 
 Here we use only one task: the link:../use/retrieve.html[retrieve] task. With no attributes, it will use default settings and look for a file named `ivy.xml` for the dependency definitions. That's exactly what we want, so we need nothing more than that.
 

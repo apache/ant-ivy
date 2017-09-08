@@ -21,14 +21,14 @@
 
 *Tag:* conflict-managers
 
-Defines a list of link:../concept.html#conflict[conflicts managers] usable in Ivy. Each conflict manager is identified by its name, given as an attribute.
+Defines a list of link:../concept.html#conflict[conflict managers] usable in Ivy. Each conflict manager is identified by its name, given as an attribute.
 The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in or added with the `typedef` tag).
 
-Here is a list of built-in conflicts managers (which do not require anything in the settings file):
+Here is a list of built-in conflict managers (which do not require anything in the settings file):
 
 
     * all +
-     this conflicts manager resolve conflicts by selecting all revisions. Also called the `NoConflictManager`, it doesn't evict any modules.
+     this conflict manager resolve conflicts by selecting all revisions. Also called the `NoConflictManager`, it doesn't evict any modules.
 
     * latest-time +
      this conflict manager selects only the `latest` revision, latest being defined as the latest in time. Note that latest in time is costly to compute, so prefer latest-revision if you can.
@@ -43,7 +43,7 @@ Here is a list of built-in conflicts managers (which do not require anything in 
      this conflict manager throws an exception (i.e. causes a build failure) whenever a conflict is found.
 
 The two "latest" conflict managers also take into account the force attribute of the dependencies.
-In fact direct dependencies can declare a force attribute (see link:../ivyfile/dependency.html[dependency]), which indicates that the revision given in the direct dependency should be preferred over indirect dependencies.
+In fact, direct dependencies can declare a force attribute (see link:../ivyfile/dependency.html[dependency]), which indicates that the revision given in the direct dependency should be preferred over indirect dependencies.
 
 Here is a list of conflict manager types available, which can be used to define your own custom conflict managers:
 

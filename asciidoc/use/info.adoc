@@ -46,7 +46,7 @@ The information is retrieved by setting Ant properties:
 
 Since Ivy 2.0 this task has been enhanced to allow you to retrieve information about Ivy modules in a repository.  Instead of specifying a local Ivy file you may specify the organisation, module, revision pattern and (optionally) the branch of the Ivy module in the repository you wish to retrieve the information for.
 
-The revision pattern is what is used when declaring a link:../ivyfile/dependency.html[dependency] on a module, identical to how the link:findrevision.html[findrevision] task works.  In fact this task can now be used in place of the findrevision task.
+The revision pattern is what is used when declaring a link:../ivyfile/dependency.html[dependency] on a module, identical to how the link:findrevision.html[findrevision] task works.  In fact, this task can now be used in place of the findrevision task.
 
 If no matching module is found then no property values are set.
 
@@ -81,25 +81,25 @@ Given this `ivy.xml` file:
 [source,xml]
 ----
 <ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="apache"
-	       module="info-all"
-	       branch="trunk"
-	       revision="1.0"
-	       status="release"
-	       e:myextraatt="myvalue"
-	/>
-	<configurations>
-		<conf name="default"/>
-		<conf name="test"/>
-		<conf name="private" visibility="private"/>
-	</configurations>
-	<publications>
-		<artifact name="thing1" type="jar" ext="jar" conf="default" e:data="main"/>
-		<artifact name="thing2" type="jar" ext="jar" conf="default" e:data="client"/>
-	</publications>
-	<dependencies>
-		<dependency org="org1" name="mod1.2" rev="2.0"/>
-	</dependencies>
+    <info organisation="apache"
+          module="info-all"
+          branch="trunk"
+          revision="1.0"
+          status="release"
+          e:myextraatt="myvalue"
+    />
+    <configurations>
+        <conf name="default"/>
+        <conf name="test"/>
+        <conf name="private" visibility="private"/>
+    </configurations>
+    <publications>
+        <artifact name="thing1" type="jar" ext="jar" conf="default" e:data="main"/>
+        <artifact name="thing2" type="jar" ext="jar" conf="default" e:data="client"/>
+    </publications>
+    <dependencies>
+        <dependency org="org1" name="mod1.2" rev="2.0"/>
+    </dependencies>
 </ivy-module>
 ----
 

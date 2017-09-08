@@ -21,13 +21,13 @@ Here are some recommendations and best practices we have gathered throughout our
 
 == Add module descriptors for all your modules
 
-In Ivy world, module descriptors are ivy files, which are basically simple xml files describing both what the module produces as artifacts and its dependencies.
+In Ivy world, module descriptors are Ivy files, which are basically simple XML files describing both what the module produces as artifacts and its dependencies.
 
 It is a good practice to write or download module descriptors for all the modules involved in your development, even for your third party dependencies, and even if they don't provide such module descriptors themselves.
 
-First, it will seem like extra work and require time. But when you have several modules using the same third party library, then you will only need to add one line to your ivy file to get this library and all its own dependencies that you really need (if you have good module descriptors in your repository, especially with the use of module link:concept.html#configurations[configurations]). It will also be very helpful when you want to upgrade a dependency. One single change in your module ivy file and you will get the updated version with its updated (or not) dependencies.
+First, it will seem like extra work and require time. But when you have several modules using the same third party library, then you will only need to add one line to your Ivy file to get this library and all its own dependencies that you really need (if you have good module descriptors in your repository, especially with the use of module link:concept.html#configurations[configurations]). It will also be very helpful when you want to upgrade a dependency. One single change in your module Ivy file and you will get the updated version with its updated (or not) dependencies.
 
-Therefore we recommend adding ivy files for all the modules in your repository. You can even enforce this rule by setting the descriptor attribute to required on your link:settings/resolvers.html[resolvers]. Hence you shouldn't need to use the dependency artifact inclusion/exclusion/specification feature of Ivy, which should only be used in very specific cases.
+Therefore we recommend adding Ivy files for all the modules in your repository. You can even enforce this rule by setting the descriptor attribute to required on your link:settings/resolvers.html[resolvers]. Hence you shouldn't need to use the dependency artifact inclusion/exclusion/specification feature of Ivy, which should only be used in very specific cases.
 
 == Use your own enterprise repository
 
@@ -91,26 +91,26 @@ On the other hand, the main drawback of this solution is that it can produce a l
 
 == Inlining dependencies or not?
 
-With Ivy 1.4 you can resolve a dependency without even writing an ivy file. This practice is called inlining. But what is it good for, and when should it be avoided?
+With Ivy 1.4 you can resolve a dependency without even writing an Ivy file. This practice is called inlining. But what is it good for, and when should it be avoided?
 
-Putting ivy dependencies in a separate file has the following advantages:
+Putting Ivy dependencies in a separate file has the following advantages:
 
 separate revision cycle::
 if your dependencies may change more often than your build, it's a good idea to separate the two, to isolate the two concepts: describing how to build / describing your project dependencies
 
 possibility to publish::
- if you describe dependencies of a module which can itself be reused, you may want to use ant to publish it to a repository. In this case the publication is only possible if you have a separate ivy file
+ if you describe dependencies of a module which can itself be reused, you may want to use ant to publish it to a repository. In this case the publication is only possible if you have a separate Ivy file
 
 more flexible::
-inline dependencies can only be used to express one dependency and only one. An ivy file can be used to express much more complex dependencies
+inline dependencies can only be used to express one dependency and only one. An Ivy file can be used to express much more complex dependencies
 
 On the other hand, using inline dependencies is very useful when:
 
 you want to use a custom task in your ant build::
-Without ivy you usually either copy the custom task jar in ant lib, which requires maintenance of your workstation installation, or use a manual copy or download and a taskdef with the appropriate classpath, which is better. But if you have several custom tasks, or if they have themselves dependencies, it can become cumbersome. Using Ivy with an inline dependency is an elegant way to solve this problem.
+Without Ivy you usually either copy the custom task jar in ant lib, which requires maintenance of your workstation installation, or use a manual copy or download and a taskdef with the appropriate classpath, which is better. But if you have several custom tasks, or if they have themselves dependencies, it can become cumbersome. Using Ivy with an inline dependency is an elegant way to solve this problem.
 
 you want to easily deploy an application::
-If you already build your application and its modules using Ivy, it is really easy to leverage your ivy repository to download your application and all its dependencies on the local filesystem, ready to be executed. If you also put your settings files as artifacts in your repository (maybe packaged as a zip), the whole installation process can rely on Ivy, easing the automatic installation of *any* version of your application available in your repository!
+If you already build your application and its modules using Ivy, it is really easy to leverage your Ivy repository to download your application and all its dependencies on the local filesystem, ready to be executed. If you also put your settings files as artifacts in your repository (maybe packaged as a zip), the whole installation process can rely on Ivy, easing the automatic installation of *any* version of your application available in your repository!
 
 == Hire an expert
 

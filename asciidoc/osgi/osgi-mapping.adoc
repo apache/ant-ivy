@@ -137,7 +137,7 @@ a|
 == OSGi Requirements / Ivy dependencies
 
 
-In OSGi there are different kinds of dependencies, which in an OSGi bundle repository documentation is called a "requirement". The problem is that Ivy understands only one kind of requirement, so we use here some extra attribute to declare those different kinds of dependencies.
+In OSGi there are different kinds of dependencies, which in an OSGi bundle repository documentation is called a "requirement". The problem is that Ivy understands only one kind of requirement, so we use here some extra attributes to declare those different kinds of dependencies.
 
 
 === Require-Bundle

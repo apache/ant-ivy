@@ -64,7 +64,7 @@ Note that when asking for revision 1, you can get a revision 10.0. To avoid that
 |default|the default revision to assume when no revision prefix is asked and no revision is found|No, defaults to 0
 |defaultBuildNumber|the default build number to use for the first revision|No, defaults to 0
 |revSep|the revision separator to use when no matching revision is found, to separate the revision prefix from the build number|No, defaults to `.`
-|prefix|the prefix to use for the property names set (will be `__prefix__.revision, __prefix__.new.revision, ...)|No, defaults to `ivy`
+|prefix|the prefix to use for the property names set (will be `__prefix__.revision`, `__prefix__.new.revision`, ...)|No, defaults to `ivy`
 |settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*.|No, `ivy.instance` is taken by default.
 |resolver|the name of the resolver to use for build number calculation *__(since 2.1)__*|No, all available resolvers will be used by default.
 |=======

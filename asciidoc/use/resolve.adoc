@@ -17,7 +17,7 @@
    under the License.
 ////
 
-The resolve task actually resolve dependencies described in an link:../ivyfile.html[Ivy file], and put the resolved dependencies in the Ivy cache.
+The resolve task actually resolves dependencies described in an link:../ivyfile.html[Ivy file], and puts the resolved dependencies in the Ivy cache.
 If configure has not been called before resolve is called, a default configuration will be used (equivalent to calling configure without attributes).
 
 After the call to this task, four properties are set in Ant:
