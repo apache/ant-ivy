@@ -67,7 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  */
-class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
+public class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
     private static final SimpleDateFormat LAST_MODIFIED_FORMAT = new SimpleDateFormat(
             "EEE, d MMM yyyy HH:mm:ss z", Locale.US);
 
@@ -94,7 +94,7 @@ class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
 
     private final CloseableHttpClient httpClient;
 
-    HttpClientHandler() {
+    public HttpClientHandler() {
         this.httpClient = buildUnderlyingClient();
     }
 
