@@ -29,9 +29,9 @@
 
 This resolver usually uses ibiblio to find artifacts.
 
-*__since 1.3__* Using the `m2compatible` attribute, you can benefit from Maven 2 repository compatibility (convert dots in organisation into slashes, search for POMs, use transitive dependencies of POMs). This setting also affects the default place where the resolver looks for its artifacts to point to the Maven 2 repository. So setting this attribute to `true` is sufficient to use Maven 2 ibiblio repository.
+(*__since 1.3__*) Using the `m2compatible` attribute, you can benefit from Maven 2 repository compatibility (convert dots in organisation into slashes, search for POMs, use transitive dependencies of POMs). This setting also affects the default place where the resolver looks for its artifacts to point to the Maven 2 repository. So setting this attribute to `true` is sufficient to use Maven 2 ibiblio repository.
 
-*__since 1.4__* When using the `m2compatible` flag, you can disable the use of POMs by setting the usepoms flag to `false`. It is then roughly equivalent to a URL resolver configured like this:
+(*__since 1.4__*) When using the `m2compatible` flag, you can disable the use of POMs by setting the usepoms flag to `false`. It is then roughly equivalent to a URL resolver configured like this:
 
 [source, xml]
 ----
@@ -42,7 +42,7 @@ This resolver usually uses ibiblio to find artifacts.
 
 ----
 
-*__since 2.0__* When used in `m2compatible` mode with the default pattern, this resolver uses `maven-metadata.xml` files (if present) to list the revisions available on the repository. This is especially useful when using a Maven specific proxy, which does not serve directory listing. This can be disabled by using the `useMavenMetadata` flag.
+(*__since 2.0__*) When used in `m2compatible` mode with the default pattern, this resolver uses `maven-metadata.xml` files (if present) to list the revisions available on the repository. This is especially useful when using a Maven specific proxy, which does not serve directory listing. This can be disabled by using the `useMavenMetadata` flag.
 
 *Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
 
@@ -56,9 +56,9 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |Attribute|Description|Required
 |root|the root of the artifact repository.|No, defaults to ${ivy.ibiblio.default.artifact.root}
 |pattern|a pattern describing the layout of the artifact repository.|No, defaults to ${ivy.ibiblio.default.artifact.pattern}
-|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise *__since 1.3__*|No, defaults to false
-|usepoms|True if this resolver should use Maven POMs when it is already in m2compatible mode, false otherwise *__since 1.4__*|No, defaults to true
-|useMavenMetadata|True if this resolver should use maven-metadata.xml files to list available revisions, false to use directory listing *__since 2.0__*|No, defaults to true
+|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise (*__since 1.3__*)|No, defaults to false
+|usepoms|True if this resolver should use Maven POMs when it is already in m2compatible mode, false otherwise (*__since 1.4__*)|No, defaults to true
+|useMavenMetadata|True if this resolver should use maven-metadata.xml files to list available revisions, false to use directory listing (*__since 2.0__*)|No, defaults to true
 |=======
 
 

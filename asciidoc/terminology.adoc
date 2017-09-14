@@ -128,7 +128,7 @@ revisions delivered to the public but not actually finished fall in this categor
 `release`::
 a revision fully tested and labelled fall in this category
 
-*__Since 1.4__* This list is link:settings/statuses.html[configurable] in your settings file.
+(*__since 1.4__*) This list is link:settings/statuses.html[configurable] in your settings file.
 
 == [[configurations]]Configurations of a module
 

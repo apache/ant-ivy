@@ -21,7 +21,7 @@
 
 *Tag:* signers
 
-*__since 2.2__*
+[*__since 2.2__*]
 
 Defines a list of detached signature generators usable in Ivy. Each generator is identified by its name, given as an attribute.
 The child tags used to configure the signature generator must be equal to the name of a signature generator type (either built-in or added with the typedef tag).

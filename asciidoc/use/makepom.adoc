@@ -17,14 +17,16 @@
    under the License.
 ////
 
-*__since 2.0__*
+[*__since 2.0__*]
+
 The `makepom` task allows to convert an Ivy file to a POM file.
 
 An example of use is to publish an Ivy managed module to a Maven 2 repository.
 
 _Note that all Ivy features are not supported by Maven POMs, so the converted POM may not resolve to the exact same dependencies as the original Ivy file._
 
-*__since 2.2__*
+[*__since 2.2__*]
+
 It is possible to specify a template file defining the structure of the generated POM. The following processing is done on this template:
 
 * properties like `${property.name}` are replaced if they are defined in Ant or by the `ivy:makepom` task (see below for the standard properties)
@@ -72,14 +74,14 @@ ${ivy.pom.header}
 |Attribute|Description|Required
 |ivyfile|the source Ivy file to convert|Yes
 |pomfile|the destination POM file to write|Yes
-|templatefile|the template file to use when generating the POM *__(since 2.2)__*|No, defaults to the internal template file.
-|artifactName|The name of the artifact which is represented by the generated POM file. *__(since 2.2)__*|No, defaults to the module name in the source Ivy file.
-|artifactPackaging|The packaging of the artifact which is represented by the generated POM file. *__(since 2.2)__*|No, the artifact type is taken by default. Defaults to `pom` if no such artifact is defined.
-|conf|a comma separated list of the configurations to include in the generated POM. Wildcards are supported here. *__(since 2.2)__*|No, defaults to all configurations.
+|templatefile|the template file to use when generating the POM (*__since 2.2__*)|No, defaults to the internal template file.
+|artifactName|The name of the artifact which is represented by the generated POM file. (*__since 2.2__*)|No, defaults to the module name in the source Ivy file.
+|artifactPackaging|The packaging of the artifact which is represented by the generated POM file. (*__since 2.2__*)|No, the artifact type is taken by default. Defaults to `pom` if no such artifact is defined.
+|conf|a comma separated list of the configurations to include in the generated POM. Wildcards are supported here. (*__since 2.2__*)|No, defaults to all configurations.
 |settingsRef|A reference to Ivy settings that must be used by this task|No, defaults to `ivy.instance`.
-|printIvyInfo|Add some information about Ivy to the generated POM. *__(since 2.2)__*|No, defaults to `true`.
+|printIvyInfo|Add some information about Ivy to the generated POM. (*__since 2.2__*)|No, defaults to `true`.
 |headerFile|the header of the generated POM file|No
-|description|The description that will be added to the generated POM. *__(since 2.2)__*|No, defaults to no description or *__(since 2.5)__* to the description in the source Ivy file.
+|description|The description that will be added to the generated POM. (*__since 2.2__*)|No, defaults to no description or (*__since 2.5__*) to the description in the source Ivy file.
 |=======
 
 == Child elements
@@ -96,8 +98,8 @@ These elements takes the following attributes: +
 * `group`: the groupId. Default `organisation` as defined in `info` +
 * `artifact`: the name of the artifact +
 * `version`: the version. Default `revision` as defined in `info` +
-* `type` *__(since 2.3)__*: the type +
-* `classifier` *__(since 2.3)__*: the classifier +
+* `type` (*__since 2.3__*): the type +
+* `classifier` (*__since 2.3__*): the classifier +
 * `scope`: the scope +
 * `optional`: is the artifact optional. Default `false`|0..n
 |=======

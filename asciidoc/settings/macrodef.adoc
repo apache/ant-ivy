@@ -21,7 +21,9 @@
 
 *Tag:* macrodef
 
-Defines a new dependency resolver type based upon another. This definition is very similar to the macrodef feature of Ant for defining macro tasks. *__since 1.3__*
+[*__since 1.3__*]
+
+Defines a new dependency resolver type based upon another. This definition is very similar to the macrodef feature of Ant for defining macro tasks.
 
 This task eases the process of creating a new dependency resolver, because it avoids writing Java code.
 

@@ -24,17 +24,17 @@ Here are some links which might be interesting:
 
 == SAnt
 
-link:http://wiki.hippo.nl/display/OS/SAnt+build+system[SAnt] is an experimental build system based on Ant and Ivy. It can be interesting to use "as is", or to get insight on an interesting approach to manage your builds.
+link:https://web.archive.org/web/20091012101947/https://wiki.onehippo.com/display/OS/SAnt+build+system[SAnt] is an experimental build system based on Ant and Ivy. It can be interesting to use "as is", or to get insight on an interesting approach to manage your builds.
 
 
 == Spring Modules
 
-The link:https://springmodules.dev.java.net/[Spring Modules] project build system is based on Ant and Ivy, and it's really interesting to have a look at how a modularized project can take advantage of advanced Ant and Ivy features to make the build simpler.
+The link:https://web.archive.org/web/20130613141751/https://java.net/projects/springmodules[Spring Modules] project build system is based on Ant and Ivy, and it's really interesting to have a look at how a modularized project can take advantage of advanced Ant and Ivy features to make the build simpler.
 
 
 == Webwork
 
-The link:http://www.opensymphony.com/webwork/[Webwork project] (which became Struts Action framework) uses Ant+Ivy for their build, and thus makes their framework very easy to use in an Ant+Ivy build system. They have a link:http://wiki.opensymphony.com/display/WW/Dependencies[page documenting how to use Ivy with their framework], which can be an interesting reading, even if you don't plan to use Webwork.
+The link:https://web.archive.org/web/20101203144930/http://www.opensymphony.com/webwork/[Webwork project] (which became Struts Action framework) uses Ant+Ivy for their build, and thus makes their framework very easy to use in an Ant+Ivy build system. They have a link:http://wiki.opensymphony.com/display/WW/Dependencies[page documenting how to use Ivy with their framework], which can be an interesting reading, even if you don't plan to use Webwork.
 
 
 == Easing multi-module development

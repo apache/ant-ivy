@@ -95,7 +95,7 @@ usage: ivy
  -version                     displays version information
 ----
 
-*__since 1.3__* System properties are included as Ivy variables, so you can easily define an Ivy variable like this:
+(*__since 1.3__*) System properties are included as Ivy variables, so you can easily define an Ivy variable like this:
 
 [source,shell]
 ----
@@ -122,7 +122,7 @@ calls Ivy with given Ivy settings file using given Ivy file
 
 '''
 
-*__since 1.3__*
+(*__since 1.3__*)
 
 [source,shell]
 ----
@@ -154,7 +154,7 @@ with `ivy.xml` like this:
 
 '''
 
-*__since 1.3__*
+(*__since 1.3__*)
 
 [source,shell]
 ----
@@ -165,7 +165,7 @@ calls Ivy with given Ivy settings file and resolves the dependencies found in th
 
 '''
 
-*__since 1.4__*
+(*__since 1.4__*)
 
 [source,shell]
 ----

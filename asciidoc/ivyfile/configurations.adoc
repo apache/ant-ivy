@@ -21,9 +21,9 @@
 
 A container for configuration elements. If this container is not present, it is assumed that the module has one public configuration called `default`.
 
-*__since 2.2__* You can define the default conf on this container by specifying the `defaultconf` attribute.  This attribute defines the conf mapping to use when no conf mapping is specified for a dependency in this Ivy file.
+(*__since 2.2__*) You can define the default conf on this container by specifying the `defaultconf` attribute.  This attribute defines the conf mapping to use when no conf mapping is specified for a dependency in this Ivy file.
 
-*__since 1.3__* You can define a default conf mapping on this container by specifying the `defaultconfmapping` attribute.
+(*__since 1.3__*) You can define a default conf mapping on this container by specifying the `defaultconfmapping` attribute.
 
 This attribute modifies the way Ivy interprets conf mapping with no mapped conf. In this case, Ivy will look in the default conf mapping and use the conf mapping defined in the default conf mapping for the conf for which there is no mapped conf.
 
@@ -33,16 +33,16 @@ If several `defaultconfmapping` or `defaultconf` attributes are defined (in the 
 
 See link:#defaultconfmapping[examples below] to clarify the behavior of these two attributes together.
 
-*__since 1.4__* You can activate a `confmappingoverride` mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from.
+(*__since 1.4__*) You can activate a `confmappingoverride` mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from.
 
 == Attributes
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|defaultconf|the default conf to use in this Ivy file *__since 2.2__*|No, defaults to no default conf
-|defaultconfmapping|the default conf mapping to use in this Ivy file *__since 1.3__*|No, defaults to no default conf mapping
-|confmappingoverride|`true` to activate configuration mapping override, `false` otherwise *__since 1.4__*|No, defaults to `false`
+|defaultconf|the default conf to use in this Ivy file (*__since 2.2__*)|No, defaults to no default conf
+|defaultconfmapping|the default conf mapping to use in this Ivy file (*__since 1.3__*)|No, defaults to no default conf mapping
+|confmappingoverride|`true` to activate configuration mapping override, `false` otherwise (*__since 1.4__*)|No, defaults to `false`
 |=======
 
 == Child elements

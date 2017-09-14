@@ -21,8 +21,9 @@
 
 *Tag:* caches
 
-Configures the Ivy cache system. *__since 2.0__*.
+[*__since 2.0__*]
 
+Configures the Ivy cache system.
 
 See link:../concept.html#cache[cache concept] for details on the Ivy cache concept.
 

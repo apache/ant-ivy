@@ -17,7 +17,9 @@
    under the License.
 ////
 
-Installs a module and all its dependencies in a resolver. *__since 1.3__*
+[*__since 1.3__*]
+
+Installs a module and all its dependencies in a resolver.
 
 The module to install should be available in a resolver, and will be installed in another resolver which should support publish.
 
@@ -34,17 +36,17 @@ For more details about this task and its usage see the link:../tutorial/build-re
 |to|the name of the resolver in which the module must be installed|Yes
 |organisation|the name of the organisation of the module to install|Yes
 |module|the name of the module to install|Yes
-|branch|the branch of the module to install *__since 2.0__*|No, defaults to default branch with exact matcher, `*` with any other matcher
+|branch|the branch of the module to install (*__since 2.0__*)|No, defaults to default branch with exact matcher, `*` with any other matcher
 |revision|the revision of the module to install|Yes
 |type|the type(s) of artifact(s) to install.  You can give multiple values separated by commas|No, defaults to `*` meaning all types
-|conf|the configurations to install. Only the dependencies of the specified configurations will be installed. *__since 2.3__*|No, defaults to `*` meaning all configurations
+|conf|the configurations to install. Only the dependencies of the specified configurations will be installed. (*__since 2.3__*)|No, defaults to `*` meaning all configurations
 |validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in settings)
 |overwrite|`true` to override modules already present in the destination resolver, `false` otherwise|No, defaults to `false`
 |transitive|`true` to install the module and all its transitive dependencies, `false` to install only the module|No, defaults to `false`
 |matcher|the name of the matcher to use to find the modules to install|No, defaults to `exact`
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
-|haltonfailure|`true` to fail build on unresolved dependencies *__since 2.0__*|No, defaults to `true`
-|installOriginalMetadata|`true` to install original metadata (if available). If the module has been originally resolved from a m2 repository, the original metadata is the original POM file *__since 2.4__*|No, defaults to `false`
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
+|haltonfailure|`true` to fail build on unresolved dependencies (*__since 2.0__*)|No, defaults to `true`
+|installOriginalMetadata|`true` to install original metadata (if available). If the module has been originally resolved from a m2 repository, the original metadata is the original POM file (*__since 2.4__*)|No, defaults to `false`
 |=======
 
 == Examples

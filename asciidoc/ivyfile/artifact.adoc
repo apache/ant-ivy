@@ -28,7 +28,10 @@ The configurations in which an artifact is published can be configured in two wa
 
 The two are equivalent, it is only a matter of preference. However, do not mix both for one artifact.
 
-*__since 1.4__* The artifact element has default values for all its attributes, so if you want to declare a default artifact you can just declare it like that:
+[*__since 1.4__*]
+
+The artifact element has default values for all its attributes, so if you want to declare a default artifact you can just declare it like that:
+
 [source,xml]
 ----
 <artifact/>
@@ -36,11 +39,11 @@ The two are equivalent, it is only a matter of preference. However, do not mix b
 
 If this is the only artifact declared, then it's equivalent to having no publication section at all.
 
-*__since 1.4__* It is possible to give an `url` at which artifacts can be found. This is not mandatory, and even not recommended. This is only a convenient way to deal with an existing repository with a bad layout, but should not be avoided in an enterprise repository.
+It is possible to give an `url` at which artifacts can be found. This is not mandatory, and even not recommended. This is only a convenient way to deal with an existing repository with a bad layout, but should not be avoided in an enterprise repository.
 
-*__since 1.4__* This tag supports link:../concept.html#extra[extra attributes].
+This tag supports link:../concept.html#extra[extra attributes].
 
-*__since 2.4__* This tag supports the 'packaging' attributes; complete documentation can be found in the link:../concept.html#packaging[concept page].
+(*__since 2.4__*) This tag supports the 'packaging' attributes; complete documentation can be found in the link:../concept.html#packaging[concept page].
 
 == Attributes
 
@@ -53,8 +56,8 @@ If this is the only artifact declared, then it's equivalent to having no publica
 |conf|comma separated list of public configurations in which this artifact is published.
 
 `$$*$$` wildcard can be used to designate all public configurations of this module|No, defaults to `defaultconf` attribute value on parent publications element.
-|url|an URL at which this artifact can be found if it isn't located at the standard location in the repository *__since 1.4__*|No, defaults to no URL
-|packaging|a comma separated list of link:../concept.html#packaging[packaging] types *__since 2.4__*|No, defaults to no packaging
+|url|an URL at which this artifact can be found if it isn't located at the standard location in the repository (*__since 1.4__*)|No, defaults to no URL
+|packaging|a comma separated list of link:../concept.html#packaging[packaging] types (*__since 2.4__*)|No, defaults to no packaging
 |=======
 
 == Child elements

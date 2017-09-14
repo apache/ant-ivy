@@ -26,7 +26,9 @@
 |Handle publish|depend on VFS capacity, usually yes
 |=======
 
-This resolver is certainly the most capable, since it relies on link:http://jakarta.apache.org/commons/vfs/[Apache Commons VFS], which gives an uniform access to link:http://jakarta.apache.org/commons/vfs/filesystems.html[a good number of file systems], including FTP, WebDAV, zip, ... *__since 1.4__*
+[*__since 1.4__*]
+
+This resolver is certainly the most capable, since it relies on link:http://jakarta.apache.org/commons/vfs/[Apache Commons VFS], which gives an uniform access to link:http://jakarta.apache.org/commons/vfs/filesystems.html[a good number of file systems], including FTP, WebDAV, zip, ...
 
 
 == Attributes

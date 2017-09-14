@@ -19,7 +19,7 @@
 
 *Tag:* conflicts *Parent:* link:../ivyfile.html[ivy-module]
 
-*__(since 2.0)__* the conflicts section is deprecated.  Use link:../ivyfile/conflict.html[conflict] instead.
+(*__since 2.0__*) The conflicts section is deprecated.  Use link:../ivyfile/conflict.html[conflict] instead.
 
 Container for conflict manager elements, used to indicate how conflicts should be resolved for this module.
 

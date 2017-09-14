@@ -32,8 +32,8 @@ Please prefer the use of retrieve + standard Ant path creation, which make your 
 |conf|a comma separated list of the configurations to take in consideration in the  dependency tree|No. Defaults to the configurations resolved by the last resolve call, or `*` if no resolve was explicitly called
 |haltonfailure|`true` to halt the build on Ivy failure, `false` to continue|No. Defaults to `true`
 |validate|true to force Ivy files validation against ivy.xsd, false to force no validation|No. Defaults to default Ivy value (as configured in settings)
-|settingsRef|A reference to Ivy settings that must be used by this task *(since 2.0)*|No, defaults to `ivy.instance`.
-|overwrite|Overwrite the value of the property if it already exist *(since 2.0)*.  Before 2.0, the properties were always overwritten.|No, `false` by default.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
+|overwrite|Overwrite the value of the property if it already exist (*__since 2.0__*).  Before 2.0, the properties were always overwritten.|No, `false` by default.
 |=======
 
 == Example

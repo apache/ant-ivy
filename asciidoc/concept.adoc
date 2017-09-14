@@ -89,7 +89,7 @@ But here are all the tokens currently available:
 the organisation name
 
 `[orgPath]`::
-*__(since 2.3)__* +
+(*__since 2.3__*) +
 the organisation name where '.' has been replaced by '/'. This can be used to configure Maven 2-like repositories.
 
 `[module]`::
@@ -114,14 +114,14 @@ the artifact file extension
 the configuration name
 
 `[originalname]`::
-*__(since 1.4)__* +
+(*__since 1.4__*) +
 the original artifact name (including the extension)
 
 The difference between type and extension is explained in the Ivy file documentation.
 
-*__since 1.2__* `[organization]` can be used instead of `[organisation]`.
+(*__since 1.2__*) `[organization]` can be used instead of `[organisation]`.
 
-*__since 1.3__* Optional parts can be used in patterns.
+(*__since 1.3__*) Optional parts can be used in patterns.
 
 This provides the possibility to avoid some input when a token is not defined, instead of having only the token as blank. Parenthesis are used to delimit the optional part, and only one token can be found inside the parenthesis.
 
@@ -135,7 +135,7 @@ For instance, suppose the pattern: `abc(def[type]ghi)`
 A more real life example:
 The pattern `[artifact](-[revision]).[ext]` lets you accept both `myartifact-1.0.jar` when a revision is set, and `myartifact.jar` (instead of `myartifact-.jar`) when no revision is set. This is particularly useful when you need to keep control of artifact names.
 
-*__since 1.4__* Extra attributes can be used as any other token in a pattern.
+(*__since 1.4__*) Extra attributes can be used as any other token in a pattern.
 
 == [[latest]]Latest Strategy
 
@@ -174,8 +174,7 @@ For more details on how to setup your conflict managers by module, see the link:
 
 == [[matcher]]Pattern matcher
 
-*__since 1.3__*
-In several places Ivy uses a pattern to match a set of objects. For instance, you can exclude several modules at once when declaring a dependency by using a pattern matching all the modules to exclude.
+(*__since 1.3__*) In several places Ivy uses a pattern to match a set of objects. For instance, you can exclude several modules at once when declaring a dependency by using a pattern matching all the modules to exclude.
 
 Ivy uses a pluggable pattern matcher to match those object names. 3 are defined by default:
 
@@ -192,11 +191,10 @@ Note also that with any matcher, the character '*' has the special meaning of ma
 
 == [[extra]]Extra attributes
 
-*__since 1.4__*
-Several tags in Ivy XML files are extensible with what is called extra attributes.
+(*__since 1.4__*) Several tags in Ivy XML files are extensible with what is called extra attributes.
 The idea is very simple: if you need some more information to define your modules, you can add the attribute you want and you will then be able to access it as any other attribute in your patterns.
 
-*__since 2.0__*
+(*__since 2.0__*)
 It's possible and recommended to use XML namespaces for your extra attributes. Using an Ivy extra namespace is the easiest way to add your own extra attributes.
 
 Example: here is an Ivy file with the attribute `color` set to blue:
@@ -233,7 +231,7 @@ If you don't want to use XML namespaces, it's possible but you will need to disa
 
 == [[checksum]]Checksums
 
-*__since 1.4__*
+(*__since 1.4__*)
 Ivy allows the use of checksums, also known as digests, to verify the correctness of a downloaded file.
 
 The configuration of using the algorithm can be done globally or by dependency resolver.
@@ -251,18 +249,16 @@ If you want to change this default, you can set the variable `ivy.checksums`. He
 
 === Supported algorithms
 
-*__since 1.4__*
+(*__since 1.4__*)
 
 * md5
 * sha1
 
-*__since 2.5__*
-Starting 2.5 version, in addition to md5 and sha1, Ivy supports SHA-256, SHA-512 and SHA-384 algorithms, if the Java runtime in which Ivy is running, supports those. For example, Java 6 runtime supports SHA-256 and SHA-512 as standard algorithms. If Ivy 2.5 and later versions are run under Java 6 or higher runtimes, these algorithms are supported by Ivy too.
+(*__since 2.5__*) In addition to md5 and sha1, Ivy supports SHA-256, SHA-512 and SHA-384 algorithms, if the Java runtime in which Ivy is running, supports those. For example, Java 6 runtime supports SHA-256 and SHA-512 as standard algorithms. If Ivy 2.5 and later versions run in Java 6 or higher runtimes, these algorithms are supported by Ivy too.
 
 == [[event]]Events and Triggers
 
-*__since 1.4__*
-When Ivy performs the dependency resolution and some other tasks, it fires events before and after the most important steps. You can listen to these events using Ivy API, or you can even register a trigger to perform a particular action when a particular event occur.
+(*__since 1.4__*) When Ivy performs the dependency resolution and some other tasks, it fires events before and after the most important steps. You can listen to these events using Ivy API, or you can even register a trigger to perform a particular action when a particular event occur.
 
 This is a particularly powerful and flexible feature which allows, for example, you to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accurately, and so on.
 
@@ -270,10 +266,9 @@ For more details about events and triggers, see the link:settings/triggers.html[
 
 == [[circular]]Circular Dependencies
 
-*__since 1.4__*
-Circular dependencies can be either direct or indirect. For instance, if A depends on A, it's a circular dependency, and if A depends on B which itself depends on A, this is also a circular dependency.
+(*__since 1.4__*) Circular dependencies can be either direct or indirect. For instance, if A depends on A, it's a circular dependency, and if A depends on B which itself depends on A, this is also a circular dependency.
 
-Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy 1.4, the behaviour of Ivy when it finds a circular dependency is configurable through a circular dependency strategy.
+Prior to Ivy 1.4 circular dependencies caused a failure in Ivy. As of Ivy 1.4, the behaviour of Ivy when it finds a circular dependency is configurable through a circular dependency strategy.
 
 3 built-in strategies are available:
 

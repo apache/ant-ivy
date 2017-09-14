@@ -33,7 +33,7 @@ Built path is registered in the Ant project with a given id, and can thus be use
 |pathid|the id to reference the built path|Yes
 |conf|a comma separated list of the configurations to put in the created path|No. Defaults to the configurations resolved by the last resolve call, or `*` if no resolve was explicitly called
 |type|comma separated list of artifact types to accept in the path, `$$*$$` for all (*__since 1.2__*)|No. Defaults to `*`
-|settingsRef|*__(since 2.0)__* A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
+|settingsRef|(*__since 2.0__*) A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
 |=======
 
 == Examples

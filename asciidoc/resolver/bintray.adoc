@@ -26,6 +26,7 @@
 |Handle publish|no
 |=======
 
+[*__since 2.4__*]
 
 This resolver uses Bintray DaaS (Distribution as a Service) platform to retrieve artifacts.
 

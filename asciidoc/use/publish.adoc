@@ -29,8 +29,7 @@ It also publishes the delivered Ivy file (except if you don't want), and even de
 
 image::../images/ivy-publish-fc.png[]
 
-*__since 1.4.1__*
-The source artifact pattern can be specified either as an attribute on the task (artifactspattern) or using a list of nested artifacts element (see examples below).
+(*__since 1.4.1__*) The source artifact pattern can be specified either as an attribute on the task (artifactspattern) or using a list of nested artifacts element (see examples below).
 
 == Attributes
 
@@ -44,21 +43,21 @@ The source artifact pattern can be specified either as an attribute on the task 
 |resolver|the name of the resolver to use for publication|Yes
 |pubrevision|the revision to use for the publication|No. Defaults to the `${ivy.deliver.revision}`
 |pubbranch|the branch to use for the publication|No. Defaults to the `${ivy.deliver.branch}`
-|forcedeliver|`true` to force the implicit call to deliver, `false` to do it only if the Ivy file to publish doesn't exist yet *__(since 1.4)__*|No. Defaults to `false`
+|forcedeliver|`true` to force the implicit call to deliver, `false` to do it only if the Ivy file to publish doesn't exist yet (*__since 1.4__*)|No. Defaults to `false`
 |update|`true` to update Ivy file metadata (revision, branch, publication date and status) before publishing, `false` otherwise. This is usually not necessary when using deliver before publish.|No. Defaults to `false`
-|merge|if this descriptor link:../ivyfile/extends.html[extends] a parent, merge the inherited information directly into this descriptor on publish.  The __extends__ element itself will be commented out in the published descriptor. *__(since 2.2)__*|No. Defaults to false
+|merge|if this descriptor link:../ivyfile/extends.html[extends] a parent, merge the inherited information directly into this descriptor on publish.  The __extends__ element itself will be commented out in the published descriptor. (*__since 2.2__*)|No. Defaults to false
 |validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in link:../settings.html[settings file])
-|replacedynamicrev|`true` to replace dynamic revisions by static ones in the delivered file, `false` to avoid this replacement *__(since 1.3)__*|No. Defaults to `true`
+|replacedynamicrev|`true` to replace dynamic revisions by static ones in the delivered file, `false` to avoid this replacement (*__since 1.3__*)|No. Defaults to `true`
 |publishivy|`true` to publish delivered Ivy file, `false` otherwise|No. Defaults to `true`
-|conf|A comma separated list of configurations to publish  *__(since 1.4.1)__*. Accepts wildcards *__(since 2.2)__*.|No. Defaults to all configurations
+|conf|A comma separated list of configurations to publish (*__since 1.4.1__*). Accepts wildcards (*__since 2.2__*).|No. Defaults to all configurations
 |overwrite|`true` to overwrite files in repository if the revision already exists, `false` to let it as is|No. Defaults to `false`
 |warnonmissing|`true` to warn when artifacts to be published are missing|No. Defaults to `true`
 |haltonmissing|`true` to halt build when artifacts to be published are missing|No. Defaults to `true`
-|srcivypattern|the pattern to use to find Ivy file to publish, and even deliver if necessary *__(since 1.2)__*|No. Defaults to the value of `artifactspattern`
+|srcivypattern|the pattern to use to find Ivy file to publish, and even deliver if necessary (*__since 1.2__*)|No. Defaults to the value of `artifactspattern`
 |pubdate|the publication date to use for the delivery, if necessary. This date should be either `now`, or a date given with the following pattern: `yyyyMMddHHmmss`|No. Defaults to `now`
 |status|the status to use for the delivery, if necessary|No. Defaults to `${ivy.status}`
 |delivertarget|the target to call for recursive delivery|No. No recursive delivery is done by default
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, default to `ivy.instance`.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, default to `ivy.instance`.
 |=======
 
 == Child elements
@@ -66,7 +65,7 @@ The source artifact pattern can be specified either as an attribute on the task 
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|artifact|Describe additional artifacts to publish. These elements can have any attributes: standard artifact attributes and *__(since 2.2)__* extra attributes are supported.|0..n
+|artifact|Describe additional artifacts to publish. These elements can have any attributes: standard artifact attributes and (*__since 2.2__*) extra attributes are supported.|0..n
 |artifacts|Specify the pattern used to find the artifact. These elements have a `pattern` attribute containing the pattern used to find the artifact.|0..n
 |=======
 

@@ -21,7 +21,9 @@
 
 *Tag:* statuses
 
-Defines the list of available statuses. *__since 1.4__*
+[*__since 1.4__*]
+
+Defines the list of available statuses.
 
 By default, Ivy has 3 statuses: `release`, `milestone` and `integration`. By adding a statuses section to your Ivy settings file, you define the statuses you want to use. Note that in this case, if you still want to have Ivy default statuses, you will have to declare them.
 

@@ -29,7 +29,7 @@ Moreover, all included configurations' files are included in the Ivy file, and v
 
 Finally, in the resolved Ivy file, dynamic revisions are replaced by the static ones that have been found during the resolve step, so the Ivy file can be used later safely to obtain the same dependencies (providing that a revision uniquely identifies a module, which should be the case for proper Ivy use).
 
-*__since 1.3__* The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the Ivy file. This is an exception to the recommended standard that published module descriptors be fully resolved, so use it with caution.
+(*__since 1.3__*) The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the Ivy file. This is an exception to the recommended standard that published module descriptors be fully resolved, so use it with caution.
 
 == Recursive delivery
 
@@ -82,12 +82,12 @@ It can also be useful if you want to trigger a recursive delivery and then ensur
 |status|the status to use for the publication|No. Defaults to `${ivy.status}`
 |delivertarget|the target to call for recursive delivery|No. No recursive delivery is done by default
 |validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in settings)
-|replacedynamicrev|`true` to replace dynamic revisions by static ones in the delivered file, `false` to avoid this replacement *__(since 1.3)__*|No. Defaults to `true`
-|replaceForcedRev|`true` to replace revisions (static or dynamic) by the revision of the resolver in link:../settings/resolvers.html#common[forced mode], `false` to avoid this replacement *__(since 2.2)__*|No. Defaults to `false`
-|merge|if a descriptor link:../ivyfile/extends.html[extends] a parent, merge the inherited information directly into the delivered descriptor.  The `extends` element itself will be commented out in the delivered descriptor. *__(since 2.2)__*|No. Defaults to `true`.
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No. Defaults to `ivy.instance`.
-|conf|comma-separated list of configurations to include in the delivered file. Accepts wildcards. *__(since 2.0)__*|No. Defaults to all configurations
-|generateRevConstraint|`true` to automatically generate a `revConstraint` attribute in the delivered file (see the link:../ivyfile/dependency.html[dependency] page for more info about this attribute), `false` to never generate this attribute *__(since 2.1)__*|No. Defaults to `true`
+|replacedynamicrev|`true` to replace dynamic revisions by static ones in the delivered file, `false` to avoid this replacement (*__since 1.3__*)|No. Defaults to `true`
+|replaceForcedRev|`true` to replace revisions (static or dynamic) by the revision of the resolver in link:../settings/resolvers.html#common[forced mode], `false` to avoid this replacement (*__since 2.2__*)|No. Defaults to `false`
+|merge|if a descriptor link:../ivyfile/extends.html[extends] a parent, merge the inherited information directly into the delivered descriptor.  The `extends` element itself will be commented out in the delivered descriptor. (*__since 2.2__*)|No. Defaults to `true`.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No. Defaults to `ivy.instance`.
+|conf|comma-separated list of configurations to include in the delivered file. Accepts wildcards. (*__since 2.0__*)|No. Defaults to all configurations
+|generateRevConstraint|`true` to automatically generate a `revConstraint` attribute in the delivered file (see the link:../ivyfile/dependency.html[dependency] page for more info about this attribute), `false` to never generate this attribute (*__since 2.1__*)|No. Defaults to `true`
 |=======
 
 == Example

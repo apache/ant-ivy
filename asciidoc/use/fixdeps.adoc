@@ -17,7 +17,8 @@
    under the License.
 ////
 
-*__since 2.4__*
+[*__since 2.4__*]
+
 The `fixdeps` task serializes transitively resolved dependencies into an `ivy.xml` file.
 
 The dependencies declared in an `ivy.xml` can be specified as range of revisions. And the transitive dependencies too. As new versions of modules can be added to the repository anytime, resolved versions of ranges can change over time. It is then safer to resolve a range once and stick with the resolved revision. This way a resolve process is highly reproducible.

@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*__(since 2.0)__*
+[*__since 2.0__*]
 
 The settings declaration is used to configure Ivy with a settings XML file. The difference with the link:../use/configure.html[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance, when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
 

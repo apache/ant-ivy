@@ -27,7 +27,7 @@
 |=======
 
 
-*__since 2.3__*
+[*__since 2.3__*]
 
 This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies. A part of the OSGi specification defines OBR (OSGi Bundle Repository). OBR aggregates the OSGi metadata of every bundle included in a repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
 
@@ -53,7 +53,6 @@ The requirement strategy is defining how the resolver should behave when facing 
     * if the requirement strategy is `first`, among the bundles satisfying the requirement, it will choose the first one. A warning will be logged about the choice Ivy has to arbitrarily do. +
 
     * if the requirement strategy is `noambiguity`, Ivy will make the resolution fail. +
-
 
 
 == Examples

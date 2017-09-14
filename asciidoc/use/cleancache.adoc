@@ -17,7 +17,8 @@
    under the License.
 ////
 
-*__since 2.0__*
+[*__since 2.0__*]
+
 Cleans the Ivy cache.
 
 This task is roughly equivalent to:

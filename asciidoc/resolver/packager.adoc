@@ -27,7 +27,7 @@
 |=======
 
 
-*__Since 2.0__*.
+(*__since 2.0__*)
 
 This resolver accesses Ivy files and "packaging instructions" from an online "packager" repository. "Packager" repositories contain no actual artifacts. To get the artifacts, the packaging instructions are downloaded from the repository and executed locally. These instructions specify additional resource(s) to download and how to create the artifacts from them, for example, by downloading a project's original distribution archive directly from their web site and extracting the desired artifacts.
 

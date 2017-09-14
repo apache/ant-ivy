@@ -21,7 +21,7 @@
 
 Gives identification and basic information about the module this Ivy file describes.
 
-*__since 1.4__* This tag supports link:../concept.html#extra[extra attributes].
+(*__since 1.4__*) This tag supports link:../concept.html#extra[extra attributes].
 
 == Attributes
 
@@ -30,7 +30,7 @@ Gives identification and basic information about the module this Ivy file descri
 |Attribute|Description|Required
 |organisation|the name of the organisation that is the owner of this module.|Yes
 |module|the name of the module described by this Ivy file.|Yes
-|branch|the branch of this module. *__since 1.4__*|No, defaults to the default branch setting, or nothing if no default branch is configured
+|branch|the branch of this module. (*__since 1.4__*)|No, defaults to the default branch setting, or nothing if no default branch is configured
 |revision|the revision of this module.|Yes in repository Ivy files, no in Ivy files to resolve
 |status|the status of this module. See link:../reference.html[terminology] section for details|No, default to `integration`
 |publication|the date of publication of this module. It should be given in this format: `yyyyMMddHHmmss`|No, but it's a good practice to set it with delivered Ivy files

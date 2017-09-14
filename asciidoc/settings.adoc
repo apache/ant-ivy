@@ -63,7 +63,7 @@ Some useful variables are available for use in settings files:
  the URL pointing to the settings file. This is set both when it has been loaded as a file or a URL.
 
 
-*__since 1.4__* Note that all link:https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#getProperties()[Java system properties] are available as Ivy variables in your settings file.
+(*__since 1.4__*) Note that all link:https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#getProperties()[Java system properties] are available as Ivy variables in your settings file.
 
 
 == Settings file structure

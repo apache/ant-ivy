@@ -21,14 +21,14 @@ The `retrieve` task copies resolved dependencies anywhere you want in your file 
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-*__since 1.4__* This task can even be used to synchronize the destination directory with what should actually be in according to the dependency resolution. This means that by setting `sync="true"`, Ivy will not only copy the necessary files, but it will also remove the files which do not need to be there.
+(*__since 1.4__*) This task can even be used to synchronize the destination directory with what should actually be in according to the dependency resolution. This means that by setting `sync="true"`, Ivy will not only copy the necessary files, but it will also remove the files which do not need to be there.
 
 The synchronisation actually consists in deleting all filles and directories in the root destination directory which are not required by the retrieve.
 
 The root destination directory is the the directory denoted by the first level up the first token in the destination pattern.
 For instance, for the pattern `lib/[conf]/[artifact].[ext]`, the root will be `lib`.
 
-*__since 2.3__* A nested link:http://ant.apache.org/manual/Types/mapper.html[mapper] element can be used to specify more complex filename transformations of the retrieved files. See the examples below.
+(*__since 2.3__*) A nested link:http://ant.apache.org/manual/Types/mapper.html[mapper] element can be used to specify more complex filename transformations of the retrieved files. See the examples below.
 
 == Attributes
 
@@ -36,11 +36,11 @@ For instance, for the pattern `lib/[conf]/[artifact].[ext]`, the root will be `l
 |=======
 |Attribute|Description|Required
 |pattern|the pattern to use to copy the dependencies|No. Defaults to `${ivy.retrieve.pattern}`
-|ivypattern|the pattern to use to copy the Ivy files of dependencies *__since 1.3__*|No. Dependency Ivy files are not retrieved by default.
+|ivypattern|the pattern to use to copy the Ivy files of dependencies (*__since 1.3__*)|No. Dependency Ivy files are not retrieved by default.
 |conf|a comma separated list of the configurations to retrieve|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
-|sync|`true` to synchronize the destination, false to just make a copy *__since 1.4__*|No. Defaults to `false`
-|type|comma separated list of accepted artifact types *__since 1.4__*|No. All artifact types are accepted by default.
-|overwriteMode|option to configure when the destination file should be overwritten if it exists *__(since 2.2)__*.
+|sync|`true` to synchronize the destination, false to just make a copy (*__since 1.4__*)|No. Defaults to `false`
+|type|comma separated list of accepted artifact types (*__since 1.4__*)|No. All artifact types are accepted by default.
+|overwriteMode|option to configure when the destination file should be overwritten if it exists (*__since 2.2__*).
 
 Possible values are: +
 * `newer`: overwrite the destination file if a more recent one is available (based on timestamp) +
@@ -48,22 +48,19 @@ Possible values are: +
 * `always`: always overwrite the destination file +
 * `never`: never overwrite the destination file +
 |No. Defaults to `newer`.
-|symlink|`true` to create symbolic links, `false` to copy the artifacts.
-    The destination of the symbolic links depends on the value of the `useOrigin` attribute. +
-    The implementation of this task relies on Java standard `Files.createSymbolicLink` API and depending on whether or not the underlying
-    filesystem supports symbolic links, creation of such symbolic links may or may not work. +
-    If this option is set to `true` and symbolic link creation fails, then the retrieve task will attempt to do a regular copy of the artifact which failed symlink creation.
-    *__(since 2.0)__*|No. Defaults to `false`
-|symlinkmass| *__Deprecated since 2.5__* This option is no longer supported or relevant.|No. Defaults to `false`
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults ot `ivy.instance`.
-|log|the log setting to use during the resolve and retrieve process. *__(since 2.0)__*
+|symlink|`true` to create symbolic links, `false` to copy the artifacts. The destination of the symbolic links depends on the value of the `useOrigin` attribute. +
+The implementation of this task relies on Java standard `Files.createSymbolicLink` API and depending on whether or not the underlying filesystem supports symbolic links, creation of such symbolic links may or may not work. +
+If this option is set to `true` and symbolic link creation fails, then the retrieve task will attempt to do a regular copy of the artifact which failed symlink creation. (*__since 2.0__*)|No. Defaults to `false`
+|[line-through]#symlinkmass#| *__Deprecated since 2.5__* This option is no longer supported or relevant.|No. Defaults to `false`
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults ot `ivy.instance`.
+|log|the log setting to use during the resolve and retrieve process. (*__since 2.0__*)
 
 Available options are the same as for link:../use/resolve.html[resolve] when used to trigger resolve automatically (see link:../use/postresolvetask.html[postresolvetask]), or the following for the retrieve process only: +
 * `default`: the default log settings, where all usual messages are output to the console +
 * `quiet`: disable all usual messages, making the whole retrieve process quiet unless errors occur
 |No, defaults to `default`.
-|pathId|the id of the path to create containing the retrieved artifacts. *__since 2.3__*|No. No path is created by default.
-|setId|the id of the fileset to create containing the retrieved artifacts. *__since 2.3__*|No. No fileset is created by default.
+|pathId|the id of the path to create containing the retrieved artifacts. (*__since 2.3__*)|No. No path is created by default.
+|setId|the id of the fileset to create containing the retrieved artifacts. (*__since 2.3__*)|No. No fileset is created by default.
 |=======
 
 == Examples

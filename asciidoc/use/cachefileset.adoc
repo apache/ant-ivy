@@ -17,7 +17,9 @@
    under the License.
 ////
 
-Constructs an Ant `fileset` consisting of artifacts in Ivy's cache for a configuration (*__since 1.2__*).
+[*__since 1.2__*]
+
+Constructs an Ant `fileset` consisting of artifacts in Ivy's cache for a configuration.
 
 This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks. Note that this task
 does not rely on retrieve, because the built fileset is made of artifacts directly in Ivy's cache.
@@ -43,5 +45,5 @@ If `cachefileset` doesn't fit the need of your use case (maybe due to the limita
 |setid|the id to reference the built fileset|Yes
 |conf|a comma separated list of the configurations to put in the created path|No. Defaults to the configurations resolved by the last resolve call, or `*` if no resolve was explicitly called
 |type|comma separated list of artifact types to accept in the path, `*` for all|No. Defaults to `*`
-|settingsRef|*__(since 2.0)__* A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
+|settingsRef|(*__since 2.0__*) A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
 |=======

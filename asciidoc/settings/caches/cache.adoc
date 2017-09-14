@@ -21,7 +21,7 @@
 
 *Tag:* cache
 
-*__Since 2.0__*.
+[*__since 2.0__*]
 
 Defines a repository cache instance based on the default repository cache implementation.
 

@@ -25,7 +25,7 @@ Defines a list of dependency resolvers usable in Ivy. Each dependency resolver i
 
 The child tag used for the dependency resolver must be equal to a name of a dependency resolver type (either built-in or added with the typedef tag).
 
-*__since 1.3__* Once defined, resolvers can be referenced by their name, using the following syntax:
+(*__since 1.3__*) Once defined, resolvers can be referenced by their name, using the following syntax:
 
 [source, xml]
 ----
@@ -101,12 +101,11 @@ The `checksums` attribute is used to define the list of checksums files to use t
 
 Any standard resolver can be used in `force` mode, which is used mainly to handle local development builds. In force mode, the resolver attempts to find a dependency whatever the requested revision is (internally it replace the requested revision by `latest.integration`), and if it finds one, it forces this revision to be returned, even when used in a chain with `returnFirst=false`.
 
-By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules `A` and `C`, where `A -> B -> C`, and pick up the local build for `C` without having to publish a local version of `B`.
-*__since 2.0__*
+By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules `A` and `C`, where `A -> B -> C`, and pick up the local build for `C` without having to publish a local version of `B`. (*__since 2.0__*)
 
 ==== timeoutConstraint
 
-*__since 2.5__*
+[*__since 2.5__*]
 
 All standard resolvers support the `timeoutConstraint` attribute. The value for this attribute is the name of the link:timeout-constraint.html[timeout-constraint] that's been defined in the Ivy settings.
 
@@ -114,36 +113,33 @@ Resolvers can be optionally configured to use a `timeoutConstraint` so that the 
 
 ==== Maven
 
-
 Any resolver which is able to parse a Maven pom.xml file has to detect the related sources or javadocs artifacts. This often involves several network connections even if neither the sources nor the javadoc are requested to be downloaded.
 
-*__since 2.5__* Setting the property `ivy.maven.lookup.sources` to `false` disables the lookup of the sources artifact.
+(*__since 2.5__*) Setting the property `ivy.maven.lookup.sources` to `false` disables the lookup of the sources artifact.
 And setting the property `ivy.maven.lookup.javadoc` to `false` disables the lookup of the javadoc artifact.
 
-
 === Attributes
-
 
 [options="header",cols="15%,50%,12%,12%,12%"]
 |=======
 |Attribute|Description|Required|Composite|Standard
 |name|the name which identifies the resolver|Yes|Yes|Yes
 |validate|indicates if resolved Ivy files should be validated against Ivy XSD|No, defaults to call setting|Yes|Yes
-|force|Indicates if this resolver should be used in force mode (see above). *__since 2.0__*|No, defaults to false|No|Yes
+|force|Indicates if this resolver should be used in force mode (see above). (*__since 2.0__*)|No, defaults to false|No|Yes
 |checkmodified|Indicates if this resolver should check lastmodified date to know if an Ivy file is up to date.|No, defaults to ${ivy.resolver.default.check.modified}|No|Yes
-|changingPattern|Indicates for which revision pattern this resolver should check lastmodified date to know if an artifact file is up to date. *__since 1.4__*. See link:../concept.html#change[cache and change management] for details.|No, defaults to none|Yes|Yes
-|changingMatcher|The name of the link:../concept.html#matcher[pattern matcher] to use to match a revision against the configured changingPattern. *__since 1.4__*. See link:../concept.html#change[cache and change management] for details.|No, defaults to exactOrRegexp|Yes|Yes
-|alwaysCheckExactRevision|Indicates if this resolver should check the given revision even if it's a special one (like latest.integration). *__since 1.3__*|No, defaults to ${ivy.default.always.check.exact.revision}|No|Yes
-|namespace|The name of the namespace to which this resolver belongs *__since 1.3__*|No, defaults to 'system'|Yes|Yes
-|checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check *__since 1.3__*|No, defaults to true|No|Yes
-|descriptor|'optional' if a module descriptor (usually an Ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor *__since 2.0__*|No, defaults to 'optional'|No (except dual)|Yes
-|allownomd|__Deprecated. Use descriptor="required \| optional" instead.__
-    true if the absence of module descriptor (usually an Ivy file) is authorised for this resolver, false to refuse modules without module descriptor *__since 1.4__*|No, defaults to true|No (except dual)|Yes
-|checksums|a comma separated list of link:../concept.html#checksum[checksum algorithms] to use both for publication and checking *__since 1.4__*|No, defaults to ${ivy.checksums}|No|Yes
+|changingPattern|Indicates for which revision pattern this resolver should check lastmodified date to know if an artifact file is up to date (*__since 1.4__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to none|Yes|Yes
+|changingMatcher|The name of the link:../concept.html#matcher[pattern matcher] to use to match a revision against the configured changingPattern (*__since 1.4__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to exactOrRegexp|Yes|Yes
+|alwaysCheckExactRevision|Indicates if this resolver should check the given revision even if it's a special one (like latest.integration) (*__since 1.3__*).|No, defaults to ${ivy.default.always.check.exact.revision}|No|Yes
+|namespace|The name of the namespace to which this resolver belongs (*__since 1.3__*)|No, defaults to 'system'|Yes|Yes
+|checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check (*__since 1.3__*)|No, defaults to true|No|Yes
+|descriptor|'optional' if a module descriptor (usually an Ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor (*__since 2.0__*)|No, defaults to 'optional'|No (except dual)|Yes
+|[line-through]#allownomd#|__Deprecated. Use descriptor="required \| optional" instead.__
+true if the absence of module descriptor (usually an Ivy file) is authorised for this resolver, false to refuse modules without module descriptor (*__since 1.4__*)|No, defaults to true|No (except dual)|Yes
+|checksums|a comma separated list of link:../concept.html#checksum[checksum algorithms] to use both for publication and checking (*__since 1.4__*)|No, defaults to ${ivy.checksums}|No|Yes
 |latest|The name of the latest strategy to use.|No, defaults to 'default'|Yes|Yes
 |cache|The name of the cache manager to use.|No, defaults to the value of the default attribute of caches|No|Yes
-|signer|The name of the link:../settings/signers.html[detached signature generator] to use when publishing artifacts. *__(since 2.2)__*|No, by default published artifacts will not get signed by Ivy.|No|Yes
-|timeoutConstraint|The name of the link:timeout-constraint.html[timeout-constraint] to use for the resolver. *__(since 2.5)__*|No. In the absence of a `timeoutConstraint`, the resolver's behaviour with timeouts is implementation specific.|No|Yes
+|signer|The name of the link:../settings/signers.html[detached signature generator] to use when publishing artifacts. (*__since 2.2__*)|No, by default published artifacts will not get signed by Ivy.|No|Yes
+|timeoutConstraint|The name of the link:timeout-constraint.html[timeout-constraint] to use for the resolver. (*__since 2.5__*)|No. In the absence of a `timeoutConstraint`, the resolver's behaviour with timeouts is implementation specific.|No|Yes
 |=======
 
 

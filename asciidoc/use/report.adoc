@@ -26,7 +26,7 @@ If you want to have an idea of what reports look like, check this very simple li
 The task also generates a GraphML file which can be loaded with the free link:http://www.yworks.com/en/products_yed_about.htm[yEd] graph editor.
 Then following a few link:../yed.html[simple steps] you can obtain a graph like this link:../samples/jayasoft-ivyrep-example-default.jpg[one].
 
-*__since 1.4__* If a custom XSLT is specified, it's possible to specify additional parameters to the stylesheet.
+(*__since 1.4__*) If a custom XSLT is specified, it's possible to specify additional parameters to the stylesheet.
 
 == Attributes
 
@@ -35,17 +35,17 @@ Then following a few link:../yed.html[simple steps] you can obtain a graph like 
 |Attribute|Description|Required
 |todir|the directory to which reports should be generated|No, defaults to `${ivy.report.todir}`, or execution directory if not defined
 |outputpattern|the generated report names pattern|No, defaults to `${ivy.report.output.pattern}`, or `[organisation]-[module]-[conf].[ext]` if not defined
-|xsl|`true` to generate a report (by default html report) using xslt, `false` otherwise *__since 1.3__*|No, defaults to `true`
-|xml|`true` to generate an XML report, `false` otherwise *__since 1.3__*|No, defaults to `false`
+|xsl|`true` to generate a report (by default html report) using xslt, `false` otherwise (*__since 1.3__*)|No, defaults to `true`
+|xml|`true` to generate an XML report, `false` otherwise (*__since 1.3__*)|No, defaults to `false`
 |graph|`true` to generate GraphML files, `false` otherwise|No, defaults to `true`
-|dot|`true` to generate link:http://www.graphviz.org/[Graphviz DOT] files, `false` otherwise *__since 1.4__*|No, defaults to `false`
+|dot|`true` to generate link:http://www.graphviz.org/[Graphviz DOT] files, `false` otherwise (*__since 1.4__*)|No, defaults to `false`
 |conf|a comma separated list of the configurations for which a report should be generated|No. Defaults to the configurations resolved by the last resolve call (during same Ant build), or `${ivy.resolved.configurations}` if no resolve was called
 |organisation|the name of the organisation of the module for which report should be generated|No, unless resolveId has not been specified and no resolve was called during the build. Defaults to last resolved module organisation.
 |module|the name of the module for which report should be generated|No, unless resolveId has not been specified and no resolve was called during the build. Defaults to last resolved module.
 |validate|true to force Ivy files validation against ivy.xsd, false to force no validation|No. Defaults to default Ivy value (as configured in settings)
 |xslfile|indicates which xsl file should be used to generate the report|No, defaults to Ivy provided xsl which generates html report
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
-|resolveId|The id which was used for a previous resolve *__(since 2.0)__*|No, defaults to `[org]-[module]`.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
+|resolveId|The id which was used for a previous resolve (*__since 2.0__*)|No, defaults to `[org]-[module]`.
 |=======
 
 == Examples

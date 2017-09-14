@@ -28,7 +28,7 @@ For the first tutorial you won't even have to install Ivy (assuming you have Ant
 
     * Make sure you have link:http://ant.apache.org/[Ant] 1.9.9 or greater and a link:https://www.java.com/en/download/[Java JDK] properly installed +
 
-    * Copy link:samples/build.xml[this build file] in an empty directory on your local filesystem (and make sure you name it `build.xml`) +
+    * Copy link:samples/build.xml[this build file] to an empty directory on your local filesystem (and make sure you name it `build.xml`) +
 
     * Open a console in that directory and run the command: `ant`. That's it! +
 

@@ -17,18 +17,19 @@
    under the License.
 ////
 
-*__since 1.1__*
+[*__since 1.1__*]
+
 Sets an Ant property for each dependency artifact previously resolved.
 
-*__since 2.0__* This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+(*__since 2.0__*) This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 Please prefer the use of retrieve + standard Ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
 
 The property name and value are generated using the classical pattern concept, all artifact tokens and Ivy variables being available.
 
-*__since 2.0__* This tag will follow the Ant usual behavior for properties.  If a property with the same name already exists, its value will be unchanged.  This behavior can be changed using the `overwrite` attribute.
+(*__since 2.0__*) This tag will follow the Ant usual behavior for properties. If a property with the same name already exists, its value will be unchanged. This behavior can be changed using the `overwrite` attribute.
 
-_WARNING_: Before 2.0, the behavior was to overwrite the properties.  Since 2.0, the default is to not overwrite to properties
+_WARNING_: Before 2.0, the behavior was to overwrite the properties. Since 2.0, the default is to not overwrite to properties
 
 == Attributes
 
@@ -40,8 +41,8 @@ _WARNING_: Before 2.0, the behavior was to overwrite the properties.  Since 2.0,
 |conf|a comma separated list of the configurations for which properties should be set|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
 |haltonfailure|`true` to halt the build on Ivy failure, `false` to continue|No. Defaults to `true`
 |validate|`true` to force validation of Ivy files against ivy.xsd, `false` to skip validation|No. Defaults to default Ivy value (as configured in settings file)
-|settingsRef|A reference to Ivy settings that must be used by this task *(since 2.0)*|No, `ivy.instance` is taken by default.
-|overwrite|Overwrite the value of the property if it already exists *(since 2.0)*.  Before 2.0, the properties were always overwritten.|No, `false` by default.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, `ivy.instance` is taken by default.
+|overwrite|Overwrite the value of the property if it already exists (*__since 2.0__*). Before 2.0, the properties were always overwritten.|No, `false` by default.
 |=======
 
 == Example

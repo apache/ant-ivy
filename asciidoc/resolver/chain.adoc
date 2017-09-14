@@ -37,7 +37,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |=======
 |Attribute|Description|Required
 |returnFirst|true if the first found should be returned.|No, defaults to false
-|dual|true if the chain should behave like a dual chain. *__since 1.3__*|No, defaults to false
+|dual|true if the chain should behave like a dual chain. (*__since 1.3__*)|No, defaults to false
 |=======
 
 

@@ -23,7 +23,7 @@
 
 Defines an Ivy variable.
 
-*__since 1.3__*: The optional override attribute enables you to avoid overriding the previous value of the variable, which makes the definition to behave like an Ant property, which is particularly useful to define default values (values which are used only if they haven't been defined yet).
+(*__since 1.3__*) The optional override attribute enables you to avoid overriding the previous value of the variable, which makes the definition to behave like an Ant property, which is particularly useful to define default values (values which are used only if they haven't been defined yet).
 
 == Attributes
 
@@ -34,8 +34,8 @@ Defines an Ivy variable.
 |name|the name of the variable to define|Yes
 |value|the new value the variable must take|Yes
 |override|true if the previous value (if any) of the variable should overridden, false otherwise|No, defaults to true
-|ifset|the variable will be set only if the provided 'ifset' variable is already set (Since 2.4)|No
-|unlessset|the variable will not be set unless the provided 'unlessset' variable is set (Since 2.4)|No
+|ifset|the variable will be set only if the provided 'ifset' variable is already set (*__since 2.4__*)|No
+|unlessset|the variable will not be set unless the provided 'unlessset' variable is set (*__since 2.4__*)|No
 |=======
 
 

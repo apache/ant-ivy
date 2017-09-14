@@ -27,7 +27,7 @@
 |=======
 
 
-*__since 2.4__*
+[*__since 2.4__*]
 
 This resolver is one of the resolvers which support link:../osgi.html[OSGi&#153;] dependencies.
 

@@ -27,7 +27,7 @@
 |=======
 
 
-*__since 2.3__*
+[*__since 2.3__*]
 
 This resolver is one of the resolvers which support link:../osgi.html[OSGi&#153;] dependencies.
 It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.

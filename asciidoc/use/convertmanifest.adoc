@@ -17,7 +17,9 @@
    under the License.
 ////
 
-*__since 2.3__* Convert a `MANIFEST.MF` into an `ivy.ml` file
+[*__since 2.3__*]
+
+Convert a `MANIFEST.MF` into an `ivy.ml` file
 
 == Attributes
 

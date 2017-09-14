@@ -19,7 +19,9 @@
 
 *Tag:* include *Parent:* link:../ivyfile/configurations.html[configurations]
 
-Include configurations specified in another file. *__since 1.3__*
+[*__since 1.3__*]
+
+Include configurations specified in another file.
 
 The included file should have a `configurations` tag as root tag, which follow the same specification as the link:../ivyfile/configurations.html[configurations] tag of the Ivy file.
 

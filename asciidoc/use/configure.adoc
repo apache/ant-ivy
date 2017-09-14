@@ -21,9 +21,11 @@ The `configure` task is used to configure Ivy with a settings XML file.
 
 See link:../settings.html[Settings Files] for details about the settings file itself.
 
-*__since 2.0__* The file loaded used to be called __configuration__ file in versions prior to 2.0. The name __settings__ and the use of the `ivy.settings.file` is new to 2.0.
+[*__since 2.0__*]
 
-*__since 2.0__* It is also possible to configure Ivy with the link:../use/settings.html[settings] declaration. The difference with this task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance, when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
+The file loaded used to be called __configuration__ file in versions prior to 2.0. The name __settings__ and the use of the `ivy.settings.file` is new to 2.0.
+
+It is also possible to configure Ivy with the link:../use/settings.html[settings] declaration. The difference with this task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance, when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
 
 == Attributes
 
@@ -32,7 +34,7 @@ See link:../settings.html[Settings Files] for details about the settings file it
 |Attribute|Description|Required
 |settingsId|The settings id usable in the `settingsRef` attributes of the Ivy task that needs a setting.|No, defaults to `ivy.instance`
 |file|path to the settings file to use
-.2+|No. If a file is provided, URL is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses `${ivy.settings.url}` *__(since 2.3)__* or a link:../samples/ivysettings-default.xml[default settings file]
+.2+|No. If a file is provided, URL is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses `${ivy.settings.url}` (*__since 2.3__*) or a link:../samples/ivysettings-default.xml[default settings file]
 |url|URL of the settings file to use
 |override|Specify what to do when another settings with the same id has already been loaded. +
 * `true`: the current settings will take precedence over any previously defined setting with this id +
@@ -49,8 +51,7 @@ See link:../settings.html[Settings Files] for details about the settings file it
 
 If any of the URLs you use in Ivy (especially in dependency resolvers) needs HTTP authentication, then you have to provide the `host`, `realm`, `username` and `passwd` attributes of the configure task. These settings will then be used in any further call to Ivy tasks.
 
-*Since 1.4:*
-It's also possible to configure authentication settings for multiple URLs. This can be done with the `<credentials>` subelements. See the examples for more details.
+(*__since 1.4__*) It's also possible to configure authentication settings for multiple URLs. This can be done with the `<credentials>` subelements. See the examples for more details.
 
 == Examples
 

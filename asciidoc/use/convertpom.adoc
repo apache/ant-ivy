@@ -17,7 +17,9 @@
    under the License.
 ////
 
-*__since 2.1__* Convert `pom.xml` into an `ivy.xml`
+[*__since 2.1__*]
+
+Convert `pom.xml` into an `ivy.xml`
 
 == Attributes
 

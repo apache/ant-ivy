@@ -44,9 +44,9 @@ So if there is a setting in the resolver, it always wins against all other setti
 |defaultResolver|the name of the default resolver to use|No, but all modules should be configured in the modules section if not provided
 |defaultLatestStrategy|the name of the default latest strategy to use|No, defaults to latest-revision
 |defaultConflictManager|the name of the default conflict manager to use|No, defaults to latest-revision
-|defaultBranch|the default branch to use for all modules, except if they have a link:../settings/module.html[module specific branch setting]. *__since 1.4__*|No, defaults to no default branch
-|defaultResolveMode|the default link:../use/resolve.html[resolve mode] to use for all modules, except if they have a link:../settings/module.html[module specific resolve mode setting]. *__since 2.0__*|No, defaults to 'default'
-|[[circularDependencyStrategy]]circularDependencyStrategy|the name of the link:../concept.html#circular[circular dependency strategy] to use *__since 1.4__*|No, defaults to warn
+|defaultBranch|the default branch to use for all modules, except if they have a link:../settings/module.html[module specific branch setting]. (*__since 1.4__*)|No, defaults to no default branch
+|defaultResolveMode|the default link:../use/resolve.html[resolve mode] to use for all modules, except if they have a link:../settings/module.html[module specific resolve mode setting]. (*__since 2.0__*)|No, defaults to 'default'
+|[[circularDependencyStrategy]]circularDependencyStrategy|the name of the link:../concept.html#circular[circular dependency strategy] to use (*__since 1.4__*)|No, defaults to warn
 |validate|Indicates if Ivy files should be validated against ivy.xsd or not.|No, defaults to true
 |useRemoteConfig|true to configure ivyrep and ibiblio resolver from a remote settings file (updated with changes in those repository structure if any) (*__since 1.2__*)|No, defaults to false
 |httpRequestMethod|specifies the HTTP method to use to retrieve information about an URL. Possible values are 'GET' and 'HEAD'. This setting can be used to solve problems with firewalls and proxies. (*__since 2.0__*)|No, defaults to 'HEAD'

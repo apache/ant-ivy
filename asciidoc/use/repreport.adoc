@@ -17,7 +17,9 @@
    under the License.
 ////
 
-Generates reports about dependencies among several modules in the repository (repreport stands for repository report). *__since 1.4__*
+[*__since 1.4__*]
+
+Generates reports about dependencies among several modules in the repository (repreport stands for repository report).
 
 This task is similar to the link:../use/report.html[report] task, except that instead of working on a single module you just resolved, it works with a set of modules in your repository.
 
@@ -47,7 +49,7 @@ Moreover, to be able to list organizations, this task requires an [organisation]
 |dot|`true` to generate Graphviz DOT format file, `false` otherwise|No, defaults to `false`
 |matcher|the name of the matcher to use for matching modules names and organisations in your repository|No. Defaults to `exactOrRegexp`
 |validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in settings)
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
 |=======
 
 == Examples

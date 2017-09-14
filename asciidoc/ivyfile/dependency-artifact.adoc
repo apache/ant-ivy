@@ -37,11 +37,11 @@ Example:
 </dependency>
 ----
 
-*__since 1.4__* It's possible to indicate the URL at which the artifact can be found. This is not mandatory, and even not recommended with an enterprise repository. Note that Ivy will always look at the location where the artifact should be and only use the URL if it cannot be found at the standard location in the repository.
+(*__since 1.4__*) It's possible to indicate the URL at which the artifact can be found. This is not mandatory, and even not recommended with an enterprise repository. Note that Ivy will always look at the location where the artifact should be and only use the URL if it cannot be found at the standard location in the repository.
 
-*__since 1.4__* This tag supports link:../concept.html#extra[extra attributes].
+(*__since 1.4__*) This tag supports link:../concept.html#extra[extra attributes].
 
-*__since 2.0__* This feature can also be used for modules having their own module descriptor, but which doesn't declare an artifact you know that is published. Note that in this case artifacts declared to be published by the dependency will be ignored, so do not forget to include all artifacts you want.
+(*__since 2.0__*) This feature can also be used for modules having their own module descriptor, but which doesn't declare an artifact you know that is published. Note that in this case artifacts declared to be published by the dependency will be ignored, so do not forget to include all artifacts you want.
 
 == Attributes
 
@@ -54,7 +54,7 @@ Example:
 |conf|comma separated list of the master configurations in which this artifact should be included.
 
 `$$*$$` wildcard can be used to designate all configurations of this module|No, defaults to `$$*$$`, unless nested conf are specified
-|url|an URL where this artifact can be found if it isn't present at the standard location in the repository *__since 1.4__*|No, defaults to no URL
+|url|an URL where this artifact can be found if it isn't present at the standard location in the repository (*__since 1.4__*)|No, defaults to no URL
 |=======
 
 == Child elements

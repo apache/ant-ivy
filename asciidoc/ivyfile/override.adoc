@@ -19,7 +19,7 @@
 
 *Tag:* override *Parent:* link:../ivyfile/dependencies.html[dependencies]
 
-*__(since 2.0)__*
+[*__since 2.0__*]
 
 Specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency.
 

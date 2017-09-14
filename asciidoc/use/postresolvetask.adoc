@@ -24,15 +24,15 @@ These tasks are:
 * link:../use/retrieve.html[retrieve]
 * link:../use/cachefileset.html[cachefileset]
 * link:../use/cachepath.html[cachepath]
-* link:../use/artifactproperty.html[artifactproperty] *__(since 2.0)__*
-* link:../use/artifactreport.html[artifactreport] *__(since 2.0)__*
+* link:../use/artifactproperty.html[artifactproperty] (*__since 2.0__*)
+* link:../use/artifactreport.html[artifactreport] (*__since 2.0__*)
 
 All these tasks will trigger a resolve automatically if:
 
 * none has already been called in the current build with the attribute `keep` set to `true` (see below)
 * organisation and module are not set
 
-*__Since Ivy 1.4__*, there are two ways to run a link:../use/resolve.html[resolve]: with an Ivy file, or with the inline mode.
+(*__since 1.4__*) There are two ways to run a link:../use/resolve.html[resolve]: with an Ivy file, or with the inline mode.
 When you call resolve with an Ivy file, the default for it is to keep the resolved data for use by the subsequent post resolve tasks. When you run an inline resolve, the default is not to keep the data. You can override this behaviour by setting the keep attribute as you like.
 
 If you want to to reuse the resolved data obtained through a call to resolve in another build (i.e. not the current one), then you have to set the organisation and module attributes. This work only if the cache was not cleaned since your last resolve call. This does not work with inline calls, which must be performed in the same build.
@@ -45,23 +45,23 @@ The attributes listed are then mostly used only if a resolve is triggered automa
 |=======
 |Attribute|Description|Required
 |conf|a comma separated list of the configurations to retrieve or `$$*$$`. +
-*__Since 2.0__* you can also use `$$*(public)$$` or `$$*(private)$$`.  Note that `$$*$$` is interpreted as `$$*(public)$$` when `inline` is `true`.|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
-|inline|`true` to use inline mode, `false` to resolve an Ivy file *__(since 1.4)__*|No. defaults `false`
+(*__since 2.0__*) You can also use `$$*(public)$$` or `$$*(private)$$`. Note that `$$*$$` is interpreted as `$$*(public)$$` when `inline` is `true`.|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
+|inline|`true` to use inline mode, `false` to resolve an Ivy file (*__since 1.4__*)|No. defaults `false`
 |organisation|the organisation of the module to retrieve. This usually doesn't need to be set since it defaults to the last resolved one, except for inline mode where it is required.|Yes in inline mode, otherwise no, it then defaults to last resolved module name
 |module|the name of the module to retrieve. This usually doesn't need to be set since it defaults to the last resolved one, except for inline mode where it is required.|Yes in inline mode, otherwise no, it then defaults to last resolved module name
-|revision|the revision constraint of the module to retrieve. Used only in inline mode. *__since 1.4__*|No. Defaults to latest.integration
-|branch|the name of the branch to resolve in inline mode *__(since 2.1)__*|Defaults to no branch in inline mode, nothing in standard mode.
-|changing|indicates that the module may change when resolving in inline mode. See link:../concept.html#change[cache and change management] for details. Ignored when resolving in standard mode. *__(since 2.2)__*|No. Defaults to `false`.
-|transitive|`true` to resolve dependencies transitively, `false` otherwise *__since 1.4__*|No. Defaults to `true`
-|resolveMode|the link:../use/resolve.html[resolve mode] to use when an automatic resolve is triggered *__(since 2.1)__*|No. defaults to using the resolve mode set in the link:../settings.html[settings]
+|revision|the revision constraint of the module to retrieve. Used only in inline mode. (*__since 1.4__*)|No. Defaults to latest.integration
+|branch|the name of the branch to resolve in inline mode (*__since 2.1__*)|Defaults to no branch in inline mode, nothing in standard mode.
+|changing|indicates that the module may change when resolving in inline mode. See link:../concept.html#change[cache and change management] for details. Ignored when resolving in standard mode (*__since 2.2__*).|No. Defaults to `false`.
+|transitive|`true` to resolve dependencies transitively, `false` otherwise (*__since 1.4__*)|No. Defaults to `true`
+|resolveMode|the link:../use/resolve.html[resolve mode] to use when an automatic resolve is triggered (*__since 2.1__*)|No. defaults to using the resolve mode set in the link:../settings.html[settings]
 |keep|`true` to keep the results of the automatic resolve in memory, `false` to discard them. When this is `false`, the standard Ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to reuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
 |haltonfailure|`true` to halt the build on Ivy failure, `false` to continue|No. Defaults to `true`
 |validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in settings)
-|refresh|`true` to force Ivy to resolve dynamic revision in this resolve process, `false` to use cached resolved revision *__since 2.1__*|No. defaults to `false`
-|file|the file to resolve if a resolve is necessary *__since 2.0__*|No. Defaults to the previous resolved Ivy file or to `${ivy.dep.file}`
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`
-|resolveId|The id which was used for a previous resolve, or the resolveId if a new resolve is performed *__(since 2.0)__*|No, defaults to `[org]-[module]`.
-|log|the log setting to use during the resolve process. *__(since 2.0)__*
+|refresh|`true` to force Ivy to resolve dynamic revision in this resolve process, `false` to use cached resolved revision (*__since 2.1__*)|No. defaults to `false`
+|file|the file to resolve if a resolve is necessary (*__since 2.0__*)|No. Defaults to the previous resolved Ivy file or to `${ivy.dep.file}`
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`
+|resolveId|The id which was used for a previous resolve, or the resolveId if a new resolve is performed (*__since 2.0__*)|No, defaults to `[org]-[module]`.
+|log|the log setting to use during the resolve process (*__since 2.0__*)
 
 Available options are: +
 * `default`: the default log settings, where all usual messages are output to the console +
@@ -72,7 +72,7 @@ Available options are: +
 
 == Child elements
 
-*__(Since 2.3)__*
+[*__since 2.3__*]
 
 These child elements are defining an inlined ivy.xml's link:../ivyfile/dependencies.html[dependencies] elements. Thus these child elements cannot be used together with the `inline` or `file` attributes.
 
@@ -83,7 +83,7 @@ There is one important difference with the ivy.xml's link:../ivyfile/dependencie
 |Element|Description|Cardinality
 |link:../ivyfile/dependency.html[dependency]|declares a dependency to resolve|0..n
 |link:../ivyfile/exclude.html[exclude]|excludes artifacts, modules or whole organizations from the set of dependencies to resolve|0..n
-|link:../ivyfile/override.html[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency *__since 2.0__*|0..n
+|link:../ivyfile/override.html[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.0__*)|0..n
 |=======
 
 == Examples

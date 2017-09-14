@@ -19,7 +19,7 @@
 
 = timeout-constraints
 
-*__since 2.5__*
+[*__since 2.5__*]
 
 Ivy, internally, communicates with various remote systems for dealing with module descriptors and artifacts. This is done through various link:../concept.html[dependency resolvers] that are configured in the Ivy settings. This communication typically involves opening a connection to the target system and reading content from those systems. As with all remote communication, certain systems can sometimes be slow or even unavailable on some occasions. `timeout-constraints` in Ivy settings allows you to configure timeouts that can then be used by Ivy while communicating with remote systems.
 

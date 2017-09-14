@@ -17,7 +17,8 @@
    under the License.
 ////
 
-*__since 1.4__*
+[*__since 1.4__*]
+
 Finds the latest revision of a module matching a given version constraint.
 
 A version constraint is what is used when declaring a link:../ivyfile/dependency.html[dependency] on a module.
@@ -33,7 +34,7 @@ If the module is not found, the property is not set.
 |branch|the branch of the module to find|No, defaults to the default branch for the given module
 |revision|the revision constraint to apply|Yes
 |property|the property to set with the found revision|No, defaults to `ivy.revision`
-|settingsRef|a reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|settingsRef|a reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
 |=======
 
 == Examples

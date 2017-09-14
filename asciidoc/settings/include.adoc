@@ -21,8 +21,9 @@
 
 *Tag:* include
 
-Includes another Ivy settings file as if it were part of this one. *__since 1.3__*
+[*__since 1.3__*]
 
+Includes another Ivy settings file as if it were part of this one.
 
 The included Ivy settings file has to be a complete well formed Ivy settings file, i.e. it does have to include the `<ivysettings>` tag.
 
@@ -35,7 +36,7 @@ The included Ivy settings file has to be a complete well formed Ivy settings fil
 |Attribute|Description|Required
 |url|a URL to the Ivy settings file to include|Yes, unless file is specified
 |file|a path to the Ivy settings file to include|Yes, unless url is specified
-|optional|indicates whether Ivy should throw an error if the specified file doesn't exist. *__(Since 2.4)__*.|No, default to false
+|optional|indicates whether Ivy should throw an error if the specified file doesn't exist (*__since 2.4__*).|No, default to false
 |=======
 
 

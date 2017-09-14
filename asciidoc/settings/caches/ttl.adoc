@@ -21,7 +21,7 @@
 
 *Tag:* ttl
 
-*__Since 2.0__*
+[*__since 2.0__*]
 
 Defines a TTL (Time To Live) rule for resolved revision caching.
 

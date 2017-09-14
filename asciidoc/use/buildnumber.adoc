@@ -17,7 +17,8 @@
    under the License.
 ////
 
-*__since 1.4__*
+[*__since 1.4__*]
+
 The `buildnumber` task is similar to the Ant `buildnumber` task, except that it uses Ivy repository to find what is the latest version and calculate a new one for you.
 
 When called, it sets four properties according to what has been found. These properties are:
@@ -65,8 +66,8 @@ Note that when asking for revision 1, you can get a revision 10.0. To avoid that
 |defaultBuildNumber|the default build number to use for the first revision|No, defaults to 0
 |revSep|the revision separator to use when no matching revision is found, to separate the revision prefix from the build number|No, defaults to `.`
 |prefix|the prefix to use for the property names set (will be `__prefix__.revision`, `__prefix__.new.revision`, ...)|No, defaults to `ivy`
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*.|No, `ivy.instance` is taken by default.
-|resolver|the name of the resolver to use for build number calculation *__(since 2.1)__*|No, all available resolvers will be used by default.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*).|No, `ivy.instance` is taken by default.
+|resolver|the name of the resolver to use for build number calculation (*__since 2.1__*)|No, all available resolvers will be used by default.
 |=======
 
 == Examples

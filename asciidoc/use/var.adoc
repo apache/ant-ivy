@@ -38,5 +38,5 @@ See link:../reference.html[reference] page for details about Ivy variables.
 .2+.^|One of these, when *not* using the name attribute
 |url|the URL from which to read Ivy variables
 |prefix|Prefix to apply to variables. A dot (`.`) is appended to the prefix if not specified.|No
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
 |=======

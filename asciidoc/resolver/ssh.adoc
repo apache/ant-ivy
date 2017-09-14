@@ -26,7 +26,7 @@
 |Handle publish|yes
 |=======
 
-*__since 1.4__*
+[*__since 1.4__*]
 
 This resolver can be used when your Ivy repository is located on a server accessible via SSH. The secured nature of SSH and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
@@ -48,7 +48,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |host|The host to connect to|No, defaults to host given on the patterns, fail if none is set
 |port|The port to connect to|No, defaults to 22
 |sshConfig|Path to an OpenSSH-style config file containing additional configuration|No
-|publishPermissions|A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of the published files. *__(since 2.0)__*
+|publishPermissions|A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions of the published files. (*__since 2.0__*)
 |No, defaults to scp standard behaviour
 |=======
 

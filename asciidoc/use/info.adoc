@@ -17,7 +17,8 @@
    under the License.
 ////
 
-*__since 1.4__*
+[*__since 1.4__*]
+
 The `info` task eases the access to some essential data contained in an Ivy file without performing a dependency resolution.
 
 The information is retrieved by setting Ant properties:
@@ -30,21 +31,21 @@ The information is retrieved by setting Ant properties:
 |ivy.branch|The branch of the module if any, as found in the link:../ivyfile/info.html[info] tag of the Ivy file parsed.
 |ivy.revision|The revision of the module, as found in the link:../ivyfile/info.html[info] tag of the Ivy file parsed.
 |ivy.status|The status of the module, as found in the link:../ivyfile/info.html[info] tag of the Ivy file parsed.
-|ivy.publication|The publication time of the module, as found in the link:../ivyfile/info.html[info] tag of the Ivy file parsed. *__(Since 2.2)__*
+|ivy.publication|The publication time of the module, as found in the link:../ivyfile/info.html[info] tag of the Ivy file parsed. (*__since 2.2__*)
 |ivy.extra.__[any extra attribute]__|Corresponding extra attribute value, as found in the link:../ivyfile/info.html[info] tag of the Ivy file parsed
 |ivy.configurations|A comma separated list of configurations of the module, as declared in the link:../ivyfile/configurations.html[configurations] section
 |ivy.public.configurations|A comma separated list of public configurations of the module, as declared in the link:../ivyfile/configurations.html[configurations] section
-|ivy.configuration.__[config name]__.desc|For each configuration with a description, a property is created containing this description. *__(Since 2.2)__*
-|ivy.artifact.__[index]__.name|For each published artifact, a property is created containing its name. *__(Since 2.2)__*
-|ivy.artifact.__[index]__.type|For each published artifact, a property is created containing its type. *__(Since 2.2)__*
-|ivy.artifact.__[index]__.ext|For each published artifact, a property is created containing its ext. *__(Since 2.2)__*
-|ivy.artifact.__[index]__.conf|For each published artifact, a property is created containing its conf. *__(Since 2.2)__*
-|ivy.artifact.__[index]__.extra.__[any extra attribute]__|For each extra attribute of the published artifact, a property is created containing its name. *__(Since 2.2)__*
+|ivy.configuration.__[config name]__.desc|For each configuration with a description, a property is created containing this description. (*__since 2.2__*)
+|ivy.artifact.__[index]__.name|For each published artifact, a property is created containing its name. (*__since 2.2__*)
+|ivy.artifact.__[index]__.type|For each published artifact, a property is created containing its type. (*__since 2.2__*)
+|ivy.artifact.__[index]__.ext|For each published artifact, a property is created containing its ext. (*__since 2.2__*)
+|ivy.artifact.__[index]__.conf|For each published artifact, a property is created containing its conf. (*__since 2.2__*)
+|ivy.artifact.__[index]__.extra.__[any extra attribute]__|For each extra attribute of the published artifact, a property is created containing its name. (*__since 2.2__*)
 |=======
 
-*__since 2.0__*
+[*__since 2.0__*]
 
-Since Ivy 2.0 this task has been enhanced to allow you to retrieve information about Ivy modules in a repository.  Instead of specifying a local Ivy file you may specify the organisation, module, revision pattern and (optionally) the branch of the Ivy module in the repository you wish to retrieve the information for.
+This task has been enhanced to allow you to retrieve information about Ivy modules in a repository.  Instead of specifying a local Ivy file you may specify the organisation, module, revision pattern and (optionally) the branch of the Ivy module in the repository you wish to retrieve the information for.
 
 The revision pattern is what is used when declaring a link:../ivyfile/dependency.html[dependency] on a module, identical to how the link:findrevision.html[findrevision] task works.  In fact, this task can now be used in place of the findrevision task.
 
@@ -52,9 +53,7 @@ If no matching module is found then no property values are set.
 
 You may now also set the property attribute to change the first part of the property names that are set by this task e.g. if you set the property attribute to `mymodule` this task will set the Ant properties `mymodule.organisation`, `mymodule.module`, `mymodule.revision` etc.
 
-*__since 2.2__*
-
-Since Ivy 2.2 this task has been enhanced to also retrieve detailed information about the module's published artifacts, as well as the publication time.
+(*__since 2.2__*) This task has been enhanced to also retrieve detailed information about the module's published artifacts, as well as the publication time.
 
 == Attributes
 
@@ -63,15 +62,15 @@ Since Ivy 2.2 this task has been enhanced to also retrieve detailed information 
 |Attribute|Description|Required
 |file|the Ivy file to parse|Yes, if you wish to parse an Ivy file.
 No, if you are retrieving information about a module from an Ivy repository.
-|organisation|the organisation of the module to find *__(since 2.0)__*|No, if you wish to parse an Ivy file.
+|organisation|the organisation of the module to find (*__since 2.0__*)|No, if you wish to parse an Ivy file.
 Yes, if you are retrieving information about a module from an Ivy repository.
-|module|the the name of the module to find *__(since 2.0)__*|No, if you wish to parse an Ivy file.
+|module|the the name of the module to find (*__since 2.0__*)|No, if you wish to parse an Ivy file.
 Yes, if you are retrieving information about a module from an Ivy repository.
-|branch|the branch of the module to find *__(since 2.0)__*|No, defaults to the default branch for the given module if you are retrieving information about a module from an Ivy repository.
-|revision|the revision constraint to apply *__(since 2.0)__*|No, if you wish to parse an Ivy file.
+|branch|the branch of the module to find (*__since 2.0__*)|No, defaults to the default branch for the given module if you are retrieving information about a module from an Ivy repository.
+|revision|the revision constraint to apply (*__since 2.0__*)|No, if you wish to parse an Ivy file.
 Yes, if you are retrieving information about a module from an Ivy repository.
-|property|the name to use as the base of the property names set by this task *__(since 2.0)__*|No, will default to `ivy` if not set.
-|settingsRef|A reference to Ivy settings that must be used by this task *__(since 2.0)__*|No, defaults to `ivy.instance`.
+|property|the name to use as the base of the property names set by this task (*__since 2.0__*)|No, will default to `ivy` if not set.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults to `ivy.instance`.
 |=======
 
 == Examples

@@ -17,10 +17,11 @@
    under the License.
 ////
 
-*__since 1.4__*
+[*__since 1.4__*]
+
 The `artifactreport` task generates an XML report of all artifact dependencies resolved by the last link:../use/resolve.html[resolve] task call during the same build.
 
-*__since 2.0__* This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+(*__since 2.0__*) This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 This report is different from the standard link:../use/report.html[report] which reports all modules and artifacts, while this report is much simpler and focuses only on artifacts, and gives more information on artifacts, such as the original location and the retrieve location.
 
@@ -69,7 +70,7 @@ Here is an example of generated file:
 |pattern|the retrieve pattern to use for adding the retrieve location information about the artifacts|No. Defaults to `${ivy.retrieve.pattern}`.
 |conf|a comma separated list of the configurations to use to generate the report|No. Defaults to the configurations resolved by the last resolve call
 |haltonfailure|`true` to halt the build on Ivy failure, `false` to continue|No. Defaults to `true`
-|settingsRef|A reference to Ivy settings that must be used by this task *(since 2.0)*|No, `ivy.instance` is taken by default.
+|settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, `ivy.instance` is taken by default.
 |=======
 
 == Examples

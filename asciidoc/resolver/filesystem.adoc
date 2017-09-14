@@ -31,19 +31,20 @@ This resolver uses the file system to resolve Ivy files and artifacts. An advant
 
 The configuration of such a resolver is mainly done through Ivy and artifact patterns, indicating where Ivy files and artifacts can be found in the file system. These patterns must be absolute paths (*__since 2.0__*). You can indicate a list of patterns which will be checked one after the other.
 
-*__since 1.3__* Using the `m2compatible` attribute, this resolver will convert dots found in organisation into slashes like Maven 2 does for groupId. For instance, it will transform the organisation from `com.company` into `com/company` when replacing the token `[organisation]` in your pattern.
+(*__since 1.3__*) Using the `m2compatible` attribute, this resolver will convert dots found in organisation into slashes like Maven 2 does for groupId. For instance, it will transform the organisation from `com.company` into `com/company` when replacing the token `[organisation]` in your pattern.
 
 *Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
 
 
 == Atomic publish support
 
-*__since 2.0__* This resolver supports atomic publish, which is useful for environments with a lot of concurrent publish and resolve actions. The atomic publish relies on the atomicity of the rename operation in the underlying filesystem (which includes NTFS and POSIX based filesystems).
+[*__since 2.0__*]
+
+This resolver supports atomic publish, which is useful for environments with a lot of concurrent publish and resolve actions. The atomic publish relies on the atomicity of the rename operation in the underlying filesystem (which includes NTFS and POSIX based filesystems).
 In this case the resolver starts by publishing the module according to the pattern, but where a `.part` suffix is appended to the revision. Then the publish is committed with a rename to the final location.
 
 *Limitations*
 Atomic publish is currently limited in several ways:
-
 
     * you need to use a pattern for both the artifact and the Ivy files which uses the revision as a directory. For instance, `${repository.dir}/[module]/[revision]/[artifact].[ext]` works, `${repository.dir}/[module]/[artifact]-[revision].[ext]` doesn't +
 
@@ -52,7 +53,6 @@ Atomic publish is currently limited in several ways:
     * overwrite during publish is not supported +
 
     * you should not use revision names ending with `.part` +
-
 
 The `*transactional*` attribute can be used to configure the atomicity behavior:
 
@@ -65,7 +65,6 @@ The `*transactional*` attribute can be used to configure the atomicity behavior:
     * false +
      don't use transaction at all
 
-
 == Attributes
 
 This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
@@ -73,9 +72,9 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise *__since 1.3__*|No, defaults to false
-|local|True if this resolver should be considered local, false otherwise *__since 1.4__*. See useOrigin attribute on the link:../settings/caches.html[caches] element for details.|No, defaults to true
-|transactional|true to force the use of transaction, false to prevent the use of transaction, auto to get transaction when possible *__since 2.0__*. See above for details.|No, defaults to auto
+|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise (*__since 1.3__*)|No, defaults to false
+|local|True if this resolver should be considered local, false otherwise (*__since 1.4__*). See useOrigin attribute on the link:../settings/caches.html[caches] element for details.|No, defaults to true
+|transactional|true to force the use of transaction, false to prevent the use of transaction, auto to get transaction when possible (*__since 2.0__*). See above for details.|No, defaults to auto
 |=======
 
 

@@ -109,7 +109,7 @@ ivy.checksums=sha1,md5
 
 _For the latest version of these properties, you can check the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/core/settings/ivy.properties[Git version]._
 
-*__since 2.0__* After calling the first Ivy task, the property `ivy.version` will be available and contains the version of the used Ivy library.
+(*__since 2.0__*) After calling the first Ivy task, the property `ivy.version` will be available and contains the version of the used Ivy library.
 
 
 == Ivy tasks attributes : generalities

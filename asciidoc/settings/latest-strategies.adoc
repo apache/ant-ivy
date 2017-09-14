@@ -53,7 +53,9 @@ This algorithm takes into account the special meaning of some text. For instance
 
 == latest-revision
 
-*__since 1.4__* The latest-revision can now be configured to handle more words with special meanings than the one defined in PHP `version_compare` function.
+[*__since 1.4__*]
+
+The latest-revision can now be configured to handle more words with special meanings than the one defined in PHP `version_compare` function.
 
 Here is an example of how you can do so:
 

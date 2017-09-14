@@ -21,7 +21,9 @@
 
 *Tag:* version-matchers
 
-Defines a list of version matchers. *__since 1.4__*
+[*__since 1.4__*]
+
+Defines a list of version matchers.
 
 The child tag used for the version matcher must be equal to a name of a report outputter type (added with the `typedef` tag).
 
@@ -144,11 +146,13 @@ Matcher types may be one of "regexp", "exact", "glob", or "exactOrRegexp".  Glob
 
 === Maven timestamped snapshot version matcher
 
+[*__since 2.5__*]
+
 Maven has the notion of timestamped snapshots, which essentially are snapshot versions of a particular Maven artifact, but have a specific timestamp associated with them so that the snapshot revision (which by nature are changing over time), can be traced back to the exact artifacts. Maven allows other artifacts to depend on such timestamped snapshots.
 
-*Starting Ivy 2.5 version*, Ivy too allows such timestamped dependencies to be part of the module's dependencies. For such dependencies to be properly parsed and resolved, a `maven-tsnap-vm` version matcher needs to be configured in the Ivy settings and link:../resolver/ibiblio.html[ibiblio resolver] must be one of the resolvers that used for dependency resolution.
+Ivy too allows such timestamped dependencies to be part of the module's dependencies. For such dependencies to be properly parsed and resolved, a `maven-tsnap-vm` version matcher needs to be configured in the Ivy settings and link:../resolver/ibiblio.html[ibiblio resolver] must be one of the resolvers that are used for dependency resolution.
 
-NOTE: Maven has a specific syntax for timestamped snapshot versions and only such versions are understood by Ivy
+NOTE: Maven has a specific syntax for timestamped snapshot versions and only such versions are understood by Ivy.
 
 Configuring the `maven-tsnap-vm` can be done as follows in the Ivy settings file:
 

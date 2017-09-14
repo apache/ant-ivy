@@ -19,7 +19,7 @@
 
 *Tag:* conflict *Parent:* link:../ivyfile/dependencies.html[dependencies]
 
-*__(since 2.0)__*
+[*__since 2.0__*]
 
 Specify a a conflict manager for one or several dependencies.
 The way to specify a conflict manager is by giving indication to which dependencies the conflict manager applies (by giving organisation and module names or name regexp), and then specifying the conflict manager, either by giving its name or by specifying a fixed revision list, in which case a fixed conflict manager is used.

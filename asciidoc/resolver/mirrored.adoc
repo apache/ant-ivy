@@ -27,7 +27,7 @@
 |=======
 
 
-*__since 2.3__*
+[*__since 2.3__*]
 
 This resolver can resolve dependencies against several mirrors of the same repository. From a list of mirror URLs, it will iteratively try to resolve the dependencies against each one.
 

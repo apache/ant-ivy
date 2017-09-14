@@ -26,7 +26,7 @@
 |Handle publish|yes
 |=======
 
-*__since 1.4__*
+[*__since 1.4__*]
 
 This resolver can be used when your Ivy repository is located on a server accessible via SFTP. The secured nature of SFTP and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 

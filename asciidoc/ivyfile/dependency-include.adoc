@@ -44,7 +44,7 @@ Example:
 |name|the name of an artifact of the dependency module to add to the include list, or an expression matching this name (see `matcher` attribute below)|No, defaults to `$$.*$$`
 |type|the type of the artifact of the dependency module to add to the include list, or an expression matching this name (see `matcher` attribute below)|No, defaults to `$$.*$$`
 |ext|the extension of the artifact of the dependency module to add to the include list, or an expression matching this name (see `matcher` attribute below)|No, defaults to the value of `type`
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to include *__since 2.0__*|No, defaults to `exactOrRegexp` in pre 1.3 Ivy files, and `exact` in 1.3 and superior
+|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to include (*__since 2.0__*)|No, defaults to `exactOrRegexp` in pre 1.3 Ivy files, and `exact` in 1.3 and superior
 |conf|comma separated list of the master configurations in which this artifact should be included.
 
 `$$*$$` wildcard can be used to designate all configurations of this module|No, defaults to `$$*$$`, unless nested conf are specified
