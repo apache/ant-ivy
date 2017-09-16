@@ -46,7 +46,7 @@
         <dependency org="org.apache.ant" name="ant" rev="1.9.9" conf="default,ant"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.3" conf="default,httpclient->runtime,master"/>
         <dependency org="oro" name="oro" rev="2.0.8" conf="default,oro"/>
-        <dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs"/>
+        <dependency org="org.apache.commons" name="commons-vfs2" rev="2.1" conf="default,vfs"/>
         <dependency org="com.jcraft" name="jsch" rev="0.1.54" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy" rev="0.0.9" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="0.0.9" conf="default,sftp"/>

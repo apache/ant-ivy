@@ -14,18 +14,19 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
-<!-- For all intents and purposes this is the providers.xml file included
-     in the jakarta-vfs-common distribution with the res and tmp schemas removed.
- -->
- <providers>
-    <default-provider class-name="org.apache.commons.vfs.provider.url.UrlFileProvider">
+<!--
+   For all intents and purposes this is the providers.xml file included
+   in the jakarta-vfs-common distribution with the res and tmp schemas removed.
+-->
+<providers>
+    <default-provider class-name="org.apache.commons.vfs2.provider.url.UrlFileProvider">
     </default-provider>
-    <provider class-name="org.apache.commons.vfs.provider.local.DefaultLocalFileProvider">
+    <provider class-name="org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider">
         <scheme name="file"/>
     </provider>
-    <provider class-name="org.apache.commons.vfs.provider.ftp.FtpFileProvider">
+    <provider class-name="org.apache.commons.vfs2.provider.ftp.FtpFileProvider">
         <scheme name="ftp"/>
         <if-available class-name="org.apache.commons.net.ftp.FTPFile"/>
     </provider>
@@ -41,8 +42,7 @@
         <if-available class-name="org.apache.commons.httpclient.HttpClient"/>
     </provider>
     -->
-    
-    <provider class-name="org.apache.commons.vfs.provider.sftp.SftpFileProvider">
+    <provider class-name="org.apache.commons.vfs2.provider.sftp.SftpFileProvider">
         <scheme name="sftp"/>
         <if-available class-name="javax.crypto.Cipher"/>
         <if-available class-name="com.jcraft.jsch.JSch"/>
