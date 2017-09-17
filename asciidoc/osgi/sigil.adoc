@@ -27,7 +27,7 @@ Another initiative to manage OSGi&#153; dependencies is the project link:https:/
 
 Apache Felix Sigil is at its core about managing OSGi dependencies, not directly related to Ivy. Most of its core feature is about the implementation of the not yet released OBR (OSGi Bundle Repository) specification. It then provides integration layers with several tools so that developers can use the OBR API. It provides an Eclipse plugin and there are the Ant/Ivy tasks and resolvers.
 
-On the other hand the built-in OSGi capabilities in Ivy are targeted towards users already familiar with Ivy and link:http://ant.apache.org/ivy/links.html[tools around it] like link:http://ant.apache.org/ivy/ivyde[Apache IvyDE&#153;]. So with a minimum amount of effort, they can get OSGi dependency management.
+On the other hand the built-in OSGi capabilities in Ivy are targeted towards users already familiar with Ivy and link:https://ant.apache.org/ivy/links.html[tools around it] like link:https://ant.apache.org/ivy/ivyde[Apache IvyDE&#153;]. So with a minimum amount of effort, they can get OSGi dependency management.
 
 
 == Resulting differences

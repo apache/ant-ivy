@@ -49,7 +49,7 @@ A public repository usually contains much more than what you actually need. Is t
 
 === Security
 
-The artifacts you download from a module repository are often executable, and are thus a security concern. Imagine a hacker replacing commons-lang by another version containing a virus? If you rely on a public repository to build your software, you expose it to a security risk. You can read more about that in this link:http://www.fortifysoftware.com/servlet/downloads/public/fortify_attacking_the_build.pdf[Forrester article].
+The artifacts you download from a module repository are often executable, and are thus a security concern. Imagine a hacker replacing commons-lang by another version containing a virus? If you rely on a public repository to build your software, you expose it to a security risk. You can read more about that in this link:https://www.helpnetsecurity.com/dl/articles/fortify_attacking_the_build.pdf[Forrester article].
 
 Note that using an enterprise repository doesn't mean you have to build it entirely by hand. Ivy features an link:use/install.html[install] task which can be used to install modules from one repository to another one, so it can be used to selectively install modules from a public repository to your enterprise repository, where you will then be able to ensure control, reliability and accuracy.
 

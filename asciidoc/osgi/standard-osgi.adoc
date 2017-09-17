@@ -23,7 +23,7 @@
 ====
 Note that this feature is considered as *experimental*.
 
-It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:https://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:https://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 
 ====
 
@@ -49,9 +49,9 @@ In few steps, we will setup a build to compile and publish an OSGi bundle.
 
     * in the `ivysettings.properties`, specify the location of the plugins folder of your Eclipse target
 
-    * *__(optional)__* by default the `build.xml` is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case
+    * (*__optional__*) by default the `build.xml` is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case
 
-    * *__(optional)__* if Ivy is not in Ant's classpath, link:http://ant.apache.org/ivy/download.cgi[download the Ivy jar] and edit the `build.xml` accordingly (see the comments at the beginning of the file)
+    * (*__optional__*) if Ivy is not in Ant's classpath, link:https://ant.apache.org/ivy/download.cgi[download the Ivy jar] and edit the `build.xml` accordingly (see the comments at the beginning of the file)
 
 To build the project, run:
 

@@ -19,7 +19,7 @@
 
 [*__since 2.3__*] (*__Ant 1.7 required__*)
 
-`ivy:resources` is an Ant link:http://ant.apache.org/manual/Types/resources.html#collection[resource collection], containing files found by an Ivy resolve, which then can be used with any task working with resources like `copy` or `import`.
+`ivy:resources` is an Ant link:https://ant.apache.org/manual/Types/resources.html#collection[resource collection], containing files found by an Ivy resolve, which then can be used with any task working with resources like `copy` or `import`.
 
 This datatype shares the same attributes, child elements and behaviour of a link:../use/postresolvetask.html[post resolve task]. It is not expected to be used as an Ant task though, only as a resource collection.
 

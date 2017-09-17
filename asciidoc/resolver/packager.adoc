@@ -268,7 +268,7 @@ The artifact children of m2resource tags support the following attributes:
 
 
 
-Below is an example of packaging instructions for the link:http://commons.apache.org/email/[Apache Commons Email] module. Note that no build tag is required because all of the Maven 2 artifacts are usable directly (i.e., without unpacking anything).
+Below is an example of packaging instructions for the link:https://commons.apache.org/proper/commons-email/[Apache Commons Email] module. Note that no build tag is required because all of the Maven 2 artifacts are usable directly (i.e., without unpacking anything).
 
 [source]
 ----

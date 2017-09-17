@@ -66,7 +66,7 @@ Here is the list of built-in resolvers:
 |link:../resolver/packager.html[Packager]|Standard|Finds Ivy files and packaging instructions via URLs, then creates artifacts by following the instructions.
 |link:../resolver/filesystem.html[FileSystem]|Standard|This very performant resolver finds Ivy files and artifacts in your file system.
 |link:../resolver/url.html[URL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs.
-|link:../resolver/vfs.html[VFS]|Standard|Finds Ivy files and artifacts in any repository accessible with link:http://jakarta.apache.org/commons/vfs/[Apache Commons VFS].
+|link:../resolver/vfs.html[VFS]|Standard|Finds Ivy files and artifacts in any repository accessible with link:https://commons.apache.org/proper/commons-vfs/[Apache Commons VFS].
 |link:../resolver/ssh.html[SSH]|Standard|Finds Ivy files and artifacts in any repository accessible with SSH.
 |link:../resolver/sftp.html[SFTP]|Standard|Finds Ivy files and artifacts in any repository accessible with SFTP.
 |link:../resolver/jar.html[Jar]|Standard|Finds Ivy files and artifacts within a specified jar.

@@ -27,7 +27,7 @@ Ivy is a tool for managing (recording, tracking, resolving and reporting) projec
 
 . tight integration with Apache Ant - while available as a standalone tool, Ivy works particularly well with Apache Ant providing a number of powerful Ant tasks ranging from dependency resolution to dependency reporting and publication.
 
-Ivy is open source and released under a very permissive link:http://www.apache.org/licenses/[Apache License].
+Ivy is open source and released under a very permissive link:https://www.apache.org/licenses/[Apache License].
 
 Ivy has a lot of powerful link:https://ant.apache.org/ivy/features.html[features], the most popular and useful being its flexibility, integration with Ant, and its strong transitive dependencies management engine.
 
@@ -42,7 +42,7 @@ Tip: The menu on the left is dynamic, you  can click on the arrows to browse the
 
 This documentation has been migrated from the old Ivy web site hosted by Jayasoft, feel free to report any problem on the link:https://ant.apache.org/ivy/mailing-lists.html[mailing-lists].
 
-If you browse this documentation from your installation of Ivy, you can also check the link:http://ant.apache.org/ivy/[online version] for the latest updates.
+If you browse this documentation from your installation of Ivy, you can also check the link:https://ant.apache.org/ivy/[online version] for the latest updates.
 
 You can also browse this documentation offline either by downloading the documentation distribution, or by checking out the doc directory from git. This documentation uses link:http://asciidoctor.org/[asciidoc] as its documentation engine, so you can very easily link:https://ant.apache.org/ivy/get-involved.html[edit it and submit patches] when you browse it from source.
 

@@ -26,13 +26,13 @@ For the first tutorial you won't even have to install Ivy (assuming you have Ant
 == First Tutorial
 
 
-    * Make sure you have link:http://ant.apache.org/[Ant] 1.9.9 or greater and a link:https://www.java.com/en/download/[Java JDK] properly installed +
+    * Make sure you have link:https://ant.apache.org/[Ant] 1.9.9 or greater and a link:http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java JDK] properly installed +
 
     * Copy link:samples/build.xml[this build file] to an empty directory on your local filesystem (and make sure you name it `build.xml`) +
 
     * Open a console in that directory and run the command: `ant`. That's it! +
 
-If you have any trouble, check our link:http://ant.apache.org/ivy/faq.html[FAQ].
+If you have any trouble, check our link:https://ant.apache.org/ivy/faq.html[FAQ].
 
 OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install.html[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example] directory).
 

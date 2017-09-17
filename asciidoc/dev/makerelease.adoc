@@ -100,7 +100,7 @@ Be prepared to enter your passphrase several times if you use this script, gpg w
 
 ==== 7. Prepare the Eclipse update site
 
-To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See link:http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html[that page] to know how to process.
+To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See link:https://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html[that page] to know how to process.
 
 ==== 8. Publish the release candidate
 
@@ -187,7 +187,7 @@ If the release is approved, it's now time to make it public. The artifacts in th
 svn mv https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION https://dist.apache.org/repos/dist/release/ant/ivy/$VERSION
 ----
 
-In order to keep the main dist area of a reasonable size, old releases should be removed. They will disappear from the main dist but will still be available via the link:http://archive.apache.org/dist/ant/ivy/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
+In order to keep the main dist area of a reasonable size, old releases should be removed. They will disappear from the main dist but will still be available via the link:https://archive.apache.org/dist/ant/ivy/[archive]. To do so, just use the `svn rm` command against the artifacts or folders to remove.
 
 ==== 13. Promote the Maven staging repository
 
@@ -197,7 +197,7 @@ Select the appropriate `orgapacheant-XXXX` repository and select the __Release__
 
 ==== 14. Update the web site
 
-It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have link:http://www.gimp.org/[gimp] installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
+It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have link:https://www.gimp.org/[gimp] installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
 
 The just release documentation should be added to the site. To do so, you need to:
 
@@ -245,7 +245,7 @@ svn add --force sources
 
 ==== 15. Deploy the Eclipse updatesite
 
-If the Eclipse update site has already been prepared to include that new Ivy release, it is now needed to be deployed. Then follow the deployment instruction on link:http://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html[that page].
+If the Eclipse update site has already been prepared to include that new Ivy release, it is now needed to be deployed. Then follow the deployment instruction on link:https://ant.apache.org/ivy/ivyde/history/trunk/dev/updatesite.html[that page].
 
 ==== 16. Announce
 

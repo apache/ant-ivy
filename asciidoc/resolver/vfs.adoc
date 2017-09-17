@@ -28,7 +28,7 @@
 
 [*__since 1.4__*]
 
-This resolver is certainly the most capable, since it relies on link:http://jakarta.apache.org/commons/vfs/[Apache Commons VFS], which gives an uniform access to link:http://jakarta.apache.org/commons/vfs/filesystems.html[a good number of file systems], including FTP, WebDAV, zip, ...
+This resolver is certainly the most capable, since it relies on link:https://commons.apache.org/proper/commons-vfs/[Apache Commons VFS], which gives an uniform access to link:https://commons.apache.org/proper/commons-vfs/filesystems.html[a good number of file systems], including FTP, WebDAV, zip, ...
 
 
 == Attributes

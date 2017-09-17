@@ -23,7 +23,7 @@
 ====
 Note that this feature is considered as *experimental*.
 
-It should work with a simple configuration but may not with complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+It should work with a simple configuration but may not with complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:https://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:https://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 ====
 
 
@@ -41,9 +41,9 @@ In a few steps, we will set up a build to compile and package an Eclipse plugin.
 
     * in the `ivy.xml`, change the symbolic name declared in the extends element
 
-    * *__(optional)__* by default the `build.xml` is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case
+    * (*__optional__*) by default the `build.xml` is expecting the sources to be in the `src` folder. You may want to edit it if it is not the case
 
-    * *__(optional)__* if Ivy is not in Ant's classpath, link:http://ant.apache.org/ivy/download.cgi[download the Ivy jar] and edit the `build.xml` accordingly (see the comments at the beginning of the file)
+    * (*__optional__*) if Ivy is not in Ant's classpath, link:https://ant.apache.org/ivy/download.cgi[download the Ivy jar] and edit the `build.xml` accordingly (see the comments at the beginning of the file)
 
 
 And that's it ! Now let's use it.
@@ -68,7 +68,7 @@ ant build
 === Eclipse setup
 
 
-You probably have already configured your project in Eclipse via the PDE. Let's see how to change that and use link:http://ant.apache.org/ivy/ivyde/[Apache IvyDE]:
+You probably have already configured your project in Eclipse via the PDE. Let's see how to change that and use link:https://ant.apache.org/ivy/ivyde/[Apache IvyDE]:
 
     * First remove from your project's classpath the PDE dependencies container
 

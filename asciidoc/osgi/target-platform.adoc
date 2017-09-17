@@ -23,7 +23,7 @@
 ====
 Note that this feature is considered as *experimental*.
 
-It should work with a simple configuration but may not with complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+It should work with a simple configuration but may not with complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:https://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:https://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 
 ====
 

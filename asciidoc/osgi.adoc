@@ -23,7 +23,7 @@ Since Apache Ivy&#153; 2.3, some support for OSGi&#153; dependency management ha
 
 
 
-WARNING: Note that this feature is considered as *experimental*. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:http://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:http://ant.apache.org/ivy/mailing-lists.html[ant-dev].
+WARNING: Note that this feature is considered as *experimental*. It should work with simple configuration but may not in complex ones. If you have any issue with that feature, you are welcomed to come discuss your use case on the link:https://ant.apache.org/ivy/mailing-lists.html[ivy-user] mailing list, or discuss about implementation issues or improvement you may have found, on link:https://ant.apache.org/ivy/mailing-lists.html[ant-dev].
 
 
 So with a standard ivy.xml, you can express some dependency on some OSGi bundle and every of their transitive dependencies will be resolved. You can also declare in your ivy.xml some OSGi dependency, like a `Require-Bundle`, an `Import-Package` or an `Import-Service`, miming an OSGi MANIFEST.MF.

@@ -346,9 +346,9 @@ A __packaged__ artifact needs to be declared as such in the module descriptor vi
 
 * `zip`, `jar` or `war`: the artifact will be uncompressed as a folder
 
-* `pack200`: the artifact will be unpacked to a file via the link:http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html[pack200] algorithm
+* `pack200`: the artifact will be unpacked to a file via the link:https://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html[pack200] algorithm
 
-* `bundle`: the OSGi artifact will be uncompressed as a folder, and every embedded jar file entry which is packed via the the link:http://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html[pack200] algorithm will be unpacked
+* `bundle`: the OSGi artifact will be uncompressed as a folder, and every embedded jar file entry which is packed via the the link:https://docs.oracle.com/javase/7/docs/technotes/tools/share/pack200.html[pack200] algorithm will be unpacked
 
 So, if in an `ivy.xml`, there would be declared a such artifact:
 

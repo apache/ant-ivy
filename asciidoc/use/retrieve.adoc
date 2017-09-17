@@ -28,7 +28,7 @@ The synchronisation actually consists in deleting all filles and directories in 
 The root destination directory is the the directory denoted by the first level up the first token in the destination pattern.
 For instance, for the pattern `lib/[conf]/[artifact].[ext]`, the root will be `lib`.
 
-(*__since 2.3__*) A nested link:http://ant.apache.org/manual/Types/mapper.html[mapper] element can be used to specify more complex filename transformations of the retrieved files. See the examples below.
+(*__since 2.3__*) A nested link:https://ant.apache.org/manual/Types/mapper.html[mapper] element can be used to specify more complex filename transformations of the retrieved files. See the examples below.
 
 == Attributes
 
