@@ -42,25 +42,26 @@
         <artifact name="ivy" type="jar" conf="core"/>
         <artifact name="ivy" type="source" ext="jar" conf="source"/>
     </publications>
+    <!-- Definition of the version is done in version.properties -->
     <dependencies>
-        <dependency org="org.apache.ant" name="ant" rev="1.9.9" conf="default,ant"/>
-        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.3" conf="default,httpclient->runtime,master"/>
-        <dependency org="oro" name="oro" rev="2.0.8" conf="default,oro"/>
-        <dependency org="org.apache.commons" name="commons-vfs2" rev="2.1" conf="default,vfs"/>
-        <dependency org="com.jcraft" name="jsch" rev="0.1.54" conf="default,sftp"/>
-        <dependency org="com.jcraft" name="jsch.agentproxy" rev="0.0.9" conf="default,sftp"/>
-        <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="0.0.9" conf="default,sftp"/>
-        <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="0.0.9" conf="default,sftp"/>
-        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.58" conf="default"/>
-        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.58" conf="default"/>
+        <dependency org="org.apache.ant" name="ant" rev="${apache-ant.version}" conf="default,ant"/>
+        <dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}" conf="default,httpclient->runtime,master"/>
+        <dependency org="oro" name="oro" rev="${oro.version}" conf="default,oro"/>
+        <dependency org="org.apache.commons" name="commons-vfs2" rev="${commons-vfs2.version}" conf="default,vfs"/>
+        <dependency org="com.jcraft" name="jsch" rev="${jsch.version}" conf="default,sftp"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
+        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="${bouncycastle.version}" conf="default"/>
+        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="${bouncycastle.version}" conf="default"/>
 
         <!-- Test dependencies -->
-        <dependency org="junit" name="junit" rev="4.12" conf="test"/>
-        <dependency org="org.hamcrest" name="hamcrest-core" rev="1.3" conf="test"/>
-        <dependency org="org.apache.ant" name="ant-testutil" rev="1.9.9" conf="test" transitive="false"/>
-        <dependency org="org.apache.ant" name="ant-launcher" rev="1.9.9" conf="test" transitive="false"/>
-        <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="test" transitive="false"/>
-        <dependency org="xmlunit" name="xmlunit" rev="1.6" conf="test" transitive="false"/>
+        <dependency org="junit" name="junit" rev="${junit.version}" conf="test"/>
+        <dependency org="org.hamcrest" name="hamcrest-core" rev="${hamcrest.version}" conf="test"/>
+        <dependency org="org.apache.ant" name="ant-testutil" rev="${apache-ant.version}" conf="test" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-launcher" rev="${apache-ant.version}" conf="test" transitive="false"/>
+        <dependency org="ant-contrib" name="ant-contrib" rev="${ant-contrib.version}" conf="test" transitive="false"/>
+        <dependency org="xmlunit" name="xmlunit" rev="${xmlunit.version}" conf="test" transitive="false"/>
 
         <!-- Global excludes -->
         <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
