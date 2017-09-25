@@ -51,8 +51,8 @@
         <dependency org="com.jcraft" name="jsch.agentproxy" rev="0.0.9" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="0.0.9" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="0.0.9" conf="default,sftp"/>
-        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.52" conf="default"/>
-        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.52" conf="default"/>
+        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.58" conf="default"/>
+        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.58" conf="default"/>
 
         <!-- Test dependencies -->
         <dependency org="junit" name="junit" rev="4.12" conf="test"/>
