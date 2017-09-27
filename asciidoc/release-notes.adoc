@@ -37,7 +37,7 @@ More information about the project can be found on the website link:https://ant.
 Key features of this 2.5.0 release are:
 
     * The minimum runtime Java version required is now Java 7
-    * Ivy now uses BouncyCastle 1.52. Due to the non backward compatibility of that library, earlier versions are not supported.
+    * Ivy now uses BouncyCastle 1.58. Due to the non backward compatibility of that library, earlier versions are not supported.
     * Ivy now uses HttpComponents HttpClient 4.5.x version when dealing with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient library is no longer used or supported. (jira:IVY-1563[])
 
 
