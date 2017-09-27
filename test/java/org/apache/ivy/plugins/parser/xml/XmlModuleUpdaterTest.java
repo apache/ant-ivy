@@ -370,6 +370,72 @@ public class XmlModuleUpdaterTest {
                 + XmlModuleDescriptorUpdater.LINE_SEPARATOR));
     }
 
+    /**
+     * Test case for IVY-1420.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1420">IVY-1420</a>
+     */
+    @Test
+    public void testMergedUpdateWithExtendsAndDefaultConfMappings() throws Exception {
+        URL url = XmlModuleUpdaterTest.class.getResource("test-extends-configurations-defaultconfmapping.xml");
+
+        XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+        ModuleDescriptor md = parser.parseDescriptor(new IvySettings(), url, true);
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlModuleDescriptorUpdater.update(url, buffer,
+                getUpdateOptions("release", "mynewrev")
+                        .setMerge(true)
+                        .setMergedDescriptor(md));
+
+        ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
+                new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
+                false), true);
+
+        Configuration[] configurations = updatedMd.getConfigurations();
+        assertNotNull("Configurations shouldn't be null", configurations);
+        assertEquals("Number of configurations is incorrect", 3, configurations.length);
+
+        String updatedXml = buffer.toString();
+        System.out.println(updatedXml);
+        assertTrue(updatedXml.contains("configurations defaultconfmapping=\"conf1,default->@()\""));
+        assertTrue(updatedXml.contains("dependencies defaultconfmapping=\"conf1,default->@()\""));
+    }
+
+    /**
+     * Test case for IVY-1437.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1437">IVY-1437</a>
+     */
+    @Test
+    public void testMergedUpdateWithExtendsAndConfigurationsInheritance() throws Exception {
+        URL url = XmlModuleUpdaterTest.class.getResource("test-extends-configurations-inherit.xml");
+
+        XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+        ModuleDescriptor md = parser.parseDescriptor(new IvySettings(), url, true);
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlModuleDescriptorUpdater.update(url, buffer,
+                getUpdateOptions("release", "mynewrev")
+                        .setMerge(true)
+                        .setMergedDescriptor(md));
+
+        ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
+                new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
+                        false), true);
+
+        Configuration[] configurations = updatedMd.getConfigurations();
+        assertNotNull("Configurations shouldn't be null", configurations);
+        assertEquals("Number of configurations is incorrect", 2, configurations.length);
+
+        String updatedXml = buffer.toString();
+        System.out.println(updatedXml);
+        assertTrue(updatedXml.contains("configurations defaultconf=\"compile\" defaultconfmapping=\"*->default\""));
+        assertTrue(updatedXml.contains("dependencies defaultconf=\"compile\" defaultconfmapping=\"*->default\""));
+    }
+
     private UpdateOptions getUpdateOptions(String status, String revision) {
         return getUpdateOptions(new IvySettings(), new HashMap<ModuleRevisionId, String>(), status,
             revision, new Date());

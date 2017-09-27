@@ -233,6 +233,9 @@ public final class XmlModuleDescriptorUpdater {
 
         private String organisation = null;
 
+        // defaultConf of imported configurations, if any
+        private String defaultConf = null;
+
         // defaultConfMapping of imported configurations, if any
         private String defaultConfMapping = null;
 
@@ -303,13 +306,31 @@ public final class XmlModuleDescriptorUpdater {
                 // by an absolute path.
                 includeStarted(attributes);
             } else if ("ivy-module/info/extends".equals(path)) {
+                if (options.isMerge()) {
+                    ModuleDescriptor mergedDescriptor = options.getMergedDescriptor();
+                    for (ExtendsDescriptor inheritedDescriptor : mergedDescriptor.getInheritedDescriptors()) {
+                        ModuleDescriptor rprid = inheritedDescriptor.getParentMd();
+                        if (rprid instanceof DefaultModuleDescriptor) {
+                            DefaultModuleDescriptor defaultModuleDescriptor = (DefaultModuleDescriptor) rprid;
+                            if (defaultModuleDescriptor.getDefaultConf() != null) {
+                                defaultConf = defaultModuleDescriptor.getDefaultConf();
+                            }
+                            if (defaultModuleDescriptor.getDefaultConfMapping() != null) {
+                                defaultConfMapping = defaultModuleDescriptor.getDefaultConfMapping();
+                            }
+                            if (defaultModuleDescriptor.isMappingOverride()) {
+                                confMappingOverride = Boolean.TRUE;
+                            }
+                        }
+                    }
+                }
                 startExtends(attributes);
             } else if ("ivy-module/dependencies/dependency".equals(path)) {
                 startElementInDependency(attributes);
-            } else if ("dependencies".equals(qName)) {
-                startDependencies(attributes);
             } else if ("ivy-module/configurations/conf".equals(path)) {
                 startElementInConfigurationsConf(qName, attributes);
+            } else if ("dependencies".equals(qName) || "configurations".equals(qName)) {
+                startElementWithConfAttributes(qName, attributes);
             } else if ("ivy-module/publications/artifact/conf".equals(path)
                     || "ivy-module/dependencies/dependency/conf".equals(path)
                     || "ivy-module/dependencies/dependency/artifact/conf".equals(path)) {
@@ -460,9 +481,9 @@ public final class XmlModuleDescriptorUpdater {
             }
         }
 
-        private void startDependencies(Attributes attributes) {
+        private void startElementWithConfAttributes(String qName, Attributes attributes) {
             // copy
-            write("<dependencies");
+            write("<" + qName);
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
                 if ("defaultconfmapping".equals(attName)) {
@@ -475,6 +496,11 @@ public final class XmlModuleDescriptorUpdater {
                     write(" " + attributes.getQName(i) + "=\""
                             + substitute(settings, attributes.getValue(i)) + "\"");
                 }
+            }
+            // add default conf if needed
+            if (defaultConf != null && attributes.getValue("defaultconf") == null
+                    && !confs.contains(defaultConf)) {
+                write(" defaultconf=\"" + defaultConf + "\"");
             }
             // add default conf mapping if needed
             if (defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
@@ -638,9 +664,14 @@ public final class XmlModuleDescriptorUpdater {
                         if ("configurations".equals(qName)) {
                             insideConfigurations = true;
                             String defaultconf = substitute(settings,
-                                attributes.getValue("defaultconfmapping"));
+                                attributes.getValue("defaultconf"));
                             if (defaultconf != null) {
-                                defaultConfMapping = defaultconf;
+                                defaultConf = defaultconf;
+                            }
+                            String defaultMapping = substitute(settings,
+                                attributes.getValue("defaultconfmapping"));
+                            if (defaultMapping != null) {
+                                defaultConfMapping = defaultMapping;
                             }
                             String mappingOverride = substitute(settings,
                                 attributes.getValue("confmappingoverride"));
@@ -952,7 +983,12 @@ public final class XmlModuleDescriptorUpdater {
                 if (currentIndent.length() == 0) {
                     out.print(getIndent());
                 }
-                out.print("<" + itemName + ">");
+                String newMapping = (defaultConfMapping == null) ? "" :
+                        removeConfigurationsFromMapping(defaultConfMapping, confs);
+                out.print(String.format("<%s%s%s%s>", itemName,
+                        (defaultConf != null && !confs.contains(defaultConf)) ? " defaultconf=\"" + defaultConf + "\"" : "",
+                        (newMapping.length() > 0) ? " defaultconfmapping=\"" + newMapping + "\"" : "",
+                        (confMappingOverride != null) ? " confmappingoverride=\"" + confMappingOverride + "\"" : ""));
                 context.push(itemName);
                 justOpen = null;
             }
