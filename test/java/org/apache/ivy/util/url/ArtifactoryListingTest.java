@@ -35,6 +35,6 @@ public class ArtifactoryListingTest {
         List<URL> content = lister.listAll(new URL(
                 "http://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
         assertNotNull(content);
-        assertEquals(5, content.size());
+        assertEquals(3, content.size());
     }
 }

@@ -16,10 +16,10 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <!-- A comment before the first tag -->
-<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd" xmlns:e="http://ant.apache.org/ivy/extra">
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd" xmlns:e="http://ant.apache.org/ivy/extra">
 	<!-- A comment with accent é & special characters -->
 	<info organisation="${myorg}"
 	       module="${mymodule}"
@@ -27,15 +27,15 @@
 	       status="${mystatus}"
 	       e:myextra="myval"
 	       publication="{mypubdate}">
-	       
+
 		<license name="${mylicense}" url="${mylicenseurl}"/>
-		
+
 		<ivyauthor name="jayasoft" url="http://www.jayasoft.org/"/>
 		<ivyauthor name="${myorg}" url="${myorgurl}"/>
 
 		<repository name="${ivyrep}" url="${ivyrepurl}" pattern="${ivyreppattern}" ivys="${ivys}" artifacts="${artifacts}"/>
 
-		<description homepage="${homepage}">	       
+		<description homepage="${homepage}">
 	This module is <b>great</b> !<br/>
 	You can use it especially with myconf1 &amp; myconf2, and myconf4 is not too bad too.
 		</description>
@@ -45,7 +45,7 @@
 		<conf name="${myvar}" description="${mydesc}"/>
 		<conf name="myconf2" description="desc 2" visibility="${visibility}"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>
-		<conf name="myconf4" description="desc 4" extends="${myvar}, myconf2"/>		
+		<conf name="myconf4" description="desc 4" extends="${myvar}, myconf2"/>
 		<conf name="myoldconf" description="my old desc" deprecated="${deprecated}"/>
 	</configurations>
 	<publications>
@@ -84,7 +84,7 @@
 		<dependency org="yourorg" name="yourmodule8" rev="8.1">
 			<artifact name="yourartifact8-1" type="jar"/>
 			<artifact name="yourartifact8-2" type="jar"/>
-		</dependency>		
+		</dependency>
 
 		<dependency org="yourorg" name="yourmodule9" rev="9.1" conf="myconf1,myconf2,myconf3->default">
 			<artifact name="${art9-1}" type="${mytype}" conf="${myvar},myconf2"/>
@@ -92,7 +92,7 @@
 				<conf name="myconf2"/>
 				<conf name="${conf3}"/>
 			</artifact>
-		</dependency>		
+		</dependency>
 
 		<dependency org="yourorg" name="yourmodule10" rev="10.1">
 			<include name="${includename}" type="${mytype}"/>
