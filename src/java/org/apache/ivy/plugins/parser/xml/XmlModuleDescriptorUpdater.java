@@ -352,18 +352,18 @@ public final class XmlModuleDescriptorUpdater {
                 confAttributeBuffers.push(buffer);
                 write("<" + qName);
                 buffer.setDefaultPrint(attributes.getValue("conf") == null
-                        && ((newDefaultConf == null) || (newDefaultConf.length() > 0)));
+                        && (newDefaultConf == null || newDefaultConf.length() > 0));
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String attName = attributes.getQName(i);
                     if ("conf".equals(attName)) {
                         String confName = substitute(settings, attributes.getValue("conf"));
                         String newConf = removeConfigurationsFromList(confName, confs);
                         if (newConf.length() > 0) {
-                            write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");
+                            write(" " + attName + "=\"" + newConf + "\"");
                             buffers.peek().setPrint(true);
                         }
                     } else {
-                        write(" " + attributes.getQName(i) + "=\""
+                        write(" " + attName + "=\""
                                 + substitute(settings, attributes.getValue(i)) + "\"");
                     }
                 }
@@ -379,11 +379,11 @@ public final class XmlModuleDescriptorUpdater {
                         String confName = substitute(settings, attributes.getValue("conf"));
                         String newConf = removeConfigurationsFromList(confName, confs);
                         if (newConf.length() > 0) {
-                            write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");
+                            write(" " + attName + "=\"" + newConf + "\"");
                             buffers.peek().setPrint(true);
                         }
                     } else {
-                        write(" " + attributes.getQName(i) + "=\""
+                        write(" " + attName + "=\""
                                 + substitute(settings, attributes.getValue(i)) + "\"");
                     }
                 }
@@ -486,21 +486,23 @@ public final class XmlModuleDescriptorUpdater {
             write("<" + qName);
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
-                if ("defaultconfmapping".equals(attName)) {
+                if ("defaultconf".equals(attName) || "defaultconfmapping".equals(attName)) {
                     String newMapping = removeConfigurationsFromMapping(
-                        substitute(settings, attributes.getValue("defaultconfmapping")), confs);
+                        substitute(settings, attributes.getValue(attName)), confs);
                     if (newMapping.length() > 0) {
-                        write(" " + attributes.getQName(i) + "=\"" + newMapping + "\"");
+                        write(" " + attName + "=\"" + newMapping + "\"");
                     }
                 } else {
-                    write(" " + attributes.getQName(i) + "=\""
+                    write(" " + attName + "=\""
                             + substitute(settings, attributes.getValue(i)) + "\"");
                 }
             }
             // add default conf if needed
-            if (defaultConf != null && attributes.getValue("defaultconf") == null
-                    && !confs.contains(defaultConf)) {
-                write(" defaultconf=\"" + defaultConf + "\"");
+            if (defaultConf != null && attributes.getValue("defaultconf") == null) {
+                String newConf = removeConfigurationsFromMapping(defaultConf, confs);
+                if (newConf.length() > 0) {
+                    write(" defaultconf=\"" + newConf + "\"");
+                }
             }
             // add default conf mapping if needed
             if (defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
@@ -523,10 +525,10 @@ public final class XmlModuleDescriptorUpdater {
                     newDefaultConf = removeConfigurationsFromList(
                         substitute(settings, attributes.getValue("defaultconf")), confs);
                     if (newDefaultConf.length() > 0) {
-                        write(" " + attributes.getQName(i) + "=\"" + newDefaultConf + "\"");
+                        write(" " + attName + "=\"" + newDefaultConf + "\"");
                     }
                 } else {
-                    write(" " + attributes.getQName(i) + "=\""
+                    write(" " + attName + "=\""
                             + substitute(settings, attributes.getValue(i)) + "\"");
                 }
             }
@@ -983,10 +985,12 @@ public final class XmlModuleDescriptorUpdater {
                 if (currentIndent.length() == 0) {
                     out.print(getIndent());
                 }
+                String newConf = (defaultConf == null) ? "" :
+                        removeConfigurationsFromMapping(defaultConf, confs);
                 String newMapping = (defaultConfMapping == null) ? "" :
                         removeConfigurationsFromMapping(defaultConfMapping, confs);
                 out.print(String.format("<%s%s%s%s>", itemName,
-                        (defaultConf != null && !confs.contains(defaultConf)) ? " defaultconf=\"" + defaultConf + "\"" : "",
+                        (newConf.length() > 0) ? " defaultconf=\"" + newConf + "\"" : "",
                         (newMapping.length() > 0) ? " defaultconfmapping=\"" + newMapping + "\"" : "",
                         (confMappingOverride != null) ? " confmappingoverride=\"" + confMappingOverride + "\"" : ""));
                 context.push(itemName);

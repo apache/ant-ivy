@@ -436,6 +436,71 @@ public class XmlModuleUpdaterTest {
         assertTrue(updatedXml.contains("dependencies defaultconf=\"compile\" defaultconfmapping=\"*->default\""));
     }
 
+    /**
+     * Test case for IVY-1315.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1315">IVY-1315</a>
+     */
+    @Test
+    public void testMergedUpdateWithInclude() throws Exception {
+        URL url = XmlModuleUpdaterTest.class.getResource("test-update-excludedconfs6.xml");
+
+        XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+        ModuleDescriptor md = parser.parseDescriptor(new IvySettings(), url, true);
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlModuleDescriptorUpdater.update(url, buffer,
+                getUpdateOptions("release", "mynewrev")
+                        .setMerge(true)
+                        .setMergedDescriptor(md));
+
+        ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
+                new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
+                        false), true);
+
+        Configuration[] configurations = updatedMd.getConfigurations();
+        assertNotNull("Configurations shouldn't be null", configurations);
+        assertEquals("Number of configurations is incorrect", 6, configurations.length);
+
+        String updatedXml = buffer.toString();
+        System.out.println(updatedXml);
+        assertTrue(updatedXml.contains("dependencies defaultconf=\"conf1->default\""));
+    }
+
+    /**
+     * Test case for IVY-1419.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1419">IVY-1419</a>
+     */
+    @Test
+    public void testMergedUpdateWithIncludeAndExcludedConf() throws Exception {
+        URL url = XmlModuleUpdaterTest.class.getResource("test-update-excludedconfs6.xml");
+
+        XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+        ModuleDescriptor md = parser.parseDescriptor(new IvySettings(), url, true);
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlModuleDescriptorUpdater.update(url, buffer,
+                getUpdateOptions("release", "mynewrev")
+                        .setMerge(true)
+                        .setMergedDescriptor(md)
+                        .setConfsToExclude(new String[]{"conf1"}));
+
+        ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
+                new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
+                        false), true);
+
+        Configuration[] configurations = updatedMd.getConfigurations();
+        assertNotNull("Configurations shouldn't be null", configurations);
+        assertEquals("Number of configurations is incorrect", 5, configurations.length);
+
+        String updatedXml = buffer.toString();
+        System.out.println(updatedXml);
+        assertTrue(updatedXml.contains("dependencies/"));
+    }
+
     private UpdateOptions getUpdateOptions(String status, String revision) {
         return getUpdateOptions(new IvySettings(), new HashMap<ModuleRevisionId, String>(), status,
             revision, new Date());
