@@ -25,9 +25,11 @@ Include configurations specified in another file.
 
 The included file should have a `configurations` tag as root tag, which follow the same specification as the link:../ivyfile/configurations.html[configurations] tag of the Ivy file.
 
-This means that it can contain conf declarations, other file inclusion, and also a `defaultconfmapping`.
+This means that it can contain conf declarations, other file inclusions, and have link:configurations.html#attributes[attributes] controlling conf mapping.
 
 When delivering an Ivy file with such an inclusion, the included descriptor file is inlined, i.e. Ivy removes the dependency on the external file.
+
+[*__since 2.5__*] Attributes inherited through included file are set on `dependencies` element due to the way module descriptor updater works currently.
 
 == Attributes
 

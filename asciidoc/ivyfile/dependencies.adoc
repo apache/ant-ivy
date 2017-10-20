@@ -31,7 +31,7 @@ This container provides two similar behaviors described below. (See link:configu
 
 (*__since 1.4__*) You can activate a `confmappingoverride` mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from.
 
-(*__since 2.5__*) Attributes inherited via link:extends.html[`extends`] are added to both `configurations` and `dependencies`.
+(*__since 2.5__*) Attributes inherited via link:extends.html[`extends`] are added to `dependencies` only on link:../use/deliver.html[delivery] and override attributes inherited from `configurations`.
 
 == Attributes
 
