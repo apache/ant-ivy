@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Main-Class: org.apache.ivy.Main
+Automatic-Module-Name: org.apache.ivy
 Bundle-Version: 2.4.0
 Bundle-Name: Ivy
 Bundle-ManifestVersion: 2
@@ -20,13 +21,13 @@ Import-Package: com.jcraft.jsch;resolution:=optional,
  org.apache.commons.httpclient.params;resolution:=optional,
  org.apache.commons.httpclient.protocol;resolution:=optional,
  org.apache.commons.net.ftp;resolution:=optional,
- org.apache.commons.vfs;resolution:=optional,
- org.apache.commons.vfs.impl;resolution:=optional,
- org.apache.commons.vfs.provider;resolution:=optional,
- org.apache.commons.vfs.provider.ftp;resolution:=optional,
- org.apache.commons.vfs.provider.local;resolution:=optional,
- org.apache.commons.vfs.provider.sftp;resolution:=optional,
- org.apache.commons.vfs.provider.url;resolution:=optional,
+ org.apache.commons.vfs2;resolution:=optional,
+ org.apache.commons.vfs2.impl;resolution:=optional,
+ org.apache.commons.vfs2.provider;resolution:=optional,
+ org.apache.commons.vfs2.provider.ftp;resolution:=optional,
+ org.apache.commons.vfs2.provider.local;resolution:=optional,
+ org.apache.commons.vfs2.provider.sftp;resolution:=optional,
+ org.apache.commons.vfs2.provider.url;resolution:=optional,
  org.apache.oro.text;resolution:=optional,
  org.apache.oro.text.regex;resolution:=optional,
  org.apache.tools.ant;resolution:=optional,
