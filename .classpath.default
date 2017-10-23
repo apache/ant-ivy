@@ -24,10 +24,11 @@
 	<classpathentry kind="lib" path="lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/ant-testutil.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/commons-vfs.jar"/>
+	<classpathentry kind="lib" path="lib/commons-vfs2.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore.jar"/>
 	<classpathentry kind="lib" path="lib/jsch.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/xmlunit.jar"/>
