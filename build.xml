@@ -692,13 +692,13 @@
 
     <target name="eclipse-default" depends="resolve,check-eclipse-classpath-overwrite"
             unless="eclipse.classpath.abort"
-            description="creates a default .classpath for eclipse, using jars resolved by this ant build">
+            description="creates a default .classpath for Eclipse using jars resolved by this Ant build">
         <copy file="${basedir}/.classpath.default" tofile="${basedir}/.classpath" overwrite="true"/>
     </target>
 
     <target name="eclipse-ivyde" depends="check-eclipse-classpath-overwrite"
             unless="eclipse.classpath.abort"
-            description="creates a .classpath for eclipse using Apache IvyDE version">
+            description="creates a .classpath for Eclipse using Apache IvyDE plugin">
         <copy file="${basedir}/.classpath.ivyde" tofile="${basedir}/.classpath" overwrite="true"/>
     </target>
 </project>

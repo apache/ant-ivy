@@ -15,7 +15,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
@@ -26,7 +26,7 @@
 	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/commons-vfs2.jar"/>
-	<classpathentry kind="lib" path="lib/hamcrest.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore.jar"/>
 	<classpathentry kind="lib" path="lib/jsch.jar"/>
