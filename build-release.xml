@@ -619,7 +619,7 @@
                             name = atts.item(j).getTextContent().split(/[\s,]+/).pop()
                             out.write(id + '.@' + ((id === "ivysettings.resolvers") ? name.toLowerCase() : name) + ' = '
                                 + xpath.evaluate("../td[2]", atts.item(j), javax.xml.xpath.XPathConstants.NODE)
-                                    .getTextContent().replace(/\n/g, " ").replace(/[\xA0-\xE1\xE3-\xFF]/g, "") + '\n');
+                                    .getTextContent().replace(/\n/g, " ").replace(/[\x00-\x1F\xA0-\xE1\xE3-\xFF]/g, "") + '\n');
                         }
                     } catch (e) {
                         print('\terror: ' + e);
