@@ -565,7 +565,8 @@
             depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot"
             description="make a new release of Ivy"/>
 
-    <target name="tagsdoc" description="generate tagsdoc.properties file which can be used in IvyDE for code completion documentation">
+    <target name="tagsdoc" depends="generate-doc"
+            description="generate tagsdoc.properties file which can be used in IvyDE for code completion documentation">
         <scriptdef name="generate-tagsdoc" language="javascript">
             <element name="fileset" type="fileset"/>
             <attribute name="destFile"/>
