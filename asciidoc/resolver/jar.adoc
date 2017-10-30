@@ -43,7 +43,7 @@ This resolver shares the link:../settings/resolvers.html#common[common attribute
 |=======
 |Attribute|Description|Required
 |file|the absolute path of the jar|One of 'file' or 'url' is required
-|url|the url of the jar|One of 'file' or 'url' is required
+|url|the URL of the jar|One of 'file' or 'url' is required
 |=======
 
 

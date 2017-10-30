@@ -612,11 +612,14 @@
                         out.write('##### ' + id + '\n');
                         out.write(id + ' = ' + t.getTextContent() + '\n');
 
-                        expression = "//table/thead/tr/th[text()='Attribute']/../../../tbody/tr/td[1]";
+                        text = (id === "ivysettings.resolvers") ? "Name" : "Attribute"
+                        expression = "(//table/thead/tr/th[text()='" + text + "'])[1]/../../../tbody/tr/td[1]";
                         var atts = xpath.evaluate(expression, document, javax.xml.xpath.XPathConstants.NODESET);
                         for (j = 0; j < atts.getLength(); j++) {
-                            out.write(id + '.@' + atts.item(j).getTextContent() + ' = '
-                                      + xpath.evaluate("../td[2]", atts.item(j), javax.xml.xpath.XPathConstants.NODE).getTextContent() + '\n');
+                            name = atts.item(j).getTextContent().split(/[\s,]+/).pop()
+                            out.write(id + '.@' + ((id === "ivysettings.resolvers") ? name.toLowerCase() : name) + ' = '
+                                + xpath.evaluate("../td[2]", atts.item(j), javax.xml.xpath.XPathConstants.NODE)
+                                    .getTextContent().replace(/\n/g, " ").replace(/[\xA0-\xE1\xE3-\xFF]/g, "") + '\n');
                         }
                     } catch (e) {
                         print('\terror: ' + e);

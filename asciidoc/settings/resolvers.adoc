@@ -63,9 +63,11 @@ Here is the list of built-in resolvers:
 |Name|Type|Description
 |link:../resolver/ivyrep.html[IvyRep]|Standard|Finds Ivy files on ivyrep and artifacts on ibiblio.
 |link:../resolver/ibiblio.html[IBiblio]|Standard|Finds artifacts on ibiblio.
+|link:../resolver/bintray.html[BinTray]|Standard|Finds artifacts on bintray.
 |link:../resolver/packager.html[Packager]|Standard|Finds Ivy files and packaging instructions via URLs, then creates artifacts by following the instructions.
 |link:../resolver/filesystem.html[FileSystem]|Standard|This very performant resolver finds Ivy files and artifacts in your file system.
 |link:../resolver/url.html[URL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs.
+|link:../resolver/url.html[MirroredURL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs from a mirror list.
 |link:../resolver/vfs.html[VFS]|Standard|Finds Ivy files and artifacts in any repository accessible with link:https://commons.apache.org/proper/commons-vfs/[Apache Commons VFS].
 |link:../resolver/ssh.html[SSH]|Standard|Finds Ivy files and artifacts in any repository accessible with SSH.
 |link:../resolver/sftp.html[SFTP]|Standard|Finds Ivy files and artifacts in any repository accessible with SFTP.
@@ -74,6 +76,7 @@ Here is the list of built-in resolvers:
 |link:../resolver/dual.html[Dual]|Composite|Delegates the finding of Ivy files to one resolver and of artifacts to another.
 |link:../resolver/obr.html[OBR]|Standard|Resolve modules as OSGi bundles listed by an OSGi obr.xml.
 |link:../resolver/updatesite.html[Eclipse updatesite]|Standard|Resolve modules as OSGi bundles which are hosted on an Eclipse update site.
+|link:../resolver/osgiagg.html[OSGi-agg]|Composite|Delegates the finding to a chain of sub resolvers supporting OSGi bundles.
 |=======
 
 
@@ -133,8 +136,7 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disables the look
 |namespace|The name of the namespace to which this resolver belongs (*__since 1.3__*)|No, defaults to 'system'|Yes|Yes
 |checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check (*__since 1.3__*)|No, defaults to true|No|Yes
 |descriptor|'optional' if a module descriptor (usually an Ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor (*__since 2.0__*)|No, defaults to 'optional'|No (except dual)|Yes
-|[line-through]#allownomd#|__Deprecated. Use descriptor="required \| optional" instead.__
-true if the absence of module descriptor (usually an Ivy file) is authorised for this resolver, false to refuse modules without module descriptor (*__since 1.4__*)|No, defaults to true|No (except dual)|Yes
+|[line-through]#allownomd#|__Deprecated, we recommend using descriptor="required \| optional" instead.__ true if the absence of module descriptor (usually an Ivy file) is authorised for this resolver, false to refuse modules without module descriptor (*__since 1.4__*)|No, defaults to true|No (except dual)|Yes
 |checksums|a comma separated list of link:../concept.html#checksum[checksum algorithms] to use both for publication and checking (*__since 1.4__*)|No, defaults to ${ivy.checksums}|No|Yes
 |latest|The name of the latest strategy to use.|No, defaults to 'default'|Yes|Yes
 |cache|The name of the cache manager to use.|No, defaults to the value of the default attribute of caches|No|Yes
