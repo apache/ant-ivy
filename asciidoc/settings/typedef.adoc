@@ -21,7 +21,7 @@
 
 *Tag:* typedef
 
-Defines a new type in Ivy. Useful to define new dependency resolvers, in particular, but also latest strategies.
+[ivysettings.typedef]#Defines a new type in Ivy. Useful to define new dependency resolvers, in particular, but also latest strategies.#
 See link:../extend.html[how to write and plug your own dependency resolver] for details.
 
 == Attributes

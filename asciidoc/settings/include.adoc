@@ -23,7 +23,7 @@
 
 [*__since 1.3__*]
 
-Includes another Ivy settings file as if it were part of this one.
+[ivysettings.include]#Includes another Ivy settings file as if it were part of this one.#
 
 The included Ivy settings file has to be a complete well formed Ivy settings file, i.e. it does have to include the `<ivysettings>` tag.
 

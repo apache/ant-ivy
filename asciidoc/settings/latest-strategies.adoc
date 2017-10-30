@@ -21,7 +21,7 @@
 
 *Tag:* latest-strategies
 
-Defines a list of link:../concept.html#latest[latest strategies] usable in Ivy. Each latest strategy is identified by its name, given as an attribute.
+[ivysettings.latest-strategies]#Defines a list of link:../concept.html#latest[latest strategies] usable in Ivy.# Each latest strategy is identified by its name, given as an attribute.
 
 The child tag used for the latest strategy must be equal to a name of a latest strategy type (usually added with the `typedef` tag).
 

@@ -31,7 +31,7 @@
 
 This resolver is one of the resolvers which support link:../osgi.html[OSGi&#153;] dependencies.
 
-This resolver is like a classic link:../resolver/chain.html[chain] resolver, but with better support for OSGi metadata.
+[ivysettings.resolvers.osgi-agg]#This resolver is like a classic link:../resolver/chain.html[chain] resolver, but with better support for OSGi metadata.#
 
 
 == Attributes

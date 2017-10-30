@@ -29,7 +29,7 @@
 
 [*__since 2.3__*]
 
-This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies. A part of the OSGi specification defines OBR (OSGi Bundle Repository). OBR aggregates the OSGi metadata of every bundle included in a repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
+[ivysettings.resolvers.obr]#This resolver is one of the resolver which supports link:../osgi.html[OSGi&#153;] dependencies.# A part of the OSGi specification defines OBR (OSGi Bundle Repository). OBR aggregates the OSGi metadata of every bundle included in a repository. So contrary to the other resolvers, this resolver needs to get the descriptor of the repository (an obr.xml) before starting to resolve modules.
 
 
 == Attributes

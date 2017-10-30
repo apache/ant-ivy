@@ -21,7 +21,7 @@
 
 *Tag:* attribute
 
-Defines a macrodef attribute. See link:../macrodef.html[macrodef] for details.
+[ivysettings.macrodef.attribute]#Defines a macrodef attribute.# See link:../macrodef.html[macrodef] for details.
 
 == Attributes
 

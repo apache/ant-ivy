@@ -27,7 +27,7 @@
 |=======
 
 
-This resolver usually uses ibiblio to find artifacts.
+[ivysettings.resolvers.ibiblio]#This resolver usually uses ibiblio to find artifacts.#
 
 (*__since 1.3__*) Using the `m2compatible` attribute, you can benefit from Maven 2 repository compatibility (convert dots in organisation into slashes, search for POMs, use transitive dependencies of POMs). This setting also affects the default place where the resolver looks for its artifacts to point to the Maven 2 repository. So setting this attribute to `true` is sufficient to use Maven 2 ibiblio repository.
 

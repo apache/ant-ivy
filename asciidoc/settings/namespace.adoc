@@ -19,7 +19,7 @@
 
 *Tag:* namespace
 
-Defines a new namespace. A namespace is identified by a name, which can be referenced by one of the link:../settings/resolvers.html[resolvers].
+[ivysettings.namespaces.namespace]#Defines a new namespace. A namespace is identified by a name, which can be referenced by one of the link:../settings/resolvers.html[resolvers].#
 
 An overview of namespaces is given in the link:../settings/namespaces.html[namespaces] documentation.
 

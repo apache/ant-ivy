@@ -21,7 +21,7 @@
 
 *Tag:* property
 
-Defines an Ivy variable.
+[ivysettings.property]#Defines an Ivy variable.#
 
 (*__since 1.3__*) The optional override attribute enables you to avoid overriding the previous value of the variable, which makes the definition to behave like an Ant property, which is particularly useful to define default values (values which are used only if they haven't been defined yet).
 

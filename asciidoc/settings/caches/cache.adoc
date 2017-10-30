@@ -23,7 +23,7 @@
 
 [*__since 2.0__*]
 
-Defines a repository cache instance based on the default repository cache implementation.
+[ivysettings.caches.cache]#Defines a repository cache instance based on the default repository cache implementation.#
 
 The default repository cache implementation caches files on the local filesystem in subdirectories of a configured base directory.
 

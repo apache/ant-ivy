@@ -23,7 +23,7 @@
 
 [*__since 2.0__*]
 
-Defines a TTL (Time To Live) rule for resolved revision caching.
+[ivysettings.caches.cache.TTL]#Defines a TTL (Time To Live) rule for resolved revision caching.#
 
 When Ivy resolves a dynamic version constraint (like `latest.integration` or a version range), it can store the result of the resolution (like `latest.integration=1.5.1`) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running link:../../use/resolve.html[resolve] in refresh mode.
 

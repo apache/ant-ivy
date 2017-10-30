@@ -23,7 +23,7 @@
 
 [*__since 1.4__*]
 
-Includes a jar in the classpath used to load plugins.
+[ivysettings.classpath]#Includes a jar in the classpath used to load plugins.#
 
 This lets you add Ivy plugins without relying on an external classpath (the Ant classpath, for instance), therefore easing the use of Ivy in multiple execution environments (Ant, standalone, IDE plugins, ...).
 

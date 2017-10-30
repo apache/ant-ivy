@@ -23,7 +23,7 @@
 
 [*__since 1.4__*]
 
-Defines a list of version matchers.
+[ivysettings.version-matchers]#Defines a list of version matchers.#
 
 The child tag used for the version matcher must be equal to a name of a report outputter type (added with the `typedef` tag).
 

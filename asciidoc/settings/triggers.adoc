@@ -23,7 +23,7 @@
 
 [*__since 1.4__*]
 
-Defines a list of triggers to activate on some Ivy events.
+[ivysettings.triggers]#Defines a list of triggers to activate on some Ivy events.#
 
 A trigger is an action which is performed whenever a particular event occurs.
 Ivy supports 3 type of triggers out of the box:

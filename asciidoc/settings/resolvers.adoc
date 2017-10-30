@@ -21,7 +21,7 @@
 
 *Tag:* resolvers
 
-Defines a list of dependency resolvers usable in Ivy. Each dependency resolver is identified by its name, given as an attribute.
+[ivysettings.resolvers]#Defines a list of dependency resolvers usable in Ivy.# Each dependency resolver is identified by its name, given as an attribute.
 
 The child tag used for the dependency resolver must be equal to a name of a dependency resolver type (either built-in or added with the typedef tag).
 

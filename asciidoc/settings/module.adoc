@@ -21,7 +21,7 @@
 
 *Tag:* module
 
-Define a module set rule. The tag defines a module set, by giving an expression and the matcher to use for organisation, name, revision and any extra attribute identifying your modules. The rule matching is performed in order, and is using a pattern matcher. Hence you can use `*` to specify all, or simply avoid specifying the attribute.
+[ivysettings.modules.module]#Define a module set rule.# The tag defines a module set, by giving an expression and the matcher to use for organisation, name, revision and any extra attribute identifying your modules. The rule matching is performed in order, and is using a pattern matcher. Hence you can use `*` to specify all, or simply avoid specifying the attribute.
 
 The revision and extra attributes are only used for rules defining the resolver to use. For other settings, use only organisation and module name.
 

@@ -21,7 +21,7 @@
 
 *Tag:* timeout-constraint
 
-Defines a named timeout constraint that can then be referenced from other places of the Ivy settings file, like the link:resolvers.html[resolvers].
+[ivysettings.timeout-constraint]#Defines a named timeout constraint that can then be referenced from other places of the Ivy settings file, like the link:resolvers.html[resolvers].#
 
 == Attributes
 

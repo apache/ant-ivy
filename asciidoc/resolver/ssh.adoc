@@ -28,7 +28,7 @@
 
 [*__since 1.4__*]
 
-This resolver can be used when your Ivy repository is located on a server accessible via SSH. The secured nature of SSH and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
+[ivysettings.resolvers.ssh]#This resolver can be used when your Ivy repository is located on a server accessible via SSH.# The secured nature of SSH and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
 If your server supports SFTP, you can consider using the link:../resolver/sftp.html[SFTP resolver].
 

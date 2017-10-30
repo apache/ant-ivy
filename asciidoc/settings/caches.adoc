@@ -23,7 +23,7 @@
 
 [*__since 2.0__*]
 
-Configures the Ivy cache system.
+[ivysettings.caches]#Configures the Ivy cache system.#
 
 See link:../concept.html#cache[cache concept] for details on the Ivy cache concept.
 

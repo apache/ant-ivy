@@ -26,7 +26,7 @@
 |Handle publish|no
 |=======
 
-This resolver usually uses an URL based repository usually similar in structure to the, now defunct, `http://ivyrep.jayasoft.org/` repo, to find Ivy files, and ibiblio to find artifacts. It can also be configured to use other similar repositories.
+[ivysettings.resolvers.ivyrep]#This resolver usually uses an URL based repository usually similar in structure to the, now defunct, `http://ivyrep.jayasoft.org/` repo, to find Ivy files, and ibiblio to find artifacts.# It can also be configured to use other similar repositories.
 
 
 [NOTE]

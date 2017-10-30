@@ -27,7 +27,7 @@
 |=======
 
 
-This resolver delegates its job to one resolver for Ivy files and another for artifacts.
+[ivysettings.resolvers.dual]#This resolver delegates its job to one resolver for Ivy files and another for artifacts.#
 
 
 == Attributes

@@ -23,7 +23,7 @@
 
 [*__since 2.0__*]
 
-Defines a list of lock strategies usable in Ivy.
+[ivysettings.lock-strategies]#Defines a list of lock strategies usable in Ivy.#
 
 A lock strategy is used by a cache manager to decide when and how locking should be performed (see link:../settings/cache[caches] to see how to configure the lock strategy to use).
 

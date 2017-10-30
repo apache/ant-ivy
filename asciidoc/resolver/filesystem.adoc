@@ -27,7 +27,7 @@
 |=======
 
 
-This resolver uses the file system to resolve Ivy files and artifacts. An advantage of this resolver is that it usually provides very good performance. Moreover, it is easy to setup using basic OS file sharing mechanisms.
+[ivysettings.resolvers.filesystem]#This resolver uses the file system to resolve Ivy files and artifacts.# An advantage of this resolver is that it usually provides very good performance. Moreover, it is easy to setup using basic OS file sharing mechanisms.
 
 The configuration of such a resolver is mainly done through Ivy and artifact patterns, indicating where Ivy files and artifacts can be found in the file system. These patterns must be absolute paths (*__since 2.0__*). You can indicate a list of patterns which will be checked one after the other.
 

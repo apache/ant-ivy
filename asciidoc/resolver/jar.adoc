@@ -28,7 +28,7 @@
 
 [*__since 2.3__*]
 
-This resolver uses a specified jar resolve Ivy files and artifacts.
+[ivysettings.resolvers.jar]#This resolver uses a specified jar resolve Ivy files and artifacts.#
 
 This kind of resolver helps the packaging of an entire repository. Since the entire "repository" jar is expected to be local at some point, the size of a such repository should be considered to be not too large if it is expected to be remote; hence the artifacts in a such repo should be little in size.
 

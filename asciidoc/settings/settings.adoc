@@ -21,7 +21,7 @@
 
 *Tag:* settings
 
-Configures some important Ivy info: default resolver, latest strategy, conflict manager and some others.
+[ivysettings.settings]#Configures some important Ivy behaviour: default resolver, latest strategy, conflict manager and some others.#
 
 The default resolver is used whenever nothing else is configured in the modules section of the settings file. It should give the name of a dependency resolver defined in the link:../settings/resolvers.html[resolvers] section of the settings file.
 

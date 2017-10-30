@@ -565,4 +565,68 @@
             depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot"
             description="make a new release of Ivy"/>
 
+    <target name="tagsdoc" description="generate tagsdoc.properties file which can be used in IvyDE for code completion documentation">
+        <scriptdef name="generate-tagsdoc" language="javascript">
+            <element name="fileset" type="fileset"/>
+            <attribute name="destFile"/>
+            <![CDATA[
+                fs = elements.get("fileset").get(0);
+                srcDir = elements.get("fileset").get(0).getDir(project);
+
+                // Get the files (array) of that fileset
+                ds = fs.getDirectoryScanner(project);
+                srcFiles = ds.getIncludedFiles();
+
+                // iterate over that array
+                print('processing ' + srcFiles.length + ' source files...');
+                var xpath = javax.xml.xpath.XPathFactory.newInstance().newXPath();
+
+                out = new java.io.FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
+                for (i = 0; i < srcFiles.length; i++) {
+                    try {
+                        // get the values via Java API
+                        var file = new java.io.File(fs.getDir(project), srcFiles[i]);
+                        print('processing ' + file + '...');
+
+                        inputSource = new org.xml.sax.InputSource(new java.io.FileInputStream(file));
+
+                        dbf = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+                        dbf.setValidating(false);
+                        dbf.setIgnoringComments(false);
+                        dbf.setIgnoringElementContentWhitespace(true);
+                        dbf.setNamespaceAware(false);
+                        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+                        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                        builder = dbf.newDocumentBuilder();
+                        document = builder.parse(inputSource);
+
+                        var expression = "//span[contains(@class, 'ivysettings.')]";
+                        var t = xpath.evaluate(expression, document, javax.xml.xpath.XPathConstants.NODE);
+                        if (t == null) {
+                            print('\tno tagdoc span found: ignored');
+                            continue;
+                        }
+                        var id = t.getAttributes().getNamedItem("class").getTextContent();
+
+                        out.write('##### ' + id + '\n');
+                        out.write(id + ' = ' + t.getTextContent() + '\n');
+
+                        expression = "//table/thead/tr/th[text()='Attribute']/../../../tbody/tr/td[1]";
+                        var atts = xpath.evaluate(expression, document, javax.xml.xpath.XPathConstants.NODESET);
+                        for (j = 0; j < atts.getLength(); j++) {
+                            out.write(id + '.@' + atts.item(j).getTextContent() + ' = '
+                                      + xpath.evaluate("../td[2]", atts.item(j), javax.xml.xpath.XPathConstants.NODE).getTextContent() + '\n');
+                        }
+                    } catch (e) {
+                        print('\terror: ' + e);
+                    }
+                }
+                out.close();
+            ]]>
+        </scriptdef>
+        <generate-tagsdoc destFile="tagsdoc.properties">
+            <fileset dir="${doc.build.dir}" includes="settings/**/*.html,resolver/**/*.html"/>
+        </generate-tagsdoc>
+    </target>
+
 </project>

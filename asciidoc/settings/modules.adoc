@@ -21,7 +21,7 @@
 
 *Tag:* modules
 
-Defines per module or module set settings.
+[ivysettings.modules]#Defines per module or module set settings.#
 
 The rules are given by defining a module set, using a pattern for module organisation and name, and giving some settings for the set, like the name of the corresponding resolver to use.
 
