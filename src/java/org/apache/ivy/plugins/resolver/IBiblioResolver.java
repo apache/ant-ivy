@@ -215,7 +215,7 @@ public class IBiblioResolver extends URLResolver {
                 Message.verbose("\tmaven-metadata not available for: " + mrid);
                 return null;
             }
-            try (final InputStream metadataStream = metadata.openStream();) {
+            try (final InputStream metadataStream = metadata.openStream()) {
                 final StringBuffer timestamp = new StringBuffer();
                 final StringBuffer buildNumer = new StringBuffer();
                 XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {

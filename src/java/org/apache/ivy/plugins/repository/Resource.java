@@ -48,7 +48,7 @@ public interface Resource {
      *
      * @return the repository's assigned resource name/identifier.
      */
-    public String getName();
+    String getName();
 
     /**
      * Get the date the resource was last modified
@@ -57,14 +57,14 @@ public interface Resource {
      *         in milliseconds since the epoch (00:00:00 GMT, January 1, 1970), or <code>0L</code>
      *         if the file does not exist or if an I/O error occurs.
      */
-    public long getLastModified();
+    long getLastModified();
 
     /**
      * Get the resource size
      *
      * @return a <code>long</code> value representing the size of the resource in bytes.
      */
-    public long getContentLength();
+    long getContentLength();
 
     /**
      * Determine if the resource is available. Note that this method only checks for
@@ -72,14 +72,14 @@ public interface Resource {
      *
      * @return <code>boolean</code> value indicating if the resource is available.
      */
-    public boolean exists();
+    boolean exists();
 
     /**
      * Is this resource local to this host, i.e. is it on the file system?
      *
      * @return <code>boolean</code> value indicating if the resource is local.
      */
-    public boolean isLocal();
+    boolean isLocal();
 
     /**
      * Clones this resource with a new resource with a different name
@@ -88,7 +88,7 @@ public interface Resource {
      *            the name of the clone
      * @return the cloned resource
      */
-    public Resource clone(String cloneName);
+    Resource clone(String cloneName);
 
     /**
      * Opens a stream on this resource
@@ -96,5 +96,5 @@ public interface Resource {
      * @return the opened input stream
      * @throws IOException if something goes wrong
      */
-    public InputStream openStream() throws IOException;
+    InputStream openStream() throws IOException;
 }

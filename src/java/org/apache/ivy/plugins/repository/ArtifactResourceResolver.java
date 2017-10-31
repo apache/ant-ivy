@@ -25,5 +25,5 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
  * {@link ResolvedResource}.
  */
 public interface ArtifactResourceResolver {
-    public ResolvedResource resolve(Artifact artifact);
+    ResolvedResource resolve(Artifact artifact);
 }

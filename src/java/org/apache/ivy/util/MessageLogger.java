@@ -52,7 +52,7 @@ public interface MessageLogger {
      * @see Message#MSG_WARN
      * @see Message#MSG_ERR
      */
-    public abstract void log(String msg, int level);
+    void log(String msg, int level);
 
     /**
      * Same as {@link #log(String, int)}, but without adding any contextual information to the
@@ -63,46 +63,46 @@ public interface MessageLogger {
      * @param level
      *            the level at which the message should be logged.
      */
-    public abstract void rawlog(String msg, int level);
+    void rawlog(String msg, int level);
 
-    public abstract void debug(String msg);
+    void debug(String msg);
 
-    public abstract void verbose(String msg);
+    void verbose(String msg);
 
-    public abstract void deprecated(String msg);
+    void deprecated(String msg);
 
-    public abstract void info(String msg);
+    void info(String msg);
 
-    public abstract void rawinfo(String msg);
+    void rawinfo(String msg);
 
-    public abstract void warn(String msg);
+    void warn(String msg);
 
-    public abstract void error(String msg);
+    void error(String msg);
 
-    public abstract List<String> getProblems();
+    List<String> getProblems();
 
-    public abstract List<String> getWarns();
+    List<String> getWarns();
 
-    public abstract List<String> getErrors();
+    List<String> getErrors();
 
     /**
      * Clears the list of problems, warns and errors.
      */
-    public abstract void clearProblems();
+    void clearProblems();
 
     /**
      * Sumup all problems encountered so far, and clear them.
      */
-    public abstract void sumupProblems();
+    void sumupProblems();
 
-    public abstract void progress();
+    void progress();
 
-    public abstract void endProgress();
+    void endProgress();
 
-    public abstract void endProgress(String msg);
+    void endProgress(String msg);
 
-    public abstract boolean isShowProgress();
+    boolean isShowProgress();
 
-    public abstract void setShowProgress(boolean progress);
+    void setShowProgress(boolean progress);
 
 }

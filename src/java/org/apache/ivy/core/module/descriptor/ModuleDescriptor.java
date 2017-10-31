@@ -41,9 +41,9 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
         DependencyDescriptorMediator {
 
-    public static final String DEFAULT_CONFIGURATION = "default";
+    String DEFAULT_CONFIGURATION = "default";
 
-    public static final String CALLER_ALL_CONFIGURATION = "all";
+    String CALLER_ALL_CONFIGURATION = "all";
 
     /**
      * @return true if this descriptor is a default one, i.e. one generated for a module not
@@ -206,13 +206,13 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo,
      *
      * @return an array of all {@link ExcludeRule} this module descriptor currently holds.
      */
-    public ExcludeRule[] getAllExcludeRules();
+    ExcludeRule[] getAllExcludeRules();
 
     /**
      * @return all the {@link DependencyDescriptorMediator}s used by this
      * {@link ModuleDescriptor}, as an instance of {@link ModuleRules}.
      */
-    public ModuleRules<DependencyDescriptorMediator> getAllDependencyDescriptorMediators();
+    ModuleRules<DependencyDescriptorMediator> getAllDependencyDescriptorMediators();
 
     /**
      * @return the list of xml namespaces used by extra attributes, as Map from prefix to namespace

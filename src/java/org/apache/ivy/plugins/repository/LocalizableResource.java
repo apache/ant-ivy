@@ -33,6 +33,6 @@ public interface LocalizableResource extends Resource {
      * @throws IllegalStateException
      *             when {@link #isLocal()} returns <code>false</code>
      */
-    public File getFile();
+    File getFile();
 
 }

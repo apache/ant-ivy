@@ -34,5 +34,5 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * </p>
  */
 public interface ResourceDownloader {
-    public void download(Artifact artifact, Resource resource, File dest) throws IOException;
+    void download(Artifact artifact, Resource resource, File dest) throws IOException;
 }

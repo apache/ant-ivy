@@ -29,10 +29,10 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.repository.Resource;
 
 public interface ModuleDescriptorParser {
-    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
+    ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             boolean validate) throws ParseException, IOException;
 
-    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
+    ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException;
 
     /**
@@ -46,17 +46,17 @@ public interface ModuleDescriptorParser {
      * @throws ParseException if something goes wrong
      * @throws IOException if something goes wrong
      */
-    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
+    void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
             throws ParseException, IOException;
 
-    public boolean accept(Resource res);
+    boolean accept(Resource res);
 
     /**
      * Return the 'type' of module artifacts this parser is parsing
      *
      * @return the 'type' of module artifacts this parser is parsing
      */
-    public String getType();
+    String getType();
 
     /**
      * Returns the module metadata artifact corresponding to the given module revision id that this
@@ -68,5 +68,5 @@ public interface ModuleDescriptorParser {
      *            the module revision id for which the module artifact should be returned
      * @return the module artifact corresponding to the given mrid and resource
      */
-    public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res);
+    Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res);
 }

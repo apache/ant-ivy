@@ -26,6 +26,6 @@ import org.apache.ivy.plugins.parser.ParserSettings;
 
 interface ModuleDescriptorProvider {
 
-    public ModuleDescriptor provideModule(ParserSettings ivySettings, File descriptorFile,
+    ModuleDescriptor provideModule(ParserSettings ivySettings, File descriptorFile,
             boolean validate) throws ParseException, IOException;
 }

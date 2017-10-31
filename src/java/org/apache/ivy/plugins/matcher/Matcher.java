@@ -29,7 +29,7 @@ public interface Matcher {
      *            the string to be matched. Cannot be null.
      * @return true if the input string is matched, false otherwise.
      */
-    public boolean matches(/* @NotNull */String input);
+    boolean matches(/* @NotNull */String input);
 
     /**
      * Return if the matcher will match *only* if the expression equals the input. <i> WARN: This is
@@ -40,5 +40,5 @@ public interface Matcher {
      * @return true if the matcher only matches when the expression is equals to the input, false
      *         otherwise.
      */
-    public boolean isExact();
+    boolean isExact();
 }

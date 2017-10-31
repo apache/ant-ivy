@@ -121,7 +121,7 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     /**
      * @return true if this descriptor contains any exclusion rule
      */
-    public boolean canExclude();
+    boolean canExclude();
 
     DependencyDescriptor asSystem();
 

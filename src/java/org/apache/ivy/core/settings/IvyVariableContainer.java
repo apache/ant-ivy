@@ -22,9 +22,9 @@ package org.apache.ivy.core.settings;
  */
 public interface IvyVariableContainer extends Cloneable {
 
-    public void setVariable(String varName, String value, boolean overwrite);
+    void setVariable(String varName, String value, boolean overwrite);
 
-    public String getVariable(String name);
+    String getVariable(String name);
 
     /**
      * Specifies the prefix used to indicate a variable is an environment variable. If the prefix
@@ -33,7 +33,7 @@ public interface IvyVariableContainer extends Cloneable {
      * @param prefix
      *            the prefix to use for the environment variables
      */
-    public void setEnvironmentPrefix(String prefix);
+    void setEnvironmentPrefix(String prefix);
 
-    public Object clone();
+    Object clone();
 }

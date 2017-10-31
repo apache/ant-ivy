@@ -27,7 +27,7 @@ public interface ConfigurationAware {
      *
      * @return an array of configuration names to which the object is attached
      */
-    public String[] getConfigurations();
+    String[] getConfigurations();
 
     /**
      * Tells this object that it will now be part of the given configuration
@@ -35,5 +35,5 @@ public interface ConfigurationAware {
      * @param confName
      *            the name of the configuration to which the object is now attached
      */
-    public void addConfiguration(String confName);
+    void addConfiguration(String confName);
 }

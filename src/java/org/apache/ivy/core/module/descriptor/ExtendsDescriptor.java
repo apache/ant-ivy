@@ -29,7 +29,7 @@ public interface ExtendsDescriptor {
      *
      * @return ModuleRevisionId
      */
-    public ModuleRevisionId getParentRevisionId();
+    ModuleRevisionId getParentRevisionId();
 
     /**
      * get the resolved revision id for {@link #getParentRevisionId}, see
@@ -37,9 +37,9 @@ public interface ExtendsDescriptor {
      *
      * @return ModuleRevisionId
      */
-    public ModuleRevisionId getResolvedParentRevisionId();
+    ModuleRevisionId getResolvedParentRevisionId();
 
-    public ModuleDescriptor getParentMd();
+    ModuleDescriptor getParentMd();
 
     /**
      * If there is an explicit path to check for the parent descriptor, return it. Otherwise returns
@@ -47,7 +47,7 @@ public interface ExtendsDescriptor {
      *
      * @return String
      */
-    public String getLocation();
+    String getLocation();
 
     /**
      * Get the parts of the parent descriptor that are inherited. Default supported types are
@@ -57,32 +57,32 @@ public interface ExtendsDescriptor {
      *
      * @return String[]
      */
-    public String[] getExtendsTypes();
+    String[] getExtendsTypes();
 
     /**
      * @return true if the <code>all</code> extend type is specified, implying all other types
      */
-    public boolean isAllInherited();
+    boolean isAllInherited();
 
     /**
      * @return true if parent info attributes are inherited (organisation, branch, revision, etc)
      */
-    public boolean isInfoInherited();
+    boolean isInfoInherited();
 
     /**
      * @return true if parent description is inherited
      */
-    public boolean isDescriptionInherited();
+    boolean isDescriptionInherited();
 
     /**
      * @return true if parent configurations are inherited
      */
-    public boolean areConfigurationsInherited();
+    boolean areConfigurationsInherited();
 
     /**
      * @return true if parent dependencies are inherited
      */
-    public boolean areDependenciesInherited();
+    boolean areDependenciesInherited();
 
-    public boolean isLocal();
+    boolean isLocal();
 }

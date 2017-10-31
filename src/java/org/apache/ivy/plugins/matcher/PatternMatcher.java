@@ -29,27 +29,27 @@ public interface PatternMatcher {
     /**
      * 'exact' pattern matcher name
      */
-    public static final String EXACT = "exact";
+    String EXACT = "exact";
 
     /**
      * pattern matcher name 'regexp'
      */
-    public static final String REGEXP = "regexp";
+    String REGEXP = "regexp";
 
     /**
      * pattern matcher 'glob'
      */
-    public static final String GLOB = "glob";
+    String GLOB = "glob";
 
     /**
      * pattern matcher name 'exactOrRegexp'
      */
-    public static final String EXACT_OR_REGEXP = "exactOrRegexp";
+    String EXACT_OR_REGEXP = "exactOrRegexp";
 
     /**
      * Any expression string: '*'
      */
-    public static final String ANY_EXPRESSION = "*";
+    String ANY_EXPRESSION = "*";
 
     /**
      * Return the matcher for the given expression.
@@ -58,7 +58,7 @@ public interface PatternMatcher {
      *            the expression to be matched. Cannot be null ?
      * @return the matcher instance for the given expression. Never null.
      */
-    public/* @NotNull */Matcher getMatcher(/* @NotNull */String expression);
+    /* @NotNull */Matcher getMatcher(/* @NotNull */String expression);
 
     /**
      * return the name of this pattern matcher
@@ -69,5 +69,5 @@ public interface PatternMatcher {
      * @see #GLOB
      * @see #EXACT_OR_REGEXP
      */
-    public/* @NotNull */String getName();
+    /* @NotNull */String getName();
 }

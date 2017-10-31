@@ -27,12 +27,12 @@ import org.apache.ivy.core.resolve.ResolveOptions;
  *
  */
 public interface ReportOutputter {
-    public static final String CONSOLE = "console";
+    String CONSOLE = "console";
 
-    public static final String XML = "xml";
+    String XML = "xml";
 
-    public abstract void output(ResolveReport report, ResolutionCacheManager cacheMgr,
+    void output(ResolveReport report, ResolutionCacheManager cacheMgr,
             ResolveOptions options) throws IOException;
 
-    public abstract String getName();
+    String getName();
 }

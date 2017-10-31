@@ -30,5 +30,5 @@ public interface InheritableItem {
      * @return the module in which this item was actually defined, if different from the module in
      *         which the item appears. May be null.
      */
-    public ModuleRevisionId getSourceModule();
+    ModuleRevisionId getSourceModule();
 }

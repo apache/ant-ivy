@@ -29,30 +29,30 @@ public interface DependencyArtifactDescriptor extends ExtendableItem {
     /**
      * @return the dependency descriptor in which this dependency artifact descriptor is declared.
      */
-    public DependencyDescriptor getDependencyDescriptor();
+    DependencyDescriptor getDependencyDescriptor();
 
     /**
      * @return the name of the artifact asked
      */
-    public String getName();
+    String getName();
 
     /**
      * @return the type of the artifact asked
      */
-    public String getType();
+    String getType();
 
     /**
      * @return the ext of the artifact asked
      */
-    public String getExt();
+    String getExt();
 
     /**
      * @return the url to look this artifact up at
      */
-    public URL getUrl();
+    URL getUrl();
 
     /**
      * @return an array of configuration names of the module in which the artifact is asked
      */
-    public String[] getConfigurations();
+    String[] getConfigurations();
 }

@@ -23,13 +23,13 @@ import org.apache.ivy.core.module.id.ModuleId;
 
 public interface PomDependencyMgt {
 
-    public abstract String getGroupId();
+    String getGroupId();
 
-    public abstract String getArtifactId();
+    String getArtifactId();
 
-    public abstract String getVersion();
+    String getVersion();
 
-    public abstract String getScope();
+    String getScope();
 
-    public List<ModuleId> getExcludedModules();
+    List<ModuleId> getExcludedModules();
 }

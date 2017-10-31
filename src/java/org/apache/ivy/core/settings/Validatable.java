@@ -28,5 +28,5 @@ public interface Validatable {
      * @throws IllegalStateException
      *             if the state of the {@link Validatable} is not valid.
      */
-    public void validate();
+    void validate();
 }
