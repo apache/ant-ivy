@@ -217,7 +217,7 @@ public class IBiblioResolver extends URLResolver {
             }
             try (final InputStream metadataStream = metadata.openStream()) {
                 final StringBuffer timestamp = new StringBuffer();
-                final StringBuffer buildNumer = new StringBuffer();
+                final StringBuffer buildNumber = new StringBuffer();
                 XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
                     @Override
                     public void endElement(String uri, String localName, String qName)
@@ -226,7 +226,7 @@ public class IBiblioResolver extends URLResolver {
                             timestamp.append(getText());
                         }
                         if ("metadata/versioning/snapshot/buildNumber".equals(getContext())) {
-                            buildNumer.append(getText());
+                            buildNumber.append(getText());
                         }
                         super.endElement(uri, localName, qName);
                     }
@@ -235,7 +235,7 @@ public class IBiblioResolver extends URLResolver {
                     // we have found a timestamp, so this is a snapshot unique version
                     String rev = mrid.getRevision();
                     rev = rev.substring(0, rev.length() - "SNAPSHOT".length());
-                    rev += timestamp.toString() + "-" + buildNumer.toString();
+                    rev += timestamp.toString() + "-" + buildNumber.toString();
 
                     return rev;
                 }
