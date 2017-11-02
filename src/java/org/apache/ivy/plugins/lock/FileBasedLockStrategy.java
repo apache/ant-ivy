@@ -64,34 +64,39 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         }
         long start = System.currentTimeMillis();
         do {
-            int lockCount = hasLock(file, currentThread);
-            if (isDebugLocking()) {
-                debugLocking("current status for " + file + " is " + lockCount
-                        + " held locks: " + getCurrentLockHolderNames(file));
-            }
-            if (lockCount < 0) {
-                /* Another thread in this process holds the lock; we need to wait */
+            synchronized (currentLockHolders) {
                 if (isDebugLocking()) {
-                    debugLocking("waiting for another thread to release the lock: "
-                            + getCurrentLockHolderNames(file));
+                    debugLocking("entered synchronized area (locking)");
                 }
-            } else if (lockCount > 0) {
-                int holdLocks = incrementLock(file, currentThread);
+                int lockCount = hasLock(file, currentThread);
                 if (isDebugLocking()) {
-                    debugLocking("reentrant lock acquired on " + file + " in "
-                            + (System.currentTimeMillis() - start) + "ms" + " - hold locks = "
-                            + holdLocks);
+                    debugLocking("current status for " + file + " is " + lockCount
+                            + " held locks: " + getCurrentLockHolderNames(file));
                 }
-                return true;
-            } else {
-                /* No prior lock on this file is held at all */
-                if (locker.tryLock(file)) {
+                if (lockCount < 0) {
+                    /* Another thread in this process holds the lock; we need to wait */
                     if (isDebugLocking()) {
-                        debugLocking("lock acquired on " + file + " in "
-                                + (System.currentTimeMillis() - start) + "ms");
+                        debugLocking("waiting for another thread to release the lock: "
+                                + getCurrentLockHolderNames(file));
                     }
-                    incrementLock(file, currentThread);
+                } else if (lockCount > 0) {
+                    int holdLocks = incrementLock(file, currentThread);
+                    if (isDebugLocking()) {
+                        debugLocking("reentrant lock acquired on " + file + " in "
+                                + (System.currentTimeMillis() - start) + "ms" + " - hold locks = "
+                                + holdLocks);
+                    }
                     return true;
+                } else {
+                    /* No prior lock on this file is held at all */
+                    if (locker.tryLock(file)) {
+                        if (isDebugLocking()) {
+                            debugLocking("lock acquired on " + file + " in "
+                                    + (System.currentTimeMillis() - start) + "ms");
+                        }
+                        incrementLock(file, currentThread);
+                        return true;
+                    }
                 }
             }
             if (isDebugLocking()) {
@@ -107,16 +112,21 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         if (isDebugLocking()) {
             debugLocking("releasing lock on " + file);
         }
-        int holdLocks = decrementLock(file, currentThread);
-        if (holdLocks == 0) {
-            locker.unlock(file);
+        synchronized (currentLockHolders) {
             if (isDebugLocking()) {
-                debugLocking("lock released on " + file);
+                debugLocking("entered synchronized area (unlocking)");
             }
-        } else {
-            if (isDebugLocking()) {
-                debugLocking("reentrant lock released on " + file + " - hold locks = "
-                        + holdLocks);
+            int holdLocks = decrementLock(file, currentThread);
+            if (holdLocks == 0) {
+                locker.unlock(file);
+                if (isDebugLocking()) {
+                    debugLocking("lock released on " + file);
+                }
+            } else {
+                if (isDebugLocking()) {
+                    debugLocking("reentrant lock released on " + file + " - hold locks = "
+                            + holdLocks);
+                }
             }
         }
     }
