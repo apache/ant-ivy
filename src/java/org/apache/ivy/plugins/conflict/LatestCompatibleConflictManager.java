@@ -224,7 +224,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                 conflictParent, selectedNode, evictedNode, callerStack);
             callerStack.pop();
             if (sub == null) {
-                // propagate the fact that a path with unblacklistable caller has been found
+                // propagate the fact that a path with nonblacklistable caller has been found
                 return false;
             } else {
                 blacklisted.addAll(sub);

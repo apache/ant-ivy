@@ -103,7 +103,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                     } else {
                         if ("ivy".equals(artifact.getType()) || "pom".equals(artifact.getType())) {
                             // we can't determine the revision from the pattern, get it
-                            // from the moduledescriptor itself
+                            // from the module descriptor itself
                             File temp = File.createTempFile("ivy", artifact.getExt());
                             temp.deleteOnExit();
                             repository.get(res.getName(), temp);
