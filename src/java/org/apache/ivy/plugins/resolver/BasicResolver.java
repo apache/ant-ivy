@@ -77,6 +77,7 @@ import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.ChecksumHelper;
+import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 
@@ -130,7 +131,9 @@ public abstract class BasicResolver extends AbstractResolver {
         }
     }
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
+    @Deprecated
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+            DateUtil.DATE_FORMAT_PATTERN);
 
     private String workspaceName;
 
