@@ -42,7 +42,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
      * Lock counter list must be static: locks are implicitly shared to the entire process, so the
      * list too much be.
      */
-    private static ConcurrentMap<File, ConcurrentMap<Thread, Integer>> currentLockHolders = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<File, ConcurrentMap<Thread, Integer>> currentLockHolders = new ConcurrentHashMap<>();
 
     protected FileBasedLockStrategy() {
         this(new CreateFileLocker(false), false);
