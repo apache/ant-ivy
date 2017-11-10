@@ -111,7 +111,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import static org.apache.ivy.util.StringUtils.splitToArray;
@@ -372,7 +371,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized void typeDefs(Properties p, boolean silentFail) {
-        for (Entry<Object, Object> entry : p.entrySet()) {
+        for (Map.Entry<Object, Object> entry : p.entrySet()) {
             typeDef(entry.getKey().toString(), entry.getValue().toString(), silentFail);
         }
     }
@@ -631,7 +630,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      */
     public synchronized Map<String, String> substitute(Map<String, String> strings) {
         Map<String, String> substituted = new LinkedHashMap<>();
-        for (Entry<String, String> entry : strings.entrySet()) {
+        for (Map.Entry<String, String> entry : strings.entrySet()) {
             substituted.put(entry.getKey(), substitute(entry.getValue()));
         }
         return substituted;

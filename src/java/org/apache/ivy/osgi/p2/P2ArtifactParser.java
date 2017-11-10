@@ -27,7 +27,6 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -82,7 +81,7 @@ public class P2ArtifactParser implements XMLInputParser {
             addChild(new MappingsHandler(), new ChildElementHandler<MappingsHandler>() {
                 @Override
                 public void childHandled(MappingsHandler child) {
-                    for (Entry<String, String> entry : child.outputByFilter.entrySet()) {
+                    for (Map.Entry<String, String> entry : child.outputByFilter.entrySet()) {
                         OSGiFilter filter;
                         try {
                             filter = OSGiFilterParser.parse(entry.getKey());
@@ -193,7 +192,7 @@ public class P2ArtifactParser implements XMLInputParser {
                 private String getPattern(P2Artifact p2Artifact, Map<String, String> properties) {
                     Map<String, String> props = new HashMap<>(properties);
                     props.put("classifier", p2Artifact.getClassifier());
-                    for (Entry<OSGiFilter, String> pattern : artifactPatterns.entrySet()) {
+                    for (Map.Entry<OSGiFilter, String> pattern : artifactPatterns.entrySet()) {
                         if (pattern.getKey().eval(props)) {
                             return pattern.getValue();
                         }

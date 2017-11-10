@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
@@ -199,7 +198,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
 
         Map<String, String> tokenValues = new HashMap<>();
-        for (Entry<String, Object> entry : criteria.entrySet()) {
+        for (Map.Entry<String, Object> entry : criteria.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String) {
                 tokenValues.put(entry.getKey(), (String) value);

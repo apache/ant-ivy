@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.util.StringUtils;
 
@@ -100,7 +99,7 @@ public class CommandLineParser {
         }
 
         // print options help
-        for (Entry<String, List<Option>> entry : categories.entrySet()) {
+        for (Map.Entry<String, List<Option>> entry : categories.entrySet()) {
             pw.println("==== " + entry.getKey());
             for (Option option : entry.getValue()) {
                 if (option.isDeprecated() && !showDeprecated) {

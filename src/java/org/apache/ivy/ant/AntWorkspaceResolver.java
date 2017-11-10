@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -156,7 +155,7 @@ public class AntWorkspaceResolver extends DataType {
 
         public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
                 throws ParseException {
-            for (Entry<ModuleDescriptor, File> md : getModuleDescriptors().entrySet()) {
+            for (Map.Entry<ModuleDescriptor, File> md : getModuleDescriptors().entrySet()) {
                 ResolvedModuleRevision rmr = checkCandidate(dd, md.getKey(),
                     getProjectName(md.getValue()));
                 if (rmr != null) {

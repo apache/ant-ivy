@@ -24,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -466,7 +465,7 @@ public final class XmlModuleDescriptorWriter {
         }
         out.print("<");
         out.print(extraInfo.getName());
-        for (Entry<String, String> entry : extraInfo.getAttributes().entrySet()) {
+        for (Map.Entry<String, String> entry : extraInfo.getAttributes().entrySet()) {
             out.print(String.format(" %s=\"%s\"", entry.getKey(), entry.getValue()));
         }
         boolean requireClosingTag = false;

@@ -19,7 +19,6 @@ package org.apache.ivy.ant;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.core.settings.IvyVariableContainerImpl;
@@ -74,7 +73,7 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
     public void updateProject(String id) {
         Map<String, String> r = new HashMap<>(super.getVariables());
         r.putAll(overwrittenProperties);
-        for (Entry<String, String> entry : r.entrySet()) {
+        for (Map.Entry<String, String> entry : r.entrySet()) {
             setPropertyIfNotSet(entry.getKey(), entry.getValue());
             if (id != null) {
                 setPropertyIfNotSet(entry.getKey() + "." + id, entry.getValue());

@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
@@ -256,7 +255,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                     if (requirementStrategy == RequirementStrategy.first) {
                         Message.warn("Ambiguity for the '" + osgiType + "' requirement "
                                 + mrid.getName() + ";version=" + mrid.getRevision());
-                        for (Entry<String, List<MDResolvedResource>> entry : matching.entrySet()) {
+                        for (Map.Entry<String, List<MDResolvedResource>> entry : matching.entrySet()) {
                             Message.warn("\t" + entry.getKey());
                             for (MDResolvedResource c : entry.getValue()) {
                                 Message.warn("\t\t" + c.getRevision()
@@ -266,7 +265,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
                     } else if (requirementStrategy == RequirementStrategy.noambiguity) {
                         Message.error("Ambiguity for the '" + osgiType + "' requirement "
                                 + mrid.getName() + ";version=" + mrid.getRevision());
-                        for (Entry<String, List<MDResolvedResource>> entry : matching.entrySet()) {
+                        for (Map.Entry<String, List<MDResolvedResource>> entry : matching.entrySet()) {
                             Message.error("\t" + entry.getKey());
                             for (MDResolvedResource c : entry.getValue()) {
                                 Message.error("\t\t" + c.getRevision()
@@ -386,7 +385,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
             // no revision, all match then
             capabilityValues.addAll(moduleByCapabilityValue.keySet());
         } else {
-            for (Entry<String, Set<ModuleDescriptor>> entry : moduleByCapabilityValue.entrySet()) {
+            for (Map.Entry<String, Set<ModuleDescriptor>> entry : moduleByCapabilityValue.entrySet()) {
                 boolean moduleMatchRev = false;
                 for (ModuleDescriptor md : entry.getValue()) {
                     moduleMatchRev = rev.equals(md.getRevision());
@@ -413,7 +412,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
     private Set<Map<String, String>> listTokenValues(Set<String> tokens,
             Map<String, Object> criteria) {
         Map<String, String> stringCriteria = new HashMap<>();
-        for (Entry<String, Object> entry : criteria.entrySet()) {
+        for (Map.Entry<String, Object> entry : criteria.entrySet()) {
             Object value = entry.getValue();
             if (!(value instanceof String)) {
                 // no support for matcher for now

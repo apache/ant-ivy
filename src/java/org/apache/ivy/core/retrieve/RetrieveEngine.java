@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
@@ -134,7 +133,7 @@ public class RetrieveEngine {
 
             // do retrieve
             long totalCopiedSize = 0;
-            for (Entry<ArtifactDownloadReport, Set<String>> artifactAndPaths : artifactsToCopy
+            for (Map.Entry<ArtifactDownloadReport, Set<String>> artifactAndPaths : artifactsToCopy
                     .entrySet()) {
                 ArtifactDownloadReport artifact = artifactAndPaths.getKey();
                 File archive = artifact.getLocalFile();
@@ -393,7 +392,7 @@ public class RetrieveEngine {
         }
 
         // resolve conflicts if any
-        for (Entry<String, Set<ArtifactRevisionId>> entry : conflictsMap.entrySet()) {
+        for (Map.Entry<String, Set<ArtifactRevisionId>> entry : conflictsMap.entrySet()) {
             String copyDest = entry.getKey();
             Set<ArtifactRevisionId> artifacts = entry.getValue();
             Set<String> conflictsConfs = conflictsConfMap.get(copyDest);

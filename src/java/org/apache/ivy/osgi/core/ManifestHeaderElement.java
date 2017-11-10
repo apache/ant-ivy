@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class ManifestHeaderElement {
     private List<String> values = new ArrayList<>();
@@ -70,7 +69,7 @@ public class ManifestHeaderElement {
         if (other.directives.size() != directives.size()) {
             return false;
         }
-        for (Entry<String, String> directive : directives.entrySet()) {
+        for (Map.Entry<String, String> directive : directives.entrySet()) {
             if (!directive.getValue().equals(other.directives.get(directive.getKey()))) {
                 return false;
             }
@@ -78,7 +77,7 @@ public class ManifestHeaderElement {
         if (other.attributes.size() != attributes.size()) {
             return false;
         }
-        for (Entry<String, String> attribute : attributes.entrySet()) {
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
             if (!attribute.getValue().equals(other.attributes.get(attribute.getKey()))) {
                 return false;
             }
@@ -94,10 +93,10 @@ public class ManifestHeaderElement {
             }
             sb.append(value);
         }
-        for (Entry<String, String> directive : directives.entrySet()) {
+        for (Map.Entry<String, String> directive : directives.entrySet()) {
             sb.append(";").append(directive.getKey()).append(":=").append(directive.getValue());
         }
-        for (Entry<String, String> attribute : attributes.entrySet()) {
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
             sb.append(";").append(attribute.getKey()).append("=").append(attribute.getValue());
         }
         return sb.toString();

@@ -29,7 +29,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -909,7 +908,7 @@ public class IvyNode implements Comparable<IvyNode> {
     private static Collection<Artifact> findArtifactsMatching(IncludeRule rule,
             Map<ArtifactId, Artifact> allArtifacts) {
         Collection<Artifact> ret = new ArrayList<>();
-        for (Entry<ArtifactId, Artifact> entry : allArtifacts.entrySet()) {
+        for (Map.Entry<ArtifactId, Artifact> entry : allArtifacts.entrySet()) {
             if (MatcherHelper.matches(rule.getMatcher(), rule.getId(), entry.getKey())) {
                 ret.add(entry.getValue());
             }

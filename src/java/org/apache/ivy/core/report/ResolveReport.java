@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -364,7 +363,7 @@ public class ResolveReport {
                 md.getStatus(), new Date());
 
         // copy namespaces
-        for (Entry<String, String> ns : md.getExtraAttributesNamespaces().entrySet()) {
+        for (Map.Entry<String, String> ns : md.getExtraAttributesNamespaces().entrySet()) {
             fixedmd.addExtraAttributeNamespace(ns.getKey(), ns.getValue());
         }
 

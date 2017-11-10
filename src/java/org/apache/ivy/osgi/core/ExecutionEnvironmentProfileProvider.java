@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.ivy.util.Message;
@@ -75,7 +74,7 @@ public class ExecutionEnvironmentProfileProvider {
             defaultProfilesFile.close();
         }
         Map<String, ExecutionEnvironmentProfile> profiles = new HashMap<>();
-        for (Entry<Object, Object> prop : props.entrySet()) {
+        for (Map.Entry<Object, Object> prop : props.entrySet()) {
             String propName = (String) prop.getKey();
             if (propName.endsWith(".pkglist")) {
                 String profileName = propName.substring(0, propName.length() - 8);

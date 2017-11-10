@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
@@ -221,7 +220,7 @@ public class SearchEngine {
         List<ModuleRevisionId> ret = new ArrayList<>();
 
         Map<String, Object> criteria = new HashMap<>();
-        for (Entry<String, String> entry : moduleCrit.getAttributes().entrySet()) {
+        for (Map.Entry<String, String> entry : moduleCrit.getAttributes().entrySet()) {
             addMatcher(matcher, entry.getValue(), criteria, entry.getKey());
         }
 
@@ -277,7 +276,7 @@ public class SearchEngine {
     public ModuleRevisionId[] listModules(DependencyResolver resolver, ModuleRevisionId moduleCrit,
             PatternMatcher matcher) {
         Map<String, Object> criteria = new HashMap<>();
-        for (Entry<String, String> entry : moduleCrit.getAttributes().entrySet()) {
+        for (Map.Entry<String, String> entry : moduleCrit.getAttributes().entrySet()) {
             addMatcher(matcher, entry.getValue(), criteria, entry.getKey());
         }
 

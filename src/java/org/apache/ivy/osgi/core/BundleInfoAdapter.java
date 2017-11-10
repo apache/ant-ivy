@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.jar.Manifest;
 
@@ -170,7 +169,7 @@ public class BundleInfoAdapter {
         }
 
         if (manifest != null) {
-            for (Entry<Object, Object> entries : manifest.getMainAttributes().entrySet()) {
+            for (Map.Entry<Object, Object> entries : manifest.getMainAttributes().entrySet()) {
                 md.addExtraInfo(new ExtraInfoHolder(entries.getKey().toString(), entries.getValue()
                         .toString()));
             }

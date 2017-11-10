@@ -20,7 +20,6 @@ package org.apache.ivy.plugins.matcher;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class MapMatcher {
     private Map<String, Matcher> matchers = new HashMap<>();
@@ -32,7 +31,7 @@ public class MapMatcher {
     public MapMatcher(Map<String, String> attributes, PatternMatcher pm) {
         this.attributes = attributes;
         this.pm = pm;
-        for (Entry<String, String> entry : attributes.entrySet()) {
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
             String value = entry.getValue();
             if (value != null) {
                 matchers.put(entry.getKey(), pm.getMatcher(value));
@@ -41,7 +40,7 @@ public class MapMatcher {
     }
 
     public boolean matches(Map<String, String> m) {
-        for (Entry<String, Matcher> entry : matchers.entrySet()) {
+        for (Map.Entry<String, Matcher> entry : matchers.entrySet()) {
             Matcher matcher = entry.getValue();
             String value = m.get(entry.getKey());
             if ((value == null) || !matcher.matches(value)) {

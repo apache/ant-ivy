@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -98,7 +97,7 @@ public class ResolveData {
 
         if (result == null) {
             // search again, now ignore the missing extra attributes
-            for (Entry<ModuleRevisionId, VisitData> entry : visitData.entrySet()) {
+            for (Map.Entry<ModuleRevisionId, VisitData> entry : visitData.entrySet()) {
                 ModuleRevisionId current = entry.getKey();
 
                 if (isSubMap(mrid.getAttributes(), current.getAttributes())) {
@@ -125,7 +124,7 @@ public class ResolveData {
         Map<K, V> smallest = map1Size < map2Size ? map1 : map2;
         Map<K, V> largest = map1Size < map2Size ? map2 : map1;
 
-        for (Entry<K, V> entry : smallest.entrySet()) {
+        for (Map.Entry<K, V> entry : smallest.entrySet()) {
 
             if (!largest.containsKey(entry.getKey())) {
                 return false;
@@ -244,9 +243,9 @@ public class ResolveData {
     }
 
     void blacklist(IvyNode node) {
-        Iterator<Entry<ModuleRevisionId, VisitData>> iter = visitData.entrySet().iterator();
+        Iterator<Map.Entry<ModuleRevisionId, VisitData>> iter = visitData.entrySet().iterator();
         while (iter.hasNext()) {
-            Entry<ModuleRevisionId, VisitData> entry = iter.next();
+            Map.Entry<ModuleRevisionId, VisitData> entry = iter.next();
             if (entry.getValue().getNode() == node && !node.getResolvedId().equals(entry.getKey())) {
                 // this visit data was associated with the blacklisted node,
                 // we discard this association
@@ -262,7 +261,7 @@ public class ResolveData {
         if (node == null) {
             // search again, now ignore the extra attributes
             // TODO: maybe we should search the node that has at least the same attributes as mrid
-            for (Entry<ModuleRevisionId, VisitData> entry : visitData.entrySet()) {
+            for (Map.Entry<ModuleRevisionId, VisitData> entry : visitData.entrySet()) {
                 ModuleRevisionId current = entry.getKey();
                 if (current.getModuleId().equals(mrid.getModuleId())
                         && current.getRevision().equals(mrid.getRevision())) {

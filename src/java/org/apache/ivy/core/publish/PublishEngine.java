@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
@@ -251,7 +250,7 @@ public class PublishEngine {
         try {
             resolver.beginPublishTransaction(md.getModuleRevisionId(), options.isOverwrite());
             // for each declared published artifact in this descriptor, do:
-            for (Entry<Artifact, File> entry : artifactsFiles.entrySet()) {
+            for (Map.Entry<Artifact, File> entry : artifactsFiles.entrySet()) {
                 publish(entry.getKey(), entry.getValue(), resolver, options.isOverwrite());
             }
             resolver.commitPublishTransaction();

@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.xml.sax.Attributes;
@@ -75,7 +74,7 @@ public final class ExtendableItemHelper {
     public static void fillExtraAttributes(ParserSettings settings, DefaultExtendableItem item,
             Attributes attributes, List<String> ignoredAttNames) {
         Map<String, String> att = getExtraAttributes(settings, attributes, ignoredAttNames);
-        for (Entry<String, String> entry : att.entrySet()) {
+        for (Map.Entry<String, String> entry : att.entrySet()) {
             item.setExtraAttribute(entry.getKey(), entry.getValue());
         }
     }

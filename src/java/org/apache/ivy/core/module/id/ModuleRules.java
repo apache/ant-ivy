@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.util.Checks;
@@ -221,12 +220,12 @@ public class ModuleRules<T> {
     public void dump(String prefix) {
         if (rules.isEmpty()) {
             Message.debug(prefix + "NONE");
-        } else {
-            for (Entry<MapMatcher, T> entry : rules.entrySet()) {
-                MapMatcher midm = entry.getKey();
-                T rule = entry.getValue();
-                Message.debug(prefix + midm + " -> " + rule);
-            }
+            return;
+        }
+        for (Map.Entry<MapMatcher, T> entry : rules.entrySet()) {
+            MapMatcher midm = entry.getKey();
+            T rule = entry.getValue();
+            Message.debug(prefix + midm + " -> " + rule);
         }
     }
 

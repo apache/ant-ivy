@@ -20,7 +20,6 @@ package org.apache.ivy.util.extendable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class UnmodifiableExtendableItem implements ExtendableItem {
     private final Map<String, String> attributes = new HashMap<>();
@@ -48,7 +47,7 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
             this.attributes.putAll(stdAttributes);
         }
         if (extraAttributes != null) {
-            for (Entry<String, String> extraAtt : extraAttributes.entrySet()) {
+            for (Map.Entry<String, String> extraAtt : extraAttributes.entrySet()) {
                 setExtraAttribute(extraAtt.getKey(), extraAtt.getValue());
             }
         }
