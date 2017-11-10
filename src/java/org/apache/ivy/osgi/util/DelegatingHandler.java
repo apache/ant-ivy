@@ -50,7 +50,7 @@ public class DelegatingHandler extends DefaultHandler implements DTDHandler, Con
 
     private boolean skipOnError = false;
 
-    private StringBuffer charBuffer = new StringBuffer();
+    private StringBuilder charBuffer = new StringBuilder();
 
     private boolean bufferingChar = false;
 

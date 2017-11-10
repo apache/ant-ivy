@@ -103,7 +103,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
 
     private long lastProgressFlush = 0;
 
-    private StringBuffer buf = new StringBuffer();
+    private StringBuilder buf = new StringBuilder();
 
     /**
      * Constructs a new AntMessageImpl instance.

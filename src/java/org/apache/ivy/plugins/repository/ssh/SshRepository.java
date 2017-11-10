@@ -114,14 +114,14 @@ public class SshRepository extends AbstractSshBasedRepository {
      * @param channel
      *            Channel to read from
      * @param strStdout
-     *            StringBuffer that receives Session Stdout output
+     *            StringBuilder that receives Session Stdout output
      * @param strStderr
-     *            StringBuffer that receives Session Stderr output
+     *            StringBuilder that receives Session Stderr output
      * @throws IOException
      *             in case of trouble with the network
      */
-    private void readSessionOutput(ChannelExec channel, StringBuffer strStdout,
-            StringBuffer strStderr) throws IOException {
+    private void readSessionOutput(ChannelExec channel, StringBuilder strStdout,
+            StringBuilder strStderr) throws IOException {
         InputStream stdout = channel.getInputStream();
         InputStream stderr = channel.getErrStream();
 
@@ -182,8 +182,8 @@ public class SshRepository extends AbstractSshBasedRepository {
         }
         String fullCmd = replaceArgument(listCommand, parentUri.getPath());
         channel.setCommand(fullCmd);
-        StringBuffer stdOut = new StringBuffer();
-        StringBuffer stdErr = new StringBuffer();
+        StringBuilder stdOut = new StringBuilder();
+        StringBuilder stdErr = new StringBuilder();
         readSessionOutput(channel, stdOut, stdErr);
         if (channel.getExitStatus() != 0) {
             Message.error("Ssh ListCommand exited with status != 0");
@@ -307,8 +307,8 @@ public class SshRepository extends AbstractSshBasedRepository {
             String mkdir = replaceArgument(createDirCommand, trimmed);
             Message.debug("SShRepository: trying to create path: " + mkdir);
             channel.setCommand(mkdir);
-            StringBuffer stdOut = new StringBuffer();
-            StringBuffer stdErr = new StringBuffer();
+            StringBuilder stdOut = new StringBuilder();
+            StringBuilder stdErr = new StringBuilder();
             readSessionOutput(channel, stdOut, stdErr);
         } finally {
             if (channel != null) {
@@ -332,8 +332,8 @@ public class SshRepository extends AbstractSshBasedRepository {
         channel = getExecChannel(session);
         String fullCmd = replaceArgument(existCommand, filePath);
         channel.setCommand(fullCmd);
-        StringBuffer stdOut = new StringBuffer();
-        StringBuffer stdErr = new StringBuffer();
+        StringBuilder stdOut = new StringBuilder();
+        StringBuilder stdErr = new StringBuilder();
         readSessionOutput(channel, stdOut, stdErr);
         return channel.getExitStatus() == 0;
     }

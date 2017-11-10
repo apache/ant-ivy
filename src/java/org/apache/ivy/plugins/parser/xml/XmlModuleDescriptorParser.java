@@ -240,7 +240,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private boolean artifactsDeclared = false;
 
-        private StringBuffer buffer;
+        private StringBuilder buffer;
 
         private String descriptorVersion;
 
@@ -324,14 +324,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 } else if (state == State.INFO && "description".equals(qName)) {
                     getMd().setHomePage(settings.substitute(attributes.getValue("homepage")));
                     state = State.DESCRIPTION;
-                    buffer = new StringBuffer();
+                    buffer = new StringBuilder();
                 } else if (state == State.INFO && "ivyauthor".equals(qName)) {
                     // nothing to do, we don't store this
                 } else if (state == State.INFO && "repository".equals(qName)) {
                     // nothing to do, we don't store this
                 } else if (state == State.EXTRA_INFO || state == State.INFO
                         && isOtherNamespace(qName)) {
-                    buffer = new StringBuffer();
+                    buffer = new StringBuilder();
                     state = State.EXTRA_INFO;
                     ExtraInfoHolder extraInfo = new ExtraInfoHolder();
                     extraInfo.setName(qName);
@@ -1322,11 +1322,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             this.artifactsDeclared = artifactsDeclared;
         }
 
-        protected StringBuffer getBuffer() {
+        protected StringBuilder getBuffer() {
             return buffer;
         }
 
-        protected void setBuffer(StringBuffer buffer) {
+        protected void setBuffer(StringBuilder buffer) {
             this.buffer = buffer;
         }
 

@@ -330,8 +330,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         } // getLocationString(SAXParseException):String
 
         protected String getDefaultConf() {
-            return defaultConf != null ? defaultConf
-                    : (defaultConfMapping != null ? defaultConfMapping : DEFAULT_CONF_MAPPING);
+            return (defaultConf != null) ? defaultConf
+                    : (defaultConfMapping != null) ? defaultConfMapping : DEFAULT_CONF_MAPPING;
         }
 
         protected void setDefaultConf(String defaultConf) {

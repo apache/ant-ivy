@@ -216,8 +216,8 @@ public class IBiblioResolver extends URLResolver {
                 return null;
             }
             try (final InputStream metadataStream = metadata.openStream()) {
-                final StringBuffer timestamp = new StringBuffer();
-                final StringBuffer buildNumber = new StringBuffer();
+                final StringBuilder timestamp = new StringBuilder();
+                final StringBuilder buildNumber = new StringBuilder();
                 XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
                     @Override
                     public void endElement(String uri, String localName, String qName)

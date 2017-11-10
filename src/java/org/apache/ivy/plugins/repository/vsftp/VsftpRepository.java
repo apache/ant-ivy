@@ -100,7 +100,7 @@ public class VsftpRepository extends AbstractRepository {
 
     private PrintWriter out;
 
-    private volatile StringBuffer errors = new StringBuffer();
+    private volatile StringBuilder errors = new StringBuilder();
 
     private long readTimeout = DEFAULT_READ_TIMEOUT;
 
@@ -383,7 +383,7 @@ public class VsftpRepository extends AbstractRepository {
     @SuppressWarnings("deprecation")
     protected synchronized String readResponse(final boolean sendErrorAsResponse, long timeout)
             throws IOException {
-        final StringBuffer response = new StringBuffer();
+        final StringBuilder response = new StringBuilder();
         final IOException[] exc = new IOException[1];
         final boolean[] done = new boolean[1];
         Runnable r = new Runnable() {
@@ -729,7 +729,7 @@ public class VsftpRepository extends AbstractRepository {
         this.username = username;
     }
 
-    private static StringBuffer chomp(StringBuffer str) {
+    private static StringBuilder chomp(StringBuilder str) {
         if (str == null || str.length() == 0) {
             return str;
         }

@@ -29,7 +29,7 @@ public class ContextualSAXHandler extends DefaultHandler {
 
     private Stack<String> contextStack = new Stack<>();
 
-    private StringBuffer buffer = new StringBuffer();
+    private StringBuilder buffer = new StringBuilder();
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {

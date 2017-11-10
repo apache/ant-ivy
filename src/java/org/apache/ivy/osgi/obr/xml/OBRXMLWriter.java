@@ -221,7 +221,7 @@ public class OBRXMLWriter {
     }
 
     private static String buildFilter(BundleRequirement requirement) {
-        StringBuffer filter = new StringBuffer();
+        StringBuilder filter = new StringBuilder();
         VersionRange v = requirement.getVersion();
         if (v != null) {
             appendVersion(filter, v);
@@ -237,7 +237,7 @@ public class OBRXMLWriter {
         return filter.toString();
     }
 
-    private static void appendVersion(StringBuffer filter, VersionRange v) {
+    private static void appendVersion(StringBuilder filter, VersionRange v) {
         filter.append("(&");
         Version start = v.getStartVersion();
         if (start != null) {

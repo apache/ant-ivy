@@ -103,7 +103,7 @@ public class LogReportOutputter implements ReportOutputter {
             char[] sep = new char[69];
             Arrays.fill(sep, '-');
             Message.rawinfo("\t" + new String(sep));
-            StringBuffer line = new StringBuffer("\t");
+            StringBuilder line = new StringBuilder("\t");
             append(line, "", 18);
             append(line, "modules", 31);
             line.append("|");
@@ -111,7 +111,7 @@ public class LogReportOutputter implements ReportOutputter {
             line.append("|");
             Message.rawinfo(line.toString());
 
-            line = new StringBuffer("\t");
+            line = new StringBuilder("\t");
             append(line, "conf", 18);
             append(line, "number", 7);
             append(line, "search", 7);
@@ -160,7 +160,7 @@ public class LogReportOutputter implements ReportOutputter {
     }
 
     public void output(ConfigurationResolveReport report) {
-        StringBuffer line = new StringBuffer("\t");
+        StringBuilder line = new StringBuilder("\t");
         // CheckStyle:MagicNumber| OFF
         append(line, report.getConfiguration(), 18);
         append(line, String.valueOf(report.getNodesNumber()), 7);
@@ -176,7 +176,7 @@ public class LogReportOutputter implements ReportOutputter {
         Message.rawinfo(line.toString());
     }
 
-    private void append(StringBuffer line, Object o, int limit) {
+    private void append(StringBuilder line, Object o, int limit) {
         String v = String.valueOf(o);
         if (v.length() >= limit) {
             v = v.substring(0, limit);

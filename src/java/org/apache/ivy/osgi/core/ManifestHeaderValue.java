@@ -96,7 +96,7 @@ public class ManifestHeaderValue {
         /**
          * buffer
          */
-        private StringBuffer buffer = new StringBuffer();
+        private StringBuilder buffer = new StringBuilder();
 
         /**
          * position in the source

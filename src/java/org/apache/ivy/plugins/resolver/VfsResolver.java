@@ -45,7 +45,7 @@ public class VfsResolver extends RepositoryResolver {
     }
 
     public static String prepareForDisplay(String name) {
-        StringBuffer s = new StringBuffer(name);
+        StringBuilder s = new StringBuilder(name);
         Matcher m = URL_PATTERN.matcher(s);
         if (m.matches()) {
             final String password = m.group(PASSWORD_GROUP);

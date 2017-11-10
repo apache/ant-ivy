@@ -255,7 +255,7 @@ public final class XmlModuleDescriptorUpdater {
         // true when we're reading indent whitespace
         private boolean indenting;
 
-        private StringBuffer currentIndent = new StringBuffer();
+        private StringBuilder currentIndent = new StringBuilder();
 
         private List<String> indentLevels = new ArrayList<>(); // ArrayList<String>
 
