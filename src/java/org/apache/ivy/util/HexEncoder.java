@@ -30,8 +30,7 @@ public class HexEncoder {
         for (byte bt : packet) {
             int highBits = (bt & 0xF0) >> 4;
             int lowBits = bt & 0x0F;
-            chars.append(ALPHABET[highBits]);
-            chars.append(ALPHABET[lowBits]);
+            chars.append(ALPHABET[highBits]).append(ALPHABET[lowBits]);
         }
         return chars.toString();
     }

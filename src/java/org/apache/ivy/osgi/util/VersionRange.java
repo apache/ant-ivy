@@ -264,26 +264,21 @@ public class VersionRange {
     }
 
     public String toString() {
-        return (startExclusive ? "(" : "[") + startVersion + ","
+        return (startExclusive ? "(" : "[") + startVersion.toString() + ","
                 + (endVersion == null ? "" : endVersion.toString()) + (endExclusive ? ")" : "]");
     }
 
     public String toIvyRevision() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(startExclusive ? "(" : "[");
-        buffer.append(startVersion);
-        if (endVersion == null) {
-            buffer.append(",)");
-        } else if (!endExclusive || startVersion.equals(endVersion)) {
-            buffer.append(",");
-            buffer.append(endVersion.withNudgedPatch());
-            buffer.append(")");
-        } else {
-            buffer.append(",");
-            buffer.append(endVersion);
-            buffer.append(")");
+        buffer.append(startExclusive ? "(" : "[").append(startVersion).append(",");
+        if (endVersion != null) {
+            if (!endExclusive || startVersion.equals(endVersion)) {
+                buffer.append(endVersion.withNudgedPatch());
+            } else {
+                buffer.append(endVersion);
+            }
         }
-        return buffer.toString();
+        return buffer.append(")").toString();
     }
 
     public boolean isEndExclusive() {

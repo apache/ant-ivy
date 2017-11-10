@@ -224,30 +224,21 @@ public class BundleInfoAdapter {
     private static URI asIvyURI(String org, String name, String branch, String rev, String type,
             String art, String ext) {
         StringBuilder builder = new StringBuilder();
-        builder.append("ivy:///");
-        builder.append(org);
-        builder.append('/');
-        builder.append(name);
-        builder.append('?');
+        builder.append("ivy:///").append(org).append('/').append(name).append('?');
         if (branch != null) {
-            builder.append("branch=");
-            builder.append(branch);
+            builder.append("branch=").append(branch);
         }
         if (rev != null) {
-            builder.append("&rev=");
-            builder.append(rev);
+            builder.append("&rev=").append(rev);
         }
         if (type != null) {
-            builder.append("&type=");
-            builder.append(type);
+            builder.append("&type=").append(type);
         }
         if (art != null) {
-            builder.append("&art=");
-            builder.append(art);
+            builder.append("&art=").append(art);
         }
         if (ext != null) {
-            builder.append("&ext=");
-            builder.append(ext);
+            builder.append("&ext=").append(ext);
         }
         try {
             return new URI(builder.toString());

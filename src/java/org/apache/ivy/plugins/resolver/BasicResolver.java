@@ -585,50 +585,54 @@ public abstract class BasicResolver extends AbstractResolver {
         boolean ok = true;
         StringBuilder errors = new StringBuilder();
         if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {
-            Message.error("\t" + getName() + ": bad organisation found in " + ivyRef.getResource()
-                    + ": expected='" + mrid.getOrganisation() + "' found='"
-                    + md.getModuleRevisionId().getOrganisation() + "'");
-            errors.append("bad organisation: expected='").append(mrid.getOrganisation()).append("' found='").append(md.getModuleRevisionId().getOrganisation()).append("'; ");
+            Message.error(String.format("\t%s: bad organisation found in %s: expected='%s' found='%s'",
+                    getName(), ivyRef.getResource(), mrid.getOrganisation(),
+                    md.getModuleRevisionId().getOrganisation()));
+            errors.append("bad organisation: expected='").append(mrid.getOrganisation())
+                    .append("' found='").append(md.getModuleRevisionId().getOrganisation()).append("'; ");
             ok = false;
         }
         if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
-            Message.error("\t" + getName() + ": bad module name found in " + ivyRef.getResource()
-                    + ": expected='" + mrid.getName() + " found='"
-                    + md.getModuleRevisionId().getName() + "'");
-            errors.append("bad module name: expected='").append(mrid.getName()).append("' found='").append(md.getModuleRevisionId().getName()).append("'; ");
+            Message.error(String.format("\t%s: bad module name found in %s: expected='%s found='%s'",
+                    getName(), ivyRef.getResource(), mrid.getName(),
+                    md.getModuleRevisionId().getName()));
+            errors.append("bad module name: expected='").append(mrid.getName()).append("' found='")
+                    .append(md.getModuleRevisionId().getName()).append("'; ");
             ok = false;
         }
         if (mrid.getBranch() != null
                 && !mrid.getBranch().equals(md.getModuleRevisionId().getBranch())) {
-            Message.error("\t" + getName() + ": bad branch name found in " + ivyRef.getResource()
-                    + ": expected='" + mrid.getBranch() + " found='"
-                    + md.getModuleRevisionId().getBranch() + "'");
-            errors.append("bad branch name: expected='").append(mrid.getBranch()).append("' found='").append(md.getModuleRevisionId().getBranch()).append("'; ");
+            Message.error(String.format("\t%s: bad branch name found in %s: expected='%s found='%s'",
+                    getName(), ivyRef.getResource(), mrid.getBranch(),
+                    md.getModuleRevisionId().getBranch()));
+            errors.append("bad branch name: expected='").append(mrid.getBranch()).append("' found='")
+                    .append(md.getModuleRevisionId().getBranch()).append("'; ");
             ok = false;
         }
         if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")
                 && !mrid.getRevision().equals(md.getModuleRevisionId().getRevision())) {
             ModuleRevisionId expectedMrid = ModuleRevisionId.newInstance(mrid, mrid.getRevision());
             if (!getSettings().getVersionMatcher().accept(expectedMrid, md)) {
-                Message.error("\t" + getName() + ": bad revision found in " + ivyRef.getResource()
-                        + ": expected='" + ivyRef.getRevision() + " found='"
-                        + md.getModuleRevisionId().getRevision() + "'");
-                errors.append("bad revision: expected='").append(ivyRef.getRevision()).append("' found='").append(md.getModuleRevisionId().getRevision()).append("'; ");
+                Message.error(String.format("\t%s: bad revision found in %s: expected='%s found='%s'",
+                        getName(), ivyRef.getResource(), ivyRef.getRevision(),
+                        md.getModuleRevisionId().getRevision()));
+                errors.append("bad revision: expected='").append(ivyRef.getRevision())
+                        .append("' found='").append(md.getModuleRevisionId().getRevision()).append("'; ");
                 ok = false;
             }
         }
         if (!getSettings().getStatusManager().isStatus(md.getStatus())) {
-            Message.error("\t" + getName() + ": bad status found in " + ivyRef.getResource()
-                    + ": '" + md.getStatus() + "'");
+            Message.error(String.format("\t%s: bad status found in %s: '%s'",
+                    getName(), ivyRef.getResource(), md.getStatus()));
             errors.append("bad status: '").append(md.getStatus()).append("'; ");
             ok = false;
         }
         for (Map.Entry<String, String> extra : mrid.getExtraAttributes().entrySet()) {
             if (extra.getValue() != null
                     && !extra.getValue().equals(md.getExtraAttribute(extra.getKey()))) {
-                String errorMsg = "bad " + extra.getKey() + " found in " + ivyRef.getResource()
-                        + ": expected='" + extra.getValue() + "' found='"
-                        + md.getExtraAttribute(extra.getKey()) + "'";
+                String errorMsg = String.format("bad %s found in %s: expected='%s' found='%s'",
+                        extra.getKey(), ivyRef.getResource(), extra.getValue(),
+                        md.getExtraAttribute(extra.getKey()));
                 Message.error("\t" + getName() + ": " + errorMsg);
                 errors.append(errorMsg).append(";");
                 ok = false;
