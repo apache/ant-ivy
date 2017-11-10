@@ -309,9 +309,7 @@ public class IvyNodeEviction {
         // check if it was evicted by a node that we are now the real node for
         Iterator<String> iter = evicted.keySet().iterator();
         while (iter.hasNext()) {
-            String rootModuleConf = iter.next();
-            EvictionData ed = evicted.get(rootModuleConf);
-            Collection<IvyNode> sel = ed.getSelected();
+            Collection<IvyNode> sel = evicted.get(iter.next()).getSelected();
             if (sel != null) {
                 for (IvyNode n : sel) {
                     if (n.getRealNode().equals(node)) {

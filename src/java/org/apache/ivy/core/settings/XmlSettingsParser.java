@@ -595,8 +595,8 @@ public class XmlSettingsParser extends DefaultHandler {
             configurator.addChild(qName, child);
         } else {
             configurator.startCreateChild(qName);
-            for (String attName : attributes.keySet()) {
-                configurator.setAttribute(attName, attributes.get(attName));
+            for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+                configurator.setAttribute(attribute.getKey(), attribute.getValue());
             }
         }
     }

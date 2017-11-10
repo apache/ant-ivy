@@ -224,10 +224,8 @@ public class Configurator {
                 return macroRecord.getObject();
             }
             conf.startCreateChild(macroRecord.getName());
-            Map<String, String> attributes = macroRecord.getAttributes();
-            for (String attName : attributes.keySet()) {
-                String attValue = replaceParam(attributes.get(attName), attValues);
-                conf.setAttribute(attName, attValue);
+            for (Map.Entry<String, String> attribute : macroRecord.getAttributes().entrySet()) {
+                conf.setAttribute(attribute.getKey(), replaceParam(attribute.getValue(), attValues));
             }
             for (MacroRecord child : macroRecord.getChildren()) {
                 Element elt = elements.get(child.getName());
@@ -405,9 +403,9 @@ public class Configurator {
             if (m != null) {
                 return m;
             }
-            for (Class<?> clazz : typeMethods.keySet()) {
-                if (clazz.isAssignableFrom(type)) {
-                    return typeMethods.get(clazz);
+            for (Map.Entry<Class<?>, Method> method : typeMethods.entrySet()) {
+                if (method.getKey().isAssignableFrom(type)) {
+                    return method.getValue();
                 }
             }
             return null;
