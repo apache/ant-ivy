@@ -32,6 +32,8 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.tools.ant.BuildException;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     private String revisionToCheck = "latest.integration";
@@ -65,7 +67,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         ResolveOptions resolveOptions = new ResolveOptions();
         resolveOptions.setDownload(isDownload());
         resolveOptions.setLog(getLog());
-        resolveOptions.setConfs(splitConfs(getConf()));
+        resolveOptions.setConfs(splitToArray(getConf()));
         resolveOptions.setCheckIfChanged(checkIfChanged);
 
         ResolveReport latestReport;

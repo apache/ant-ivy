@@ -62,12 +62,12 @@ public class IvyExclude {
     }
 
     DefaultExcludeRule asRule(IvySettings settings) {
-        String matcherName = matcher == null ? PatternMatcher.EXACT : matcher;
-        String orgPattern = org == null ? PatternMatcher.ANY_EXPRESSION : org;
-        String modulePattern = module == null ? PatternMatcher.ANY_EXPRESSION : module;
-        String artifactPattern = artifact == null ? PatternMatcher.ANY_EXPRESSION : artifact;
-        String typePattern = type == null ? PatternMatcher.ANY_EXPRESSION : type;
-        String extPattern = ext == null ? typePattern : ext;
+        String matcherName = (matcher == null) ? PatternMatcher.EXACT : matcher;
+        String orgPattern = (org == null) ? PatternMatcher.ANY_EXPRESSION : org;
+        String modulePattern = (module == null) ? PatternMatcher.ANY_EXPRESSION : module;
+        String artifactPattern = (artifact == null) ? PatternMatcher.ANY_EXPRESSION : artifact;
+        String typePattern = (type == null) ? PatternMatcher.ANY_EXPRESSION : type;
+        String extPattern = (ext == null) ? typePattern : ext;
         ArtifactId aid = new ArtifactId(new ModuleId(orgPattern, modulePattern), artifactPattern,
                 typePattern, extPattern);
         return new DefaultExcludeRule(aid, settings.getMatcher(matcherName), null);

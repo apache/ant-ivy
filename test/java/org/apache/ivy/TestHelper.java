@@ -437,10 +437,7 @@ public class TestHelper {
         final com.sun.net.httpserver.Authenticator authenticator = new BasicAuthenticator(realm) {
             @Override
             public boolean checkCredentials(final String user, final String pass) {
-                if (validCredentials == null) {
-                    return false;
-                }
-                if (!validCredentials.containsKey(user)) {
+                if (validCredentials == null || !validCredentials.containsKey(user)) {
                     return false;
                 }
                 final String expectedPass = validCredentials.get(user);

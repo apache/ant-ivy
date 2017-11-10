@@ -147,7 +147,7 @@ public class IvyPublishTest {
                         mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
                     }
                     // discard whitespace-only lines
-                    if (!(mergeLine.trim().equals("") && expectedLine.trim().equals(""))) {
+                    if (!(mergeLine.trim().isEmpty() && expectedLine.trim().isEmpty())) {
                         assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
                                 mergeLine);
                     }

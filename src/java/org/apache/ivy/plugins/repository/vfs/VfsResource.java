@@ -88,8 +88,8 @@ public class VfsResource implements Resource {
         init();
         List<String> list = new ArrayList<>();
         try {
-            if ((resourceImpl != null) && resourceImpl.exists()
-                    && (resourceImpl.getType() == FileType.FOLDER)) {
+            if (resourceImpl != null && resourceImpl.exists()
+                    && resourceImpl.getType() == FileType.FOLDER) {
                 for (FileObject child : resourceImpl.getChildren()) {
                     list.add(normalize(child.getName().getURI()));
                 }

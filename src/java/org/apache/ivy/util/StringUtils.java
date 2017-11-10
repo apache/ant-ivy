@@ -82,30 +82,90 @@ public final class StringUtils {
         return sw.getBuffer().toString();
     }
 
+    @Deprecated
+    public static String join(Object[] objs, String sep) {
+        for (int i = 0; i < objs.length; i++) {
+            if (!(objs[i] instanceof String)) {
+                objs[i] = objs[i].toString();
+            }
+        }
+        return joinArray((String[]) objs, sep);
+    }
+
     /**
-     * Joins the given object array in one string, each separated by the given separator.
+     * Joins the given string array in one string, each separated by the given separator.
      *
      * Example:
      *
      * <pre>
-     * join(new String[] {"one", "two", "three"}, ", ") -&gt; "one, two, three"
+     * joinArray(new String[] {"one", "two", "three"}, ", ") -&gt; "one, two, three"
      * </pre>
      *
      * @param objs
-     *            The array of objects (<code>toString()</code> is used).
+     *            The array of strings.
      * @param sep
      *            The separator to use.
      * @return The concatenated string.
      */
-    public static String join(Object[] objs, String sep) {
+    public static String joinArray(String[] objs, String sep) {
         StringBuilder buf = new StringBuilder();
-        for (Object obj : objs) {
+        for (String obj : objs) {
             buf.append(obj).append(sep);
         }
         if (objs.length > 0) {
             buf.setLength(buf.length() - sep.length()); // delete sep
         }
         return buf.toString();
+    }
+
+    /**
+     * Splits the given string into a string array using comma as a separator.
+     * Every array member gets {@link String#trim() trimmed}.
+     *
+     * @param list the string
+     * @return String[]
+     */
+    public static String[] splitToArray(String list) {
+        if (list == null) {
+            return null;
+        }
+        String[] parts = list.split(",");
+        for (int i = 0; i < parts.length; i++) {
+            parts[i] = parts[i].trim();
+        }
+        return parts;
+    }
+
+    /**
+     * Checks that a string is not null or consists of whitespace by {@link String#trim() trimming}
+     * and checking the {@link String#isEmpty() length} of the result.
+     *
+     * @param s the string to check
+     * @return boolean
+     */
+    public static boolean isNullOrEmpty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    /**
+     * Asserts that the passed <code>value</code> is not null and not an empty {@link String}.
+     * The implementation of this method {@link String#trim() trims} the (non-null)
+     * <code>value</code> to check whether the value is an empty string. If the <code>value</code>
+     * is either null or empty, then this method throws an {@link IllegalArgumentException}
+     * with the passed <code>errorMessage</code> as the message in the exception.
+     *
+     * @param value        The value to check for
+     * @param errorMessage The error message
+     */
+    public static void assertNotNullNorEmpty(final String value, final String errorMessage) {
+        if (isNullOrEmpty(value)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+    @Deprecated
+    public static void assertNotNullNotEmpty(final String value, final String errorMessage) {
+        assertNotNullNorEmpty(value, errorMessage);
     }
 
     // basic string codec (same algo as CVS passfile, inspired by ant CVSPass class
@@ -187,20 +247,5 @@ public final class StringUtils {
             sb.append(str);
         }
         return sb.toString();
-    }
-
-    /**
-     * Asserts that the passed <code>value</code> is not null and not an empty {@link String}. The implementation
-     * of this method {@link String#trim() trims} the (non-null) <code>value</code> to check whether the value is an
-     * empty string. If the <code>value</code> is either null or empty, then this method throws an {@link IllegalArgumentException}
-     * with the passed <code>errorMessage</code> as the message in the exception.
-     *
-     * @param value        The value to check for
-     * @param errorMessage The error message
-     */
-    public static void assertNotNullNotEmpty(final String value, final String errorMessage) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(errorMessage);
-        }
     }
 }

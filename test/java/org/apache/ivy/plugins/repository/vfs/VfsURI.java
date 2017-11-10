@@ -19,6 +19,8 @@ package org.apache.ivy.plugins.repository.vfs;
 
 import org.apache.ivy.Ivy;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public class VfsURI {
     private String host;
 
@@ -135,10 +137,10 @@ public class VfsURI {
         uri.append(this.scheme).append("://");
 
         // not all resource identifiers include user/passwd specifiers
-        if (user != null && user.trim().length() > 0) {
+        if (!isNullOrEmpty(user)) {
             uri.append(this.user).append(":");
 
-            if (passwd != null && passwd.trim().length() > 0) {
+            if (!isNullOrEmpty(passwd)) {
                 this.passwd = passwd.trim();
             } else {
                 this.passwd = "";
@@ -147,7 +149,7 @@ public class VfsURI {
         }
 
         // not all resource identifiers include a host specifier
-        if (host != null && host.trim().length() > 0) {
+        if (!isNullOrEmpty(host)) {
             this.host = host.trim();
             uri.append(this.host);
         }

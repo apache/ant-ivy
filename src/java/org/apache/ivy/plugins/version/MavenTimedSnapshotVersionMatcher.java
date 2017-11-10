@@ -22,6 +22,8 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  * A {@link VersionMatcher} which understands {@code Maven timestamped snapshots}.
  */
@@ -80,7 +82,7 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
      * @return
      */
     public static MavenSnapshotRevision computeIfSnapshot(final String revision) {
-        if (revision == null || revision.trim().isEmpty()) {
+        if (isNullOrEmpty(revision)) {
             return null;
         }
         final boolean regularSnapshot = revision.endsWith(SNAPSHOT_SUFFIX);

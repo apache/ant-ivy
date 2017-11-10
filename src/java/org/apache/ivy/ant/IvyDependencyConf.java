@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public class IvyDependencyConf {
 
     private final List<IvyDependencyConfMapped> mappeds = new ArrayList<>();
@@ -49,8 +51,8 @@ public class IvyDependencyConf {
 
     void addConf(DefaultDependencyDescriptor dd, String masterConf) {
         if (mapped != null) {
-            for (String map : mapped.split(",")) {
-                dd.addDependencyConfiguration(masterConf, map.trim());
+            for (String map : splitToArray(mapped)) {
+                dd.addDependencyConfiguration(masterConf, map);
             }
         }
         for (IvyDependencyConfMapped m : mappeds) {

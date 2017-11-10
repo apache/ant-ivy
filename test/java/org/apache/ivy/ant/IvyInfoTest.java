@@ -86,7 +86,7 @@ public class IvyInfoTest {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
 
-        assertTrue(info.getProject().getProperty("ivy.extra.branch") == null);
+        assertNull(info.getProject().getProperty("ivy.extra.branch"));
     }
 
     /**

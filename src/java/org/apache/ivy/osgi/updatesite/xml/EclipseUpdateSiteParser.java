@@ -31,6 +31,8 @@ import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public class EclipseUpdateSiteParser {
 
     public static UpdateSite parse(InputStream in) throws IOException, SAXException {
@@ -89,7 +91,7 @@ public class EclipseUpdateSiteParser {
             updatesite = new UpdateSite();
 
             String url = atts.getValue(URL);
-            if (url != null && !("".equals(url.trim()))) {
+            if (!isNullOrEmpty(url)) {
                 if (!url.endsWith("/") && !url.endsWith(File.separator)) {
                     url += "/";
                 }
@@ -101,7 +103,7 @@ public class EclipseUpdateSiteParser {
             }
 
             String mirrorsURL = atts.getValue(MIRRORS_URL);
-            if (mirrorsURL != null && mirrorsURL.trim().length() > 0) {
+            if (!isNullOrEmpty(mirrorsURL)) {
                 updatesite.setMirrorsURL(mirrorsURL);
             }
 

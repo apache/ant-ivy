@@ -76,28 +76,29 @@ public class JarResolver extends RepositoryResolver {
     @Override
     public void setSettings(ResolverSettings settings) {
         super.setSettings(settings);
-        // let's resolve the url
-        if (url != null) {
-            ArtifactDownloadReport report;
-            EventManager eventManager = getEventManager();
-            try {
-                if (eventManager != null) {
-                    getRepository().addTransferListener(eventManager);
-                }
-                Resource jarResource = new URLResource(url, this.getTimeoutConstraint());
-                CacheResourceOptions options = new CacheResourceOptions();
-                report = getRepositoryCacheManager().downloadRepositoryResource(jarResource,
-                    "jarrepository", "jar", "jar", options, new URLRepository());
-            } finally {
-                if (eventManager != null) {
-                    getRepository().removeTransferListener(eventManager);
-                }
-            }
-            if (report.getDownloadStatus() == DownloadStatus.FAILED) {
-                throw new RuntimeException("The jar file " + url.toExternalForm()
-                        + " could not be downloaded (" + report.getDownloadDetails() + ")");
-            }
-            setJarFile(report.getLocalFile());
+        if (url == null) {
+            return;
         }
+        // let's resolve the url
+        ArtifactDownloadReport report;
+        EventManager eventManager = getEventManager();
+        try {
+            if (eventManager != null) {
+                getRepository().addTransferListener(eventManager);
+            }
+            Resource jarResource = new URLResource(url, this.getTimeoutConstraint());
+            CacheResourceOptions options = new CacheResourceOptions();
+            report = getRepositoryCacheManager().downloadRepositoryResource(jarResource,
+                "jarrepository", "jar", "jar", options, new URLRepository());
+        } finally {
+            if (eventManager != null) {
+                getRepository().removeTransferListener(eventManager);
+            }
+        }
+        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
+            throw new RuntimeException("The jar file " + url.toExternalForm()
+                    + " could not be downloaded (" + report.getDownloadDetails() + ")");
+        }
+        setJarFile(report.getLocalFile());
     }
 }

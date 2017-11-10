@@ -33,6 +33,8 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.util.FileNameMapper;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
  */
@@ -98,7 +100,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         try {
             final Filter<Artifact> artifactFilter = getArtifactFilter();
             final RetrieveOptions retrieveOptions = (RetrieveOptions) new RetrieveOptions().setLog(getLog());
-            retrieveOptions.setConfs(splitConfs(getConf())).setDestArtifactPattern(pattern)
+            retrieveOptions.setConfs(splitToArray(getConf())).setDestArtifactPattern(pattern)
                     .setDestIvyPattern(ivypattern).setArtifactFilter(artifactFilter)
                     .setSync(sync).setOverwriteMode(getOverwriteMode())
                     .setUseOrigin(isUseOrigin()).setMakeSymlinks(symlink)

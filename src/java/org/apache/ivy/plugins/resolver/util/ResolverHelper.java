@@ -54,42 +54,40 @@ public final class ResolverHelper {
             // the searched token is a whole name
             String root = pattern.substring(0, index);
             return listAll(rep, root);
-        } else {
-            int slashIndex = pattern.substring(0, index).lastIndexOf(fileSep);
-            String root = slashIndex == -1 ? "" : pattern.substring(0, slashIndex);
+        }
 
-            try {
-                Message.debug("\tusing " + rep + " to list all in " + root);
-                String[] all = listAll(rep, root);
-                if (all != null) {
-                    Message.debug("\t\tfound " + all.length + " urls");
-                    List<String> ret = new ArrayList<>(all.length);
-                    int endNameIndex = pattern.indexOf(fileSep, slashIndex + 1);
-                    String namePattern;
-                    if (endNameIndex != -1) {
-                        namePattern = pattern.substring(slashIndex + 1, endNameIndex);
-                    } else {
-                        namePattern = pattern.substring(slashIndex + 1);
-                    }
-                    namePattern = namePattern.replaceAll("\\.", "\\\\.");
-                    namePattern = IvyPatternHelper.substituteToken(namePattern, token, "(.+)");
-                    Pattern p = Pattern.compile(namePattern);
-                    for (String path : all) {
-                        Matcher m = p.matcher(path);
-                        if (m.matches()) {
-                            String value = m.group(1);
-                            ret.add(value);
-                        }
-                    }
-                    Message.debug("\t\t" + ret.size() + " matched " + pattern);
-                    return ret.toArray(new String[ret.size()]);
-                } else {
-                    return null;
-                }
-            } catch (Exception e) {
-                Message.warn("problem while listing resources in " + root + " with " + rep, e);
+        int slashIndex = pattern.substring(0, index).lastIndexOf(fileSep);
+        String root = (slashIndex == -1) ? "" : pattern.substring(0, slashIndex);
+        try {
+            Message.debug("\tusing " + rep + " to list all in " + root);
+            String[] all = listAll(rep, root);
+            if (all == null) {
                 return null;
             }
+            Message.debug("\t\tfound " + all.length + " urls");
+            List<String> ret = new ArrayList<>(all.length);
+            int endNameIndex = pattern.indexOf(fileSep, slashIndex + 1);
+            String namePattern;
+            if (endNameIndex != -1) {
+                namePattern = pattern.substring(slashIndex + 1, endNameIndex);
+            } else {
+                namePattern = pattern.substring(slashIndex + 1);
+            }
+            namePattern = namePattern.replaceAll("\\.", "\\\\.");
+            namePattern = IvyPatternHelper.substituteToken(namePattern, token, "(.+)");
+            Pattern p = Pattern.compile(namePattern);
+            for (String path : all) {
+                Matcher m = p.matcher(path);
+                if (m.matches()) {
+                    String value = m.group(1);
+                    ret.add(value);
+                }
+            }
+            Message.debug("\t\t" + ret.size() + " matched " + pattern);
+            return ret.toArray(new String[ret.size()]);
+        } catch (Exception e) {
+            Message.warn("problem while listing resources in " + root + " with " + rep, e);
+            return null;
         }
     }
 
@@ -98,21 +96,20 @@ public final class ResolverHelper {
             String fileSep = rep.getFileSeparator();
             Message.debug("\tusing " + rep + " to list all in " + parent);
             List<String> all = rep.list(parent);
-            if (all != null) {
-                Message.debug("\t\tfound " + all.size() + " resources");
-                List<String> names = new ArrayList<>(all.size());
-                for (String path : all) {
-                    if (path.endsWith(fileSep)) {
-                        path = path.substring(0, path.length() - 1);
-                    }
-                    int slashIndex = path.lastIndexOf(fileSep);
-                    names.add(path.substring(slashIndex + 1));
-                }
-                return names.toArray(new String[names.size()]);
-            } else {
+            if (all == null) {
                 Message.debug("\t\tno resources found");
                 return null;
             }
+            Message.debug("\t\tfound " + all.size() + " resources");
+            List<String> names = new ArrayList<>(all.size());
+            for (String path : all) {
+                if (path.endsWith(fileSep)) {
+                    path = path.substring(0, path.length() - 1);
+                }
+                int slashIndex = path.lastIndexOf(fileSep);
+                names.add(path.substring(slashIndex + 1));
+            }
+            return names.toArray(new String[names.size()]);
         } catch (IOException e) {
             Message.verbose("problem while listing resources in " + parent + " with " + rep, e);
             return null;
@@ -156,7 +153,9 @@ public final class ResolverHelper {
                 Message.debug("\tfound resolved res: " + ret);
             }
             return ret.toArray(new ResolvedResource[ret.size()]);
-        } else if (!partiallyResolvedPattern.contains("[" + IvyPatternHelper.REVISION_KEY + "]")) {
+        }
+
+        if (!partiallyResolvedPattern.contains("[" + IvyPatternHelper.REVISION_KEY + "]")) {
             // the partially resolved pattern is completely resolved, check the resource
             try {
                 Resource res = rep.getResource(partiallyResolvedPattern);

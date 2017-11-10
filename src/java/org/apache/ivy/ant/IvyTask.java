@@ -27,10 +27,12 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Reference;
+
+import static org.apache.ivy.util.StringUtils.joinArray;
+import static org.apache.ivy.util.StringUtils.splitToArray;
 
 /**
  * Base class for all ivy ant tasks, deal particularly with ivy instance storage in ant project.
@@ -43,10 +45,10 @@ public abstract class IvyTask extends Task {
     private Reference antIvyEngineRef = null;
 
     protected boolean doValidate(IvySettings ivy) {
-        if (validate != null) {
-            return validate;
+        if (validate == null) {
+            return ivy.doValidate();
         }
-        return ivy.doValidate();
+        return validate;
     }
 
     public boolean isValidate() {
@@ -71,7 +73,9 @@ public abstract class IvyTask extends Task {
 
     protected Ivy getIvyInstance() {
         Object antIvyEngine;
-        if (antIvyEngineRef != null) {
+        if (antIvyEngineRef == null) {
+            antIvyEngine = IvyAntSettings.getDefaultInstance(this);
+        } else {
             antIvyEngine = antIvyEngineRef.getReferencedObject(getProject());
             if (!antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
                 throw new BuildException(antIvyEngineRef.getRefId()
@@ -83,8 +87,6 @@ public abstract class IvyTask extends Task {
                         + "Please use the same loader when defining your task, or "
                         + "redeclare your ivy:settings in this classloader", getLocation());
             }
-        } else {
-            antIvyEngine = IvyAntSettings.getDefaultInstance(this);
         }
         Ivy ivy = ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance(this);
         AntMessageLogger.register(this, ivy);
@@ -108,13 +110,14 @@ public abstract class IvyTask extends Task {
 
     protected void setResolved(ResolveReport report, String resolveId, boolean keep) {
         setResolved(report, keep);
-        if (resolveId != null) {
-            ModuleDescriptor md = report.getModuleDescriptor();
-            String[] confs = report.getConfigurations();
-            getProject().addReference("ivy.resolved.report." + resolveId, report);
-            getProject().addReference("ivy.resolved.descriptor." + resolveId, md);
-            getProject().addReference("ivy.resolved.configurations.ref." + resolveId, confs);
+        if (resolveId == null) {
+            return;
         }
+        ModuleDescriptor md = report.getModuleDescriptor();
+        String[] confs = report.getConfigurations();
+        getProject().addReference("ivy.resolved.report." + resolveId, report);
+        getProject().addReference("ivy.resolved.descriptor." + resolveId, md);
+        getProject().addReference("ivy.resolved.configurations.ref." + resolveId, confs);
     }
 
     protected String[] getResolvedConfigurations(String org, String module, boolean strict) {
@@ -127,7 +130,7 @@ public abstract class IvyTask extends Task {
 
     protected <T> T getResolvedDescriptor(String resolveId, boolean strict) {
         T result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
-        if (strict && (result == null)) {
+        if (strict && result == null) {
             throw new BuildException("ModuleDescriptor for resolve with id '" + resolveId
                     + "' not found.");
         }
@@ -154,83 +157,67 @@ public abstract class IvyTask extends Task {
     }
 
     protected ResolveReport getResolvedReport(String org, String module, String resolveId) {
-        ResolveReport result = null;
-
         if (resolveId == null) {
-            result = getReference("ivy.resolved.report", org, module, false);
-        } else {
-            result = getReference("ivy.resolved.report." + resolveId, null, null,
-                false);
+            return getReference("ivy.resolved.report", org, module, false);
         }
-
-        return result;
+        return getReference("ivy.resolved.report." + resolveId, null, null,
+            false);
     }
 
     protected String[] splitConfs(String conf) {
-        if (conf == null) {
-            return null;
-        }
-        String[] confs = conf.split(",");
-        for (int i = 0; i < confs.length; i++) {
-            confs[i] = confs[i].trim();
-        }
-        return confs;
+        return splitToArray(conf);
     }
 
     protected String mergeConfs(String[] conf) {
-        return StringUtils.join(conf, ", ");
+        return joinArray(conf, ", ");
     }
 
     protected static Date getPubDate(String date, Date def) {
-        if (date != null) {
-            if ("now".equals(date.toLowerCase(Locale.US))) {
-                return new Date();
-            }
-            try {
-                return DateUtil.parse(date);
-            } catch (Exception ex) {
-                throw new BuildException("Publication date provided in bad format. Should be '"
-                        + DateUtil.DATE_FORMAT_PATTERN + "' and not '" + date + "'!");
-            }
-        } else {
+        if (date == null) {
             return def;
+        }
+        if ("now".equals(date.toLowerCase(Locale.US))) {
+            return new Date();
+        }
+        try {
+            return DateUtil.parse(date);
+        } catch (Exception ex) {
+            throw new BuildException("Publication date provided in bad format. Should be '"
+                    + DateUtil.DATE_FORMAT_PATTERN + "' and not '" + date + "'!");
         }
     }
 
     protected String getProperty(String value, IvySettings ivy, String name) {
         if (value == null) {
             return getProperty(ivy, name);
-        } else {
-            value = ivy.substitute(value);
-            Message.debug("parameter found as attribute value: " + name + "=" + value);
-            return value;
         }
+        value = ivy.substitute(value);
+        Message.debug("parameter found as attribute value: " + name + "=" + value);
+        return value;
     }
 
     protected String getProperty(String value, IvySettings ivy, String name, String resolveId) {
         if (resolveId == null) {
             return getProperty(value, ivy, name);
-        } else {
-            return getProperty(value, ivy, name + "." + resolveId);
         }
+        return getProperty(value, ivy, name + "." + resolveId);
     }
 
     protected String getProperty(IvySettings ivy, String name, String resolveId) {
         if (resolveId == null) {
             return getProperty(ivy, name);
-        } else {
-            return getProperty(ivy, name + "." + resolveId);
         }
+        return getProperty(ivy, name + "." + resolveId);
     }
 
     protected String getProperty(IvySettings ivy, String name) {
         String val = ivy.getVariable(name);
         if (val == null) {
             val = ivy.substitute(getProject().getProperty(name));
-            if (val != null) {
-                Message.debug("parameter found as ant project property: " + name + "=" + val);
-            } else {
+            if (val == null) {
                 Message.debug("parameter not found: " + name);
+            } else {
+                Message.debug("parameter found as ant project property: " + name + "=" + val);
             }
         } else {
             val = ivy.substitute(val);

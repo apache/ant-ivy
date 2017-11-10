@@ -52,6 +52,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
 import org.apache.tools.ant.util.JAXPUtils;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * This ant task let users generates reports (html, xml, graphml, ...) from the last resolve done.
  */
@@ -202,7 +204,7 @@ public class IvyReport extends IvyTask {
         }
 
         try {
-            String[] confs = splitConfs(conf);
+            String[] confs = splitToArray(conf);
             if (xsl) {
                 genreport(confs);
             }
@@ -226,10 +228,10 @@ public class IvyReport extends IvyTask {
             File xml = cacheMgr.getConfigurationResolveReportInCache(resolveId, config);
 
             File out;
-            if (todir != null) {
-                out = new File(todir, getOutputPattern(config, "xml"));
-            } else {
+            if (todir == null) {
                 out = getProject().resolveFile(getOutputPattern(config, "xml"));
+            } else {
+                out = new File(todir, getOutputPattern(config, "xml"));
             }
 
             FileUtil.copy(xml, out, null);
@@ -242,10 +244,10 @@ public class IvyReport extends IvyTask {
         // copy the css if required
         if (xslFile == null) {
             File css;
-            if (todir != null) {
-                css = new File(todir, "ivy-report.css");
-            } else {
+            if (todir == null) {
                 css = getProject().resolveFile("ivy-report.css");
+            } else {
+                css = new File(todir, "ivy-report.css");
             }
 
             if (!css.exists()) {

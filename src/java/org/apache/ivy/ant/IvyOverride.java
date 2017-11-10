@@ -56,9 +56,9 @@ public class IvyOverride {
     }
 
     void addOverride(DefaultModuleDescriptor md, IvySettings settings) {
-        String matcherName = matcher == null ? PatternMatcher.EXACT : matcher;
-        String orgPattern = org == null ? PatternMatcher.ANY_EXPRESSION : org;
-        String modulePattern = module == null ? PatternMatcher.ANY_EXPRESSION : module;
+        String matcherName = (matcher == null) ? PatternMatcher.EXACT : matcher;
+        String orgPattern = (org == null) ? PatternMatcher.ANY_EXPRESSION : org;
+        String modulePattern = (module == null) ? PatternMatcher.ANY_EXPRESSION : module;
         md.addDependencyDescriptorMediator(new ModuleId(orgPattern, modulePattern),
             settings.getMatcher(matcherName), new OverrideDependencyDescriptorMediator(branch, rev));
     }

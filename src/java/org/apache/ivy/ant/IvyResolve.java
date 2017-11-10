@@ -42,6 +42,8 @@ import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * This task allow to call the Ivy dependency resolution from ant.
  */
@@ -242,7 +244,7 @@ public class IvyResolve extends IvyTask {
         try {
             conf = getProperty(conf, settings, "ivy.configurations");
             type = getProperty(type, settings, "ivy.resolve.default.type.filter");
-            String[] confs = splitConfs(conf);
+            String[] confs = splitToArray(conf);
 
             boolean childs = !dependencies.isEmpty() || !excludes.isEmpty() || !conflicts.isEmpty();
 

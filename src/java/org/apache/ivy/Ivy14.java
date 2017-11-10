@@ -54,6 +54,8 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * This class can be used for easy migration from Ivy 1.4 API.
  * <p>
@@ -230,7 +232,7 @@ public class Ivy14 {
             boolean overwrite, String conf) throws IOException {
         return ivy.getPublishEngine().publish(md, srcArtifactPattern, resolver,
             new PublishOptions().setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
-                    .setOverwrite(overwrite).setConfs(splitConfs(conf)));
+                    .setOverwrite(overwrite).setConfs(splitToArray(conf)));
     }
 
     public Collection<Artifact> publish(ModuleRevisionId mrid, String pubrevision, File cache,
@@ -241,7 +243,7 @@ public class Ivy14 {
             new PublishOptions().setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
                     .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
                     .setUpdate(update).setValidate(validate).setOverwrite(overwrite)
-                    .setConfs(splitConfs(conf)));
+                    .setConfs(splitToArray(conf)));
     }
 
     public Collection<Artifact> publish(ModuleRevisionId mrid, String pubrevision, File cache,
@@ -268,7 +270,7 @@ public class Ivy14 {
             new PublishOptions().setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
                     .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
                     .setUpdate(update).setValidate(validate).setOverwrite(overwrite)
-                    .setConfs(splitConfs(conf)));
+                    .setConfs(splitToArray(conf)));
     }
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
@@ -451,17 +453,6 @@ public class Ivy14 {
 
     public String substitute(String str) {
         return ivy.substitute(str);
-    }
-
-    private String[] splitConfs(String conf) {
-        if (conf == null || "".equals(conf)) {
-            return null;
-        }
-        String[] confs = conf.split(",");
-        for (int i = 0; i < confs.length; i++) {
-            confs[i] = confs[i].trim();
-        }
-        return confs;
     }
 
     // CheckStyle:ParameterNumberCheck ON

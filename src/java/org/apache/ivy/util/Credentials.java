@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.util;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  *
  */
@@ -53,11 +55,10 @@ public class Credentials {
     }
 
     public static String buildKey(String realm, String host) {
-        if (realm == null || "".equals(realm.trim())) {
+        if (isNullOrEmpty(realm)) {
             return host;
-        } else {
-            return realm + "@" + host;
         }
+        return realm + "@" + host;
     }
 
     /**

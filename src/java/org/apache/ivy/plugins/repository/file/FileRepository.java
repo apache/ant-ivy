@@ -109,11 +109,10 @@ public class FileRepository extends AbstractRepository {
     }
 
     File getFile(String source) {
-        if (baseDir != null) {
-            return FileUtil.resolveFile(baseDir, source);
-        } else {
+        if (baseDir == null) {
             return Checks.checkAbsolute(source, "source");
         }
+        return FileUtil.resolveFile(baseDir, source);
     }
 
     public boolean isLocal() {
@@ -134,11 +133,10 @@ public class FileRepository extends AbstractRepository {
     }
 
     public String standardize(String source) {
-        if (baseDir != null) {
-            return FileUtil.resolveFile(baseDir, source).getPath();
-        } else {
+        if (baseDir == null) {
             return FileUtil.normalize(source).getPath();
         }
+        return FileUtil.resolveFile(baseDir, source).getPath();
     }
 
     public String getFileSeparator() {

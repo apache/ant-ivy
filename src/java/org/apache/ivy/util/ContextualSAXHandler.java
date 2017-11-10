@@ -23,6 +23,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static org.apache.ivy.util.StringUtils.joinArray;
+
 public class ContextualSAXHandler extends DefaultHandler {
 
     private Stack<String> contextStack = new Stack<>();
@@ -48,14 +50,7 @@ public class ContextualSAXHandler extends DefaultHandler {
     }
 
     protected String getContext() {
-        StringBuilder buf = new StringBuilder();
-        for (String ctx : contextStack) {
-            buf.append(ctx).append("/");
-        }
-        if (buf.length() > 0) {
-            buf.setLength(buf.length() - 1);
-        }
-        return buf.toString();
+        return joinArray(contextStack.toArray(new String[contextStack.size()]), "/");
     }
 
     protected String getText() {

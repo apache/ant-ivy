@@ -64,7 +64,7 @@ public abstract class XMLHelper {
         }
         SAXParser parser = parserFactory.newSAXParser();
 
-        if (canUseSchemaValidation && (schema != null)) {
+        if (canUseSchemaValidation && schema != null) {
             try {
                 parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
                 parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);

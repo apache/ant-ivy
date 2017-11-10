@@ -191,7 +191,7 @@ public final class SshCache {
         if (port != -1 && port != SSH_DEFAULT_PORT) {
             portToUse = Integer.toString(port);
         }
-        return user.toLowerCase(Locale.US).trim() + "@" + host.toLowerCase(Locale.US).trim() + ":"
+        return user.trim().toLowerCase(Locale.US) + "@" + host.trim().toLowerCase(Locale.US) + ":"
                 + portToUse;
     }
 
@@ -232,7 +232,7 @@ public final class SshCache {
             oldSession.disconnect();
             Message.verbose(":: SSH :: ssh connection closed from " + oldhost);
         }
-        if ((newSession == null) && (entry != null)) {
+        if (newSession == null && entry != null) {
             uriCacheMap.remove(createCacheKey(user, host, port));
             if (entry.getSession() != null) {
                 sessionCacheMap.remove(entry.getSession());

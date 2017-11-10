@@ -50,7 +50,6 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
-import org.apache.ivy.util.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -75,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.ivy.util.StringUtils.joinArray;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -2500,7 +2500,7 @@ public class ResolveTest {
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.5.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("missing conf should have raised an error in report", report.hasError());
-        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").contains("'unknown'"));
+        assertTrue(joinArray(report.getAllProblemMessages().toArray(new String[0]), "\n").contains("'unknown'"));
     }
 
     @Test
@@ -3797,27 +3797,27 @@ public class ResolveTest {
             new File("test/repositories/badfile/ivys/ivy-badorg.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad org should have raised an error in report", report.hasError());
-        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").contains("'badorg'"));
+        assertTrue(joinArray(report.getAllProblemMessages().toArray(new String[0]), "\n").contains("'badorg'"));
 
         report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badmodule.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad module should have raised an error in report", report.hasError());
-        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").contains("'badmodule'"));
+        assertTrue(joinArray(report.getAllProblemMessages().toArray(new String[0]), "\n").contains("'badmodule'"));
 
         report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badbranch.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad branch should have raised an error in report", report.hasError());
-        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").contains("'badbranch'"));
+        assertTrue(joinArray(report.getAllProblemMessages().toArray(new String[0]), "\n").contains("'badbranch'"));
 
         report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad revision should have raised an error in report", report.hasError());
-        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").contains("'badrevision'"));
+        assertTrue(joinArray(report.getAllProblemMessages().toArray(new String[0]), "\n").contains("'badrevision'"));
 
         report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badxml.xml"),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad xml should have raised an error in report", report.hasError());
-        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").contains("badatt"));
+        assertTrue(joinArray(report.getAllProblemMessages().toArray(new String[0]), "\n").contains("badatt"));
     }
 
     @Test

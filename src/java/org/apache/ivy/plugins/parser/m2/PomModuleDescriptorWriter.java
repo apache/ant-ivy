@@ -121,7 +121,7 @@ public final class PomModuleDescriptorWriter {
                     continue;
                 }
 
-                if (line.trim().length() == 0) {
+                if (line.trim().isEmpty()) {
                     // empty line
                     out.println(line);
                     line = in.readLine();

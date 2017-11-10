@@ -80,6 +80,8 @@ import org.apache.ivy.util.ChecksumHelper;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  *
  */
@@ -180,10 +182,8 @@ public abstract class BasicResolver extends AbstractResolver {
         IvyContext context = IvyContext.pushNewCopyContext();
         try {
             ResolvedModuleRevision mr = data.getCurrentResolvedModuleRevision();
-            if (mr != null) {
-                if (shouldReturnResolvedModule(dd, mr)) {
-                    return mr;
-                }
+            if (mr != null && shouldReturnResolvedModule(dd, mr)) {
+                return mr;
             }
 
             if (isForce()) {
@@ -238,33 +238,35 @@ public abstract class BasicResolver extends AbstractResolver {
                     throw new UnresolvedDependencyException("\t" + getName()
                             + ": no ivy file found for " + systemMrid, false);
                 }
+
                 nsMd = DefaultModuleDescriptor.newDefaultInstance(nsMrid,
                     nsDd.getAllDependencyArtifacts());
                 ResolvedResource artifactRef = findFirstArtifactRef(nsMd, nsDd, data);
                 checkInterrupted();
+
                 if (artifactRef == null) {
                     throw new UnresolvedDependencyException("\t" + getName()
                             + ": no ivy file nor artifact found for " + systemMrid, false);
-                } else {
-                    long lastModified = artifactRef.getLastModified();
-                    if (lastModified != 0 && nsMd instanceof DefaultModuleDescriptor) {
-                        ((DefaultModuleDescriptor) nsMd).setLastModified(lastModified);
-                    }
-                    Message.verbose("\t" + getName() + ": no ivy file found for " + systemMrid
-                            + ": using default data");
-                    if (isDynamic) {
-                        nsMd.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(nsMrid,
-                            artifactRef.getRevision()));
-                    }
-                    systemMd = toSystem(nsMd);
-                    MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport(
-                            systemMd.getMetadataArtifact());
-                    madr.setDownloadStatus(DownloadStatus.NO);
-                    madr.setSearched(true);
-                    rmr = new ResolvedModuleRevision(this, this, systemMd, madr, isForce());
-                    getRepositoryCacheManager().cacheModuleDescriptor(this, artifactRef,
-                        toSystem(dd), systemMd.getAllArtifacts()[0], null, getCacheOptions(data));
                 }
+
+                long lastModified = artifactRef.getLastModified();
+                if (lastModified != 0 && nsMd instanceof DefaultModuleDescriptor) {
+                    ((DefaultModuleDescriptor) nsMd).setLastModified(lastModified);
+                }
+                Message.verbose("\t" + getName() + ": no ivy file found for " + systemMrid
+                        + ": using default data");
+                if (isDynamic) {
+                    nsMd.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(nsMrid,
+                        artifactRef.getRevision()));
+                }
+                systemMd = toSystem(nsMd);
+                MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport(
+                        systemMd.getMetadataArtifact());
+                madr.setDownloadStatus(DownloadStatus.NO);
+                madr.setSearched(true);
+                rmr = new ResolvedModuleRevision(this, this, systemMd, madr, isForce());
+                getRepositoryCacheManager().cacheModuleDescriptor(this, artifactRef,
+                    toSystem(dd), systemMd.getAllArtifacts()[0], null, getCacheOptions(data));
             } else {
                 if (ivyRef instanceof MDResolvedResource) {
                     rmr = ((MDResolvedResource) ivyRef).getResolvedModuleRevision();
@@ -356,10 +358,10 @@ public abstract class BasicResolver extends AbstractResolver {
         final ModuleDescriptorParser parser = systemMd.getParser();
 
         // the metadata artifact which was used to cache the original metadata file
-        Artifact requestedMetadataArtifact = ivyRef == null ? systemMd.getMetadataArtifact()
+        Artifact requestedMetadataArtifact = (ivyRef == null) ? systemMd.getMetadataArtifact()
                 : parser.getMetadataArtifact(
-                    ModuleRevisionId.newInstance(systemMrid, systemMd.getRevision()),
-                    ivyRef.getResource());
+                        ModuleRevisionId.newInstance(systemMrid, systemMd.getRevision()),
+                ivyRef.getResource());
 
         cacheManager.originalToCachedModuleDescriptor(this, ivyRef, requestedMetadataArtifact, rmr,
             new ModuleDescriptorWriter() {
@@ -397,21 +399,22 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private void resolveAndCheckPublicationDate(DependencyDescriptor systemDd,
             ModuleDescriptor systemMd, ModuleRevisionId systemMrid, ResolveData data) {
-        // resolve and check publication date
-        if (data.getDate() != null) {
-            long pubDate = getPublicationDate(systemMd, systemDd, data);
-            if (pubDate > data.getDate().getTime()) {
-                throw new UnresolvedDependencyException("\t" + getName()
-                        + ": unacceptable publication date => was=" + new Date(pubDate)
-                        + " required=" + data.getDate());
-            }
-            if (pubDate == -1) {
-                throw new UnresolvedDependencyException("\t" + getName()
-                        + ": impossible to guess publication date: artifact missing for "
-                        + systemMrid);
-            }
-            systemMd.setResolvedPublicationDate(new Date(pubDate));
+        if (data.getDate() == null) {
+            return;
         }
+        // resolve and check publication date
+        long pubDate = getPublicationDate(systemMd, systemDd, data);
+        if (pubDate > data.getDate().getTime()) {
+            throw new UnresolvedDependencyException("\t" + getName()
+                    + ": unacceptable publication date => was=" + new Date(pubDate)
+                    + " required=" + data.getDate());
+        }
+        if (pubDate == -1) {
+            throw new UnresolvedDependencyException("\t" + getName()
+                    + ": impossible to guess publication date: artifact missing for "
+                    + systemMrid);
+        }
+        systemMd.setResolvedPublicationDate(new Date(pubDate));
     }
 
     protected void checkModuleDescriptorRevision(ModuleDescriptor systemMd,
@@ -519,16 +522,15 @@ public abstract class BasicResolver extends AbstractResolver {
             IvyNode node = data.getNode(resolvedMrid);
             if (node != null && node.getModuleRevision() != null) {
                 // this revision has already be resolved : return it
-                if (node.getDescriptor() != null && node.getDescriptor().isDefault()) {
-                    Message.verbose("\t" + getName() + ": found already resolved revision: "
-                            + resolvedMrid
-                            + ": but it's a default one, maybe we can find a better one");
-                } else {
+                if (node.getDescriptor() == null || !node.getDescriptor().isDefault()) {
                     Message.verbose("\t" + getName() + ": revision already resolved: "
                             + resolvedMrid);
                     node.getModuleRevision().getReport().setSearched(true);
                     return node.getModuleRevision();
                 }
+                Message.verbose("\t" + getName() + ": found already resolved revision: "
+                        + resolvedMrid
+                        + ": but it's a default one, maybe we can find a better one");
             }
         }
 
@@ -693,7 +695,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 rejected.add(rres.getRevision() + " (unreachable)");
                 continue;
             }
-            if ((date != null && rres.getLastModified() > date.getTime())) {
+            if (date != null && rres.getLastModified() > date.getTime()) {
                 Message.verbose("\t" + name + ": too young: " + rres);
                 rejected.add(rres.getRevision() + " (" + rres.getLastModified() + ")");
                 continue;
@@ -780,10 +782,10 @@ public abstract class BasicResolver extends AbstractResolver {
 
     protected void logAttempt(String attempt) {
         Artifact currentArtifact = IvyContext.getContext().get(getName() + ".artifact");
-        if (currentArtifact != null) {
-            logArtifactAttempt(currentArtifact, attempt);
-        } else {
+        if (currentArtifact == null) {
             logIvyAttempt(attempt);
+        } else {
+            logArtifactAttempt(currentArtifact, attempt);
         }
     }
 
@@ -1098,16 +1100,15 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public String[] getChecksumAlgorithms() {
-        String csDef = checksums == null ? getSettings().getVariable("ivy.checksums") : checksums;
+        String csDef = (checksums == null) ? getSettings().getVariable("ivy.checksums") : checksums;
         if (csDef == null) {
             return new String[0];
         }
         // csDef is a comma separated list of checksum algorithms to use with this resolver
         // we parse and return it as a String[]
         List<String> algos = new ArrayList<>();
-        for (String checksum : csDef.split(",")) {
-            String cs = checksum.trim();
-            if (!"".equals(cs) && !"none".equals(cs)) {
+        for (String cs : splitToArray(csDef)) {
+            if (!cs.isEmpty() && !"none".equals(cs)) {
                 algos.add(cs);
             }
         }

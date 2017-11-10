@@ -24,6 +24,8 @@ import java.net.PasswordAuthentication;
 import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  *
  */
@@ -81,7 +83,7 @@ public final class IvyAuthenticator extends Authenticator {
 
         if (isProxyAuthentication()) {
             String proxyUser = System.getProperty("http.proxyUser");
-            if ((proxyUser != null) && (proxyUser.trim().length() > 0)) {
+            if (!isNullOrEmpty(proxyUser)) {
                 String proxyPass = System.getProperty("http.proxyPassword", "");
                 Message.debug("authenticating to proxy server with username [" + proxyUser + "]");
                 result = new PasswordAuthentication(proxyUser, proxyPass.toCharArray());
@@ -98,7 +100,7 @@ public final class IvyAuthenticator extends Authenticator {
             }
         }
 
-        if ((result == null) && (original != null)) {
+        if (result == null && original != null) {
             Authenticator.setDefault(original);
             try {
                 result = Authenticator.requestPasswordAuthentication(getRequestingHost(),

@@ -54,6 +54,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  */
 public class XmlSettingsParser extends DefaultHandler {
@@ -374,7 +376,7 @@ public class XmlSettingsParser extends DefaultHandler {
             URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_HEAD);
         } else if ("get".equalsIgnoreCase(requestMethod)) {
             URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_GET);
-        } else if ((requestMethod != null) && (requestMethod.trim().length() > 0)) {
+        } else if (!isNullOrEmpty(requestMethod)) {
             throw new IllegalArgumentException(
                     "Invalid httpRequestMethod specified, must be one of {'HEAD', 'GET'}");
         }

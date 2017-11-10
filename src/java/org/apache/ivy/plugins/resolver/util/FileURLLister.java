@@ -49,7 +49,7 @@ public class FileURLLister implements URLLister {
             // unexpected try to get the best of it
             path = url.getPath();
         }
-        File file = basedir == null ? new File(path) : new File(basedir, path);
+        File file = (basedir == null) ? new File(path) : new File(basedir, path);
         if (file.exists() && file.isDirectory()) {
             String[] files = file.list();
             List<URL> ret = new ArrayList<>(files.length);

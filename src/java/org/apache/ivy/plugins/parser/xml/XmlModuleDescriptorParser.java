@@ -83,6 +83,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.getVisibility;
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+import static org.apache.ivy.util.StringUtils.splitToArray;
 
 /**
  * Parses an xml ivy file and output a ModuleDescriptor. For dependency and performance reasons, it
@@ -412,20 +414,19 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         protected void extendsStarted(Attributes attributes) throws ParseException {
             String parentOrganisation = settings.substitute(attributes.getValue("organisation"));
             String parentModule = settings.substitute(attributes.getValue("module"));
-            String parentRevision = attributes.getValue("revision") != null ? settings
-                    .substitute(attributes.getValue("revision")) : Ivy.getWorkingRevision();
-            String location = attributes.getValue("location") != null ? settings
-                    .substitute(attributes.getValue("location")) : getDefaultParentLocation();
-            ModuleDescriptor parent = null;
-
-            String extendType = attributes.getValue("extendType") != null ? settings
-                    .substitute(attributes.getValue("extendType").toLowerCase(Locale.US)) : "all";
+            String parentRevision = (attributes.getValue("revision") == null) ? Ivy.getWorkingRevision()
+                    : settings.substitute(attributes.getValue("revision"));
+            String location = (attributes.getValue("location") == null) ? getDefaultParentLocation()
+                    : settings.substitute(attributes.getValue("location"));
+            String extendType = (attributes.getValue("extendType") == null) ? "all"
+                    : settings.substitute(attributes.getValue("extendType").toLowerCase(Locale.US));
 
             List<String> extendTypes = Arrays.asList(extendType.split(","));
             ModuleId parentMid = new ModuleId(parentOrganisation, parentModule);
             ModuleRevisionId parentMrid = new ModuleRevisionId(parentMid, parentRevision);
 
             // check on filesystem based on location attribute (for dev ONLY)
+            ModuleDescriptor parent = null;
             boolean local = false;
             try {
                 parent = parseParentModuleOnFilesystem(location);
@@ -503,9 +504,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (extendTypes.contains("description")) {
                     mergeDescription(parent.getDescription());
                 }
+
                 if (extendTypes.contains("licenses")) {
                     mergeLicenses(parent.getLicenses());
                 }
+
                 if (extendTypes.contains("excludes")) {
                     mergeExcludes(parent.getAllExcludeRules());
                 }
@@ -625,7 +628,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          */
         protected void mergeDescription(String description) {
             String current = getMd().getDescription();
-            if (current == null || current.trim().length() == 0) {
+            if (isNullOrEmpty(current)) {
                 getMd().setDescription(description);
             }
         }
@@ -733,27 +736,23 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         protected void setPublicationsDefaultConf(String defaultConf) {
-            this.publicationsDefaultConf = defaultConf == null ? null : defaultConf.split(",");
+            this.publicationsDefaultConf = (defaultConf == null) ? null : splitToArray(defaultConf);
         }
 
         protected boolean isOtherNamespace(String qName) {
-            return qName.indexOf(':') != -1;
+            return qName.contains(":");
         }
 
         protected void managerStarted(Attributes attributes, String managerAtt) {
             String org = settings.substitute(attributes.getValue("org"));
-            org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
+            org = (org == null) ? PatternMatcher.ANY_EXPRESSION : org;
             String mod = settings.substitute(attributes.getValue("module"));
-            mod = mod == null ? PatternMatcher.ANY_EXPRESSION : mod;
+            mod = (mod == null) ? PatternMatcher.ANY_EXPRESSION : mod;
             ConflictManager cm;
             String name = settings.substitute(attributes.getValue(managerAtt));
             String rev = settings.substitute(attributes.getValue("rev"));
             if (rev != null) {
-                String[] revs = rev.split(",");
-                for (int i = 0; i < revs.length; i++) {
-                    revs[i] = revs[i].trim();
-                }
-                cm = new FixedConflictManager(revs);
+                cm = new FixedConflictManager(splitToArray(rev));
             } else if (name != null) {
                 cm = settings.getConflictManager(name);
                 if (cm == null) {
@@ -864,8 +863,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     this.conf = conf;
                     String mappeds = settings.substitute(attributes.getValue("mapped"));
                     if (mappeds != null) {
-                        for (String mapped : mappeds.split(",")) {
-                            dd.addDependencyConfiguration(conf, mapped.trim());
+                        for (String mapped : splitToArray(mappeds)) {
+                            dd.addDependencyConfiguration(conf, mapped);
                         }
                     }
                     break;
@@ -961,10 +960,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 // only if there are no conf defined in sub elements
                 if (confs != null && confs.length() > 0) {
                     String[] configs = "*".equals(confs) ? getMd().getConfigurationsNames()
-                            : confs.split(",");
+                            : splitToArray(confs);
                     for (String config : configs) {
-                        artifact.addConfiguration(config.trim());
-                        getMd().addArtifact(config.trim(), artifact);
+                        artifact.addConfiguration(config);
+                        getMd().addArtifact(config, artifact);
                     }
                 }
             } else if (state == State.DEP) {
@@ -1138,9 +1137,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             // only if there are no conf defined in sub elements
             if (confs != null && confs.length() > 0) {
                 String[] configs = "*".equals(confs) ? getMd().getConfigurationsNames()
-                        : confs.split(",");
+                        : splitToArray(confs);
                 for (String config : configs) {
-                    addConfiguration(config.trim());
+                    addConfiguration(config);
                 }
             }
         }
@@ -1185,11 +1184,11 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (state == State.PUB && "artifact".equals(qName)
                     && artifact.getConfigurations().length == 0) {
-                String[] configs = publicationsDefaultConf == null ? getMd().getConfigurationsNames()
-                        : publicationsDefaultConf;
+                String[] configs = (publicationsDefaultConf == null)
+                        ? getMd().getConfigurationsNames() : publicationsDefaultConf;
                 for (String config : configs) {
-                    artifact.addConfiguration(config.trim());
-                    getMd().addArtifact(config.trim(), artifact);
+                    artifact.addConfiguration(config);
+                    getMd().addArtifact(config, artifact);
                 }
             } else if ("configurations".equals(qName)) {
                 checkConfigurations();

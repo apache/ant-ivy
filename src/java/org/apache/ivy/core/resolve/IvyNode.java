@@ -63,6 +63,7 @@ import org.apache.ivy.util.filter.FilterHelper;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+import static org.apache.ivy.util.StringUtils.splitToArray;
 
 public class IvyNode implements Comparable<IvyNode> {
     private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
@@ -593,22 +594,23 @@ public class IvyNode implements Comparable<IvyNode> {
     }
 
     // This is never called. Could we remove it?
+    @Deprecated
     public void discardConf(String rootModuleConf, String conf) {
         Set<String> depConfs = usage.addAndGetConfigurations(rootModuleConf);
-        if (md != null) {
+        if (md == null) {
+            depConfs.remove(conf);
+        } else {
             // remove all given dependency configurations to the set + extended ones
             Configuration c = md.getConfiguration(conf);
-            if (conf != null) {
+            if (conf == null) {
+                Message.warn("unknown configuration in " + getId() + ": " + conf);
+            } else {
                 // recursive remove of extended configurations
                 for (String ext : c.getExtends()) {
                     discardConf(rootModuleConf, ext);
                 }
                 depConfs.remove(c.getName());
-            } else {
-                Message.warn("unknown configuration in " + getId() + ": " + conf);
             }
-        } else {
-            depConfs.remove(conf);
         }
     }
 
@@ -672,10 +674,7 @@ public class IvyNode implements Comparable<IvyNode> {
             return resolveSpecialConfigurations(new String[] {conf});
         }
         if (conf.contains(",")) {
-            String[] confs = conf.split(",");
-            for (int i = 0; i < confs.length; i++) {
-                confs[i] = confs[i].trim();
-            }
+            return splitToArray(conf);
         }
         return new String[] {conf};
 

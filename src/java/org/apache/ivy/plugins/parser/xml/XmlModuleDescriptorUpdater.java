@@ -36,7 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -65,6 +64,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
+
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+import static org.apache.ivy.util.StringUtils.joinArray;
+import static org.apache.ivy.util.StringUtils.splitToArray;
 
 /**
  * Used to update ivy files. Uses ivy file as source and not ModuleDescriptor to preserve as much as
@@ -464,9 +467,8 @@ public final class XmlModuleDescriptorUpdater {
                 buffers.peek().setPrint(true);
                 String extend = substitute(settings, attributes.getValue("extends"));
                 if (extend != null) {
-                    StringTokenizer tok = new StringTokenizer(extend, ", ");
-                    while (tok.hasMoreTokens()) {
-                        if (confs.contains(tok.nextToken())) {
+                    for (String tok : splitToArray(extend)) {
+                        if (confs.contains(tok)) {
                             throw new IllegalArgumentException(
                                     "Cannot exclude a configuration which is extended.");
                         }
@@ -538,11 +540,12 @@ public final class XmlModuleDescriptorUpdater {
             ExtendedBuffer buffer = new ExtendedBuffer(getContext());
             buffers.push(buffer);
             confAttributeBuffers.push(buffer);
-            buffer.setDefaultPrint(attributes.getValue("conf") == null
-                    || attributes.getValue("conf").trim().length() == 0);
+            buffer.setDefaultPrint(isNullOrEmpty(attributes.getValue("conf")));
             write("<dependency");
             String org = substitute(settings, attributes.getValue("org"));
-            org = org == null ? organisation : org;
+            if (org == null) {
+                org = organisation;
+            }
             String module = substitute(settings, attributes.getValue("name"));
             String branch = substitute(settings, attributes.getValue("branch"));
             String branchConstraint = substitute(settings, attributes.getValue("branchConstraint"));
@@ -623,11 +626,9 @@ public final class XmlModuleDescriptorUpdater {
             }
 
             if (attributes.getIndex("branch") == -1) {
-                if (newBranch != null) {
-                    // erase an existing branch attribute if its new value is blank
-                    if (!newBranch.trim().equals("")) {
-                        write(" branch=\"" + newBranch + "\"");
-                    }
+                // erase an existing branch attribute if its new value is blank
+                if (!isNullOrEmpty(newBranch)) {
+                    write(" branch=\"" + newBranch + "\"");
                 } else if (options.isUpdateBranch() && systemMrid.getBranch() != null) {
                     // this dependency is on a specific branch, we set it explicitly in the updated
                     // file
@@ -689,14 +690,12 @@ public final class XmlModuleDescriptorUpdater {
                                 }
                                 String extend = substitute(settings, attributes.getValue("extends"));
                                 if (extend != null) {
-                                    StringTokenizer tok = new StringTokenizer(extend, ", ");
-                                    while (tok.hasMoreTokens()) {
-                                        if (confs.contains(tok.nextToken())) {
-                                            throw new IllegalArgumentException("Cannot exclude a "
-                                                    + "configuration which is extended.");
+                                    for (String tok : splitToArray(extend)) {
+                                        if (confs.contains(tok)) {
+                                            throw new IllegalArgumentException(
+                                                    "Cannot exclude a configuration which is extended.");
                                         }
                                     }
-
                                 }
 
                                 write("<" + qName);
@@ -824,42 +823,35 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         private String getContext() {
-            StringBuilder buf = new StringBuilder();
-            for (String ctx : context) {
-                buf.append(ctx).append("/");
-            }
-            if (buf.length() > 0) {
-                buf.setLength(buf.length() - 1);
-            }
-            return buf.toString();
+            return joinArray(context.toArray(new String[context.size()]), "/");
         }
 
         private String substitute(ParserSettings ivy, String value) {
-            String result = ivy == null ? value : ivy.substitute(value);
+            String result = (ivy == null) ? value : ivy.substitute(value);
             return XMLHelper.escape(result);
         }
 
         private String removeConfigurationsFromMapping(String mapping, List<String> confsToRemove) {
             StringBuilder newMapping = new StringBuilder();
             String mappingSep = "";
-            StringTokenizer tokenizer = new StringTokenizer(mapping, ";");
-            while (tokenizer.hasMoreTokens()) {
-                String[] ops = tokenizer.nextToken().split("->");
+            for (String groups : mapping.split(";")) {
+                String[] ops = groups.split("->");
                 List<String> confsToWrite = new ArrayList<>();
-                for (String lh : ops[0].split(",")) {
-                    if (!confs.contains(lh.trim())) {
+                for (String lh : splitToArray(ops[0])) {
+                    if (!confs.contains(lh)) {
                         confsToWrite.add(lh);
                     }
                 }
                 if (!confsToWrite.isEmpty()) {
                     newMapping.append(mappingSep);
                     String sep = "";
+                    String listSep = groups.contains(" ") ? ", " : ",";
                     for (String confToWrite : confsToWrite) {
                         newMapping.append(sep).append(confToWrite);
-                        sep = ",";
+                        sep = listSep;
                     }
                     if (ops.length == 2) {
-                        newMapping.append("->").append(ops[1]);
+                        newMapping.append("->").append(joinArray(splitToArray(ops[1]), sep));
                     }
                     mappingSep = ";";
                 }
@@ -869,13 +861,12 @@ public final class XmlModuleDescriptorUpdater {
 
         private String removeConfigurationsFromList(String list, List<String> confsToRemove) {
             StringBuilder newList = new StringBuilder();
-            String listSep = "";
-            StringTokenizer tokenizer = new StringTokenizer(list, ",");
-            while (tokenizer.hasMoreTokens()) {
-                String current = tokenizer.nextToken();
-                if (!confsToRemove.contains(current.trim())) {
-                    newList.append(listSep).append(current);
-                    listSep = ",";
+            String sep = "";
+            String listSep = list.contains(" ") ? ", " : ",";
+            for (String current : splitToArray(list)) {
+                if (!confsToRemove.contains(current)) {
+                    newList.append(sep).append(current);
+                    sep = listSep;
                 }
             }
             return newList.toString();

@@ -242,7 +242,7 @@ public class VsftpRepository extends AbstractRepository {
                 while (line.endsWith("\r") || line.endsWith("\n")) {
                     line = line.substring(0, line.length() - 1);
                 }
-                if (line.trim().length() != 0) {
+                if (!line.trim().isEmpty()) {
                     ret.add(parent + line.substring(line.lastIndexOf(' ') + 1));
                 }
             }

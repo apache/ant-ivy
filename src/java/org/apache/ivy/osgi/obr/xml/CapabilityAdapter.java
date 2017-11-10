@@ -25,6 +25,8 @@ import org.apache.ivy.osgi.core.ExportPackage;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public class CapabilityAdapter {
 
     public static void adapt(BundleInfo bundleInfo, Capability capability) throws ParseException {
@@ -67,8 +69,8 @@ public class CapabilityAdapter {
         }
         ExportPackage exportPackage = new ExportPackage(pkgName, version);
         if (uses != null) {
-            for (String use : uses.split(",")) {
-                exportPackage.addUse(use.trim());
+            for (String use : splitToArray(uses)) {
+                exportPackage.addUse(use);
             }
         }
         return exportPackage;

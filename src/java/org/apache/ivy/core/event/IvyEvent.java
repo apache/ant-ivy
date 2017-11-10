@@ -24,7 +24,8 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.util.StringUtils;
+
+import static org.apache.ivy.util.StringUtils.joinArray;
 
 /**
  * <p>
@@ -81,7 +82,7 @@ public class IvyEvent {
     }
 
     protected void addConfsAttribute(String[] confs) {
-        addAttribute("conf", StringUtils.join(confs, ", "));
+        addAttribute("conf", joinArray(confs, ", "));
     }
 
     protected void addAttributes(Map<String, String> attributes) {

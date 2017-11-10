@@ -37,6 +37,8 @@ import org.apache.ivy.util.DateUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DynamicAttribute;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * This task allow to publish a module revision to an Ivy repository.
  */
@@ -321,7 +323,7 @@ public class IvyPublish extends IvyTask {
                         .setExtraArtifacts(artifacts.toArray(new Artifact[artifacts.size()]))
                         .setValidate(doValidate(settings)).setOverwrite(overwrite)
                         .setUpdate(update).setMerge(merge).setWarnOnMissing(warnonmissing)
-                        .setHaltOnMissing(haltonmissing).setConfs(splitConfs(conf)));
+                        .setHaltOnMissing(haltonmissing).setConfs(splitToArray(conf)));
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;

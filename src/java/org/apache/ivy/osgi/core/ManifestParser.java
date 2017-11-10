@@ -31,6 +31,8 @@ import java.util.jar.Manifest;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * Provides an OSGi manifest parser.
  *
@@ -173,8 +175,8 @@ public class ManifestParser {
                 ExportPackage export = new ExportPackage(name, v);
                 String uses = exportElement.getDirectives().get(ATTR_USE);
                 if (uses != null) {
-                    for (String use : uses.split(",")) {
-                        export.addUse(use.trim());
+                    for (String use : splitToArray(uses)) {
+                        export.addUse(use);
                     }
                 }
                 bundleInfo.addCapability(export);

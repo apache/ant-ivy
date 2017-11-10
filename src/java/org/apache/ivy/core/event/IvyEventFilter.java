@@ -29,6 +29,9 @@ import org.apache.ivy.util.filter.OrFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * A filter implementation filtering {@link IvyEvent} based upon an event name and a filter
  * expression. The name will be matched against the event name using the {@link PatternMatcher} used
@@ -95,8 +98,11 @@ public class IvyEventFilter implements Filter<IvyEvent> {
                 }
             };
         }
-        attFilter = (filterExpression == null || filterExpression.trim().length() == 0)
-                ? NoFilter.<IvyEvent> instance() : parseExpression(filterExpression);
+        if (isNullOrEmpty(filterExpression)) {
+            attFilter = NoFilter.instance();
+        } else {
+            attFilter = parseExpression(filterExpression);
+        }
     }
 
     private Filter<IvyEvent> parseExpression(String filterExpression) {
@@ -121,10 +127,9 @@ public class IvyEventFilter implements Filter<IvyEvent> {
                                 + filterExpression + ": no equal sign found");
                     }
                     final String attname = filterExpression.substring(0, index).trim();
-                    String[] values = filterExpression.substring(index + 1).trim().split(",");
-                    final List<Matcher> matchers = new ArrayList<>(values.length);
-                    for (String value : values) {
-                        matchers.add(matcher.getMatcher(value.trim()));
+                    final List<Matcher> matchers = new ArrayList<>();
+                    for (String value : splitToArray(filterExpression.substring(index + 1))) {
+                        matchers.add(matcher.getMatcher(value));
                     }
                     return new Filter<IvyEvent>() {
                         public boolean accept(IvyEvent e) {

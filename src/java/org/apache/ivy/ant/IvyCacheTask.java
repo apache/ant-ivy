@@ -35,6 +35,8 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * Base class for the cache path related classes: cachepath and cachefileset. Most of the behaviour
  * is common to the two, since only the produced element differs.
@@ -54,7 +56,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
     }
 
     private Collection<ArtifactDownloadReport> getAllArtifactReports() throws ParseException {
-        String[] confs = splitConfs(getConf());
+        String[] confs = splitToArray(getConf());
         Collection<ArtifactDownloadReport> all = new LinkedHashSet<>();
 
         ResolveReport report = getResolvedReport();

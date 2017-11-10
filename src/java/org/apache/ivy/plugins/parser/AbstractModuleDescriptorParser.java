@@ -42,6 +42,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public abstract class AbstractModuleDescriptorParser implements ModuleDescriptorParser {
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             boolean validate) throws ParseException, IOException {
@@ -139,7 +141,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                 String[] ops = conf.split("->");
                 switch (ops.length) {
                     case 1:
-                        for (String modConf : ops[0].split(",")) {
+                        for (String modConf : splitToArray(ops[0])) {
                             if (useDefaultMappingToGuessRightOperand) {
                                 String[] depConfs = getDefaultConfMappingDescriptor()
                                         .getDependencyConfigurations(modConf);
@@ -148,28 +150,27 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                                         String mappedDependency = evaluateConditions ? evaluateCondition(
                                                 depConf.trim(), dd) : depConf.trim();
                                         if (mappedDependency != null) {
-                                            dd.addDependencyConfiguration(modConf.trim(),
+                                            dd.addDependencyConfiguration(modConf,
                                                     mappedDependency);
                                         }
                                     }
                                 } else {
                                     // no default mapping found for this configuration, map
                                     // configuration to itself
-                                    dd.addDependencyConfiguration(modConf.trim(),
-                                            modConf.trim());
+                                    dd.addDependencyConfiguration(modConf, modConf);
                                 }
                             } else {
-                                dd.addDependencyConfiguration(modConf.trim(), modConf.trim());
+                                dd.addDependencyConfiguration(modConf, modConf);
                             }
                         }
                         break;
                     case 2:
-                        for (String modConf : ops[0].split(",")) {
-                            for (String depConf : ops[1].split(",")) {
+                        for (String modConf : splitToArray(ops[0])) {
+                            for (String depConf : splitToArray(ops[1])) {
                                 String mappedDependency = evaluateConditions ? evaluateCondition(
-                                        depConf.trim(), dd) : depConf.trim();
+                                        depConf, dd) : depConf;
                                 if (mappedDependency != null) {
-                                    dd.addDependencyConfiguration(modConf.trim(), mappedDependency);
+                                    dd.addDependencyConfiguration(modConf, mappedDependency);
                                 }
                             }
                         }

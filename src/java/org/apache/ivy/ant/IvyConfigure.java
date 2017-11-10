@@ -146,7 +146,7 @@ public class IvyConfigure extends Task {
                             + "'.");
         }
 
-        if ((otherRef != null) && OVERRIDE_FALSE.equals(override)) {
+        if (otherRef != null && OVERRIDE_FALSE.equals(override)) {
             verbose("A settings definition is already available for " + settingsId + ": skipping");
             return;
         }

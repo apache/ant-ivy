@@ -129,10 +129,8 @@ public class AntCallTriggerTest {
                 ProjectHelper.configureProject(project, buildFile);
 
                 // make sure that we have a target to execute
-                if (targets.size() == 0) {
-                    if (project.getDefaultTarget() != null) {
-                        targets.addElement(project.getDefaultTarget());
-                    }
+                if (targets.size() == 0 && project.getDefaultTarget() != null) {
+                    targets.addElement(project.getDefaultTarget());
                 }
 
                 project.executeTargets(targets);

@@ -329,10 +329,7 @@ public class VersionRange {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof VersionRange)) {
+        if (obj == null || !(obj instanceof VersionRange)) {
             return false;
         }
         VersionRange other = (VersionRange) obj;

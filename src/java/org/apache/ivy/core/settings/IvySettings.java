@@ -114,6 +114,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, ResolverSettings,
         ResolveEngineSettings, RetrieveEngineSettings, RepositoryManagementEngineSettings {
@@ -227,14 +229,14 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
-            for (String file : ivyTypeDefs.split("\\,")) {
+            for (String file : splitToArray(ivyTypeDefs)) {
                 try {
-                    typeDefs(new FileInputStream(Checks.checkAbsolute(file.trim(),
+                    typeDefs(new FileInputStream(Checks.checkAbsolute(file,
                             "ivy.typedef.files")), true);
                 } catch (FileNotFoundException e) {
-                    Message.warn("typedefs file not found: " + file.trim());
+                    Message.warn("typedefs file not found: " + file);
                 } catch (IOException e) {
-                    Message.warn("problem with typedef file: " + file.trim(), e);
+                    Message.warn("problem with typedef file: " + file, e);
                 }
             }
         } else {
@@ -1080,7 +1082,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             return;
         }
         final String name = timeoutConstraint.getName();
-        StringUtils.assertNotNullNotEmpty(name, "Name of a timeout constraint cannot be null or empty string");
+        StringUtils.assertNotNullNorEmpty(name, "Name of a timeout constraint cannot be null or empty string");
         this.timeoutConstraints.put(name, timeoutConstraint);
     }
 

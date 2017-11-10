@@ -69,10 +69,7 @@ public abstract class MultiOperatorFilter extends OSGiFilter {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof MultiOperatorFilter)) {
+        if (obj == null || !(obj instanceof MultiOperatorFilter)) {
             return false;
         }
         MultiOperatorFilter other = (MultiOperatorFilter) obj;
@@ -80,11 +77,8 @@ public abstract class MultiOperatorFilter extends OSGiFilter {
             if (other.subFilters != null) {
                 return false;
             }
-        } else if (other.subFilters == null) {
-            return false;
-        } else if (subFilters.size() != other.subFilters.size()) {
-            return false;
-        } else if (!subFilters.containsAll(other.subFilters)) {
+        } else if (other.subFilters == null || subFilters.size() != other.subFilters.size()
+                || !subFilters.containsAll(other.subFilters)) {
             return false;
         }
         return true;

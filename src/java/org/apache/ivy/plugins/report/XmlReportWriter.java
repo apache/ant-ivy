@@ -41,8 +41,9 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.util.DateUtil;
-import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.XMLHelper;
+
+import static org.apache.ivy.util.StringUtils.joinArray;
 
 /**
  * XmlReportWriter allows to write ResolveReport in an xml format.
@@ -78,7 +79,7 @@ public class XmlReportWriter {
         }
         out.println(extraToString(mrid.getExtraAttributes(), "\t\t"));
         out.println("\t\tconf=\"" + XMLHelper.escape(report.getConfiguration()) + "\"");
-        out.println("\t\tconfs=\"" + XMLHelper.escape(StringUtils.join(confs, ", ")) + "\"");
+        out.println("\t\tconfs=\"" + XMLHelper.escape(joinArray(confs, ", ")) + "\"");
         out.println("\t\tdate=\"" + DateUtil.format(report.getDate()) + "\"/>");
 
         out.println("\t<dependencies>");
@@ -148,7 +149,7 @@ public class XmlReportWriter {
                 details, dep.isDownloaded(), dep.isSearched(),
                 (dep.getDescriptor() == null) ? "" : " default=\""
                 + dep.getDescriptor().isDefault() + "\"",
-                toString(dep.getConfigurations(report.getConfiguration())),
+                XMLHelper.escape(joinArray(dep.getConfigurations(report.getConfiguration()), ", ")),
                 dependencies.indexOf(dep.getResolvedId())));
         if (md != null) {
             License[] licenses = md.getLicenses();
@@ -226,7 +227,7 @@ public class XmlReportWriter {
             out.println(String.format("\t\t\t\t<caller organisation=\"%s\" name=\"%s\" conf=\"%s\" rev=\"%s\" rev-constraint-default=\"%s\" rev-constraint-dynamic=\"%s\" callerrev=\"%s\"%s/>",
                     XMLHelper.escape(caller.getModuleRevisionId().getOrganisation()),
                     XMLHelper.escape(caller.getModuleRevisionId().getName()),
-                    XMLHelper.escape(toString(caller.getCallerConfigurations())),
+                    XMLHelper.escape(joinArray(caller.getCallerConfigurations(), ", ")),
                     XMLHelper.escape(caller.getAskedDependencyId(dep.getData()).getRevision()),
                     XMLHelper.escape(dependencyDescriptor.getDependencyRevisionId().getRevision()),
                     XMLHelper.escape(dependencyDescriptor.getDynamicConstraintDependencyRevisionId().getRevision()),
@@ -269,14 +270,4 @@ public class XmlReportWriter {
         out.println("\t\t\t\t</artifacts>");
     }
 
-    private String toString(String[] strs) {
-        StringBuilder buf = new StringBuilder();
-        for (String str : strs) {
-            if (buf.length() > 0) {
-                buf.append(", ");
-            }
-            buf.append(str);
-        }
-        return XMLHelper.escape(buf.toString());
-    }
 }

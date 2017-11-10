@@ -34,12 +34,12 @@ public class NamedTimeoutConstraint implements TimeoutConstraint {
     }
 
     public NamedTimeoutConstraint(final String name) {
-        StringUtils.assertNotNullNotEmpty(name, "Name of a timeout constraint cannot be null or empty string");
+        StringUtils.assertNotNullNorEmpty(name, "Name of a timeout constraint cannot be null or empty string");
         this.name = name;
     }
 
     public void setName(final String name) {
-        StringUtils.assertNotNullNotEmpty(name, "Name of a timeout constraint cannot be null or empty string");
+        StringUtils.assertNotNullNorEmpty(name, "Name of a timeout constraint cannot be null or empty string");
         this.name = name;
     }
 

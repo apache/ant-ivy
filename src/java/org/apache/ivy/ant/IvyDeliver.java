@@ -36,6 +36,9 @@ import org.apache.tools.ant.taskdefs.Echo;
 import org.apache.tools.ant.taskdefs.Input;
 import org.apache.tools.ant.taskdefs.Property;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * Trigger the delivery of a module, which may consist in a recursive delivery of dependencies and
  * on the replacement in the ivy file of dynamic revisions (like latest.integration) by static ones.
@@ -141,41 +144,41 @@ public class IvyDeliver extends IvyTask {
 
         public void deliverDependency(ModuleRevisionId depMrid, String version, String status,
                 String depStatus) {
-            // call deliver target if any
-            if (deliverTarget != null && deliverTarget.trim().length() > 0) {
-
-                CallTarget ct = (CallTarget) getProject().createTask("antcall");
-                ct.setOwningTarget(getOwningTarget());
-                ct.init();
-                ct.setTarget(deliverTarget);
-                ct.setInheritAll(true);
-                ct.setInheritRefs(true);
-                Property param = ct.createParam();
-                param.setName("dependency.name");
-                param.setValue(depMrid.getName());
-                param = ct.createParam();
-                param.setName("dependency.published.status");
-                param.setValue(status);
-                param = ct.createParam();
-                param.setName("dependency.published.version");
-                param.setValue(version);
-                param = ct.createParam();
-                param.setName("dependency.version");
-                param.setValue(depMrid.getRevision());
-                param = ct.createParam();
-                param.setName("dependency.status");
-                param.setValue(depStatus == null ? "null" : depStatus);
-
-                ct.perform();
-
-                String deliveredProperty = depMrid.getName() + "." + depMrid.getRevision()
-                        + ".delivered";
-                getProject().setProperty(deliveredProperty, "true");
-                appendDeliveryList(deliveredProperty + " = true");
-
-                getProject().setProperty("recursive." + depMrid.getName() + ".delivered", "true");
-                appendDeliveryList("recursive." + depMrid.getName() + ".delivered" + " = true");
+            if (isNullOrEmpty(deliverTarget)) {
+                return;
             }
+            // call deliver target if any
+            CallTarget ct = (CallTarget) getProject().createTask("antcall");
+            ct.setOwningTarget(getOwningTarget());
+            ct.init();
+            ct.setTarget(deliverTarget);
+            ct.setInheritAll(true);
+            ct.setInheritRefs(true);
+            Property param = ct.createParam();
+            param.setName("dependency.name");
+            param.setValue(depMrid.getName());
+            param = ct.createParam();
+            param.setName("dependency.published.status");
+            param.setValue(status);
+            param = ct.createParam();
+            param.setName("dependency.published.version");
+            param.setValue(version);
+            param = ct.createParam();
+            param.setName("dependency.version");
+            param.setValue(depMrid.getRevision());
+            param = ct.createParam();
+            param.setName("dependency.status");
+            param.setValue(depStatus == null ? "null" : depStatus);
+
+            ct.perform();
+
+            String deliveredProperty = depMrid.getName() + "." + depMrid.getRevision()
+                    + ".delivered";
+            getProject().setProperty(deliveredProperty, "true");
+            appendDeliveryList(deliveredProperty + " = true");
+
+            getProject().setProperty("recursive." + depMrid.getName() + ".delivered", "true");
+            appendDeliveryList("recursive." + depMrid.getName() + ".delivered" + " = true");
         }
 
     }
@@ -403,14 +406,14 @@ public class IvyDeliver extends IvyTask {
             loadDeliveryList();
 
             PublishingDependencyRevisionResolver drResolver;
-            if (deliverTarget != null && deliverTarget.trim().length() > 0) {
-                drResolver = new DeliverDRResolver();
-            } else {
+            if (isNullOrEmpty(deliverTarget)) {
                 drResolver = new DefaultPublishingDRResolver();
+            } else {
+                drResolver = new DeliverDRResolver();
             }
 
             DeliverOptions options = new DeliverOptions(status, pubdate, drResolver,
-                    doValidate(settings), replacedynamicrev, splitConfs(conf))
+                    doValidate(settings), replacedynamicrev, splitToArray(conf))
                     .setResolveId(resolveId).setReplaceForcedRevisions(isReplaceForcedRev())
                     .setGenerateRevConstraint(generateRevConstraint).setMerge(merge)
                     .setPubBranch(pubBranch);
@@ -420,7 +423,7 @@ public class IvyDeliver extends IvyTask {
                 ivy.deliver(mrid, pubRevision, deliverpattern, options);
             }
         } catch (Exception e) {
-            throw new BuildException("impossible to deliver " + mrid == null ? resolveId : mrid
+            throw new BuildException("impossible to deliver " + (mrid == null ? resolveId : mrid)
                     + ": " + e, e);
         } finally {
             if (isLeading) {

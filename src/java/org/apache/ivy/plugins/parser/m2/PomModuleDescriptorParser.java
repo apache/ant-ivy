@@ -395,10 +395,9 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
         if (resolver == null) {
             // TODO: Throw exception here?
             return null;
-        } else {
-            dd = toSystem(dd, ivySettings.getContextNamespace());
-            return resolver.getDependency(dd, data);
         }
+        dd = toSystem(dd, ivySettings.getContextNamespace());
+        return resolver.getDependency(dd, data);
     }
 
     private ParseException newParserException(Exception e) {

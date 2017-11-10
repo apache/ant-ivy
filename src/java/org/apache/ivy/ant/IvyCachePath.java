@@ -62,12 +62,11 @@ public class IvyCachePath extends IvyCacheTask {
     public void doExecute() throws BuildException {
         prepareAndCheck();
         if (pathid == null) {
-            if (id != null) {
-                pathid = id;
-                log("ID IS DEPRECATED, PLEASE USE PATHID INSTEAD", Project.MSG_WARN);
-            } else {
+            if (id == null) {
                 throw new BuildException("pathid is required in ivy classpath");
             }
+            pathid = id;
+            log("ID IS DEPRECATED, PLEASE USE PATHID INSTEAD", Project.MSG_WARN);
         }
         try {
             Path path = new Path(getProject());

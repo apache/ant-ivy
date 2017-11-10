@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  * BintrayResolver is a resolver which can be used to resolve dependencies found in the Bintray
  * artifacts repository.
@@ -55,7 +57,7 @@ public class BintrayResolver extends IBiblioResolver {
     }
 
     private void updateRoot() {
-        if (isEmpty(subject) || isEmpty(repo)) {
+        if (isNullOrEmpty(subject) || isNullOrEmpty(repo)) {
             return;
         }
 
@@ -64,16 +66,12 @@ public class BintrayResolver extends IBiblioResolver {
     }
 
     private void updateName(String defaultName) {
-        if (isEmpty(defaultName)) {
+        if (isNullOrEmpty(defaultName)) {
             throw new IllegalArgumentException("Default resolver name must not be null or empty");
         }
-        if (isEmpty(getName()) || isNameUpdatable) {
+        if (isNullOrEmpty(getName()) || isNameUpdatable) {
             isNameUpdatable = true;
             setName(defaultName);
         }
-    }
-
-    private boolean isEmpty(String s) {
-        return ((s == null) || (s.trim().length() < 1));
     }
 }

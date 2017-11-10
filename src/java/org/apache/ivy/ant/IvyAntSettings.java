@@ -40,6 +40,8 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.DataType;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public class IvyAntSettings extends DataType {
 
     public static class Credentials {
@@ -199,7 +201,7 @@ public class IvyAntSettings extends DataType {
     }
 
     private static String format(String str) {
-        return str == null ? str : (str.trim().length() == 0 ? null : str.trim());
+        return isNullOrEmpty(str) ? null : str.trim();
     }
 
     public void addConfiguredCredentials(Credentials c) {

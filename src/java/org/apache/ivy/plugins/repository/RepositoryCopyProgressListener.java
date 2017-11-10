@@ -30,10 +30,10 @@ public class RepositoryCopyProgressListener implements CopyProgressListener {
     private Long totalLength = null;
 
     public void start(CopyProgressEvent evt) {
-        if (totalLength != null) {
-            repository.fireTransferStarted(totalLength);
-        } else {
+        if (totalLength == null) {
             repository.fireTransferStarted();
+        } else {
+            repository.fireTransferStarted(totalLength);
         }
     }
 

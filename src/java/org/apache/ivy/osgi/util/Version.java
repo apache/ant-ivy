@@ -71,7 +71,7 @@ public class Version implements Comparable<Version> {
         this.major = baseVersion.major;
         this.minor = baseVersion.minor;
         this.patch = baseVersion.patch;
-        this.qualifier = baseVersion.qualifier == null ? extraQualifier
+        this.qualifier = (baseVersion.qualifier == null) ? extraQualifier
                 : (baseVersion.qualifier + extraQualifier);
         split = true;
         toString = false;
@@ -145,22 +145,13 @@ public class Version implements Comparable<Version> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Version)) {
+        if (obj == null || !(obj instanceof Version)) {
             return false;
         }
         Version other = (Version) obj;
         ensureSplit();
         other.ensureSplit();
-        if (major != other.major) {
-            return false;
-        }
-        if (minor != other.minor) {
-            return false;
-        }
-        if (patch != other.patch) {
+        if (major != other.major || minor != other.minor || patch != other.patch) {
             return false;
         }
         if (qualifier == null) {
@@ -185,7 +176,7 @@ public class Version implements Comparable<Version> {
 
     public String qualifier() {
         ensureSplit();
-        return qualifier == null ? "" : qualifier;
+        return (qualifier == null) ? "" : qualifier;
     }
 
     public int compareUnqualified(Version other) {

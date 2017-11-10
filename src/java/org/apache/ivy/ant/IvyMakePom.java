@@ -35,6 +35,8 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * Convert an ivy file to a pom
  */
@@ -265,7 +267,7 @@ public class IvyMakePom extends IvyTask {
 
     private PomWriterOptions getPomWriterOptions() throws IOException {
         PomWriterOptions options = new PomWriterOptions();
-        options.setConfs(splitConfs(conf)).setArtifactName(getArtifactName())
+        options.setConfs(splitToArray(conf)).setArtifactName(getArtifactName())
                 .setArtifactPackaging(getArtifactPackaging()).setPrintIvyInfo(isPrintIvyInfo())
                 .setDescription(getDescription()).setExtraDependencies(getDependencies())
                 .setTemplate(getTemplateFile());
@@ -284,7 +286,7 @@ public class IvyMakePom extends IvyTask {
     private Map<String, String> getMappingsMap() {
         Map<String, String> mappingsMap = new LinkedHashMap<>();
         for (Mapping mapping : mappings) {
-            for (String mappingConf : splitConfs(mapping.getConf())) {
+            for (String mappingConf : splitToArray(mapping.getConf())) {
                 if (!mappingsMap.containsKey(mappingConf)) {
                     mappingsMap.put(mappingConf, mapping.getScope());
                 }

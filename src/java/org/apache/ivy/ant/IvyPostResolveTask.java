@@ -32,10 +32,12 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
+
+import static org.apache.ivy.util.StringUtils.joinArray;
+import static org.apache.ivy.util.StringUtils.splitToArray;
 
 /**
  * Base class for tasks needing to be performed after a resolve.
@@ -111,7 +113,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
 
-        boolean orgAndModSetManually = (organisation != null) && (module != null);
+        boolean orgAndModSetManually = organisation != null && module != null;
 
         organisation = getProperty(organisation, settings, "ivy.organisation");
         module = getProperty(module, settings, "ivy.module");
@@ -124,7 +126,9 @@ public abstract class IvyPostResolveTask extends IvyTask {
         }
 
         if (isInline()) {
-            conf = conf == null ? "*" : conf;
+            if (conf == null) {
+                conf = "*";
+            }
             if (organisation == null) {
                 throw new BuildException(
                         "no organisation provided for ivy cache task in inline mode: "
@@ -146,9 +150,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 }
             }
             if (toResolve.length > 0) {
-                Message.verbose("using inline mode to resolve " + getOrganisation() + " "
-                        + getModule() + " " + getRevision() + " ("
-                        + StringUtils.join(toResolve, ", ") + ")");
+                Message.verbose(String.format("using inline mode to resolve %s %s %s (%s)",
+                        getOrganisation(), getModule(), getRevision(), joinArray(toResolve, ", ")));
                 IvyResolve resolve = setupResolve(isHaltonfailure(), isUseOrigin());
                 resolve.setOrganisation(getOrganisation());
                 resolve.setModule(getModule());
@@ -161,11 +164,11 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 resolve.setTransitive(isTransitive());
                 resolve.execute();
             } else {
-                Message.verbose("inline resolve already done for " + getOrganisation() + " "
-                        + getModule() + " " + getRevision() + " (" + conf + ")");
+                Message.verbose(String.format("inline resolve already done for %s %s %s (%s)",
+                        getOrganisation(), getModule(), getRevision(), conf));
             }
             if ("*".equals(conf)) {
-                conf = StringUtils.join(
+                conf = joinArray(
                     getResolvedConfigurations(getOrganisation(), getModule() + "-caller", true),
                     ", ");
             }
@@ -221,7 +224,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
             IvyResolve resolve = setupResolve(isHaltonfailure(), isUseOrigin());
             resolve.setFile(getFile());
             resolve.setTransitive(isTransitive());
-            resolve.setConf(StringUtils.join(confs, ", "));
+            resolve.setConf(joinArray(confs, ", "));
             resolve.setResolveId(getResolveId());
             resolve.execute();
         }
@@ -241,9 +244,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
             // TODO: find a way to discover which confs were resolved by that previous resolve
             if (conf == null) {
                 return new String[] {"*"};
-            } else {
-                return splitConfs(conf);
             }
+            return splitToArray(conf);
         }
         String[] rconfs = getProject().getReference("ivy.resolved.configurations.ref." + resolveId);
         return getConfsToResolve(reference, conf, rconfs);
@@ -256,44 +258,44 @@ public abstract class IvyPostResolveTask extends IvyTask {
             Message.debug("module not yet resolved, all confs still need to be resolved");
             if (conf == null) {
                 return new String[] {"*"};
-            } else {
-                return splitConfs(conf);
             }
-        } else if (conf != null) {
-            String[] confs;
-            if ("*".equals(conf)) {
-                confs = reference.getConfigurationsNames();
-            } else {
-                confs = splitConfs(conf);
-            }
+            return splitToArray(conf);
+        }
 
-            Set<String> rconfsSet = new HashSet<>();
-
-            // for each resolved configuration, check if the report still exists
-            ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
-            for (String resolvedConf : rconfs) {
-                String resolveId = getResolveId();
-                if (resolveId == null) {
-                    resolveId = ResolveOptions.getDefaultResolveId(reference);
-                }
-                File report = cache.getConfigurationResolveReportInCache(resolveId, resolvedConf);
-                // if the report does not exist any longer, we have to recreate it...
-                if (report.exists()) {
-                    rconfsSet.add(resolvedConf);
-                }
-            }
-
-            Set<String> confsSet = new HashSet<>(Arrays.asList(confs));
-            Message.debug("resolved configurations:   " + rconfsSet);
-            Message.debug("asked configurations:      " + confsSet);
-            confsSet.removeAll(rconfsSet);
-            Message.debug("to resolve configurations: " + confsSet);
-            return confsSet.toArray(new String[confsSet.size()]);
-        } else {
+        if (conf == null) {
             Message.debug("module already resolved, no configuration to resolve");
             return new String[0];
         }
 
+        String[] confs;
+        if ("*".equals(conf)) {
+            confs = reference.getConfigurationsNames();
+        } else {
+            confs = splitToArray(conf);
+        }
+
+        Set<String> rconfsSet = new HashSet<>();
+
+        // for each resolved configuration, check if the report still exists
+        ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
+        for (String resolvedConf : rconfs) {
+            String resolveId = getResolveId();
+            if (resolveId == null) {
+                resolveId = ResolveOptions.getDefaultResolveId(reference);
+            }
+            File report = cache.getConfigurationResolveReportInCache(resolveId, resolvedConf);
+            // if the report does not exist any longer, we have to recreate it...
+            if (report.exists()) {
+                rconfsSet.add(resolvedConf);
+            }
+        }
+
+        Set<String> confsSet = new HashSet<>(Arrays.asList(confs));
+        Message.debug("resolved configurations:   " + rconfsSet);
+        Message.debug("asked configurations:      " + confsSet);
+        confsSet.removeAll(rconfsSet);
+        Message.debug("to resolve configurations: " + confsSet);
+        return confsSet.toArray(new String[confsSet.size()]);
     }
 
     protected IvyResolve setupResolve(boolean haltOnFailure, boolean useOrigin) {
@@ -313,7 +315,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     protected ModuleRevisionId getResolvedMrid() {
         return new ModuleRevisionId(getResolvedModuleId(),
-                getRevision() == null ? Ivy.getWorkingRevision() : getRevision());
+                (getRevision() == null) ? Ivy.getWorkingRevision() : getRevision());
     }
 
     protected ModuleId getResolvedModuleId() {

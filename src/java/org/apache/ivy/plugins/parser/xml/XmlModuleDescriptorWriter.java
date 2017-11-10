@@ -44,9 +44,11 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItem;
+
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+import static org.apache.ivy.util.StringUtils.joinArray;
 
 /**
  *
@@ -421,7 +423,7 @@ public final class XmlModuleDescriptorWriter {
                 if (location != null) {
                     out.print(" location=\"" + XMLHelper.escape(location) + "\"");
                 }
-                out.print(" extendType=\"" + StringUtils.join(parent.getExtendsTypes(), ",") + "\"");
+                out.print(" extendType=\"" + joinArray(parent.getExtendsTypes(), ",") + "\"");
                 out.println("/>");
             }
             License[] licenses = md.getLicenses();
@@ -440,12 +442,12 @@ public final class XmlModuleDescriptorWriter {
                 if (md.getHomePage() != null) {
                     out.print(" homepage=\"" + XMLHelper.escape(md.getHomePage()) + "\"");
                 }
-                if (md.getDescription() != null && md.getDescription().trim().length() > 0) {
+                if (isNullOrEmpty(md.getDescription())) {
+                    out.println(" />");
+                } else {
                     out.println(">");
                     out.println("\t\t" + XMLHelper.escape(md.getDescription()));
                     out.println("\t\t</description>");
-                } else {
-                    out.println(" />");
                 }
             }
             for (ExtraInfoHolder extraInfo : md.getExtraInfos()) {
@@ -468,7 +470,7 @@ public final class XmlModuleDescriptorWriter {
             out.print(String.format(" %s=\"%s\"", entry.getKey(), entry.getValue()));
         }
         boolean requireClosingTag = false;
-        if (extraInfo.getContent() != null && extraInfo.getContent().trim().length() > 0) {
+        if (!isNullOrEmpty(extraInfo.getContent())) {
             out.print(">");
             out.print(XMLHelper.escape(extraInfo.getContent()));
             requireClosingTag = true;
@@ -495,7 +497,7 @@ public final class XmlModuleDescriptorWriter {
 
     private static boolean requireInnerInfoElement(ModuleDescriptor md) {
         return md.getExtraInfos().size() > 0 || md.getHomePage() != null
-                || (md.getDescription() != null && md.getDescription().trim().length() > 0)
+                || !isNullOrEmpty(md.getDescription())
                 || md.getLicenses().length > 0 || md.getInheritedDescriptors().length > 0;
     }
 

@@ -67,24 +67,28 @@ public class IvyInstall extends IvyTask {
                     + "It can either be set explicitly via the attribute 'organisation' "
                     + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
-        if (module == null && PatternMatcher.EXACT.equals(matcher)) {
-            throw new BuildException("no module name provided for ivy publish task: "
-                    + "It can either be set explicitly via the attribute 'module' "
-                    + "or via 'ivy.module' property or a prior call to <resolve/>");
-        } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
+        if (module == null) {
+            if (PatternMatcher.EXACT.equals(matcher)) {
+                throw new BuildException("no module name provided for ivy publish task: "
+                        + "It can either be set explicitly via the attribute 'module' "
+                        + "or via 'ivy.module' property or a prior call to <resolve/>");
+            }
             module = PatternMatcher.ANY_EXPRESSION;
         }
-        if (revision == null && PatternMatcher.EXACT.equals(matcher)) {
-            throw new BuildException("no module revision provided for ivy publish task: "
-                    + "It can either be set explicitly via the attribute 'revision' "
-                    + "or via 'ivy.revision' property or a prior call to <resolve/>");
-        } else if (revision == null && !PatternMatcher.EXACT.equals(matcher)) {
+        if (revision == null) {
+            if (PatternMatcher.EXACT.equals(matcher)) {
+                throw new BuildException("no module revision provided for ivy publish task: "
+                        + "It can either be set explicitly via the attribute 'revision' "
+                        + "or via 'ivy.revision' property or a prior call to <resolve/>");
+            }
             revision = PatternMatcher.ANY_EXPRESSION;
         }
-        if (branch == null && PatternMatcher.EXACT.equals(matcher)) {
-            branch = settings.getDefaultBranch(ModuleId.newInstance(organisation, module));
-        } else if (branch == null && !PatternMatcher.EXACT.equals(matcher)) {
-            branch = PatternMatcher.ANY_EXPRESSION;
+        if (branch == null) {
+            if (PatternMatcher.EXACT.equals(matcher)) {
+                branch = settings.getDefaultBranch(ModuleId.newInstance(organisation, module));
+            } else {
+                branch = PatternMatcher.ANY_EXPRESSION;
+            }
         }
         if (from == null) {
             throw new BuildException(

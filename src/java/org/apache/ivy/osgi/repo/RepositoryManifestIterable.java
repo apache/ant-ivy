@@ -68,6 +68,9 @@ public class RepositoryManifestIterable extends AbstractFSManifestIterable<Strin
     }
 
     private List<String> asList(String[] array) {
-        return (array == null) ? Collections.<String> emptyList() : Arrays.asList(array);
+        if (array == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(array);
     }
 }

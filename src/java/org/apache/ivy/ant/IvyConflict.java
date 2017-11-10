@@ -24,6 +24,8 @@ import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public class IvyConflict {
 
     private String org;
@@ -62,11 +64,7 @@ public class IvyConflict {
         String modulePattern = (module == null) ? PatternMatcher.ANY_EXPRESSION : module;
         ConflictManager cm = null;
         if (rev != null) {
-            String[] revs = rev.split(",");
-            for (int i = 0; i < revs.length; i++) {
-                revs[i] = revs[i].trim();
-            }
-            cm = new FixedConflictManager(revs);
+            cm = new FixedConflictManager(splitToArray(rev));
         } else if (manager != null) {
             cm = settings.getConflictManager(manager);
         }

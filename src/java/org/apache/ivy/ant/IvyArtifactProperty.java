@@ -26,6 +26,8 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.tools.ant.BuildException;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * Set a set of ant properties according to the last artifact resolved
  */
@@ -67,7 +69,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
                 resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
             }
             XmlReportParser parser = new XmlReportParser();
-            for (String conf : splitConfs(getConf())) {
+            for (String conf : splitToArray(getConf())) {
                 File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, conf);
                 parser.parse(report);
 

@@ -176,8 +176,7 @@ public class VfsRepository extends AbstractRepository {
         Message.debug("resourceImpl.exists()" + resourceImpl.exists());
         Message.debug("resourceImpl.getType()" + resourceImpl.getType());
         Message.debug("FileType.FOLDER" + FileType.FOLDER);
-        if ((resourceImpl != null) && resourceImpl.exists()
-                && (resourceImpl.getType() == FileType.FOLDER)) {
+        if (resourceImpl.exists() && resourceImpl.getType() == FileType.FOLDER) {
             List<FileObject> children = Arrays.asList(resourceImpl.getChildren());
             for (FileObject child : children) {
                 Message.debug("child " + children.indexOf(child) + child.getName().getURI());

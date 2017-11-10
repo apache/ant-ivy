@@ -27,6 +27,8 @@ import java.util.Properties;
 
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 public class ExecutionEnvironmentProfileProvider {
 
     private static final String DEFAULT_PROFILES_FILE = "jvm-packages.properties";
@@ -103,9 +105,8 @@ public class ExecutionEnvironmentProfileProvider {
 
         // load the actual list
         String pkgList = props.getProperty(name + ".pkglist");
-        for (String pack : pkgList.split(",")) {
-            String pkg = pack.trim();
-            if (pkg.length() != 0) {
+        for (String pkg : splitToArray(pkgList)) {
+            if (!pkg.isEmpty()) {
                 profile.pkgNames.add(pkg);
             }
         }
@@ -114,9 +115,8 @@ public class ExecutionEnvironmentProfileProvider {
 
         String aliasList = props.getProperty(name + ".aliases");
         if (aliasList != null) {
-            for (String aka : aliasList.split(",")) {
-                String alias = aka.trim();
-                if (alias.length() != 0) {
+            for (String alias : splitToArray(aliasList)) {
+                if (!alias.isEmpty()) {
                     ExecutionEnvironmentProfile profileAlias = new ExecutionEnvironmentProfile(
                             alias);
                     profileAlias.pkgNames = profile.pkgNames;

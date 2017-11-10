@@ -37,6 +37,8 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public class OSGiManifestParser implements ModuleDescriptorParser {
 
     private static final OSGiManifestParser INSTANCE = new OSGiManifestParser();
@@ -53,7 +55,7 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
     }
 
     public boolean accept(Resource res) {
-        return !(res == null || res.getName() == null || res.getName().trim().equals(""))
+        return !(res == null || isNullOrEmpty(res.getName()))
                 && res.getName().toUpperCase(Locale.US).endsWith("MANIFEST.MF");
     }
 

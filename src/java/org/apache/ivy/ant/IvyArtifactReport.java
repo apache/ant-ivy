@@ -48,6 +48,8 @@ import org.apache.tools.ant.Project;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import static org.apache.ivy.util.StringUtils.splitToArray;
+
 /**
  * Generates a report of all artifacts involved during the last resolve.
  */
@@ -82,12 +84,12 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
 
         try {
-            String[] confs = splitConfs(getConf());
+            String[] confs = splitToArray(getConf());
             ModuleDescriptor md = null;
-            if (getResolveId() != null) {
-                md = getResolvedDescriptor(getResolveId());
-            } else {
+            if (getResolveId() == null) {
                 md = getResolvedDescriptor(getOrganisation(), getModule(), false);
+            } else {
+                md = getResolvedDescriptor(getResolveId());
             }
             IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(md,
                 ((ResolveOptions) new ResolveOptions().setLog(getLog())).setConfs(confs)
