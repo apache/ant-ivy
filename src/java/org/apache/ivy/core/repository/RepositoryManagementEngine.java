@@ -158,7 +158,7 @@ public class RepositoryManagementEngine {
             }
         }
         long endTime = System.currentTimeMillis();
-        Message.info(String.format("\nrepository loaded: %d modules; %d revisions; %s%ss",
+        Message.info(String.format("%nrepository loaded: %d modules; %d revisions; %s%ss",
                 modules.size(), revisions.size(), settings.dumpMemoryUsage()
                         ? (MemoryUtil.getUsedMemory() - startingMemoryUse) / KILO + "kB; " : "",
                 (endTime - startTime) / THOUSAND));
