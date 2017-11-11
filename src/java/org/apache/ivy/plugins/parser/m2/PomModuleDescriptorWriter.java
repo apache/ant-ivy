@@ -46,6 +46,8 @@ import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ConfigurationScopeMappi
 import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ExtraDependency;
 import org.apache.ivy.util.ConfigurationUtils;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public final class PomModuleDescriptorWriter {
 
     private static final String SKIP_LINE = "SKIP_LINE";
@@ -179,7 +181,7 @@ public final class PomModuleDescriptorWriter {
         }
         if (options.getDescription() != null) {
             variables.setVariable("ivy.pom.description", options.getDescription(), true);
-        } else if (md.getDescription() != null && md.getDescription().length() > 0) {
+        } else if (!isNullOrEmpty(md.getDescription())) {
             variables.setVariable("ivy.pom.description", md.getDescription(), true);
         }
         if (md.getHomePage() != null) {

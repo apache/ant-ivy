@@ -210,10 +210,10 @@ public class ResolveReport {
         for (ConfigurationResolveReport r : confReports.values()) {
             for (IvyNode unresolved : r.getUnresolvedDependencies()) {
                 String errMsg = unresolved.getProblemMessage();
-                if (errMsg.length() > 0) {
-                    ret.add("unresolved dependency: " + unresolved.getId() + ": " + errMsg);
-                } else {
+                if (errMsg.isEmpty()) {
                     ret.add("unresolved dependency: " + unresolved.getId());
+                } else {
+                    ret.add("unresolved dependency: " + unresolved.getId() + ": " + errMsg);
                 }
             }
             for (ArtifactDownloadReport adr : r.getFailedArtifactsReports()) {

@@ -56,6 +56,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
 
 /**
  * Build a module descriptor. This class handle the complexity of the structure of an ivy
@@ -268,20 +269,22 @@ public class PomModuleDescriptorBuilder {
 
     public void addDependency(Resource res, PomDependencyData dep) {
         String scope = dep.getScope();
-        if ((scope != null) && (scope.length() > 0) && !MAVEN2_CONF_MAPPING.containsKey(scope)) {
+        if (!isNullOrEmpty(scope) && !MAVEN2_CONF_MAPPING.containsKey(scope)) {
             // unknown scope, defaulting to 'compile'
             scope = "compile";
         }
 
         String version = dep.getVersion();
-        version = (version == null || version.length() == 0) ? getDefaultVersion(dep) : version;
+        if (isNullOrEmpty(version)) {
+            version = getDefaultVersion(dep);
+        }
         ModuleRevisionId moduleRevId = ModuleRevisionId.newInstance(dep.getGroupId(),
             dep.getArtifactId(), version);
 
         // Some POMs depend on themselves; Ivy doesn't allow this. Don't add this dependency!
         // Example: https://repo1.maven.org/maven2/net/jini/jsk-platform/2.1/jsk-platform-2.1.pom
         ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
-        if ((mRevId != null) && mRevId.getModuleId().equals(moduleRevId.getModuleId())) {
+        if (mRevId != null && mRevId.getModuleId().equals(moduleRevId.getModuleId())) {
             return;
         }
         // experimentation shows the following, excluded modules are
@@ -296,12 +299,14 @@ public class PomModuleDescriptorBuilder {
         final boolean excludeAllTransitiveDeps = shouldExcludeAllTransitiveDeps(excluded);
         DefaultDependencyDescriptor dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor,
                 moduleRevId, !excludeAllTransitiveDeps);
-        scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
+        if (isNullOrEmpty(scope)) {
+            scope = getDefaultScope(dep);
+        }
         ConfMapper mapping = MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map<String, String> extraAtt = new HashMap<>();
         if ((dep.getClassifier() != null)
-                || ((dep.getType() != null) && !"jar".equals(dep.getType()))) {
+                || (dep.getType() != null && !"jar".equals(dep.getType()))) {
             String type = "jar";
             if (dep.getType() != null) {
                 type = dep.getType();

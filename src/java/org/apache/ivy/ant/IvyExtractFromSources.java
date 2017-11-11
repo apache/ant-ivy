@@ -170,7 +170,7 @@ public class IvyExtractFromSources extends Task {
     private ModuleRevisionId getMapping(String pack) {
         String askedPack = pack;
         ModuleRevisionId ret = null;
-        while (ret == null && pack.length() > 0) {
+        while (ret == null && !pack.isEmpty()) {
             if (ignoredPackaged.contains(pack)) {
                 return null;
             }

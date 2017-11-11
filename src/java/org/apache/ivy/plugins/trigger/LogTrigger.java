@@ -30,6 +30,8 @@ import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.resolve.ResolveProcessException;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  * A trigger performing logging.
  * <p>
@@ -46,7 +48,7 @@ public class LogTrigger extends AbstractTrigger {
     private boolean append = true;
 
     /** encoding; set to null or empty means 'default' */
-    private String encoding = "";
+    private String encoding;
 
     public void progress(IvyEvent event) {
         log(IvyPatternHelper.substituteVariables(message, event.getAttributes()));
@@ -69,7 +71,7 @@ public class LogTrigger extends AbstractTrigger {
                 // we use the system dependent line separator to ease reading the log file
                 message += LINE_SEPARATOR;
                 String filename = file.getAbsolutePath();
-                if (encoding == null || encoding.length() == 0) {
+                if (isNullOrEmpty(encoding)) {
                     out = new FileWriter(filename, append);
                 } else {
                     out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename,

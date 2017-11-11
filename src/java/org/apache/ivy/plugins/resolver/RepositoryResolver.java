@@ -50,6 +50,8 @@ import org.apache.ivy.util.ChecksumHelper;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  *
  */
@@ -112,7 +114,7 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
                             ModuleDescriptor md = parser.parseDescriptor(getParserSettings(), temp
                                     .toURI().toURL(), res, false);
                             revision = md.getRevision();
-                            if ((revision == null) || (revision.length() == 0)) {
+                            if (isNullOrEmpty(revision)) {
                                 revision = "working@" + name;
                             }
                         } else {

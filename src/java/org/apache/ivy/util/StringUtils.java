@@ -33,7 +33,7 @@ public final class StringUtils {
     }
 
     public static String uncapitalize(String string) {
-        if (string == null || string.length() == 0) {
+        if (isNullOrEmpty(string)) {
             return string;
         }
         if (string.length() == 1) {
@@ -58,8 +58,8 @@ public final class StringUtils {
             InvocationTargetException ex = (InvocationTargetException) t;
             t = ex.getTargetException();
         }
-        String errMsg = t instanceof RuntimeException ? t.getMessage() : t.toString();
-        if (errMsg == null || errMsg.length() == 0 || "null".equals(errMsg)) {
+        String errMsg = (t instanceof RuntimeException) ? t.getMessage() : t.toString();
+        if (isNullOrEmpty(errMsg) || "null".equals(errMsg)) {
             errMsg = t.getClass().getName() + " at " + t.getStackTrace()[0].toString();
         }
         return errMsg;

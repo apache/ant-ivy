@@ -18,6 +18,7 @@
 package org.apache.ivy.util;
 
 import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+import static org.apache.ivy.util.StringUtils.repeat;
 
 /**
  *
@@ -75,11 +76,7 @@ public class Credentials {
         if (passwd == null) {
             return null;
         }
-        StringBuilder sb = new StringBuilder();
-        for (int i = passwd.length(); i > 0; i--) {
-            sb.append('*');
-        }
-        return sb.toString();
+        return repeat("*", passwd.length());
     }
 
     public boolean equals(Object o) {

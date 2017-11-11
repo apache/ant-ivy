@@ -19,6 +19,8 @@ package org.apache.ivy.osgi.util;
 
 import java.text.ParseException;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  * Provides version range support.
  */
@@ -33,7 +35,7 @@ public class VersionRange {
     private Version endVersion;
 
     public VersionRange(String versionStr) throws ParseException {
-        if (versionStr == null || versionStr.length() == 0) {
+        if (isNullOrEmpty(versionStr)) {
             startExclusive = false;
             startVersion = new Version(0, 0, 0, null);
             endExclusive = true;

@@ -77,6 +77,8 @@ import org.apache.ivy.util.HexEncoder;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public class DefaultRepositoryCacheManager implements RepositoryCacheManager, IvySettingsAware {
     private static final String DEFAULT_ARTIFACT_PATTERN = "[organisation]/[module](/[branch])/[type]s/[artifact]-[revision](-[classifier])(.[ext])";
 
@@ -317,7 +319,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private int getGroupIntValue(java.util.regex.Matcher m, int groupNumber) {
         String g = m.group(groupNumber);
-        return g == null || g.length() == 0 ? 0 : Integer.parseInt(g);
+        return isNullOrEmpty(g) ? 0 : Integer.parseInt(g);
     }
 
     /**

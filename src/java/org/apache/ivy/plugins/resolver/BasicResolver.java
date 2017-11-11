@@ -317,7 +317,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
             return checkLatest(systemDd, checkForcedResolvedModuleRevision(rmr), data);
         } catch (UnresolvedDependencyException ex) {
-            if (ex.getMessage().length() > 0) {
+            if (!ex.getMessage().isEmpty()) {
                 if (ex.isError()) {
                     Message.error(ex.getMessage());
                 } else {

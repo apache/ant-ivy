@@ -355,13 +355,13 @@ public final class XmlModuleDescriptorUpdater {
                 confAttributeBuffers.push(buffer);
                 write("<" + qName);
                 buffer.setDefaultPrint(attributes.getValue("conf") == null
-                        && (newDefaultConf == null || newDefaultConf.length() > 0));
+                        && (newDefaultConf == null || !newDefaultConf.isEmpty()));
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String attName = attributes.getQName(i);
                     if ("conf".equals(attName)) {
                         String confName = substitute(settings, attributes.getValue("conf"));
-                        String newConf = removeConfigurationsFromList(confName, confs);
-                        if (newConf.length() > 0) {
+                        String newConf = removeConfigurationsFromList(confName);
+                        if (!newConf.isEmpty()) {
                             write(" " + attName + "=\"" + newConf + "\"");
                             buffers.peek().setPrint(true);
                         }
@@ -380,8 +380,8 @@ public final class XmlModuleDescriptorUpdater {
                     String attName = attributes.getQName(i);
                     if ("conf".equals(attName)) {
                         String confName = substitute(settings, attributes.getValue("conf"));
-                        String newConf = removeConfigurationsFromList(confName, confs);
-                        if (newConf.length() > 0) {
+                        String newConf = removeConfigurationsFromList(confName);
+                        if (!newConf.isEmpty()) {
                             write(" " + attName + "=\"" + newConf + "\"");
                             buffers.peek().setPrint(true);
                         }
@@ -490,8 +490,8 @@ public final class XmlModuleDescriptorUpdater {
                 String attName = attributes.getQName(i);
                 if ("defaultconf".equals(attName) || "defaultconfmapping".equals(attName)) {
                     String newMapping = removeConfigurationsFromMapping(
-                        substitute(settings, attributes.getValue(attName)), confs);
-                    if (newMapping.length() > 0) {
+                        substitute(settings, attributes.getValue(attName)));
+                    if (!newMapping.isEmpty()) {
                         write(" " + attName + "=\"" + newMapping + "\"");
                     }
                 } else {
@@ -501,15 +501,15 @@ public final class XmlModuleDescriptorUpdater {
             }
             // add default conf if needed
             if (defaultConf != null && attributes.getValue("defaultconf") == null) {
-                String newConf = removeConfigurationsFromMapping(defaultConf, confs);
-                if (newConf.length() > 0) {
+                String newConf = removeConfigurationsFromMapping(defaultConf);
+                if (!newConf.isEmpty()) {
                     write(" defaultconf=\"" + newConf + "\"");
                 }
             }
             // add default conf mapping if needed
             if (defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
-                String newMapping = removeConfigurationsFromMapping(defaultConfMapping, confs);
-                if (newMapping.length() > 0) {
+                String newMapping = removeConfigurationsFromMapping(defaultConfMapping);
+                if (!newMapping.isEmpty()) {
                     write(" defaultconfmapping=\"" + newMapping + "\"");
                 }
             }
@@ -525,8 +525,8 @@ public final class XmlModuleDescriptorUpdater {
                 String attName = attributes.getQName(i);
                 if ("defaultconf".equals(attName)) {
                     newDefaultConf = removeConfigurationsFromList(
-                        substitute(settings, attributes.getValue("defaultconf")), confs);
-                    if (newDefaultConf.length() > 0) {
+                        substitute(settings, attributes.getValue("defaultconf")));
+                    if (!newDefaultConf.isEmpty()) {
                         write(" " + attName + "=\"" + newDefaultConf + "\"");
                     }
                 } else {
@@ -612,9 +612,9 @@ public final class XmlModuleDescriptorUpdater {
                     write(" branchConstraint=\"" + branchConstraint + "\"");
                 } else if ("conf".equals(attName)) {
                     String oldMapping = substitute(settings, attributes.getValue("conf"));
-                    if (oldMapping.length() > 0) {
-                        String newMapping = removeConfigurationsFromMapping(oldMapping, confs);
-                        if (newMapping.length() > 0) {
+                    if (!oldMapping.isEmpty()) {
+                        String newMapping = removeConfigurationsFromMapping(oldMapping);
+                        if (!newMapping.isEmpty()) {
                             write(" conf=\"" + newMapping + "\"");
                             buffers.peek().setPrint(true);
                         }
@@ -831,7 +831,7 @@ public final class XmlModuleDescriptorUpdater {
             return XMLHelper.escape(result);
         }
 
-        private String removeConfigurationsFromMapping(String mapping, List<String> confsToRemove) {
+        private String removeConfigurationsFromMapping(String mapping) {
             StringBuilder newMapping = new StringBuilder();
             String mappingSep = "";
             for (String groups : mapping.split(";")) {
@@ -845,7 +845,7 @@ public final class XmlModuleDescriptorUpdater {
                 if (!confsToWrite.isEmpty()) {
                     newMapping.append(mappingSep);
                     String sep = "";
-                    String listSep = groups.contains(" ") ? ", " : ",";
+                    String listSep = groups.contains(", ") ? ", " : ",";
                     for (String confToWrite : confsToWrite) {
                         newMapping.append(sep).append(confToWrite);
                         sep = listSep;
@@ -859,12 +859,12 @@ public final class XmlModuleDescriptorUpdater {
             return newMapping.toString();
         }
 
-        private String removeConfigurationsFromList(String list, List<String> confsToRemove) {
+        private String removeConfigurationsFromList(String list) {
             StringBuilder newList = new StringBuilder();
             String sep = "";
-            String listSep = list.contains(" ") ? ", " : ",";
+            String listSep = list.contains(", ") ? ", " : ",";
             for (String current : splitToArray(list)) {
-                if (!confsToRemove.contains(current)) {
+                if (!confs.contains(current)) {
                     newList.append(sep).append(current);
                     sep = listSep;
                 }
@@ -977,12 +977,12 @@ public final class XmlModuleDescriptorUpdater {
                     out.print(getIndent());
                 }
                 String newConf = (defaultConf == null) ? "" :
-                        removeConfigurationsFromMapping(defaultConf, confs);
+                        removeConfigurationsFromMapping(defaultConf);
                 String newMapping = (defaultConfMapping == null) ? "" :
-                        removeConfigurationsFromMapping(defaultConfMapping, confs);
+                        removeConfigurationsFromMapping(defaultConfMapping);
                 out.print(String.format("<%s%s%s%s>", itemName,
-                        (newConf.length() > 0) ? " defaultconf=\"" + newConf + "\"" : "",
-                        (newMapping.length() > 0) ? " defaultconfmapping=\"" + newMapping + "\"" : "",
+                        newConf.isEmpty() ? "" : " defaultconf=\"" + newConf + "\"",
+                        newMapping.isEmpty() ? "" : " defaultconfmapping=\"" + newMapping + "\"",
                         (confMappingOverride != null) ? " confmappingoverride=\"" + confMappingOverride + "\"" : ""));
                 context.push(itemName);
                 justOpen = null;
@@ -1058,7 +1058,7 @@ public final class XmlModuleDescriptorUpdater {
             if (!hasDescription) {
                 hasDescription = true;
                 String description = merged.getDescription();
-                if ((description != null) && (description.length() > 0)) {
+                if (!isNullOrEmpty(description)) {
                     PrintWriter writer = getWriter();
                     if (justOpen != null) {
                         writer.println(">");

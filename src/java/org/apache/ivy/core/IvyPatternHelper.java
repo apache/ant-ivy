@@ -34,6 +34,8 @@ import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.core.settings.IvyVariableContainerImpl;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  */
 public final class IvyPatternHelper {
@@ -298,7 +300,7 @@ public final class IvyPatternHelper {
                     String value = (tokenValue == null) ? null : tokenValue.toString();
 
                     if (insideOptionalPart) {
-                        tokenHadValue = (value != null) && (value.length() > 0);
+                        tokenHadValue = !isNullOrEmpty(value);
                         optionalPart.append(value);
                     } else {
                         if (value == null) { // the token wasn't set, it's kept as is

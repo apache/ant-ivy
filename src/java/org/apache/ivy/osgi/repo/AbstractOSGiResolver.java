@@ -56,6 +56,8 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
 import org.apache.ivy.util.Message;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 public abstract class AbstractOSGiResolver extends BasicResolver {
 
     private static final String CAPABILITY_EXTRA_ATTR = "osgi_bundle";
@@ -322,7 +324,7 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
 
         String osgiType = tokenValues.get(IvyPatternHelper.ORGANISATION_KEY);
-        if (osgiType == null || osgiType.length() == 0) {
+        if (isNullOrEmpty(osgiType)) {
             return Collections.emptyList();
         }
 

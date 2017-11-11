@@ -38,6 +38,8 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.tools.ant.BuildException;
 
+import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
+
 /**
  * Look for the latest module in the repository matching the given criteria, and sets a set of
  * properties according to what was found.
@@ -151,12 +153,12 @@ public class IvyBuildNumber extends IvyTask {
         if (branch == null) {
             branch = settings.getDefaultBranch(new ModuleId(organisation, module));
         }
-        if (revision == null || revision.length() == 0) {
+        if (isNullOrEmpty(revision)) {
             revision = "latest.integration";
         } else if (!revision.endsWith("+")) {
             revision += "+";
         }
-        if (!prefix.endsWith(".") && prefix.length() > 0) {
+        if (!prefix.endsWith(".") && !prefix.isEmpty()) {
             prefix += ".";
         }
 
@@ -312,7 +314,7 @@ public class IvyBuildNumber extends IvyTask {
         while (endNumberIndex >= 0 && !Character.isDigit(str.charAt(endNumberIndex))) {
             endNumberIndex--;
         }
-        int startNumberIndex = endNumberIndex == -1 ? -1 : endNumberIndex - 1;
+        int startNumberIndex = (endNumberIndex == -1) ? -1 : endNumberIndex - 1;
         while (startNumberIndex >= 0 && Character.isDigit(str.charAt(startNumberIndex))) {
             startNumberIndex--;
         }
