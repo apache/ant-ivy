@@ -63,8 +63,8 @@ import static org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.getPlu
 /**
  * A parser for Maven 2 POM.
  * <p>
- * The configurations used in the generated module descriptor mimics the behavior defined by Maven 2
- * scopes, as documented
+ * The configurations used in the generated module descriptor mimics the behavior defined by
+ * Maven 2 scopes, as documented
  * <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">here</a>.
  * The PomModuleDescriptorParser use a PomDomReader to read the pom, and the
  * PomModuleDescriptorBuilder to write the ivy module descriptor using the info read by the
@@ -148,8 +148,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 parentDescr = parentModule.getDescriptor();
                 if (parentDescr != null) {
-                    for (Map.Entry<String, String> prop :
-                            extractPomProperties(parentDescr.getExtraInfos()).entrySet()) {
+                    for (Map.Entry<String, String> prop
+                            : extractPomProperties(parentDescr.getExtraInfos()).entrySet()) {
                         domReader.setProperty(prop.getKey(), prop.getValue());
                     }
                 }

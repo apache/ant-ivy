@@ -244,8 +244,8 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions());
         if (dr == null) {
             /*
-             * according to IVY-831, it seems that this actually happen sometime, while the contract
-             * of DependencyResolver says that it should never return null
+             * according to IVY-831, it seems that this actually happen sometime, while the
+             * contract of DependencyResolver says that it should never return null
              */
             throw new IllegalStateException("null download report returned by " + getName() + " ("
                     + getClass().getName() + ")" + " when trying to download " + artifact);
@@ -430,8 +430,8 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         }
         this.timeoutConstraint = settings.getTimeoutConstraint(this.timeoutConstraintName);
         if (this.timeoutConstraint == null) {
-            throw new IllegalStateException("Unknown timeout constraint '" + this.timeoutConstraintName + "' " +
-                    "on resolver '" + this.name + "'");
+            throw new IllegalStateException("Unknown timeout constraint '" + this.timeoutConstraintName
+                    + "' " + "on resolver '" + this.name + "'");
         }
     }
 

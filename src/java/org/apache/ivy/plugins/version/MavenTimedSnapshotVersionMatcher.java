@@ -1,18 +1,19 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package org.apache.ivy.plugins.version;
@@ -43,7 +44,8 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
             return false;
         }
         // we consider only timestamped snapshots as dynamic, since unlike regular snapshots,
-        // a timestamped snapshot version of the form x.y.z-<timestamped-part> represents the real x.y.z-SNAPSHOT version
+        // a timestamped snapshot version of the form x.y.z-<timestamped-part> represents the real
+        // x.y.z-SNAPSHOT version
         final Matcher snapshotPatternMatcher = M2_TIMESTAMPED_SNAPSHOT_REV_PATTERN.matcher(askedMrid.getRevision());
         return snapshotPatternMatcher.matches();
     }
@@ -58,8 +60,9 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
             // this isn't a snapshot, so we aren't interested in it
             return false;
         }
-        // this version matcher only comes into picture if we have been asked to deal with a timestamped snapshot.
-        // In other words, if the asked version isn't a timestamped snapshot, then we don't accept it
+        // this version matcher only comes into picture if we have been asked to deal with a
+        // timestamped snapshot. In other words, if the asked version isn't a timestamped snapshot,
+        // then we don't accept it
         if (!askedSnapshotVersion.isTimestampedSnapshot()) {
             return false;
         }
@@ -74,12 +77,13 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
     }
 
     /**
-     * Parses the passed {@code revision} and returns a {@link MavenSnapshotRevision}, representing that {@code revision},
-     * if it is either a regular snapshot (for example: 1.0.2-SNAPSHOT) or a timestamped snapshot (for example: 1.0.2-20100925.223013-19).
+     * Parses the passed {@code revision} and returns a {@link MavenSnapshotRevision}, representing
+     * that {@code revision}, if it is either a regular snapshot (for example: 1.0.2-SNAPSHOT) or a
+     * timestamped snapshot (for example: 1.0.2-20100925.223013-19).
      * If the passed {@code revision} isn't a snapshot revision, then this method returns null
      *
      * @param revision The revision to parse
-     * @return
+     * @return MavenSnapshotRevision
      */
     public static MavenSnapshotRevision computeIfSnapshot(final String revision) {
         if (isNullOrEmpty(revision)) {
@@ -93,14 +97,15 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
             return null;
         }
         // the revision is now identified as a snapshot (either a regular one or a timestamped one)
-        return timestampedSnaphost ? new MavenSnapshotRevision(true, revision, snapshotPatternMatcher.group(1)) :
-                new MavenSnapshotRevision(false, revision, revision.substring(0, revision.indexOf(SNAPSHOT_SUFFIX)));
+        return timestampedSnaphost ? new MavenSnapshotRevision(true, revision, snapshotPatternMatcher.group(1))
+                : new MavenSnapshotRevision(false, revision, revision.substring(0, revision.indexOf(SNAPSHOT_SUFFIX)));
     }
 
 
     /**
-     * Represents a Maven 2 snapshot version, which is either a regular snapshot (for example: 1.0.2-SNAPSHOT)
-     * or a timestamped snapshot (for example: 1.0.2-20100925.223013-19)
+     * Represents a Maven 2 snapshot version, which is either a regular snapshot
+     * (for example: 1.0.2-SNAPSHOT) or a timestamped snapshot (for example:
+     * 1.0.2-20100925.223013-19)
      */
     public static final class MavenSnapshotRevision {
 
@@ -121,32 +126,36 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
         }
 
         /**
-         * Returns true if this {@link MavenSnapshotRevision} represents a timestamped snapshot version. Else returns false.
+         * Returns true if this {@link MavenSnapshotRevision} represents a timestamped snapshot
+         * version. Else returns false.
          *
-         * @return
+         * @return boolean
          */
         public boolean isTimestampedSnapshot() {
             return this.timedsnapshot;
         }
 
         /**
-         * Returns the "base" revision that this {@link MavenSnapshotRevision} represents. For example, for the regular snapshot revision
-         * {@link 1.2.3-SNAPSHOT}, the base revision is {@code 1.2.3}. Similarly for timestamped snapshot version
+         * Returns the "base" revision that this {@link MavenSnapshotRevision} represents. For
+         * example, for the regular snapshot revision {@link 1.2.3-SNAPSHOT}, the base revision
+         * is {@code 1.2.3}. Similarly for timestamped snapshot version
          * {@code 1.0.2-20100925.223013-19}, the base revision is {@link 1.0.2}
          *
-         * @return
+         * @return String
          */
         public String getBaseRevision() {
             return this.baseRevision;
         }
 
         /**
-         * Returns the complete/whole revision this {@link MavenSnapshotRevision} represents. For example, if this {@link MavenSnapshotRevision}
-         * represents a regular snapshot {@code 1.3.4-SNAPSHOT} revision then this method returns {@code 1.3.4-SNAPSHOT}. Similarly, if this
-         * {@link MavenSnapshotRevision} represents a timestamped snapshot {@code 1.0.2-20100925.223013-19} revision, then this method returns
+         * Returns the complete/whole revision this {@link MavenSnapshotRevision} represents. For
+         * example, if this {@link MavenSnapshotRevision} represents a regular snapshot
+         * {@code 1.3.4-SNAPSHOT} revision then this method returns {@code 1.3.4-SNAPSHOT}.
+         * Similarly, if this {@link MavenSnapshotRevision} represents a timestamped snapshot
+         * {@code 1.0.2-20100925.223013-19} revision, then this method returns
          * {@code 1.0.2-20100925.223013-19}
          *
-         * @return
+         * @return String
          */
         public String getRevision() {
             return this.wholeRevision;

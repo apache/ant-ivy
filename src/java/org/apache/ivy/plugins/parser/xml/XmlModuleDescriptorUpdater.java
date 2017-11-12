@@ -976,10 +976,10 @@ public final class XmlModuleDescriptorUpdater {
                 if (currentIndent.length() == 0) {
                     out.print(getIndent());
                 }
-                String newConf = (defaultConf == null) ? "" :
-                        removeConfigurationsFromMapping(defaultConf);
-                String newMapping = (defaultConfMapping == null) ? "" :
-                        removeConfigurationsFromMapping(defaultConfMapping);
+                String newConf = (defaultConf == null) ? ""
+                        : removeConfigurationsFromMapping(defaultConf);
+                String newMapping = (defaultConfMapping == null) ? ""
+                        : removeConfigurationsFromMapping(defaultConfMapping);
                 out.print(String.format("<%s%s%s%s>", itemName,
                         newConf.isEmpty() ? "" : " defaultconf=\"" + newConf + "\"",
                         newMapping.isEmpty() ? "" : " defaultconfmapping=\"" + newMapping + "\"",

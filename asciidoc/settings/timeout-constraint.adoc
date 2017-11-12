@@ -53,9 +53,9 @@ A value less than `0` lets the users of this timeout constraint decide what sema
 ----
 Here we see 4 timeout constraints defined:
 
-    - `test-timeout-1` uses a connection timeout of 200 milli seconds and read timeout of 500 milli seconds.
-    - `test-timeout-2` uses a read timeout of 20 milli seconds and lets the connection timeout default to -1.
-    - `test-timeout-3` uses a connection timeout of 400 milli seconds and lets the read timeout default to -1.
+    - `test-timeout-1` uses a connection timeout of 200 milliseconds and read timeout of 500 milliseconds.
+    - `test-timeout-2` uses a read timeout of 20 milliseconds and lets the connection timeout default to -1.
+    - `test-timeout-3` uses a connection timeout of 400 milliseconds and lets the read timeout default to -1.
     - `test-timeout-4` lets both the connection timeout and read timeout default to -1.
 
 
