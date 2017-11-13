@@ -242,7 +242,7 @@ The m2resource XML tag supports the following attributes:
 |groupId|Maven group ID|No; defaults to ${ivy.packager.organisation}
 |artifactId|Maven artifact ID|No; defaults to ${ivy.packager.module}
 |version|Maven version|No; defaults to ${ivy.packager.revision}
-|repo|Maven repository URL|No; defaults to https://repo1.maven.org/maven2/
+|repo|Maven repository URL|No; defaults to https://repo.maven.apache.org/maven2/
 |=======
 
 

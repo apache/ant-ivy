@@ -120,7 +120,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals(
-            "https://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]",
+            "https://repo.maven.apache.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]",
             l.get(0));
 
         resolver = (IBiblioResolver) settings.getResolver("ibiblioD");

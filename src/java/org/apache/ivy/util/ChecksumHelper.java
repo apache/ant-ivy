@@ -93,7 +93,7 @@ public final class ChecksumHelper {
                 expected = csFileContent.substring(0, spaceIndex);
 
                 // IVY-1155: support some strange formats like this one:
-                // https://repo1.maven.org/maven2/org/apache/pdfbox/fontbox/0.8.0-incubator/fontbox-0.8.0-incubator.jar.md5
+                // https://repo.maven.apache.org/maven2/org/apache/pdfbox/fontbox/0.8.0-incubator/fontbox-0.8.0-incubator.jar.md5
                 if (expected.endsWith(":")) {
                     StringBuilder result = new StringBuilder();
                     for (char ch : csFileContent.substring(spaceIndex + 1).toCharArray()) {

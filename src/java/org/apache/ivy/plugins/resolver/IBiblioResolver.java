@@ -70,7 +70,7 @@ public class IBiblioResolver extends URLResolver {
     @Deprecated
     public static final String DEFAULT_ROOT = "http://www.ibiblio.org/maven/";
 
-    public static final String DEFAULT_M2_ROOT = "https://repo1.maven.org/maven2/";
+    public static final String DEFAULT_M2_ROOT = "https://repo.maven.apache.org/maven2/";
 
     private String root = null;
 

@@ -48,7 +48,7 @@
 		<url name="public">
 			<ivy pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/ivy-[revision].xml"/>
 			<artifact pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/[revision]/[artifact].[ext]"/>
-			<artifact pattern="https://repo1.maven.org/maven/[module]/[type]s/[artifact]-[revision].[ext]"/>
+			<artifact pattern="https://repo.maven.apache.org/maven/[module]/[type]s/[artifact]-[revision].[ext]"/>
 		</url>
 	</resolvers>
 </ivysettings>
