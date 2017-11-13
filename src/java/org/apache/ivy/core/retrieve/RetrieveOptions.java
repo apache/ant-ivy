@@ -60,9 +60,10 @@ public class RetrieveOptions extends LogOptions {
     private Filter<Artifact> artifactFilter = FilterHelper.NO_FILTER;
 
     /**
-     * True if a synchronisation of the destination directory should be done, false if a simple copy
-     * is enough. Synchronisation means that after the retrieve only files which have been retrieved
-     * will be present in the destination directory, which means that some files may be deleted.
+     * True if a synchronisation of the destination directory should be done, false if a simple
+     * copy is enough. Synchronisation means that after the retrieve only files which have been
+     * retrieved will be present in the destination directory, which means that some files may be
+     * deleted.
      */
     private boolean sync = false;
 
@@ -153,8 +154,8 @@ public class RetrieveOptions extends LogOptions {
     }
 
     public boolean isMakeSymlinks() {
-        // we also do a check on makeSymlinkInMass just to allow backward compatibility for a version
-        // or so, to allow users time to move away from symlinkmass option
+        // we also do a check on makeSymlinkInMass just to allow backward compatibility for
+        // a version or so, to allow users time to move away from symlinkmass option
         return makeSymlinks || makeSymlinksInMass;
     }
 

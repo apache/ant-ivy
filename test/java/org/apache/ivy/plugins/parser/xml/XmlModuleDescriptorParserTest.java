@@ -64,7 +64,11 @@ import java.util.Set;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
     private IvySettings settings = null;
@@ -1449,10 +1453,11 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     /**
-     * Tests that when the <code>location</code> attribute of the <code>extends</code> element of a module descriptor
-     * file, includes an {@link File#isAbsolute() absolute path} with characters that {@link java.net.URI} considers
-     * as encoded characters (for example <code>%2F</code>) then the module descriptor and the location of
-     * the parent descriptor, are resolved and parsed correctly.
+     * Tests that when the <code>location</code> attribute of the <code>extends</code> element of
+     * a module descriptor file, includes an {@link File#isAbsolute() absolute path} with
+     * characters that {@link java.net.URI} considers as encoded characters (for example,
+     * <code>%2F</code>) then the module descriptor and the location of the parent descriptor
+     * are resolved and parsed correctly.
      *
      * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1562">IVY-1562</a>
@@ -1463,8 +1468,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull("Ivy xml file is missing", ivyXML);
         final URL parentIvyXML = this.getClass().getResource("foo%2Fbar/parent-ivy.xml");
         assertNotNull("Parent Ivy xml file is missing", parentIvyXML);
-        // the ivy xml references a parent ivy xml via extends "location" and expects the parent ivy to be present
-        // at a location under java.io.tmpdir, so we copy over the parent ivy file over there
+        // the ivy xml references a parent ivy xml via extends "location" and expects the parent
+        // ivy to be present at a location under java.io.tmpdir, so we copy over the parent ivy
+        // file over there
         final Path targetDir = Paths.get(System.getProperty("java.io.tmpdir"), "foo%2Fbar");
         Files.createDirectories(targetDir);
         final Path parentIvyXMLPath = Paths.get(targetDir.toString(), "parent-ivy.xml");

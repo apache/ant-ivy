@@ -138,24 +138,26 @@ public class IBiblioResolver extends URLResolver {
             // this is a Maven timestamped snapshot revision. Something like 1.0.0-<timestampedRev>
             // We now get the base revision from it, which is "1.0.0" and append the "-SNAPSHOT" to it.
             final String inferredSnapshotRevision = snapshotRevision.getBaseRevision() + "-SNAPSHOT";
-            // we replace the "/[revision]" in the descriptor pattern with the "inferred" snapshot revision
-            // which is like "1.0.0-SNAPSHOT".
-            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            // we replace the "/[revision]" in the descriptor pattern with the "inferred" snapshot
+            // revision which is like "1.0.0-SNAPSHOT". Ultimately, this will translate to
+            // something like
+            // org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
             snapshotArtifactPattern = getWholePattern().replaceFirst("/\\[revision\\]", "/" + inferredSnapshotRevision);
         } else {
-            // it's not a timestamped revision, but a regular snapshot. Try and find
-            // any potential timestamped revisions of this regular snapshot, by looking into the maven metadata
+            // it's not a timestamped revision, but a regular snapshot. Try and find any potential
+            // timestamped revisions of this regular snapshot, by looking into the Maven metadata
             final String timestampedRev = findTimestampedSnapshotVersion(mrid);
             if (timestampedRev == null) {
                 // no timestamped snapshots found and instead this is just a regular snapshot
-                // version. So let's just fallback to our logic of finding resources using configured
-                // artifact pattern(s)
+                // version. So let's just fallback to our logic of finding resources using
+                // configured artifact pattern(s)
                 return null;
             }
             Message.verbose(mrid + " has been identified as a snapshot revision which has a timestamped snapshot revision " + timestampedRev);
-            // we have found a timestamped revision for a snapshot. So we replace the "-[revision]" in the artifact file name to use the
-            // timestamped revision.
-            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            // we have found a timestamped revision for a snapshot. So we replace the "-[revision]"
+            // in the artifact file name to use the timestamped revision.
+            // Ultimately, this will translate to something like
+            // org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
             snapshotArtifactPattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + timestampedRev);
         }
         return findResourceUsingPattern(mrid, snapshotArtifactPattern, artifact, getDefaultRMDParser(artifact
@@ -174,24 +176,26 @@ public class IBiblioResolver extends URLResolver {
             // this is a Maven timestamped snapshot revision. Something like 1.0.0-<timestampedRev>
             // We now get the base revision from it, which is "1.0.0" and append the "-SNAPSHOT" to it.
             final String inferredSnapshotRevision = snapshotRevision.getBaseRevision() + "-SNAPSHOT";
-            // we replace the "/[revision]" in the descriptor pattern with the "inferred" snapshot revision
-            // which is like "1.0.0-SNAPSHOT".
-            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            // we replace the "/[revision]" in the descriptor pattern with the "inferred" snapshot
+            // revision which is like "1.0.0-SNAPSHOT".
+            // Ultimately, this will translate to something like
+            // org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
             snapshotDescriptorPattern = getWholePattern().replaceFirst("/\\[revision\\]", "/" + inferredSnapshotRevision);
         } else {
-            // it's not a timestamped revision, but a regular snapshot. Try and find
-            // any potential timestamped revisions of this regular snapshot, by looking into the maven metadata
+            // it's not a timestamped revision, but a regular snapshot. Try and find any potential
+            // timestamped revisions of this regular snapshot, by looking into the Maven metadata
             final String timestampedRev = findTimestampedSnapshotVersion(mrid);
             if (timestampedRev == null) {
                 // no timestamped snapshots found and instead this is just a regular snapshot
-                // version. So let's just fallback to our logic of finding resources using configured
-                // Ivy pattern(s)
+                // version. So let's just fallback to our logic of finding resources using
+                // configured Ivy pattern(s)
                 return null;
             }
             Message.verbose(mrid + " has been identified as a snapshot revision which has a timestamped snapshot revision " + timestampedRev);
-            // we have found a timestamped revision for a snapshot. So we replace the "-[revision]" in the artifact file name to use the
-            // timestamped revision.
-            // Ultimately, this will translate to something like org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
+            // we have found a timestamped revision for a snapshot. So we replace the "-[revision]"
+            // in the artifact file name to use the timestamped revision.
+            // Ultimately, this will translate to something like
+            // org/module/1.0.0-SNAPSHOT/artifact-1.0.0-<timestampedRev>(-[classifier]).ext
             snapshotDescriptorPattern = getWholePattern().replaceFirst("\\-\\[revision\\]", "-" + timestampedRev);
         }
         // find the descriptor using the snapshot descriptor pattern

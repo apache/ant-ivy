@@ -158,12 +158,12 @@ public class IvyCacheFileset extends IvyCacheTask {
      * </p>
      *
      * @param file1
-     *            One of the files, for which the common base directory is being sought, may be null.
+     *         One of the files, for which the common base directory is being sought, may be null.
      * @param file2
-     *            The other file for which the common base directory should be returned, may be null.
-     * @return the common base directory between a <code>file1</code> and <code>file2</code>. Returns
-     *         null if no common base directory could be determined or if either <code>file1</code>
-     *         or <code>file2</code> is null
+     *         The other file for which the common base directory should be returned, may be null.
+     * @return the common base directory between a <code>file1</code> and <code>file2</code>.
+     *         Returns null if no common base directory could be determined or if either
+     *         <code>file1</code> or <code>file2</code> is null
      */
     File getBaseDir(final File file1, final File file2) {
         if (file1 == null || file2 == null) {

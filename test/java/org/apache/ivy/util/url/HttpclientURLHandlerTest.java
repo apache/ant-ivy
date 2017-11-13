@@ -117,8 +117,9 @@ public class HttpclientURLHandlerTest {
     }
 
     /**
-     * Tests that the {@link HttpClientHandler}, backed by {@link CredentialsStore Ivy credentials store}
-     * works as expected when it interacts with a HTTP server which requires authentication for accessing resources.
+     * Tests that the {@link HttpClientHandler}, backed by
+     * {@link CredentialsStore Ivy credentials store} works as expected when it interacts
+     * with a HTTP server which requires authentication for accessing resources.
      *
      * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1336">IVY-1336</a>
@@ -148,9 +149,9 @@ public class HttpclientURLHandlerTest {
             handler.download(src, target, null, defaultTimeoutConstraint);
             assertTrue("File " + target + " was not downloaded from " + src, target.isFile());
         }
-        // now create a server backed by BASIC auth with a set of credentials that do *not* match with what the
-        // Ivy credentials store will return for a given realm+host combination. i.e. Ivy credentials store
-        // will return back invalid credentials and the server will reject them
+        // now create a server backed by BASIC auth with a set of credentials that do *not* match
+        // with what the Ivy credentials store will return for a given realm+host combination, i.e.
+        // Ivy credential store will return back invalid credentials and the server will reject them
         try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr, contextRoot,
                 repoRoot, realm, Collections.singletonMap("other-" + userName, "other-" + password))) {
 
@@ -164,9 +165,9 @@ public class HttpclientURLHandlerTest {
                 Assert.fail("Download from " + src + " was expected to fail due to invalid credentials");
             } catch (IOException ioe) {
                 // we catch it and check for presence of 401 in the exception message.
-                // It's not exactly an contract that the IOException will have the 401 message but for now
-                // that's how it's implemented and it's fine to check for the presence of that message at the
-                // moment
+                // It's not exactly an contract that the IOException will have the 401 message
+                // but for now that's how it's implemented and it's fine to check for the presence
+                // of that message at the moment
                 assertTrue("Expected to find 401 error message in exception", ioe.getMessage().contains("401"));
             }
         }

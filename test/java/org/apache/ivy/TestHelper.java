@@ -90,15 +90,15 @@ public class TestHelper {
 
     public static DefaultRepositoryCacheManager getRepositoryCacheManager(Ivy ivy,
             ModuleRevisionId id) {
-        // WARN: this doesn't work if the resolver registered is a compound resolver (chain or dual)
-        // and a sub resolver doesn't use the same cache manager as the parent
+        // WARN: this doesn't work if the resolver registered is a compound resolver (chain
+        // or dual) and a sub resolver doesn't use the same cache manager as the parent
         return (DefaultRepositoryCacheManager) ivy.getSettings().getResolver(id)
                 .getRepositoryCacheManager();
     }
 
     /**
-     * Assertion utility methods to test if a collection of {@link ModuleRevisionId} matches a given
-     * expected set of mrids.
+     * Assertion utility methods to test if a collection of {@link ModuleRevisionId} matches a
+     * given expected set of mrids.
      * <p>
      * Expected mrids is given as a String of comma separated string representations of
      * {@link ModuleRevisionId}.
@@ -202,8 +202,8 @@ public class TestHelper {
     }
 
     /**
-     * Parses a collection of module descriptors in the micro ivy format, separated by double semi
-     * columns.
+     * Parses a collection of module descriptors in the micro ivy format, separated by double
+     * semicolumns.
      *
      * @param microIvy
      *            the text representation of the collection of module descriptors
@@ -358,13 +358,13 @@ public class TestHelper {
     }
 
     /**
-     * The {@link Authenticator} doesn't have API to get hold of the current system level {@link Authenticator}.
-     * This method does a best-effort attempt to try and get hold of the current {@link Authenticator} in a way that's
-     * specific to the implementation of this method. There's no guarantee that this method will return the current
-     * authenticator.
+     * The {@link Authenticator} doesn't have API to get hold of the current system level
+     * {@link Authenticator}. This method does a best-effort attempt to try and get hold of the
+     * current {@link Authenticator} in a way that's specific to the implementation of this method.
+     * There's no guarantee that this method will return the current authenticator.
      *
-     * @return Returns the currently setup system level {@link Authenticator}. In cases where this method isn't able to get
-     * the current authenticator, this method returns null
+     * @return Returns the currently setup system level {@link Authenticator}. In cases where this
+     * method isn't able to get the current authenticator, this method returns null
      */
     public static Authenticator getCurrentAuthenticator() {
         // we use reflection to try and get hold of the "current" authenticator
@@ -380,14 +380,16 @@ public class TestHelper {
     }
 
     /**
-     * Creates a HTTP server, backed by a local file system, which can be used as a repository to serve Ivy module descriptors
-     * and artifacts.
-     * NOTE: This is supposed to be used only in test cases and only a limited functionality is added in the handler(s) backing the
-     * server
+     * Creates a HTTP server, backed by a local file system, which can be used as a repository to
+     * serve Ivy module descriptors and artifacts.
+     * NOTE: This is supposed to be used only in test cases and only a limited functionality is
+     * added in the handler(s) backing the server
      *
      * @param serverAddress           The address to which the server will be bound
-     * @param webAppContext           The context root of the application which will be handling the requests to the server
-     * @param localFilesystemRepoRoot The path to the root directory containing the module descriptors and artifacts
+     * @param webAppContext           The context root of the application which will be handling
+     *                                the requests to the server
+     * @param localFilesystemRepoRoot The path to the root directory containing the module
+     *                                descriptors and artifacts
      * @return AutoCloseable
      * @throws IOException if something goes wrong
      */
@@ -409,20 +411,25 @@ public class TestHelper {
     }
 
     /**
-     * Creates a HTTP server, backed by a local file system, which can be used as a repository to serve Ivy module descriptors
-     * and artifacts. The context within the server will be backed by {@code BASIC} authentication mechanism with {@code realm}
-     * as the realm and {@code validCredentials} as the credentials that the server will recognize. The server will allow
-     * access to resources, only if the credentials that are provided by the request, belong to these credentials.
+     * Creates a HTTP server, backed by a local file system, which can be used as a repository to
+     * serve Ivy module descriptors and artifacts. The context within the server will be backed by
+     * {@code BASIC} authentication mechanism with {@code realm} as the realm and
+     * {@code validCredentials} as the credentials that the server will recognize. The server will
+     * allow access to resources, only if the credentials that are provided by the request, belong
+     * to these credentials.
      * <p>
-     * NOTE: This is supposed to be used only in test cases and only a limited functionality is added in the handler(s) backing the
-     * server
+     * NOTE: This is supposed to be used only in test cases and only a limited functionality is
+     * added in the handler(s) backing the server
      *
      * @param serverAddress           The address to which the server will be bound
-     * @param webAppContext           The context root of the application which will be handling the requests to the server
-     * @param localFilesystemRepoRoot The path to the root directory containing the module descriptors and artifacts
+     * @param webAppContext           The context root of the application which will be handling
+     *                                the requests to the server
+     * @param localFilesystemRepoRoot The path to the root directory containing the module
+     *                                descriptors and artifacts
      * @param realm                   The realm to use for the {@code BASIC} auth mechanism
-     * @param validCredentials        A {@link Map} of valid credentials, the key being the user name and the value being the password,
-     *                                that the server will use during the authentication process of the incoming requests
+     * @param validCredentials        A {@link Map} of valid credentials, the key being the user
+     *                                name and the value being the password, that the server will
+     *                                use during the authentication process of the incoming requests
      * @return AutoCloseable
      * @throws IOException if something goes wrong
      */

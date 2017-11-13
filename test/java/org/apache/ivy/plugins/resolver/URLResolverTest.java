@@ -231,11 +231,12 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         assertTrue(repoRoot + " is not a directory", Files.isDirectory(repoRoot));
         final DependencyDescriptor dependency = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1", "mod1.1", "2.0"), false);
         try (final AutoCloseable httpServer = TestHelper.createHttpServerBackedRepository(fastServerBindAddr, contextRoot, repoRoot)) {
-            final String ivyPattern = "http://" + fastServerBindAddr.getHostName() + ":" + fastServerBindAddr.getPort() +
-                    "/testTimeouts/[organisation]/[module]/ivys/ivy-[revision].xml";
-            final String artifactPattern = "http://" + fastServerBindAddr.getHostName() + ":" + fastServerBindAddr.getPort() +
-                    "/testTimeouts/[organisation]/[module]/[type]s/[artifact]-[revision].[type]";
-            // first use a resolver with a high timeout to make sure it can actually fetch the resources
+            final String ivyPattern = "http://" + fastServerBindAddr.getHostName() + ":" + fastServerBindAddr.getPort()
+                    + "/testTimeouts/[organisation]/[module]/ivys/ivy-[revision].xml";
+            final String artifactPattern = "http://" + fastServerBindAddr.getHostName() + ":" + fastServerBindAddr.getPort()
+                    + "/testTimeouts/[organisation]/[module]/[type]s/[artifact]-[revision].[type]";
+            // first use a resolver with a high timeout to make sure
+            // it can actually fetch the resources
             final URLResolver highTimeoutResolver = new URLResolver();
             highTimeoutResolver.setName("high-timeout-resolver");
             highTimeoutResolver.setAllownomd(false);
@@ -256,18 +257,18 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
             assertEquals("Unexpected dependency resolved by resolver " + highTimeoutResolver.getName(), dependency.getDependencyRevisionId(), resolvedModule.getId());
         }
 
-        // now test this whole fetch using a resolver with a very low connection timeout and by starting the repo server
-        // with a delay so that the connection request can timeout
+        // now test this whole fetch using a resolver with a very low connection timeout and
+        // by starting the repo server with a delay so that the connection request can timeout
 
         // clean the cache before testing to ensure the resource isn't fetched from cache
         settings.getDefaultRepositoryCacheManager().clean();
         settings.getResolutionCacheManager().clean();
 
         final InetSocketAddress slowServerAddr = new InetSocketAddress("localhost", 23456);
-        final String ivyPattern = "http://" + slowServerAddr.getHostName() + ":" + slowServerAddr.getPort() +
-                "/testTimeouts/[organisation]/[module]/ivys/ivy-[revision].xml";
-        final String artifactPattern = "http://" + slowServerAddr.getHostName() + ":" + slowServerAddr.getPort() +
-                "/testTimeouts/[organisation]/[module]/[type]s/[artifact]-[revision].[type]";
+        final String ivyPattern = "http://" + slowServerAddr.getHostName() + ":" + slowServerAddr.getPort()
+                + "/testTimeouts/[organisation]/[module]/ivys/ivy-[revision].xml";
+        final String artifactPattern = "http://" + slowServerAddr.getHostName() + ":" + slowServerAddr.getPort()
+                + "/testTimeouts/[organisation]/[module]/[type]s/[artifact]-[revision].[type]";
         final URLResolver lowTimeoutResolver = new URLResolver();
         lowTimeoutResolver.setAllownomd(false);
         lowTimeoutResolver.setName("low-timeout-resolver");

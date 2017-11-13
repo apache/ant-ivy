@@ -259,8 +259,9 @@ public class HttpClientHandler extends AbstractURLHandler implements AutoCloseab
     }
 
     /**
-     * Checks the status code of the response and if it's considered as successful response, then this method just returns back.
-     * Else it {@link CloseableHttpResponse#close() closes the response} and throws an {@link IOException} for the unsuccessful response.
+     * Checks the status code of the response and if it's considered as successful response, then
+     * this method just returns back. Else it {@link CloseableHttpResponse#close() closes the
+     * response} and throws an {@link IOException} for the unsuccessful response.
      *
      * @param httpMethod The HTTP method that was used for the source request
      * @param sourceURL  The URL of the source request

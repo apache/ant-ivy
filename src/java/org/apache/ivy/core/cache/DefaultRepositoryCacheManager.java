@@ -147,12 +147,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public void setSettings(final IvySettings settings) {
         this.settings = settings;
         packagingManager.setSettings(settings);
-        // process and setup the configured TTLs (which weren't yet processed since they needed a settings instance to be present)
+        // process and setup the configured TTLs (which weren't yet processed since they needed
+        // a settings instance to be present)
         for (final ConfiguredTTL configuredTTL : configuredTTLs) {
             this.addTTL(configuredTTL.attributes,
                     configuredTTL.matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(configuredTTL.matcher), configuredTTL.duration);
         }
-        // clear off the configured TTLs since we have now processed them and created TTL rules out of them
+        // clear off the configured TTLs since we have now processed them and created TTL rules
+        // out of them
         this.configuredTTLs.clear();
     }
 
@@ -267,7 +269,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         final long duration = parseDuration(durationValue);
         final ConfiguredTTL configuredTTL = new ConfiguredTTL(duration, attributes.get("matcher"), attributes);
         // Processing TTLs requires access to an initialized/usable IvySettings instance.
-        // we keep track of these configured TTLs and process them when the IvySettings instance becomes usable
+        // We keep track of these configured TTLs and process them when the IvySettings instance
+        // becomes usable
         this.configuredTTLs.add(configuredTTL);
     }
 
@@ -340,8 +343,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     /**
-     * True if this cache should use artifacts original location when possible, false if they should
-     * be copied to cache.
+     * True if this cache should use artifacts original location when possible, false if they
+     * should be copied to cache.
      *
      * @return boolean
      */
@@ -1436,9 +1439,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private boolean lockMetadataArtifact(ModuleRevisionId mrid) {
         Artifact artifact = getDefaultMetadataArtifact(mrid);
         try {
-            // we need to provide an artifact origin to be sure we do not end up in a stack overflow
-            // if the cache pattern is using original name, and the substitution thus trying to get
-            // the saved artifact origin value which in turns calls this method
+            // we need to provide an artifact origin to be sure we do not end up in a stack
+            // overflow if the cache pattern is using original name, and the substitution thus
+            // trying to get the saved artifact origin value which in turns calls this method
             return getLockStrategy().lockArtifact(artifact,
                 getArchiveFileInCache(artifact, getDefaultMetadataArtifactOrigin(mrid)));
         } catch (InterruptedException e) {

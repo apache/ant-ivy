@@ -636,7 +636,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             new HashSet<>(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
         assertEquals(0, dds[2].getAllExcludeRules().length);
 
-        // test for IVY-1531 (where the pom.xml can have a exclusion for groupid=* and artifactid=*, implying transitive=false, in ivy land)
+        // test for IVY-1531 (where the pom.xml can have a exclusion for groupid=* and artifactid=*,
+        // implying transitive=false, in Ivy land)
         final DependencyDescriptor excludeAllTransitiveDepsDescriptor = dds[3];
         assertEquals(ModuleRevisionId.newInstance("org.owasp.esapi", "esapi", "2.1.0"),
             excludeAllTransitiveDepsDescriptor.getDependencyRevisionId());
@@ -1091,10 +1092,11 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
      */
     @Test
     public void testSystemPropertyAndEnvReferences() throws Exception {
-        // the pom we are testing contains reference to a string called "env.THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR".
-        // this piece of code replaces it to "env.someenvname" where someenvname is a environment variable we
-        // choose in this test case (after randomly picking it from the ones that are set).
-        // finally we created the updated pom content in a separate file and test against that file
+        // The pom we are testing contains a reference to a string called
+        // "env.THIS_WILL_BE_REPLACED_IN_TEST_BY_A_ENV_VAR". This piece of code replaces it with
+        // "env.someenvname" where someenvname is a environment variable we choose in this test case
+        // (after randomly picking it from the ones that are set).
+        // Finally we save the updated pom content in a separate file and test against that file
         final String envName = chooseSomeEnvVar();
         final URL originalPomFile = this.getClass().getResource("test-system-properties.pom");
         assertNotNull("Pom file to test, is missing", originalPomFile);
@@ -1107,8 +1109,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         final Path updatedPomFile = Paths.get(workDir.getRoot().toPath().toString(), "updated-test-system-properties.pom");
         Files.write(updatedPomFile, replacedContent, Charset.forName("UTF-8"));
 
-        // now start testing
-        // we do 2 rounds of testing - one with a system property (referenced in the pom) set and once unset
+        // now start testing - we do 2 rounds -
+        // once with a system property (referenced in the pom) set and once unset
         boolean withSystemPropertiesSet = false;
         try {
             for (int i = 0; i < 2; i++) {

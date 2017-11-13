@@ -312,8 +312,8 @@ public class IvyConfigureTest {
     }
 
     /**
-     * Tests that if the Ivy settings file <code>include</code>s another file as <code>optional</code>,
-     * then the absence of that file doesn't lead to failures
+     * Tests that if the Ivy settings file <code>include</code>s another file as
+     * <code>optional</code>, then the absence of that file doesn't lead to failures
      *
      * @throws Exception if something goes wrong
      */
@@ -325,7 +325,7 @@ public class IvyConfigureTest {
         final IvySettings ivySettings = ivy.getSettings();
         // just test that it indeed parsed fine
         assertTrue("Unexpected number of resolvers in Ivy settings", ivySettings.getResolvers().isEmpty());
-        final List<Status> statuses =ivySettings.getStatusManager().getStatuses();
+        final List<Status> statuses = ivySettings.getStatusManager().getStatuses();
         assertEquals("Unexpected number of custom status in parsed Ivy settings", 1, statuses.size());
         assertEquals("Custom status not found in the parsed Ivy settings", "ivy-1555", statuses.get(0).getName());
     }

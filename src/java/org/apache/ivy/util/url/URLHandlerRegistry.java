@@ -55,8 +55,9 @@ public final class URLHandlerRegistry {
             final Field instance = handler.getDeclaredField("DELETE_ON_EXIT_INSTANCE");
             return (URLHandler) instance.get(null);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            Message.verbose("Using JDK backed URL handler for HTTP interaction since the " +
-                    "Apache HttpComponents HttpClient backed handler couldn't be created due to: " + e.getMessage());
+            Message.verbose("Using JDK backed URL handler for HTTP interaction since the "
+                    + "Apache HttpComponents HttpClient backed handler couldn't be created due to: "
+                    + e.getMessage());
             return new BasicURLHandler();
         }
     }

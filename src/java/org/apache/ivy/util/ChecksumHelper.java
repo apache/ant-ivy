@@ -38,7 +38,8 @@ public final class ChecksumHelper {
         algorithms.put("md5", "MD5");
         algorithms.put("sha1", "SHA-1");
 
-        // higher versions of JRE support these algorithms https://docs.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#MessageDigest
+        // higher versions of JRE support these algorithms
+        // https://docs.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#MessageDigest
         // conditionally add them
         if (isAlgorithmSupportedInJRE("SHA-256")) {
             algorithms.put("SHA-256", "SHA-256");

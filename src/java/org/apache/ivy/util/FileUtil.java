@@ -61,15 +61,16 @@ public final class FileUtil {
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
     /**
-     * Creates a symbolic link at {@code link} whose target will be the {@code target}. Depending on the underlying
-     * filesystem, this method may not always be able to create a symbolic link, in which case this method returns
-     * {@code false}.
+     * Creates a symbolic link at {@code link} whose target will be the {@code target}. Depending
+     * on the underlying filesystem, this method may not always be able to create a symbolic link,
+     * in which case this method returns {@code false}.
      *
      * @param target    The {@link File} which will be the target of the symlink being created
      * @param link      The path to the symlink that needs to be created
-     * @param overwrite {@code true} if any existing file at {@code link} has to be overwritten. False otherwise
-     * @return Returns true if the symlink was successfully created. Returns false if the symlink creation couldn't
-     * be done
+     * @param overwrite {@code true} if any existing file at {@code link} has to be overwritten.
+     *                  False otherwise
+     * @return Returns true if the symlink was successfully created. Returns false if the symlink
+     * could not be created
      * @throws IOException if {@link Files#createSymbolicLink} fails
      */
     public static boolean symlink(final File target, final File link, final boolean overwrite)
@@ -99,14 +100,14 @@ public final class FileUtil {
         }
         // else it is a file copy
         if (dest.exists()) {
-            // If overwrite is specified as "true" and the dest file happens to be a
-            // symlink, we delete the "link" (a.k.a unlink it). This is for cases
-            // like https://issues.apache.org/jira/browse/IVY-1498 where not unlinking
-            // the existing symlink can lead to potentially overwriting the wrong "target" file
+            // If overwrite is specified as "true" and the dest file happens to be a symlink,
+            // we delete the "link" (a.k.a unlink it). This is for cases like
+            // https://issues.apache.org/jira/browse/IVY-1498 where not unlinking the existing
+            // symlink can lead to potentially overwriting the wrong "target" file
             // TODO: This behaviour is intentionally hardcoded here for now, since I don't
             // see a reason (yet) to expose it as a param of this method. If any use case arises
-            // we can have this behaviour decided by the callers of this method, by passing a value for this
-            // param
+            // we can have this behaviour decided by the callers of this method, by passing
+            // a value for this param
             final boolean unlinkSymlinkIfOverwrite = true;
             if (!dest.isFile()) {
                 throw new IOException("impossible to copy: destination is not a file: " + dest);
@@ -116,8 +117,8 @@ public final class FileUtil {
                     // unlink (a.k.a delete the symlink path)
                     dest.delete();
                 } else if (!dest.canWrite()) {
-                    // if the file *isn't* "writable" (see javadoc of File.canWrite() on what that means)
-                    // we delete it.
+                    // if the file *isn't* "writable" (see javadoc of File.canWrite() on what
+                    // that means) we delete it.
                     dest.delete();
                 } // if dest is writable, the copy will overwrite it without requiring a delete
             } else {

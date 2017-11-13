@@ -38,7 +38,9 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * <h3>Resource Publication</h3>
  * <p>{@link #put} transfers a file to the repository.</p>
  * <h2>resource Listing</h2>
- * <p>{@link #list} returns a listing of file like objects belonging to a specified parent directory.</p>
+ * <p>
+ * {@link #list} returns a listing of file like objects belonging to a specified parent directory.
+ * </p>
  */
 public interface Repository {
 

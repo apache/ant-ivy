@@ -1,18 +1,19 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package org.apache.ivy.util;
@@ -33,8 +34,8 @@ import org.w3c.dom.Document;
 public class TestXmlHelper {
 
     /**
-     * Evaluates the passed {@link XPathExpression} against the {@link Document} created out of the passed <code>xmlFile</code>
-     * and returns the result of the evaluation.
+     * Evaluates the passed {@link XPathExpression} against the {@link Document} created out of the
+     * passed <code>xmlFile</code> and returns the result of the evaluation.
      *
      * @param xmlFile         The XML file to parse
      * @param xPathExpression The XPath expression to evaluate
@@ -59,9 +60,11 @@ public class TestXmlHelper {
     }
 
     /**
-     * Evaluates the passed <code>xpathExpression</code> against the {@link Document} created out of the passed <code>xmlFile</code>
-     * and returns the result of the evaluation.
-     * This is the same as calling {@link #evaluateXPathExpr(File, XPathExpression, QName)}, with <code>XPathFactory.newInstance().newXPath().compile(xpathExpression)</code> as the {@link XPathExpression} parameter
+     * Evaluates the passed <code>xpathExpression</code> against the {@link Document} created out of
+     * the passed <code>xmlFile</code> and returns the result of the evaluation. This is the same as
+     * calling {@link #evaluateXPathExpr(File, XPathExpression, QName)}, with
+     * <code>XPathFactory.newInstance().newXPath().compile(xpathExpression)</code> as the
+     * {@link XPathExpression} parameter
      *
      * @param xmlFile         The XML file to parse
      * @param xpathExpression The XPath expression to evaluate

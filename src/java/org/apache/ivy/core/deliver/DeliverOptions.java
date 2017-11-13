@@ -205,8 +205,8 @@ public class DeliverOptions {
     }
 
     /**
-     * Return the configurations which must be delivered. Returns <tt>null</tt> if all configurations
-     * has to be delivered. Attention: the returned array can contain wildcards!
+     * Return the configurations which must be delivered. Returns <tt>null</tt> if all
+     * configurations has to be delivered. Attention: the returned array can contain wildcards!
      *
      * @return the configurations to deliver
      */

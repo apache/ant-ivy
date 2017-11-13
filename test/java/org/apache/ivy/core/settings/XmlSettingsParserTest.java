@@ -315,7 +315,7 @@ public class XmlSettingsParserTest {
      * Tests that the {@code maven-tsnap-vm} version matcher, configured in the settings file,
      * is parsed correctly
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testMavenTimedSnapshotVersionMatcher() throws Exception {

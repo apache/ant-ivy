@@ -32,13 +32,14 @@ import java.net.URL;
 public interface URLHandler {
 
     /**
-     * Using the slower REQUEST method for getting the basic URL infos. Use this when getting errors
-     * behind a problematic/special proxy or firewall chain.
+     * Using the slower REQUEST method for getting the basic URL infos. Use this when getting
+     * errors behind a problematic/special proxy or firewall chain.
      */
     int REQUEST_METHOD_GET = 1;
 
     /**
-     * Using the faster HEAD method for getting the basic URL infos. Works for most common networks.
+     * Using the faster HEAD method for getting the basic URL infos. Works for most common
+     * networks.
      */
     int REQUEST_METHOD_HEAD = 2;
 
@@ -107,13 +108,13 @@ public interface URLHandler {
      * Returns true if the passed <code>URL</code> is reachable. Else returns false. Uses the
      * passed <code>timeoutConstraint</code> for determining the connectivity to the URL.
      * <p>
-     * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the <code>url</code>
-     * is needed
+     * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the
+     * <code>url</code> is needed
      * </p>
      *
-     * @param url                The URL to access
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param url               The URL to access
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @return boolean
      * @since 2.5
      */
@@ -123,8 +124,8 @@ public interface URLHandler {
      * Please prefer getURLInfo when several infos are needed.
      *
      * @param url the url to check
-     * @return the length of the target if the given url is reachable, 0 otherwise. No error code in
-     * case of http urls.
+     * @return the length of the target if the given url is reachable, 0 otherwise. No error code
+     * in case of http urls.
      * @deprecated Use {@link #getContentLength(URL, TimeoutConstraint)} instead
      */
     @Deprecated
@@ -134,20 +135,20 @@ public interface URLHandler {
      * @param url     the url to check
      * @param timeout the maximum time before considering an url is not reachable a
      *                timeout of zero indicates no timeout
-     * @return the length of the target if the given url is reachable, 0 otherwise. No error code in
-     * case of http urls.
+     * @return the length of the target if the given url is reachable, 0 otherwise. No error code
+     * in case of http urls.
      * @deprecated Use {@link #getContentLength(URL, TimeoutConstraint)} instead
      */
     @Deprecated
     long getContentLength(URL url, int timeout);
 
     /**
-     * Returns the number of bytes of data that's available for the resource at the passed <code>url</code>.
-     * Returns 0 if the passed <code>url</code> isn't reachable
+     * Returns the number of bytes of data that's available for the resource at the passed
+     * <code>url</code>. Returns 0 if the passed <code>url</code> isn't reachable
      *
-     * @param url                The URL to access
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param url               The URL to access
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @return long
      * @since 2.5
      */
@@ -175,15 +176,16 @@ public interface URLHandler {
     long getLastModified(URL url, int timeout);
 
     /**
-     * Returns the last modified timestamp of the resource accessible at the passed <code>url</code>.
+     * Returns the last modified timestamp of the resource accessible at the passed
+     * <code>url</code>.
      * <p>
-     * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the <code>url</code>
-     * is needed
+     * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the
+     * <code>url</code> is needed
      * </p>
      *
-     * @param url                The URL to access
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param url               The URL to access
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @return long
      * @since 2.5
      */
@@ -201,20 +203,20 @@ public interface URLHandler {
     /**
      * @param url     The url from which information is retrieved.
      * @param timeout The timeout in milliseconds.
-     * @return The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when the url is not
-     * reachable, never null.
+     * @return The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when the url is
+     * not reachable, never null.
      * @deprecated Use {@link #getURLInfo(URL, TimeoutConstraint)} instead
      */
     @Deprecated
     URLInfo getURLInfo(URL url, int timeout);
 
     /**
-     * Returns the {@link URLInfo} extracted from the given url, or {@link #UNAVAILABLE} when the url is not
-     * reachable. Never returns null.
+     * Returns the {@link URLInfo} extracted from the given url, or {@link #UNAVAILABLE} when the
+     * url is not reachable. Never returns null.
      *
-     * @param url                The URL for which the information is to be retrieved
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param url               The URL for which the information is to be retrieved
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @return URLInfo
      * @since 2.5
      */
@@ -232,9 +234,9 @@ public interface URLHandler {
     /**
      * Opens and returns an {@link InputStream} to the passed <code>url</code>.
      *
-     * @param url                The URL to which an {@link InputStream} has to be opened
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param url               The URL to which an {@link InputStream} has to be opened
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @return InputStream
      * @throws IOException if something goes wrong
      * @since 2.5
@@ -254,11 +256,11 @@ public interface URLHandler {
     /**
      * Downloads the resource available at <code>src</code> to the target <code>dest</code>
      *
-     * @param src                The source URL to download the resource from
-     * @param dest               The destination {@link File} to download the resource to
-     * @param listener           The listener that will be notified of the download progress
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param src               The source URL to download the resource from
+     * @param dest              The destination {@link File} to download the resource to
+     * @param listener          The listener that will be notified of the download progress
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @throws IOException if something goes wrong
      * @since 2.5
      */
@@ -277,11 +279,11 @@ public interface URLHandler {
     /**
      * Uploads the <code>src</code> {@link File} to the target <code>dest</code> {@link URL}
      *
-     * @param src                The source {@link File} to upload
-     * @param dest               The target URL where the {@link File} has to be uploaded
-     * @param listener           The listener that will be notified of the upload progress
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case the timeouts
-     *                           are implementation specific
+     * @param src               The source {@link File} to upload
+     * @param dest              The target URL where the {@link File} has to be uploaded
+     * @param listener          The listener that will be notified of the upload progress
+     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
+     *                          the timeouts are implementation specific
      * @throws IOException if something goes wrong
      * @since 2.5
      */
