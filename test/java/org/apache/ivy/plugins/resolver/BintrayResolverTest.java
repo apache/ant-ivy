@@ -47,18 +47,18 @@ import static org.junit.Assert.assertNull;
 
 public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private ResolveEngine _engine;
+    private ResolveEngine engine;
 
-    private ResolveData _data;
+    private ResolveData data;
 
     @Before
     public void setUp() {
-        _settings = new IvySettings();
-        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _data = new ResolveData(_engine, new ResolveOptions());
-        _settings.setDefaultCache(TestHelper.cache);
+        settings = new IvySettings();
+        engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+        data = new ResolveData(engine, new ResolveOptions());
+        settings.setDefaultCache(TestHelper.cache);
     }
 
     @After
@@ -137,11 +137,11 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
     @Test
     public void testBintray() throws Exception {
         BintrayResolver resolver = new BintrayResolver();
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         ModuleRevisionId mrid = ModuleRevisionId
                 .newInstance("org.apache.ant", "ant-antunit", "1.2");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
@@ -178,7 +178,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         resolver.setRepo("unknown");
         resolver.setName("test");
         resolver.setM2compatible(true);
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         assertEquals("test", resolver.getName());
 
         MockMessageLogger mockMessageImpl = new MockMessageLogger();
@@ -187,7 +187,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "commons-fileupload",
             "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNull(rmr);
 
         mockMessageImpl
@@ -200,7 +200,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
     public void testBintrayArtifacts() throws Exception {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setName("test");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId
@@ -210,7 +210,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
                 "ant-antunit", "javadoc", "jar"), ExactPatternMatcher.INSTANCE, null));
         dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(),
                 "ant-antunit", "sources", "jar"), ExactPatternMatcher.INSTANCE, null));
-        ResolvedModuleRevision rmr = resolver.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
@@ -259,11 +259,11 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
     public void testUnknown() throws Exception {
         BintrayResolver resolver = new BintrayResolver();
         resolver.setName("test");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         assertNull(resolver.getDependency(
             new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("unknown", "unknown",
-                "1.0"), false), _data));
+                "1.0"), false), data));
     }
 
 }

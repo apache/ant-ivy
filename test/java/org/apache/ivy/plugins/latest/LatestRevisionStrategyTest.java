@@ -92,25 +92,25 @@ public class LatestRevisionStrategyTest {
 
     private static class MockArtifactInfo implements ArtifactInfo {
 
-        private long _lastModified;
+        private long lastModified;
 
-        private String _rev;
+        private String rev;
 
         public MockArtifactInfo(String rev, long lastModified) {
-            _rev = rev;
-            _lastModified = lastModified;
+            this.rev = rev;
+            this.lastModified = lastModified;
         }
 
         public String getRevision() {
-            return _rev;
+            return rev;
         }
 
         public long getLastModified() {
-            return _lastModified;
+            return lastModified;
         }
 
         public String toString() {
-            return _rev;
+            return rev;
         }
     }
 

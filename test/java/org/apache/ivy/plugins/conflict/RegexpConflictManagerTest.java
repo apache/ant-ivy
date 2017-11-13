@@ -33,7 +33,7 @@ import org.junit.rules.ExpectedException;
 public class RegexpConflictManagerTest {
     private Ivy ivy;
 
-    private File _cache;
+    private File cache;
 
     @Rule
     public ExpectedException expExc = ExpectedException.none();
@@ -42,13 +42,13 @@ public class RegexpConflictManagerTest {
     public void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(RegexpConflictManagerTest.class.getResource("ivysettings-regexp-test.xml"));
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     @After
     public void tearDown() {
-        FileUtil.forceDelete(_cache);
+        FileUtil.forceDelete(cache);
     }
 
     @Test

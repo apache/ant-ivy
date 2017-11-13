@@ -55,19 +55,19 @@ import org.junit.Test;
 public class IBiblioResolverTest extends AbstractDependencyResolverTest {
     // remote.test
 
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private ResolveEngine _engine;
+    private ResolveEngine engine;
 
-    private ResolveData _data;
+    private ResolveData data;
 
     @Before
     public void setUp() {
-        _settings = new IvySettings();
-        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _data = new ResolveData(_engine, new ResolveOptions());
+        settings = new IvySettings();
+        engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+        data = new ResolveData(engine, new ResolveOptions());
         TestHelper.createCache();
-        _settings.setDefaultCache(TestHelper.cache);
+        settings.setDefaultCache(TestHelper.cache);
     }
 
     @After
@@ -78,11 +78,11 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
     @Test
     public void testDefaults() {
         IBiblioResolver resolver = new IBiblioResolver();
-        _settings.setVariable("ivy.ibiblio.default.artifact.root",
+        settings.setVariable("ivy.ibiblio.default.artifact.root",
             "http://www.ibiblio.org/mymaven/");
-        _settings.setVariable("ivy.ibiblio.default.artifact.pattern",
+        settings.setVariable("ivy.ibiblio.default.artifact.pattern",
             "[module]/jars/[artifact]-[revision].jar");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         List<String> l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
@@ -92,20 +92,20 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
 
     @Test
     public void testInitFromConf() throws Exception {
-        _settings.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/maven/");
-        _settings.setVariable("ivy.ibiblio.default.artifact.pattern",
+        settings.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/maven/");
+        settings.setVariable("ivy.ibiblio.default.artifact.pattern",
             "[module]/jars/[artifact]-[revision].jar");
-        _settings.setVariable("my.ibiblio.root", "http://www.ibiblio.org/mymaven/");
-        _settings.setVariable("my.ibiblio.pattern", "[module]/[artifact]-[revision].jar");
-        _settings.load(IBiblioResolverTest.class.getResource("ibiblioresolverconf.xml"));
-        IBiblioResolver resolver = (IBiblioResolver) _settings.getResolver("ibiblioA");
+        settings.setVariable("my.ibiblio.root", "http://www.ibiblio.org/mymaven/");
+        settings.setVariable("my.ibiblio.pattern", "[module]/[artifact]-[revision].jar");
+        settings.load(IBiblioResolverTest.class.getResource("ibiblioresolverconf.xml"));
+        IBiblioResolver resolver = (IBiblioResolver) settings.getResolver("ibiblioA");
         assertNotNull(resolver);
         List<String> l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[module]/[artifact]-[revision].jar", l.get(0));
 
-        resolver = (IBiblioResolver) _settings.getResolver("ibiblioB");
+        resolver = (IBiblioResolver) settings.getResolver("ibiblioB");
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
@@ -113,7 +113,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals("http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar",
             l.get(0));
 
-        resolver = (IBiblioResolver) _settings.getResolver("ibiblioC");
+        resolver = (IBiblioResolver) settings.getResolver("ibiblioC");
         assertTrue(resolver.isM2compatible());
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
@@ -123,7 +123,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
             "https://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]",
             l.get(0));
 
-        resolver = (IBiblioResolver) _settings.getResolver("ibiblioD");
+        resolver = (IBiblioResolver) settings.getResolver("ibiblioD");
         assertFalse(resolver.isM2compatible());
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
@@ -132,7 +132,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         assertEquals("http://www.ibiblio.org/maven/[module]/jars/[artifact]-[revision].jar",
             l.get(0));
 
-        resolver = (IBiblioResolver) _settings.getResolver("ibiblioE");
+        resolver = (IBiblioResolver) settings.getResolver("ibiblioE");
         assertTrue(resolver.isM2compatible());
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
@@ -142,7 +142,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
             "http://www.ibiblio.org/mymaven/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]",
             l.get(0));
 
-        resolver = (IBiblioResolver) _settings.getResolver("ibiblioF");
+        resolver = (IBiblioResolver) settings.getResolver("ibiblioF");
         assertTrue(resolver.isM2compatible());
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
@@ -158,7 +158,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
     public void testMaven2Listing() throws Exception {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setName("test");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         resolver.setM2compatible(true);
         assertEquals("test", resolver.getName());
 
@@ -195,7 +195,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         resolver.setRoot("http://unknown.host.comx/");
         resolver.setName("test");
         resolver.setM2compatible(true);
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         assertEquals("test", resolver.getName());
 
         MockMessageLogger mockMessageImpl = new MockMessageLogger();
@@ -204,7 +204,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "commons-fileupload",
             "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNull(rmr);
 
         mockMessageImpl

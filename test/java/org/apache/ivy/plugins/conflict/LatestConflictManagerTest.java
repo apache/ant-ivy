@@ -39,19 +39,19 @@ public class LatestConflictManagerTest {
 
     private Ivy ivy;
 
-    private File _cache;
+    private File cache;
 
     @Before
     public void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(LatestConflictManagerTest.class.getResource("ivysettings-latest.xml"));
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     @After
     public void tearDown() {
-        FileUtil.forceDelete(_cache);
+        FileUtil.forceDelete(cache);
     }
 
     /**

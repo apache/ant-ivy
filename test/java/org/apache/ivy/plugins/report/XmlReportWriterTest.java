@@ -35,20 +35,20 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class XmlReportWriterTest {
-    private Ivy _ivy;
+    private Ivy ivy;
 
-    private File _cache;
+    private File cache;
 
     @Before
     public void setUp() throws Exception {
-        _ivy = new Ivy();
-        _ivy.configure(new File("test/repositories/ivysettings.xml"));
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
         createCache();
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     @After
@@ -57,12 +57,12 @@ public class XmlReportWriterTest {
     }
 
     private void cleanCache() {
-        CacheCleaner.deleteDir(_cache);
+        CacheCleaner.deleteDir(cache);
     }
 
     @Test
     public void testWriteOrigin() throws Exception {
-        ResolveReport report = _ivy.resolve(new File(
+        ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/special-encoding-root-ivy.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
@@ -92,8 +92,8 @@ public class XmlReportWriterTest {
 
     @Test
     public void testEscapeXml() throws Exception {
-        _ivy.configure(new File("test/repositories/IVY-635/ivysettings.xml"));
-        ResolveReport report = _ivy.resolve(new File(
+        ivy.configure(new File("test/repositories/IVY-635/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File(
                 "test/java/org/apache/ivy/plugins/report/ivy-635.xml"),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
@@ -111,7 +111,7 @@ public class XmlReportWriterTest {
 
     @Test
     public void testWriteModuleInfo() throws Exception {
-        ResolveReport report = _ivy.resolve(new File(
+        ResolveReport report = ivy.resolve(new File(
                 "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml"),
             getResolveOptions(new String[] {"default"}).setValidate(false));
         assertNotNull(report);

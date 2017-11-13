@@ -22,69 +22,69 @@ import java.util.List;
 
 public class MockMessageLogger extends AbstractMessageLogger {
 
-    private final List<String> _endProgress = new ArrayList<>();
+    private final List<String> endProgress = new ArrayList<>();
 
-    private final List<String> _logs = new ArrayList<>();
+    private final List<String> logs = new ArrayList<>();
 
-    private final List<String> _rawLogs = new ArrayList<>();
+    private final List<String> rawLogs = new ArrayList<>();
 
-    private int _progressCalls;
+    private int progressCalls;
 
     public void doEndProgress(String msg) {
-        _endProgress.add(msg);
+        endProgress.add(msg);
     }
 
     public void log(String msg, int level) {
-        _logs.add(level + " " + msg);
+        logs.add(level + " " + msg);
     }
 
     public void doProgress() {
-        _progressCalls++;
+        progressCalls++;
     }
 
     public void rawlog(String msg, int level) {
-        _rawLogs.add(level + " " + msg);
+        rawLogs.add(level + " " + msg);
     }
 
     public List<String> getEndProgress() {
-        return _endProgress;
+        return endProgress;
     }
 
     public List<String> getLogs() {
-        return _logs;
+        return logs;
     }
 
     public int getProgressCalls() {
-        return _progressCalls;
+        return progressCalls;
     }
 
     public List<String> getRawLogs() {
-        return _rawLogs;
+        return rawLogs;
     }
 
     public void clear() {
         super.clearProblems();
-        _logs.clear();
-        _rawLogs.clear();
-        _endProgress.clear();
-        _progressCalls = 0;
+        logs.clear();
+        rawLogs.clear();
+        endProgress.clear();
+        progressCalls = 0;
     }
 
     public void assertLogContains(String message) {
-        for (String log : _logs) {
+        for (String log : logs) {
             if (log.contains(message)) {
                 return;
             }
         }
         throw new AssertionError("logs do not contain expected message: expected='" + message
-                + "' logs='\n" + join(_logs) + "'");
+                + "' logs='\n" + join(logs) + "'");
     }
 
     public void assertLogDoesntContain(String message) {
-        for (String log : _logs) {
+        for (String log : logs) {
             if (log.contains(message)) {
                 throw new AssertionError("logs contain unexpected message: '" + message
-                        + "' logs='\n" + join(_logs) + "'");
+                        + "' logs='\n" + join(logs) + "'");
             }
         }
     }

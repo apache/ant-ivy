@@ -46,98 +46,98 @@ public class ConfiguratorTest {
     }
 
     public static class City {
-        private final List<Housing> _housings = new ArrayList<>();
+        private final List<Housing> housings = new ArrayList<>();
 
-        private final List<Street> _streets = new ArrayList<>();
+        private final List<Street> streets = new ArrayList<>();
 
-        private String _name;
+        private String name;
 
         public String getName() {
-            return _name;
+            return name;
         }
 
         public void setName(String name) {
-            _name = name;
+            this.name = name;
         }
 
         public List<Housing> getHousings() {
-            return _housings;
+            return housings;
         }
 
         public List<Street> getStreets() {
-            return _streets;
+            return streets;
         }
 
         public void add(Housing h) {
-            _housings.add(h);
+            housings.add(h);
         }
 
         public void add(Street s) {
-            _streets.add(s);
+            streets.add(s);
         }
     }
 
     public static class Street {
-        private Class<?> _clazz;
+        private Class<?> clazz;
 
-        private final List<Tree> _trees = new ArrayList<>();
+        private final List<Tree> trees = new ArrayList<>();
 
-        private final List<Person> _walkers = new ArrayList<>();
+        private final List<Person> walkers = new ArrayList<>();
 
         public List<Tree> getTrees() {
-            return _trees;
+            return trees;
         }
 
         public void addConfiguredTree(Tree tree) {
-            _trees.add(tree);
+            trees.add(tree);
         }
 
         public List<Person> getWalkers() {
-            return _walkers;
+            return walkers;
         }
 
         public void addConfiguredWalker(Map<String, String> walkerAttributes) {
-            _walkers.add(new Person(walkerAttributes.get("name")));
+            walkers.add(new Person(walkerAttributes.get("name")));
         }
 
         public Class<?> getClazz() {
-            return _clazz;
+            return clazz;
         }
 
         public void setClazz(Class<?> clazz) {
-            _clazz = clazz;
+            this.clazz = clazz;
         }
     }
 
     public abstract static class Housing {
-        private final List<Room> _rooms = new ArrayList<>();
+        private final List<Room> rooms = new ArrayList<>();
 
-        private boolean _isEmpty;
+        private boolean isEmpty;
 
-        private Person _proprietary;
+        private Person proprietary;
 
         public List<Room> getRooms() {
-            return _rooms;
+            return rooms;
         }
 
         public void addRoom(Room r) {
-            _rooms.add(r);
+            rooms.add(r);
         }
 
         public boolean isEmpty() {
-            return _isEmpty;
+            return isEmpty;
         }
 
         public void setEmpty(boolean isEmpty) {
-            _isEmpty = isEmpty;
+            this.isEmpty = isEmpty;
         }
 
         public Person getProprietary() {
-            return _proprietary;
+            return proprietary;
         }
 
         public void setProprietary(Person proprietary) {
-            _proprietary = proprietary;
+            this.proprietary = proprietary;
         }
     }
 
@@ -145,190 +145,190 @@ public class ConfiguratorTest {
     }
 
     public static class Tree {
-        private short _age;
+        private short age;
 
         public short getAge() {
-            return _age;
+            return age;
         }
 
         public void setAge(short age) {
-            _age = age;
+            this.age = age;
         }
     }
 
     public static class Flat extends Housing {
-        private int _stage;
+        private int stage;
 
         public int getStage() {
-            return _stage;
+            return stage;
         }
 
         public void setStage(int stage) {
-            _stage = stage;
+            this.stage = stage;
         }
     }
 
     public static class Room {
-        private short _surface;
+        private short surface;
 
         public short getSurface() {
-            return _surface;
+            return surface;
         }
 
         public void setSurface(short surface) {
-            _surface = surface;
+            this.surface = surface;
         }
     }
 
     public static class Person {
-        private final String _name;
+        private final String name;
 
         public Person(String name) {
-            _name = name;
+            this.name = name;
         }
 
         public String getName() {
-            return _name;
+            return name;
         }
     }
 
-    private Configurator _conf;
+    private Configurator conf;
 
     @Before
     public void setUp() {
-        _conf = new Configurator();
+        conf = new Configurator();
     }
 
     @Test
     public void testSetRoot() {
         City city = new City();
-        _conf.setRoot(city);
-        assertEquals(city, _conf.getCurrent());
+        conf.setRoot(city);
+        assertEquals(city, conf.getCurrent());
     }
 
     @Test
     public void testStringAttribute() {
         City city = new City();
-        _conf.setRoot(city);
-        _conf.setAttribute("name", "bordeaux");
+        conf.setRoot(city);
+        conf.setAttribute("name", "bordeaux");
         assertEquals("bordeaux", city.getName());
     }
 
     @Test
     public void testIntAttribute() {
         Flat flat = new Flat();
-        _conf.setRoot(flat);
-        _conf.setAttribute("stage", "4");
+        conf.setRoot(flat);
+        conf.setAttribute("stage", "4");
         assertEquals(4, flat.getStage());
     }
 
     @Test
     public void testBooleanAttribute() {
         Housing housing = new House();
-        _conf.setRoot(housing);
-        _conf.setAttribute("empty", "true");
+        conf.setRoot(housing);
+        conf.setAttribute("empty", "true");
         assertEquals(true, housing.isEmpty());
-        _conf.setAttribute("empty", "false");
+        conf.setAttribute("empty", "false");
         assertEquals(false, housing.isEmpty());
-        _conf.setAttribute("empty", "yes");
+        conf.setAttribute("empty", "yes");
         assertEquals(true, housing.isEmpty());
-        _conf.setAttribute("empty", "no");
+        conf.setAttribute("empty", "no");
         assertEquals(false, housing.isEmpty());
-        _conf.setAttribute("empty", "on");
+        conf.setAttribute("empty", "on");
         assertEquals(true, housing.isEmpty());
-        _conf.setAttribute("empty", "off");
+        conf.setAttribute("empty", "off");
         assertEquals(false, housing.isEmpty());
     }
 
     @Test
     public void testClassAttribute() {
         Street street = new Street();
-        _conf.setRoot(street);
-        _conf.setAttribute("clazz", getClass().getName());
+        conf.setRoot(street);
+        conf.setAttribute("clazz", getClass().getName());
         assertEquals(getClass(), street.getClazz());
     }
 
     @Test
     public void testPersonAttribute() {
         Housing housing = new House();
-        _conf.setRoot(housing);
-        _conf.setAttribute("proprietary", "jean");
+        conf.setRoot(housing);
+        conf.setAttribute("proprietary", "jean");
         assertEquals("jean", housing.getProprietary().getName());
     }
 
     @Test
     public void testAddRoom() {
         Housing housing = new House();
-        _conf.setRoot(housing);
-        _conf.startCreateChild("room");
+        conf.setRoot(housing);
+        conf.startCreateChild("room");
         assertEquals(1, housing.getRooms().size());
-        _conf.setAttribute("surface", "24");
+        conf.setAttribute("surface", "24");
         assertEquals(24, housing.getRooms().get(0).getSurface());
-        _conf.endCreateChild();
-        assertEquals(housing, _conf.getCurrent());
+        conf.endCreateChild();
+        assertEquals(housing, conf.getCurrent());
     }
 
     @Test
     public void testAddConfiguredTree() {
         Street street = new Street();
-        _conf.setRoot(street);
-        _conf.startCreateChild("tree");
+        conf.setRoot(street);
+        conf.startCreateChild("tree");
         assertTrue(street.getTrees().isEmpty());
-        _conf.setAttribute("age", "400");
-        _conf.endCreateChild();
+        conf.setAttribute("age", "400");
+        conf.endCreateChild();
         assertEquals(1, street.getTrees().size());
         assertEquals(400, street.getTrees().get(0).getAge());
-        assertEquals(street, _conf.getCurrent());
+        assertEquals(street, conf.getCurrent());
     }
 
     @Test
     public void testAddConfiguredWalker() {
         Street street = new Street();
-        _conf.setRoot(street);
-        _conf.startCreateChild("walker");
+        conf.setRoot(street);
+        conf.startCreateChild("walker");
         assertTrue(street.getWalkers().isEmpty());
-        _conf.setAttribute("name", "xavier");
-        _conf.endCreateChild();
+        conf.setAttribute("name", "xavier");
+        conf.endCreateChild();
         assertEquals(1, street.getWalkers().size());
         assertEquals("xavier", street.getWalkers().get(0).getName());
-        assertEquals(street, _conf.getCurrent());
+        assertEquals(street, conf.getCurrent());
     }
 
     @Test
     public void testAddWithTypeDef() throws Exception {
         City city = new City();
-        _conf.typeDef("house", House.class.getName());
-        _conf.typeDef("flat", Flat.class.getName());
-        _conf.typeDef("street", Street.class.getName());
-        _conf.setRoot(city);
-        _conf.startCreateChild("house");
+        conf.typeDef("house", House.class.getName());
+        conf.typeDef("flat", Flat.class.getName());
+        conf.typeDef("street", Street.class.getName());
+        conf.setRoot(city);
+        conf.startCreateChild("house");
         assertEquals(1, city.getHousings().size());
         assertTrue(city.getHousings().get(0) instanceof House);
-        _conf.endCreateChild();
-        _conf.startCreateChild("flat");
+        conf.endCreateChild();
+        conf.startCreateChild("flat");
         assertEquals(2, city.getHousings().size());
         assertTrue(city.getHousings().get(1) instanceof Flat);
-        _conf.endCreateChild();
-        _conf.startCreateChild("street");
+        conf.endCreateChild();
+        conf.startCreateChild("street");
         assertEquals(1, city.getStreets().size());
-        _conf.endCreateChild();
-        assertEquals(city, _conf.getCurrent());
+        conf.endCreateChild();
+        assertEquals(city, conf.getCurrent());
     }
 
     @Test
     public void testNested() throws Exception {
         City city = new City();
-        _conf.typeDef("house", House.class.getName());
-        _conf.setRoot(city);
-        _conf.startCreateChild("house");
-        _conf.startCreateChild("room");
-        _conf.setAttribute("surface", "20");
-        _conf.endCreateChild();
-        _conf.startCreateChild("room");
-        _conf.setAttribute("surface", "25");
-        _conf.endCreateChild();
-        _conf.endCreateChild();
-        assertEquals(city, _conf.getCurrent());
+        conf.typeDef("house", House.class.getName());
+        conf.setRoot(city);
+        conf.startCreateChild("house");
+        conf.startCreateChild("room");
+        conf.setAttribute("surface", "20");
+        conf.endCreateChild();
+        conf.startCreateChild("room");
+        conf.setAttribute("surface", "25");
+        conf.endCreateChild();
+        conf.endCreateChild();
+        assertEquals(city, conf.getCurrent());
         assertEquals(2, city.getHousings().get(0).getRooms().size());
         assertEquals(20, city.getHousings().get(0).getRooms().get(0).getSurface());
         assertEquals(25, city.getHousings().get(0).getRooms().get(1).getSurface());
@@ -337,37 +337,37 @@ public class ConfiguratorTest {
     @Test
     public void testMacro() throws Exception {
         City city = new City();
-        _conf.typeDef("house", House.class.getName());
+        conf.typeDef("house", House.class.getName());
 
-        _conf.startMacroDef("castle");
-        _conf.addMacroAttribute("surface", "40");
-        _conf.addMacroElement("addroom", true);
-        _conf.startCreateChild("house");
-        _conf.startCreateChild("room");
-        _conf.setAttribute("surface", "@{surface}");
-        _conf.endCreateChild();
-        _conf.startCreateChild("room");
-        _conf.setAttribute("surface", "@{surface}");
-        _conf.endCreateChild();
-        _conf.startCreateChild("addroom");
-        _conf.endCreateChild();
-        _conf.endCreateChild();
-        _conf.endMacroDef();
+        conf.startMacroDef("castle");
+        conf.addMacroAttribute("surface", "40");
+        conf.addMacroElement("addroom", true);
+        conf.startCreateChild("house");
+        conf.startCreateChild("room");
+        conf.setAttribute("surface", "@{surface}");
+        conf.endCreateChild();
+        conf.startCreateChild("room");
+        conf.setAttribute("surface", "@{surface}");
+        conf.endCreateChild();
+        conf.startCreateChild("addroom");
+        conf.endCreateChild();
+        conf.endCreateChild();
+        conf.endMacroDef();
 
-        _conf.setRoot(city);
-        _conf.startCreateChild("castle");
-        _conf.setAttribute("surface", "10");
-        _conf.endCreateChild();
+        conf.setRoot(city);
+        conf.startCreateChild("castle");
+        conf.setAttribute("surface", "10");
+        conf.endCreateChild();
 
-        _conf.startCreateChild("castle");
-        _conf.startCreateChild("addroom");
-        _conf.startCreateChild("room");
-        _conf.setAttribute("surface", "20");
-        _conf.endCreateChild();
-        _conf.endCreateChild();
-        _conf.endCreateChild();
+        conf.startCreateChild("castle");
+        conf.startCreateChild("addroom");
+        conf.startCreateChild("room");
+        conf.setAttribute("surface", "20");
+        conf.endCreateChild();
+        conf.endCreateChild();
+        conf.endCreateChild();
 
-        assertEquals(city, _conf.getCurrent());
+        assertEquals(city, conf.getCurrent());
         assertEquals(2, city.getHousings().size());
 
         // first castle : 2 default rooms of 10 of surface
@@ -385,8 +385,8 @@ public class ConfiguratorTest {
     @Test
     public void testFileAttribute() {
         FileTester root = new FileTester();
-        _conf.setRoot(root);
-        _conf.setAttribute("file", "path/to/file.txt");
+        conf.setRoot(root);
+        conf.setAttribute("file", "path/to/file.txt");
 
         String filePath = root.getFile().getPath();
         filePath = filePath.replace('\\', '/');

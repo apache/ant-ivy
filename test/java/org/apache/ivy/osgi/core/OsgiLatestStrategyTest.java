@@ -76,33 +76,33 @@ public class OsgiLatestStrategyTest {
 
     private static class MockArtifactInfo implements ArtifactInfo {
 
-        private long _lastModified;
+        private long lastModified;
 
-        private String _rev;
+        private String rev;
 
         public MockArtifactInfo(String rev, long lastModified) {
-            _rev = rev;
-            _lastModified = lastModified;
+            this.rev = rev;
+            this.lastModified = lastModified;
         }
 
         public String getRevision() {
-            return _rev;
+            return rev;
         }
 
         public long getLastModified() {
-            return _lastModified;
+            return lastModified;
         }
 
         public String toString() {
-            return _rev;
+            return rev;
         }
     }
 
     private ArtifactInfo[] toMockAI(String[] revs) {
-        ArtifactInfo[] artifactInfos = new ArtifactInfo[revs.length];
-        for (int i = 0; i < artifactInfos.length; i++) {
-            artifactInfos[i] = new MockArtifactInfo(revs[i], 0);
+        List<ArtifactInfo> artifactInfos = new ArrayList<>();
+        for (String rev : revs) {
+            artifactInfos.add(new MockArtifactInfo(rev, 0));
         }
-        return artifactInfos;
+        return artifactInfos.toArray(new ArtifactInfo[artifactInfos.size()]);
     }
 }

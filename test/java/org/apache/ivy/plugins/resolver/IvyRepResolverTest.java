@@ -48,22 +48,22 @@ import org.junit.rules.ExpectedException;
  *
  */
 public class IvyRepResolverTest extends AbstractDependencyResolverTest {
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private ResolveEngine _engine;
+    private ResolveEngine engine;
 
-    private ResolveData _data;
+    private ResolveData data;
 
     @Rule
     public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
-        _settings = new IvySettings();
-        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _data = new ResolveData(_engine, new ResolveOptions());
+        settings = new IvySettings();
+        engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+        data = new ResolveData(engine, new ResolveOptions());
         TestHelper.createCache();
-        _settings.setDefaultCache(TestHelper.cache);
+        settings.setDefaultCache(TestHelper.cache);
     }
 
     @After
@@ -74,14 +74,14 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     @Test
     public void testDefaults() {
         IvyRepResolver resolver = new IvyRepResolver();
-        _settings.setVariable("ivy.ivyrep.default.ivy.root", "http://www.jayasoft.fr/myivyrep/");
-        _settings.setVariable("ivy.ivyrep.default.ivy.pattern",
+        settings.setVariable("ivy.ivyrep.default.ivy.root", "http://www.jayasoft.fr/myivyrep/");
+        settings.setVariable("ivy.ivyrep.default.ivy.pattern",
             "[organisation]/[module]/ivy-[revision].[ext]");
-        _settings.setVariable("ivy.ivyrep.default.artifact.root",
+        settings.setVariable("ivy.ivyrep.default.artifact.root",
             "http://www.ibiblio.org/mymaven/");
-        _settings.setVariable("ivy.ivyrep.default.artifact.pattern",
+        settings.setVariable("ivy.ivyrep.default.artifact.pattern",
             "[module]/jars/[artifact]-[revision].jar");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
         List<String> l = resolver.getIvyPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
@@ -107,11 +107,11 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
 
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-cli", "1.0");
 
-        resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
     }
 
     @Test
@@ -124,11 +124,11 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
         resolver.setIvypattern("[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.setArtroot("file:" + rootpath);
         resolver.setArtpattern("[organisation]/[module]/jars/[artifact]-[revision].[ext]");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
+                false), data);
         assertNotNull(rmr);
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "mod1.1",
