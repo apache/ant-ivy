@@ -282,7 +282,7 @@ public class PomModuleDescriptorBuilder {
             dep.getArtifactId(), version);
 
         // Some POMs depend on themselves; Ivy doesn't allow this. Don't add this dependency!
-        // Example: https://repo.maven.apache.org/maven2/net/jini/jsk-platform/2.1/jsk-platform-2.1.pom
+        // Example: https://repo1.maven.org/maven2/net/jini/jsk-platform/2.1/jsk-platform-2.1.pom
         ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
         if (mRevId != null && mRevId.getModuleId().equals(moduleRevId.getModuleId())) {
             return;
@@ -370,7 +370,7 @@ public class PomModuleDescriptorBuilder {
         // Some POMs depend on themselves through their parent pom, don't add this dependency
         // since Ivy doesn't allow this!
         // Example:
-        // https://repo.maven.apache.org/maven2/com/atomikos/atomikos-util/3.6.4/atomikos-util-3.6.4.pom
+        // https://repo1.maven.org/maven2/com/atomikos/atomikos-util/3.6.4/atomikos-util-3.6.4.pom
         ModuleId dependencyId = descriptor.getDependencyId();
         ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
         if ((mRevId != null) && mRevId.getModuleId().equals(dependencyId)) {

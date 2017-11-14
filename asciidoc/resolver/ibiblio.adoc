@@ -37,7 +37,7 @@
 ----
 
 <url name="test" m2compatible="true">
-  <artifact pattern="https://repo.maven.apache.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+  <artifact pattern="https://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
 </url>
 
 ----

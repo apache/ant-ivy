@@ -64,7 +64,7 @@ Having the file mavenrepolist.txt content:
 [source]
 ----
 
-https://repo.maven.apache.org/maven2/
+https://repo1.maven.org/maven2/
 http://repo2.maven.org/maven2/
 
 ----
@@ -80,7 +80,7 @@ And the piece of settings:
 
 ----
 
-It will resolve first on the `repo` and if failing it will fall back on `repo2`.
+It will resolve first on the `repo1` and if failing it will fall back on `repo2`.
 
 
 '''

@@ -92,7 +92,7 @@ public class HttpclientURLHandlerTest {
         URLHandler handler = new HttpClientHandler();
         URLInfo info = handler
                 .getURLInfo(new URL(
-                        "https://repo.maven.apache.org/maven2/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
+                        "https://repo1.maven.org/maven2/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
 
         assertEquals(URLHandler.UNAVAILABLE, info);
     }
