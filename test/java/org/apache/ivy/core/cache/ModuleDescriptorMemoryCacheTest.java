@@ -33,29 +33,29 @@ import org.junit.Test;
 
 public class ModuleDescriptorMemoryCacheTest {
 
-    ModuleDescriptorMemoryCache cache = new ModuleDescriptorMemoryCache(2);
+    private ModuleDescriptorMemoryCache cache = new ModuleDescriptorMemoryCache(2);
 
-    ParserSettings ivySettings = new IvySettings();
+    private ParserSettings ivySettings = new IvySettings();
 
-    IvySettings ivySettings2 = new IvySettings();
+    private IvySettings ivySettings2 = new IvySettings();
 
-    File url1 = new File("file://cached/file.txt");
+    private File url1 = new File("file://cached/file.txt");
 
-    File url2 = new File("file://cached/file2.txt");
+    private File url2 = new File("file://cached/file2.txt");
 
-    File url3 = new File("file://cached/file3.txt");
+    private File url3 = new File("file://cached/file3.txt");
 
-    ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("org", "name", "rev");
+    private ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("org", "name", "rev");
 
-    ModuleDescriptor md1 = DefaultModuleDescriptor.newDefaultInstance(mrid1);
+    private ModuleDescriptor md1 = DefaultModuleDescriptor.newDefaultInstance(mrid1);
 
-    ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("org", "name", "rev2");
+    private ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("org", "name", "rev2");
 
-    ModuleDescriptor md2 = DefaultModuleDescriptor.newDefaultInstance(mrid2);
+    private ModuleDescriptor md2 = DefaultModuleDescriptor.newDefaultInstance(mrid2);
 
-    ModuleRevisionId mrid3 = ModuleRevisionId.newInstance("org", "name", "rev3");
+    private ModuleRevisionId mrid3 = ModuleRevisionId.newInstance("org", "name", "rev3");
 
-    ModuleDescriptor md3 = DefaultModuleDescriptor.newDefaultInstance(mrid3);
+    private ModuleDescriptor md3 = DefaultModuleDescriptor.newDefaultInstance(mrid3);
 
     @Test
     public void testUseModuleDescriptorProviderWhenModuleNotCached() throws ParseException,

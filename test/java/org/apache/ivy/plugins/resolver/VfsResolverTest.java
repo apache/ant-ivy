@@ -24,7 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class VfsResolverTest extends AbstractDependencyResolverTest {
-    VfsResolver resolver = null;
+    private VfsResolver resolver = null;
 
     @Before
     public void setUp() {

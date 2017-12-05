@@ -66,7 +66,7 @@ public class MockResolver extends AbstractResolver {
 
     List<DependencyDescriptor> askedDeps = new ArrayList<>();
 
-    ResolvedModuleRevision rmr;
+    private ResolvedModuleRevision rmr;
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {

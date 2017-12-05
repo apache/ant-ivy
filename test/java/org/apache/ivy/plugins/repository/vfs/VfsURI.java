@@ -33,19 +33,19 @@ public class VfsURI {
     private String user;
 
     // VFS Schemes
-    public static final String SCHEME_CIFS = "smb";
+    private static final String SCHEME_CIFS = "smb";
 
-    public static final String SCHEME_FILE = "file";
+    private static final String SCHEME_FILE = "file";
 
-    public static final String SCHEME_FTP = "ftp";
+    private static final String SCHEME_FTP = "ftp";
 
-    public static final String SCHEME_HTTP = "http";
+    private static final String SCHEME_HTTP = "http";
 
-    public static final String SCHEME_HTTPS = "https";
+    private static final String SCHEME_HTTPS = "https";
 
-    public static final String SCHEME_SFTP = "sftp";
+    private static final String SCHEME_SFTP = "sftp";
 
-    public static final String SCHEME_WEBDAV = "webdav";
+    private static final String SCHEME_WEBDAV = "webdav";
 
     public static final String[] SUPPORTED_SCHEMES = new String[] {
     // add other schemes here if other can be tested on your machine

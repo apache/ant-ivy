@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.ivy.Ivy;
@@ -170,7 +169,8 @@ public class DefaultRepositoryCacheManagerTest {
             }
         };
         ModuleDescriptorWriter writer = new ModuleDescriptorWriter() {
-            public void write(ResolvedResource originalMdResource, ModuleDescriptor md, File src, File dest) throws IOException, ParseException {
+            public void write(ResolvedResource originalMdResource, ModuleDescriptor md, File src,
+                              File dest) throws IOException {
                 XmlModuleDescriptorWriter.write(md, dest);
             }
         };
@@ -192,8 +192,8 @@ public class DefaultRepositoryCacheManagerTest {
         assertEquals(rmr11, rmrFromCache);
     }
 
-    protected static DefaultArtifact createArtifact(String org, String module, String rev, String name,
-            String type, String ext) {
+    private static DefaultArtifact createArtifact(String org, String module, String rev,
+                                                  String name, String type, String ext) {
         ModuleId mid = new ModuleId(org, module);
         ModuleRevisionId mrid = new ModuleRevisionId(mid, rev);
         return new DefaultArtifact(mrid, new Date(), name, type, ext);

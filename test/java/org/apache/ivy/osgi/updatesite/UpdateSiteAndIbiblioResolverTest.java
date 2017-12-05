@@ -43,7 +43,7 @@ public class UpdateSiteAndIbiblioResolverTest {
 
     private UpdateSiteResolver resolver;
 
-    IBiblioResolver resolver2;
+    private IBiblioResolver resolver2;
 
     private File cache;
 
@@ -51,7 +51,7 @@ public class UpdateSiteAndIbiblioResolverTest {
 
     private ResolveData data;
 
-    ChainResolver chain;
+    private ChainResolver chain;
 
     @Before
     public void setUp() throws Exception {

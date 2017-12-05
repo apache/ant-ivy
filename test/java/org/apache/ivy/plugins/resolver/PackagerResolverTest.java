@@ -95,7 +95,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         cleanupTempDirs();
     }
 
-    protected void cleanupTempDirs() {
+    private void cleanupTempDirs() {
         FileUtil.forceDelete(workdir);
     }
 

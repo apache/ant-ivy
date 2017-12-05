@@ -24,7 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class VersionRangeMatcherTest {
-    final VersionMatcher vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
+    private final VersionMatcher vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
 
     @Test
     public void testMavenExcludeParenthesis() {

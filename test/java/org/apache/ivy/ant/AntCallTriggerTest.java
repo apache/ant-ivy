@@ -162,7 +162,7 @@ public class AntCallTriggerTest {
      * @param level
      *            log level
      */
-    protected void addBuildListeners(Project project, int level) {
+    private void addBuildListeners(Project project, int level) {
 
         // Add the default listener
         project.addBuildListener(createLogger(level));

@@ -65,8 +65,8 @@ public class ResolverTestHelper {
         assertModuleEntriesContains(resolver, org, names, mods);
     }
 
-    static void assertModuleEntriesContains(DependencyResolver resolver, OrganisationEntry org,
-            String[] names, ModuleEntry[] mods) {
+    private static void assertModuleEntriesContains(DependencyResolver resolver, OrganisationEntry org,
+                                                    String[] names, ModuleEntry[] mods) {
         assertNotNull(mods);
         for (String name : names) {
             boolean found = false;
@@ -90,8 +90,8 @@ public class ResolverTestHelper {
         assertRevisionEntriesContains(resolver, mod, names, revs);
     }
 
-    static void assertRevisionEntriesContains(DependencyResolver resolver, ModuleEntry mod,
-            String[] names, RevisionEntry[] revs) {
+    private static void assertRevisionEntriesContains(DependencyResolver resolver, ModuleEntry mod,
+                                                      String[] names, RevisionEntry[] revs) {
         assertNotNull(revs);
         for (String name : names) {
             boolean found = false;

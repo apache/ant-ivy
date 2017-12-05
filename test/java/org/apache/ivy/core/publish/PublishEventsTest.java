@@ -162,7 +162,7 @@ public class PublishEventsTest {
         ivyFile = null;
     }
 
-    protected void resetCounters() {
+    private void resetCounters() {
         preTriggers = 0;
         postTriggers = 0;
         publications = 0;
