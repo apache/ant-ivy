@@ -58,6 +58,7 @@
         <!-- Test dependencies -->
         <dependency org="junit" name="junit" rev="${junit.version}" conf="test"/>
         <dependency org="org.hamcrest" name="hamcrest-core" rev="${hamcrest.version}" conf="test"/>
+        <dependency org="org.hamcrest" name="hamcrest-library" rev="${hamcrest.version}" conf="test"/>
         <dependency org="org.apache.ant" name="ant-testutil" rev="${apache-ant.version}" conf="test" transitive="false"/>
         <dependency org="org.apache.ant" name="ant-launcher" rev="${apache-ant.version}" conf="test" transitive="false"/>
         <dependency org="ant-contrib" name="ant-contrib" rev="${ant-contrib.version}" conf="test" transitive="false"/>
