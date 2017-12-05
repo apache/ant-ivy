@@ -58,7 +58,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class RetrieveTest {
 
@@ -153,7 +152,7 @@ public class RetrieveTest {
         mockLogger.assertLogDoesntContain("conflict on");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testRetrieveDifferentArtifactsOfSameModuleToSameFile() throws Exception {
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml").toURI().toURL(),
@@ -168,11 +167,9 @@ public class RetrieveTest {
         try {
             ivy.retrieve(md.getModuleRevisionId(),
                 getRetrieveOptions().setDestArtifactPattern(pattern));
-            fail("Exception should have been thrown!");
-        } catch (RuntimeException e) {
-            // expected!
+        } finally {
+            mockLogger.assertLogDoesntContain("multiple artifacts");
         }
-        mockLogger.assertLogDoesntContain("multiple artifacts");
     }
 
     @Test

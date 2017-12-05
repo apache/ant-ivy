@@ -39,12 +39,13 @@ import org.apache.tools.ant.taskdefs.Echo;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class IvyPublishTest {
     private File cache;
@@ -52,6 +53,9 @@ public class IvyPublishTest {
     private IvyPublish publish;
 
     private Project project;
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -399,8 +403,13 @@ public class IvyPublishTest {
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
     }
 
+    /**
+     * Expected failure: publish with haltonmissing and a missing artifact
+     */
     @Test
     public void testHaltOnMissing() {
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("missing artifact apache#resolve-simple;1.2!resolve-simple.jar");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -411,11 +420,8 @@ public class IvyPublishTest {
         publish.setHaltonmissing(true);
         try {
             publish.execute();
-            fail("publish with haltonmissing and a missing artifact should raise an exception");
-        } catch (BuildException ex) {
-            assertTrue(ex.getMessage().contains("missing"));
-            assertTrue(ex.getMessage().contains("resolve-simple.jar"));
-            // should have do the ivy delivering
+        } finally {
+            // should have delivered the ivy file
             assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
 
             // should not have published the files with "1" resolver
@@ -427,8 +433,15 @@ public class IvyPublishTest {
         }
     }
 
+    /**
+     * Expected failure: publish with haltonmissing and a missing artifact
+     *
+     * @throws IOException when copy fails
+     */
     @Test
     public void testHaltOnMissing2() throws IOException {
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("missing artifact apache#multi;1.2!multi2.jar");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -443,12 +456,8 @@ public class IvyPublishTest {
         publish.setHaltonmissing(true);
         try {
             publish.execute();
-            fail("publish with haltonmissing and a missing artifact should raise an exception");
-        } catch (BuildException ex) {
-            assertTrue(ex.getMessage().contains("missing"));
-            assertTrue(ex.getMessage().contains("multi2.jar"));
-
-            // should have do the ivy delivering
+        } finally {
+            // should have delivered the ivy file
             assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
 
             // should not have published the files with "transactional" resolver
@@ -456,8 +465,15 @@ public class IvyPublishTest {
         }
     }
 
+    /**
+     * Expected failure: publish with haltonmissing and a missing artifact
+     *
+     * @throws IOException when copy fails
+     */
     @Test
     public void testHaltOnMissing3() throws IOException {
+        expExc.expect(BuildException.class);
+        expExc.expectMessage("missing artifact apache#multi;1.2!multi2.jar");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -472,12 +488,8 @@ public class IvyPublishTest {
         publish.setHaltonmissing(true);
         try {
             publish.execute();
-            fail("publish with haltonmissing and a missing artifact should raise an exception");
-        } catch (BuildException ex) {
-            assertTrue(ex.getMessage().contains("missing"));
-            assertTrue(ex.getMessage().contains("multi2.jar"));
-
-            // should have do the ivy delivering
+        } finally {
+            // should have delivered the ivy file
             assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
 
             // should not have published the files with "transactional" resolver
@@ -744,8 +756,8 @@ public class IvyPublishTest {
         publish.execute();
     }
 
-    @Test
-    public void testReadonly() throws Exception {
+    @Test(expected = BuildException.class)
+    public void testReadonly() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -776,8 +788,7 @@ public class IvyPublishTest {
 
         try {
             publish.execute();
-            fail("by default, publish should fail when a readonly artifact already exist");
-        } catch (Exception ex) {
+        } finally {
             assertTrue(dest.exists());
             BufferedReader reader = new BufferedReader(new FileReader(dest));
             assertEquals("old version", reader.readLine());
