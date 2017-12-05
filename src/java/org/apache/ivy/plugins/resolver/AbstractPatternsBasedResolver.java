@@ -120,8 +120,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     @Override
     protected Collection<String> findNames(Map<String, String> tokenValues, String token) {
-        Collection<String> names = new HashSet<>();
-        names.addAll(findIvyNames(tokenValues, token));
+        Collection<String> names = new HashSet<>(findIvyNames(tokenValues, token));
         if (isAllownomd()) {
             names.addAll(findArtifactNames(tokenValues, token));
         }

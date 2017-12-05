@@ -433,10 +433,10 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         remainingTokens.remove(IvyPatternHelper.ORGANISATION_KEY);
         String osgiType = stringCriteria.get(IvyPatternHelper.ORGANISATION_KEY);
         if (osgiType == null) {
-            Set<Map<String, String>> tokenValues = new HashSet<>();
             Map<String, Object> newCriteria = new HashMap<>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.BUNDLE_TYPE);
-            tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));
+            Set<Map<String, String>> tokenValues = new HashSet<>(listTokenValues(remainingTokens,
+                    newCriteria));
             newCriteria = new HashMap<>(criteria);
             newCriteria.put(IvyPatternHelper.ORGANISATION_KEY, BundleInfo.PACKAGE_TYPE);
             tokenValues.addAll(listTokenValues(remainingTokens, newCriteria));

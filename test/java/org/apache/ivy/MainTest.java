@@ -152,8 +152,7 @@ public class MainTest {
         final String[] parsedTypes = parsedCommand.getOptionValues("types");
         assertNotNull("Values for types argument is missing", parsedTypes);
         assertEquals("Unexpected number of values parsed for types argument", 2, parsedTypes.length);
-        final Set<String> uniqueParsedTypes = new HashSet<>();
-        uniqueParsedTypes.addAll(Arrays.asList(parsedTypes));
+        final Set<String> uniqueParsedTypes = new HashSet<>(Arrays.asList(parsedTypes));
         assertTrue("jar type is missing from the parsed types argument", uniqueParsedTypes.contains("jar"));
         assertTrue("jar type is missing from the parsed types argument", uniqueParsedTypes.contains("source"));
     }

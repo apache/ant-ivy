@@ -385,9 +385,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private Collection<String> getDependencyConfigurationsIncludingExtending(String conf,
             String requestedConfiguration) {
-        Set<String> allDepConfs = new LinkedHashSet<>();
-        allDepConfs
-                .addAll(Arrays.asList(getDependencyConfigurations(conf, requestedConfiguration)));
+        Set<String> allDepConfs = new LinkedHashSet<>(Arrays.asList(getDependencyConfigurations(conf,
+                requestedConfiguration)));
 
         Collection<Configuration> extendingConfs = Configuration.findConfigurationExtending(conf,
             md.getConfigurations());
