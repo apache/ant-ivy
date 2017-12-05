@@ -225,7 +225,6 @@ public class IvyConfigureTest {
     /**
      * Test case for IVY-601.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-601">IVY-601</a>
      */
     @Test
@@ -274,8 +273,6 @@ public class IvyConfigureTest {
 
     /**
      * Calling settings twice with the same id with override=notallowed must fail
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testOverrideNotAllowed() {
@@ -299,8 +296,6 @@ public class IvyConfigureTest {
 
     /**
      * Settings override with invalid value must fail.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testInvalidOverride() {

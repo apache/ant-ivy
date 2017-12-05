@@ -120,8 +120,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testInlineForNonExistingModule() {
@@ -135,8 +133,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() {
@@ -147,8 +143,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     /**
      * Test must fail because of missing configurations.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testFailureWithMissingConfigurations() {
@@ -163,8 +157,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailureOnBadDependencyIvyFile() {
@@ -175,8 +167,6 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailureOnBadStatusInDependencyIvyFile() {

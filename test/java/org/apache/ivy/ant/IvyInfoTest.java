@@ -77,7 +77,6 @@ public class IvyInfoTest {
     /**
      * Test case for IVY-726.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-726">IVY-726</a>
      */
     @Test
@@ -91,7 +90,6 @@ public class IvyInfoTest {
     /**
      * Test case for IVY-395.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-395">IVY-395</a>
      */
     @Test

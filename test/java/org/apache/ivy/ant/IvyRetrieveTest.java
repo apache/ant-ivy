@@ -91,7 +91,6 @@ public class IvyRetrieveTest {
     /**
      * Test case for IVY-992.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-992">IVY-992</a>
      */
     @Test
@@ -229,7 +228,6 @@ public class IvyRetrieveTest {
     /**
      * Test case for IVY-304.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-304">IVY-304</a>
      */
     @Test
@@ -280,7 +278,6 @@ public class IvyRetrieveTest {
     /**
      * Test case for IVY-631.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-631">IVY-631</a>
      */
     @Test
@@ -296,8 +293,6 @@ public class IvyRetrieveTest {
 
     /**
      * Retrieve without previous resolve must fail.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailureWithoutAPreviousResolve() {
@@ -309,8 +304,6 @@ public class IvyRetrieveTest {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() {

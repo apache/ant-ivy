@@ -91,8 +91,6 @@ public class SortTest {
      * Sorter does not throw circular dependency, circular dependencies are handled at resolve time
      * only. However the sort respect the transitive order when it is unambiguous. (If A depends
      * transitively of B, but B doesn't depends transitively on A, then B always comes before A.)
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testCircularDependency() {
@@ -129,7 +127,6 @@ public class SortTest {
     /**
      * Test case for IVY-624
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-624">IVY-624</a>
      */
     @Test

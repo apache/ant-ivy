@@ -69,7 +69,6 @@ public class IvyResolveTest {
     /**
      * Test case for IVY-1455.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1455">IVY-1455</a>
      */
     @Test
@@ -100,7 +99,6 @@ public class IvyResolveTest {
     /**
      * Test case for IVY-779.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-779">IVY-779</a>
      */
     @Test
@@ -141,7 +139,6 @@ public class IvyResolveTest {
     /**
      * Test case for IVY-630.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-630">IVY-630</a>
      */
     @Test
@@ -638,8 +635,6 @@ public class IvyResolveTest {
 
     /**
      * Test a failing resolve.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testChildsFail() {

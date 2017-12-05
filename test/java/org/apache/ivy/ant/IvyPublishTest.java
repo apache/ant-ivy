@@ -171,7 +171,6 @@ public class IvyPublishTest {
      * Test case for IVY-1248.
      *
      * @throws IOException if something goes wrong
-     * @throws ParseException if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
      */
     @Test
@@ -203,12 +202,10 @@ public class IvyPublishTest {
      * the module parent is not published not yet in cache.
      *
      * @throws IOException if something goes wrong
-     * @throws ParseException if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
      */
     @Test
-    public void testMergeParentWithoutPublishingParentForceDeliver()
-            throws IOException {
+    public void testMergeParentWithoutPublishingParentForceDeliver() throws IOException {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));

@@ -103,8 +103,6 @@ public class IvyCleanCacheTest {
 
     /**
      * clean cache must fail with unknown cache
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testUnknownCache() {

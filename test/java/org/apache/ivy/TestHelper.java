@@ -203,7 +203,7 @@ public class TestHelper {
 
     /**
      * Parses a collection of module descriptors in the micro ivy format, separated by double
-     * semicolumns.
+     * semicolons.
      *
      * @param microIvy
      *            the text representation of the collection of module descriptors

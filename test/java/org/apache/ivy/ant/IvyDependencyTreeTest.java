@@ -86,8 +86,6 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
 
     /**
      * Task must fail because no resolve was performed.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testWithResolveIdWithoutResolve() {
@@ -121,7 +119,6 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
      * Test case for IVY-1540.
      * Dependency tree task must not run into an infinite loop due to circular dependencies.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1540">IVY-1540</a>
      */
     @Test

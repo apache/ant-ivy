@@ -291,8 +291,6 @@ public class IvyInstallTest {
 
     /**
      * Installing a module with namespace coordinates instead of system one must fail.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testInstallWithNamespace2() {
@@ -324,8 +322,6 @@ public class IvyInstallTest {
 
     /**
      * Fail on unknown dependency when haltonfailure=true.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testDependencyNotFoundFailure() {

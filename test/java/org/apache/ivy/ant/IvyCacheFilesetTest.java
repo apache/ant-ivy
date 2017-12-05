@@ -111,8 +111,6 @@ public class IvyCacheFilesetTest {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testFailure() {
@@ -123,8 +121,6 @@ public class IvyCacheFilesetTest {
 
     /**
      * Test must fail with default haltonfailure setting.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
     public void testInvalidPattern() {
@@ -136,8 +132,6 @@ public class IvyCacheFilesetTest {
 
     /**
      * Test must pass with haltonfailure set to false.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testHaltOnFailure() {
@@ -190,8 +184,8 @@ public class IvyCacheFilesetTest {
         assertEquals(new File("x").getAbsoluteFile(), base);
 
         // A common base only on the fs-root.
-        final File[] filesytemRoots = File.listRoots();
-        final File root1 = filesytemRoots[0];
+        final File[] filesystemRoots = File.listRoots();
+        final File root1 = filesystemRoots[0];
         final File file4 = new File(root1, "abcd/xyz");
         final File file5 = new File(root1, "pqrs/xyz");
         final File commonBase = fileset.getBaseDir(file4, file5);
