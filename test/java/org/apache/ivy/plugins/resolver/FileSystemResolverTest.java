@@ -1035,16 +1035,19 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 "org2", "org6", "org9", "orgfailure", "yourorg", "IVY-644"}, orgs);
 
         OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "org1");
+        assertNotNull("organisation not found: org1", org);
         ModuleEntry[] mods = resolver.listModules(org);
         ResolverTestHelper.assertModuleEntries(resolver, org, new String[] {"mod1.1", "mod1.2",
                 "mod1.3", "mod1.4", "mod1.5", "mod1.6"}, mods);
 
         ModuleEntry mod = ResolverTestHelper.getEntry(mods, "mod1.1");
+        assertNotNull("module not found: mod1.1", mod);
         RevisionEntry[] revs = resolver.listRevisions(mod);
         ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.0.1",
                 "1.1", "2.0"}, revs);
 
         mod = ResolverTestHelper.getEntry(mods, "mod1.2");
+        assertNotNull("module not found: mod1.2", mod);
         revs = resolver.listRevisions(mod);
         ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"0.9", "1.0", "1.1",
                 "2.0", "2.1", "2.2"}, revs);

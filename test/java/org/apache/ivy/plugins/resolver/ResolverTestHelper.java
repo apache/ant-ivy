@@ -26,7 +26,6 @@ import org.apache.ivy.core.search.RevisionEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  *
@@ -112,7 +111,6 @@ public class ResolverTestHelper {
                 return org;
             }
         }
-        fail("organisation not found: " + name);
         return null; // for compilation only
     }
 
@@ -122,7 +120,6 @@ public class ResolverTestHelper {
                 return mod;
             }
         }
-        fail("module not found: " + name);
         return null; // for compilation only
     }
 }
