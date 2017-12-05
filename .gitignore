@@ -12,6 +12,7 @@ doc/xooki/.svn
 doc/samples/target-platform/bundles
 doc/samples/target-platform/cache
 lib
+tagsdoc.properties
 test/jar-repos
 test/repositories/checkmodified/ivy-1.0.xml
 test/repositories/checkmodified/mod1.1-1.0.jar

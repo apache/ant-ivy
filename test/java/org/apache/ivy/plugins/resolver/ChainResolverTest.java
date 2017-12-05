@@ -384,6 +384,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertEquals(Collections.emptyList(), resolvers[0].askedDeps);
     }
 
+    @Test
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -450,6 +451,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
      * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-207">IVY-207</a>
      */
+    @Test
     public void testReturnFirstWithCheckModifiedAndDefaultAndCacheAndRealResolver()
             throws Exception {
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
