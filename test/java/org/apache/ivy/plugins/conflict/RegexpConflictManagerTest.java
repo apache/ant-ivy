@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import org.apache.ivy.Ivy;
@@ -53,12 +51,8 @@ public class RegexpConflictManagerTest {
 
     @Test
     public void testNoApiConflictResolve() throws Exception {
-        try {
-            ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-no-regexp-conflict.xml"),
+        ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-no-regexp-conflict.xml"),
                 getResolveOptions());
-        } catch (StrictConflictException e) {
-            fail("Unexpected conflict: " + e);
-        }
     }
 
     @Test

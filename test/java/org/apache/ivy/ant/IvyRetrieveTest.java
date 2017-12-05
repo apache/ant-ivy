@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class IvyRetrieveTest {
     private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
@@ -321,13 +320,9 @@ public class IvyRetrieveTest {
 
     @Test
     public void testHaltOnFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            retrieve.setHaltonfailure(false);
-            retrieve.execute();
-        } catch (BuildException ex) {
-            fail("failure raised an exception with haltonfailure set to false");
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        retrieve.setHaltonfailure(false);
+        retrieve.execute();
     }
 
     @Test

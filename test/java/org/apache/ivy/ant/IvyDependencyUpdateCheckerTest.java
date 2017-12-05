@@ -34,7 +34,6 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
@@ -188,15 +187,10 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     @Test
     public void testHaltOnFailure() throws Exception {
-        try {
-            dependencyUpdateChecker
-                    .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
-            dependencyUpdateChecker.setHaltonfailure(false);
-            dependencyUpdateChecker.execute();
-        } catch (BuildException ex) {
-            ex.printStackTrace();
-            fail("failure raised an exception with haltonfailure set to false");
-        }
+        dependencyUpdateChecker
+                .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        dependencyUpdateChecker.setHaltonfailure(false);
+        dependencyUpdateChecker.execute();
     }
 
     @Test

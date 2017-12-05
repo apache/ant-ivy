@@ -32,7 +32,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class IvyCachePathTest {
 
@@ -149,14 +148,10 @@ public class IvyCachePathTest {
 
     @Test
     public void testHaltOnFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            path.setPathid("haltfailure-pathid");
-            path.setHaltonfailure(false);
-            path.execute();
-        } catch (BuildException ex) {
-            fail("failure raised an exception with haltonfailure set to false");
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        path.setPathid("haltfailure-pathid");
+        path.setHaltonfailure(false);
+        path.execute();
     }
 
     @Test

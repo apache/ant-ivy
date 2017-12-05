@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class LatestConflictManagerTest {
 
@@ -236,14 +235,10 @@ public class LatestConflictManagerTest {
                 .getResource("ivysettings-evicted.xml"));
 
         ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
-        try {
-            ResolveReport report = ivy.resolve(
+        ResolveReport report = ivy.resolve(
                 new File("test/repositories/IVY-1399/MyCompany/target/ivy-1.xml"),
                 getResolveOptions());
-            report.getConfigurationReport("all");
-        } catch (IllegalStateException e) {
-            fail("Resolving target should not throw an exception");
-        }
+        report.getConfigurationReport("all");
     }
 
     private ResolveOptions getResolveOptions() {

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Arrays;
@@ -135,16 +134,17 @@ public class IvyCacheFilesetTest {
         fileset.execute();
     }
 
+    /**
+     * Test must pass with haltonfailure set to false.
+     *
+     * @throws Exception if something goes wrong
+     */
     @Test
     public void testHaltOnFailure() throws Exception {
-        try {
-            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            fileset.setSetid("haltfailure-setid");
-            fileset.setHaltonfailure(false);
-            fileset.execute();
-        } catch (BuildException ex) {
-            fail("failure raised an exception with haltonfailure set to false");
-        }
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+        fileset.setSetid("haltfailure-setid");
+        fileset.setHaltonfailure(false);
+        fileset.execute();
     }
 
     @Test
@@ -238,7 +238,6 @@ public class IvyCacheFilesetTest {
         expExc.expect(BuildException.class);
         List<ArtifactDownloadReport> reports = Collections.emptyList();
         fileset.requireCommonBaseDir(reports);
-        fail("A BuildException was expected when trying to find a common base dir.");
     }
 
     @Test
@@ -256,7 +255,6 @@ public class IvyCacheFilesetTest {
             artifactDownloadReport(new File(fileSystemRoots[1], "a/b/e/f"))
         );
         fileset.requireCommonBaseDir(reports);
-        fail("A BuildException was expected when trying to find a common base dir.");
     }
 
     @Test

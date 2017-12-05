@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ModuleIdTest {
 
@@ -37,17 +36,18 @@ public class ModuleIdTest {
         assertEquals(name, moduleId.getName());
     }
 
+    /*
+     * null is allowed as an organisation name
+     */
     @Test
     public void testModuleIdIllegalArgumentException1() {
         String name = "some-new-module";
-
-        try {
-            new ModuleId(null, name);
-        } catch (IllegalArgumentException iae) {
-            fail("A null should be allowed for argument 'org'.");
-        }
+        new ModuleId(null, name);
     }
 
+    /*
+     * null is not allowed as a module name
+     */
     @Test(expected = IllegalArgumentException.class)
     public void testModuleIdIllegalArgumentException2() {
         String org = "apache";

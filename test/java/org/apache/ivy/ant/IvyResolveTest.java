@@ -40,7 +40,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 public class IvyResolveTest {
 
@@ -332,14 +331,9 @@ public class IvyResolveTest {
 
     @Test
     public void testHaltOnFailure() throws Exception {
-        try {
-            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
-            resolve.setHaltonfailure(false);
-            resolve.execute();
-        } catch (BuildException ex) {
-            ex.printStackTrace();
-            fail("failure raised an exception with haltonfailure set to false");
-        }
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        resolve.setHaltonfailure(false);
+        resolve.execute();
     }
 
     @Test

@@ -31,7 +31,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class IvyInstallTest {
     private File cache;
@@ -223,23 +222,13 @@ public class IvyInstallTest {
         install.setFrom("test");
         install.setTo("install");
         install.setHaltonfailure(false);
-
-        try {
-            install.execute();
-        } catch (BuildException be) {
-            fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
-        }
+        install.execute();
 
         assertFalse(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
 
         install.setInstallOriginalMetadata(true);
-
-        try {
-            install.setOverwrite(true);
-            install.execute();
-        } catch (BuildException be) {
-            fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
-        }
+        install.setOverwrite(true);
+        install.execute();
 
         assertTrue(new File("build/test/install/org.apache/test/test-1.0.pom").exists());
     }
@@ -358,11 +347,6 @@ public class IvyInstallTest {
         install.setFrom("test");
         install.setTo("1");
         install.setHaltonfailure(false);
-
-        try {
-            install.execute();
-        } catch (BuildException be) {
-            fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
-        }
+        install.execute();
     }
 }

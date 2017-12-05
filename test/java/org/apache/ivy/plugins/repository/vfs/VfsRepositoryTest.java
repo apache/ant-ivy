@@ -29,7 +29,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
  * Testing was the single biggest hurdle I faced. I have tried to provide a complete test
@@ -97,14 +96,9 @@ public class VfsRepositoryTest {
                 FileUtil.forceDelete(scratchDir);
             }
 
-            try {
-                repo.put(new File(srcFile), vfsURI.toString(), false);
-                assertTrue("Put didn't happen. Src VfsURI: " + vfsURI.toString()
-                        + ".\nExpected file: " + destFile, new File(srcFile).exists());
-            } catch (IOException e) {
-                fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
-                        + e.getLocalizedMessage());
-            }
+            repo.put(new File(srcFile), vfsURI.toString(), false);
+            assertTrue("Put didn't happen. Src VfsURI: " + vfsURI.toString()
+                    + ".\nExpected file: " + destFile, new File(srcFile).exists());
         }
     }
 
@@ -130,16 +124,11 @@ public class VfsRepositoryTest {
             destFile.getParentFile().mkdirs();
             destFile.createNewFile();
 
-            try {
-                repo.put(new File(srcFile), vfsURI.toString(), true);
-                assertTrue("Put didn't happen. Src VfsURI: " + vfsURI.toString()
-                        + ".\nExpected file: " + destFile, new File(srcFile).exists());
-                assertNotEquals("Zero file size indicates file not overwritten", 0,
-                        destFile.length());
-            } catch (IOException e) {
-                fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
-                        + e.getLocalizedMessage());
-            }
+            repo.put(new File(srcFile), vfsURI.toString(), true);
+            assertTrue("Put didn't happen. Src VfsURI: " + vfsURI.toString()
+                    + ".\nExpected file: " + destFile, new File(srcFile).exists());
+            assertNotEquals("Zero file size indicates file not overwritten", 0,
+                    destFile.length());
         }
     }
 
@@ -177,14 +166,9 @@ public class VfsRepositoryTest {
                 FileUtil.forceDelete(scratchDir);
             }
 
-            try {
-                repo.get(vfsURI.toString(), new File(testFile));
-                assertTrue("Expected file: " + testFile + "not found. Failed vfsURI: "
-                        + vfsURI.toString(), new File(testFile).exists());
-            } catch (IOException e) {
-                fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
-                        + e.getLocalizedMessage());
-            }
+            repo.get(vfsURI.toString(), new File(testFile));
+            assertTrue("Expected file: " + testFile + "not found. Failed vfsURI: "
+                    + vfsURI.toString(), new File(testFile).exists());
         }
     }
 
@@ -206,16 +190,11 @@ public class VfsRepositoryTest {
             testFile.getParentFile().mkdirs();
             testFile.createNewFile();
 
-            try {
-                repo.get(vfsURI.toString(), testFile);
-                assertTrue("Expected file: " + testFile + "not found. Failed vfsURI: "
-                        + vfsURI.toString(), testFile.exists());
-                assertNotEquals("Zero file size indicates file not overwritten", 0,
-                        testFile.length());
-            } catch (IOException e) {
-                fail("Caught unexpected IOException on Vfs URI: " + vfsURI.toString() + "\n"
-                        + e.getLocalizedMessage());
-            }
+            repo.get(vfsURI.toString(), testFile);
+            assertTrue("Expected file: " + testFile + "not found. Failed vfsURI: "
+                    + vfsURI.toString(), testFile.exists());
+            assertNotEquals("Zero file size indicates file not overwritten", 0,
+                    testFile.length());
         }
     }
 
@@ -230,12 +209,7 @@ public class VfsRepositoryTest {
         String testResource = VfsTestHelper.TEST_IVY_XML;
 
         for (VfsURI vfsURI : helper.createVFSUriSet(testResource)) {
-            try {
-                assertNotNull(repo.getResource(vfsURI.toString()));
-            } catch (IOException e) {
-                fail("Unexpected IOError on fetch of valid resource");
-                e.printStackTrace();
-            }
+            assertNotNull(repo.getResource(vfsURI.toString()));
         }
     }
 
@@ -254,12 +228,7 @@ public class VfsRepositoryTest {
             if (scratchDir.exists()) {
                 FileUtil.forceDelete(scratchDir);
             }
-            try {
-                assertNotNull(repo.getResource(vfsURI.toString()));
-            } catch (IOException e) {
-                // this should not happen
-                fail("Unexpected IOException");
-            }
+            assertNotNull(repo.getResource(vfsURI.toString()));
         }
     }
 
