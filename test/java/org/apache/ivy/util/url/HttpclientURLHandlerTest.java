@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Random;
 
+import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -90,9 +91,8 @@ public class HttpclientURLHandlerTest {
     @Test
     public void testGetURLInfo() throws Exception {
         URLHandler handler = new HttpClientHandler();
-        URLInfo info = handler
-                .getURLInfo(new URL(
-                        "https://repo1.maven.org/maven2/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
+        URLInfo info = handler.getURLInfo(new URL(DEFAULT_M2_ROOT
+                + "/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
 
         assertEquals(URLHandler.UNAVAILABLE, info);
     }

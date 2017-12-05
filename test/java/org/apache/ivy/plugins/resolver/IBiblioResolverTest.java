@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -119,8 +120,9 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals(
-            "https://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]",
+        assertTrue("Default Maven URL must end with '/'", DEFAULT_M2_ROOT.endsWith("/"));
+        assertEquals(DEFAULT_M2_ROOT
+            + "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]",
             l.get(0));
 
         resolver = (IBiblioResolver) settings.getResolver("ibiblioD");

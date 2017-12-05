@@ -35,6 +35,7 @@ import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
 import static org.junit.Assert.assertNotNull;
 
 public class UpdateSiteAndIbiblioResolverTest {
@@ -68,7 +69,7 @@ public class UpdateSiteAndIbiblioResolverTest {
 
         resolver2 = new IBiblioResolver();
         resolver2.setName("maven2");
-        settings.setVariable("ivy.ibiblio.default.artifact.root", "https://repo1.maven.org/maven2/");
+        settings.setVariable("ivy.ibiblio.default.artifact.root", DEFAULT_M2_ROOT);
         settings.setVariable("ivy.ibiblio.default.artifact.pattern",
             "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
         resolver2.setSettings(settings);

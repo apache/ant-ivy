@@ -17,8 +17,10 @@
  */
 package org.apache.ivy.osgi.obr;
 
+import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,10 +65,11 @@ public class OBRParserTest {
                 String url0 = md.getAllArtifacts()[0].getUrl().toExternalForm();
                 String type1 = md.getAllArtifacts()[1].getType();
                 String url1 = md.getAllArtifacts()[1].getUrl().toExternalForm();
-                String jarUrl = "https://repo1.maven.org/maven2/org/apache/felix/"
-                        + "org.apache.felix.bundlerepository/1.0.3/org.apache.felix.bundlerepository-1.0.3.jar";
-                String srcUrl = "http://oscar-osgi.sf.net/obr2/org.apache.felix.bundlerepository/"
-                        + "org.apache.felix.bundlerepository-1.0.3-src.jar";
+                assertTrue("Default Maven URL must end with '/'", DEFAULT_M2_ROOT.endsWith("/"));
+                String jarUrl = DEFAULT_M2_ROOT + "org/apache/felix/org.apache.felix."
+                        + "bundlerepository/1.0.3/org.apache.felix.bundlerepository-1.0.3.jar";
+                String srcUrl = "http://oscar-osgi.sf.net/obr2/org.apache.felix."
+                        + "bundlerepository/org.apache.felix.bundlerepository-1.0.3-src.jar";
                 if (type0.equals("jar")) {
                     assertEquals(jarUrl, url0);
                     assertEquals("source", type1);
