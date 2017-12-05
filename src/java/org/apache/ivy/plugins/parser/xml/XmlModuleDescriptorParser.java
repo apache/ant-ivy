@@ -745,9 +745,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         protected void managerStarted(Attributes attributes, String managerAtt) {
             String org = settings.substitute(attributes.getValue("org"));
-            org = (org == null) ? PatternMatcher.ANY_EXPRESSION : org;
+            if (org == null) {
+                org = PatternMatcher.ANY_EXPRESSION;
+            }
             String mod = settings.substitute(attributes.getValue("module"));
-            mod = (mod == null) ? PatternMatcher.ANY_EXPRESSION : mod;
+            if (mod == null) {
+                mod = PatternMatcher.ANY_EXPRESSION;
+            }
             ConflictManager cm;
             String name = settings.substitute(attributes.getValue(managerAtt));
             String rev = settings.substitute(attributes.getValue("rev"));
@@ -764,8 +768,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 return;
             }
             String matcherName = settings.substitute(attributes.getValue("matcher"));
-            PatternMatcher matcher = matcherName == null ? defaultMatcher : settings
-                    .getMatcher(matcherName);
+            PatternMatcher matcher = (matcherName == null) ? defaultMatcher
+                    : settings.getMatcher(matcherName);
             if (matcher == null) {
                 addError("unknown matcher: " + matcherName);
                 return;
@@ -775,14 +779,18 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         protected void mediationOverrideStarted(Attributes attributes) {
             String org = settings.substitute(attributes.getValue("org"));
-            org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
+            if (org == null) {
+                org = PatternMatcher.ANY_EXPRESSION;
+            }
             String mod = settings.substitute(attributes.getValue("module"));
-            mod = mod == null ? PatternMatcher.ANY_EXPRESSION : mod;
+            if (mod == null) {
+                mod = PatternMatcher.ANY_EXPRESSION;
+            }
             String rev = settings.substitute(attributes.getValue("rev"));
             String branch = settings.substitute(attributes.getValue("branch"));
             String matcherName = settings.substitute(attributes.getValue("matcher"));
-            PatternMatcher matcher = matcherName == null ? defaultMatcher : settings
-                    .getMatcher(matcherName);
+            PatternMatcher matcher = (matcherName == null) ? defaultMatcher
+                    : settings.getMatcher(matcherName);
             if (matcher == null) {
                 addError("unknown matcher: " + matcherName);
                 return;
@@ -805,8 +813,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             // the specified file.
             Parser parser = new Parser(getModuleDescriptorParser(), settings);
             parser.setInput(url);
-            parser.setMd(new DefaultModuleDescriptor(getModuleDescriptorParser(), new URLResource(
-                    url)));
+            parser.setMd(new DefaultModuleDescriptor(getModuleDescriptorParser(),
+                    new URLResource(url)));
             XMLHelper.parse(url, null, parser);
 
             // add the configurations from this temporary parser to this module descriptor
@@ -945,11 +953,17 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             if (state == State.PUB) {
                 // this is a published artifact
                 String artName = settings.substitute(attributes.getValue("name"));
-                artName = artName == null ? getMd().getModuleRevisionId().getName() : artName;
+                if (artName == null) {
+                    artName = getMd().getModuleRevisionId().getName();
+                }
                 String type = settings.substitute(attributes.getValue("type"));
-                type = type == null ? "jar" : type;
+                if (type == null) {
+                    type = "jar";
+                }
                 String ext = settings.substitute(attributes.getValue("ext"));
-                ext = ext != null ? ext : type;
+                if (ext == null) {
+                    ext = type;
+                }
                 String url = settings.substitute(attributes.getValue("url"));
                 artifact = new MDArtifact(getMd(), artName, type, ext, url == null ? null
                         : new URL(url), ExtendableItemHelper.getExtraAttributes(settings,
@@ -1102,35 +1116,52 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 type = "artifact".equals(tag) ? "jar" : PatternMatcher.ANY_EXPRESSION;
             }
             String ext = settings.substitute(attributes.getValue("ext"));
-            ext = ext != null ? ext : type;
-            if (state == State.DEP_ARTIFACT) {
-                String url = settings.substitute(attributes.getValue("url"));
-                Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, Arrays.asList("name", "type", "ext", "url", "conf"));
-                confAware = new DefaultDependencyArtifactDescriptor(dd, name, type, ext,
-                        url == null ? null : new URL(url), extraAtt);
-            } else if (state == State.ARTIFACT_INCLUDE) {
-                PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
-                String org = settings.substitute(attributes.getValue("org"));
-                org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
-                String module = settings.substitute(attributes.getValue("module"));
-                module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
-                ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-                Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, Arrays.asList("org", "module", "name", "type", "ext", "matcher",
-                            "conf"));
-                confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
-            } else { // _state == ARTIFACT_EXCLUDE || EXCLUDE
-                PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
-                String org = settings.substitute(attributes.getValue("org"));
-                org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
-                String module = settings.substitute(attributes.getValue("module"));
-                module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
-                ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-                Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
-                    attributes, Arrays.asList("org", "module", "name", "type", "ext", "matcher",
-                            "conf"));
-                confAware = new DefaultExcludeRule(aid, matcher, extraAtt);
+            if (ext == null) {
+                ext = type;
+            }
+            switch (state) {
+                case State.DEP_ARTIFACT: {
+                    String url = settings.substitute(attributes.getValue("url"));
+                    Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
+                            attributes, Arrays.asList("name", "type", "ext", "url", "conf"));
+                    confAware = new DefaultDependencyArtifactDescriptor(dd, name, type, ext,
+                            url == null ? null : new URL(url), extraAtt);
+                    break;
+                }
+                case State.ARTIFACT_INCLUDE: {
+                    PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
+                    String org = settings.substitute(attributes.getValue("org"));
+                    if (org == null) {
+                        org = PatternMatcher.ANY_EXPRESSION;
+                    }
+                    String module = settings.substitute(attributes.getValue("module"));
+                    if (module == null) {
+                        module = PatternMatcher.ANY_EXPRESSION;
+                    }
+                    ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
+                    Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
+                            attributes, Arrays.asList("org", "module", "name", "type", "ext", "matcher",
+                                    "conf"));
+                    confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
+                    break;
+                }
+                default: { // _state == ARTIFACT_EXCLUDE || EXCLUDE
+                    PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
+                    String org = settings.substitute(attributes.getValue("org"));
+                    if (org == null) {
+                        org = PatternMatcher.ANY_EXPRESSION;
+                    }
+                    String module = settings.substitute(attributes.getValue("module"));
+                    if (module == null) {
+                        module = PatternMatcher.ANY_EXPRESSION;
+                    }
+                    ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
+                    Map<String, String> extraAtt = ExtendableItemHelper.getExtraAttributes(settings,
+                            attributes, Arrays.asList("org", "module", "name", "type", "ext", "matcher",
+                                    "conf"));
+                    confAware = new DefaultExcludeRule(aid, matcher, extraAtt);
+                    break;
+                }
             }
             String confs = settings.substitute(attributes.getValue("conf"));
             // only add confs if they are specified. if they aren't, endElement will handle this

@@ -432,29 +432,34 @@ public final class XmlModuleDescriptorUpdater {
                 String name = attributes.getQName(i);
                 String value = null;
 
-                if ("revision".equals(name)) {
-                    // replace inline revision with resolved parent revision
-                    ModuleDescriptor merged = options.getMergedDescriptor();
-                    if (merged != null) {
-                        for (ExtendsDescriptor parent : merged.getInheritedDescriptors()) {
-                            ModuleRevisionId resolvedId = parent.getResolvedParentRevisionId();
-                            if (parentId.equals(resolvedId.getModuleId())) {
-                                value = resolvedId.getRevision();
-                                if (value != null) {
-                                    break;
+                switch (name) {
+                    case "revision":
+                        // replace inline revision with resolved parent revision
+                        ModuleDescriptor merged = options.getMergedDescriptor();
+                        if (merged != null) {
+                            for (ExtendsDescriptor parent : merged.getInheritedDescriptors()) {
+                                ModuleRevisionId resolvedId = parent.getResolvedParentRevisionId();
+                                if (parentId.equals(resolvedId.getModuleId())) {
+                                    value = resolvedId.getRevision();
+                                    if (value != null) {
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (value == null) {
+                        if (value == null) {
+                            value = substitute(settings, attributes.getValue(i));
+                        }
+                        break;
+                    case "organisation":
+                        value = org;
+                        break;
+                    case "module":
+                        value = module;
+                        break;
+                    default:
                         value = substitute(settings, attributes.getValue(i));
-                    }
-                } else if ("organisation".equals(name)) {
-                    value = org;
-                } else if ("module".equals(name)) {
-                    value = module;
-                } else {
-                    value = substitute(settings, attributes.getValue(i));
+                        break;
                 }
                 write(" " + name + "=\"" + value + "\"");
             }
@@ -578,50 +583,59 @@ public final class XmlModuleDescriptorUpdater {
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
-                if ("rev".equals(attName)) {
-                    String rev = resolvedRevisions.get(systemMrid);
-                    if (rev != null) {
-                        write(" rev=\"" + rev + "\"");
-                        if (attributes.getIndex("branchConstraint") == -1
-                                && branchConstraint != null) {
-                            write(" branchConstraint=\"" + branchConstraint + "\"");
+                switch (attName) {
+                    case "rev":
+                        String rev = resolvedRevisions.get(systemMrid);
+                        if (rev == null) {
+                            write(" rev=\"" + systemMrid.getRevision() + "\"");
+                        } else {
+                            write(" rev=\"" + rev + "\"");
+                            if (attributes.getIndex("branchConstraint") == -1
+                                    && branchConstraint != null) {
+                                write(" branchConstraint=\"" + branchConstraint + "\"");
+                            }
+                            if (generateRevConstraint && attributes.getIndex("revConstraint") == -1
+                                    && !rev.equals(systemMrid.getRevision())) {
+                                write(" revConstraint=\"" + systemMrid.getRevision() + "\"");
+                            }
                         }
-                        if (generateRevConstraint && attributes.getIndex("revConstraint") == -1
-                                && !rev.equals(systemMrid.getRevision())) {
-                            write(" revConstraint=\"" + systemMrid.getRevision() + "\"");
+                        break;
+                    case "revConstraint":
+                        write(" revConstraint=\"" + revisionConstraint + "\"");
+                        break;
+                    case "org":
+                        write(" org=\"" + systemMrid.getOrganisation() + "\"");
+                        break;
+                    case "name":
+                        write(" name=\"" + systemMrid.getName() + "\"");
+                        break;
+                    case "branch":
+                        if (newBranch != null) {
+                            write(" branch=\"" + newBranch + "\"");
+                        } else if (!resolvedBranches.containsKey(systemMrid)) {
+                            write(" branch=\"" + systemMrid.getBranch() + "\"");
+                        } else {
+                            // if resolvedBranches contains the systemMrid, but the new branch is null,
+                            // the branch attribute will be removed altogether
                         }
-                    } else {
-                        write(" rev=\"" + systemMrid.getRevision() + "\"");
-                    }
-                } else if ("revConstraint".equals(attName)) {
-                    write(" revConstraint=\"" + revisionConstraint + "\"");
-                } else if ("org".equals(attName)) {
-                    write(" org=\"" + systemMrid.getOrganisation() + "\"");
-                } else if ("name".equals(attName)) {
-                    write(" name=\"" + systemMrid.getName() + "\"");
-                } else if ("branch".equals(attName)) {
-                    if (newBranch != null) {
-                        write(" branch=\"" + newBranch + "\"");
-                    } else if (!resolvedBranches.containsKey(systemMrid)) {
-                        write(" branch=\"" + systemMrid.getBranch() + "\"");
-                    } else {
-                        // if resolvedBranches contains the systemMrid, but the new branch is null,
-                        // the branch attribute will be removed altogether
-                    }
-                } else if ("branchConstraint".equals(attName)) {
-                    write(" branchConstraint=\"" + branchConstraint + "\"");
-                } else if ("conf".equals(attName)) {
-                    String oldMapping = substitute(settings, attributes.getValue("conf"));
-                    if (!oldMapping.isEmpty()) {
-                        String newMapping = removeConfigurationsFromMapping(oldMapping);
-                        if (!newMapping.isEmpty()) {
-                            write(" conf=\"" + newMapping + "\"");
-                            buffers.peek().setPrint(true);
+                        break;
+                    case "branchConstraint":
+                        write(" branchConstraint=\"" + branchConstraint + "\"");
+                        break;
+                    case "conf":
+                        String oldMapping = substitute(settings, attributes.getValue("conf"));
+                        if (!oldMapping.isEmpty()) {
+                            String newMapping = removeConfigurationsFromMapping(oldMapping);
+                            if (!newMapping.isEmpty()) {
+                                write(" conf=\"" + newMapping + "\"");
+                                buffers.peek().setPrint(true);
+                            }
                         }
-                    }
-                } else {
-                    write(" " + attName + "=\""
-                            + substitute(settings, attributes.getValue(attName)) + "\"");
+                        break;
+                    default:
+                        write(" " + attName + "=\""
+                                + substitute(settings, attributes.getValue(attName)) + "\"");
+                        break;
                 }
             }
 
@@ -642,11 +656,7 @@ public final class XmlModuleDescriptorUpdater {
             buffers.push(buffer);
             try {
                 URL url;
-                if (settings != null) {
-                    url = settings.getRelativeUrlResolver().getURL(relativePathCtx,
-                        settings.substitute(attributes.getValue("file")),
-                        settings.substitute(attributes.getValue("url")));
-                } else {
+                if (settings == null) {
                     // TODO : settings can be null, but I don't why.
                     // Check if the following code is correct in that case
                     String fileName = attributes.getValue("file");
@@ -656,6 +666,10 @@ public final class XmlModuleDescriptorUpdater {
                     } else {
                         url = Checks.checkAbsolute(fileName, "settings.include").toURI().toURL();
                     }
+                } else {
+                    url = settings.getRelativeUrlResolver().getURL(relativePathCtx,
+                        settings.substitute(attributes.getValue("file")),
+                        settings.substitute(attributes.getValue("url")));
                 }
                 XMLHelper.parse(url, null, new DefaultHandler() {
                     private boolean insideConfigurations = false;
@@ -1147,21 +1161,25 @@ public final class XmlModuleDescriptorUpdater {
             String path = getContext();
             if (options.isMerge()) {
                 ModuleDescriptor merged = options.getMergedDescriptor();
-
-                if ("ivy-module/info".equals(path)) {
-                    // guarantee that inherited description has been written before
-                    // info element closes.
-                    writeInheritedDescription(merged);
-                } else if ("ivy-module/configurations".equals(path)) {
-                    // write inherited configurations after all child configurations
-                    writeInheritedConfigurations(merged);
-                } else if ("ivy-module/dependencies".equals(path)) {
-                    // write inherited dependencies after all child dependencies
-                    writeInheritedDependencies(merged);
-                } else if ("ivy-module".equals(path)) {
-                    // write any remaining inherited data before we close the
-                    // descriptor.
-                    flushAllMergedElements();
+                switch (path) {
+                    case "ivy-module/info":
+                        // guarantee that inherited description has been written before
+                        // info element closes.
+                        writeInheritedDescription(merged);
+                        break;
+                    case "ivy-module/configurations":
+                        // write inherited configurations after all child configurations
+                        writeInheritedConfigurations(merged);
+                        break;
+                    case "ivy-module/dependencies":
+                        // write inherited dependencies after all child dependencies
+                        writeInheritedDependencies(merged);
+                        break;
+                    case "ivy-module":
+                        // write any remaining inherited data before we close the
+                        // descriptor.
+                        flushAllMergedElements();
+                        break;
                 }
             }
 

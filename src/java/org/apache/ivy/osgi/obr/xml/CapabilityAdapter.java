@@ -31,17 +31,20 @@ public class CapabilityAdapter {
 
     public static void adapt(BundleInfo bundleInfo, Capability capability) throws ParseException {
         String name = capability.getName();
-        if (BundleInfo.PACKAGE_TYPE.equals(name)) {
-            ExportPackage exportPackage = getExportPackage(bundleInfo, capability);
-            bundleInfo.addCapability(exportPackage);
-        } else if (BundleInfo.BUNDLE_TYPE.equals(name)) {
-            // nothing to do, already handled at the resource tag level
-        } else if (BundleInfo.SERVICE_TYPE.equals(name)) {
-            BundleCapability service = getOSGiService(bundleInfo, capability);
-            bundleInfo.addCapability(service);
-        } else {
-            Message.warn("Unsupported capability '" + name + "' on the bundle '"
-                    + bundleInfo.getSymbolicName() + "'");
+        switch (name) {
+            case BundleInfo.PACKAGE_TYPE:
+                bundleInfo.addCapability(getExportPackage(bundleInfo, capability));
+                break;
+            case BundleInfo.BUNDLE_TYPE:
+                // nothing to do, already handled at the resource tag level
+                break;
+            case BundleInfo.SERVICE_TYPE:
+                bundleInfo.addCapability(getOSGiService(bundleInfo, capability));
+                break;
+            default:
+                Message.warn("Unsupported capability '" + name + "' on the bundle '"
+                        + bundleInfo.getSymbolicName() + "'");
+                break;
         }
     }
 
@@ -52,16 +55,21 @@ public class CapabilityAdapter {
         String uses = null;
         for (CapabilityProperty property : capability.getProperties()) {
             String propName = property.getName();
-            if ("package".equals(propName)) {
-                pkgName = property.getValue();
-            } else if ("version".equals(propName)) {
-                version = new Version(property.getValue());
-            } else if ("uses".equals(propName)) {
-                uses = property.getValue();
-            } else {
-                Message.warn("Unsupported property '" + propName
-                        + "' on the 'package' capability of the bundle '"
-                        + bundleInfo.getSymbolicName() + "'");
+            switch (propName) {
+                case "package":
+                    pkgName = property.getValue();
+                    break;
+                case "uses":
+                    uses = property.getValue();
+                    break;
+                case "version":
+                    version = new Version(property.getValue());
+                    break;
+                default:
+                    Message.warn("Unsupported property '" + propName
+                            + "' on the 'package' capability of the bundle '"
+                            + bundleInfo.getSymbolicName() + "'");
+                    break;
             }
         }
         if (pkgName == null) {
@@ -83,14 +91,18 @@ public class CapabilityAdapter {
 
         for (CapabilityProperty property : capability.getProperties()) {
             String propName = property.getName();
-            if ("service".equals(propName)) {
-                name = property.getValue();
-            } else if ("version".equals(propName)) {
-                version = new Version(property.getValue());
-            } else {
-                Message.warn("Unsupported property '" + propName
-                        + "' on the 'package' capability of the bundle '"
-                        + bundleInfo.getSymbolicName() + "'");
+            switch (propName) {
+                case "service":
+                    name = property.getValue();
+                    break;
+                case "version":
+                    version = new Version(property.getValue());
+                    break;
+                default:
+                    Message.warn("Unsupported property '" + propName
+                            + "' on the 'package' capability of the bundle '"
+                            + bundleInfo.getSymbolicName() + "'");
+                    break;
             }
         }
 

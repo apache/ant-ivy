@@ -290,21 +290,25 @@ public class IvyBuildList extends IvyTask {
     }
 
     private void onMissingDescriptor(File buildFile, File ivyFile, List<File> noDescriptor) {
-        if (OnMissingDescriptor.SKIP.equals(onMissingDescriptor)) {
-            Message.debug("skipping " + buildFile + ": descriptor " + ivyFile + " doesn't exist");
-        } else if (OnMissingDescriptor.FAIL.equals(onMissingDescriptor)) {
-            throw new BuildException(
-                    "a module has no module descriptor and onMissingDescriptor=fail. "
-                            + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
-        } else {
-            if (OnMissingDescriptor.WARN.equals(onMissingDescriptor)) {
+        switch (onMissingDescriptor) {
+            case OnMissingDescriptor.FAIL:
+                throw new BuildException("a module has no module descriptor and"
+                        + " onMissingDescriptor=fail. Build file: " + buildFile
+                        + ". Expected descriptor: " + ivyFile);
+            case OnMissingDescriptor.SKIP:
+                Message.debug("skipping " + buildFile + ": descriptor " + ivyFile
+                        + " doesn't exist");
+                break;
+            case OnMissingDescriptor.WARN:
                 Message.warn("a module has no module descriptor. " + "Build file: " + buildFile
                         + ". Expected descriptor: " + ivyFile);
-            }
-            Message.verbose(String.format("no descriptor for %s: descriptor=%s: adding it at the %s of the path",
-                    buildFile, ivyFile, (OnMissingDescriptor.TAIL.equals(onMissingDescriptor) ? "tail" : "head")));
-            Message.verbose("\t(change onMissingDescriptor if you want to take another action");
-            noDescriptor.add(buildFile);
+                // fall through
+            default:
+                Message.verbose(String.format("no descriptor for %s: descriptor=%s: adding it at the %s of the path",
+                        buildFile, ivyFile, (OnMissingDescriptor.TAIL.equals(onMissingDescriptor) ? "tail" : "head")));
+                Message.verbose("\t(change onMissingDescriptor if you want to take another action");
+                noDescriptor.add(buildFile);
+                break;
         }
     }
 

@@ -95,84 +95,98 @@ public class RequirementAdapter {
     private void parseCompareFilter(CompareFilter compareFilter, boolean not)
             throws UnsupportedFilterException {
         String att = compareFilter.getLeftValue();
-        if (BundleInfo.PACKAGE_TYPE.equals(att) || BundleInfo.BUNDLE_TYPE.equals(att)
-                || BundleInfo.EXECUTION_ENVIRONMENT_TYPE.equals(att) || "symbolicname".equals(att)
-                || BundleInfo.SERVICE_TYPE.equals(att)) {
-            if (not) {
-                throw new UnsupportedFilterException(
-                        "Not filter on requirement comparison is not supported");
-            }
-            if (type != null) {
-                throw new UnsupportedFilterException("Multiple requirement type are not supported");
-            }
-            if ("symbolicname".equals(att)) {
-                type = BundleInfo.BUNDLE_TYPE;
-            } else {
+        if ("symbolicname".equals(att)) {
+            att = BundleInfo.BUNDLE_TYPE;
+        }
+        switch (att) {
+            case BundleInfo.BUNDLE_TYPE:
+            case BundleInfo.EXECUTION_ENVIRONMENT_TYPE:
+            case BundleInfo.PACKAGE_TYPE:
+            case BundleInfo.SERVICE_TYPE:
+                if (not) {
+                    throw new UnsupportedFilterException(
+                            "Not filter on requirement comparison is not supported");
+                }
+                if (compareFilter.getOperator() != Operator.EQUALS) {
+                    throw new UnsupportedFilterException(
+                            "Filtering is only supported with the operator '='");
+                }
+                if (type != null) {
+                    throw new UnsupportedFilterException(
+                            "Multiple requirement type are not supported");
+                }
                 type = att;
-            }
-            if (compareFilter.getOperator() != Operator.EQUALS) {
-                throw new UnsupportedFilterException(
-                        "Filtering is only supported with the operator '='");
-            }
-            name = compareFilter.getRightValue();
-        } else if ("version".equals(att)) {
-            String v = compareFilter.getRightValue();
-            Version version = new Version(v);
-            Operator operator = compareFilter.getOperator();
-            if (not) {
-                if (operator == Operator.EQUALS) {
-                    throw new UnsupportedFilterException(
-                            "Not filter on equals comparison is not supported");
-                } else if (operator == Operator.GREATER_OR_EQUAL) {
-                    operator = Operator.LOWER_THAN;
-                } else if (operator == Operator.GREATER_THAN) {
-                    operator = Operator.LOWER_OR_EQUAL;
-                } else if (operator == Operator.LOWER_OR_EQUAL) {
-                    operator = Operator.GREATER_THAN;
-                } else if (operator == Operator.LOWER_THAN) {
-                    operator = Operator.GREATER_OR_EQUAL;
+                name = compareFilter.getRightValue();
+                break;
+            case "version":
+                Version version = new Version(compareFilter.getRightValue());
+                Operator operator = compareFilter.getOperator();
+                if (not) {
+                    switch (operator) {
+                        case EQUALS:
+                            throw new UnsupportedFilterException(
+                                    "Not filter on equals comparison is not supported");
+                        case GREATER_OR_EQUAL:
+                            operator = Operator.LOWER_THAN;
+                            break;
+                        case GREATER_THAN:
+                            operator = Operator.LOWER_OR_EQUAL;
+                            break;
+                        case LOWER_OR_EQUAL:
+                            operator = Operator.GREATER_THAN;
+                            break;
+                        case LOWER_THAN:
+                            operator = Operator.GREATER_OR_EQUAL;
+                            break;
+                    }
                 }
-            }
-            if (operator == Operator.EQUALS) {
-                if (startVersion != null || endVersion != null) {
-                    throw new UnsupportedFilterException(
-                            "Multiple version matching is not supported");
+                switch (operator) {
+                    case EQUALS:
+                        if (startVersion != null || endVersion != null) {
+                            throw new UnsupportedFilterException(
+                                    "Multiple version matching is not supported");
+                        }
+                        startVersion = version;
+                        startExclusive = false;
+                        endVersion = version;
+                        endExclusive = false;
+                        break;
+                    case GREATER_OR_EQUAL:
+                        if (startVersion != null) {
+                            throw new UnsupportedFilterException(
+                                    "Multiple version matching is not supported");
+                        }
+                        startVersion = version;
+                        startExclusive = false;
+                        break;
+                    case GREATER_THAN:
+                        if (startVersion != null) {
+                            throw new UnsupportedFilterException(
+                                    "Multiple version matching is not supported");
+                        }
+                        startVersion = version;
+                        startExclusive = true;
+                        break;
+                    case LOWER_OR_EQUAL:
+                        if (endVersion != null) {
+                            throw new UnsupportedFilterException(
+                                    "Multiple version matching is not supported");
+                        }
+                        endVersion = version;
+                        endExclusive = false;
+                        break;
+                    case LOWER_THAN:
+                        if (endVersion != null) {
+                            throw new UnsupportedFilterException(
+                                    "Multiple version matching is not supported");
+                        }
+                        endVersion = version;
+                        endExclusive = true;
+                        break;
                 }
-                startVersion = version;
-                startExclusive = false;
-                endVersion = version;
-                endExclusive = false;
-            } else if (operator == Operator.GREATER_OR_EQUAL) {
-                if (startVersion != null) {
-                    throw new UnsupportedFilterException(
-                            "Multiple version matching is not supported");
-                }
-                startVersion = version;
-                startExclusive = false;
-            } else if (operator == Operator.GREATER_THAN) {
-                if (startVersion != null) {
-                    throw new UnsupportedFilterException(
-                            "Multiple version matching is not supported");
-                }
-                startVersion = version;
-                startExclusive = true;
-            } else if (operator == Operator.LOWER_OR_EQUAL) {
-                if (endVersion != null) {
-                    throw new UnsupportedFilterException(
-                            "Multiple version matching is not supported");
-                }
-                endVersion = version;
-                endExclusive = false;
-            } else if (operator == Operator.LOWER_THAN) {
-                if (endVersion != null) {
-                    throw new UnsupportedFilterException(
-                            "Multiple version matching is not supported");
-                }
-                endVersion = version;
-                endExclusive = true;
-            }
-        } else {
-            throw new UnsupportedFilterException("Unsupported attribute: " + att);
+                break;
+            default:
+                throw new UnsupportedFilterException("Unsupported attribute: " + att);
         }
 
     }

@@ -211,14 +211,17 @@ public class DualResolver extends AbstractResolver {
      *            the descriptor rule to use with this resolver.
      */
     public void setDescriptor(String descriptorRule) {
-        if (DESCRIPTOR_REQUIRED.equals(descriptorRule)) {
-            allownomd = false;
-        } else if (DESCRIPTOR_OPTIONAL.equals(descriptorRule)) {
-            allownomd = true;
-        } else {
-            throw new IllegalArgumentException("unknown descriptor rule '" + descriptorRule
-                    + "'. Allowed rules are: "
-                    + Arrays.asList(DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL));
+        switch (descriptorRule) {
+            case DESCRIPTOR_REQUIRED:
+                allownomd = false;
+                break;
+            case DESCRIPTOR_OPTIONAL:
+                allownomd = true;
+                break;
+            default:
+                throw new IllegalArgumentException("unknown descriptor rule '" + descriptorRule
+                        + "'. Allowed rules are: "
+                        + Arrays.asList(DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL));
         }
     }
 

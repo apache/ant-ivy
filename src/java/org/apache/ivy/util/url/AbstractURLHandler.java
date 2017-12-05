@@ -154,38 +154,45 @@ public abstract class AbstractURLHandler implements URLHandler {
 
     protected InputStream getDecodingInputStream(String encoding, InputStream in)
             throws IOException {
+        if (encoding == null) {
+            return in;
+        }
         InputStream result = null;
+        switch (encoding) {
+            case "gzip":
+            case "x-gzip":
+                result = new GZIPInputStream(in);
+                break;
+            case "deflate":
+                // There seems to be 2 variants of the "deflate"-encoding.
+                // I couldn't find a way to auto-detect which variant was
+                // used, so as (a not really good) work-around we try do
+                // decompress the first 100 bytes using the "zlib"-variant.
+                BufferedInputStream bStream = new BufferedInputStream(in);
+                bStream.mark(100);
+                byte[] bytes = new byte[100];
+                int nbBytes = bStream.read(bytes);
+                bStream.reset();
 
-        if ("gzip".equals(encoding) || "x-gzip".equals(encoding)) {
-            result = new GZIPInputStream(in);
-        } else if ("deflate".equals(encoding)) {
-            // There seems to be 2 variants of the "deflate"-encoding.
-            // I couldn't find a way to auto-detect which variant was
-            // used, so as (a not really good) work-around we try do
-            // decompress the first 100 bytes using the "zlib"-variant.
-            BufferedInputStream bStream = new BufferedInputStream(in);
-            bStream.mark(100);
-            byte[] bytes = new byte[100];
-            int nbBytes = bStream.read(bytes);
-            bStream.reset();
+                Inflater inflater = new Inflater();
+                inflater.setInput(bytes, 0, nbBytes);
+                try {
+                    inflater.inflate(new byte[1000]);
 
-            Inflater inflater = new Inflater();
-            inflater.setInput(bytes, 0, nbBytes);
-            try {
-                inflater.inflate(new byte[1000]);
-
-                // no error decompressing the first 100 bytes, so we
-                // assume the "zlib"-variant was used.
-                result = new InflaterInputStream(bStream);
-            } catch (DataFormatException e) {
-                // there was an error decompressing the first 100 bytes,
-                // so we assume the "gzip/raw"-variant was used.
-                result = new InflaterInputStream(bStream, new Inflater(true));
-            } finally {
-                inflater.end();
-            }
-        } else {
-            result = in;
+                    // no error decompressing the first 100 bytes, so we
+                    // assume the "zlib"-variant was used.
+                    result = new InflaterInputStream(bStream);
+                } catch (DataFormatException e) {
+                    // there was an error decompressing the first 100 bytes,
+                    // so we assume the "gzip/raw"-variant was used.
+                    result = new InflaterInputStream(bStream, new Inflater(true));
+                } finally {
+                    inflater.end();
+                }
+                break;
+            default:
+                result = in;
+                break;
         }
 
         return result;

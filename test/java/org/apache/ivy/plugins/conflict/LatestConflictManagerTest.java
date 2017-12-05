@@ -195,15 +195,20 @@ public class LatestConflictManagerTest {
             getResolveOptions());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
         for (ModuleRevisionId mrid : defaultReport.getModuleRevisionIds()) {
-            if (mrid.getName().equals("A")) {
-                assertEquals("A revision should be 1.0.0", "1.0.0", mrid.getRevision());
-            } else if (mrid.getName().equals("D")) {
-                assertEquals("D revision should be 1.0.0", "1.0.0", mrid.getRevision());
-            } else if (mrid.getName().equals("B")) {
-                // by transitivity
-                assertEquals("B revision should be 1.0.0", "1.0.0", mrid.getRevision());
-            } else if (mrid.getName().equals("C")) {
-                assertEquals("C revision should be 1.0.2", "1.0.2", mrid.getRevision());
+            switch (mrid.getName()) {
+                case "A":
+                    assertEquals("A revision should be 1.0.0", "1.0.0", mrid.getRevision());
+                    break;
+                case "D":
+                    assertEquals("D revision should be 1.0.0", "1.0.0", mrid.getRevision());
+                    break;
+                case "B":
+                    // by transitivity
+                    assertEquals("B revision should be 1.0.0", "1.0.0", mrid.getRevision());
+                    break;
+                case "C":
+                    assertEquals("C revision should be 1.0.2", "1.0.2", mrid.getRevision());
+                    break;
             }
         }
     }

@@ -38,12 +38,13 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
         public static final Visibility PRIVATE = new Visibility("private");
 
         public static Visibility getVisibility(String name) {
-            if ("private".equals(name)) {
-                return PRIVATE;
-            } else if ("public".equals(name)) {
-                return PUBLIC;
-            } else {
-                throw new IllegalArgumentException("unknown visibility " + name);
+            switch (name) {
+                case "private":
+                    return PRIVATE;
+                case "public":
+                    return PUBLIC;
+                default:
+                    throw new IllegalArgumentException("unknown visibility " + name);
             }
         }
 
@@ -222,14 +223,19 @@ public class Configuration extends DefaultExtendableItem implements InheritableI
 
         Set<String> newExtends = new LinkedHashSet<>();
         for (String extend : extendsFrom) {
-            if ("*".equals(extend)) {
-                addOther(configs, null, newExtends);
-            } else if ("*(public)".equals(extend)) {
-                addOther(configs, Visibility.PUBLIC, newExtends);
-            } else if ("*(private)".equals(extend)) {
-                addOther(configs, Visibility.PRIVATE, newExtends);
-            } else {
-                newExtends.add(extend);
+            switch (extend) {
+                case "*":
+                    addOther(configs, null, newExtends);
+                    break;
+                case "*(public)":
+                    addOther(configs, Visibility.PUBLIC, newExtends);
+                    break;
+                case "*(private)":
+                    addOther(configs, Visibility.PRIVATE, newExtends);
+                    break;
+                default:
+                    newExtends.add(extend);
+                    break;
             }
         }
 
