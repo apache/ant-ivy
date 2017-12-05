@@ -55,13 +55,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.xml.sax.SAXException;
+import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -303,7 +302,7 @@ public class ResolveTest {
     }
 
     @Test
-    public void testResolveWithXmlEntities() throws Exception {
+    public void testResolveWithXmlEntities() {
         Ivy ivy = new Ivy();
         Throwable th = null;
         try {
@@ -2117,7 +2116,7 @@ public class ResolveTest {
         saxParser.parse(r, new DefaultHandler() {
             @Override
             public void startElement(String uri, String localName, String qName,
-                    org.xml.sax.Attributes attributes) throws SAXException {
+                                     Attributes attributes) {
                 if ("revision".equals(qName) && "2.0".equals(attributes.getValue("name"))) {
                     found[0] = true;
                 }
@@ -2166,7 +2165,7 @@ public class ResolveTest {
         saxParser.parse(r, new DefaultHandler() {
             @Override
             public void startElement(String uri, String localName, String qName,
-                    org.xml.sax.Attributes attributes) throws SAXException {
+                    Attributes attributes) {
                 if ("revision".equals(qName) && "2.0".equals(attributes.getValue("name"))) {
                     found[0] = true;
                 }
@@ -3039,7 +3038,7 @@ public class ResolveTest {
         saxParser.parse(r, new DefaultHandler() {
             @Override
             public void startElement(String uri, String localName, String qName,
-                    org.xml.sax.Attributes attributes) throws SAXException {
+                    Attributes attributes) {
                 if ("artifact".equals(qName) && "art51B".equals(attributes.getValue("name"))) {
                     found[0] = true;
                 }
@@ -3131,7 +3130,7 @@ public class ResolveTest {
         saxParser.parse(r, new DefaultHandler() {
             @Override
             public void startElement(String uri, String localName, String qName,
-                    org.xml.sax.Attributes attributes) throws SAXException {
+                    Attributes attributes) {
                 if ("artifact".equals(qName) && "mod1.2".equals(attributes.getValue("name"))) {
                     found[0] = true;
                 }
@@ -6160,15 +6159,15 @@ public class ResolveTest {
         // ensure that we hit only the cache and never try to hit in the repository
         FileSystemResolver resolver = (FileSystemResolver) ivy.getSettings().getResolver("1");
         resolver.setRepository(new AbstractRepository() {
-            public List<String> list(String parent) throws IOException {
+            public List<String> list(String parent) {
                 throw new UnsupportedOperationException();
             }
 
-            public Resource getResource(String source) throws IOException {
+            public Resource getResource(String source) {
                 throw new UnsupportedOperationException();
             }
 
-            public void get(String source, File destination) throws IOException {
+            public void get(String source, File destination) {
                 throw new UnsupportedOperationException();
             }
         });

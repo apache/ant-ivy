@@ -73,7 +73,7 @@ public class IvyResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1455">IVY-1455</a>
      */
     @Test
-    public void testIVY1455() throws Exception {
+    public void testIVY1455() {
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1455/ivysettings.xml");
         resolve.setFile(new File("test/repositories/IVY-1455/ivy.xml"));
         resolve.execute();
@@ -104,7 +104,7 @@ public class IvyResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-779">IVY-779</a>
      */
     @Test
-    public void testIVY779() throws Exception {
+    public void testIVY779() {
         Project project = TestHelper.newProject();
         project.setProperty("ivy.local.default.root",
             new File("test/repositories/norev").getAbsolutePath());
@@ -124,7 +124,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         // depends on org="org1" name="mod1.2" rev="2.0"
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.execute();
@@ -145,7 +145,7 @@ public class IvyResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-630">IVY-630</a>
      */
     @Test
-    public void testResolveWithoutIvyFile() throws Exception {
+    public void testResolveWithoutIvyFile() {
         resolve.getProject().setProperty("ivy.settings.file",
             "test/repositories/IVY-630/ivysettings.xml");
 
@@ -174,7 +174,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testInline() throws Exception {
+    public void testInline() {
         // same as before, but expressing dependency directly without ivy file
         resolve.setOrganisation("org1");
         resolve.setModule("mod1.2");
@@ -189,7 +189,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testInlineWithResolveId() throws Exception {
+    public void testInlineWithResolveId() {
         // same as before, but expressing dependency directly without ivy file
         resolve.setOrganisation("org1");
         resolve.setModule("mod1.2");
@@ -206,7 +206,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testInlineForNonExistingModule() throws Exception {
+    public void testInlineForNonExistingModule() {
         resolve.setOrganisation("org1XX");
         resolve.setModule("mod1.2");
         resolve.setRevision("2.0");
@@ -221,7 +221,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testWithSlashes() throws Exception {
+    public void testWithSlashes() {
         resolve.setFile(new File("test/java/org/apache/ivy/core/resolve/ivy-198.xml"));
         resolve.execute();
 
@@ -241,7 +241,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testDepsChanged() throws Exception {
+    public void testDepsChanged() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.execute();
 
@@ -253,7 +253,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testDontCheckIfChanged() throws Exception {
+    public void testDontCheckIfChanged() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setCheckIfChanged(false);
         resolve.execute();
@@ -265,7 +265,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testConflictingDepsChanged() throws Exception {
+    public void testConflictingDepsChanged() {
         resolve.setFile(new File("test/repositories/2/mod4.1/ivy-4.1.xml"));
         resolve.execute();
 
@@ -277,7 +277,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testDouble() throws Exception {
+    public void testDouble() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.execute();
 
@@ -292,13 +292,13 @@ public class IvyResolveTest {
     }
 
     @Test(expected = BuildException.class)
-    public void testFailure() throws Exception {
+    public void testFailure() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         resolve.execute();
     }
 
     @Test
-    public void testIvyLogModulesInUseWithFailure() throws Exception {
+    public void testIvyLogModulesInUseWithFailure() {
         resolve.getProject().setProperty("ivy.log.modules.in.use", "true");
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         resolve.setHaltonfailure(false);
@@ -308,7 +308,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testFailureWithMissingConfigurations() throws Exception {
+    public void testFailureWithMissingConfigurations() {
         expExc.expect(BuildException.class);
         expExc.expectMessage("unknown");
 
@@ -318,26 +318,26 @@ public class IvyResolveTest {
     }
 
     @Test(expected = BuildException.class)
-    public void testFailureOnBadDependencyIvyFile() throws Exception {
+    public void testFailureOnBadDependencyIvyFile() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure2.xml"));
         resolve.execute();
     }
 
     @Test(expected = BuildException.class)
-    public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
+    public void testFailureOnBadStatusInDependencyIvyFile() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure3.xml"));
         resolve.execute();
     }
 
     @Test
-    public void testHaltOnFailure() throws Exception {
+    public void testHaltOnFailure() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         resolve.setHaltonfailure(false);
         resolve.execute();
     }
 
     @Test
-    public void testWithResolveId() throws Exception {
+    public void testWithResolveId() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("testWithResolveId");
         resolve.execute();
@@ -376,7 +376,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testDoubleResolveWithResolveId() throws Exception {
+    public void testDoubleResolveWithResolveId() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("testWithResolveId");
         resolve.execute();
@@ -410,7 +410,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testDifferentResolveWithSameResolveId() throws Exception {
+    public void testDifferentResolveWithSameResolveId() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("testWithResolveId");
         resolve.execute();
@@ -445,7 +445,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testExcludedConf() throws Exception {
+    public void testExcludedConf() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("*,!default");
         resolve.execute();
@@ -495,7 +495,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsSimple() throws Exception {
+    public void testChildsSimple() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -507,7 +507,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsMultiple() throws Exception {
+    public void testChildsMultiple() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -528,7 +528,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsMultipleWithConf() throws Exception {
+    public void testChildsMultipleWithConf() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -548,7 +548,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsMultipleWithConf2() throws Exception {
+    public void testChildsMultipleWithConf2() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -569,7 +569,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsExclude() throws Exception {
+    public void testChildsExclude() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -593,7 +593,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsDependencyExclude() throws Exception {
+    public void testChildsDependencyExclude() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -616,7 +616,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testChildsDependencyInclude() throws Exception {
+    public void testChildsDependencyInclude() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -642,7 +642,7 @@ public class IvyResolveTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testChildsFail() throws Exception {
+    public void testChildsFail() {
         IvyDependency dependency = resolve.createDependency();
         dependency.setOrg("org1");
         dependency.setName("noexisting");
@@ -651,7 +651,7 @@ public class IvyResolveTest {
     }
 
     @Test
-    public void testSimpleExtends() throws Exception {
+    public void testSimpleExtends() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
         resolve.execute();
         assertEquals("1", resolve.getProject().getProperty("ivy.parents.count"));

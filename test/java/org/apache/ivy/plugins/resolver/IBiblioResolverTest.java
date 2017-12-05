@@ -155,7 +155,7 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    public void testMaven2Listing() throws Exception {
+    public void testMaven2Listing() {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setName("test");
         resolver.setSettings(settings);

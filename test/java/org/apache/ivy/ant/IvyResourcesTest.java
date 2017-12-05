@@ -73,7 +73,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -86,7 +86,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testMultiple() throws Exception {
+    public void testMultiple() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -112,7 +112,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testMultipleWithConf() throws Exception {
+    public void testMultipleWithConf() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -135,7 +135,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testMultipleWithConf2() throws Exception {
+    public void testMultipleWithConf2() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -160,7 +160,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testExclude() throws Exception {
+    public void testExclude() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -187,7 +187,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testDependencyExclude() throws Exception {
+    public void testDependencyExclude() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -213,7 +213,7 @@ public class IvyResourcesTest {
     }
 
     @Test
-    public void testDependencyInclude() throws Exception {
+    public void testDependencyInclude() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("mod1.2");
@@ -236,7 +236,7 @@ public class IvyResourcesTest {
     }
 
     @Test(expected = BuildException.class)
-    public void testFail() throws Exception {
+    public void testFail() {
         IvyDependency dependency = resources.createDependency();
         dependency.setOrg("org1");
         dependency.setName("noexisting");

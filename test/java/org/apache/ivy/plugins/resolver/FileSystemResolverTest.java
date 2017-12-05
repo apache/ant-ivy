@@ -1020,7 +1020,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     }
 
     @Test
-    public void testListing() throws Exception {
+    public void testListing() {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);

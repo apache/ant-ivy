@@ -46,7 +46,7 @@ public class ModuleRulesTest {
     }
 
     @Test
-    public void testGetRule() throws Exception {
+    public void testGetRule() {
         // fixture
         rules.defineRule(mapMatcher().organization("apache").build(), rule[0]);
         rules.defineRule(mapMatcher().organization("other").build(), rule[1]);
@@ -59,7 +59,7 @@ public class ModuleRulesTest {
     }
 
     @Test
-    public void testGetRuleWithFilter() throws Exception {
+    public void testGetRuleWithFilter() {
         // fixture
         rules.defineRule(mapMatcher().organization("apache").build(), rule[0]);
         rules.defineRule(mapMatcher().module("module1").build(), rule[1]);

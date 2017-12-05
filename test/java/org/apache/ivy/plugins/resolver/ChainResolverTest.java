@@ -97,7 +97,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
     }
 
     @Test
-    public void testName() throws Exception {
+    public void testName() {
         ChainResolver chain = new ChainResolver();
         chain.setSettings(settings);
         chain.setName("chain");
@@ -539,7 +539,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
     }
 
     @Test
-    public void testDownloadWithDual() throws Exception {
+    public void testDownloadWithDual() {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
         chain.setSettings(settings);

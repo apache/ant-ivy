@@ -99,7 +99,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testMergeParent() throws IOException, ParseException {
+    public void testMergeParent() throws IOException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
@@ -171,7 +171,7 @@ public class IvyPublishTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
      */
     @Test
-    public void testMergeParentWithoutPublishingParent() throws IOException, ParseException {
+    public void testMergeParentWithoutPublishingParent() throws IOException {
         // here we directly publish a module extending ivy-multiconf.xml,
         // the module parent is not published not yet in cache
         // update=true implies merge=true
@@ -204,7 +204,7 @@ public class IvyPublishTest {
      */
     @Test
     public void testMergeParentWithoutPublishingParentForceDeliver()
-            throws IOException, ParseException {
+            throws IOException {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
@@ -230,7 +230,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testMergeParentWithoutLocationAttribute() throws IOException, ParseException {
+    public void testMergeParentWithoutLocationAttribute() throws IOException {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/extends/child1/ivy-child1.xml"));
@@ -253,7 +253,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testMinimalMerge() throws IOException, ParseException {
+    public void testMinimalMerge() throws IOException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
@@ -288,7 +288,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testMergeExtraAttributes() throws IOException, ParseException {
+    public void testMergeExtraAttributes() throws IOException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
@@ -329,7 +329,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testMergeExtraAttributesFromParent() throws IOException, ParseException {
+    public void testMergeExtraAttributesFromParent() throws IOException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
         project.setProperty("ivy.dep.file",
@@ -371,7 +371,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() throws IOException, ParseException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -400,7 +400,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testHaltOnMissing() throws Exception {
+    public void testHaltOnMissing() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -428,7 +428,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testHaltOnMissing2() throws Exception {
+    public void testHaltOnMissing2() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -457,7 +457,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testHaltOnMissing3() throws Exception {
+    public void testHaltOnMissing3() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -486,7 +486,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testPublishNotAllConfigs() throws Exception {
+    public void testPublishNotAllConfigs() throws IOException, ParseException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -522,7 +522,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testMultiPatterns() throws Exception {
+    public void testMultiPatterns() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -548,7 +548,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testPublishPublicConfigsByWildcard() throws Exception {
+    public void testPublishPublicConfigsByWildcard() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-public.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -572,7 +572,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testCustom() throws Exception {
+    public void testCustom() throws IOException, ParseException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-custom.xml");
         IvyResolve res = new IvyResolve();
         res.setValidate(false);
@@ -615,7 +615,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testNoDeliver() throws Exception {
+    public void testNoDeliver() throws IOException, ParseException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -650,7 +650,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testNoDeliverWithBranch() throws Exception {
+    public void testNoDeliverWithBranch() throws IOException, ParseException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -688,7 +688,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testForceDeliver() throws Exception {
+    public void testForceDeliver() throws IOException, ParseException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -722,10 +722,10 @@ public class IvyPublishTest {
     /**
      * Test must not publish ivy file with bad revision.
      *
-     * @throws Exception if something goes wrong
+     * @throws IOException when copy fails
      */
     @Test(expected = BuildException.class)
-    public void testBadNoDeliver() throws Exception {
+    public void testBadNoDeliver() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -786,7 +786,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testOverwrite() throws Exception {
+    public void testOverwrite() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);
@@ -822,7 +822,7 @@ public class IvyPublishTest {
     }
 
     @Test
-    public void testOverwriteReadOnly() throws Exception {
+    public void testOverwriteReadOnly() throws IOException {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(project);

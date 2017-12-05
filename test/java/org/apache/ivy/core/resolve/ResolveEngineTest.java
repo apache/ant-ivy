@@ -75,7 +75,7 @@ public class ResolveEngineTest {
     }
 
     @Test
-    public void testLocateThenDownload() throws Exception {
+    public void testLocateThenDownload() {
         ResolveEngine engine = new ResolveEngine(ivy.getSettings(), ivy.getEventManager(),
                 ivy.getSortEngine());
 

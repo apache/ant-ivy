@@ -104,7 +104,7 @@ public class IvyConfigureTest {
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() {
         // by default settings look in the current directory for an ivysettings.xml file...
         // but Ivy itself has one, and we don't want to use it
         configure.getProject().setProperty("ivy.settings.file", "no/settings/will/use/default.xml");
@@ -121,7 +121,7 @@ public class IvyConfigureTest {
     }
 
     @Test
-    public void testDefault14() throws Exception {
+    public void testDefault14() {
         // by default settings look in the current directory for an ivysettings.xml file...
         // but Ivy itself has one, and we don't want to use it
         configure.getProject().setProperty("ivy.settings.file", "no/settings/will/use/default.xml");
@@ -229,7 +229,7 @@ public class IvyConfigureTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-601">IVY-601</a>
      */
     @Test
-    public void testIncludeTwice() throws Exception {
+    public void testIncludeTwice() {
         configure.setFile(new File("test/java/org/apache/ivy/ant/ivysettings-include-twice.xml"));
 
         configure.execute();
@@ -238,7 +238,7 @@ public class IvyConfigureTest {
     }
 
     @Test
-    public void testOverrideTrue() throws Exception {
+    public void testOverrideTrue() {
         configure.setFile(new File("test/repositories/ivysettings.xml"));
         configure.execute();
 
@@ -256,7 +256,7 @@ public class IvyConfigureTest {
     }
 
     @Test
-    public void testOverrideFalse() throws Exception {
+    public void testOverrideFalse() {
         configure.setFile(new File("test/repositories/ivysettings.xml"));
         configure.execute();
 
@@ -278,7 +278,7 @@ public class IvyConfigureTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testOverrideNotAllowed() throws Exception {
+    public void testOverrideNotAllowed() {
         expExc.expect(BuildException.class);
         expExc.expectMessage("Overriding a previous definition of ivy:settings with the id '"
                 + configure.getSettingsId() + "' is not allowed when using override='notallowed'.");
@@ -303,7 +303,7 @@ public class IvyConfigureTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testInvalidOverride() throws Exception {
+    public void testInvalidOverride() {
         expExc.expect(IllegalArgumentException.class);
         expExc.expectMessage("invalid override value 'unknown'. Valid values are "
                 + "[true, false, notallowed]");

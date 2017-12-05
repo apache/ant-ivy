@@ -78,7 +78,7 @@ public class AntBuildResolverTest {
     }
 
     @Test
-    public void testNoProject() throws Exception {
+    public void testNoProject() {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/workspace/project1/ivy.xml"));
@@ -158,7 +158,7 @@ public class AntBuildResolverTest {
     }
 
     @Test
-    public void testCachePath() throws Exception {
+    public void testCachePath() {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/workspace/project2/ivy.xml"));
@@ -180,7 +180,7 @@ public class AntBuildResolverTest {
     }
 
     @Test
-    public void testCachePathFolder() throws Exception {
+    public void testCachePathFolder() {
         wa.setPath("target/classes");
 
         IvyResolve resolve = new IvyResolve();

@@ -47,7 +47,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testDefault() throws Exception {
+    public void testDefault() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
         buildNumber.execute();
@@ -58,7 +58,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testDefault2() throws Exception {
+    public void testDefault2() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
         buildNumber.setDefault("1.0-dev-1");
@@ -70,7 +70,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testDefault3() throws Exception {
+    public void testDefault3() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
         buildNumber.setDefault("mydefault");
@@ -82,7 +82,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testLatest() throws Exception {
+    public void testLatest() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
         buildNumber.execute();
@@ -93,7 +93,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testLatest2() throws Exception {
+    public void testLatest2() {
         buildNumber.setOrganisation("orgbn");
         buildNumber.setModule("buildnumber");
         buildNumber.execute();
@@ -104,7 +104,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testPrefix() throws Exception {
+    public void testPrefix() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
         buildNumber.setPrefix("test");
@@ -116,7 +116,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testBuildNumber() throws Exception {
+    public void testBuildNumber() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
         buildNumber.setRevision("1.");
@@ -128,7 +128,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testBuildNumber2() throws Exception {
+    public void testBuildNumber2() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.5");
         buildNumber.setRevision("1.");
@@ -140,7 +140,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testBuildNumber3() throws Exception {
+    public void testBuildNumber3() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
         buildNumber.setRevision("1.1");
@@ -152,7 +152,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testBuildNumber4() throws Exception {
+    public void testBuildNumber4() {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("mod1.1");
         buildNumber.setRevision("3.");
@@ -164,7 +164,7 @@ public class IvyBuildNumberTest {
     }
 
     @Test
-    public void testWithBadChecksum() throws Exception {
+    public void testWithBadChecksum() {
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-checksums.xml");
 
@@ -187,7 +187,7 @@ public class IvyBuildNumberTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1037">IVY-1037</a>
      */
     @Test
-    public void testChainResolver() throws Exception {
+    public void testChainResolver() {
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/IVY-1037/ivysettings.xml");
 

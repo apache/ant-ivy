@@ -50,7 +50,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         dependencyTree.execute();
         assertLogContaining("Dependency tree for apache-resolve-simple");
@@ -58,7 +58,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testEmpty() throws Exception {
+    public void testEmpty() {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-empty.xml"));
         dependencyTree.execute();
         assertLogContaining("Dependency tree for apache-resolve-empty");
@@ -66,7 +66,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testWithResolveId() throws Exception {
+    public void testWithResolveId() {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
@@ -90,12 +90,12 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testWithResolveIdWithoutResolve() throws Exception {
+    public void testWithResolveIdWithoutResolve() {
         dependencyTree.execute();
     }
 
     @Test
-    public void testWithEvictedModule() throws Exception {
+    public void testWithEvictedModule() {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-dyn-evicted.xml"));
         dependencyTree.execute();
         assertLogContaining("Dependency tree for apache-resolve-latest");
@@ -106,7 +106,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testShowEvictedModule() throws Exception {
+    public void testShowEvictedModule() {
         dependencyTree.setFile(new File("test/java/org/apache/ivy/ant/ivy-dyn-evicted.xml"));
         dependencyTree.setShowEvicted(true);
         dependencyTree.execute();
@@ -125,7 +125,7 @@ public class IvyDependencyTreeTest extends AntTaskTestCase {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1540">IVY-1540</a>
      */
     @Test
-    public void testCircularDep() throws Exception {
+    public void testCircularDep() {
         final String resolveId = "circular-dep-tree";
         // resolve
         final IvyResolve ivyResolve = new IvyResolve();

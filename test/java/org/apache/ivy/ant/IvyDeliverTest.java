@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,7 +97,7 @@ public class IvyDeliverTest {
     }
 
    @Test
-    public void testMergeParent() throws IOException, ParseException {
+    public void testMergeParent() throws IOException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");

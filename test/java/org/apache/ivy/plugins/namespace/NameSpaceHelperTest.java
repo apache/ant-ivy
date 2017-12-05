@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 
 public class NameSpaceHelperTest {
     @Test
-    public void testTransformArtifactWithExtraAttributes() throws Exception {
+    public void testTransformArtifactWithExtraAttributes() {
         Artifact artifact = new DefaultArtifact(ArtifactRevisionId.newInstance(
             ModuleRevisionId.parse("org.apache#test;1.0"), "test", "jar", "jar",
             Collections.singletonMap("m:qualifier", "sources")), new Date(), null, false);

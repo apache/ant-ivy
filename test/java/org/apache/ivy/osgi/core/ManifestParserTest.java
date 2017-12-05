@@ -104,7 +104,7 @@ public class ManifestParserTest {
     }
 
     @Test
-    public void testFormatLines() throws Exception {
+    public void testFormatLines() {
         assertEquals("foo bar\n", ManifestParser.formatLines("foo bar"));
         assertEquals(
             "123456789012345678901234567890123456789012345678901234567890123456789012\n",

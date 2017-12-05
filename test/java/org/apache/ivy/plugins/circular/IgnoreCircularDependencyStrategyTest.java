@@ -43,19 +43,19 @@ public class IgnoreCircularDependencyStrategyTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         resetMockLogger(messageLoggerEngine);
     }
 
     @Test
-    public void testLog() throws Exception {
+    public void testLog() {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.0, #B;1.0"));
 
         mockMessageImpl.assertLogVerboseContains("circular dependency found: #A;1.0->#B;1.0");
     }
 
     @Test
-    public void testRemoveDuplicates() throws Exception {
+    public void testRemoveDuplicates() {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
 

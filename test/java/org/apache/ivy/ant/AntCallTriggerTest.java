@@ -41,7 +41,7 @@ import org.junit.Test;
 
 public class AntCallTriggerTest {
     @Test
-    public void test() throws Exception {
+    public void test() {
         assertFalse(new File("test/triggers/ant-call/A/out/foo.txt").exists());
         runAnt(new File("test/triggers/ant-call/A/build.xml"), "resolve");
         // should have unzipped foo.zip

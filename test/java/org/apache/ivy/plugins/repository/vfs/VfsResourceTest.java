@@ -120,7 +120,7 @@ public class VfsResourceTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testBadURI() throws Exception {
+    public void testBadURI() {
         String vfsURI = "smb1:/goobeldygook";
         VfsResource res = new VfsResource(vfsURI, helper.fsManager);
 
@@ -142,7 +142,7 @@ public class VfsResourceTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testListFolderChildren() throws Exception {
+    public void testListFolderChildren() {
         final String testFolder = "2/mod10.1";
         final List<String> expectedFiles =
                 Arrays.asList("ivy-1.0.xml", "ivy-1.1.xml", "ivy-1.2.xml", "ivy-1.3.xml");
@@ -177,7 +177,7 @@ public class VfsResourceTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testListFileChildren() throws Exception {
+    public void testListFileChildren() {
         for (VfsURI vfsURI : helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML)) {
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
             List<String> results = res.getChildren();
@@ -193,7 +193,7 @@ public class VfsResourceTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testListImaginary() throws Exception {
+    public void testListImaginary() {
         for (VfsURI vfsURI : helper.createVFSUriSet("idontexistzzxx")) {
             VfsResource res = new VfsResource(vfsURI.toString(), helper.fsManager);
             List<String> results = res.getChildren();

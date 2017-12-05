@@ -66,7 +66,7 @@ public class IvyCacheFilesetTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         fileset.setSetid("simple-setid");
         fileset.execute();
@@ -95,7 +95,7 @@ public class IvyCacheFilesetTest {
     }
 
     @Test
-    public void testEmptyConf() throws Exception {
+    public void testEmptyConf() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         fileset.setSetid("emptyconf-setid");
         fileset.setConf("empty");
@@ -115,7 +115,7 @@ public class IvyCacheFilesetTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailure() throws Exception {
+    public void testFailure() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         fileset.setSetid("failure-setid");
         fileset.execute();
@@ -127,7 +127,7 @@ public class IvyCacheFilesetTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testInvalidPattern() throws Exception {
+    public void testInvalidPattern() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-invalidcachepattern.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         fileset.setSetid("simple-setid");
@@ -140,7 +140,7 @@ public class IvyCacheFilesetTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testHaltOnFailure() throws Exception {
+    public void testHaltOnFailure() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         fileset.setSetid("haltfailure-setid");
         fileset.setHaltonfailure(false);
@@ -148,7 +148,7 @@ public class IvyCacheFilesetTest {
     }
 
     @Test
-    public void testWithoutPreviousResolveAndNonDefaultCache() throws Exception {
+    public void testWithoutPreviousResolveAndNonDefaultCache() {
         File cache2 = new File("build/cache2");
         cache2.mkdirs();
 

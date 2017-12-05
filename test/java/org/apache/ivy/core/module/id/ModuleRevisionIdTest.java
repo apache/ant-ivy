@@ -32,7 +32,7 @@ public class ModuleRevisionIdTest {
     public ExpectedException expExc = ExpectedException.none();
 
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
         testParse("#A;1.0");
         testParse("org#module;2.0");
         testParse("org#module#branch;myversion");
@@ -47,22 +47,22 @@ public class ModuleRevisionIdTest {
     }
 
     @Test
-    public void testParseFailure1() throws Exception {
+    public void testParseFailure1() {
         testParseFailure("bad");
     }
 
     @Test
-    public void testParseFailure2() throws Exception {
+    public void testParseFailure2() {
         testParseFailure("org#mod");
     }
 
     @Test
-    public void testParseFailure3() throws Exception {
+    public void testParseFailure3() {
         testParseFailure("#;1");
     }
 
     @Test
-    public void testParseFailure4() throws Exception {
+    public void testParseFailure4() {
         testParseFailure("#A%;1.0");
     }
 

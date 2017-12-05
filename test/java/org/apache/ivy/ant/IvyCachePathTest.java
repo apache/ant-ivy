@@ -56,7 +56,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         path.setPathid("simple-pathid");
         path.execute();
@@ -70,7 +70,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testInline1() throws Exception {
+    public void testInline1() {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -96,7 +96,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testInline2() throws Exception {
+    public void testInline2() {
         // we first resolve a dependency directly
         path.setOrganisation("org1");
         path.setModule("mod1.2");
@@ -122,7 +122,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testEmptyConf() throws Exception {
+    public void testEmptyConf() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         path.setPathid("emptyconf-pathid");
         path.setConf("empty");
@@ -140,14 +140,14 @@ public class IvyCachePathTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailure() throws Exception {
+    public void testFailure() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         path.setPathid("failure-pathid");
         path.execute();
     }
 
     @Test
-    public void testHaltOnFailure() throws Exception {
+    public void testHaltOnFailure() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         path.setPathid("haltfailure-pathid");
         path.setHaltonfailure(false);
@@ -155,7 +155,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testWithResolveId() throws Exception {
+    public void testWithResolveId() {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
@@ -182,7 +182,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testWithResolveIdWithoutResolve() throws Exception {
+    public void testWithResolveIdWithoutResolve() {
         Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
@@ -213,7 +213,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testWithResolveIdAndMissingConfs() throws Exception {
+    public void testWithResolveIdAndMissingConfs() {
         Project otherProject = TestHelper.newProject();
         otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
@@ -240,7 +240,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testUnpack() throws Exception {
+    public void testUnpack() {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module1/ivys/ivy-1.0.xml");
         path.setPathid("testUnpack");
@@ -254,7 +254,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testOSGi() throws Exception {
+    public void testOSGi() {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module5/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");
@@ -274,7 +274,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testOSGi2() throws Exception {
+    public void testOSGi2() {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module6/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");
@@ -291,7 +291,7 @@ public class IvyCachePathTest {
     }
 
     @Test
-    public void testPackedOSGi() throws Exception {
+    public void testPackedOSGi() {
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module8/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");

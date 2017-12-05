@@ -52,7 +52,7 @@ public class IvyArtifactReportTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         prop.setTofile(new File("build/test-artifact-report.xml"));
         prop.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         prop.execute();

@@ -58,7 +58,7 @@ public class LogTriggerTest {
     }
 
     @Test
-    public void testMessage() throws Exception {
+    public void testMessage() {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
 
         MockMessageLogger mockLogger = new MockMessageLogger();

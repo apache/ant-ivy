@@ -47,7 +47,7 @@ public class IvyInfoRepositoryTest {
     }
 
     @Test
-    public void testProperty() throws Exception {
+    public void testProperty() {
         info.setOrganisation("org1");
         info.setModule("mod1.1");
         info.setRevision("1.0");
@@ -61,7 +61,7 @@ public class IvyInfoRepositoryTest {
     }
 
     @Test
-    public void testLatest() throws Exception {
+    public void testLatest() {
         info.setOrganisation("org1");
         info.setModule("mod1.1");
         info.setRevision("latest.integration");
@@ -74,7 +74,7 @@ public class IvyInfoRepositoryTest {
     }
 
     @Test
-    public void testLatestSubversion() throws Exception {
+    public void testLatestSubversion() {
         info.setOrganisation("org1");
         info.setModule("mod1.1");
         info.setRevision("1.0+");

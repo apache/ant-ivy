@@ -47,7 +47,7 @@ public class StrictConflictManagerTest {
     }
 
     @Test
-    public void testInitFromConf() throws Exception {
+    public void testInitFromConf() {
         ConflictManager cm = ivy.getSettings().getDefaultConflictManager();
         assertTrue(cm instanceof StrictConflictManager);
     }

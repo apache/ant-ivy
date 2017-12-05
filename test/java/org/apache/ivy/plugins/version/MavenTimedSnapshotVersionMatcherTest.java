@@ -29,11 +29,9 @@ public class MavenTimedSnapshotVersionMatcherTest {
 
     /**
      * Tests the {@link MavenTimedSnapshotVersionMatcher#isDynamic(ModuleRevisionId)} method
-     *
-     * @throws Exception
      */
     @Test
-    public void testIsDynamic() throws Exception {
+    public void testIsDynamic() {
         final MavenTimedSnapshotVersionMatcher versionMatcher = new MavenTimedSnapshotVersionMatcher();
         final ModuleRevisionId regularSnapshot = ModuleRevisionId.newInstance("org.apache", "ant-ivy", "1.0.2-SNAPSHOT");
         Assert.assertFalse(regularSnapshot + " wasn't expected to be a dynamic revision", versionMatcher.isDynamic(regularSnapshot));
@@ -46,11 +44,9 @@ public class MavenTimedSnapshotVersionMatcherTest {
 
     /**
      * Tests the {@link MavenTimedSnapshotVersionMatcher#computeIfSnapshot(String)} method
-     *
-     * @throws Exception
      */
     @Test
-    public void testSnapshotParsing() throws Exception {
+    public void testSnapshotParsing() {
         Assert.assertNull("Revision wasn't expected to be a snapshot",
             MavenTimedSnapshotVersionMatcher.computeIfSnapshot("1.9.9"));
 

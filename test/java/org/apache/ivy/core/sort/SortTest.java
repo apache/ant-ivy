@@ -74,7 +74,7 @@ public class SortTest {
     }
 
     @Test
-    public void testSort() throws Exception {
+    public void testSort() {
         addDependency(md2, "md1", "rev1");
         addDependency(md3, "md2", "rev2");
         addDependency(md4, "md3", "rev3");
@@ -95,7 +95,7 @@ public class SortTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testCircularDependency() throws Exception {
+    public void testCircularDependency() {
         addDependency(md1, "md4", "rev4");
         addDependency(md2, "md1", "rev1");
         addDependency(md3, "md2", "rev2");
@@ -111,7 +111,7 @@ public class SortTest {
     }
 
     @Test
-    public void testCircularDependency2() throws Exception {
+    public void testCircularDependency2() {
         addDependency(md2, "md3", "rev3");
         addDependency(md2, "md1", "rev1");
         addDependency(md3, "md2", "rev2");
@@ -133,7 +133,7 @@ public class SortTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-624">IVY-624</a>
      */
     @Test
-    public void testCircularDependencyInfiniteLoop() throws Exception {
+    public void testCircularDependencyInfiniteLoop() {
         addDependency(md1, "md2", "rev2");
         addDependency(md1, "md3", "rev3");
         addDependency(md2, "md3", "rev3");

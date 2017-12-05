@@ -27,7 +27,7 @@ public class VersionRangeMatcherTest {
     final VersionMatcher vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
 
     @Test
-    public void testMavenExcludeParenthesis() throws Exception {
+    public void testMavenExcludeParenthesis() {
         assertAccept("[3.8,4.0)", "3.7", false);
         assertAccept("[3.8,4.0)", "3.8", true);
         assertAccept("[3.8,4.0)", "3.9", true);

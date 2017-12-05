@@ -55,7 +55,7 @@ public class IvyReportTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         Locale oldLocale = Locale.getDefault();
 
         try {
@@ -134,7 +134,7 @@ public class IvyReportTest {
     }
 
     @Test
-    public void testNoRevisionInOutputPattern() throws Exception {
+    public void testNoRevisionInOutputPattern() {
         Locale oldLocale = Locale.getDefault();
 
         try {
@@ -159,7 +159,7 @@ public class IvyReportTest {
     }
 
     @Test
-    public void testMultipleConfigurations() throws Exception {
+    public void testMultipleConfigurations() {
         Locale oldLocale = Locale.getDefault();
 
         try {
@@ -184,7 +184,7 @@ public class IvyReportTest {
     }
 
     @Test
-    public void testRegularCircular() throws Exception {
+    public void testRegularCircular() {
         Locale oldLocale = Locale.getDefault();
 
         try {

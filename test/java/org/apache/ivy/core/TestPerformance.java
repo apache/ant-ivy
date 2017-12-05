@@ -46,7 +46,7 @@ public class TestPerformance {
 
     private final Ivy ivy;
 
-    public TestPerformance() throws Exception {
+    public TestPerformance() {
         ivy = new Ivy();
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("def");

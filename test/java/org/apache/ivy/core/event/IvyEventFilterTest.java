@@ -42,7 +42,7 @@ public class IvyEventFilterTest {
     private ModuleDescriptor md4 = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "bar", "1.0"),
                 "integration", new Date());
         md2 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo2", "bar", "1.0"),

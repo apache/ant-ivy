@@ -63,7 +63,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         // depends on org="org1" name="mod1.1" rev="1.0"
         // has transitive dependency on org="org1" name="mod1.2" rev="2.0"
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple3.xml"));
@@ -78,7 +78,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testSimpleAndShowTransitiveDependencies() throws Exception {
+    public void testSimpleAndShowTransitiveDependencies() {
         // depends on org="org1" name="mod1.1" rev="1.0"
         // has transitive dependency on org="org1" name="mod1.2" rev="2.0"
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple3.xml"));
@@ -94,7 +94,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testResolveWithoutIvyFile() throws Exception {
+    public void testResolveWithoutIvyFile() {
         // depends on org="org1" name="mod1.2" rev="2.0"
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         dependencyUpdateChecker.setConf("default");
@@ -106,7 +106,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testInline() throws Exception {
+    public void testInline() {
         // same as before, but expressing dependency directly without ivy file
         dependencyUpdateChecker.setOrganisation("org1");
         dependencyUpdateChecker.setModule("mod1.2");
@@ -124,7 +124,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testInlineForNonExistingModule() throws Exception {
+    public void testInlineForNonExistingModule() {
         dependencyUpdateChecker.setOrganisation("org1XXYZ");
         dependencyUpdateChecker.setModule("mod1.2");
         dependencyUpdateChecker.setRevision("2.0");
@@ -139,7 +139,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailure() throws Exception {
+    public void testFailure() {
         dependencyUpdateChecker
                 .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         dependencyUpdateChecker.execute();
@@ -151,7 +151,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testFailureWithMissingConfigurations() throws Exception {
+    public void testFailureWithMissingConfigurations() {
         expExc.expect(BuildException.class);
         expExc.expectMessage("unknown");
 
@@ -167,7 +167,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailureOnBadDependencyIvyFile() throws Exception {
+    public void testFailureOnBadDependencyIvyFile() {
         dependencyUpdateChecker.setFile(new File(
                 "test/java/org/apache/ivy/ant/ivy-failure2.xml"));
         dependencyUpdateChecker.execute();
@@ -179,14 +179,14 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
+    public void testFailureOnBadStatusInDependencyIvyFile() {
         dependencyUpdateChecker.setFile(new File(
                 "test/java/org/apache/ivy/ant/ivy-failure3.xml"));
         dependencyUpdateChecker.execute();
     }
 
     @Test
-    public void testHaltOnFailure() throws Exception {
+    public void testHaltOnFailure() {
         dependencyUpdateChecker
                 .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         dependencyUpdateChecker.setHaltonfailure(false);
@@ -194,7 +194,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testExcludedConf() throws Exception {
+    public void testExcludedConf() {
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         dependencyUpdateChecker.setConf("*,!default");
         dependencyUpdateChecker.execute();
@@ -245,7 +245,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
     }
 
     @Test
-    public void testSimpleExtends() throws Exception {
+    public void testSimpleExtends() {
         dependencyUpdateChecker.setFile(new File(
                 "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
         dependencyUpdateChecker.execute();

@@ -658,7 +658,7 @@ public class XmlSettingsParserTest {
     }
 
     @Test
-    public void testBaseDirVariables() throws Exception {
+    public void testBaseDirVariables() {
         IvySettings settings = new IvySettings();
         settings.setBaseDir(new File("test/base/dir"));
         assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("basedir"));

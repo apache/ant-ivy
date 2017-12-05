@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 public class StringUtilsTest {
 
     @Test
-    public void testGetStackTrace() throws Exception {
+    public void testGetStackTrace() {
         String trace = StringUtils.getStackTrace(new Exception());
         assertTrue(trace.contains("java.lang.Exception"));
         assertTrue(trace.contains("at org.apache.ivy.util.StringUtilsTest.testGetStackTrace(StringUtilsTest.java"));

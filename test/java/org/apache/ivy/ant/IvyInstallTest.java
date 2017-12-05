@@ -295,7 +295,7 @@ public class IvyInstallTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testInstallWithNamespace2() throws Exception {
+    public void testInstallWithNamespace2() {
         project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
         install.setOrganisation("A");
         install.setModule("B");
@@ -328,7 +328,7 @@ public class IvyInstallTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testDependencyNotFoundFailure() throws Exception {
+    public void testDependencyNotFoundFailure() {
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         install.setOrganisation("xxx");
         install.setModule("yyy");

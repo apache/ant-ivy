@@ -90,11 +90,9 @@ public class IvyArtifactPropertyTest {
 
     /**
      * Test must fail because no resolve was performed
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testWithResolveIdWithoutResolve() throws Exception {
+    public void testWithResolveIdWithoutResolve() {
         prop.setName("[module].[artifact]-[revision]");
         prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
         prop.setResolveId("abc");

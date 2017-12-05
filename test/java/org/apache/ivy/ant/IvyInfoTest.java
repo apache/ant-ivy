@@ -41,7 +41,7 @@ public class IvyInfoTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         info.execute();
 
@@ -53,7 +53,7 @@ public class IvyInfoTest {
     }
 
     @Test
-    public void testAll() throws Exception {
+    public void testAll() {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
 
@@ -81,7 +81,7 @@ public class IvyInfoTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-726">IVY-726</a>
      */
     @Test
-    public void testIVY726() throws Exception {
+    public void testIVY726() {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
         info.execute();
 
@@ -95,7 +95,7 @@ public class IvyInfoTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-395">IVY-395</a>
      */
     @Test
-    public void testIVY395() throws Exception {
+    public void testIVY395() {
         info.setFile(new File("test/java/org/apache/ivy/ant/ivy-artifact-info.xml"));
         info.execute();
 

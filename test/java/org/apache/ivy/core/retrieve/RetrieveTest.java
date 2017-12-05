@@ -293,7 +293,7 @@ public class RetrieveTest {
      * passed {@code filePath} is a {@link Files#isSymbolicLink(Path) symbolic link}. Else asserts
      * that the {@code filePath} {@link Files#exists(Path, LinkOption...) exists}.
      *
-     * @param filePath
+     * @param filePath String
      */
     private void assertLinkOrExists(final String filePath) {
         if (systemHasSymlinkAbility) {

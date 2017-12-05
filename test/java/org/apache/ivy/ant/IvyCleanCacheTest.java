@@ -66,7 +66,7 @@ public class IvyCleanCacheTest {
     }
 
     @Test
-    public void testCleanAll() throws Exception {
+    public void testCleanAll() {
         cleanCache.perform();
         assertFalse(resolutionCache.exists());
         assertFalse(repoCache.exists());
@@ -74,7 +74,7 @@ public class IvyCleanCacheTest {
     }
 
     @Test
-    public void testResolutionOnly() throws Exception {
+    public void testResolutionOnly() {
         cleanCache.setCache(IvyCleanCache.NONE);
         cleanCache.perform();
         assertFalse(resolutionCache.exists());
@@ -83,7 +83,7 @@ public class IvyCleanCacheTest {
     }
 
     @Test
-    public void testRepositoryOnly() throws Exception {
+    public void testRepositoryOnly() {
         cleanCache.setResolution(false);
         cleanCache.perform();
         assertTrue(resolutionCache.exists());
@@ -92,7 +92,7 @@ public class IvyCleanCacheTest {
     }
 
     @Test
-    public void testOneRepositoryOnly() throws Exception {
+    public void testOneRepositoryOnly() {
         cleanCache.setResolution(false);
         cleanCache.setCache("mycache");
         cleanCache.perform();
@@ -107,7 +107,7 @@ public class IvyCleanCacheTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testUnknownCache() throws Exception {
+    public void testUnknownCache() {
         expExc.expect(BuildException.class);
         expExc.expectMessage("unknown cache 'yourcache'");
         cleanCache.setResolution(false);

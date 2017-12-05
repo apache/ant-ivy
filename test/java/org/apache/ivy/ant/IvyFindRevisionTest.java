@@ -47,7 +47,7 @@ public class IvyFindRevisionTest {
     }
 
     @Test
-    public void testProperty() throws Exception {
+    public void testProperty() {
         findRevision.setOrganisation("org1");
         findRevision.setModule("mod1.1");
         findRevision.setRevision("1.0");
@@ -57,7 +57,7 @@ public class IvyFindRevisionTest {
     }
 
     @Test
-    public void testLatest() throws Exception {
+    public void testLatest() {
         findRevision.setOrganisation("org1");
         findRevision.setModule("mod1.1");
         findRevision.setRevision("latest.integration");
@@ -66,7 +66,7 @@ public class IvyFindRevisionTest {
     }
 
     @Test
-    public void testLatestSubversion() throws Exception {
+    public void testLatestSubversion() {
         findRevision.setOrganisation("org1");
         findRevision.setModule("mod1.1");
         findRevision.setRevision("1.0+");

@@ -90,7 +90,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         FileUtil.forceDelete(cache);
         cleanupTempDirs();
     }

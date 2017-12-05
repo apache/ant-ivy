@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.ParseException;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -95,7 +94,7 @@ public class BundleRepoTest {
     }
 
     @Test
-    public void testXMLSerialisation() throws SAXException, ParseException, IOException {
+    public void testXMLSerialisation() throws SAXException, IOException {
         FSManifestIterable it = new FSManifestIterable(bundlerepo);
         BundleRepoDescriptor repo = new BundleRepoDescriptor(bundlerepo.toURI(),
                 ExecutionEnvironmentProfileProvider.getInstance());

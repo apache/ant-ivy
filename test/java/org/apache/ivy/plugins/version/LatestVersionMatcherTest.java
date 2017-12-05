@@ -42,14 +42,14 @@ public class LatestVersionMatcherTest {
     }
 
     @Test
-    public void testNeedModuleDescriptorStandardStatus() throws Exception {
+    public void testNeedModuleDescriptorStandardStatus() {
         assertNeed("latest.release", true);
         assertNeed("latest.milestone", true);
         assertNeed("latest.integration", false);
     }
 
     @Test
-    public void testNeedModuleDescriptorCustomStatus() throws Exception {
+    public void testNeedModuleDescriptorCustomStatus() {
         StatusManager.getCurrent().addStatus(new Status("release", false));
         StatusManager.getCurrent().addStatus(new Status("snapshot", true));
 
@@ -58,21 +58,21 @@ public class LatestVersionMatcherTest {
     }
 
     @Test
-    public void testAcceptForStandardStatus() throws Exception {
+    public void testAcceptForStandardStatus() {
         assertAccept("latest.release", "release", true);
         assertAccept("latest.release", "milestone", false);
         assertAccept("latest.release", "integration", false);
     }
 
     @Test
-    public void testAcceptForSameBranches() throws Exception {
+    public void testAcceptForSameBranches() {
         assertAccept("latest.release", "trunk", "release", "trunk", true);
         assertAccept("latest.release", "trunk", "milestone", "trunk", false);
         assertAccept("latest.release", "trunk", "integration", "trunk", false);
     }
 
   @Test
-    public void testAcceptForDifferentBranches() throws Exception {
+    public void testAcceptForDifferentBranches() {
         assertAccept("latest.release", "trunk", "release", "feature", false);
         assertAccept("latest.release", "trunk", "milestone", "feature", false);
         assertAccept("latest.release", "trunk", "integration", "feature", false);

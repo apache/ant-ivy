@@ -43,6 +43,7 @@ import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -228,7 +229,7 @@ public class IvyRepResolver extends URLResolver {
             XMLHelper.parse(content, null, new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName,
-                        org.xml.sax.Attributes attributes) throws SAXException {
+                        Attributes attributes) throws SAXException {
                     if ("organisation".equals(qName)) {
                         String org = attributes.getValue("name");
                         if (org != null) {

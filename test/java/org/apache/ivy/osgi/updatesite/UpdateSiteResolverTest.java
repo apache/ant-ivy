@@ -86,7 +86,7 @@ public class UpdateSiteResolverTest {
     }
 
     @Test
-    public void testListOrganization() throws Exception {
+    public void testListOrganization() {
         OrganisationEntry[] orgs = resolver.listOrganisations();
         assertEquals(2, orgs.length);
         assertTrue((orgs[0].getOrganisation().equals(BundleInfo.BUNDLE_TYPE) && orgs[1]
@@ -96,7 +96,7 @@ public class UpdateSiteResolverTest {
     }
 
     @Test
-    public void testListModules() throws Exception {
+    public void testListModules() {
         ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver,
                 BundleInfo.BUNDLE_TYPE));
         assertEquals(3, modules.length);

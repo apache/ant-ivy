@@ -56,13 +56,13 @@ public class WarnCircularDependencyStrategyTest {
     }
 
     @Test
-    public void testLog() throws Exception {
+    public void testLog() {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.0, #B;1.0"));
         mockMessageLogger.assertLogWarningContains("circular dependency found: #A;1.0->#B;1.0");
     }
 
     @Test
-    public void testRemoveDuplicates() throws Exception {
+    public void testRemoveDuplicates() {
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
 
@@ -71,7 +71,7 @@ public class WarnCircularDependencyStrategyTest {
     }
 
     @Test
-    public void testRemoveDuplicates2() throws Exception {
+    public void testRemoveDuplicates2() {
         setResolveContext("1");
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));
         strategy.handleCircularDependency(TestHelper.parseMridsToArray("#A;1.1, #B;1.0"));

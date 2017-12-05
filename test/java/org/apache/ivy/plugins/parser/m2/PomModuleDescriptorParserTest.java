@@ -109,7 +109,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
-    public void testAccept() throws Exception {
+    public void testAccept() {
         assertTrue(PomModuleDescriptorParser.getInstance().accept(
             new URLResource(getClass().getResource("test-simple.pom"))));
         assertFalse(PomModuleDescriptorParser.getInstance().accept(

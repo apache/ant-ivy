@@ -35,11 +35,9 @@ public class FileUtilTest {
 
     /**
      * Tests that {@link FileUtil#normalize(String)} works as expected for some basic file paths
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
-    public void testSimpleNormalize() throws Exception {
+    public void testSimpleNormalize() {
         final File ivySettingsFile = new File("test/repositories/ivysettings.xml");
         final File normalizedIvySettingsFile = FileUtil.normalize(ivySettingsFile.getAbsolutePath());
         assertEquals("Unexpected normalization of file path " + ivySettingsFile.getAbsolutePath(), ivySettingsFile.getAbsolutePath(), normalizedIvySettingsFile.getAbsolutePath());
@@ -49,11 +47,9 @@ public class FileUtilTest {
     /**
      * Tests that {@link FileUtil#normalize(String)} works as expected when passed a path that starts with
      * {@link File#listRoots() filesystem roots}
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
-    public void testNormalizeOfFileSystemRootPath() throws Exception {
+    public void testNormalizeOfFileSystemRootPath() {
         for (final File fileSystemRoot : File.listRoots()) {
             final File normalized = FileUtil.normalize(fileSystemRoot.getPath());
             assertNotNull("Normalized path was null for " + fileSystemRoot, normalized);

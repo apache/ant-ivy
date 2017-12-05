@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 public class VersionTest {
 
     @Test
-    public void testParsing() throws Exception {
+    public void testParsing() {
         Version v;
 
         v = new Version("1");
@@ -46,7 +46,7 @@ public class VersionTest {
     }
 
     @Test
-    public void testCompareTo() throws Exception {
+    public void testCompareTo() {
         assertTrue(new Version("1.2.3").compareTo(new Version("1.2.3")) == 0);
 
         assertTrue(new Version("1.2.3").compareTo(new Version("1.2.2")) > 0);

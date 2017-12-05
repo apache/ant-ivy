@@ -70,7 +70,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         retrieve.execute();
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0",
@@ -78,7 +78,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testRetrievePrivateWithWildcard() throws Exception {
+    public void testRetrievePrivateWithWildcard() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-381.xml");
         retrieve.setConf("*");
         retrieve.execute();
@@ -95,7 +95,7 @@ public class IvyRetrieveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-992">IVY-992</a>
      */
     @Test
-    public void testValidateInIvySettings() throws Exception {
+    public void testValidateInIvySettings() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
         retrieve.getSettings().setValidate(false);
         retrieve.execute();
@@ -105,7 +105,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testInline() throws Exception {
+    public void testInline() {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -125,7 +125,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testWithConf() throws Exception {
+    public void testWithConf() {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
         retrieve.execute();
 
@@ -185,7 +185,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testWithAPreviousResolve() throws Exception {
+    public void testWithAPreviousResolve() {
         // first we do a resolve in another project
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -205,7 +205,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testWithAPreviousResolveAndResolveId() throws Exception {
+    public void testWithAPreviousResolveAndResolveId() {
         // first we do a resolve in another project
         Project project = TestHelper.newProject();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
@@ -233,7 +233,7 @@ public class IvyRetrieveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-304">IVY-304</a>
      */
     @Test
-    public void testUseOrigin() throws Exception {
+    public void testUseOrigin() {
         // first we do a resolve with useOrigin=true in another project
         Project project = TestHelper.newProject();
         project.init();
@@ -256,7 +256,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testUseOriginWithIvyPattern() throws Exception {
+    public void testUseOriginWithIvyPattern() {
         // mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which
         // depends on mod1.2
         project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.5/ivys/ivy-0.6.1.xml");
@@ -284,7 +284,7 @@ public class IvyRetrieveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-631">IVY-631</a>
      */
     @Test
-    public void testRetrieveWithOriginalNamePattern() throws Exception {
+    public void testRetrieveWithOriginalNamePattern() {
         retrieve.setFile(new File("test/java/org/apache/ivy/ant/ivy-631.xml"));
         retrieve.setConf("default");
         retrieve.setPattern("build/test/lib/[conf]/[originalname].[ext]");
@@ -300,7 +300,7 @@ public class IvyRetrieveTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailureWithoutAPreviousResolve() throws Exception {
+    public void testFailureWithoutAPreviousResolve() {
         retrieve.setOrganisation("apache");
         retrieve.setModule("resolve-simple");
         retrieve.setConf("default");
@@ -313,20 +313,20 @@ public class IvyRetrieveTest {
      * @throws Exception if something goes wrong
      */
     @Test(expected = BuildException.class)
-    public void testFailure() throws Exception {
+    public void testFailure() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         retrieve.execute();
     }
 
     @Test
-    public void testHaltOnFailure() throws Exception {
+    public void testHaltOnFailure() {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
         retrieve.setHaltonfailure(false);
         retrieve.execute();
     }
 
     @Test
-    public void testCustomIvyPattern() throws Exception {
+    public void testCustomIvyPattern() {
         // mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which
         // depends on mod1.2
         project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.5/ivys/ivy-0.6.1.xml");
@@ -347,7 +347,7 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testCustomIvyPatternWithConf() throws Exception {
+    public void testCustomIvyPatternWithConf() {
         project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
 
         String ivyPattern = "build/test/lib/[conf]/[organisation]/[module]/ivy-[revision].xml";

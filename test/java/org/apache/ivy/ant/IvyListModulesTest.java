@@ -47,7 +47,7 @@ public class IvyListModulesTest {
     }
 
     @Test
-    public void testExact() throws Exception {
+    public void testExact() {
         findModules.setOrganisation("org1");
         findModules.setModule("mod1.1");
         findModules.setRevision("1.0");

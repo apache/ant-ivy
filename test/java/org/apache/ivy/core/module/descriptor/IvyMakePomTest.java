@@ -51,7 +51,7 @@ public class IvyMakePomTest {
     public TemporaryFolder workdir = new TemporaryFolder();
 
     @Before
-    public void beforeTest() throws Exception {
+    public void beforeTest() {
         this.project = TestHelper.newProject();
     }
 
