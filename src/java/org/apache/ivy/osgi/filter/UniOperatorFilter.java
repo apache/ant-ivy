@@ -59,13 +59,6 @@ public abstract class UniOperatorFilter extends OSGiFilter {
             return false;
         }
         UniOperatorFilter other = (UniOperatorFilter) obj;
-        if (subFilter == null) {
-            if (other.subFilter != null) {
-                return false;
-            }
-        } else if (!subFilter.equals(other.subFilter)) {
-            return false;
-        }
-        return true;
+        return subFilter == null ? other.subFilter == null : subFilter.equals(other.subFilter);
     }
 }

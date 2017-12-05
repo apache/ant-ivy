@@ -99,13 +99,6 @@ public class BundleRequirement {
         } else if (!resolution.equals(other.resolution)) {
             return false;
         }
-        if (version == null) {
-            if (other.version != null) {
-                return false;
-            }
-        } else if (!version.equals(other.version)) {
-            return false;
-        }
-        return true;
+        return version == null ? other.version == null : version.equals(other.version);
     }
 }

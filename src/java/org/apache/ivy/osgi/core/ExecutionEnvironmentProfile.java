@@ -64,14 +64,7 @@ public class ExecutionEnvironmentProfile {
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (pkgNames == null) {
-            if (other.pkgNames != null) {
-                return false;
-            }
-        } else if (!pkgNames.equals(other.pkgNames)) {
-            return false;
-        }
-        return true;
+        return pkgNames == null ? other.pkgNames == null : pkgNames.equals(other.pkgNames);
     }
 
     public String toString() {

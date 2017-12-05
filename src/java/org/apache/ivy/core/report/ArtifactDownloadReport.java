@@ -189,14 +189,7 @@ public class ArtifactDownloadReport {
             return true;
         }
         ArtifactDownloadReport other = (ArtifactDownloadReport) obj;
-        if (artifact == null) {
-            if (other.artifact != null) {
-                return false;
-            }
-        } else if (!artifact.equals(other.artifact)) {
-            return false;
-        }
-        return true;
+        return artifact == null ? other.artifact == null : artifact.equals(other.artifact);
     }
 
 }

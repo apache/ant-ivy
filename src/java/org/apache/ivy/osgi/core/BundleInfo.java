@@ -325,17 +325,8 @@ public class BundleInfo {
         } else if (!versionTarget.equals(other.versionTarget)) {
             return false;
         }
-        if (hasInnerClasspath != other.hasInnerClasspath) {
-            return false;
-        }
-        if (classpath == null) {
-            if (other.classpath != null) {
-                return false;
-            }
-        } else if (!classpath.equals(other.classpath)) {
-            return false;
-        }
-        return true;
+        return hasInnerClasspath == other.hasInnerClasspath
+                && (classpath == null ? other.classpath == null : classpath.equals(other.classpath));
     }
 
     public Set<BundleRequirement> getRequires() {

@@ -79,14 +79,7 @@ public class BundleCapability {
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (version == null) {
-            if (other.version != null) {
-                return false;
-            }
-        } else if (!version.equals(other.version)) {
-            return false;
-        }
-        return true;
+        return version == null ? other.version == null : version.equals(other.version);
     }
 
 }

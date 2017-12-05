@@ -144,13 +144,6 @@ public class CompareFilter extends OSGiFilter {
         } else if (!operator.equals(other.operator)) {
             return false;
         }
-        if (rightValue == null) {
-            if (other.rightValue != null) {
-                return false;
-            }
-        } else if (!rightValue.equals(other.rightValue)) {
-            return false;
-        }
-        return true;
+        return rightValue == null ? other.rightValue == null : rightValue.equals(other.rightValue);
     }
 }

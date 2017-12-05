@@ -151,17 +151,8 @@ public class Version implements Comparable<Version> {
         Version other = (Version) obj;
         ensureSplit();
         other.ensureSplit();
-        if (major != other.major || minor != other.minor || patch != other.patch) {
-            return false;
-        }
-        if (qualifier == null) {
-            if (other.qualifier != null) {
-                return false;
-            }
-        } else if (!qualifier.equals(other.qualifier)) {
-            return false;
-        }
-        return true;
+        return major == other.major && minor == other.minor && patch == other.patch
+                && (qualifier == null ? other.qualifier == null : qualifier.equals(other.qualifier));
     }
 
     public Version withNudgedPatch() {

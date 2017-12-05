@@ -57,14 +57,7 @@ public class ExportPackage extends BundleCapability {
             return false;
         }
         ExportPackage other = (ExportPackage) obj;
-        if (uses == null) {
-            if (other.uses != null) {
-                return false;
-            }
-        } else if (!uses.equals(other.uses)) {
-            return false;
-        }
-        return true;
+        return uses == null ? other.uses == null : uses.equals(other.uses);
     }
 
 }

@@ -571,14 +571,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             return false;
         }
         DefaultModuleDescriptor other = (DefaultModuleDescriptor) obj;
-        if (revId == null) {
-            if (other.revId != null) {
-                return false;
-            }
-        } else if (!revId.equals(other.revId)) {
-            return false;
-        }
-        return true;
+        return revId == null ? other.revId == null : revId.equals(other.revId);
     }
 
     @Override

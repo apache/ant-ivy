@@ -150,10 +150,8 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     private void mkdirs(String directory, ChannelSftp c) throws SftpException {
         try {
             SftpATTRS att = c.stat(directory);
-            if (att != null) {
-                if (att.isDir()) {
-                    return;
-                }
+            if (att != null && att.isDir()) {
+                return;
             }
         } catch (SftpException ex) {
             if (directory.indexOf('/') != -1) {

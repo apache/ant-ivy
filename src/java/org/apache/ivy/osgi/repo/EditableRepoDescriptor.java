@@ -157,14 +157,7 @@ public class EditableRepoDescriptor extends RepoDescriptor {
             return true;
         }
         EditableRepoDescriptor other = (EditableRepoDescriptor) obj;
-        if (modules == null) {
-            if (other.modules != null) {
-                return false;
-            }
-        } else if (!modules.equals(other.modules)) {
-            return false;
-        }
-        return true;
+        return modules == null ? other.modules == null : modules.equals(other.modules);
     }
 
 }

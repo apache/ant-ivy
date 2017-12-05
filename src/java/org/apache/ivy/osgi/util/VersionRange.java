@@ -340,17 +340,8 @@ public class VersionRange {
         } else if (!endVersion.equals(other.endVersion)) {
             return false;
         }
-        if (startExclusive != other.startExclusive) {
-            return false;
-        }
-        if (startVersion == null) {
-            if (other.startVersion != null) {
-                return false;
-            }
-        } else if (!startVersion.equals(other.startVersion)) {
-            return false;
-        }
-        return true;
+        return startExclusive == other.startExclusive
+                && (startVersion == null ? other.startVersion == null : startVersion.equals(other.startVersion));
     }
 
 }
