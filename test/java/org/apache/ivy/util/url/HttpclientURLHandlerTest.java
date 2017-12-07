@@ -23,9 +23,10 @@ import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,9 +38,11 @@ import java.util.Collections;
 import java.util.Random;
 
 import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
+import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test {@link HttpClientHandler}
@@ -56,6 +59,9 @@ public class HttpclientURLHandlerTest {
         defaultTimeoutConstraint = new NamedTimeoutConstraint("default-http-client-handler-timeout");
         ((NamedTimeoutConstraint) defaultTimeoutConstraint).setConnectionTimeout(5000);
     }
+
+    @Rule
+    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -77,8 +83,10 @@ public class HttpclientURLHandlerTest {
 
     @Test
     public void testIsReachable() throws Exception {
-        assertTrue("URL resource was expected to be reachable", handler.isReachable(new URL("http://www.google.fr/"), defaultTimeoutConstraint));
-        assertFalse("URL resource was expected to be unreachable", handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), defaultTimeoutConstraint));
+        assertTrue("URL resource was expected to be reachable",
+                handler.isReachable(new URL("http://www.google.fr/"), defaultTimeoutConstraint));
+        assertFalse("URL resource was expected to be unreachable",
+                handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), defaultTimeoutConstraint));
     }
 
     /**
@@ -91,8 +99,9 @@ public class HttpclientURLHandlerTest {
     @Test
     public void testGetURLInfo() throws Exception {
         URLHandler handler = new HttpClientHandler();
+        assertTrue("Default Maven URL must end with '/'", DEFAULT_M2_ROOT.endsWith("/"));
         URLInfo info = handler.getURLInfo(new URL(DEFAULT_M2_ROOT
-                + "/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
+                + "commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
 
         assertEquals(URLHandler.UNAVAILABLE, info);
     }
@@ -126,6 +135,13 @@ public class HttpclientURLHandlerTest {
      */
     @Test
     public void testCredentials() throws Exception {
+        // we catch it and check for presence of 401 in the exception message.
+        // It's not exactly an contract that the IOException will have the 401 message
+        // but for now that's how it's implemented and it's fine to check for the presence
+        // of that message at the moment
+        expExc.expect(IOException.class);
+        expExc.expectMessage(endsWith("ivysettings.xml' 401 - 'Unauthorized"));
+
         final CredentialsStore credentialsStore = CredentialsStore.INSTANCE;
         final String realm = "test-http-client-handler-realm";
         final String host = "localhost";
@@ -138,8 +154,8 @@ public class HttpclientURLHandlerTest {
         final Path repoRoot = new File("test/repositories").toPath();
         assertTrue(repoRoot + " is not a directory", Files.isDirectory(repoRoot));
         // create a server backed by BASIC auth with the set of "allowed" credentials
-        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr, contextRoot,
-                repoRoot, realm, Collections.singletonMap(userName, password))) {
+        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr,
+                contextRoot, repoRoot, realm, Collections.singletonMap(userName, password))) {
 
             final File target = new File(testDir, "downloaded.xml");
             assertFalse("File " + target + " already exists", target.exists());
@@ -152,30 +168,22 @@ public class HttpclientURLHandlerTest {
         // now create a server backed by BASIC auth with a set of credentials that do *not* match
         // with what the Ivy credentials store will return for a given realm+host combination, i.e.
         // Ivy credential store will return back invalid credentials and the server will reject them
-        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr, contextRoot,
-                repoRoot, realm, Collections.singletonMap("other-" + userName, "other-" + password))) {
+        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr,
+                contextRoot, repoRoot, realm, Collections.singletonMap("other-" + userName, "other-" + password))) {
 
             final File target = new File(testDir, "should-not-have-been-downloaded.xml");
             assertFalse("File " + target + " already exists", target.exists());
             final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/"
                     + contextRoot + "/ivysettings.xml");
             // download it (expected to fail)
-            try {
-                handler.download(src, target, null, defaultTimeoutConstraint);
-                Assert.fail("Download from " + src + " was expected to fail due to invalid credentials");
-            } catch (IOException ioe) {
-                // we catch it and check for presence of 401 in the exception message.
-                // It's not exactly an contract that the IOException will have the 401 message
-                // but for now that's how it's implemented and it's fine to check for the presence
-                // of that message at the moment
-                assertTrue("Expected to find 401 error message in exception", ioe.getMessage().contains("401"));
-            }
+            handler.download(src, target, null, defaultTimeoutConstraint);
         }
     }
 
     private void assertDownloadOK(final URL url, final File file) throws Exception {
         handler.download(url, file, null, defaultTimeoutConstraint);
         assertTrue("Content from " + url + " wasn't downloaded to " + file, file.exists());
-        assertTrue("Unexpected content at " + file + " for resource that was downloaded from " + url, file.isFile() && file.length() > 0);
+        assertTrue("Unexpected content at " + file + " for resource that was downloaded from "
+                + url, file.isFile() && file.length() > 0);
     }
 }

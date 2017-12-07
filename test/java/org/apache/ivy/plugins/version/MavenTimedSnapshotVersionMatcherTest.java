@@ -19,8 +19,12 @@
 package org.apache.ivy.plugins.version;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link MavenTimedSnapshotVersionMatcher}
@@ -34,11 +38,11 @@ public class MavenTimedSnapshotVersionMatcherTest {
     public void testIsDynamic() {
         final MavenTimedSnapshotVersionMatcher versionMatcher = new MavenTimedSnapshotVersionMatcher();
         final ModuleRevisionId regularSnapshot = ModuleRevisionId.newInstance("org.apache", "ant-ivy", "1.0.2-SNAPSHOT");
-        Assert.assertFalse(regularSnapshot + " wasn't expected to be a dynamic revision", versionMatcher.isDynamic(regularSnapshot));
+        assertFalse(regularSnapshot + " wasn't expected to be a dynamic revision", versionMatcher.isDynamic(regularSnapshot));
         final ModuleRevisionId timestampedSnapshot = ModuleRevisionId.newInstance("org.apache", "ant-ivy", "1.0.2-20100925.223013-19");
-        Assert.assertTrue(timestampedSnapshot + " was expected to be a dynamic revision", versionMatcher.isDynamic(timestampedSnapshot));
+        assertTrue(timestampedSnapshot + " was expected to be a dynamic revision", versionMatcher.isDynamic(timestampedSnapshot));
         final ModuleRevisionId exactRevision = ModuleRevisionId.newInstance("org.apache", "ant-ivy", "2.4.0");
-        Assert.assertFalse(exactRevision + " wasn't expected to be a dynamic revision", versionMatcher.isDynamic(exactRevision));
+        assertFalse(exactRevision + " wasn't expected to be a dynamic revision", versionMatcher.isDynamic(exactRevision));
 
     }
 
@@ -47,22 +51,22 @@ public class MavenTimedSnapshotVersionMatcherTest {
      */
     @Test
     public void testSnapshotParsing() {
-        Assert.assertNull("Revision wasn't expected to be a snapshot",
+        assertNull("Revision wasn't expected to be a snapshot",
             MavenTimedSnapshotVersionMatcher.computeIfSnapshot("1.9.9"));
 
         final String regularSnapshot = "1.9.9-SNAPSHOT";
         final MavenTimedSnapshotVersionMatcher.MavenSnapshotRevision snapshotRevision = MavenTimedSnapshotVersionMatcher.computeIfSnapshot(regularSnapshot);
-        Assert.assertNotNull(regularSnapshot + " was expected to be a snapshot", snapshotRevision);
-        Assert.assertFalse(regularSnapshot + " wasn't expected to be a timestamped snapshot",
+        assertNotNull(regularSnapshot + " was expected to be a snapshot", snapshotRevision);
+        assertFalse(regularSnapshot + " wasn't expected to be a timestamped snapshot",
             snapshotRevision.isTimestampedSnapshot());
 
         final String timestampedRev = "21.03.22-20150925.223013-232";
         final MavenTimedSnapshotVersionMatcher.MavenSnapshotRevision timestampedSnapshot = MavenTimedSnapshotVersionMatcher.computeIfSnapshot(timestampedRev);
-        Assert.assertNotNull(timestampedRev + " was expected to be a snapshot", timestampedSnapshot);
-        Assert.assertTrue(timestampedRev + " was expected to be a timestamped snapshot", timestampedSnapshot.isTimestampedSnapshot());
+        assertNotNull(timestampedRev + " was expected to be a snapshot", timestampedSnapshot);
+        assertTrue(timestampedRev + " was expected to be a timestamped snapshot", timestampedSnapshot.isTimestampedSnapshot());
 
         final String exactRevision = "21.2.2-a20140204.232421-2";
-        Assert.assertNull(exactRevision + " wasn't expected to be a snapshot",
+        assertNull(exactRevision + " wasn't expected to be a snapshot",
             MavenTimedSnapshotVersionMatcher.computeIfSnapshot(exactRevision));
     }
 }

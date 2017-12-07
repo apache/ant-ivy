@@ -30,7 +30,6 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.version.MavenTimedSnapshotVersionMatcher;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,7 +74,7 @@ public class IBiblioMavenSnapshotsResolutionTest {
     @Test
     public void testSnapshotResolution() throws Exception {
         final IvySettings settings = this.ivy.getSettings();
-        Assert.assertNotNull("Maven timestamped snapshot revision version matcher is absent",
+        assertNotNull("Maven timestamped snapshot revision version matcher is absent",
             settings.getVersionMatcher(new MavenTimedSnapshotVersionMatcher().getName()));
         final ResolveOptions resolveOptions = new ResolveOptions();
         resolveOptions.setConfs(new String[]{"default"});
