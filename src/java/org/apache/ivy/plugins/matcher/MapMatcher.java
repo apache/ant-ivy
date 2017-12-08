@@ -43,7 +43,7 @@ public class MapMatcher {
         for (Map.Entry<String, Matcher> entry : matchers.entrySet()) {
             Matcher matcher = entry.getValue();
             String value = m.get(entry.getKey());
-            if ((value == null) || !matcher.matches(value)) {
+            if (value == null || !matcher.matches(value)) {
                 return false;
             }
         }

@@ -211,7 +211,7 @@ public class PomModuleDescriptorBuilder {
         mrid = ModuleRevisionId.newInstance(groupId, artifactId, version);
         ivyModuleDescriptor.setModuleRevisionId(mrid);
 
-        if ((version == null) || version.endsWith("SNAPSHOT")) {
+        if (version == null || version.endsWith("SNAPSHOT")) {
             ivyModuleDescriptor.setStatus("integration");
         } else {
             ivyModuleDescriptor.setStatus("release");
@@ -305,8 +305,7 @@ public class PomModuleDescriptorBuilder {
         ConfMapper mapping = MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map<String, String> extraAtt = new HashMap<>();
-        if ((dep.getClassifier() != null)
-                || (dep.getType() != null && !"jar".equals(dep.getType()))) {
+        if (dep.getClassifier() != null || dep.getType() != null && !"jar".equals(dep.getType())) {
             String type = "jar";
             if (dep.getType() != null) {
                 type = dep.getType();
@@ -373,7 +372,7 @@ public class PomModuleDescriptorBuilder {
         // https://repo1.maven.org/maven2/com/atomikos/atomikos-util/3.6.4/atomikos-util-3.6.4.pom
         ModuleId dependencyId = descriptor.getDependencyId();
         ModuleRevisionId mRevId = ivyModuleDescriptor.getModuleRevisionId();
-        if ((mRevId != null) && mRevId.getModuleId().equals(dependencyId)) {
+        if (mRevId != null && mRevId.getModuleId().equals(dependencyId)) {
             return;
         }
 
@@ -494,7 +493,7 @@ public class PomModuleDescriptorBuilder {
             String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());
             result = ivyModuleDescriptor.getExtraInfoContentByTagName(key);
         }
-        if ((result == null) || !MAVEN2_CONF_MAPPING.containsKey(result)) {
+        if (result == null || !MAVEN2_CONF_MAPPING.containsKey(result)) {
             result = "compile";
         }
         return result;

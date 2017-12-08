@@ -433,6 +433,12 @@ public final class XmlModuleDescriptorUpdater {
                 String value = null;
 
                 switch (name) {
+                    case "organisation":
+                        value = org;
+                        break;
+                    case "module":
+                        value = module;
+                        break;
                     case "revision":
                         // replace inline revision with resolved parent revision
                         ModuleDescriptor merged = options.getMergedDescriptor();
@@ -450,12 +456,6 @@ public final class XmlModuleDescriptorUpdater {
                         if (value == null) {
                             value = substitute(settings, attributes.getValue(i));
                         }
-                        break;
-                    case "organisation":
-                        value = org;
-                        break;
-                    case "module":
-                        value = module;
                         break;
                     default:
                         value = substitute(settings, attributes.getValue(i));
@@ -554,7 +554,9 @@ public final class XmlModuleDescriptorUpdater {
             String module = substitute(settings, attributes.getValue("name"));
             String branch = substitute(settings, attributes.getValue("branch"));
             String branchConstraint = substitute(settings, attributes.getValue("branchConstraint"));
-            branchConstraint = branchConstraint == null ? branch : branchConstraint;
+            if (branchConstraint == null) {
+                branchConstraint = branch;
+            }
 
             // look for the branch used in resolved revisions
             if (branch == null) {
@@ -576,7 +578,7 @@ public final class XmlModuleDescriptorUpdater {
                 XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
             ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
                 revision, extraAttributes);
-            ModuleRevisionId systemMrid = ns == null ? localMrid : ns.getToSystemTransformer()
+            ModuleRevisionId systemMrid = (ns == null) ? localMrid : ns.getToSystemTransformer()
                     .transform(localMrid);
 
             String newBranch = resolvedBranches.get(systemMrid);
@@ -584,6 +586,12 @@ public final class XmlModuleDescriptorUpdater {
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
                 switch (attName) {
+                    case "org":
+                        write(" org=\"" + systemMrid.getOrganisation() + "\"");
+                        break;
+                    case "name":
+                        write(" name=\"" + systemMrid.getName() + "\"");
+                        break;
                     case "rev":
                         String rev = resolvedRevisions.get(systemMrid);
                         if (rev == null) {
@@ -602,12 +610,6 @@ public final class XmlModuleDescriptorUpdater {
                         break;
                     case "revConstraint":
                         write(" revConstraint=\"" + revisionConstraint + "\"");
-                        break;
-                    case "org":
-                        write(" org=\"" + systemMrid.getOrganisation() + "\"");
-                        break;
-                    case "name":
-                        write(" name=\"" + systemMrid.getName() + "\"");
                         break;
                     case "branch":
                         if (newBranch != null) {

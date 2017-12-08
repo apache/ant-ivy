@@ -203,12 +203,9 @@ public class TransferEvent extends IvyEvent {
      */
     protected void setRequestType(final int requestType) {
         switch (requestType) {
-
             case REQUEST_PUT:
-                break;
             case REQUEST_GET:
                 break;
-
             default:
                 throw new IllegalArgumentException("Illegal request type: " + requestType);
         }

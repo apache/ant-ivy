@@ -93,7 +93,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         for (String pattern : patternList) {
             ResolvedResource rres = findResourceUsingPattern(moduleRevision, pattern, artifact,
                 rmdparser, date);
-            if ((rres != null) && !foundRevisions.contains(rres.getRevision())) {
+            if (rres != null && !foundRevisions.contains(rres.getRevision())) {
                 // only add the first found ResolvedResource for each revision
                 foundRevisions.add(rres.getRevision());
                 resolvedResources.add(rres);
@@ -212,7 +212,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
         String partiallyResolvedPattern = IvyPatternHelper.substituteTokens(pattern, tokenValues);
         String token = IvyPatternHelper.getFirstToken(partiallyResolvedPattern);
-        if ((token == null) && exist(partiallyResolvedPattern)) {
+        if (token == null && exist(partiallyResolvedPattern)) {
             // no more tokens to resolve
             result.add(tokenValues);
             return result;
@@ -235,7 +235,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         filterNames(valueList);
 
         for (String value : valueList) {
-            if ((matcher != null) && !matcher.matches(value)) {
+            if (matcher != null && !matcher.matches(value)) {
                 continue;
             }
 

@@ -126,7 +126,7 @@ public class PomReader {
             Document pomDomDoc = XMLHelper.parseToDom(source, new EntityResolver() {
                 public InputSource resolveEntity(String publicId, String systemId)
                         throws SAXException, IOException {
-                    if ((systemId != null) && systemId.endsWith("m2-entities.ent")) {
+                    if (systemId != null && systemId.endsWith("m2-entities.ent")) {
                         return new InputSource(
                                 PomReader.class.getResourceAsStream("m2-entities.ent"));
                     }
@@ -264,7 +264,7 @@ public class PomReader {
                 String name = getFirstChildText(license, LICENSE_NAME);
                 String url = getFirstChildText(license, LICENSE_URL);
 
-                if ((name == null) && (url == null)) {
+                if (name == null && url == null) {
                     // move to next license
                     continue;
                 }
@@ -287,11 +287,17 @@ public class PomReader {
             return null;
         } else {
             String relocGroupId = getFirstChildText(relocation, GROUP_ID);
+            if (relocGroupId == null) {
+                relocGroupId = getGroupId();
+            }
             String relocArtId = getFirstChildText(relocation, ARTIFACT_ID);
+            if (relocArtId == null) {
+                relocArtId = getArtifactId();
+            }
             String relocVersion = getFirstChildText(relocation, VERSION);
-            relocGroupId = relocGroupId == null ? getGroupId() : relocGroupId;
-            relocArtId = relocArtId == null ? getArtifactId() : relocArtId;
-            relocVersion = relocVersion == null ? getVersion() : relocVersion;
+            if (relocVersion == null) {
+                relocVersion = getVersion();
+            }
             return ModuleRevisionId.newInstance(relocGroupId, relocArtId, relocVersion);
         }
     }
@@ -408,7 +414,7 @@ public class PomReader {
                 if (node instanceof Element && EXCLUSION.equals(node.getNodeName())) {
                     String groupId = getFirstChildText((Element) node, GROUP_ID);
                     String artifactId = getFirstChildText((Element) node, ARTIFACT_ID);
-                    if ((groupId != null) && (artifactId != null)) {
+                    if (groupId != null && artifactId != null) {
                         exclusions.add(ModuleId.newInstance(groupId, artifactId));
                     }
                 }
@@ -719,8 +725,8 @@ public class PomReader {
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
-            } else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length)
-                    || ((off + len) < 0)) {
+            } else if (off < 0 || off > b.length || len < 0 || (off + len) > b.length
+                    || (off + len) < 0) {
                 throw new IndexOutOfBoundsException();
             } else if (len == 0) {
                 return 0;

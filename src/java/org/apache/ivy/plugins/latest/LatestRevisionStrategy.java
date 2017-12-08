@@ -65,7 +65,9 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
                 Integer sm1 = specialMeanings.get(parts1[i].toLowerCase(Locale.US));
                 Integer sm2 = specialMeanings.get(parts2[i].toLowerCase(Locale.US));
                 if (sm1 != null) {
-                    sm2 = sm2 == null ? new Integer(0) : sm2;
+                    if (sm2 == null) {
+                        sm2 = new Integer(0);
+                    }
                     return sm1.compareTo(sm2);
                 }
                 if (sm2 != null) {

@@ -538,7 +538,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public void addDependencyConfiguration(String masterConf, String depConf) {
-        if ((md != null) && !"*".equals(masterConf) && !"%".equals(masterConf)) {
+        if (md != null && !"*".equals(masterConf) && !"%".equals(masterConf)) {
             Configuration config;
             if (masterConf.startsWith("!")) {
                 config = md.getConfiguration(masterConf.substring(1));

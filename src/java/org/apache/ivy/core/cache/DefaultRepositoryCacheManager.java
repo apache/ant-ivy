@@ -1564,7 +1564,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
 
         public void restore() throws IOException {
-            if ((backup != null) && backup.exists()) {
+            if (backup != null && backup.exists()) {
                 File original = new File(originalPath);
                 FileUtil.copy(backup, original, null, true);
                 backup.delete();
@@ -1572,7 +1572,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
 
         public void cleanUp() {
-            if ((backup != null) && backup.exists()) {
+            if (backup != null && backup.exists()) {
                 backup.delete();
             }
         }

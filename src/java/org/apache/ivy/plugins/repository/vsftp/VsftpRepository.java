@@ -121,7 +121,6 @@ public class VsftpRepository extends AbstractRepository {
     private Ivy ivy = null;
 
     public VsftpRepository() {
-
     }
 
     public VsftpRepository(final TimeoutConstraint timeoutConstraint) {
@@ -161,9 +160,9 @@ public class VsftpRepository extends AbstractRepository {
             }
 
             int index = source.lastIndexOf('/');
-            String srcName = index == -1 ? source : source.substring(index + 1);
-            final File to = destDir == null ? Checks.checkAbsolute(srcName, "source") : new File(
-                    destDir, srcName);
+            String srcName = (index == -1) ? source : source.substring(index + 1);
+            final File to = (destDir == null) ? Checks.checkAbsolute(srcName, "source")
+                    : new File(destDir, srcName);
 
             final IOException[] ex = new IOException[1];
             Thread get = new IvyThread() {
@@ -516,8 +515,8 @@ public class VsftpRepository extends AbstractRepository {
                                     sleep(sleep);
                                     sleep = reuseConnection
                                             - (System.currentTimeMillis() - lastCommand);
-                                    if (inCommand) {
-                                        sleep = sleep <= 0 ? reuseConnection : sleep;
+                                    if (inCommand && sleep <= 0) {
+                                        sleep = reuseConnection;
                                     }
                                 }
                             } catch (InterruptedException e) {

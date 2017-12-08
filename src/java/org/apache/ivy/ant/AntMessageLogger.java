@@ -51,7 +51,7 @@ public class AntMessageLogger extends AbstractMessageLogger {
                 && ((AntMessageLogger) current).task instanceof Task) {
             Task currentTask = (Task) ((AntMessageLogger) current).task;
 
-            if ((currentTask.getTaskName() != null)
+            if (currentTask.getTaskName() != null
                     && currentTask.getTaskName().equals(((Task) task).getTaskName())) {
                 // The current AntMessageLogger already logs with the same
                 // prefix as the given task. So we shouldn't do anything...

@@ -48,7 +48,7 @@ public final class ResolverHelper {
                     + ": token not found in pattern");
             return null;
         }
-        if (((pattern.length() <= index + tokenString.length()) || fileSep.equals(pattern
+        if ((pattern.length() <= index + tokenString.length() || fileSep.equals(pattern
                 .substring(index + tokenString.length(), index + tokenString.length() + 1)))
                 && (index == 0 || fileSep.equals(pattern.substring(index - 1, index)))) {
             // the searched token is a whole name
@@ -247,7 +247,7 @@ public final class ResolverHelper {
                         + ": token not found in pattern");
                 return null;
             }
-            if (((pattern.length() <= index + tokenString.length()) || "/".equals(pattern
+            if ((pattern.length() <= index + tokenString.length() || "/".equals(pattern
                     .substring(index + tokenString.length(), index + tokenString.length() + 1)))
                     && (index == 0 || "/".equals(pattern.substring(index - 1, index)))) {
                 // the searched token is a whole name

@@ -133,7 +133,7 @@ public class ApacheURLLister {
             String href = matcher.group(1);
             String text = matcher.group(2);
 
-            if ((href == null) || (text == null)) {
+            if (href == null || text == null) {
                 // the groups were not found (shouldn't happen, really)
                 continue;
             }

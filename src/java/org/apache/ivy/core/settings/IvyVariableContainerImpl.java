@@ -53,7 +53,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
     }
 
     public void setEnvironmentPrefix(String prefix) {
-        if ((prefix != null) && !prefix.endsWith(".")) {
+        if (prefix != null && !prefix.endsWith(".")) {
             this.envPrefix = prefix + ".";
         } else {
             this.envPrefix = prefix;
@@ -79,7 +79,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
      */
     public String getVariable(String name) {
         String val = null;
-        if ((envPrefix != null) && name.startsWith(envPrefix)) {
+        if (envPrefix != null && name.startsWith(envPrefix)) {
             val = System.getenv(name.substring(envPrefix.length()));
         } else {
             val = variables.get(name);

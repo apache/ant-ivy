@@ -159,10 +159,6 @@ public abstract class AbstractURLHandler implements URLHandler {
         }
         InputStream result = null;
         switch (encoding) {
-            case "gzip":
-            case "x-gzip":
-                result = new GZIPInputStream(in);
-                break;
             case "deflate":
                 // There seems to be 2 variants of the "deflate"-encoding.
                 // I couldn't find a way to auto-detect which variant was
@@ -189,6 +185,10 @@ public abstract class AbstractURLHandler implements URLHandler {
                 } finally {
                     inflater.end();
                 }
+                break;
+            case "gzip":
+            case "x-gzip":
+                result = new GZIPInputStream(in);
                 break;
             default:
                 result = in;

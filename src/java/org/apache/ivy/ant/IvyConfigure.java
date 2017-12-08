@@ -139,7 +139,7 @@ public class IvyConfigure extends Task {
         String settingsId = settings.getId();
         Object otherRef = getProject().getReference(settingsId);
 
-        if ((otherRef != null) && OVERRIDE_NOT_ALLOWED.equals(override)) {
+        if (otherRef != null && OVERRIDE_NOT_ALLOWED.equals(override)) {
             throw new BuildException(
                     "Overriding a previous definition of ivy:settings with the id '" + settingsId
                             + "' is not allowed when using override='" + OVERRIDE_NOT_ALLOWED

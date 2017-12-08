@@ -349,7 +349,7 @@ public final class PomModuleDescriptorWriter {
         List<DependencyDescriptor> result = new ArrayList<>();
         for (DependencyDescriptor dd : md.getDependencies()) {
             String[] depConfs = dd.getDependencyConfigurations(confs);
-            if ((depConfs != null) && (depConfs.length > 0)) {
+            if (depConfs != null && depConfs.length > 0) {
                 result.add(dd);
             }
         }

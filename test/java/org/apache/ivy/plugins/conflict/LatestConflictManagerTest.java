@@ -199,15 +199,15 @@ public class LatestConflictManagerTest {
                 case "A":
                     assertEquals("A revision should be 1.0.0", "1.0.0", mrid.getRevision());
                     break;
-                case "D":
-                    assertEquals("D revision should be 1.0.0", "1.0.0", mrid.getRevision());
-                    break;
                 case "B":
                     // by transitivity
                     assertEquals("B revision should be 1.0.0", "1.0.0", mrid.getRevision());
                     break;
                 case "C":
                     assertEquals("C revision should be 1.0.2", "1.0.2", mrid.getRevision());
+                    break;
+                case "D":
+                    assertEquals("D revision should be 1.0.0", "1.0.0", mrid.getRevision());
                     break;
             }
         }

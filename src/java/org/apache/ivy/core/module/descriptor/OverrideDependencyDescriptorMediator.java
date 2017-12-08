@@ -70,8 +70,8 @@ public class OverrideDependencyDescriptorMediator implements DependencyDescripto
             return dd;
         }
 
-        String version = this.version == null ? mrid.getRevision() : this.version;
-        String branch = this.branch == null ? mrid.getBranch() : this.branch;
+        String version = (this.version == null) ? mrid.getRevision() : this.version;
+        String branch = (this.branch == null) ? mrid.getBranch() : this.branch;
 
         // if this is a noop, do not construct any new object
         if (version.equals(dd.getDependencyRevisionId().getRevision())

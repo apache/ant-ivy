@@ -141,7 +141,7 @@ public class Scp {
             throw new RemoteScpException("Remote scp terminated unexpectedly.");
         }
 
-        if ((c != 1) && (c != 2)) {
+        if (c != 1 && c != 2) {
             throw new RemoteScpException("Remote scp sent illegal error code.");
         }
 
@@ -188,7 +188,7 @@ public class Scp {
                     "Malformed C line sent by remote SCP binary, line too short.");
         }
 
-        if ((line.charAt(CLINE_SPACE_INDEX1) != ' ') || (line.charAt(CLINE_SPACE_INDEX2) == ' ')) {
+        if (line.charAt(CLINE_SPACE_INDEX1) != ' ' || line.charAt(CLINE_SPACE_INDEX2) == ' ') {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
@@ -201,11 +201,11 @@ public class Scp {
         String lengthSubstring = line.substring(CLINE_SPACE_INDEX2, lengthNameSep);
         String nameSubstring = line.substring(lengthNameSep + 1);
 
-        if ((lengthSubstring.length() <= 0) || (nameSubstring.length() <= 0)) {
+        if (lengthSubstring.length() <= 0 || nameSubstring.length() <= 0) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
-        if ((CLINE_SPACE_INDEX2 + 1 + lengthSubstring.length() + nameSubstring.length()) != line
+        if (CLINE_SPACE_INDEX2 + 1 + lengthSubstring.length() + nameSubstring.length() != line
                 .length()) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
@@ -387,7 +387,7 @@ public class Scp {
                 os.flush();
                 continue;
             }
-            if ((c == 1) || (c == 2)) {
+            if (c == 1 || c == 2) {
                 throw new RemoteScpException("Remote SCP error: " + line);
             }
 
@@ -472,7 +472,7 @@ public class Scp {
             throws IOException, RemoteScpException {
         ChannelExec channel = null;
 
-        if ((localFile == null) || (remoteTargetName == null)) {
+        if (localFile == null || remoteTargetName == null) {
             throw new IllegalArgumentException("Null argument.");
         }
 
@@ -544,7 +544,7 @@ public class Scp {
             RemoteScpException {
         ChannelExec channel = null;
 
-        if ((remoteFile == null) || (localTarget == null)) {
+        if (remoteFile == null || localTarget == null) {
             throw new IllegalArgumentException("Null argument.");
         }
 

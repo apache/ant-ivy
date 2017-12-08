@@ -156,11 +156,10 @@ public class OpenPGPSignatureGenerator implements SignatureGenerator {
             Iterator<PGPSecretKey> it2 = kRing.getSecretKeys();
             while (key == null && it2.hasNext()) {
                 PGPSecretKey k = it2.next();
-                if ((keyId == null) && k.isSigningKey()) {
+                if (keyId == null && k.isSigningKey()) {
                     key = k;
                 }
-                if ((keyId != null)
-                        && (Long.valueOf(keyId, 16) == (k.getKeyID() & MASK))) {
+                if (keyId != null && Long.valueOf(keyId, 16) == (k.getKeyID() & MASK)) {
                     key = k;
                 }
             }

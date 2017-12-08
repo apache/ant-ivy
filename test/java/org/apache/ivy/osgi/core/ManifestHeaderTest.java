@@ -101,7 +101,7 @@ public class ManifestHeaderTest {
         @Rule
         public ExpectedException expExc = ExpectedException.none();
 
-        @Parameterized.Parameters(name = "illegal token at {1} in {0}")
+        @Parameterized.Parameters(name = "Illegal token at {1} in {0}")
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][] {{"value1=", 6},
                     {"value1;version=1;value2", 22}, {"value1;version=", 14},

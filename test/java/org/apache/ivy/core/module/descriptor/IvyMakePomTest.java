@@ -168,12 +168,14 @@ public class IvyMakePomTest {
                         optional = nextChild.getTextContent();
                         break;
                     default:
-                        throw new RuntimeException("Unexpected child element " + nextChild.getNodeName() + " under dependency element");
+                        throw new RuntimeException("Unexpected child element "
+                                + nextChild.getNodeName() + " under dependency element");
                 }
                 // move to next sibling
                 nextChild = nextChild.getNextSibling();
             }
-            return new PomDependency(groupId, artifactId, version, scope, classifier, optional != null && Boolean.parseBoolean(optional));
+            return new PomDependency(groupId, artifactId, version, scope, classifier,
+                    optional != null && Boolean.parseBoolean(optional));
         }
 
         private static Node skipIfTextNode(final Node node) {

@@ -262,7 +262,6 @@ public final class IvyPatternHelper {
                     tokenSeen = false;
                     tokenHadValue = false;
                     break;
-
                 case ')':
                     if (!insideOptionalPart || insideToken) {
                         throw new IllegalArgumentException(
@@ -275,10 +274,8 @@ public final class IvyPatternHelper {
                     } else if (!tokenSeen) {
                         buffer.append('(').append(optionalPart.toString()).append(')');
                     }
-
                     insideOptionalPart = false;
                     break;
-
                 case '[':
                     if (insideToken) {
                         throw new IllegalArgumentException("invalid start of token at position "
@@ -288,7 +285,6 @@ public final class IvyPatternHelper {
                     tokenBuffer = new StringBuffer();
                     insideToken = true;
                     break;
-
                 case ']':
                     if (!insideToken) {
                         throw new IllegalArgumentException("invalid end of token at position " + i
@@ -298,7 +294,6 @@ public final class IvyPatternHelper {
                     String token = tokenBuffer.toString();
                     Object tokenValue = tokensCopy.get(token);
                     String value = (tokenValue == null) ? null : tokenValue.toString();
-
                     if (insideOptionalPart) {
                         tokenHadValue = !isNullOrEmpty(value);
                         optionalPart.append(value);
@@ -308,11 +303,9 @@ public final class IvyPatternHelper {
                         }
                         buffer.append(value);
                     }
-
                     insideToken = false;
                     tokenSeen = true;
                     break;
-
                 default:
                     if (insideToken) {
                         tokenBuffer.append(ch);

@@ -264,7 +264,6 @@ public class ManifestHeaderValue {
                 switch (readNext()) {
                     case '\0':
                         break;
-
                     case ',':
                     case ';':
                         endParameterValue();

@@ -662,7 +662,7 @@ public class IvyNode implements Comparable<IvyNode> {
         }
         String defaultConf = getDefaultConf(conf);
         conf = getMainConf(conf);
-        if ((md.getConfiguration(conf) == null)
+        if (md.getConfiguration(conf) == null
                 || PRIVATE.equals(md.getConfiguration(conf).getVisibility())) {
             if ("".equals(defaultConf)) {
                 return new String[0];
@@ -821,7 +821,7 @@ public class IvyNode implements Comparable<IvyNode> {
             }
 
             if ((dependencyArtifacts == null || dependencyArtifacts.isEmpty())
-                    && (includes.isEmpty())) {
+                    && includes.isEmpty()) {
                 // no artifacts / includes: we get all artifacts as defined by the descriptor
                 for (String conf : confs) {
                     artifacts.addAll(Arrays.asList(md.getArtifacts(conf)));

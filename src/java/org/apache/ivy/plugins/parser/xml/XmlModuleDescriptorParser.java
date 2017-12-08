@@ -371,7 +371,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 } else if ("mapped".equals(qName)) {
                     dd.addDependencyConfiguration(conf,
                         settings.substitute(attributes.getValue("name")));
-                } else if (("conflict".equals(qName) && state == State.DEPS)
+                } else if ("conflict".equals(qName) && state == State.DEPS
                         || "manager".equals(qName) && state == State.CONFLICT) {
                     managerStarted(attributes, state == State.CONFLICT ? "name" : "manager");
                 } else if ("override".equals(qName) && state == State.DEPS) {
@@ -922,7 +922,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             ModuleRevisionId revId = ModuleRevisionId.newInstance(org, name, branch, rev,
                 extraAttributes);
             ModuleRevisionId dynamicId = null;
-            if ((revConstraint == null) && (branchConstraint == null)) {
+            if (revConstraint == null && branchConstraint == null) {
                 // no dynamic constraints defined, so dynamicId equals revId
                 dynamicId = ModuleRevisionId.newInstance(org, name, branch, rev, extraAttributes,
                     false);
@@ -1223,9 +1223,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 }
             } else if ("configurations".equals(qName)) {
                 checkConfigurations();
-            } else if ((state == State.DEP_ARTIFACT && "artifact".equals(qName))
-                    || (state == State.ARTIFACT_INCLUDE && "include".equals(qName))
-                    || (state == State.ARTIFACT_EXCLUDE && "exclude".equals(qName))) {
+            } else if (state == State.DEP_ARTIFACT && "artifact".equals(qName)
+                    || state == State.ARTIFACT_INCLUDE && "include".equals(qName)
+                    || state == State.ARTIFACT_EXCLUDE && "exclude".equals(qName)) {
                 state = State.DEP;
                 if (confAware.getConfigurations().length == 0) {
                     for (String config : getMd().getConfigurationsNames()) {

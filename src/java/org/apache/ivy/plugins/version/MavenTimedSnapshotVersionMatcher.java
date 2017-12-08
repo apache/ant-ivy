@@ -137,9 +137,9 @@ public class MavenTimedSnapshotVersionMatcher extends AbstractVersionMatcher {
 
         /**
          * Returns the "base" revision that this {@link MavenSnapshotRevision} represents. For
-         * example, for the regular snapshot revision {@link 1.2.3-SNAPSHOT}, the base revision
+         * example, for the regular snapshot revision {@code 1.2.3-SNAPSHOT}, the base revision
          * is {@code 1.2.3}. Similarly for timestamped snapshot version
-         * {@code 1.0.2-20100925.223013-19}, the base revision is {@link 1.0.2}
+         * {@code 1.0.2-20100925.223013-19}, the base revision is {@code 1.0.2}
          *
          * @return String
          */
