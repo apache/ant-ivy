@@ -91,6 +91,9 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         Set<String> foundRevisions = new HashSet<>();
         boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
         for (String pattern : patternList) {
+            if (Thread.currentThread().isInterrupted()) {
+                return null;
+            }
             ResolvedResource rres = findResourceUsingPattern(moduleRevision, pattern, artifact,
                 rmdparser, date);
             if (rres != null && !foundRevisions.contains(rres.getRevision())) {
