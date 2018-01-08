@@ -228,7 +228,7 @@ public class XmlReportWriter {
                     XMLHelper.escape(caller.getModuleRevisionId().getOrganisation()),
                     XMLHelper.escape(caller.getModuleRevisionId().getName()),
                     XMLHelper.escape(joinArray(caller.getCallerConfigurations(), ", ")),
-                    XMLHelper.escape(caller.getAskedDependencyId(dep.getData()).getRevision()),
+                    XMLHelper.escape(caller.getAskedDependencyId().getRevision()),
                     XMLHelper.escape(dependencyDescriptor.getDependencyRevisionId().getRevision()),
                     XMLHelper.escape(dependencyDescriptor.getDynamicConstraintDependencyRevisionId().getRevision()),
                     XMLHelper.escape(caller.getModuleRevisionId().getRevision()),

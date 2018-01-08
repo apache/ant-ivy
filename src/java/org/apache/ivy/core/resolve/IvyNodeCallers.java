@@ -111,7 +111,12 @@ public class IvyNodeCallers {
             return mrid.toString();
         }
 
+        @Deprecated
         public ModuleRevisionId getAskedDependencyId(ResolveData resolveData) {
+            return getAskedDependencyId();
+        }
+
+        public ModuleRevisionId getAskedDependencyId() {
             return dd.getDependencyRevisionId();
         }
 
@@ -274,8 +279,7 @@ public class IvyNodeCallers {
                 if (!caller.canExclude()) {
                     return false;
                 }
-                ModuleDescriptor md = caller.getModuleDescriptor();
-                Boolean doesExclude = node.doesExclude(md, rootModuleConf,
+                Boolean doesExclude = node.doesExclude(caller.getModuleDescriptor(), rootModuleConf,
                         caller.getCallerConfigurations(), caller.getDependencyDescriptor(),
                         artifact, callersStack);
                 if (doesExclude != null) {
