@@ -50,6 +50,7 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.PropertiesFile;
 import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.CommandLineParser;
 import org.apache.ivy.util.cli.OptionBuilder;
@@ -74,6 +75,9 @@ public final class Main {
                 .addOption(
                     new OptionBuilder("settings").arg("settingsfile")
                             .description("use given file for settings").create())
+                .addOption(
+                        new OptionBuilder("properties").arg("propertiesfile")
+                            .description("use given file for properties not specified in settings").create())
                 .addOption(
                     new OptionBuilder("cache").arg("cachedir")
                             .description("use given directory for cache").create())
@@ -427,6 +431,10 @@ public final class Main {
             throws java.text.ParseException, IOException, ParseException {
         IvySettings settings = ivy.getSettings();
         settings.addAllVariables(System.getProperties());
+        if (line.hasOption("properties")) {
+            settings.addAllVariables(new PropertiesFile(new File(line.getOptionValue("properties")),
+                    "additional properties"));
+        }
         if (line.hasOption("m2compatible")) {
             settings.setVariable("ivy.default.configuration.m2compatible", "true");
         }
