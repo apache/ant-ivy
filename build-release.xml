@@ -572,11 +572,10 @@
             <attribute name="destFile"/>
             <![CDATA[
                 fs = elements.get("fileset").get(0);
-                srcDir = elements.get("fileset").get(0).getDir(project);
+                srcDir = fs.getDir(project);
 
                 // Get the files (array) of that fileset
-                ds = fs.getDirectoryScanner(project);
-                srcFiles = ds.getIncludedFiles();
+                srcFiles = fs.getDirectoryScanner(project).getIncludedFiles();
 
                 // iterate over that array
                 print('processing ' + srcFiles.length + ' source files...');
@@ -586,7 +585,7 @@
                 for (i = 0; i < srcFiles.length; i++) {
                     try {
                         // get the values via Java API
-                        var file = new java.io.File(fs.getDir(project), srcFiles[i]);
+                        var file = new java.io.File(srcDir, srcFiles[i]);
                         print('processing ' + file + '...');
 
                         inputSource = new org.xml.sax.InputSource(new java.io.FileInputStream(file));
