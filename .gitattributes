@@ -1,0 +1,5 @@
+# Mark the test specific pom files (which have backing checksum files) as binary
+# so that auto conversion of line endings aren't done on them (thus resulting in
+# different checksums) during git checkout.
+test/**/maven-snapshot-test/**/*.pom -text diff
+
