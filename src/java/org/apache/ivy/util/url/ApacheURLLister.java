@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,19 +142,21 @@ public class ApacheURLLister {
 
             text = text.trim();
 
-            // handle complete URL listings
-            if (href.startsWith("http:") || href.startsWith("https:")) {
-                try {
-                    href = new URL(href).getPath();
+            try {
+                // URI methods decode the URL
+                URI uri = new URI(href);
+                href = uri.getPath();
+                // handle complete URL listings
+                if (uri.getScheme() != null) {
                     if (!href.startsWith(url.getPath())) {
                         // ignore URLs which aren't children of the base URL
                         continue;
                     }
                     href = href.substring(url.getPath().length());
-                } catch (Exception ignore) {
-                    // incorrect URL, ignore
-                    continue;
                 }
+            } catch (URISyntaxException e) {
+                // incorrect URL, ignore
+                continue;
             }
 
             if (href.startsWith("../")) {
