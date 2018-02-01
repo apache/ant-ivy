@@ -67,6 +67,7 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
+import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
@@ -329,11 +330,27 @@ public class ResolveEngine {
                             String forcedRev = forcedRevisionId == null ? rev : forcedRevisionId
                                     .getRevision();
 
+                            String[] moduleConfigurations = ConfigurationUtils.replaceWildcards(
+                                dd.getModuleConfigurations(), md);
+                            boolean dependencyConfApplicableToAllTopLevelDepConfs = true;
+                            for (String moduleConfiguration : moduleConfigurations) {
+                                if (!dependency.isRootModuleConfLoaded(moduleConfiguration)) {
+                                    dependencyConfApplicableToAllTopLevelDepConfs = false;
+                                    break;
+                                }
+                            }
+
                             // The evicted modules have no description, so we can't put the status
                             String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
                             Message.debug("storing dependency " + depResolvedId + " in props");
-                            props.put(depRevisionId.encodeToString(), rev + " " + status + " "
-                                    + forcedRev + " " + depResolvedId.getBranch());
+                            String depRevisionIdString = depRevisionId.encodeToString();
+                            // don't replace a dep revision we've already added unless it is
+                            // applicable to all the confs of the matching top-level dep.
+                            if (!props.containsKey(depRevisionIdString)
+                                    || dependencyConfApplicableToAllTopLevelDepConfs) {
+                                props.put(depRevisionIdString, rev + " " + status + " " + forcedRev
+                                        + " " + depResolvedId.getBranch());
+                            }
                         }
                     }
                 }
