@@ -50,6 +50,7 @@ So if there is a setting in the resolver, it always wins against all other setti
 |validate|Indicates if Ivy files should be validated against ivy.xsd or not.|No, defaults to true
 |useRemoteConfig|true to configure ivyrep and ibiblio resolver from a remote settings file (updated with changes in those repository structure if any) (*__since 1.2__*)|No, defaults to false
 |httpRequestMethod|specifies the HTTP method to use to retrieve information about an URL. Possible values are 'GET' and 'HEAD'. This setting can be used to solve problems with firewalls and proxies. (*__since 2.0__*)|No, defaults to 'HEAD'
+|preemptiveAuth|true to use link:https://hc.apache.org/httpcomponents-client-4.5.x/tutorial/html/authentication.html[preemptive authentication] whenever possible (only supported with link:https://hc.apache.org/httpcomponents-client-4.5.x[HttpClient] as URL Handler) (*__since 2.5__*)|No, defaults to false
 |[line-through]#defaultCache#|a path to a directory to use as default basedir for both resolution and repository cache(s). +
 __Deprecated, we recommend using defaultCacheDir on the link:../settings/caches{outfilesuffix}[caches] tag instead__|No, defaults to .ivy2/cache in user home
 |[line-through]#checkUpToDate#|Indicates if date should be checked before retrieving artifacts from cache. +

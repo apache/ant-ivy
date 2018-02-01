@@ -48,7 +48,7 @@ For details about the following changes, check our JIRA install at link:https://
 - BREAKING: Removed old fr\jayasoft\ivy\ant\antlib.xml AntLib definition file (jira:IVY-1612[])
 - FIX:
 
-- IMPROVEMENT:
+- IMPROVEMENT: Support link:https://hc.apache.org/httpcomponents-client-4.5.x/tutorial/html/authentication.html[preemptive authentication]. (jira:IVY-1280[])
 
 - NEW:
 
@@ -74,7 +74,7 @@ Here is the list of people who have contributed source code and documentation up
 * Gintautas Grigelionis
 * Xavier Hanin
 * Nicolas Lalev&eacute;e
-* Jan Mat&egrave;rne 
+* Jan Mat&egrave;rne
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
@@ -152,6 +152,7 @@ Here is the list of people who have contributed source code and documentation up
 * Antoine Levy-Lambert
 * Tony Likhite
 * Andrey Lomakin
+* Aur&#233;lien Lourot
 * William Lyvers
 * Sakari Maaranen
 * Jan Materne
