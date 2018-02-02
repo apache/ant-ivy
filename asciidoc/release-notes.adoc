@@ -70,7 +70,10 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: command line: -types seems to not accept comma [jira:IVY-1355[]]
 - FIX: Mixed use of symlinks leads to cache corruption [jira:IVY-1498[]] (Thanks to Stephen Haberman)
 - FIX: Some cached location are badly stored which results in MalformedURLException [jira:IVY-1566[]] (Thanks to Aur&#233;lien Pupier)
-- FIX: defaultconfmapping not used when extended/inherited from parent file [jira:IVY-1420[]] [jira:IVY-1420[]] (Thanks to Willem Verstraeten)
+- FIX: defaultconf/mapping attributes ignored when extended/included from parent file [jira:IVY-1315[]] [jira:IVY-1419[]] [jira:IVY-1420[]] [jira:IVY-1437[]] (Thanks to Willem Verstraeten)
+- FIX: ApacheURLLister skips versions with URL encoded characters [jira:IVY-1442[]] [jira:IVY-1573[]]
+- FIX: Configuration lists are sensitive to whitespace; multiple split/merge methods [jira:IVY-309[]] [jira:IVY-1282[]]
+- FIX: Warnings about illegal reflection access due to lack of methods to retrieve default authenticator in Java 5 to 8 [jira:IVY-1569[]]
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
