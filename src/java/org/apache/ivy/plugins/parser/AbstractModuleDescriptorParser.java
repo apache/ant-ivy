@@ -125,7 +125,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                 return;
             }
 
-            String[] conf = confs.split(";");
+            String[] conf = confs.trim().split("\\s*;\\s*");
             parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperand, evaluateConditions);
         }
 

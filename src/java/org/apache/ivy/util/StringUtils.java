@@ -129,11 +129,7 @@ public final class StringUtils {
         if (list == null) {
             return null;
         }
-        String[] parts = list.split(",");
-        for (int i = 0; i < parts.length; i++) {
-            parts[i] = parts[i].trim();
-        }
-        return parts;
+        return list.trim().split("\\s*,\\s*");
     }
 
     /**

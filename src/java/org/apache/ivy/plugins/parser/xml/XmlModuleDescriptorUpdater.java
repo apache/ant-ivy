@@ -850,7 +850,7 @@ public final class XmlModuleDescriptorUpdater {
         private String removeConfigurationsFromMapping(String mapping) {
             StringBuilder newMapping = new StringBuilder();
             String mappingSep = "";
-            for (String groups : mapping.split(";")) {
+            for (String groups : mapping.trim().split("\\s*;\\s*")) {
                 String[] ops = groups.split("->");
                 List<String> confsToWrite = new ArrayList<>();
                 for (String lh : splitToArray(ops[0])) {
