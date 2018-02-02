@@ -18,6 +18,7 @@
 package org.apache.ivy.util.url;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
@@ -50,26 +51,20 @@ public final class IvyAuthenticator extends Authenticator {
         // We will try to use the original authenticator as backup authenticator.
         // Since there is no getter available, so try to use some reflection to
         // obtain it. If that doesn't work, assume there is no original authenticator
-        Authenticator original = null;
+        Authenticator original = (getJavaVersion() < 9) ? getTheAuthenticator()
+                : getDefaultAuthenticator();
 
-        try {
-            Field f = Authenticator.class.getDeclaredField("theAuthenticator");
-            f.setAccessible(true);
-            original = (Authenticator) f.get(null);
-        } catch (Throwable t) {
-            Message.debug("Error occurred while getting the original authenticator: "
-                    + t.getMessage());
+        if (original instanceof IvyAuthenticator) {
+            return;
         }
 
-        if (!(original instanceof IvyAuthenticator)) {
-            try {
-                Authenticator.setDefault(new IvyAuthenticator(original));
-            } catch (SecurityException e) {
-                if (!securityWarningLogged) {
-                    securityWarningLogged = true;
-                    Message.warn("Not enough permissions to set the IvyAuthenticator. "
-                            + "HTTP(S) authentication will be disabled!");
-                }
+        try {
+            Authenticator.setDefault(new IvyAuthenticator(original));
+        } catch (SecurityException e) {
+            if (!securityWarningLogged) {
+                securityWarningLogged = true;
+                Message.warn("Not enough permissions to set the IvyAuthenticator. "
+                        + "HTTP(S) authentication will be disabled!");
             }
         }
     }
@@ -121,4 +116,36 @@ public final class IvyAuthenticator extends Authenticator {
         return RequestorType.PROXY.equals(getRequestorType());
     }
 
+    private static Authenticator getDefaultAuthenticator() {
+        try {
+            final Method m = Authenticator.class.getDeclaredMethod("getDefault");
+            return (Authenticator) m.invoke(null);
+        } catch (final Throwable t) {
+            handleReflectionException(t);
+        }
+        return null;
+    }
+
+    private static Authenticator getTheAuthenticator() {
+        try {
+            Field f = Authenticator.class.getDeclaredField("theAuthenticator");
+            f.setAccessible(true);
+            return (Authenticator) f.get(null);
+        } catch (final Throwable t) {
+            handleReflectionException(t);
+        }
+        return null;
+    }
+
+    private static void handleReflectionException(final Throwable t) {
+        Message.debug("Error occurred while getting the original authenticator: "
+                + t.getMessage());
+    }
+
+    private static int getJavaVersion() {
+        // See https://docs.oracle.com/javase/8/docs/technotes/guides/versioning/spec/versioning2.html#wp90002
+        final String[] version = System.getProperty("java.version").split("\\.");
+        final int major = Integer.parseInt(version[0]);
+        return major == 1 ? Integer.parseInt(version[1]) : major;
+    }
 }
