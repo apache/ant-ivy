@@ -564,7 +564,7 @@
     </target>
 
     <target name="init-checkstyle" depends="jar">
-        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8.1"
+        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8.2"
                        inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
         <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
                  resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
