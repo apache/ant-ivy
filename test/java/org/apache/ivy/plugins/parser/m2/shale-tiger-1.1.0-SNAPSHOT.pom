@@ -76,21 +76,21 @@
 
             <configuration>
               <tasks>
-                <mkdir dir="${basedir}/target/test-webapp/WEB-INF"></mkdir>
-                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/test-web.xml" tofile="${basedir}/target/test-webapp/WEB-INF/web.xml"></copy>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF"/>
+                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/test-web.xml" tofile="${basedir}/target/test-webapp/WEB-INF/web.xml"/>
                 <copy todir="${basedir}/target/test-webapp/WEB-INF">
-                  <fileset includes="test-config-*.xml" dir="${basedir}/target/test-classes/org/apache/shale/tiger/config"></fileset>
+                  <fileset includes="test-config-*.xml" dir="${basedir}/target/test-classes/org/apache/shale/tiger/config"/>
                 </copy>
-                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"></mkdir>
-                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/TestBean.class" todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"></copy>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"/>
+                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/TestBean.class" todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"/>
 
-                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/TestBean2.class" todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"></copy>
-                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/faces"></mkdir>
+                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/TestBean2.class" todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"/>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/faces"/>
                 <copy todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/faces">
-                  <fileset includes="My*.class" dir="${basedir}/target/test-classes/org/apache/shale/tiger/faces"></fileset>
+                  <fileset includes="My*.class" dir="${basedir}/target/test-classes/org/apache/shale/tiger/faces"/>
                 </copy>
-                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/lib"></mkdir>
-                <jar includes="org/apache/shale/tiger/config/TestBean3.class META-INF/faces-config.xml" destfile="${basedir}/target/test-webapp/WEB-INF/lib/test.jar" basedir="${basedir}/target/test-classes"></jar>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/lib"/>
+                <jar includes="org/apache/shale/tiger/config/TestBean3.class META-INF/faces-config.xml" destfile="${basedir}/target/test-webapp/WEB-INF/lib/test.jar" basedir="${basedir}/target/test-classes"/>
               </tasks>
             </configuration>
 
