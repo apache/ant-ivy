@@ -156,16 +156,15 @@ Here is the list of people who have contributed source code and documentation up
 * Mitch Gitman
 * Evgeny Goldin
 * Scott Goldstein
-* Pierre H&#228;gnestrand
-* Scott Hebert
-* Tobias Himstedt
+* Stephen Haberman
 * Aaron Hachez
 * Ben Hale
-* Stephen Haberman
 * Peter Hayes
 * Scott Hebert
 * Payam Hekmat
+* Tobias Himstedt
 * Achim Huegen
+* Pierre H&#228;gnestrand
 * Ilya
 * Matt Inger
 * Anders Jacobsson
@@ -180,8 +179,8 @@ Here is the list of people who have contributed source code and documentation up
 * Heschi Kreinick
 * Sebastian Krueger
 * Thomas Kurpick
-* Tat Leung
 * Costin Leau
+* Tat Leung
 * Antoine Levy-Lambert
 * Tony Likhite
 * Andrey Lomakin
@@ -239,6 +238,7 @@ Here is the list of people who have contributed source code and documentation up
 * Willem Verstraeten
 * Richard Vowles
 * Sven Walter
+* Zhong Wang
 * James P. White
 * Tom Widmer
 * John Williams
@@ -247,4 +247,3 @@ Here is the list of people who have contributed source code and documentation up
 * Jaroslaw Wypychowski
 * Sven Zethelius
 * Aleksey Zhukov
-* Zhong Wang
