@@ -144,7 +144,7 @@ public final class IvyAuthenticator extends Authenticator {
 
     private static int getJavaVersion() {
         // See https://docs.oracle.com/javase/8/docs/technotes/guides/versioning/spec/versioning2.html#wp90002
-        final String[] version = System.getProperty("java.version").split("\\.");
+        final String[] version = System.getProperty("java.specification.version").split("\\.");
         final int major = Integer.parseInt(version[0]);
         return major == 1 ? Integer.parseInt(version[1]) : major;
     }
