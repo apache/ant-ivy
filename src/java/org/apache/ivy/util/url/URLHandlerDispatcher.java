@@ -28,7 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is used to dispatch downloading requests
+ * An implementation of {@link URLHandler} which uses an underlying {@link URLHandler} per protocol
+ * and a fallback default {@link URLHandler} for dealing with downloads, uploads and
+ * general reachability checks
  */
 public class URLHandlerDispatcher implements URLHandler {
     private final Map<String, URLHandler> handlers = new HashMap<>();
