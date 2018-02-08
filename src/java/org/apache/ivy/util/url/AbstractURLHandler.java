@@ -33,7 +33,7 @@ import java.util.zip.InflaterInputStream;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.settings.TimeoutConstraint;
 
-public abstract class AbstractURLHandler implements TimeoutConstrainedURLHandler {
+public abstract class AbstractURLHandler implements URLHandler {
 
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("%25([0-9a-fA-F][0-9a-fA-F])");
 
@@ -42,48 +42,34 @@ public abstract class AbstractURLHandler implements TimeoutConstrainedURLHandler
 
     @Override
     public boolean isReachable(final URL url) {
-        return this.isReachable(url, null);
+        return getURLInfo(url).isReachable();
     }
 
     @Override
     public boolean isReachable(final URL url, final int timeout) {
-        return this.isReachable(url, createTimeoutConstraints(timeout));
-    }
-
-    @Override
-    public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getURLInfo(url, timeoutConstraint).isReachable();
+        return getURLInfo(url, timeout).isReachable();
     }
 
     @Override
     public long getContentLength(final URL url) {
-        return this.getContentLength(url, null);
+        return getURLInfo(url).getContentLength();
     }
 
     @Override
     public long getContentLength(final URL url, final int timeout) {
-        return this.getContentLength(url, createTimeoutConstraints(timeout));
-    }
-
-    @Override
-    public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getURLInfo(url, timeoutConstraint).getContentLength();
+        return getURLInfo(url, timeout).getContentLength();
     }
 
     @Override
     public long getLastModified(final URL url) {
-        return this.getLastModified(url, null);
+        return getURLInfo(url).getLastModified();
     }
 
     @Override
     public long getLastModified(final URL url, final int timeout) {
-        return this.getLastModified(url, createTimeoutConstraints(timeout));
+        return getURLInfo(url, timeout).getLastModified();
     }
 
-    @Override
-    public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getURLInfo(url, timeoutConstraint).getLastModified();
-    }
 
     protected String getUserAgent() {
         return System.getProperty("http.agent", "Apache Ivy/" + Ivy.getIvyVersion());

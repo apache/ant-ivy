@@ -67,7 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  */
-public class HttpClientHandler extends AbstractURLHandler implements AutoCloseable {
+public class HttpClientHandler extends AbstractURLHandler implements TimeoutConstrainedURLHandler, AutoCloseable {
     private static final SimpleDateFormat LAST_MODIFIED_FORMAT = new SimpleDateFormat(
             "EEE, d MMM yyyy HH:mm:ss z", Locale.US);
 
@@ -199,6 +199,21 @@ public class HttpClientHandler extends AbstractURLHandler implements AutoCloseab
     @Override
     public URLInfo getURLInfo(final URL url, final int timeout) {
         return this.getURLInfo(url, createTimeoutConstraints(timeout));
+    }
+
+    @Override
+    public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).isReachable();
+    }
+
+    @Override
+    public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).getContentLength();
+    }
+
+    @Override
+    public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).getLastModified();
     }
 
     @Override

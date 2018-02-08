@@ -37,7 +37,7 @@ import java.net.UnknownHostException;
 /**
  *
  */
-public class BasicURLHandler extends AbstractURLHandler {
+public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstrainedURLHandler {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
@@ -58,6 +58,21 @@ public class BasicURLHandler extends AbstractURLHandler {
     @Override
     public URLInfo getURLInfo(final URL url, final int timeout) {
         return this.getURLInfo(url, createTimeoutConstraints(timeout));
+    }
+
+    @Override
+    public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).isReachable();
+    }
+
+    @Override
+    public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).getContentLength();
+    }
+
+    @Override
+    public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
+        return this.getURLInfo(url, timeoutConstraint).getLastModified();
     }
 
     @Override

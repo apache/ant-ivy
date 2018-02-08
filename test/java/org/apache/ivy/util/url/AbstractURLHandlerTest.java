@@ -77,45 +77,29 @@ public class AbstractURLHandlerTest {
 
     private static class TestURLHandler extends AbstractURLHandler {
 
+        @Override
         public void download(URL src, File dest, CopyProgressListener l) throws IOException {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void download(final URL src, final File dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-
         public URLInfo getURLInfo(URL url) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public URLInfo getURLInfo(URL url, int timeout) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
-            throw new UnsupportedOperationException();
-        }
-
         public InputStream openStream(URL url) throws IOException {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-
         public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-
     }
 }
