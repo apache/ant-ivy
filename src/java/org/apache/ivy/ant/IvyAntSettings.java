@@ -30,6 +30,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.CredentialsStore;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
@@ -387,7 +388,7 @@ public class IvyAntSettings extends DataType {
         CredentialsStore.INSTANCE.addCredentials(getRealm(), getHost(), getUsername(), getPasswd());
 
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        URLHandler httpHandler = URLHandlerRegistry.getHttp();
+        TimeoutConstrainedURLHandler httpHandler = URLHandlerRegistry.getHttp();
         dispatcher.setDownloader("http", httpHandler);
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);

@@ -324,7 +324,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                 try {
                     URL url = new URL("http://ant.apache.org/ivy/repository.properties");
                     Message.verbose("configuring repositories with " + url);
-                    props.load(URLHandlerRegistry.getDefault().openStream(url, null));
+                    props.load(URLHandlerRegistry.getDefault().openStream(url));
                     configured = true;
                 } catch (Exception ex) {
                     Message.verbose("unable to use remote repository configuration", ex);

@@ -27,6 +27,8 @@ import java.net.URL;
 import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.plugins.repository.LocalizableResource;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
+import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
@@ -73,7 +75,13 @@ public class URLResource implements LocalizableResource {
     }
 
     private void init() {
-        final URLInfo info = URLHandlerRegistry.getDefault().getURLInfo(url, this.timeoutConstraint);
+        final URLHandler handler = URLHandlerRegistry.getDefault();
+        final URLInfo info;
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            info = ((TimeoutConstrainedURLHandler) handler).getURLInfo(this.url, this.timeoutConstraint);
+        } else {
+            info = handler.getURLInfo(this.url);
+        }
         contentLength = info.getContentLength();
         lastModified = info.getLastModified();
         exists = info.isReachable();
@@ -107,7 +115,11 @@ public class URLResource implements LocalizableResource {
     }
 
     public InputStream openStream() throws IOException {
-        return URLHandlerRegistry.getDefault().openStream(url, null);
+        final URLHandler handler = URLHandlerRegistry.getDefault();
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            return ((TimeoutConstrainedURLHandler) handler).openStream(this.url, this.timeoutConstraint);
+        }
+        return handler.openStream(this.url);
     }
 
     public File getFile() {

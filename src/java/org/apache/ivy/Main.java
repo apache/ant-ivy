@@ -57,6 +57,7 @@ import org.apache.ivy.util.cli.OptionBuilder;
 import org.apache.ivy.util.cli.ParseException;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.ivy.util.url.CredentialsStore;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
@@ -573,7 +574,7 @@ public final class Main {
         CredentialsStore.INSTANCE.addCredentials(realm, host, username, passwd);
 
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        URLHandler httpHandler = URLHandlerRegistry.getHttp();
+        TimeoutConstrainedURLHandler httpHandler = URLHandlerRegistry.getHttp();
         dispatcher.setDownloader("http", httpHandler);
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);

@@ -97,7 +97,7 @@ public class HttpclientURLHandlerTest {
     @SuppressWarnings("resource")
     @Test
     public void testGetURLInfo() throws Exception {
-        URLHandler handler = new HttpClientHandler();
+        final TimeoutConstrainedURLHandler handler = new HttpClientHandler();
         assertTrue("Default Maven URL must end with '/'", DEFAULT_M2_ROOT.endsWith("/"));
         URLInfo info = handler.getURLInfo(new URL(DEFAULT_M2_ROOT
                 + "commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);

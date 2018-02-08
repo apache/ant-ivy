@@ -152,7 +152,7 @@ public class XmlSettingsParser extends DefaultHandler {
         this.settings = settingsUrl;
         InputStream stream = null;
         try {
-            stream = URLHandlerRegistry.getDefault().openStream(settingsUrl, null);
+            stream = URLHandlerRegistry.getDefault().openStream(settingsUrl);
             InputSource inSrc = new InputSource(stream);
             inSrc.setSystemId(settingsUrl.toExternalForm());
             SAXParserFactory.newInstance().newSAXParser().parse(settingsUrl.toExternalForm(), this);

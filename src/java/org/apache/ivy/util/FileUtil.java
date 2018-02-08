@@ -18,6 +18,8 @@
 package org.apache.ivy.util;
 
 import org.apache.ivy.core.settings.TimeoutConstraint;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
+import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 import java.io.BufferedInputStream;
@@ -200,12 +202,22 @@ public final class FileUtil {
 
     public static void copy(final URL src, final File dest, final CopyProgressListener listener,
                             final TimeoutConstraint timeoutConstraint) throws IOException {
-        URLHandlerRegistry.getDefault().download(src, dest, listener, timeoutConstraint);
+        final URLHandler handler = URLHandlerRegistry.getDefault();
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            ((TimeoutConstrainedURLHandler) handler).download(src, dest, listener, timeoutConstraint);
+            return;
+        }
+        handler.download(src, dest, listener);
     }
 
     public static void copy(final File src, final URL dest, final CopyProgressListener listener,
                             final TimeoutConstraint timeoutConstraint) throws IOException {
-        URLHandlerRegistry.getDefault().upload(src, dest, listener, timeoutConstraint);
+        final URLHandler handler = URLHandlerRegistry.getDefault();
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            ((TimeoutConstrainedURLHandler) handler).upload(src, dest, listener, timeoutConstraint);
+            return;
+        }
+        handler.upload(src, dest, listener);
     }
 
     public static void copy(InputStream src, File dest, CopyProgressListener l) throws IOException {

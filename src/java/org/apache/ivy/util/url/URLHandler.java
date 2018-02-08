@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.util.url;
 
-import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.CopyProgressListener;
 
 import java.io.File;
@@ -28,7 +27,11 @@ import java.net.URL;
 /**
  * This interface is responsible for handling some URL manipulation (stream opening, downloading,
  * check reachability, ...).
+ * <p>
+ *
+ * @deprecated Starting 2.5.0, the {@link TimeoutConstrainedURLHandler} is preferred in favour of this interface
  */
+@Deprecated
 public interface URLHandler {
 
     /**
@@ -88,9 +91,7 @@ public interface URLHandler {
      *
      * @param url the url to check
      * @return true if the target is reachable
-     * @deprecated Use {@link #isReachable(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     boolean isReachable(URL url);
 
     /**
@@ -99,26 +100,8 @@ public interface URLHandler {
      * @param url     the url to check
      * @param timeout the timeout in milliseconds
      * @return true if the target is reachable
-     * @deprecated Use {@link #isReachable(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     boolean isReachable(URL url, int timeout);
-
-    /**
-     * Returns true if the passed <code>URL</code> is reachable. Else returns false. Uses the
-     * passed <code>timeoutConstraint</code> for determining the connectivity to the URL.
-     * <p>
-     * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the
-     * <code>url</code> is needed
-     * </p>
-     *
-     * @param url               The URL to access
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @return boolean
-     * @since 2.5
-     */
-    boolean isReachable(URL url, TimeoutConstraint timeoutConstraint);
 
     /**
      * Please prefer getURLInfo when several infos are needed.
@@ -126,9 +109,7 @@ public interface URLHandler {
      * @param url the url to check
      * @return the length of the target if the given url is reachable, 0 otherwise. No error code
      * in case of http urls.
-     * @deprecated Use {@link #getContentLength(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     long getContentLength(URL url);
 
     /**
@@ -137,31 +118,15 @@ public interface URLHandler {
      *                timeout of zero indicates no timeout
      * @return the length of the target if the given url is reachable, 0 otherwise. No error code
      * in case of http urls.
-     * @deprecated Use {@link #getContentLength(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     long getContentLength(URL url, int timeout);
-
-    /**
-     * Returns the number of bytes of data that's available for the resource at the passed
-     * <code>url</code>. Returns 0 if the passed <code>url</code> isn't reachable
-     *
-     * @param url               The URL to access
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @return long
-     * @since 2.5
-     */
-    long getContentLength(URL url, TimeoutConstraint timeoutConstraint);
 
     /**
      * Please prefer getURLInfo when several infos are needed.
      *
      * @param url the url to check
      * @return last modified timestamp of the given url
-     * @deprecated Use {@link #getLastModified(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     long getLastModified(URL url);
 
     /**
@@ -170,34 +135,14 @@ public interface URLHandler {
      * @param url     the url to check
      * @param timeout the timeout in milliseconds
      * @return last modified timestamp of the given url
-     * @deprecated Use {@link #getLastModified(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     long getLastModified(URL url, int timeout);
-
-    /**
-     * Returns the last modified timestamp of the resource accessible at the passed
-     * <code>url</code>.
-     * <p>
-     * Please use {@link #getURLInfo(URL, TimeoutConstraint)} if more one information about the
-     * <code>url</code> is needed
-     * </p>
-     *
-     * @param url               The URL to access
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @return long
-     * @since 2.5
-     */
-    long getLastModified(URL url, TimeoutConstraint timeoutConstraint);
 
     /**
      * @param url The url from which information is retrieved.
      * @return The URLInfo extracted from the given url, or {@link #UNAVAILABLE} instance when the
      * url is not reachable.
-     * @deprecated Use {@link #getURLInfo(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     URLInfo getURLInfo(URL url);
 
     /**
@@ -205,89 +150,31 @@ public interface URLHandler {
      * @param timeout The timeout in milliseconds.
      * @return The URLInfo extracted from the given url, or {@link #UNAVAILABLE} when the url is
      * not reachable, never null.
-     * @deprecated Use {@link #getURLInfo(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     URLInfo getURLInfo(URL url, int timeout);
-
-    /**
-     * Returns the {@link URLInfo} extracted from the given url, or {@link #UNAVAILABLE} when the
-     * url is not reachable. Never returns null.
-     *
-     * @param url               The URL for which the information is to be retrieved
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @return URLInfo
-     * @since 2.5
-     */
-    URLInfo getURLInfo(URL url, TimeoutConstraint timeoutConstraint);
 
     /**
      * @param url ditto
      * @return InputStream
      * @throws IOException if something goes wrong
-     * @deprecated Use {@link #openStream(URL, TimeoutConstraint)} instead
      */
-    @Deprecated
     InputStream openStream(URL url) throws IOException;
 
     /**
-     * Opens and returns an {@link InputStream} to the passed <code>url</code>.
-     *
-     * @param url               The URL to which an {@link InputStream} has to be opened
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @return InputStream
-     * @throws IOException if something goes wrong
-     * @since 2.5
-     */
-    InputStream openStream(URL url, TimeoutConstraint timeoutConstraint) throws IOException;
-
-    /**
-     * @param src URL
+     * @param src  URL
      * @param dest File
-     * @param l CopyProgressListener
+     * @param l    CopyProgressListener
      * @throws IOException if something goes wrong
-     * @deprecated Use {@link #download(URL, File, CopyProgressListener, TimeoutConstraint)} instead
      */
-    @Deprecated
     void download(URL src, File dest, CopyProgressListener l) throws IOException;
 
     /**
-     * Downloads the resource available at <code>src</code> to the target <code>dest</code>
-     *
-     * @param src               The source URL to download the resource from
-     * @param dest              The destination {@link File} to download the resource to
-     * @param listener          The listener that will be notified of the download progress
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @throws IOException if something goes wrong
-     * @since 2.5
-     */
-    void download(URL src, File dest, CopyProgressListener listener, TimeoutConstraint timeoutConstraint) throws IOException;
-
-    /**
-     * @param src File
+     * @param src  File
      * @param dest URL
-     * @param l CopyProgressListener
+     * @param l    CopyProgressListener
      * @throws IOException if something goes wrong
-     * @deprecated Use {@link #upload(File, URL, CopyProgressListener, TimeoutConstraint)} instead
      */
-    @Deprecated
     void upload(File src, URL dest, CopyProgressListener l) throws IOException;
-
-    /**
-     * Uploads the <code>src</code> {@link File} to the target <code>dest</code> {@link URL}
-     *
-     * @param src               The source {@link File} to upload
-     * @param dest              The target URL where the {@link File} has to be uploaded
-     * @param listener          The listener that will be notified of the upload progress
-     * @param timeoutConstraint The connectivity timeout constraints. Can be null, in which case
-     *                          the timeouts are implementation specific
-     * @throws IOException if something goes wrong
-     * @since 2.5
-     */
-    void upload(File src, URL dest, CopyProgressListener listener, TimeoutConstraint timeoutConstraint) throws IOException;
 
     void setRequestMethod(int requestMethod);
 }

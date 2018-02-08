@@ -33,7 +33,7 @@ import java.util.zip.InflaterInputStream;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.settings.TimeoutConstraint;
 
-public abstract class AbstractURLHandler implements URLHandler {
+public abstract class AbstractURLHandler implements TimeoutConstrainedURLHandler {
 
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("%25([0-9a-fA-F][0-9a-fA-F])");
 

@@ -32,7 +32,7 @@ import java.util.Map;
  * and a fallback default {@link URLHandler} for dealing with downloads, uploads and
  * general reachability checks
  */
-public class URLHandlerDispatcher implements URLHandler {
+public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
     private final Map<String, URLHandler> handlers = new HashMap<>();
 
     private URLHandler defaultHandler = new BasicURLHandler();
@@ -52,7 +52,11 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getHandler(url.getProtocol()).isReachable(url, timeoutConstraint);
+        final URLHandler handler = this.getHandler(url.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            return ((TimeoutConstrainedURLHandler) handler).isReachable(url, timeoutConstraint);
+        }
+        return handler.isReachable(url, timeoutConstraint != null ? timeoutConstraint.getConnectionTimeout() : 0);
     }
 
     @Override
@@ -67,7 +71,11 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getHandler(url.getProtocol()).getContentLength(url, timeoutConstraint);
+        final URLHandler handler = this.getHandler(url.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            return ((TimeoutConstrainedURLHandler) handler).getContentLength(url, timeoutConstraint);
+        }
+        return handler.getContentLength(url, timeoutConstraint != null ? timeoutConstraint.getConnectionTimeout() : 0);
     }
 
     @Override
@@ -82,7 +90,11 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getHandler(url.getProtocol()).getLastModified(url, timeoutConstraint);
+        final URLHandler handler = this.getHandler(url.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            return ((TimeoutConstrainedURLHandler) handler).getLastModified(url, timeoutConstraint);
+        }
+        return handler.getLastModified(url, timeoutConstraint != null ? timeoutConstraint.getConnectionTimeout() : 0);
     }
 
     @Override
@@ -97,7 +109,11 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
-        return this.getHandler(url.getProtocol()).getURLInfo(url, timeoutConstraint);
+        final URLHandler handler = this.getHandler(url.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            return ((TimeoutConstrainedURLHandler) handler).getURLInfo(url, timeoutConstraint);
+        }
+        return handler.getURLInfo(url, timeoutConstraint != null ? timeoutConstraint.getConnectionTimeout() : 0);
     }
 
     @Override
@@ -107,7 +123,11 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
-        return this.getHandler(url.getProtocol()).openStream(url, timeoutConstraint);
+        final URLHandler handler = this.getHandler(url.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            return ((TimeoutConstrainedURLHandler) handler).openStream(url, timeoutConstraint);
+        }
+        return handler.openStream(url);
     }
 
     @Override
@@ -117,7 +137,12 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public void download(final URL src, final File dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
-        this.getHandler(src.getProtocol()).download(src, dest, listener, timeoutConstraint);
+        final URLHandler handler = this.getHandler(src.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            ((TimeoutConstrainedURLHandler) handler).download(src, dest, listener, timeoutConstraint);
+            return;
+        }
+        handler.download(src, dest, listener);
     }
 
     @Override
@@ -127,7 +152,12 @@ public class URLHandlerDispatcher implements URLHandler {
 
     @Override
     public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
-        this.getHandler(dest.getProtocol()).upload(src, dest, listener, timeoutConstraint);
+        final URLHandler handler = this.getHandler(dest.getProtocol());
+        if (handler instanceof TimeoutConstrainedURLHandler) {
+            ((TimeoutConstrainedURLHandler) handler).upload(src, dest, listener, timeoutConstraint);
+            return;
+        }
+        handler.upload(src, dest, listener);
     }
 
     public void setRequestMethod(int requestMethod) {

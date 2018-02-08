@@ -44,7 +44,7 @@ public final class URLHandlerRegistry {
      *
      * @return most accurate http downloader
      */
-    public static URLHandler getHttp() {
+    public static TimeoutConstrainedURLHandler getHttp() {
         try {
             // check for the presence of HttpComponents HttpClient
             Class.forName("org.apache.http.client.HttpClient");
@@ -53,7 +53,7 @@ public final class URLHandlerRegistry {
             // we always use just one instance which is internally registered to be closed
             // when the JVM exits
             final Field instance = handler.getDeclaredField("DELETE_ON_EXIT_INSTANCE");
-            return (URLHandler) instance.get(null);
+            return (TimeoutConstrainedURLHandler) instance.get(null);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             Message.verbose("Using JDK backed URL handler for HTTP interaction since the "
                     + "Apache HttpComponents HttpClient backed handler couldn't be created due to: "
