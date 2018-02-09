@@ -79,6 +79,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -4919,6 +4920,48 @@ public class ResolveTest {
                 .exists());
         assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test3", "1.0", "test3", "jar",
             "jar").exists());
+    }
+
+    @Test
+    public void testErrorResolveMaven2ParentPomWithCycle() throws Exception {
+        // IVY-1545
+        // test6 has parent parent4, parent4 parent is parent5, parent5 parent is parent4, a cycle.
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
+        ivy.getSettings().setDefaultResolver("parentChain");
+
+        try {
+            ivy.resolve(
+                new File("test/repositories/parentPom/org/apache/dm/test6/1.0/test6-1.0.pom"),
+                getResolveOptions(new String[] {"*"}));
+
+            // don't expect to get here, should suffer StackOverflowError if cycle is not detected
+            fail("Expected CircularDependencyException from parent cycle detection");
+        } catch (CircularDependencyException e) {
+            // ok
+            assertEquals("org.apache.dm#parent4;1.0->org.apache.dm#parent5;1.0", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testErrorResolveMaven2SelfAsParent() throws Exception {
+        // IVY-1545
+        // test7 has parent == self
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
+        ivy.getSettings().setDefaultResolver("parentChain");
+
+        try {
+            ivy.resolve(
+                new File("test/repositories/parentPom/org/apache/dm/test7/1.0/test7-1.0.pom"),
+                getResolveOptions(new String[] {"*"}));
+
+            // don't expect to get here, should suffer StackOverflowError if cycle is not detected
+            fail("Expected CircularDependencyException from parent cycle detection");
+        } catch (CircularDependencyException e) {
+            // ok
+            assertEquals("org.apache.dm#test7;1.0", e.getMessage());
+        }
     }
 
     /**
