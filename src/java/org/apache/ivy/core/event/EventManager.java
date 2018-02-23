@@ -54,7 +54,15 @@ public class EventManager implements TransferListener {
     }
 
     public boolean hasIvyListener(IvyListener listener) {
-        return Arrays.asList(listeners.getListeners(IvyListener.class)).contains(listener);
+        IvyListener[] listeners = this.listeners.getListeners(IvyListener.class);
+        for (IvyListener listen : listeners) {
+            if (listen instanceof FilteredIvyListener) {
+                if (listener.equals(((FilteredIvyListener) listen).getIvyListener())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void fireIvyEvent(IvyEvent evt) {
