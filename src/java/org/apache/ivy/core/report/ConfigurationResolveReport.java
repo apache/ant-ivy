@@ -170,6 +170,10 @@ public class ConfigurationResolveReport {
         return md;
     }
 
+    public ResolveOptions getResolveOptions()  {
+        return options;
+    }
+
     public IvyNode[] getUnresolvedDependencies() {
         List<IvyNode> unresolved = new ArrayList<>();
         for (IvyNode node : getDependencies()) {
