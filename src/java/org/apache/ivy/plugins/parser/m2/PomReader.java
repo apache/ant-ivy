@@ -17,21 +17,6 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
-import java.io.BufferedInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -47,6 +32,22 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Provides the method to read some data out of the DOM tree of a pom file.
@@ -171,7 +172,7 @@ public class PomReader {
      * properties are never null.
      *
      * @param prop String
-     * @param val String
+     * @param val  String
      */
     public void setProperty(String prop, String val) {
         if (!properties.containsKey(prop) && val != null) {
@@ -229,11 +230,11 @@ public class PomReader {
     }
 
     public String getPackaging() {
-        String val = getFirstChildText(projectElement, PACKAGING);
+        final String val = getFirstChildText(projectElement, PACKAGING);
         if (val == null) {
-            val = "jar";
+            return "jar";
         }
-        return val;
+        return replaceProps(val);
     }
 
     public String getHomePage() {
@@ -328,7 +329,7 @@ public class PomReader {
 
     private List<PomDependencyMgt> getDependencyMgt(Element parent) {
         Element dependenciesElement = getFirstChildElement(
-            getFirstChildElement(parent, DEPENDENCY_MGT), DEPENDENCIES);
+                getFirstChildElement(parent, DEPENDENCY_MGT), DEPENDENCIES);
         if (dependenciesElement == null) {
             return Collections.emptyList();
         }
@@ -445,6 +446,19 @@ public class PomReader {
         return plugins;
     }
 
+    private static Map<String, String> getProperties(final Element parent) {
+        final Element propsEl = getFirstChildElement(parent, PROPERTIES);
+        if (propsEl == null) {
+            return Collections.emptyMap();
+        }
+        propsEl.normalize();
+        final Map<String, String> props = new HashMap<>();
+        for (final Element prop : getAllChilds(propsEl)) {
+            props.put(prop.getNodeName(), getTextContent(prop));
+        }
+        return props;
+    }
+
     public class PomPluginElement implements PomDependencyMgt {
         private Element pluginElement;
 
@@ -524,6 +538,17 @@ public class PomReader {
 
         private static final String ACTIVE_BY_DEFAULT_ELEMENT = "activeByDefault";
 
+        private static final String OS = "os";
+        private static final String FAMILY = "family";
+        private static final String VERSION = "version";
+        private static final String ARCH = "arch";
+
+        private static final String FILE = "file";
+        private static final String MISSING = "missing";
+        private static final String EXISTS = "exists";
+
+        private static final String JDK = "jdk";
+
         private final Element profileElement;
 
         PomProfileElement(Element profileElement) {
@@ -535,12 +560,91 @@ public class PomReader {
         }
 
         public boolean isActive() {
-            return isActiveByDefault() || isActivatedByProperty();
+            return isActiveByDefault() || isActivatedByProperty()
+                    || isActiveByOS() || isActiveByJDK() || isActiveByFile();
         }
 
         public boolean isActiveByDefault() {
             Element activation = getFirstChildElement(profileElement, ACTIVATION_ELEMENT);
             return Boolean.parseBoolean(getFirstChildText(activation, ACTIVE_BY_DEFAULT_ELEMENT));
+        }
+
+        public boolean isActiveByOS() {
+            final Element activation = getFirstChildElement(profileElement, ACTIVATION_ELEMENT);
+            if (activation == null) {
+                return false;
+            }
+            final Element osActivation = getFirstChildElement(activation, OS);
+            if (osActivation == null) {
+                return false;
+            }
+            final String actualOS = System.getProperty("os.name");
+            final String expectedOSName = getFirstChildText(osActivation, NAME);
+            if (expectedOSName != null && !actualOS.equals(expectedOSName.trim())) {
+                // os name is specified but doesn't match
+                return false;
+            }
+            final String expectedOSFamily = getFirstChildText(osActivation, FAMILY);
+            if (expectedOSFamily != null && !actualOS.contains(expectedOSFamily.trim())) {
+                // os family is specified but doesn't match
+                return false;
+            }
+            final String expectedOSArch = getFirstChildText(osActivation, ARCH);
+            if (expectedOSArch != null && !System.getProperty("os.arch").equals(expectedOSArch.trim())) {
+                // os arch is specified but doesn't match
+                return false;
+            }
+            final String expectedOSVersion = getFirstChildText(osActivation, VERSION);
+            if (expectedOSVersion != null && !System.getProperty("os.version").equals(expectedOSVersion.trim())) {
+                // os version is specified but doesn't match
+                return false;
+            }
+            // reaching here implies that either no OS match rules were specified or
+            // all of the OS rules that were specified were matched. So we just check to see
+            // if any rules were specified at all, in which case, we consider the profile to be activated
+            // by the OS element
+            return (expectedOSName != null || expectedOSFamily != null || expectedOSArch != null || expectedOSVersion != null);
+        }
+
+        public boolean isActiveByJDK() {
+            final Element activation = getFirstChildElement(profileElement, ACTIVATION_ELEMENT);
+            if (activation == null) {
+                return false;
+            }
+            final String expectedJDKRange = getFirstChildText(activation, JDK);
+            if (expectedJDKRange == null) {
+                return false;
+            }
+            final boolean negate = expectedJDKRange.trim().startsWith("!");
+            final String nonNegatedRange = negate ? expectedJDKRange.substring(1).trim() : expectedJDKRange.trim();
+            final boolean javaVersionInRange = MavenVersionRangeParser.currentJavaVersionInRange(nonNegatedRange);
+            return javaVersionInRange ^ negate;
+        }
+
+        public boolean isActiveByFile() {
+            final Element activation = getFirstChildElement(profileElement, ACTIVATION_ELEMENT);
+            if (activation == null) {
+                return false;
+            }
+            final Element fileActivation = getFirstChildElement(activation, FILE);
+            if (fileActivation == null) {
+                return false;
+            }
+            final String expectedMissing = getFirstChildText(fileActivation, MISSING);
+            if (expectedMissing != null && new File(expectedMissing.trim()).exists()) {
+                // the file was specified and expected to be missing, but it exists
+                return false;
+            }
+            final String expectedExists = getFirstChildText(fileActivation, EXISTS);
+            if (expectedExists != null && !(new File(expectedExists.trim()).exists())) {
+                // the file was specified and expected to be existing, but it doesn't
+                return false;
+            }
+            // reaching here implies that either no file match rules were specified or
+            // all of the file rules that were specified were matched. So we just check to see
+            // if any rules were specified at all, in which case, we consider the profile to be activated
+            // by the file element
+            return (expectedMissing != null || expectedExists != null);
         }
 
         public boolean isActivatedByProperty() {
@@ -559,12 +663,11 @@ public class PomReader {
             }
             String propertyValue = getFirstChildText(propertyActivation, VALUE);
 
-            Map<String, String> pomProperties = PomReader.this.getPomProperties();
-            boolean matched;
+            final boolean matched;
             if (propertyValue == null || "".equals(propertyValue)) {
-                matched = pomProperties.containsKey(propertyName);
+                matched = PomReader.this.properties.containsKey(propertyName);
             } else {
-                matched = propertyValue.equals(pomProperties.get(propertyName));
+                matched = propertyValue.equals(PomReader.this.properties.get(propertyName));
             }
             return matched ^ negate;
         }
@@ -581,21 +684,16 @@ public class PomReader {
             return PomReader.this.getPlugins(profileElement);
         }
 
+        public Map<String, String> getProfileProperties() {
+            return PomReader.getProperties(profileElement);
+        }
     }
 
     /**
      * @return the content of the properties tag into the pom.
      */
     public Map<String, String> getPomProperties() {
-        Map<String, String> pomProperties = new HashMap<>();
-        Element propsEl = getFirstChildElement(projectElement, PROPERTIES);
-        if (propsEl != null) {
-            propsEl.normalize();
-        }
-        for (Element prop : getAllChilds(propsEl)) {
-            pomProperties.put(prop.getNodeName(), getTextContent(prop));
-        }
-        return pomProperties;
+        return new HashMap<>(getProperties(projectElement));
     }
 
     private String replaceProps(String val) {

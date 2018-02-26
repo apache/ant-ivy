@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -1141,6 +1142,61 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             }
         } finally {
             System.clearProperty("version.test.system.property.b");
+        }
+    }
+
+    /**
+     * Tests that the {@code properties} setup in the Maven {@code profiles} that are conditionally activated,
+     * become available to the module being parsed and such properties can be used as references within the pom
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1577">IVY-1577</a> for more details
+     */
+    @Test
+    public void testPropertiesDefinedInProfiles() throws Exception {
+        final String[] packagingTypesToTest = new String[]{"bundle", "jar"};
+        for (final String expectedPackagingType : packagingTypesToTest) {
+            String sysPropToSet = null;
+            switch (expectedPackagingType) {
+                case "bundle": {
+                    sysPropToSet = "PomModuleDescriptorParserTest.some-other-test-prop";
+                    break;
+                }
+                case "jar": {
+                    sysPropToSet = "PomModuleDescriptorParserTest.some-test-prop";
+                    break;
+                }
+                default: {
+                    fail("Unexpected packaging type");
+                }
+            }
+            // activate the relevant profile, based on a system property
+            System.setProperty(sysPropToSet, "foo");
+            try {
+                // now parse the pom
+                final ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                        getClass().getResource("test-properties-in-profile.pom"), false);
+                assertNotNull("Parsed module descriptor was null", md);
+                assertEquals("Unexpected module descriptor", ModuleRevisionId.newInstance("org.apache", "test", "5.0.1"), md.getModuleRevisionId());
+                final Artifact[] artifacts = md.getAllArtifacts();
+                assertNotNull("No artifacts found for module", artifacts);
+                assertEquals("Unexpected number of artifacts for module", 1, artifacts.length);
+                final Artifact mainArtifact = artifacts[0];
+                // make sure that the main artifact which references a conditionally set property (via a Maven profile)
+                // is indeed using the right value
+                assertEquals("Unexpected artifact type", expectedPackagingType, mainArtifact.getType());
+                // some other basic tests
+                final DependencyDescriptor[] dds = md.getDependencies();
+                assertNotNull(dds);
+                assertEquals(1, dds.length);
+                assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+                        dds[0].getDependencyRevisionId());
+            } finally {
+                if (sysPropToSet != null) {
+                    // reset the system prop that we had set
+                    System.clearProperty(sysPropToSet);
+                }
+            }
         }
     }
 

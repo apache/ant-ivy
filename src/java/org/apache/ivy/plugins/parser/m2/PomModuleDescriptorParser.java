@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -147,9 +149,27 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             Message.debug("parent.artifactId: " + domReader.getParentArtifactId());
             Message.debug("parent.version: " + domReader.getParentVersion());
 
-            for (Map.Entry<String, String> prop : domReader.getPomProperties().entrySet()) {
+            for (final Map.Entry<String, String> prop : domReader.getPomProperties().entrySet()) {
                 domReader.setProperty(prop.getKey(), prop.getValue());
                 mdBuilder.addProperty(prop.getKey(), prop.getValue());
+            }
+            final List<PomProfileElement> activeProfiles = new ArrayList<>();
+            // add profile specific properties
+            for (final PomProfileElement profile : domReader.getProfiles()) {
+                if (!profile.isActive()) {
+                    continue;
+                }
+                // keep track of this active profile for later use
+                activeProfiles.add(profile);
+
+                final Map<String, String> profileProps = profile.getProfileProperties();
+                if (profileProps.isEmpty()) {
+                    continue;
+                }
+                for (final Map.Entry<String, String> entry : profileProps.entrySet()) {
+                    domReader.setProperty(entry.getKey(), entry.getValue());
+                    mdBuilder.addProperty(entry.getKey(), entry.getValue());
+                }
             }
 
             ModuleDescriptor parentDescr = null;
@@ -275,17 +295,15 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
 
                 // consult active profiles:
-                for (PomProfileElement profile : domReader.getProfiles()) {
-                    if (profile.isActive()) {
-                        for (PomDependencyMgt dep : profile.getDependencyMgt()) {
-                            addTo(mdBuilder, dep, ivySettings);
-                        }
-                        for (PomDependencyData dep : profile.getDependencies()) {
-                            mdBuilder.addDependency(res, dep);
-                        }
-                        for (PomPluginElement plugin : profile.getPlugins()) {
-                            mdBuilder.addPlugin(plugin);
-                        }
+                for (final PomProfileElement activeProfile : activeProfiles) {
+                    for (PomDependencyMgt dep : activeProfile.getDependencyMgt()) {
+                        addTo(mdBuilder, dep, ivySettings);
+                    }
+                    for (PomDependencyData dep : activeProfile.getDependencies()) {
+                        mdBuilder.addDependency(res, dep);
+                    }
+                    for (PomPluginElement plugin : activeProfile.getPlugins()) {
+                        mdBuilder.addPlugin(plugin);
                     }
                 }
 
