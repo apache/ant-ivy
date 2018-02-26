@@ -136,4 +136,41 @@ public class MavenVersionRangeParserTest {
         assertFalse("'>' range wasn't expected to match", MavenVersionRangeParser.rangeAccepts(range, "11"));
         assertFalse("'>' range wasn't expected to match", MavenVersionRangeParser.rangeAccepts(range, "11.0"));
     }
+
+    /**
+     * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
+     * {@code (,1.0],[1.2,)} is used to compare against some value.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testMultiRange() throws Exception {
+        final String range = "(,1.0],[1.2,)"; // x <= 1.0 or x >= 1.2
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "0.9"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "0.9.5"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "22"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.2"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.2.0"));
+
+        assertFalse("Range with multiple sets wasn't expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.1"));
+        assertFalse("Range with multiple sets wasn't expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0.1"));
+    }
+
+    /**
+     * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
+     * {@code (,1.1),(1.1,)} is used to compare against some value.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testMultiRangeSpecificValue() throws Exception {
+        final String range = "(,1.1),(1.1,)"; // x != 1.1
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0.1"));
+        assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.2"));
+
+        assertFalse("Range with multiple sets wasn't expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.1"));
+    }
 }

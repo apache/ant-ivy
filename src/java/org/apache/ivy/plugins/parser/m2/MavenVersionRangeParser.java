@@ -17,6 +17,7 @@
 
 package org.apache.ivy.plugins.parser.m2;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
@@ -121,8 +122,24 @@ class MavenVersionRangeParser {
                 return new BasicRange(lowerBound, !lowerBoundVal.startsWith("("), upperBound, !upperBoundVal.endsWith(")"));
             }
             if (versionParts.length > 2) {
-                // TODO: we do not yet support multi-range format (which is a valid range in maven
-                return null;
+                // each range part can itself be a range, which is valid in maven
+                final Collection<Range> ranges = new ArrayList<>();
+                for (int i = 0; i < versionParts.length; i = (i + 2 < versionParts.length) ? i + 2 : i + 1) {
+                    final String partOne = versionParts[i];
+                    final String partTwo;
+                    if (i + 1 < versionParts.length) {
+                        partTwo = versionParts[i + 1];
+                    } else {
+                        partTwo = "";
+                    }
+                    final Range rangePart = parse(partOne + "," + partTwo);
+                    if (rangePart == null) {
+                        continue;
+                    }
+                    ranges.add(rangePart);
+
+                }
+                return (ranges == null || ranges.isEmpty()) ? null : new MultiSetRange(ranges);
             }
             return null;
         } catch (NumberFormatException nfe) {
@@ -177,7 +194,7 @@ class MavenVersionRangeParser {
         }
     }
 
-    private final class MultiSetRange implements Range {
+    private static final class MultiSetRange implements Range {
 
         private final Collection<Range> ranges;
 
