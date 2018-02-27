@@ -1,0 +1,186 @@
+= Instructions for releasing Apache Ivy
+
+
+NOTE: This document is adapted from the Ant release process.
+
+== Propose a release plan
+
+This should set out the timetable for the release under ideal circumstances. In reality, you send a note to the list that you intend to cut the release and wait for a few days whether anybody objects.
+
+We don't create extra branches for release and the release will be done from the `master` branch.
+
+This document assumes you are familiar with `git` http://git-scm.com/book/en/v2/ may be a good guide if you are not.
+
+== Checkout the repo
+
+We don't want tags for failed votes to end up on out branches so the release is first created from a detached head.
+
+Checkout the `HEAD` of the `master` branch as a detached head:
+
+[source]
+----
+    git checkout master^0
+
+----
+
+Make sure that your directory tree is clean by running `git status`.
+
+== Update the version number
+
+The `version.properties` contains the version number of the Ivy project being released. Update the following properties to the right values (which is decided based on what version number and qualifier you want to associate with the release):
+
+[source]
+----
+target.ivy.version=2.5.0
+# Following OSGi spec: have to be 3 numbers separated by dots
+target.ivy.bundle.version=2.5.0
+# in case we want to add a qualifier such as alpha, beta, etc...
+# if non empty, add a '_' at the end of the qualifier, so the version would look like 1.2.3.alpha_200901011200
+target.ivy.bundle.version.qualifier=alpha_
+----
+
+== Trigger the release build
+
+Trigger the release by running the `build-release.xml`'s `release` target. This compiles the project, runs the tests, generates the documentation and tutorials and finally creates the distribution artifacts.
+
+[source]
+----
+    ant -f build-release.xml release
+
+----
+
+Upon successful completion, the distribution artifacts will be generated in the `build/distrib` directory of the checked out project, locally.
+
+== Sign the distribution artifacts
+
+TODO: This section needs more details about setting up KEYS and making them available to the public (similar to the Ant project's KEYS file in the repo)
+
+The `build-release.xml` has a `sign` target which can be used to sign the generated distribution artifacts. Run the following command to sign these artifacts:
+
+[source]
+----
+    ant -f build-release.xml sign
+----
+
+== Commit the changes and create a RC tag for the release
+
+At this point the distribution artifacts have been generated and have been successfully signed too. We can now commit the changes (which most likely will just be the version file changes) and create a RC tag for the release.
+
+If we are releasing `2.5.0` and if this is the first RC for it, then we create a `2.5.0-RC1` tag for it.
+
+Be sure to replace the version number appropriately in the following command:
+
+[source]
+----
+    git tag -m "Release <version>" <version>
+----
+
+The commit and the tag can now be pushed to the asf hosted repo:
+
+[source]
+----
+    git push --tags <remote-repo> master
+----
+
+== Upload the distribution artifacts
+
+TODO: This needs more details and some verification that it's a similar process as that we do in Ant release. The process might involve the following:
+
+=== Upload to https://dist.apache.org/repos/dist/dev/ant/ivy/
+
+- Create a SVN sandbox on your computer with https://dist.apache.org/repos/dist/dev/ant/ivy/ in it.
+
+- Copy the distribution folder to the location of the sandbox.
+
+- `svn add` the files and `commit` into https://dist.apache.org/repos/dist/dev/ant/ivy/
+
+=== Upload the Maven artifacts
+TODO: This section needs work
+
+== Initiate a vote
+
+Once the above steps are done, initiate a vote by sending a email on dev@ant.
+
+The email will typically mention :
+
+- the git tag for the release including commit hash,
+
+- the location of the tarballs, including revision number in dist.apache.org repository
+
+- the URL for the maven artifacts
+
+- TODO: link to documentation? (where do we upload it?)
+
+The vote will only pass if at least three PMC members have voted +1 and more +1s than -1s have been cast.  The vote will run for 3 days.
+
+If the vote fails, address the problems and recreate the next RC build (by redoing the release process)
+
+== Promote the RC to Final
+
+=== Create the tag in the repo
+Once the vote has passed, tag the last RC created with the final tag
+
+[source]
+----
+    git checkout <the-rc-tag-that-passed-the-vote>
+    git tag -m "Tagging release <verion> of Ivy" <version>
+    git push --tags <remote-repo> master
+----
+
+=== Promote the distribution artifacts to https://dist.apache.org/repos/dist/release/ant/ivy/
+
+The distrib artifacts should be published the apache dist. It is managed via `svnpubsub` so the release should be committed to the subversion repository at https://dist.apache.org/repos/dist/release/ant/ivy/.
+
+TODO: This needs more details on what needs to be done
+
+== Release the project in the Ivy's JIRA
+
+Mark the newly released version as "released" in the JIRA and create a newer version for tracking upcoming tasks.
+
+== Update the version in the repo to next release
+
+Checkout the master branch and update the `version.properties` to use newer version number for a subsequent release. Commit the changes and push to master branch.
+
+[source]
+----
+    git checkout master
+    ... edit the version.properties to use newer version
+    git commit -m "next dev version" ./version.properties
+    git push <remote-repo> master
+----
+
+== Wait for mirrors to catch up
+
+Now that distribution artifacts have been uploaded, wait a few hours for the mirrors to catch up.
+
+== Update the Ivy site https://ant.apache.org/ivy/
+
+The website is managed here: https://svn.apache.org/repos/asf/ant/site/ivy/
+
+TODO: This needs more details/verification
+
+Copy the manual of the release into the production folder - since the site still uses svn and Ivy proper uses git there currently is no way to use the scm for this.
+
+Regenerate the site
+
+== Announce the release
+
+At this point in time, the release is done and announcements are made. PGP-sign your announcement posts.
+
+Apache mailing lists that should get the announcements:
+
+    announce@apache.org, dev@ant.apache.org and ivy-user@ant.apache.org.
+
+== Get some fresh air!
+
+You can now reacquaint yourself with your family and friends ;)
+
+== Remove the older releases
+
+TODO: This needs details
+
+
+
+
+
+
