@@ -37,7 +37,7 @@ Run the following git command to checkout the branch, revert any change and remo
 
 [source,shell]
 ----
-git checkout 2.0.x
+git checkout master
 git reset --hard
 git clean -d -x -f
 ----
@@ -108,6 +108,8 @@ All artifacts in `build/distrib/dist` needs to be published on the 'dist' svn of
 
 The following command lines should do the job:
 
+NOTE: Make sure to use the right version number in the commit message.
+
 [source,shell]
 ----
 svn checkout -N https://dist.apache.org/repos/dist/dev/ant/ivy build/distrib/dist
@@ -136,6 +138,8 @@ Once the checks passed, you can find in the __Summary__ the URL of the staging r
 
 As soon as you are happy with the artifacts to be released, it is time to tag the release
 
+NOTE: Use the right version number for the tag. For example, if you released 2.5.0 of Ivy, then the tag name should be 2.5.0
+
 [source,shell]
 ----
 git tag -s 2.0.0-beta1 -m 'Release Ivy 2.0.0-beta1'
@@ -160,9 +164,9 @@ Subject: [VOTE] Ivy ${version} Release
 
 I have built a release candidate for Ivy ${version}
 
-The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tag;h=refs/tags/2.0.0-beta1
+The svn tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tag;h=refs/tags/${version}
 
-The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/$VERSION at revision ${svn-rev-of-the-check-in}
+The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/${version} at revision ${svn-rev-of-the-check-in}
 
 The staging Maven repository is available there: https://repository.apache.org/content/repositories/orgapacheant-XXXX
 
