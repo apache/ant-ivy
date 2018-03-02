@@ -77,6 +77,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Cycle in parent POM ancestry yields StackOverflowError in PomModuleDescriptorParser (jira:IVY-1545[]) (Thanks to Brett Randall)
 - FIX: The method hasIvyListener in org.apache.ivy.core.event.EventManager always returned false
 - FIX: Allow conditionally activated properties through Maven profiles, to be referenced in the `pom.xml` (jira:IVY-1577[])
+- FIX: Fix Maven dependency resolution for dependencies with multiple different classifiers (jira:IVY-1576[])
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
