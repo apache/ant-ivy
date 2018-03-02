@@ -35,5 +35,17 @@
       <version>1.0</version>
       <classifier>asl</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.apache</groupId>
+      <artifactId>test-classified</artifactId>
+      <version>1.0</version>
+      <classifier>other</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache</groupId>
+      <artifactId>test-classified</artifactId>
+      <version>1.0</version>
+      <classifier>unix</classifier>
+    </dependency>
   </dependencies>
 </project>

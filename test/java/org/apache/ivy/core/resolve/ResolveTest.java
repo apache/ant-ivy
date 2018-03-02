@@ -27,6 +27,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExtendsDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -6286,5 +6287,35 @@ public class ResolveTest {
         assertEquals(new File(adr.getUnpackedLocalFile(), "test.txt"), jarContents[1]);
         assertEquals(new File(adr.getUnpackedLocalFile(), "META-INF/MANIFEST.MF"),
             jarContents[0].listFiles()[0]);
+    }
+
+    /**
+     * Tests that if a pom.xml has multiple dependencies for the same module, but for different Maven classifiers,
+     * then the resolution of such dependencies, preserves those multiple (Ivy) artifacts against the dependency
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1576">IVY-1576</a> for more details
+     */
+    @Test
+    public void testMultiClassifierMavenDepResolution() throws Exception {
+        final File pomFile = new File("test/repositories/m2/org/apache/test-classifier/1.0/test-classifier-1.0.pom");
+        final ResolveReport resolveReport = ivy.resolve(pomFile.toURI().toURL(), new ResolveOptions().setConfs(new String[]{"*"}));
+        assertFalse(resolveReport.hasError());
+        final ModuleRevisionId dependencyId = ModuleRevisionId.newInstance("org.apache", "test-classified", "1.0");
+        final ArtifactDownloadReport[] adrs = resolveReport.getArtifactsReports(dependencyId);
+        assertNotNull("Artifact download reports is null for dependency " + dependencyId, adrs);
+        assertEquals("Unexpected number of artifact download reports for dependency " + dependencyId, 3, adrs.length);
+        final Set<String> classifiers = new HashSet<>();
+        Collections.addAll(classifiers, "other", "asl", "unix");
+        for (final ArtifactDownloadReport adr : adrs) {
+            final Artifact artifact = adr.getArtifact();
+            assertNotNull("Artifact is null for dependency " + dependencyId, artifact);
+            final ArtifactRevisionId artifactId = artifact.getId();
+            assertEquals("Unexpected artifact " + artifactId.getName(), "test-classified", artifactId.getName());
+            final String classifier = artifact.getExtraAttribute("m:classifier");
+            assertNotNull("No classifier extra attribute on artifact for dependency " + dependencyId, classifier);
+            assertTrue("Unexpected classifier " + classifier + " on artifact " + artifact, classifiers.remove(classifier));
+        }
+        assertTrue("Missing artifact(s) with classifiers " + classifiers, classifiers.isEmpty());
     }
 }

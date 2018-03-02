@@ -297,8 +297,12 @@ public class PomModuleDescriptorBuilder {
                     dep.getArtifactId());
         }
         final boolean excludeAllTransitiveDeps = shouldExcludeAllTransitiveDeps(excluded);
-        DefaultDependencyDescriptor dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor,
-                moduleRevId, !excludeAllTransitiveDeps);
+        // the same dependency mrid could appear twice in the module descriptor,
+        // so we check if we already have created a dependency descriptor for the dependency mrid
+        final DependencyDescriptor existing = this.ivyModuleDescriptor.depDescriptors.get(moduleRevId);
+        final DefaultDependencyDescriptor dd = (existing != null && existing instanceof DefaultDependencyDescriptor)
+                ? (DefaultDependencyDescriptor) existing
+                : new PomDependencyDescriptor(dep, ivyModuleDescriptor, moduleRevId, !excludeAllTransitiveDeps);
         if (isNullOrEmpty(scope)) {
             scope = getDefaultScope(dep);
         }
@@ -346,8 +350,10 @@ public class PomModuleDescriptorBuilder {
                         PatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, null));
             }
         }
-
-        ivyModuleDescriptor.addDependency(dd);
+        // intentional identity check to make sure we don't re-add the same dependency
+        if (existing != dd) {
+            ivyModuleDescriptor.addDependency(dd);
+        }
     }
 
     private static boolean shouldExcludeAllTransitiveDeps(final List<ModuleId> exclusions) {
@@ -723,6 +729,8 @@ public class PomModuleDescriptorBuilder {
 
     public static class PomModuleDescriptor extends DefaultModuleDescriptor {
         private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new LinkedHashMap<>();
+        // dependency descriptor keyed by its dependency revision id
+        private final Map<ModuleRevisionId, DependencyDescriptor> depDescriptors = new HashMap<>();
 
         public PomModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
             super(parser, res);
@@ -736,6 +744,12 @@ public class PomModuleDescriptorBuilder {
 
         public Map<ModuleId, PomDependencyMgt> getDependencyManagementMap() {
             return dependencyManagementMap;
+        }
+
+        @Override
+        public void addDependency(final DependencyDescriptor dependency) {
+            super.addDependency(dependency);
+            this.depDescriptors.put(dependency.getDependencyRevisionId(), dependency);
         }
     }
 }
