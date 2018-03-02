@@ -62,6 +62,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +74,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static org.apache.ivy.util.StringUtils.joinArray;
 import static org.junit.Assert.assertEquals;
@@ -6315,7 +6318,16 @@ public class ResolveTest {
             final String classifier = artifact.getExtraAttribute("m:classifier");
             assertNotNull("No classifier extra attribute on artifact for dependency " + dependencyId, classifier);
             assertTrue("Unexpected classifier " + classifier + " on artifact " + artifact, classifiers.remove(classifier));
+            // just make sure it's the correct jar file
+            assertJarContains(adr.getLocalFile(), classifier + ".txt");
         }
         assertTrue("Missing artifact(s) with classifiers " + classifiers, classifiers.isEmpty());
+    }
+
+    private void assertJarContains(final File jar, final String jarEntryPath) throws IOException {
+        try (final JarFile jarFile = new JarFile(jar)) {
+            final JarEntry entry = jarFile.getJarEntry(jarEntryPath);
+            assertNotNull(jarEntryPath + " is missing from jar file " + jar, entry);
+        }
     }
 }
