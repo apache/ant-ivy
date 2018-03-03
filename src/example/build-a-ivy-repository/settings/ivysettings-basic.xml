@@ -14,17 +14,17 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
-	<settings       defaultResolver="libraries"
-			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
-	<caches defaultCacheDir="${ivy.cache.dir}/no-namespace" />
-	<resolvers>
-		<ibiblio name="libraries" m2compatible="true" />
-  		<filesystem name="my-repository">
-  			<ivy pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-  			<artifact pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
-  		</filesystem>
-	</resolvers>
+    <settings defaultResolver="libraries"
+              defaultConflictManager="all"/>            <!-- in order to get all revisions without any eviction -->
+    <caches defaultCacheDir="${ivy.cache.dir}/no-namespace"/>
+    <resolvers>
+        <ibiblio name="libraries" m2compatible="true"/>
+        <filesystem name="my-repository">
+            <ivy pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+            <artifact pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+        </filesystem>
+    </resolvers>
 </ivysettings>

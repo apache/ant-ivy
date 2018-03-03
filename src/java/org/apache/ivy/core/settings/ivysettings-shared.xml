@@ -14,16 +14,16 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
-	<property name="ivy.shared.default.root"             value="${ivy.default.ivy.user.dir}/shared" override="false"/>
-	<property name="ivy.shared.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
-	<property name="ivy.shared.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
-	<resolvers>
-		<filesystem name="shared">
-			<ivy pattern="${ivy.shared.default.root}/${ivy.shared.default.ivy.pattern}" />
-			<artifact pattern="${ivy.shared.default.root}/${ivy.shared.default.artifact.pattern}" />
-		</filesystem>
-	</resolvers>
+    <property name="ivy.shared.default.root"             value="${ivy.default.ivy.user.dir}/shared" override="false"/>
+    <property name="ivy.shared.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+    <property name="ivy.shared.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+    <resolvers>
+        <filesystem name="shared">
+            <ivy pattern="${ivy.shared.default.root}/${ivy.shared.default.ivy.pattern}" />
+            <artifact pattern="${ivy.shared.default.root}/${ivy.shared.default.artifact.pattern}" />
+        </filesystem>
+    </resolvers>
 </ivysettings>

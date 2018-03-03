@@ -1,4 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -15,7 +14,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <html>
 <head>
@@ -28,12 +27,12 @@ This packages gathers classes used to represent identifiers of objects involved 
 As identifiers, they do not store any information on the module content and detailed metadata (like dependencies).
 </p>
 <h2>Classes</h2>
-<ul>
-<li>ModuleId</li> is used as the identifier of module, without considering its version. It's basically an organization and module name couple.
-<li>ModuleRevisionId</li> is used as the identifier of a module in a particular version or version constraint. It is composed of a ModuleId, a revision, and optionally a branch and extra attributes. 
-<li>ArtifactId</li> identifies an artifact without considering its version. It's basically a ModuleId and an artifact name, type and extension, plus optional extra attributes.
-<li>ArtifactRevisionId</li> identifies an artifact of a module in a particular version. It is composed of a ModuleRevisionId along with artifact identifier like the name type and extension. 
-</ul>
+<dl>
+<dt>ModuleId</dt><dd>is used as the identifier of module, without considering its version. It's basically an organization and module name couple.</dd>
+<dt>ModuleRevisionId</dt><dd>is used as the identifier of a module in a particular version or version constraint. It is composed of a ModuleId, a revision, and optionally a branch and extra attributes.</dd>
+<dt>ArtifactId</dt><dd>identifies an artifact without considering its version. It's basically a ModuleId and an artifact name, type and extension, plus optional extra attributes.</dd>
+<dt>ArtifactRevisionId</dt><dd>identifies an artifact of a module in a particular version. It is composed of a ModuleRevisionId along with artifact identifier like the name type and extension.</dd>
+</dl>
 <h2>Text Representation</h2>
 <p>
 These classes share an homogeneous text representation, which can be easily obtained through the toString() method.
@@ -44,16 +43,17 @@ The # before the branch is present only if the branch is not empty.<br/>
 The type and surrounding parenthesis are present only if different from the extension.
 </p>
 <p>
-A textual representation can be parsed into an object (supported for ModuleRevisionId only yet), as long as a strict set of characters is used for each field (which is recommended).<br/>
+A textual representation can be parsed into an object (supported for ModuleRevisionId only yet), as long as a strict set of characters is used for each field (which is recommended).
+</p>
 Allowed characters are:
-<ul>
-<li>organisation</li> a-z A-Z 0-9 - / . _ + =
-<li>module</li> a-z A-Z 0-9 - / . _ + =
-<li>branch</li> a-z A-Z 0-9 - / . _ + =
-<li>revision</li> a-z A-Z 0-9 - / . _ + = , [ ] { } ( ) : @
-<li>artifact</li> a-z A-Z 0-9 - / . _ + =
-<li>extension</li> a-z A-Z 0-9 - / . _ + =
-<li>type</li> a-z A-Z 0-9 - / . _ + =
-</ul>
+<dl>
+<dt>organisation</dt><dd><code>a-z A-Z 0-9 - / . _ + =</code></dd>
+<dt>module</dt><dd><code>a-z A-Z 0-9 - / . _ + =</code></dd>
+<dt>branch</dt><dd><code>a-z A-Z 0-9 - / . _ + =</code></dd>
+<dt>revision</dt><dd><code>a-z A-Z 0-9 - / . _ + = , [ ] { } ( ) : @</code></dd>
+<dt>artifact</dt><dd><code>a-z A-Z 0-9 - / . _ + =</code></dd>
+<dt>extension</dt><dd><code>a-z A-Z 0-9 - / . _ + =</code></dd>
+<dt>type</dt><dd><code>a-z A-Z 0-9 - / . _ + =</code></dd>
+</dl>
 
 </body>

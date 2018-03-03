@@ -46,7 +46,7 @@
         <xslt style="packager.xsl" in="packager.xml" out="packager-output.xml">
             <param name="resourceURL" expression="${resourceURL}"/>
             <param name="restricted" expression="${ivy.packager.restricted}"/>
-        	<param name="quiet" expression="${ivy.packager.quiet}"/>
+            <param name="quiet" expression="${ivy.packager.quiet}"/>
         </xslt>
     </target>
 

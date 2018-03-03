@@ -81,7 +81,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     private static final PomModuleDescriptorParser INSTANCE = new PomModuleDescriptorParser();
 
     private static final String PARENT_MAP_KEY = PomModuleDescriptorParser.class.getName() + ".parentMap";
-    
+
     public static PomModuleDescriptorParser getInstance() {
         return INSTANCE;
     }

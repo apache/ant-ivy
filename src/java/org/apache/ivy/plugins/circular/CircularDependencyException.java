@@ -28,7 +28,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 public class CircularDependencyException extends RuntimeException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 670272039106237360L;
 

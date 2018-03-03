@@ -14,16 +14,16 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
-	<property name="ivy.local.default.root"             value="${ivy.default.ivy.user.dir}/local" override="false"/>
-	<property name="ivy.local.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
-	<property name="ivy.local.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
-	<resolvers>
-		<filesystem name="local">
-			<ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
-			<artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
-		</filesystem>
-	</resolvers>
+    <property name="ivy.local.default.root"             value="${ivy.default.ivy.user.dir}/local" override="false"/>
+    <property name="ivy.local.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+    <property name="ivy.local.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+    <resolvers>
+        <filesystem name="local">
+            <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
+            <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
+        </filesystem>
+    </resolvers>
 </ivysettings>

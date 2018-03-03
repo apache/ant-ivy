@@ -14,148 +14,146 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
-	<settings defaultResolver="my-repository"
-              defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
-	<caches defaultCacheDir="${ivy.cache.dir}/advanced" />
+    <settings defaultResolver="my-repository"
+              defaultConflictManager="all"/>            <!-- in order to get all revisions without any eviction -->
+    <caches defaultCacheDir="${ivy.cache.dir}/advanced"/>
 
-	<!-- 
-	   You can override this property to use one of the mirrors listed on
-	   http://docs.codehaus.org/display/MAVENUSER/Mirrors+Repositories
-	-->
-	<property name="ibiblio-maven2-root" value="https://repo1.maven.org/maven2/" override="false" />
+    <!--
+        You can override this property to use one of the mirrors listed on
+        http://docs.codehaus.org/display/MAVENUSER/Mirrors+Repositories
+    -->
+    <property name="ibiblio-maven2-root" value="https://repo1.maven.org/maven2/" override="false"/>
 
-	<namespaces>
-    	<namespace name="maven2">
-	        <rule>	<!-- imported apache maven1 projects -->
-            	<fromsystem>
-                	<src org="apache" module=".+"/>
-	
+    <namespaces>
+        <namespace name="maven2">
+            <rule>      <!-- imported apache maven1 projects -->
+                <fromsystem>
+                    <src org="apache" module=".+"/>
                     <dest org="$m0" module="$m0"/>
                 </fromsystem>
                 <tosystem>
-					<src org="commons-.+" module="commons-.+" />
-					<src org="ant" module=".*" />
-					<src org="avalon-.+" module="avalon-.+" />
-					<src org="avalon" module="avalon" />
-					<src org="axis" module="axis" />
-					<src org="axis2" module="axis2" />
-					<src org="batik" module="batik" />
-					<src org="bcel" module="bcel" />
-					<src org="beehive" module="beehive" />
-					<src org="bsf" module="bsf" />
-					<src org="cactus" module="cactus" />
-					<src org="cocoon" module="cocoon" />
-					<src org="cornerstone-.+" module="cornerstone-.+" />
-					<src org="create-checksums" module="create-checksums" />
-					<src org="crimson" module="crimson" />
-					<src org="directory-.+" module="directory-.+" />
-					<src org="directory" module="directory" />
-					<src org="ecs" module="ecs" />
-					<src org="excalibur-.+" module="excalibur-.+" />
-					<src org="excalibur" module="excalibur" />
-					<src org="fop" module="fop" />
-					<src org="fulcrum" module="fulcrum" />
-					<src org="geronimo-.+" module="geronimo-.+" />
-					<src org="geronimo" module="geronimo" />
-					<src org="hivemind" module="hivemind" />
-					<src org="jakarta-regexp" module="jakarta-regexp" />
-					<src org="james" module="james" />
-					<src org="jaxme" module="jaxme" />
-					<src org="jcs-javagroups" module="jcs-javagroups" />
-					<src org="jcs" module="jcs" />
-					<src org="jspapi" module="jspapi" />
-					<src org="jstl" module="jstl" />
-					<src org="juddi" module="juddi" />
-					<src org="log4j" module="log4j" />
-					<src org="logkit" module="logkit" />
-					<src org="lucene" module="lucene" />
-					<src org="magicGball" module="magicGball" />
-					<src org="maven" module="maven" />
-					<src org="merlin-developer" module="merlin-developer" />
-					<src org="merlin" module="merlin" />
-					<src org="muse" module="muse" />
-					<src org="myfaces" module="myfaces" />
-					<src org="nekohtml" module="nekohtml" />
-					<src org="ojb" module="ojb" />
-					<src org="oro" module="oro" />
-					<src org="pluto-container" module="pluto-container" />
-					<src org="poi" module="poi" />
-					<src org="pubscribe" module="pubscribe" />
-					<src org="sandesha" module="sandesha" />
-					<src org="servletapi" module="servletapi" />
-					<src org="slide" module=".*" />
-					<src org="stratum" module="stratum" />
-					<src org="struts" module="struts" />
-					<src org="taglibs" module="taglibs" />
-					<src org="tapestry" module="tapestry" />
-					<src org="tomcat-util" module="tomcat-util" />
-					<src org="tomcat" module="tomcat" />
-					<src org="torque" module="torque" />
-					<src org="turbine" module="turbine" />
-					<src org="velocity-.+" module="velocity-.+" />
-					<src org="velocity" module="velocity" />
-					<src org="ws-commons.*" module="ws-commons.*" />
-					<src org="wsdl4j" module="wsdl4j" />
-					<src org="wsrf" module="wsrf" />
-					<src org="xalan" module="xalan" />
-					<src org="xerces" module=".*" />
-					<src org="xercesjarv" module="xercesjarv" />
-					<src org="xml-apis" module="xml-apis" />
-					<src org="xml-resolver" module="xml-resolver" />
-					<src org="xml-security" module="xml-security" />
-					<src org="xmlbeans" module="xmlbeans" />
-					<src org="xmlrpc" module="xmlrpc" />
-					
-					<dest org="apache" module="$m0"/>
-            	</tosystem>
-        	</rule>
+                    <src org="commons-.+" module="commons-.+"/>
+                    <src org="ant" module=".*"/>
+                    <src org="avalon-.+" module="avalon-.+"/>
+                    <src org="avalon" module="avalon"/>
+                    <src org="axis" module="axis"/>
+                    <src org="axis2" module="axis2"/>
+                    <src org="batik" module="batik"/>
+                    <src org="bcel" module="bcel"/>
+                    <src org="beehive" module="beehive"/>
+                    <src org="bsf" module="bsf"/>
+                    <src org="cactus" module="cactus"/>
+                    <src org="cocoon" module="cocoon"/>
+                    <src org="cornerstone-.+" module="cornerstone-.+"/>
+                    <src org="create-checksums" module="create-checksums"/>
+                    <src org="crimson" module="crimson"/>
+                    <src org="directory-.+" module="directory-.+"/>
+                    <src org="directory" module="directory"/>
+                    <src org="ecs" module="ecs"/>
+                    <src org="excalibur-.+" module="excalibur-.+"/>
+                    <src org="excalibur" module="excalibur"/>
+                    <src org="fop" module="fop"/>
+                    <src org="fulcrum" module="fulcrum"/>
+                    <src org="geronimo-.+" module="geronimo-.+"/>
+                    <src org="geronimo" module="geronimo"/>
+                    <src org="hivemind" module="hivemind"/>
+                    <src org="jakarta-regexp" module="jakarta-regexp"/>
+                    <src org="james" module="james"/>
+                    <src org="jaxme" module="jaxme"/>
+                    <src org="jcs-javagroups" module="jcs-javagroups"/>
+                    <src org="jcs" module="jcs"/>
+                    <src org="jspapi" module="jspapi"/>
+                    <src org="jstl" module="jstl"/>
+                    <src org="juddi" module="juddi"/>
+                    <src org="log4j" module="log4j"/>
+                    <src org="logkit" module="logkit"/>
+                    <src org="lucene" module="lucene"/>
+                    <src org="magicGball" module="magicGball"/>
+                    <src org="maven" module="maven"/>
+                    <src org="merlin-developer" module="merlin-developer"/>
+                    <src org="merlin" module="merlin"/>
+                    <src org="muse" module="muse"/>
+                    <src org="myfaces" module="myfaces"/>
+                    <src org="nekohtml" module="nekohtml"/>
+                    <src org="ojb" module="ojb"/>
+                    <src org="oro" module="oro"/>
+                    <src org="pluto-container" module="pluto-container"/>
+                    <src org="poi" module="poi"/>
+                    <src org="pubscribe" module="pubscribe"/>
+                    <src org="sandesha" module="sandesha"/>
+                    <src org="servletapi" module="servletapi"/>
+                    <src org="slide" module=".*"/>
+                    <src org="stratum" module="stratum"/>
+                    <src org="struts" module="struts"/>
+                    <src org="taglibs" module="taglibs"/>
+                    <src org="tapestry" module="tapestry"/>
+                    <src org="tomcat-util" module="tomcat-util"/>
+                    <src org="tomcat" module="tomcat"/>
+                    <src org="torque" module="torque"/>
+                    <src org="turbine" module="turbine"/>
+                    <src org="velocity-.+" module="velocity-.+"/>
+                    <src org="velocity" module="velocity"/>
+                    <src org="ws-commons.*" module="ws-commons.*"/>
+                    <src org="wsdl4j" module="wsdl4j"/>
+                    <src org="wsrf" module="wsrf"/>
+                    <src org="xalan" module="xalan"/>
+                    <src org="xerces" module=".*"/>
+                    <src org="xercesjarv" module="xercesjarv"/>
+                    <src org="xml-apis" module="xml-apis"/>
+                    <src org="xml-resolver" module="xml-resolver"/>
+                    <src org="xml-security" module="xml-security"/>
+                    <src org="xmlbeans" module="xmlbeans"/>
+                    <src org="xmlrpc" module="xmlrpc"/>
 
-			<rule> <!-- new apache projects -->
-	    		<fromsystem>
-		        	<src org="apache" />
-        			<dest org="org.apache"/>
-		    	</fromsystem>
-			    <tosystem>
-    		    	<src org="org.apache" />
-	    		    <dest org="apache" />
-		    	</tosystem>
-			</rule>
-			<rule> <!-- hibernate -->
-	    		<fromsystem>
-		        	<src org="hibernate" />
-        			<dest org="org.hibernate"/>
-		    	</fromsystem>
-			    <tosystem>
-    		    	<src org="org.hibernate" />
-	    		    <dest org="hibernate" />
-		    	</tosystem>
-			</rule>
-			<rule> <!-- net.sf projects -->
-	    		<fromsystem>
-		        	<src org="ehcache" />
-        			<dest org="net.sf.$o0"/>
-		    	</fromsystem>
-			    <tosystem>
-    		    	<src org="net.sf.(.+)" />
-	    		    <dest org="$o1" />
-		    	</tosystem>
-			</rule>
-    	</namespace>
-	</namespaces>
+                    <dest org="apache" module="$m0"/>
+                </tosystem>
+            </rule>
 
-	<resolvers>
-	    <filesystem name="my-repository">
-	        <ivy pattern="${dest.repo.dir}/advanced/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-	        <artifact pattern="${dest.repo.dir}/advanced/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
-	    </filesystem>
-	
-		<ibiblio	name="libraries" 
-					root="${ibiblio-maven2-root}" 
-					m2compatible="true"
-					namespace="maven2"
-		/>
-	</resolvers>
+            <rule> <!-- new apache projects -->
+                <fromsystem>
+                    <src org="apache"/>
+                    <dest org="org.apache"/>
+                </fromsystem>
+                <tosystem>
+                    <src org="org.apache"/>
+                    <dest org="apache"/>
+                </tosystem>
+            </rule>
+            <rule> <!-- hibernate -->
+                <fromsystem>
+                    <src org="hibernate"/>
+                    <dest org="org.hibernate"/>
+                </fromsystem>
+                <tosystem>
+                    <src org="org.hibernate"/>
+                    <dest org="hibernate"/>
+                </tosystem>
+            </rule>
+            <rule> <!-- net.sf projects -->
+                <fromsystem>
+                    <src org="ehcache"/>
+                    <dest org="net.sf.$o0"/>
+                </fromsystem>
+                <tosystem>
+                    <src org="net.sf.(.+)"/>
+                    <dest org="$o1"/>
+                </tosystem>
+            </rule>
+        </namespace>
+    </namespaces>
+
+    <resolvers>
+        <filesystem name="my-repository">
+            <ivy pattern="${dest.repo.dir}/advanced/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+            <artifact pattern="${dest.repo.dir}/advanced/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+        </filesystem>
+
+        <ibiblio name="libraries"
+                 root="${ibiblio-maven2-root}"
+                 m2compatible="true"
+                 namespace="maven2"/>
+    </resolvers>
 </ivysettings>

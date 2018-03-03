@@ -78,25 +78,25 @@
     <target name="go" depends="install-ivy, generate-src"
             description="--> resolve dependencies, compile and run the project">
         <echo message="using ivy to resolve commons-lang 2.1..."/>
-	<!-- here comes the magic line: asks ivy to resolve a dependency on
+        <!-- here comes the magic line: asks ivy to resolve a dependency on
              commons-lang 2.1 and to build an ant path with it from its cache  -->
-	<ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1"
+        <ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1"
                        pathid="lib.path.id" inline="true"/>
 
-	<echo message="compiling..."/>
-	<mkdir dir="${build.dir}"/>
-	<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
+        <echo message="compiling..."/>
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
 
-	<echo>
+        <echo>
 We are now ready to execute our simple program with its dependency on commons-lang.
 Let's go!
-	</echo>
-	<java classname="example.Hello">
+        </echo>
+        <java classname="example.Hello">
             <classpath>
                 <path refid="lib.path.id"/>
-		<path location="${build.dir}"/>
+                <path location="${build.dir}"/>
             </classpath>
-	</java>
+        </java>
     </target>
 
     <!-- =================================

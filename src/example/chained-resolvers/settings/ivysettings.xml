@@ -14,16 +14,16 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
   <settings defaultResolver="chain-example"/>
   <resolvers>
     <chain name="chain-example">
       <filesystem name="libraries">
-        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[ext]" />
+        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[ext]"/>
       </filesystem>
-      <ibiblio name="ibiblio" m2compatible="true" />
+      <ibiblio name="ibiblio" m2compatible="true"/>
     </chain>
   </resolvers>
 </ivysettings>

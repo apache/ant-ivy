@@ -14,13 +14,13 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivysettings>
-	<settings defaultResolver="default"/>
-	<include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
-	<include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
-	<include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
-	<include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
-	<include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+    <settings defaultResolver="default"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
 </ivysettings>

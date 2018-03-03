@@ -45,8 +45,8 @@
 
     <target name="buildlist" depends="load-ivy">
         <ivy:buildlist reference="build-path">
-	    <fileset dir="projects" includes="**/build.xml"/>
-	</ivy:buildlist>
+            <fileset dir="projects" includes="**/build.xml"/>
+        </ivy:buildlist>
     </target>
 
     <target name="publish-all" depends="buildlist"
