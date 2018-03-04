@@ -15,21 +15,21 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
-<ivy-module version="2.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
-  <info organisation="com.uefa" module="ireland" revision="${version}">
-    <extends organisation="com.uefa" module="master-parent" revision="${version}" 
-        location="${master-parent.dir}/ivy.xml" />
-  </info>
-  
-  <configurations>
-    <!-- Check master-parent module for inherited public confs. -->
-  </configurations>
-  
-  <publications />
-  
-  <dependencies />
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="com.uefa" module="ireland" revision="${version}">
+        <extends organisation="com.uefa" module="master-parent" revision="${version}"
+                 location="${master-parent.dir}/ivy.xml"/>
+    </info>
+
+    <configurations>
+        <!-- Check master-parent module for inherited public confs. -->
+    </configurations>
+
+    <publications/>
+
+    <dependencies/>
 </ivy-module>

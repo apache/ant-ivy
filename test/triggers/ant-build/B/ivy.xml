@@ -14,12 +14,12 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.2">
-	<info organisation="apache" module="B"/>
-	<dependencies>
-		<dependency name="A" rev="latest.integration"/>
-		<dependency name="foo" rev="1.0"/>
-	</dependencies>
+    <info organisation="apache" module="B"/>
+    <dependencies>
+        <dependency name="A" rev="latest.integration"/>
+        <dependency name="foo" rev="1.0"/>
+    </dependencies>
 </ivy-module>

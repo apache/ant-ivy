@@ -15,17 +15,17 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <repository>
     <resource symbolicname="org.apache.ivy.osgi.testbundle1" version="1.2.3" uri="org.apache.ivy.osgi.testbundle1_1.2.3.jar">
         <capability name="package">
-            <p n="package" v="org.apache.ivy.osgi.testbundle1" />
-            <p n="version" v="1.2.3" />
+            <p n="package" v="org.apache.ivy.osgi.testbundle1"/>
+            <p n="version" v="1.2.3"/>
         </capability>
     </resource>
     <resource symbolicname="org.apache.ivy.osgi.testbundle1.importing" version="3.2.1"
         uri="org.apache.ivy.osgi.testbundle.importing1_3.2.1.jar">
-        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle2)" />
+        <require name="package" filter="(package=org.apache.ivy.osgi.testbundle2)"/>
     </resource>
 </repository>

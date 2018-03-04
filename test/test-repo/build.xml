@@ -14,7 +14,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <project basedir="." default="generate-bundles" name="ivy-osgi-test-repo">
 
@@ -59,7 +59,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.0">
     <info organisation="org.apache.ivy.osgi" module="${module.name}" revision="${bundle.version}" />

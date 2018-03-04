@@ -14,8 +14,8 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="1.2">
-	<info organisation="apache2" module="E"/>
+    <info organisation="apache2" module="E"/>
 </ivy-module>
