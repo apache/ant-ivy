@@ -128,7 +128,7 @@ ant -f build-release.xml upload-nexus
 
 Once uploaded, log in https://repository.apache.org/ with your preferred web browser (use your Apache ID).
 
-You should find there an __open__ repository with the name of the form `orgapacheant-XXXX`. It should contain the Maven artifacts: the pom, the jar, the sources, the javadocs and the md5 and asc files.
+You should find there an __open__ repository with the name of the form `orgapacheant-XXXX`. It should contain the Maven artifacts: the pom, the jar, the sources, the javadocs and the sha and asc files.
 
 Now __close__ the staging repository, with the description "Ivy 2.0.0-beta1". Closing means you finished the upload and some automatic checks will run. You can see them in the __Activity__ tab of the repository.
 

@@ -365,13 +365,13 @@
         <copy file="${artifacts.build.dir}/sources/${final.name}"
               tofile="${m2.distrib.dir}/ivy-${build.version}-sources.jar"/>
 
-        <checksum algorithm="md5">
+        <checksum algorithm="sha1">
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
             </fileset>
         </checksum>
-        <checksum algorithm="sha1">
+        <checksum algorithm="sha-512" fileext=".sha512">
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
@@ -380,7 +380,7 @@
     </target>
 
     <target name="snapshot-checksums">
-        <checksum algorithm="md5">
+        <checksum algorithm="sha1">
             <fileset dir="${distrib.dir}/dist/${build.version}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
@@ -388,7 +388,7 @@
                 <include name="*.gz"/>
             </fileset>
         </checksum>
-        <checksum algorithm="sha">
+        <checksum algorithm="sha-512" fileext=".sha512">
             <fileset dir="${distrib.dir}/dist/${build.version}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
@@ -493,7 +493,7 @@
                 <exclude name="build/**/*"/>
                 <exclude name="bin/**/*"/>
                 <exclude name="**/*.sha1"/>
-                <exclude name="**/*.md5"/>
+                <exclude name="**/*.sha512"/>
                 <exclude name="**/*.txt"/>
                 <exclude name="**/MANIFEST*.MF"/>
                 <exclude name="**/*.json"/>
@@ -579,8 +579,8 @@
 
                 // iterate over that array
                 print('processing ' + srcFiles.length + ' source files...');
-                var xpath = javax.xml.xpath.XPathFactory.newInstance().newXPath();
 
+                var xpath = javax.xml.xpath.XPathFactory.newInstance().newXPath();
                 out = new java.io.FileWriter(self.getProject().resolveFile(attributes.get("destfile")));
                 for (i = 0; i < srcFiles.length; i++) {
                     try {
