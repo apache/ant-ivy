@@ -1,4 +1,2 @@
-ReleaseInstructions are in /doc/dev/makerelease.html.
+ReleaseInstructions are in /asciidoc/dev/makerelease.adoc.
 
-Best you navigate to that via /doc/index.html and follow the navigation
-    Documentation | Developer doc | Making a release
