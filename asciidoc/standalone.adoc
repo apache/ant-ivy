@@ -35,7 +35,7 @@ It will display usage text as follows:
 usage: ivy
 ==== settings options
  -settings <settingsfile>     use given file for settings
- -properties <properties>     use given file for properties not specified in set
+ -properties <propertiesfile> use given file for properties not specified in set
                               tings
  -cache <cachedir>            use given directory for cache
  -novalidate                  do not validate ivy files against xsd
