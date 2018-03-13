@@ -42,7 +42,7 @@ As the title suggests, here you will find an explanation of how Ivy does work in
 +
 This part describes how to install Ivy.
 
-** Running
+** link:running{outfilesuffix}[Running]
 +
 This part describes possibility to control the behavior of Ivy at run time
 
