@@ -19,9 +19,9 @@
 
 = Ivy Settings
 
-In order to work as you want, Ivy sometimes needs some settings. Actually, Ivy can work with no specific settings at all, see the link:tutorial/defaultconf.html[default settings documentation] for details about that. But Ivy is able to work in very different contexts. You just have to configure it properly.
+In order to work as you want, Ivy sometimes needs some settings. Actually, Ivy can work with no specific settings at all, see the link:tutorial/defaultconf{outfilesuffix}[default settings documentation] for details about that. But Ivy is able to work in very different contexts. You just have to configure it properly.
 
-Settings are specified through an XML file, usually called `ivysettings.xml`. To configure Ivy from Ant, you just have to use the link:use/settings.html[settings] datatype with the path of your settings file.
+Settings are specified through an XML file, usually called `ivysettings.xml`. To configure Ivy from Ant, you just have to use the link:use/settings{outfilesuffix}[settings] datatype with the path of your settings file.
 
 Here is an example of the settings file:
 
@@ -73,43 +73,43 @@ The settings file is structured in some parts and left open in others. In fact, 
 
 **ivysettings**
 
-    * link:settings/property.html[property]
-    * link:settings/properties.html[properties]
-    * link:settings/settings.html[settings]
-    * link:settings/include.html[include]
-    * link:settings/classpath.html[classpath]
-    * link:settings/typedef.html[typedef]
-    * link:settings/credentials.html[credentials]
-    * link:settings/signers.html[signers]
-    * link:settings/lock-strategies.html[lock-strategies]
-    * link:settings/caches.html[caches]
-        ** link:settings/caches/cache.html[cache]
-    * link:settings/latest-strategies.html[latest-strategies]
-    * link:settings/parsers.html[parsers]
-    * link:settings/namespaces.html[namespaces]
-        ** link:settings/namespace.html[namespace]
-            *** link:settings/namespace/rule.html[rule]
-                **** link:settings/namespace/fromtosystem.html[fromsystem]
-                    ***** link:settings/namespace/src.html[src]
-                    ***** link:settings/namespace/dest.html[dest]
-                **** link:settings/namespace/fromtosystem.html[tosystem]
-                    ***** link:settings/namespace/src.html[src]
-                    ***** link:settings/namespace/dest.html[dest]
-    * link:settings/macrodef.html[macrodef]
-        ** link:settings/macrodef/attribute.html[attribute]
+    * link:settings/property{outfilesuffix}[property]
+    * link:settings/properties{outfilesuffix}[properties]
+    * link:settings/settings{outfilesuffix}[settings]
+    * link:settings/include{outfilesuffix}[include]
+    * link:settings/classpath{outfilesuffix}[classpath]
+    * link:settings/typedef{outfilesuffix}[typedef]
+    * link:settings/credentials{outfilesuffix}[credentials]
+    * link:settings/signers{outfilesuffix}[signers]
+    * link:settings/lock-strategies{outfilesuffix}[lock-strategies]
+    * link:settings/caches{outfilesuffix}[caches]
+        ** link:settings/caches/cache{outfilesuffix}[cache]
+    * link:settings/latest-strategies{outfilesuffix}[latest-strategies]
+    * link:settings/parsers{outfilesuffix}[parsers]
+    * link:settings/namespaces{outfilesuffix}[namespaces]
+        ** link:settings/namespace{outfilesuffix}[namespace]
+            *** link:settings/namespace/rule{outfilesuffix}[rule]
+                **** link:settings/namespace/fromtosystem{outfilesuffix}[fromsystem]
+                    ***** link:settings/namespace/src{outfilesuffix}[src]
+                    ***** link:settings/namespace/dest{outfilesuffix}[dest]
+                **** link:settings/namespace/fromtosystem{outfilesuffix}[tosystem]
+                    ***** link:settings/namespace/src{outfilesuffix}[src]
+                    ***** link:settings/namespace/dest{outfilesuffix}[dest]
+    * link:settings/macrodef{outfilesuffix}[macrodef]
+        ** link:settings/macrodef/attribute{outfilesuffix}[attribute]
         ** any resolver
-    * link:settings/resolvers.html[resolvers]
+    * link:settings/resolvers{outfilesuffix}[resolvers]
         ** any resolver
-    * link:settings/conflict-managers.html[conflict-managers]
-    * link:settings/modules.html[modules]
-        ** link:settings/module.html[module]
-    * link:settings/outputters.html[outputters]
-    * link:settings/statuses.html[statuses]
-        ** link:settings/status.html[status]
-    * link:settings/triggers.html[triggers]
-    * link:settings/version-matchers.html[version-matchers]
-    * link:settings/timeout-constraints.html[timeout-constraints]
-        ** link:settings/timeout-constraint.html[timeout-constraint]
+    * link:settings/conflict-managers{outfilesuffix}[conflict-managers]
+    * link:settings/modules{outfilesuffix}[modules]
+        ** link:settings/module{outfilesuffix}[module]
+    * link:settings/outputters{outfilesuffix}[outputters]
+    * link:settings/statuses{outfilesuffix}[statuses]
+        ** link:settings/status{outfilesuffix}[status]
+    * link:settings/triggers{outfilesuffix}[triggers]
+    * link:settings/version-matchers{outfilesuffix}[version-matchers]
+    * link:settings/timeout-constraints{outfilesuffix}[timeout-constraints]
+        ** link:settings/timeout-constraint{outfilesuffix}[timeout-constraint]
 
 
 == ivysettings
@@ -124,24 +124,24 @@ Root tag of any Ivy settings file.
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:settings/property.html[property]|set an Ivy variable|0..n
-|link:settings/properties.html[properties]|loads a properties file as Ivy variables|0..n
-|link:settings/settings.html[settings]|configures Ivy with some defaults|0..1
-|link:settings/include.html[include]|includes another settings file|0..n
-|link:settings/classpath.html[classpath]|add a location in the classpath used to load plugins|0..n
-|link:settings/typedef.html[typedef]|defines new types in Ivy|0..n
-|link:settings/lock-strategies.html[lock-strategies]|defines lock strategies|0..1
-|link:settings/caches.html[caches]|defines repository cache managers|0..1
-|link:settings/latest-strategies.html[latest-strategies]|defines latest strategies|0..1
-|link:settings/parsers.html[parsers]|defines module descriptor parsers|0..1
-|link:settings/namespaces.html[namespaces]|defines new namespaces|0..1
-|link:settings/macrodef.html[macrodef]|defines a new macro resolver|0..n
-|link:settings/resolvers.html[resolvers]|defines dependency resolvers|0..1
-|link:settings/conflict-managers.html[conflict-managers]|defines conflict managers|0..1
-|link:settings/modules.html[modules]|defines rules between modules and dependency resolvers|0..1
-|link:settings/outputters.html[outputters]|defines the list of available report outputters|0..1
-|link:settings/statuses.html[statuses]|defines the list of available statuses|0..1
-|link:settings/triggers.html[triggers]|register triggers on Ivy events|0..1
-|link:settings/version-matchers.html[version-matchers]|defines new version matchers|0..1
-|link:settings/timeout-constraints.html[timeout-constraints]|defines the list of available timeout-constraints|0..n
+|link:settings/property{outfilesuffix}[property]|set an Ivy variable|0..n
+|link:settings/properties{outfilesuffix}[properties]|loads a properties file as Ivy variables|0..n
+|link:settings/settings{outfilesuffix}[settings]|configures Ivy with some defaults|0..1
+|link:settings/include{outfilesuffix}[include]|includes another settings file|0..n
+|link:settings/classpath{outfilesuffix}[classpath]|add a location in the classpath used to load plugins|0..n
+|link:settings/typedef{outfilesuffix}[typedef]|defines new types in Ivy|0..n
+|link:settings/lock-strategies{outfilesuffix}[lock-strategies]|defines lock strategies|0..1
+|link:settings/caches{outfilesuffix}[caches]|defines repository cache managers|0..1
+|link:settings/latest-strategies{outfilesuffix}[latest-strategies]|defines latest strategies|0..1
+|link:settings/parsers{outfilesuffix}[parsers]|defines module descriptor parsers|0..1
+|link:settings/namespaces{outfilesuffix}[namespaces]|defines new namespaces|0..1
+|link:settings/macrodef{outfilesuffix}[macrodef]|defines a new macro resolver|0..n
+|link:settings/resolvers{outfilesuffix}[resolvers]|defines dependency resolvers|0..1
+|link:settings/conflict-managers{outfilesuffix}[conflict-managers]|defines conflict managers|0..1
+|link:settings/modules{outfilesuffix}[modules]|defines rules between modules and dependency resolvers|0..1
+|link:settings/outputters{outfilesuffix}[outputters]|defines the list of available report outputters|0..1
+|link:settings/statuses{outfilesuffix}[statuses]|defines the list of available statuses|0..1
+|link:settings/triggers{outfilesuffix}[triggers]|register triggers on Ivy events|0..1
+|link:settings/version-matchers{outfilesuffix}[version-matchers]|defines new version matchers|0..1
+|link:settings/timeout-constraints{outfilesuffix}[timeout-constraints]|defines the list of available timeout-constraints|0..n
 |=======

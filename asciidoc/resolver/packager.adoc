@@ -34,7 +34,7 @@
 Packager repositories allow the creation of Ivy repositories that require neither the participation of any of the modules' creators nor setting up a huge mirror site.
 
 
-The Packager resolver supports a "resource cache", where downloaded archives can be stored to avoid duplicate downloads. This cache is entirely separate from the link:../concept.html#cache[normal Ivy cache]: it is "private" to the Packager resolver, and it stores unmodified original software archives, not Ivy artifacts. See the `resourceCache` attribute below for details.
+The Packager resolver supports a "resource cache", where downloaded archives can be stored to avoid duplicate downloads. This cache is entirely separate from the link:../concept{outfilesuffix}#cache[normal Ivy cache]: it is "private" to the Packager resolver, and it stores unmodified original software archives, not Ivy artifacts. See the `resourceCache` attribute below for details.
 
 
 The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using link:https://ant.apache.org/[Ant]. Therefore, Ant must be available as an executable on the platform. The Ant task executes in a separate Ant project and so is not affected by properties, etc. that may be set in any existing Ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
@@ -46,13 +46,13 @@ For security reasons, the XSLT transform ensures that
     b. only a very limited set of Ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
 
 
-The Packager resolver is based on the link:url.html[URL resolver] and is configured similarly, except the artifact child tags specify where to find the packager.xml files, rather than the artifacts themselves.
+The Packager resolver is based on the link:url{outfilesuffix}[URL resolver] and is configured similarly, except the artifact child tags specify where to find the packager.xml files, rather than the artifacts themselves.
 
-Because the packaging process is relatively slow, it is important to use link:../concept.html#cache[Ivy's caching support] to avoid repeated execution of the packaging instructions.
+Because the packaging process is relatively slow, it is important to use link:../concept{outfilesuffix}#cache[Ivy's caching support] to avoid repeated execution of the packaging instructions.
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers, plus the following:
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers, plus the following:
 
 [options="header",cols="15%,50%,35%"]
 |=======

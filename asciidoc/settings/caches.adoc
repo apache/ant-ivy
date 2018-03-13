@@ -25,13 +25,13 @@
 
 [ivysettings.caches]#Configures the Ivy cache system.#
 
-See link:../concept.html#cache[cache concept] for details on the Ivy cache concept.
+See link:../concept{outfilesuffix}#cache[cache concept] for details on the Ivy cache concept.
 
 By default, Ivy defines one repository cache instance, called `default-cache`, which uses the default cache settings defined using attributes on this tag. This default instance is defined as long as you don't define your own default cache using the `default` attribute, and have at least one dependency resolver which doesn't specify which cache instance to use.
 
 `defaultCacheDir` is the default directory used for both the resolution and repository cache(s). It usually points to a directory in your filesystem. If you want to isolate resolution cache from repository cache, we recommend setting both the `resolutionCacheDir` and `repositoryCacheDir` attributes on this tag instead of using `defaultCacheDir`.
 
-Since repository cache implementations are pluggable, you can either define new cache instances based on the default implementation provided in Ivy using the link:../settings/caches/cache.html[cache] child element, or use custom cache implementations using child elements as you have defined using link:../settings/typedef.html[typedef].
+Since repository cache implementations are pluggable, you can either define new cache instances based on the default implementation provided in Ivy using the link:../settings/caches/cache{outfilesuffix}[cache] child element, or use custom cache implementations using child elements as you have defined using link:../settings/typedef{outfilesuffix}[typedef].
 
 `ivyPattern` and `artifactPattern` are used to configure the default way Ivy stores Ivy files and artifacts in repository cache(s). Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended. These patterns are relative to the repository cache base directory.
 
@@ -50,9 +50,9 @@ Since repository cache implementations are pluggable, you can either define new 
 |repositoryCacheDir|the path of the default directory to use for repository cache data. *This should not point to a directory used as a repository!*|No, defaults to defaultCacheDir
 |ivyPattern|default pattern used to indicate where Ivy files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/ivy-[revision].xml
 |artifactPattern|default pattern used to indicate where artifact files should be put in the repository cache(s)|No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]
-|[line-through]#checkUpToDate#|__Deprecated, we recommend using overwriteMode on the link:../use/retrieve.html[retrieve] task instead.__ Indicates if date should be checked before retrieving artifacts from cache.|No, defaults to true
+|[line-through]#checkUpToDate#|__Deprecated, we recommend using overwriteMode on the link:../use/retrieve{outfilesuffix}[retrieve] task instead.__ Indicates if date should be checked before retrieving artifacts from cache.|No, defaults to true
 |useOrigin|the default value to use for useOrigin for caches in which it isn't specifically defined. Use true to avoid the copy of local artifacts to the cache and use directly their original location.|No, defaults to false
-|lockStrategy|the name of the default link:../settings/lock-strategies.html[lock strategy] to use when accessing repository cache(s)|No, defaults to _no-lock_
+|lockStrategy|the name of the default link:../settings/lock-strategies{outfilesuffix}[lock strategy] to use when accessing repository cache(s)|No, defaults to _no-lock_
 |=======
 
 
@@ -62,7 +62,7 @@ Since repository cache implementations are pluggable, you can either define new 
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:caches/cache.html[cache]|defines a new repository cache instance, based on the default repository cache implementation|0..n
+|link:caches/cache{outfilesuffix}[cache]|defines a new repository cache instance, based on the default repository cache implementation|0..n
 |=======
 
 

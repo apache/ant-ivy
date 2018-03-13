@@ -60,7 +60,7 @@ __Examples: hibernate-entitymanager, ant__
 
 A _module descriptor_ is a generic way of identifying what describes a module: the identifier (organisation, module name, branch and revision), the published artifacts, possible configurations and their dependencies.
 
-The most common module descriptors in Ivy are link:ivyfile.html[Ivy Files], XML files with an Ivy specific syntax, and usually called ivy.xml.
+The most common module descriptors in Ivy are link:ivyfile{outfilesuffix}[Ivy Files], XML files with an Ivy specific syntax, and usually called ivy.xml.
 
 But since Ivy is also compatible with Maven 2 metadata format (called POM, for Project Object Model), POM files fall into the category of module descriptors.
 
@@ -128,7 +128,7 @@ revisions delivered to the public but not actually finished fall in this categor
 `release`::
 a revision fully tested and labelled fall in this category
 
-(*__since 1.4__*) This list is link:settings/statuses.html[configurable] in your settings file.
+(*__since 1.4__*) This list is link:settings/statuses{outfilesuffix}[configurable] in your settings file.
 
 == [[configurations]]Configurations of a module
 
@@ -137,7 +137,7 @@ A _module configuration_ is a way to use or construct a module. If the same modu
 Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server).
 Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in Ivy.
 
-For more details on configurations and how they are used in Ivy, please refer to the link:concept.html[main concepts page].
+For more details on configurations and how they are used in Ivy, please refer to the link:concept{outfilesuffix}[main concepts page].
 
 == [[settings]]Ivy Settings
 
@@ -151,4 +151,4 @@ Prior to Ivy 2.0, the settings files were called configuration files and usually
 
 What is called a _repository_ in Ivy is a distribution site location where Ivy is able to find your required modules' artifacts and descriptors (i.e. Ivy files in most cases).
 
-Ivy can be used with complex repositories configured very finely. You can use link:concept.html[Dependency Resolvers] to do so.
+Ivy can be used with complex repositories configured very finely. You can use link:concept{outfilesuffix}[Dependency Resolvers] to do so.

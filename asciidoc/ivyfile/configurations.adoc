@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* configurations *Parent:* link:../ivyfile.html[ivy-module]
+*Tag:* configurations *Parent:* link:../ivyfile{outfilesuffix}[ivy-module]
 
 A container for configuration elements. If this container is not present, it is assumed that the module has one public configuration called `default`.
 
@@ -35,7 +35,7 @@ See link:#defaultconfmapping[examples below] to clarify the behavior of these tw
 
 (*__since 1.4__*) You can activate a `confmappingoverride` mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from.
 
-(*__since 2.5__*) Attributes inherited via link:extends.html[`extends`] are added to both `configurations` and `dependencies` on link:../use/deliver.html[delivery]. If the latter element has attributes, their values override values of the corresponding attributes of the former element.
+(*__since 2.5__*) Attributes inherited via link:extends{outfilesuffix}[`extends`] are added to both `configurations` and `dependencies` on link:../use/deliver{outfilesuffix}[delivery]. If the latter element has attributes, their values override values of the corresponding attributes of the former element.
 
 == [[attributes]]Attributes
 
@@ -52,8 +52,8 @@ See link:#defaultconfmapping[examples below] to clarify the behavior of these tw
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
-|link:conf.html[conf]|declares a configuration of this module|0..n
-|link:include.html[include]|include configurations from another file|0..n
+|link:conf{outfilesuffix}[conf]|declares a configuration of this module|0..n
+|link:include{outfilesuffix}[include]|include configurations from another file|0..n
 |=======
 
 == Configuration mappings details

@@ -30,7 +30,7 @@ Moreover, the fact that it is the responsibility of the resolver to find Ivy fil
 
 As you see, a dependency resolver can be thought of as a class responsible for describing a repository.
 
-If you want to see which resolvers are available in Ivy, you can go to the link:settings/resolvers.html[resolvers configuration page].
+If you want to see which resolvers are available in Ivy, you can go to the link:settings/resolvers{outfilesuffix}[resolvers configuration page].
 
 == [[configurations]]Module configurations explained
 
@@ -42,7 +42,7 @@ Moreover, because dependencies in Ivy are expressed on modules and not on artifa
 
 If you use only simple modules and do not want to worry about configurations, you don't have to worry about them. They're still there under the hood because Ivy can't work without configurations. But most of the time if you declare nothing, Ivy assumes that the artifacts of your module are published in all configurations, and that all the dependencies' configurations are required in all configurations. And it works in simple cases. But whenever you want to separate things within a module, or get more control over things published and get better dependencies resolution, configurations will meet most of your needs.
 
-For details on how to declare your module configurations, how to declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to link:ivyfile.html[Ivy file documentation]. The link:tutorial/conf.html[configurations tutorial] is also a good place to go to learn more about this concept.
+For details on how to declare your module configurations, how to declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to link:ivyfile{outfilesuffix}[Ivy file documentation]. The link:tutorial/conf{outfilesuffix}[configurations tutorial] is also a good place to go to learn more about this concept.
 
 == [[variables]]Variables
 
@@ -58,7 +58,7 @@ To use Ivy variables, you just have to follow the same syntax as for Ant propert
 
 Finally, it's also important to be aware of the time of substitution of variables. This substitution is done as soon as possible. This means that when Ivy encounters a reference to a variable, it tries to substitute it if such a variable is defined. Consequently, *any later modification of the variable will not alter the value already substituted*.
 
-Moreover, in an Ant environment, a bunch of variables are going to be set by default via the Ant property file loading mechanism (actually they are first loaded as Ant properties and then imported as Ivy variables, see link:ant.html[Ant Tasks]), and even in the Ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overridden via Ant properties because of this.
+Moreover, in an Ant environment, a bunch of variables are going to be set by default via the Ant property file loading mechanism (actually they are first loaded as Ant properties and then imported as Ivy variables, see link:ant{outfilesuffix}[Ant Tasks]), and even in the Ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overridden via Ant properties because of this.
 
 Moreover, it's also important to understand the difference between Ivy variables and Ivy pattern tokens.
 See the Patterns chapter below for what pattern tokens are.
@@ -158,7 +158,7 @@ This algorithm takes into account special meanings of some text. For instance, w
 `latest-lexico`::
  This compares the revisions as strings, using lexicographic order (the one used by the Java string comparison).
 
-See also how to configure new latest strategies link:settings/latest-strategies.html[here].
+See also how to configure new latest strategies link:settings/latest-strategies{outfilesuffix}[here].
 
 == [[conflict]]Conflict Manager
 
@@ -168,9 +168,9 @@ But in some cases you will need to keep several revisions, and load in separate 
 
 A list of revisions is said to be in conflict if they correspond to the same module, i.e. the same organisation/module name couple.
 
-The list of available conflict managers is available on the link:settings/conflict-managers.html[conflict manager configuration page].
+The list of available conflict managers is available on the link:settings/conflict-managers{outfilesuffix}[conflict manager configuration page].
 
-For more details on how to setup your conflict managers by module, see the link:ivyfile/conflicts.html[conflicts] section in the Ivy file reference.
+For more details on how to setup your conflict managers by module, see the link:ivyfile/conflicts{outfilesuffix}[conflicts] section in the Ivy file reference.
 
 == [[matcher]]Pattern matcher
 
@@ -227,7 +227,7 @@ ${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
 
 Note that in patterns you must use the unqualified attribute name (no namespace prefix).
 
-If you don't want to use XML namespaces, it's possible but you will need to disable Ivy file validation, since your files won't fulfill anymore the official Ivy XSD. See the link:settings/settings.html[settings documentation] to see how to disable validation.
+If you don't want to use XML namespaces, it's possible but you will need to disable Ivy file validation, since your files won't fulfill anymore the official Ivy XSD. See the link:settings/settings{outfilesuffix}[settings documentation] to see how to disable validation.
 
 == [[checksum]]Checksums
 
@@ -262,7 +262,7 @@ If you want to change this default, you can set the variable `ivy.checksums`. He
 
 This is a particularly powerful and flexible feature which allows, for example, you to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accurately, and so on.
 
-For more details about events and triggers, see the link:settings/triggers.html[triggers] documentation page in the configuration section of this documentation.
+For more details about events and triggers, see the link:settings/triggers{outfilesuffix}[triggers] documentation page in the configuration section of this documentation.
 
 == [[circular]]Circular Dependencies
 
@@ -281,7 +281,7 @@ same as ignore, except that they are signaled as a warning (default)
 `error`::
 halt the dependency resolution when a circular dependency is found
 
-See the link:settings/settings.html[configuration page] to see how to configure the circular dependency strategy you want to use.
+See the link:settings/settings{outfilesuffix}[configuration page] to see how to configure the circular dependency strategy you want to use.
 
 == Cache and Change Management
 
@@ -293,18 +293,18 @@ An Ivy cache is composed of two different parts:
 
 the repository cache::
 The repository cache is where Ivy stores data downloaded from module repositories, along with some meta information concerning these artifacts, like their original location.
-This part of the cache can be shared if you use a well suited link:settings/lock-strategies.html[lock strategy].
+This part of the cache can be shared if you use a well suited link:settings/lock-strategies{outfilesuffix}[lock strategy].
 
 the resolution cache::
 This part of the cache is used to store resolution data, which is used by Ivy to reuse the results of a resolve process.
 +
 This part of the cache is overwritten each time a new resolve is performed, and should never be used by multiple processes at the same time.
 
-While there is always only one resolution cache, you can link:settings/caches.html[define multiple repository caches], each link:settings/resolvers.html[resolver] being able to use a separate cache.
+While there is always only one resolution cache, you can link:settings/caches{outfilesuffix}[define multiple repository caches], each link:settings/resolvers{outfilesuffix}[resolver] being able to use a separate cache.
 
 === [[change]]Change management
 
-To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and does not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several link:bestpractices.html[good reasons] to follow this principle.
+To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and does not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several link:bestpractices{outfilesuffix}[good reasons] to follow this principle.
 
 However, depending on your current build system and your dependency management strategy, you may prefer to update your modules sometimes. There are two kinds of changes to consider:
 
@@ -318,17 +318,17 @@ In this case, setting `checkModified="true"` on your dependency resolver will be
 
 Some people, especially those coming from Maven 2 land, like to use one special revision to handle often updated modules. In Maven 2, this is called a SNAPSHOT version, and some argue that it helps save disk space to keep only one version for the high number of intermediary builds you can make whilst developing.
 
-Ivy supports this kind of approach with the notion of "changing revision". A changing revision is just that: a revision for which Ivy should consider that the artifacts may change over time. To handle this, you can either specify a dependency as changing on the link:ivyfile/dependency.html[dependency] tag, or use the `changingPattern` and `changingMatcher` attributes on your link:settings/resolvers.html[resolvers] to indicate which revision or group of revisions should be considered as changing.
+Ivy supports this kind of approach with the notion of "changing revision". A changing revision is just that: a revision for which Ivy should consider that the artifacts may change over time. To handle this, you can either specify a dependency as changing on the link:ivyfile/dependency{outfilesuffix}[dependency] tag, or use the `changingPattern` and `changingMatcher` attributes on your link:settings/resolvers{outfilesuffix}[resolvers] to indicate which revision or group of revisions should be considered as changing.
 
 Once Ivy knows that a revision is changing, it will follow this principle to avoid checking your repository too often: if the module metadata has not changed, it will considered the whole module (including artifacts) as not changed. Even if the module descriptor file has changed, it will check the publication data of the module to see if this is a new publication of the same revision or not. Then if the publication date has changed, it will check the artifacts' last modified timestamps, and download them accordingly.
 
-So if you want to use changing revisions, use the link:use/publish.html[publish] task to publish your modules, it will take care of updating the publication date, and everything will work fine. And remember to set `checkModified=true"` on your resolver too!
+So if you want to use changing revisions, use the link:use/publish{outfilesuffix}[publish] task to publish your modules, it will take care of updating the publication date, and everything will work fine. And remember to set `checkModified=true"` on your resolver too!
 
 == [[paths]]Paths handling
 
 As a dependency manager, Ivy has a lot of file related operations, which most of the time use paths or path patterns to locate the file on the filesystem.
 
-These paths can obviously be relative or absolute. We recommend to always use absolute paths, so that you don't have to worry about what is the base of your relative paths. Ivy provides some variables which can be used as the base of your absolute paths. For instance, Ivy has a concept of base directory, which is basically the same as for Ant. You have access to this base directory with the ivy.basedir variable. So if you have a path like `${ivy.basedir}/ivy.xml`, you have an absolute path. In link:settings.html[settings files], you also have a variable called `ivy.settings.dir` which points to the directory in which your settings file is located, which makes defining paths relative to this directory very easy.
+These paths can obviously be relative or absolute. We recommend to always use absolute paths, so that you don't have to worry about what is the base of your relative paths. Ivy provides some variables which can be used as the base of your absolute paths. For instance, Ivy has a concept of base directory, which is basically the same as for Ant. You have access to this base directory with the ivy.basedir variable. So if you have a path like `${ivy.basedir}/ivy.xml`, you have an absolute path. In link:settings{outfilesuffix}[settings files], you also have a variable called `ivy.settings.dir` which points to the directory in which your settings file is located, which makes defining paths relative to this directory very easy.
 
 If you really want to use relative paths, the base directory used to actually locate the file depends on where the relative path is defined:
 
@@ -342,7 +342,7 @@ If you really want to use relative paths, the base directory used to actually lo
 
 Most of the artifacts found in a repository are jars. They can be downloaded and used as is. But some other kind of artifacts required some __unpacking__ after being downloaded and before being used. Such artifacts can be zipped folders and packed jars. Ivy supports that kind of artifact with *packaging*.
 
-A __packaged__ artifact needs to be declared as such in the module descriptor via the attribute link:ivyfile/artifact.html[packaging]. The value of that attribute defined which kind of unpacking algorithm must be used. Here are the list of currently supported algorithms:
+A __packaged__ artifact needs to be declared as such in the module descriptor via the attribute link:ivyfile/artifact{outfilesuffix}[packaging]. The value of that attribute defined which kind of unpacking algorithm must be used. Here are the list of currently supported algorithms:
 
 * `zip`, `jar` or `war`: the artifact will be uncompressed as a folder
 
@@ -357,6 +357,6 @@ So, if in an `ivy.xml`, there would be declared a such artifact:
     <artifact name="mymodule" type="jar" ext="jar.pack.gz" packaging="pack200"/>
 ----
 
-A file `mymodule-1.2.3.jar.pack.gz` would be download into the cache, and also uncompressed in the cache to `mymodule-1.2.3.jar`. Then any post resolve task which supports it, like the link:use/cachepath.html[cachepath], will use the uncompressed file instead of the original compressed file.
+A file `mymodule-1.2.3.jar.pack.gz` would be download into the cache, and also uncompressed in the cache to `mymodule-1.2.3.jar`. Then any post resolve task which supports it, like the link:use/cachepath{outfilesuffix}[cachepath], will use the uncompressed file instead of the original compressed file.
 
-It is possible to chain packing algorithm. The attribute link:ivyfile/artifact.html[packaging] of a artifact expects a comma separated list of packing types, in packing order. For instance, an artifact `mymodule-1.2.3.jar.pack.gz` can have the packaging `jar,pack200`, so it would be uncompressed as a folder `mymodule-1.2.3`.
+It is possible to chain packing algorithm. The attribute link:ivyfile/artifact{outfilesuffix}[packaging] of a artifact expects a comma separated list of packing types, in packing order. For instance, an artifact `mymodule-1.2.3.jar.pack.gz` can have the packaging `jar,pack200`, so it would be uncompressed as a folder `mymodule-1.2.3`.

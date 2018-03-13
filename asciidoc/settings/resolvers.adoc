@@ -51,7 +51,7 @@ Note that this works only if the resolver has already been defined and *NOT* if 
 
 Ivy comes with a set of built-in dependency resolvers that handle most common needs.
 
-If you don't find the one you want here, you can also check if someone has contributed it on the links page, or even link:../extend.html[write your own].
+If you don't find the one you want here, you can also check if someone has contributed it on the links page, or even link:../extend{outfilesuffix}[write your own].
 
 There are basically two types of resolvers in Ivy - composite and standard. A composite resolver is a resolver which delegates the work to other resolvers. The other resolvers are standard resolvers.
 
@@ -61,22 +61,22 @@ Here is the list of built-in resolvers:
 [options="header",cols="15%,50%,35%"]
 |=======
 |Name|Type|Description
-|link:../resolver/ivyrep.html[IvyRep]|Standard|Finds Ivy files on ivyrep and artifacts on ibiblio.
-|link:../resolver/ibiblio.html[IBiblio]|Standard|Finds artifacts on ibiblio.
-|link:../resolver/bintray.html[BinTray]|Standard|Finds artifacts on bintray.
-|link:../resolver/packager.html[Packager]|Standard|Finds Ivy files and packaging instructions via URLs, then creates artifacts by following the instructions.
-|link:../resolver/filesystem.html[FileSystem]|Standard|This very performant resolver finds Ivy files and artifacts in your file system.
-|link:../resolver/url.html[URL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs.
-|link:../resolver/url.html[MirroredURL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs from a mirror list.
-|link:../resolver/vfs.html[VFS]|Standard|Finds Ivy files and artifacts in any repository accessible with link:https://commons.apache.org/proper/commons-vfs/[Apache Commons VFS].
-|link:../resolver/ssh.html[SSH]|Standard|Finds Ivy files and artifacts in any repository accessible with SSH.
-|link:../resolver/sftp.html[SFTP]|Standard|Finds Ivy files and artifacts in any repository accessible with SFTP.
-|link:../resolver/jar.html[Jar]|Standard|Finds Ivy files and artifacts within a specified jar.
-|link:../resolver/chain.html[Chain]|Composite|Delegates the finding to a chain of sub resolvers.
-|link:../resolver/dual.html[Dual]|Composite|Delegates the finding of Ivy files to one resolver and of artifacts to another.
-|link:../resolver/obr.html[OBR]|Standard|Resolve modules as OSGi bundles listed by an OSGi obr.xml.
-|link:../resolver/updatesite.html[Eclipse updatesite]|Standard|Resolve modules as OSGi bundles which are hosted on an Eclipse update site.
-|link:../resolver/osgiagg.html[OSGi-agg]|Composite|Delegates the finding to a chain of sub resolvers supporting OSGi bundles.
+|link:../resolver/ivyrep{outfilesuffix}[IvyRep]|Standard|Finds Ivy files on ivyrep and artifacts on ibiblio.
+|link:../resolver/ibiblio{outfilesuffix}[IBiblio]|Standard|Finds artifacts on ibiblio.
+|link:../resolver/bintray{outfilesuffix}[BinTray]|Standard|Finds artifacts on bintray.
+|link:../resolver/packager{outfilesuffix}[Packager]|Standard|Finds Ivy files and packaging instructions via URLs, then creates artifacts by following the instructions.
+|link:../resolver/filesystem{outfilesuffix}[FileSystem]|Standard|This very performant resolver finds Ivy files and artifacts in your file system.
+|link:../resolver/url{outfilesuffix}[URL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs.
+|link:../resolver/url{outfilesuffix}[MirroredURL]|Standard|Finds Ivy files and artifacts in any repository accessible with URLs from a mirror list.
+|link:../resolver/vfs{outfilesuffix}[VFS]|Standard|Finds Ivy files and artifacts in any repository accessible with link:https://commons.apache.org/proper/commons-vfs/[Apache Commons VFS].
+|link:../resolver/ssh{outfilesuffix}[SSH]|Standard|Finds Ivy files and artifacts in any repository accessible with SSH.
+|link:../resolver/sftp{outfilesuffix}[SFTP]|Standard|Finds Ivy files and artifacts in any repository accessible with SFTP.
+|link:../resolver/jar{outfilesuffix}[Jar]|Standard|Finds Ivy files and artifacts within a specified jar.
+|link:../resolver/chain{outfilesuffix}[Chain]|Composite|Delegates the finding to a chain of sub resolvers.
+|link:../resolver/dual{outfilesuffix}[Dual]|Composite|Delegates the finding of Ivy files to one resolver and of artifacts to another.
+|link:../resolver/obr{outfilesuffix}[OBR]|Standard|Resolve modules as OSGi bundles listed by an OSGi obr.xml.
+|link:../resolver/updatesite{outfilesuffix}[Eclipse updatesite]|Standard|Resolve modules as OSGi bundles which are hosted on an Eclipse update site.
+|link:../resolver/osgiagg{outfilesuffix}[OSGi-agg]|Composite|Delegates the finding to a chain of sub resolvers supporting OSGi bundles.
 |=======
 
 
@@ -110,7 +110,7 @@ By using such a resolver at the beginning of a chain, you can be sure that Ivy w
 
 [*__since 2.5__*]
 
-All standard resolvers support the `timeoutConstraint` attribute. The value for this attribute is the name of the link:timeout-constraint.html[timeout-constraint] that's been defined in the Ivy settings.
+All standard resolvers support the `timeoutConstraint` attribute. The value for this attribute is the name of the link:timeout-constraint{outfilesuffix}[timeout-constraint] that's been defined in the Ivy settings.
 
 Resolvers can be optionally configured to use a `timeoutConstraint` so that the timeouts defined on that constraint dictate how the resolvers behave when it comes to dealing with timeouts while establishing connections and reading content, during module descriptor and artifact resolutions.
 
@@ -130,18 +130,18 @@ And setting the property `ivy.maven.lookup.javadoc` to `false` disables the look
 |validate|indicates if resolved Ivy files should be validated against Ivy XSD|No, defaults to call setting|Yes|Yes
 |force|Indicates if this resolver should be used in force mode (see above). (*__since 2.0__*)|No, defaults to false|No|Yes
 |checkmodified|Indicates if this resolver should check lastmodified date to know if an Ivy file is up to date.|No, defaults to ${ivy.resolver.default.check.modified}|No|Yes
-|changingPattern|Indicates for which revision pattern this resolver should check lastmodified date to know if an artifact file is up to date (*__since 1.4__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to none|Yes|Yes
-|changingMatcher|The name of the link:../concept.html#matcher[pattern matcher] to use to match a revision against the configured changingPattern (*__since 1.4__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to exactOrRegexp|Yes|Yes
+|changingPattern|Indicates for which revision pattern this resolver should check lastmodified date to know if an artifact file is up to date (*__since 1.4__*). See link:../concept{outfilesuffix}#change[cache and change management] for details.|No, defaults to none|Yes|Yes
+|changingMatcher|The name of the link:../concept{outfilesuffix}#matcher[pattern matcher] to use to match a revision against the configured changingPattern (*__since 1.4__*). See link:../concept{outfilesuffix}#change[cache and change management] for details.|No, defaults to exactOrRegexp|Yes|Yes
 |alwaysCheckExactRevision|Indicates if this resolver should check the given revision even if it's a special one (like latest.integration) (*__since 1.3__*).|No, defaults to ${ivy.default.always.check.exact.revision}|No|Yes
 |namespace|The name of the namespace to which this resolver belongs (*__since 1.3__*)|No, defaults to 'system'|Yes|Yes
 |checkconsistency|true to check consistency of module descriptors found by this resolver, false to avoid consistency check (*__since 1.3__*)|No, defaults to true|No|Yes
 |descriptor|'optional' if a module descriptor (usually an Ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor (*__since 2.0__*)|No, defaults to 'optional'|No (except dual)|Yes
 |[line-through]#allownomd#|__Deprecated, we recommend using descriptor="required \| optional" instead.__ true if the absence of module descriptor (usually an Ivy file) is authorised for this resolver, false to refuse modules without module descriptor (*__since 1.4__*)|No, defaults to true|No (except dual)|Yes
-|checksums|a comma separated list of link:../concept.html#checksum[checksum algorithms] to use both for publication and checking (*__since 1.4__*)|No, defaults to ${ivy.checksums}|No|Yes
+|checksums|a comma separated list of link:../concept{outfilesuffix}#checksum[checksum algorithms] to use both for publication and checking (*__since 1.4__*)|No, defaults to ${ivy.checksums}|No|Yes
 |latest|The name of the latest strategy to use.|No, defaults to 'default'|Yes|Yes
 |cache|The name of the cache manager to use.|No, defaults to the value of the default attribute of caches|No|Yes
-|signer|The name of the link:../settings/signers.html[detached signature generator] to use when publishing artifacts. (*__since 2.2__*)|No, by default published artifacts will not get signed by Ivy.|No|Yes
-|timeoutConstraint|The name of the link:timeout-constraint.html[timeout-constraint] to use for the resolver. (*__since 2.5__*)|No. In the absence of a `timeoutConstraint`, the resolver's behaviour with timeouts is implementation specific.|No|Yes
+|signer|The name of the link:../settings/signers{outfilesuffix}[detached signature generator] to use when publishing artifacts. (*__since 2.2__*)|No, by default published artifacts will not get signed by Ivy.|No|Yes
+|timeoutConstraint|The name of the link:timeout-constraint{outfilesuffix}[timeout-constraint] to use for the resolver. (*__since 2.5__*)|No. In the absence of a `timeoutConstraint`, the resolver's behaviour with timeouts is implementation specific.|No|Yes
 |=======
 
 

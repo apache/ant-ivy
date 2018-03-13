@@ -34,33 +34,33 @@ For the first tutorial you won't even have to install Ivy (assuming you have Ant
 
 If you have any trouble, check our link:https://ant.apache.org/ivy/faq.html[FAQ].
 
-OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install.html[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example] directory).
+OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install{outfilesuffix}[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example] directory).
 
 == List of available tutorials
 
 The following tutorials are available:
 
 
-    * link:tutorial/start.html[Quick Start] +
+    * link:tutorial/start{outfilesuffix}[Quick Start] +
         Guides you through your very first steps with Ivy.
 
-    * link:tutorial/defaultconf.html[Adjusting default settings] +
+    * link:tutorial/defaultconf{outfilesuffix}[Adjusting default settings] +
         Gives you a better understanding of the default settings and shows you how to customize them to your needs.
 
-    * link:tutorial/multiple.html[Multiple Resolvers] +
+    * link:tutorial/multiple{outfilesuffix}[Multiple Resolvers] +
         Teaches you how to configure Ivy to find its dependencies in multiple places.
 
-    * link:tutorial/dual.html[Dual Resolver] +
+    * link:tutorial/dual{outfilesuffix}[Dual Resolver] +
         Helps you configure Ivy to find Ivy files in one place and artifacts in another.
 
-    * link:tutorial/dependence.html[Project dependencies] +
+    * link:tutorial/dependence{outfilesuffix}[Project dependencies] +
         A starting point for using Ivy in a multi-project environment.
 
-    * link:tutorial/multiproject.html[Using Ivy in multiple projects environment] +
+    * link:tutorial/multiproject{outfilesuffix}[Using Ivy in multiple projects environment] +
         A more complex example demonstrating the use of Ant+Ivy in a multi-project environment.
 
-    * link:tutorial/conf.html[Using Ivy Module Configurations] +
+    * link:tutorial/conf{outfilesuffix}[Using Ivy Module Configurations] +
         Shows you how to use configurations in an Ivy file to define sets of artifacts.
 
-    * link:tutorial/build-repository.html[Building a repository] +
+    * link:tutorial/build-repository{outfilesuffix}[Building a repository] +
         Shows you how to build your own enterprise repository.

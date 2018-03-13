@@ -31,7 +31,7 @@ Ivy is open source and released under a very permissive link:https://www.apache.
 
 Ivy has a lot of powerful link:https://ant.apache.org/ivy/features.html[features], the most popular and useful being its flexibility, integration with Ant, and its strong transitive dependencies management engine.
 
-The transitive dependencies management is a feature which lets you get dependencies of your dependencies, transitively. In order to address this general problem, Ivy needs to find metadata about your modules, usually in an link:ivyfile.html[Ivy file]. To find the metadata and your dependencies' artifacts (usually jars), Ivy can be configured to use a lot of different link:settings/resolvers.html[repositories].
+The transitive dependencies management is a feature which lets you get dependencies of your dependencies, transitively. In order to address this general problem, Ivy needs to find metadata about your modules, usually in an link:ivyfile{outfilesuffix}[Ivy file]. To find the metadata and your dependencies' artifacts (usually jars), Ivy can be configured to use a lot of different link:settings/resolvers{outfilesuffix}[repositories].
 
 == About this doc
 
@@ -46,7 +46,7 @@ If you browse this documentation from your installation of Ivy, you can also che
 
 You can also browse this documentation offline either by downloading the documentation distribution, or by checking out the doc directory from git. This documentation uses link:http://asciidoctor.org/[asciidoc] as its documentation engine, so you can very easily link:https://ant.apache.org/ivy/get-involved.html[edit it and submit patches] when you browse it from source.
 
-A link:book.html[printer-friendly version] of this whole documentation is also provided for your convenience.
+A link:book{outfilesuffix}[printer-friendly version] of this whole documentation is also provided for your convenience.
 
 Since Ivy 2.0.0-alpha-2, we keep an online history of the documentation. You can thus browse history versions online (in the history menu in the web site) and even check the trunk version documentation currently in development.
 
@@ -64,13 +64,13 @@ Check link:https://ant.apache.org/ivy/links.html[external tools and resources]. 
 
 This documentation is composed of three main parts:
 
-link:tutorial.html[Tutorials]::
+link:tutorial{outfilesuffix}[Tutorials]::
 The tutorials is the best way to begin to play with Ivy. You will easily and quickly learn the basics of Ivy.
 
-link:reference.html[Reference]::
+link:reference{outfilesuffix}[Reference]::
 The reference documentation gives you all the details of Ivy.
 The introduction part is particularly useful: it defines some vocabulary, explains main concepts such as dependency resolvers and patterns, and gives an overview of how Ivy works internally.
 It's also in the reference doc that you will find all you always dreamed to know about Ivy settings, Ivy files, and Ivy use (especially with Ant).
 
-link:dev.html[Developer doc]::
+link:dev{outfilesuffix}[Developer doc]::
 The developer doc is useful for users who would like to extend Ivy or build it from source. It's also the documentation used by the Ivy team, so you will also find information about how we make releases.

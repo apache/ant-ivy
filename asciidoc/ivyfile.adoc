@@ -31,7 +31,7 @@ Here is the simplest Ivy file you can write:
 
 If you want to see a sample module descriptor using almost all possibilities of Ivy files, check this one, link:samples/ivy-sample-xslt.xml[with] or link:samples/ivy-sample.xml[without] XSLT.
 
-Before beginning the reference itself, it is required to have in mind the terminology defined in the link:reference.html[main page] of this reference documentation.
+Before beginning the reference itself, it is required to have in mind the terminology defined in the link:reference{outfilesuffix}[main page] of this reference documentation.
 
 For those familiar with XML schema, the schema used to validate Ivy files can be found link:http://ant.apache.org/ivy/schemas/ivy.xsd[here]. For those using XSD aware IDE, you can declare the XSD in your Ivy files to benefit from code completion / validation:
 
@@ -53,44 +53,44 @@ A module descriptor (Ivy file) is needed both before and after the publication o
 
 === Dynamic descriptor for module development
 
-During the module development time, between publications, the descriptor helps in managing all the possibly changing dependencies of the module. For that purpose, development time Ivy files can declare dynamic dependencies to allow for a greater flexibility of use. link:ivyfile/dependency.html#revision[Dynamic revision] references like `latest.integration` or `1.0.+` are possible and may resolve to different artifacts at different times. Variables can be used for even more flexibility. Development time Ivy files are hence called _dynamic_, because they can produce different results over time. The dynamic Ivy files are normally considered source files and kept with them (under SCM control).
+During the module development time, between publications, the descriptor helps in managing all the possibly changing dependencies of the module. For that purpose, development time Ivy files can declare dynamic dependencies to allow for a greater flexibility of use. link:ivyfile/dependency{outfilesuffix}#revision[Dynamic revision] references like `latest.integration` or `1.0.+` are possible and may resolve to different artifacts at different times. Variables can be used for even more flexibility. Development time Ivy files are hence called _dynamic_, because they can produce different results over time. The dynamic Ivy files are normally considered source files and kept with them (under SCM control).
 
 === Resolved descriptors for publishing
 
 At each publication, another kind of a module descriptor is needed to document the dependencies of the particular published revision of the module. For that purpose, the descriptor usually needs to be fixed as its dependencies should no longer change. In doing so, the published module revision gets fixed, explicitly resolved dependencies. No variables are allowed either. Such publication-friendly, static Ivy files are called _resolved_, because they should always produce the same results. The resolved Ivy files are comparable to published artifacts and are kept with them in a repository.
 
-Resolved Ivy files are generated from their original dynamic Ivy files via the link:use/deliver.html[deliver] task.
+Resolved Ivy files are generated from their original dynamic Ivy files via the link:use/deliver{outfilesuffix}[deliver] task.
 
 Note that although it is technically possible to publish module revisions with dynamic Ivy files, it is not a generally recommended practice.
 
 == Hierarchical Index
 
 * *ivy-module*
-    ** link:ivyfile/info.html[info]
-        *** link:ivyfile/license.html[license]
-        *** link:ivyfile/ivyauthor.html[ivyauthor]
-        *** link:ivyfile/repository.html[repository]
-        *** link:ivyfile/description.html[description]
-    ** link:ivyfile/configurations.html[configurations]
-        *** link:ivyfile/conf.html[conf]
-    ** link:ivyfile/publications.html[publications]
-        *** link:ivyfile/artifact.html[artifact]
-            **** link:ivyfile/artifact-conf.html[conf]
-    ** link:ivyfile/dependencies.html[dependencies]
-        *** link:ivyfile/dependency.html[dependency]
-            **** link:ivyfile/dependency-conf.html[conf]
-                ***** link:ivyfile/mapped.html[mapped]
-            **** link:ivyfile/dependency-artifact.html[artifact]
-                ***** link:ivyfile/dependency-artifact-conf.html[conf]
-            **** link:ivyfile/dependency-artifact.html[include]
-                ***** link:ivyfile/dependency-artifact-conf.html[conf]
-            **** link:ivyfile/artifact-exclude.html[exclude]
-                ***** link:ivyfile/artifact-exclude-conf.html[conf]
-        *** link:ivyfile/exclude.html[exclude]
-        *** link:ivyfile/override.html[override]
-        *** link:ivyfile/conflict.html[conflict]
-    ** link:ivyfile/conflicts.html[conflicts]
-        *** link:ivyfile/manager.html[manager]
+    ** link:ivyfile/info{outfilesuffix}[info]
+        *** link:ivyfile/license{outfilesuffix}[license]
+        *** link:ivyfile/ivyauthor{outfilesuffix}[ivyauthor]
+        *** link:ivyfile/repository{outfilesuffix}[repository]
+        *** link:ivyfile/description{outfilesuffix}[description]
+    ** link:ivyfile/configurations{outfilesuffix}[configurations]
+        *** link:ivyfile/conf{outfilesuffix}[conf]
+    ** link:ivyfile/publications{outfilesuffix}[publications]
+        *** link:ivyfile/artifact{outfilesuffix}[artifact]
+            **** link:ivyfile/artifact-conf{outfilesuffix}[conf]
+    ** link:ivyfile/dependencies{outfilesuffix}[dependencies]
+        *** link:ivyfile/dependency{outfilesuffix}[dependency]
+            **** link:ivyfile/dependency-conf{outfilesuffix}[conf]
+                ***** link:ivyfile/mapped{outfilesuffix}[mapped]
+            **** link:ivyfile/dependency-artifact{outfilesuffix}[artifact]
+                ***** link:ivyfile/dependency-artifact-conf{outfilesuffix}[conf]
+            **** link:ivyfile/dependency-artifact{outfilesuffix}[include]
+                ***** link:ivyfile/dependency-artifact-conf{outfilesuffix}[conf]
+            **** link:ivyfile/artifact-exclude{outfilesuffix}[exclude]
+                ***** link:ivyfile/artifact-exclude-conf{outfilesuffix}[conf]
+        *** link:ivyfile/exclude{outfilesuffix}[exclude]
+        *** link:ivyfile/override{outfilesuffix}[override]
+        *** link:ivyfile/conflict{outfilesuffix}[conflict]
+    ** link:ivyfile/conflicts{outfilesuffix}[conflicts]
+        *** link:ivyfile/manager{outfilesuffix}[manager]
 
 == ivy-module
 
@@ -111,9 +111,9 @@ The root tag of any Ivy file (module descriptor).
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:ivyfile/info.html[info]|contains information about the described module|1
-|link:ivyfile/configurations.html[configurations]|container for configuration elements|0..1
-|link:ivyfile/publications.html[publications]|container for published artifact elements|0..1
-|link:ivyfile/dependencies.html[dependencies]|container for dependency elements|0..1
-|link:ivyfile/conflicts.html[conflicts]|section to configure the conflict managers to use|0..1
+|link:ivyfile/info{outfilesuffix}[info]|contains information about the described module|1
+|link:ivyfile/configurations{outfilesuffix}[configurations]|container for configuration elements|0..1
+|link:ivyfile/publications{outfilesuffix}[publications]|container for published artifact elements|0..1
+|link:ivyfile/dependencies{outfilesuffix}[dependencies]|container for dependency elements|0..1
+|link:ivyfile/conflicts{outfilesuffix}[conflicts]|section to configure the conflict managers to use|0..1
 |=======

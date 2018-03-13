@@ -41,7 +41,7 @@ The built-in OSGi resolver is __obviously__ using the Ivy engine to do the resol
 
 On the other hand, Sigil is using a separate "engine" to do the resolution, the OBR, an engine which is dedicated to understand the OSGi metadata and their semantics.
 
-The immediate consequence of this difference is that the built-in resolver is probably less accurate than the Sigil one when it comes to understanding the OSGi dependencies semantics. As explained in this link:osgi-mapping.html[page], the OSGi model doesn't fit well into the Ivy one.
+The immediate consequence of this difference is that the built-in resolver is probably less accurate than the Sigil one when it comes to understanding the OSGi dependencies semantics. As explained in this link:osgi-mapping{outfilesuffix}[page], the OSGi model doesn't fit well into the Ivy one.
 
 
 === Source of metadata

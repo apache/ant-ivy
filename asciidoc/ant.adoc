@@ -75,8 +75,8 @@ This calls Ivy with default values, which might be ok in several projects. In fa
 
 Those 3 tasks follow the 3 main steps of the Ivy retrieving dependencies process:
 
-* First the configure task tells it how it can find dependencies giving it a path to an link:settings.html[settings XML file].
-* Then the resolve task actually resolves dependencies described by an link:ivyfile.html[Ivy file], and puts those dependencies in the Ivy cache (a directory configured in the settings file).
+* First the configure task tells it how it can find dependencies giving it a path to an link:settings{outfilesuffix}[settings XML file].
+* Then the resolve task actually resolves dependencies described by an link:ivyfile{outfilesuffix}[Ivy file], and puts those dependencies in the Ivy cache (a directory configured in the settings file).
 * Finally the retrieve task copies dependencies from the cache to anywhere you want in your file system. You can then use those dependencies to make your classpath with standard Ant paths.
 
 To understand more accurately the behaviour of Ivy tasks, one should know that a property file is loaded in Ant by Ivy at the beginning of the configure call. This property file contains the following properties:

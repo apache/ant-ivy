@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* dependency *Parent:* link:dependencies.html[dependencies]
+*Tag:* dependency *Parent:* link:dependencies{outfilesuffix}[dependencies]
 
 Declares a dependency for this module. A dependency is described by the module on which the current module depends (identified by its name, organisation and revision), and a mapping of configurations.
 
@@ -31,7 +31,7 @@ selects the latest revision of the dependency module.
 * `latest.[any status]` (*__since 1.4__*) +
 selects the latest revision of the dependency module with at least the specified status. +
 For instance, `latest.milestone` will select the latest version being either a `milestone` or a `release`, and `latest.release` will only select the latest `release`. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the Ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
-See also link:../settings/statuses.html[statuses] to see how to configure module statuses.
+See also link:../settings/statuses{outfilesuffix}[statuses] to see how to configure module statuses.
 
 * end the revision with a `+` +
 selects the latest sub-revision of the dependency module. For instance,
@@ -49,8 +49,8 @@ Examples: +
 `(,2.0]` matches all versions lower or equal to 2.0 +
 `(,2.0[` matches all versions lower than 2.0  +
 
-(*__since 1.4__*) If you don't find a way to expression your dependency version constraint among these, you can link:../settings/version-matchers.html[plug your own].
-The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference.html[Ivy main concepts] for details about this.
+(*__since 1.4__*) If you don't find a way to expression your dependency version constraint among these, you can link:../settings/version-matchers{outfilesuffix}[plug your own].
+The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See link:../reference{outfilesuffix}[Ivy main concepts] for details about this.
 
 == [[revision-constraint]]Revision constraint
 
@@ -58,7 +58,7 @@ The way to determine which revision is the "latest" between two is configurable 
 
 The `dependency` tag supports two revision attributes: `rev`, corresponding to the default required dependency revision, and `revConstraint`, corresponding to a dynamic revision constraint applied on this dependency.
 
-Depending on the link:../use/resolve.html[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver.html[deliver] is used, dynamic version constraints are replaced by a static version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This ensures better metadata in the repository while still allowing easier build reproducibility.
+Depending on the link:../use/resolve{outfilesuffix}[resolve mode] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When link:../use/deliver{outfilesuffix}[deliver] is used, dynamic version constraints are replaced by a static version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the `revConstraint` attribute. This ensures better metadata in the repository while still allowing easier build reproducibility.
 
 == Configurations mapping
 
@@ -70,11 +70,11 @@ The first way to declare this mapping is called the inline mapping. It is maybe 
 
 === Specify one configuration name
 
-This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this Ivy file, see link:../ivyfile/configurations.html[configurations] for details, or table below for examples).
+This means that in this master configuration the same dependency configuration is needed (except if a `defaultconfmapping` has been specified in this Ivy file, see link:../ivyfile/configurations{outfilesuffix}[configurations] for details, or table below for examples).
 
 For instance, if the current module has defined a configuration named '`runtime`', and the dependency too, then having an inline mapping configuration set to '`runtime`' means that in the runtime master configuration the runtime dependency configuration is required.
 
-The link:../ivyfile/configurations.html#defaultconfmapping[examples on the dependency on the configurations page] explain how Ivy interprets the conf attribute according to how link:../ivyfile/configurations.html[defaultconfmapping] and link:../ivyfile/configurations.html[defaultconf] is set.
+The link:../ivyfile/configurations{outfilesuffix}#defaultconfmapping[examples on the dependency on the configurations page] explain how Ivy interprets the conf attribute according to how link:../ivyfile/configurations{outfilesuffix}[defaultconfmapping] and link:../ivyfile/configurations{outfilesuffix}[defaultconf] is set.
 
 === Specify a configuration mapping using the `$$->$$` operator
 
@@ -108,7 +108,7 @@ For instance, `$$test->runtime(default)$$` means that in the test configuration 
 
 It is also possible to define dependencies on configuration intersections. A configuration intersection is defined using a `+` sign to separate the configuration (eg `A+B` means the intersection of configuration A and B). In that case only artifacts and dependencies defined in both configurations in the dependency will be part of the master configuration defining the dependency on the configuration intersection.
 
-Configuration intersections can also be used when specifying the confs to link:../use/resolve.html[resolve].
+Configuration intersections can also be used when specifying the confs to link:../use/resolve{outfilesuffix}[resolve].
 
 Moreover, the mapping `$$*->@$$` is handled as a specific case with configuration intersections: it maps also the intersections. So if one resolve conf `A+B` in a module which defines a dependency with mapping `$$*->@$$`, the mapping `$$*->@$$` is interpreted as `$$A+B->A+B$$` so the intersection of A and B will be resolved in the dependency.
 
@@ -146,15 +146,15 @@ If you prefer more verbose mapping declaration, everything is also possible with
 == Artifact restriction
 
 Moreover, the dependency element also supports an artifact restriction feature (since 0.6).
-See link:../ivyfile/dependency-artifact.html[dependency artifact] for details.
+See link:../ivyfile/dependency-artifact{outfilesuffix}[dependency artifact] for details.
 
 == Forcing revision
 
 Finally, the dependency element also supports an a force attribute (since 0.8), which gives an indication
 to conflict manager to force the revision of a dependency to the one given here.
-See link:../ivyfile/conflicts.html[conflict manager] for details.
+See link:../ivyfile/conflicts{outfilesuffix}[conflict manager] for details.
 
-(*__since 1.4__*) This tag supports link:../concept.html#extra[extra attributes]
+(*__since 1.4__*) This tag supports link:../concept{outfilesuffix}#extra[extra attributes]
 
 == Attributes
 
@@ -166,10 +166,10 @@ See link:../ivyfile/conflicts.html[conflict manager] for details.
 |branch|the branch of the dependency. (*__since 1.4__*)|No, defaults to the default branch setting for the dependency.
 |rev|the revision of the dependency. See link:#revision[above] for details.|Yes
 |revConstraint|the dynamic revision constraint originally used for this dependency. See link:#revision-constraint[above] for details.|No, defaults to the value of `rev`
-|force|a boolean to give an indication to conflict manager that this dependency should be forced to this revision (see link:../ivyfile/conflicts.html[conflict manager])|No, defaults to `false`
+|force|a boolean to give an indication to conflict manager that this dependency should be forced to this revision (see link:../ivyfile/conflicts{outfilesuffix}[conflict manager])|No, defaults to `false`
 |conf|an inline mapping configuration spec (see above for details)|No, defaults to `defaultconf` attribute of dependencies element if neither conf attribute nor conf children element is given
 |transitive|`true` to resolve this dependency transitively, `false` otherwise (*__since 1.2__*)|No, defaults to `true`
-|changing|`true` if the dependency artifacts may change without revision change, false otherwise (*__since 1.2__*). See link:../concept.html#change[cache and change management] for details.|No, defaults to `false`
+|changing|`true` if the dependency artifacts may change without revision change, false otherwise (*__since 1.2__*). See link:../concept{outfilesuffix}#change[cache and change management] for details.|No, defaults to `false`
 |=======
 
 == Child elements
@@ -177,9 +177,9 @@ See link:../ivyfile/conflicts.html[conflict manager] for details.
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
-|link:../ivyfile/dependency-conf.html[conf]|defines configuration mapping has sub element|0..n
-|link:../ivyfile/dependency-artifact.html[artifact / include]|defines artifacts inclusion - use only if you do not control dependency Ivy file|0..n
-|link:../ivyfile/artifact-exclude.html[exclude]|defines artifacts exclusion - use only if you do not control dependency Ivy file|0..n
+|link:../ivyfile/dependency-conf{outfilesuffix}[conf]|defines configuration mapping has sub element|0..n
+|link:../ivyfile/dependency-artifact{outfilesuffix}[artifact / include]|defines artifacts inclusion - use only if you do not control dependency Ivy file|0..n
+|link:../ivyfile/artifact-exclude{outfilesuffix}[exclude]|defines artifacts exclusion - use only if you do not control dependency Ivy file|0..n
 |=======
 
 == Examples

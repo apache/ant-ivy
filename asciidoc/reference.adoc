@@ -19,26 +19,26 @@
 
 Welcome to the Ivy reference documentation!
 
-If you don't know Ivy at all, take a look at its features, the faq and the link:tutorial.html[tutorials] before digging into this reference documentation.
+If you don't know Ivy at all, take a look at its features, the faq and the link:tutorial{outfilesuffix}[tutorials] before digging into this reference documentation.
 
 == Reference Overview
 
 This documentation is broken into several parts:
 
 * Introduction
-** link:terminology.html[Terminology]
+** link:terminology{outfilesuffix}[Terminology]
 +
 This part gives you the meaning of some words used all over the Ivy documentation, such as organization, module, configurations, settings, ...
 
-** link:concept.html[Main Concepts]
+** link:concept{outfilesuffix}[Main Concepts]
 +
 This part introduces the main concepts used in Ivy: dependency resolvers, variables, patterns, and explains a central Ivy concept: module configurations.
 
-** link:principle.html[How does it work ?]
+** link:principle{outfilesuffix}[How does it work ?]
 +
 As the title suggests, here you will find an explanation of how Ivy does work internally, which can help to better understand and customize its use.
 
-** link:install.html[Installation]
+** link:install{outfilesuffix}[Installation]
 +
 This part describes how to install Ivy.
 
@@ -46,18 +46,18 @@ This part describes how to install Ivy.
 +
 This part describes possibility to control the behavior of Ivy at run time
 
-* link:settings.html[Settings Files]
+* link:settings{outfilesuffix}[Settings Files]
 +
 This part is dedicated to the specification of the settings file of Ivy (usually called ivysettings.xml). It also gives the list of built-in dependency resolvers available in Ivy.
 
-* link:ivyfile.html[Ivy Files]
+* link:ivyfile{outfilesuffix}[Ivy Files]
 +
 This part is the reference for the module descriptors, the Ivy files in which you describe your dependencies. If you have any questions about what can be done or not in an Ivy file, you will find the answer here.
 
-* link:ant.html[Ant Tasks]
+* link:ant{outfilesuffix}[Ant Tasks]
 +
 This part describes how to use Ivy from Ant. It's in this section that all Ant tasks provided by Ivy are specified.
 
-* link:standalone.html[Using standalone]
+* link:standalone{outfilesuffix}[Using standalone]
 +
 Even though Ivy is most often used from Ant, it can also be used from the command line. This page describes how you can do this.
