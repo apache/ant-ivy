@@ -51,62 +51,62 @@ It is presented in a very simplified description language, far away from the who
 but giving a good understanding of how it works. In particular, it completely hides some complexity due
 to configurations management.
 
-```
+[source,java,subs="verbatim,quotes"]
+----
 resolve(node) {
-	node.resolved(node.mid) = <i>collection</i>(node);
-	resolveConflict(node, node.parent, empty);
-	if (!node.evicted && !node.alreadyResolved) {
-		node.loadData();
-		resolveConflict(node, node.parent, empty);
-		if (!node.evicted) {
-			// actually do resolve
-			foreach (dep in node.dependencies) {
-				resolve(dep);
-			}
-		}
-	}
+    node.resolved(node.mid) = _collection_(node);
+    resolveConflict(node, node.parent, empty);
+    if (!node.evicted && !node.alreadyResolved) {
+        node.loadData();
+        resolveConflict(node, node.parent, empty);
+        if (!node.evicted) {
+            // actually do resolve
+            foreach (dep in node.dependencies) {
+                resolve(dep);
+            }
+        }
+    }
 }
 
 resolveConflict(node, parent, toevict) {
-	if (node.revision.exact && parent.resolved(node.mid).revision.contains(node.revision)) { 
-		// exact revision already in resolved
-		// => job already done
-		return;
-	}
-	if (parent.resolved(node.mid).containsAny(toevict)) {
-		// parent.resolved(node.mid) is not up to date:
-		// recompute resolved from all sub nodes
-		resolved = parent.cm(node.mid).resolveConflicts(
-		                                 parent.dependencies.resolved(node.mid));
-	} else {
-		resolved = parent.cm(node.mid).resolveConflicts(<i>collection</i>(node, parent.resolved(node.mid)));
-	}
-	if (resolved.contains(node)) {
-		// node has been selected for the current parent
-		// we update its eviction... but it can still be evicted by parent !
-		node.evicted = false;
-		
-		// handle previously selected nodes that are now evicted by this new node
-		toevict = parent.resolved(node.mid) - resolved;
-		foreach (te in toevict) {
-			te.evicted = true;
-		}
-		
-		// it's very important to update resolved BEFORE recompute parent call
-		// to allow it to recompute its resolved collection with correct data
-		// if necessary
-		parent.resolved(node.mid) = resolved; 
-		if (parent.parent != null) {
-			resolveConflict(node, parent.parent, toevict);
-		}
-	} else {
-		// node has been evicted for the current parent
-		
-		// it's time to update parent resolved with found resolved...
-		// if they have not been recomputed, it does not change anything
-		parent.resolved(node.mid) = resolved; 
-		
-		node.evicted = true;
-	}
+    if (node.revision.exact && parent.resolved(node.mid).revision.contains(node.revision)) {
+        // exact revision already in resolved
+        // => job already done
+        return;
+    }
+    if (parent.resolved(node.mid).containsAny(toevict)) {
+        // parent.resolved(node.mid) is not up to date:
+        // recompute resolved from all sub nodes
+        resolved = parent.cm(node.mid).resolveConflicts(parent.dependencies.resolved(node.mid));
+    } else {
+        resolved = parent.cm(node.mid).resolveConflicts(_collection_(node, parent.resolved(node.mid)));
+    }
+    if (resolved.contains(node)) {
+        // node has been selected for the current parent
+        // we update its eviction... but it can still be evicted by parent !
+        node.evicted = false;
+
+        // handle previously selected nodes that are now evicted by this new node
+        toevict = parent.resolved(node.mid) - resolved;
+        foreach (te in toevict) {
+            te.evicted = true;
+        }
+
+        // it's very important to update resolved BEFORE recompute parent call
+        // to allow it to recompute its resolved collection with correct data
+        // if necessary
+        parent.resolved(node.mid) = resolved;
+        if (parent.parent != null) {
+            resolveConflict(node, parent.parent, toevict);
+        }
+    } else {
+        // node has been evicted for the current parent
+
+        // it's time to update parent resolved with found resolved...
+        // if they have not been recomputed, it does not change anything
+        parent.resolved(node.mid) = resolved;
+
+        node.evicted = true;
+    }
 }
-```
+----
