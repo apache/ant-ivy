@@ -7,18 +7,20 @@ Ivy (http://www.jayasoft.org/ivy) is a java based tool for tracking, resolving a
 
 == Proposal ==
 Ivy is a tool for managing (recording, tracking, resolving and reporting)  project dependencies. It is characterized by the following:
- 1) flexibility and configurability - Ivy is essentially process agnostic and is not tied to any methodology or structure. Instead it provides the necessary flexibility and configurability to be adapted to a broad range of dependency management and build processes.
- 2) tight integration with Apache Ant - while available as a standalone tool, Ivy works particularly well with Apache Ant providing a number of powerful Ant tasks ranging from dependency resolution to dependency reporting and publication.
+
+1. flexibility and configurability - Ivy is essentially process agnostic and is not tied to any methodology or structure. Instead it provides the necessary flexibility and configurability to be adapted to a broad range of dependency management and build processes.
+2. tight integration with Apache Ant - while available as a standalone tool, Ivy works particularly well with Apache Ant providing a number of powerful Ant tasks ranging from dependency resolution to dependency reporting and publication.
 
 == Rationale ==
 
 Software development is increasingly characterized by leveraging externally provided components/capabilities and by a rapid release cycle. As a result it is not unusual for a project to depend on numerous third-party components which themselves may be dependent on a multitude of third-party of different or identical third-party components. Managing these dependencies - determining what the dependencies are, how they are used, the impact of a change, conflicts among dependencies, etc. - is extremely difficult and absolutely necessary. Ivy is one of a handful of tools addressing this need. While often compared to Maven - which has similar Ant tasks - Ivy differs from Maven in both its focus and philosophy. Ivy is solely focused on dependency management and is designed from the ground up to adapt to a wide range of requirements and scenarios. Examples include multiple aritfacts per module, plugin resolvers, configurable repository configurations and conflict managers.
 
 The maintainers of Ivy are interested in joining the Apache Software Foundation for several reasons:
-    * Ivy has been hosted since its beginning in 2004 by a private company, which make people feel like it's a corporate product, thus slowing the contribution by the community. We strongly believe in the open source movement, and would like to make Ivy independent from Jayasoft.
-    * We'd like to enjoy the benefits of utilizing Apache's infrastructure and legal protection.
-    * It might open the door for cooperation with other projects, such as Ant or Maven.
-    * We strongly believe in Apache philosophy, especially Meritocracy.
+
+* Ivy has been hosted since its beginning in 2004 by a private company, which make people feel like it's a corporate product, thus slowing the contribution by the community. We strongly believe in the open source movement, and would like to make Ivy independent from Jayasoft.
+* We'd like to enjoy the benefits of utilizing Apache's infrastructure and legal protection.
+* It might open the door for cooperation with other projects, such as Ant or Maven.
+* We strongly believe in Apache philosophy, especially Meritocracy.
 
 == Current status ==
 === Meritocracy ===
@@ -60,43 +62,43 @@ Xavier's case is more complex, as a co founder of Jayasoft, part of his time in 
 Ivy has a strong relationship with Apache Ant, and is often seen as a good companion of Ant. Being part of Apache could help for a closer collaboration between the two projects.
 
 === A Excessive Fascination with the Apache Brand ===
-Even if we recognize the strong value of the Apache Brand, the purpose of joining Apache is not focused on improving the visibility of the project. The main focus of this proposition is to make Ivy a more open project, with a closer integration with Apache Ant. Even if Ivy does not join the ASF, Ivy will move out of Jayasoft umbrella and try to attract more developers. 
+Even if we recognize the strong value of the Apache Brand, the purpose of joining Apache is not focused on improving the visibility of the project. The main focus of this proposition is to make Ivy a more open project, with a closer integration with Apache Ant. Even if Ivy does not join the ASF, Ivy will move out of Jayasoft umbrella and try to attract more developers.
 
 == Documentation ==
-Further reading on Ivy can be found at:
+Further reading on Ivy can be found at: +
 http://www.jayasoft.org/ivy
 
 == Initial Source ==
-The initial code base can be found at:
+The initial code base can be found at: +
 http://svn.jayasoft.org/projects/tools/ivy
 
 == External Dependencies ==
-Ivy has no mandatory dependencies at runtime. 
+Ivy has no mandatory dependencies at runtime.
 
-For compilation, it requires:
-apache ant
-apache commons-httpclient
-apache commons-cli
-apache oro
-apache commons-vfs
+For compilation, it requires: +
+apache ant +
+apache commons-httpclient +
+apache commons-cli +
+apache oro +
+apache commons-vfs +
 jcraft jsch  (BSD, already used by commons-vfs and by ant)
 
 == Required Resources ==
 
 === Mailing lists ===
- * ivy-private (with moderated subscriptions) 
- * ivy-dev 
- * ivy-user
- 
+* ivy-private (with moderated subscriptions)
+* ivy-dev
+* ivy-user
+
 === Subversion Directory ===
 https://svn.apache.org/repos/asf/incubator/ivy
 
 === Issue Tracking ===
-JIRA Ivy (IVY) 
+JIRA Ivy (IVY) +
 An import from existing JIRA issues at http://jira.jayasoft.org/ would also be very much appreciated
 
 == Initial Committers ==
-Xavier Hanin (xavier dot hanin at gmail dot com)
+Xavier Hanin (xavier dot hanin at gmail dot com) +
 Maarten Coene (maarten_coene at yahoo dot com)
 
 == Affiliations ==
@@ -105,16 +107,16 @@ As stated in the Reliance on salaried developers section, Xavier is a co founder
 == Sponsors ==
 
 === Champion ===
-Antoine Levy-Lambert
+Antoine Levy-Lambert +
 Sylvain Wallez
 
 === Nominated Mentors ===
-Antoine Levy-Lambert
-Stephane Baillez
+Antoine Levy-Lambert +
+Stephane Baillez +
 Steve Loughran
 
 === Sponsoring Entity ===
-The Ant PMC has voted the following resolution:
+The Ant PMC has voted the following resolution: +
 The Ant PMC sponsors Ivy moving to the Apache Incubator.
 If the Ivy community wishes to move Ivy to become an Ant subproject
 after successful incubation, and if the ASF board agrees to it, Ant
