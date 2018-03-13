@@ -130,7 +130,7 @@ This tag loads some properties for the Ivy process, just like Ant does.
 === settings
 
 This tag initializes some parameters for the Ivy process. In this case, the directory that Ivy will use to cache artifacts will be in a sub directory called ivy-cache of the directory containing the `ivysettings.xml` file itself.
-The second parameter, tells Ivy to use a resolver named "libraries" as its default resolver. More information can be found in the link:../settings.html[settings reference documentation].
+The second parameter, tells Ivy to use a resolver named "libraries" as its default resolver. More information can be found in the link:../settings{outfilesuffix}[settings reference documentation].
 
 === resolvers
 

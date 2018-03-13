@@ -23,7 +23,7 @@
 
 [ivysettings.statuses.status]#Define one available module status.#
 
-See link:../settings/statuses.html[statuses] page for details about how statuses are defined.
+See link:../settings/statuses{outfilesuffix}[statuses] page for details about how statuses are defined.
 
 
 == Attributes

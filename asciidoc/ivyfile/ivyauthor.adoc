@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* ivyauthor *Parent:* link:../ivyfile/info.html[info]
+*Tag:* ivyauthor *Parent:* link:../ivyfile/info{outfilesuffix}[info]
 
 Gives information about who has contributed to write this Ivy file. It does NOT indicate who
 is the author of the module itself.

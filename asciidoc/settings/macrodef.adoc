@@ -27,7 +27,7 @@
 
 This task eases the process of creating a new dependency resolver, because it avoids writing Java code.
 
-It is generally used in combination with the link:../settings/include.html[include] feature to help reuse a macro in multiple settings files.
+It is generally used in combination with the link:../settings/include{outfilesuffix}[include] feature to help reuse a macro in multiple settings files.
 
 A macro is defined by declaring an existing resolver within it. Then you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name, and optionally a default value, and are used using the following syntax:
 
@@ -109,7 +109,7 @@ This is equivalent to:
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:../settings/macrodef/attribute.html[attribute]|defines an attribute for the macro resolver|0..n
+|link:../settings/macrodef/attribute{outfilesuffix}[attribute]|defines an attribute for the macro resolver|0..n
 |any resolver|defines the base resolver upon which this macro is defined|1
 |=======
 

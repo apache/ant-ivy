@@ -44,12 +44,12 @@
 
 (*__since 2.0__*) When used in `m2compatible` mode with the default pattern, this resolver uses `maven-metadata.xml` files (if present) to list the revisions available on the repository. This is especially useful when using a Maven specific proxy, which does not serve directory listing. This can be disabled by using the `useMavenMetadata` flag.
 
-*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
+*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport{outfilesuffix}[repreport] are not available.
 
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

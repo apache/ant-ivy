@@ -57,7 +57,7 @@ The delivered Ivy file will update its dependency revisions with those given her
 
 == deliver and publish
 
-The `deliver` task is most of the time not called explicitly, but rather called automatically by the link:../use/publish.html[publish] task. So, when shall the deliver task be called explicitly? When you actually need to separate what is performed by the deliver task (see above), from what is performed by the `publish` task, i.e. upload a module to a repository.
+The `deliver` task is most of the time not called explicitly, but rather called automatically by the link:../use/publish{outfilesuffix}[publish] task. So, when shall the deliver task be called explicitly? When you actually need to separate what is performed by the deliver task (see above), from what is performed by the `publish` task, i.e. upload a module to a repository.
 
 And this can be particularly useful if you want to process the generated Ivy file before uploading it (if you want to add automatically more information like an SCM tag used, the user who performed the release, ...).
 
@@ -83,11 +83,11 @@ It can also be useful if you want to trigger a recursive delivery and then ensur
 |delivertarget|the target to call for recursive delivery|No. No recursive delivery is done by default
 |validate|`true` to force Ivy files validation against ivy.xsd, `false` to force no validation|No. Defaults to default Ivy value (as configured in settings)
 |replacedynamicrev|`true` to replace dynamic revisions by static ones in the delivered file, `false` to avoid this replacement (*__since 1.3__*)|No. Defaults to `true`
-|replaceForcedRev|`true` to replace revisions (static or dynamic) by the revision of the resolver in link:../settings/resolvers.html#common[forced mode], `false` to avoid this replacement (*__since 2.2__*)|No. Defaults to `false`
-|merge|if a descriptor link:../ivyfile/extends.html[extends] a parent, merge the inherited information directly into the delivered descriptor.  The `extends` element itself will be commented out in the delivered descriptor. (*__since 2.2__*)|No. Defaults to `true`.
+|replaceForcedRev|`true` to replace revisions (static or dynamic) by the revision of the resolver in link:../settings/resolvers{outfilesuffix}#common[forced mode], `false` to avoid this replacement (*__since 2.2__*)|No. Defaults to `false`
+|merge|if a descriptor link:../ivyfile/extends{outfilesuffix}[extends] a parent, merge the inherited information directly into the delivered descriptor.  The `extends` element itself will be commented out in the delivered descriptor. (*__since 2.2__*)|No. Defaults to `true`.
 |settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No. Defaults to `ivy.instance`.
 |conf|comma-separated list of configurations to include in the delivered file. Accepts wildcards. (*__since 2.0__*)|No. Defaults to all configurations
-|generateRevConstraint|`true` to automatically generate a `revConstraint` attribute in the delivered file (see the link:../ivyfile/dependency.html[dependency] page for more info about this attribute), `false` to never generate this attribute (*__since 2.1__*)|No. Defaults to `true`
+|generateRevConstraint|`true` to automatically generate a `revConstraint` attribute in the delivered file (see the link:../ivyfile/dependency{outfilesuffix}[dependency] page for more info about this attribute), `false` to never generate this attribute (*__since 2.1__*)|No. Defaults to `true`
 |=======
 
 == Example

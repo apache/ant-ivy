@@ -30,13 +30,13 @@
 
 [ivysettings.resolvers.ssh]#This resolver can be used when your Ivy repository is located on a server accessible via SSH.# The secured nature of SSH and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
-If your server supports SFTP, you can consider using the link:../resolver/sftp.html[SFTP resolver].
+If your server supports SFTP, you can consider using the link:../resolver/sftp{outfilesuffix}[SFTP resolver].
 
-Internally this resolver shares most of its behaviour with the link:../resolver/sftp.html[SFTP resolver], so refer to its documentation for details.
+Internally this resolver shares most of its behaviour with the link:../resolver/sftp{outfilesuffix}[SFTP resolver], so refer to its documentation for details.
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

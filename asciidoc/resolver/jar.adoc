@@ -37,7 +37,7 @@ The configuration of such a resolver is done via specifying the location of the 
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

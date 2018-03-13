@@ -29,6 +29,6 @@
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:../../settings/namespace/src.html[src]|defines a source name which can be accepted|1..n
-|link:../../settings/namespace/dest.html[dest]|defines the translation to apply when a name is accepted by an src pattern|1
+|link:../../settings/namespace/src{outfilesuffix}[src]|defines a source name which can be accepted|1..n
+|link:../../settings/namespace/dest{outfilesuffix}[dest]|defines the translation to apply when a name is accepted by an src pattern|1
 |=======

@@ -76,7 +76,7 @@ A matcher that matches all revisions starting with a specific prefix. The syntax
 === Latest (Status) Matcher
 
 
-A matcher that matches versions based on their status. The predefined statuses in Ivy are `release`, `milestone` and `integration`. It's possible to define your own statuses, see link:../settings/statuses.html[statuses] for more details.
+A matcher that matches versions based on their status. The predefined statuses in Ivy are `release`, `milestone` and `integration`. It's possible to define your own statuses, see link:../settings/statuses{outfilesuffix}[statuses] for more details.
 
 
 [options="header"]
@@ -150,7 +150,7 @@ Matcher types may be one of "regexp", "exact", "glob", or "exactOrRegexp".  Glob
 
 Maven has the notion of timestamped snapshots, which essentially are snapshot versions of a particular Maven artifact, but have a specific timestamp associated with them so that the snapshot revision (which by nature are changing over time), can be traced back to the exact artifacts. Maven allows other artifacts to depend on such timestamped snapshots.
 
-Ivy too allows such timestamped dependencies to be part of the module's dependencies. For such dependencies to be properly parsed and resolved, a `maven-tsnap-vm` version matcher needs to be configured in the Ivy settings and link:../resolver/ibiblio.html[ibiblio resolver] must be one of the resolvers that are used for dependency resolution.
+Ivy too allows such timestamped dependencies to be part of the module's dependencies. For such dependencies to be properly parsed and resolved, a `maven-tsnap-vm` version matcher needs to be configured in the Ivy settings and link:../resolver/ibiblio{outfilesuffix}[ibiblio resolver] must be one of the resolvers that are used for dependency resolution.
 
 NOTE: Maven has a specific syntax for timestamped snapshot versions and only such versions are understood by Ivy.
 

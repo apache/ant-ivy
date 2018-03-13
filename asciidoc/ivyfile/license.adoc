@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* license *Parent:* link:../ivyfile/info.html[info]
+*Tag:* license *Parent:* link:../ivyfile/info{outfilesuffix}[info]
 
 Gives information about a license of the described module.
 

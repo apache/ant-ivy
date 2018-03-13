@@ -23,8 +23,8 @@ The `buildlist` task enables to obtain a `filelist` of files (usually `build.xml
 
 This is particularly useful combined with `subant`, to build a set of interrelated projects being sure that a dependency will be built before any module depending on it.
 
-When the `ivy.xml` of the modules that you want to order doesn't contain link:../ivyfile/info.html[revision] numbers, the `rev` attributes declared in the dependencies are not used.
-When the `ivy.xml` of the modules that you want to order contains link:../ivyfile/info.html[revision] numbers, the revision numbers are used. If the revision number doesn't match a dependency description, a warning is logged and the modules are considered to be different modules.
+When the `ivy.xml` of the modules that you want to order doesn't contain link:../ivyfile/info{outfilesuffix}[revision] numbers, the `rev` attributes declared in the dependencies are not used.
+When the `ivy.xml` of the modules that you want to order contains link:../ivyfile/info{outfilesuffix}[revision] numbers, the revision numbers are used. If the revision number doesn't match a dependency description, a warning is logged and the modules are considered to be different modules.
 
 (*__since 1.3__*) A `root` attribute can also be used to include, among all the modules found, only the ones that are dependencies (either direct or transitive) of a root module. This can also be used with the `excluderoot` attribute, which when set to `true` will exclude the root itself from the list.
 
@@ -37,7 +37,7 @@ When the `ivy.xml` of the modules that you want to order contains link:../ivyfil
 The `root` and `leaf` attributes can be a delimited list of modules to use as roots. These modules, and all their dependencies will be included in the build list.
 
 By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will appear before the modules in the loop. This guarantees that if there is a dependency path between a module A and a module B (but no dependency path from B to A), B will always appear before A even if A is included in a loop in the provided set of modules to sort.
-Note that a circular dependency can also trigger a failure depending on the value configured in the `circularDependencyStrategy` of your link:../settings/conf.html#circularDependencyStrategy[settings]
+Note that a circular dependency can also trigger a failure depending on the value configured in the `circularDependencyStrategy` of your link:../settings/conf{outfilesuffix}#circularDependencyStrategy[settings]
 
 When you are specifying `root` or `leaf` modules you can limit the resulting list to only direct dependencies of the root modules or to modules that directly depends on your leaf modules.
 

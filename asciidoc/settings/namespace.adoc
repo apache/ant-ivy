@@ -19,9 +19,9 @@
 
 *Tag:* namespace
 
-[ivysettings.namespaces.namespace]#Defines a new namespace. A namespace is identified by a name, which can be referenced by one of the link:../settings/resolvers.html[resolvers].#
+[ivysettings.namespaces.namespace]#Defines a new namespace. A namespace is identified by a name, which can be referenced by one of the link:../settings/resolvers{outfilesuffix}[resolvers].#
 
-An overview of namespaces is given in the link:../settings/namespaces.html[namespaces] documentation.
+An overview of namespaces is given in the link:../settings/namespaces{outfilesuffix}[namespaces] documentation.
 
 A namespace mainly consists of a list of rules, each rule defining a translation between a system namespace and the defined namespace, and vice versa.
 
@@ -44,7 +44,7 @@ There are two main possibilities for using these rules. By default, a namespace 
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:../settings/namespace/rule.html[rule]|defines a new namespace rule|0..n
+|link:../settings/namespace/rule{outfilesuffix}[rule]|defines a new namespace rule|0..n
 |=======
 
 

@@ -19,9 +19,9 @@
 
 Constructs an Ant `path` consisting of artifacts in Ivy's cache (or origin location with depending on `useOrigin` setting) for a resolved module configuration.
 
-This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-If you want to make your build more independent from Ivy, you could consider using the link:../use/retrieve.html[retrieve task]. Once the artifacts are properly retrieved, you can use standard Ant path creation which makes Ivy not necessary any more.
+If you want to make your build more independent from Ivy, you could consider using the link:../use/retrieve{outfilesuffix}[retrieve task]. Once the artifacts are properly retrieved, you can use standard Ant path creation which makes Ivy not necessary any more.
 
 Built path is registered in the Ant project with a given id, and can thus be used like any other Ant path using `refid`.
 

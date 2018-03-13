@@ -30,7 +30,7 @@
 
 [ivysettings.resolvers.sftp]#This resolver can be used when your Ivy repository is located on a server accessible via SFTP.# The secured nature of SFTP and its widespread implementation on most *nix servers makes this resolver a very good candidate in an enterprise environment.
 
-If your server supports SSH but not SFTP, there is also an link:../resolver/ssh.html[SSH resolver].
+If your server supports SSH but not SFTP, there is also an link:../resolver/ssh{outfilesuffix}[SSH resolver].
 
 Note that SFTP is also supported by VFS, so you can use a VFS resolver instead. The advantage of this resolver is that you have a better control over authentication, it can prompt for username/password credentials, or you can use private/public key authentication, which is not possible with the VFS resolver. When it prompts for username/password, it uses a Swing dialog, which is not possible in a headless environment. If you want to prompt for the credentials on the command line, use Ant input task, for example, before calling Ivy.
 
@@ -49,7 +49,7 @@ Internally this resolver relies on link:http://www.jcraft.com/jsch/[jsch] as SSH
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

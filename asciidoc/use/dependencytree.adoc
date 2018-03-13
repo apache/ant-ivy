@@ -19,7 +19,7 @@
 
 Display a dependency tree on the console.
 
-This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 Please prefer the use of retrieve + standard Ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
 

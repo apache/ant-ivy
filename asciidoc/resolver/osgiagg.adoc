@@ -29,19 +29,19 @@
 
 [*__since 2.4__*]
 
-This resolver is one of the resolvers which support link:../osgi.html[OSGi&#153;] dependencies.
+This resolver is one of the resolvers which support link:../osgi{outfilesuffix}[OSGi&#153;] dependencies.
 
-[ivysettings.resolvers.osgi-agg]#This resolver is like a classic link:../resolver/chain.html[chain] resolver, but with better support for OSGi metadata.#
+[ivysettings.resolvers.osgi-agg]#This resolver is like a classic link:../resolver/chain{outfilesuffix}[chain] resolver, but with better support for OSGi metadata.#
 
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of composite resolvers.
 
 
 == Elements
 
-As sub element, this resolver accept any kind of OSGi resolver: link:../resolver/obr.html[obr], link:../resolver/updatesite.html[updatesite], or any other `osgi-agg`.
+As sub element, this resolver accept any kind of OSGi resolver: link:../resolver/obr{outfilesuffix}[obr], link:../resolver/updatesite{outfilesuffix}[updatesite], or any other `osgi-agg`.
 
 
 == Examples

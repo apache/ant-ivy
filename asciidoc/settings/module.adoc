@@ -30,13 +30,13 @@ It also gives the specific setting to use for this module set.
 For each module set, you can configure:
 
 
-    * the link:../settings/resolvers.html[resolver] to use +
+    * the link:../settings/resolvers{outfilesuffix}[resolver] to use +
 
-    * the link:../settings/conflict-managers.html[conflict manager] to use +
+    * the link:../settings/conflict-managers{outfilesuffix}[conflict manager] to use +
 
-    * the default link:../terminology.html#branch[branch] to use +
+    * the default link:../terminology{outfilesuffix}#branch[branch] to use +
 
-    * the link:../use/resolve.html[resolve mode] to use +
+    * the link:../use/resolve{outfilesuffix}[resolve mode] to use +
 
 
 
@@ -50,7 +50,7 @@ For each module set, you can configure:
 |name|the module's name to match to apply the rule.|No, defaults to *
 |revision|the module's revision to match to apply the rule. Note that the version may not be resolved yet (be `latest.integration`, for instance), so be very careful when using this attribute (*__since 2.0__*).|No, defaults to *
 |_any extra attribute_|an extra attribute to match to apply the rule (*__since 2.0__*).|No, defaults to *
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules to which the resolver should be applied (*__since 1.3__*).|No, defaults to exactOrRegexp
+|matcher|the link:../concept{outfilesuffix}#matcher[matcher] to use to match the modules to which the resolver should be applied (*__since 1.3__*).|No, defaults to exactOrRegexp
 |resolver|the name of the resolver to apply. The resolver must have been defined in the resolvers section of the settings file.|No
 |conflict-manager|the name of the conflict manager to apply (*__since 1.4__*).|No
 |branch|the default branch to apply (*__since 1.4__*).|No

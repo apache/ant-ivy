@@ -23,7 +23,7 @@ Finds the list of modules in the repository matching some criteria and sets a co
 
 The criteria is set by given patterns matching the organisation, name branch and revision of the modules to find.
 
-To know if a module matches the criteria, Ivy will use the configured link:../concept.html#matcher[pattern matcher].
+To know if a module matches the criteria, Ivy will use the configured link:../concept{outfilesuffix}#matcher[pattern matcher].
 
 == Attributes
 

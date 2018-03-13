@@ -25,7 +25,7 @@ Contrary to Ant properties, Ivy variables are mutable. But a problem with this i
 variables are substituted, and usually it is done as soon as possible. So changing the value of a variable will
 have no effect if it has already been substituted. Consequently, *using this task is NOT recommended*.
 
-See link:../reference.html[reference] page for details about Ivy variables.
+See link:../reference{outfilesuffix}[reference] page for details about Ivy variables.
 
 == Attributes
 

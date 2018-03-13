@@ -30,7 +30,7 @@ It should work with a simple configuration but may not with complex ones. If you
 
 The concept of "target platform" is a concept introduced by Eclipse&#153; to describe the set of bundles which will run together in an OSGi&#153; environment. Then when developing an OSGi bundle, we expect it to run in such a "target platform".
 
-When developing a single OSGi bundle, a single `ivy.xml` (together with the use of the link:../use/fixdeps.html[fixdeps] task) is sufficient to describe precisely the bundle requirements.
+When developing a single OSGi bundle, a single `ivy.xml` (together with the use of the link:../use/fixdeps{outfilesuffix}[fixdeps] task) is sufficient to describe precisely the bundle requirements.
 
 But when developing several bundles, it will be error prone to declare for each bundle its dependencies. Because once deployed in an OSGi environment, the bindings are sensitive to the available bundles. So when developing, we must ensure that the set of bundles will be the same set as the one at deploy time.
 
@@ -50,11 +50,11 @@ First you need a project (basically a folder) in which you will manage your targ
     * and a link:../samples/target-platform/build.xml[build.xml] with which you'll manage your target platform
 
 
-In the build there is a target: `update-dependencies`. This target will do a resolve with the `ivy.xml` and will generate an `ivy-fixed.xml` from the resolved dependencies. This `ivy-fixed.xml` file contains only fixed non transitive dependencies (see the link:../use/fixdeps.html[fixdeps] task for further info). With that `ivy-fixed.xml` file, subsequent dependency resolutions are then reproducible and will always generate the same set of artifacts.
+In the build there is a target: `update-dependencies`. This target will do a resolve with the `ivy.xml` and will generate an `ivy-fixed.xml` from the resolved dependencies. This `ivy-fixed.xml` file contains only fixed non transitive dependencies (see the link:../use/fixdeps{outfilesuffix}[fixdeps] task for further info). With that `ivy-fixed.xml` file, subsequent dependency resolutions are then reproducible and will always generate the same set of artifacts.
 
 Once generated, it is recommended to share that `ivy-fixed.xml` file into your version control system (Git, Subversion, etc...). The target `update-dependencies` must then be launched each time you edit the `ivy.xml`, when you want to change the content of your target platform.
 
-The second target `generate-target-platform` will generate an `obr.xml`, a OSGi Bundle repository descriptor. This file will list every artifact which has been resolved by the `ivy-fixed.xml`. Then each of your bundles you develop will do its resolve against that `obr.xml` (see the link:../resolver/obr.html[obr resolver]).
+The second target `generate-target-platform` will generate an `obr.xml`, a OSGi Bundle repository descriptor. This file will list every artifact which has been resolved by the `ivy-fixed.xml`. Then each of your bundles you develop will do its resolve against that `obr.xml` (see the link:../resolver/obr{outfilesuffix}[obr resolver]).
 
 The generated `obr.xml` contains paths to the local filesystem, so it is neither recommended to share it between developers nor commit it to version control system.
 

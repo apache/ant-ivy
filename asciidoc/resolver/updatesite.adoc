@@ -29,14 +29,14 @@
 
 [*__since 2.3__*]
 
-[ivysettings.resolvers.updatesite]#This resolver is one of the resolvers which support link:../osgi.html[OSGi&#153;] dependencies. It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.#
+[ivysettings.resolvers.updatesite]#This resolver is one of the resolvers which support link:../osgi{outfilesuffix}[OSGi&#153;] dependencies. It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.#
 
 This resolver supports old style Eclipse updatesite, based on a single file, site.xml. It also supports Eclipse P2 repositories.
 
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of composite resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

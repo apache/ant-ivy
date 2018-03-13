@@ -23,7 +23,7 @@ The `fixdeps` task serializes transitively resolved dependencies into an `ivy.xm
 
 The dependencies declared in an `ivy.xml` can be specified as range of revisions. And the transitive dependencies too. As new versions of modules can be added to the repository anytime, resolved versions of ranges can change over time. It is then safer to resolve a range once and stick with the resolved revision. This way a resolve process is highly reproducible.
 
-It is especially useful in a very dynamic environment like the link:../osgi.html[OSGi] one.
+It is especially useful in a very dynamic environment like the link:../osgi{outfilesuffix}[OSGi] one.
 
 In a multi project environment some dependencies still need to be maintained loose: the ones between the projects. These dependencies, as soon as they are declared in the original ivy.xml, can be kept from being fixed. In order to do so, use the inner element `keep`.
 
@@ -33,7 +33,7 @@ The recommended setup is then to:
 * have an Ant target which resolves the `ivy-spec.xml` and call `fixdeps` to generate an `ivy.xml`. This target should then only be called after `ivy-spec.xml` is modified. The generated `ivy.xml` can safely be shared in a version control repository (Git, Subversion, ...).
 * make the entire build workflow based on the resolve of the generated `ivy.xml`
 
-This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 == Attributes
 

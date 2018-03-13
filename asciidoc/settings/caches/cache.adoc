@@ -37,13 +37,13 @@ By default also, the parsed module descriptors read from the cache are kept in a
 |=======
 |Attribute|Description|Required
 |name|name of the cache instance|Yes
-|basedir|the path of the base directory to use to put repository cache data. *This should not point to a directory used as a repository!*|No, defaults to repositoryCacheDir defined in link:../../settings/caches.html[caches]
-|ivyPattern|the pattern to use to store cached Ivy files|No, defaults to default cache Ivy pattern as configured in link:../../settings/caches.html[caches]
-|artifactPattern|the pattern to use to store cached artifacts|No, defaults to default cache artifact pattern as configured in link:../../settings/caches.html[caches]
+|basedir|the path of the base directory to use to put repository cache data. *This should not point to a directory used as a repository!*|No, defaults to repositoryCacheDir defined in link:../../settings/caches{outfilesuffix}[caches]
+|ivyPattern|the pattern to use to store cached Ivy files|No, defaults to default cache Ivy pattern as configured in link:../../settings/caches{outfilesuffix}[caches]
+|artifactPattern|the pattern to use to store cached artifacts|No, defaults to default cache artifact pattern as configured in link:../../settings/caches{outfilesuffix}[caches]
 |useOrigin|true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise.
-To know if an artifact is local, Ivy asks the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you use the cache for some non local resolvers. In this case the cache will behave as usual, copying files to the cache. Note also that this only applies to artifacts, not to Ivy files, which are still copied in the cache.|No. defaults to the default value configured in link:../../settings/caches.html[caches]
-|lockStrategy|the name of the link:../../settings/lock-strategies.html[lock strategy] to use for this cache|No, defaults to default lock strategy as configured in link:../../settings/caches.html[caches]
-|defaultTTL|the default link:../../settings/caches/ttl.html[TTL] to use when no specific one is defined|No, defaults to ${ivy.cache.ttl.default}
+To know if an artifact is local, Ivy asks the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you use the cache for some non local resolvers. In this case the cache will behave as usual, copying files to the cache. Note also that this only applies to artifacts, not to Ivy files, which are still copied in the cache.|No. defaults to the default value configured in link:../../settings/caches{outfilesuffix}[caches]
+|lockStrategy|the name of the link:../../settings/lock-strategies{outfilesuffix}[lock strategy] to use for this cache|No, defaults to default lock strategy as configured in link:../../settings/caches{outfilesuffix}[caches]
+|defaultTTL|the default link:../../settings/caches/ttl{outfilesuffix}[TTL] to use when no specific one is defined|No, defaults to ${ivy.cache.ttl.default}
 |memorySize|the number of parsed module descriptors to keep in a memory cache.|No, default to 150
 |=======
 
@@ -55,7 +55,7 @@ To know if an artifact is local, Ivy asks the resolver. Only filesystem resolver
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:../../settings/caches/ttl.html[ttl]|defines a TTL rule|0..n
+|link:../../settings/caches/ttl{outfilesuffix}[ttl]|defines a TTL rule|0..n
 |=======
 
 

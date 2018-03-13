@@ -19,14 +19,14 @@
 
 [*__since 2.3__*]
 
-From a set of jar artifacts, this task generates an OBR (OSGi Bundle Repository) descriptor. It could be then used by the link:../resolver/obr.html[obr resolver].
+From a set of jar artifacts, this task generates an OBR (OSGi Bundle Repository) descriptor. It could be then used by the link:../resolver/obr{outfilesuffix}[obr resolver].
 
 The set of jars which will be described by OBR can be defined in 4 mutually exclusive ways:
 
 * via an Ivy resolver: every jar listed by the resolver will be taken into account
 * by defining a root directory: every jar found recursively in that folder will be taken into account
 * via the name of an Ivy cache: every artifact contained in the cache will be taken into account
-* (*__since 2.4__*) via a resolve: this task is a link:../use/postresolvetask.html[post resolve task] (with all the behaviour and attributes common to all post resolve tasks), thus every artifact which has been resolved will be taken into account; it is especially useful for building a link:../osgi/target-platform.html[target platform]
+* (*__since 2.4__*) via a resolve: this task is a link:../use/postresolvetask{outfilesuffix}[post resolve task] (with all the behaviour and attributes common to all post resolve tasks), thus every artifact which has been resolved will be taken into account; it is especially useful for building a link:../osgi/target-platform{outfilesuffix}[target platform]
 
 NB: among every listed file or artifact, only the actually OSGi bundles will be described by the OBR descriptor; the other files are ignored.
 
@@ -34,7 +34,7 @@ NB: among every listed file or artifact, only the actually OSGi bundles will be 
 
 [*__since 2.4__*]
 
-This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 [options="header",cols="15%,50%,35%"]
 |=======

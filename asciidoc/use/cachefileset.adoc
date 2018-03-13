@@ -21,7 +21,7 @@
 
 Constructs an Ant `fileset` consisting of artifacts in Ivy's cache for a configuration.
 
-This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks. Note that this task
+This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks. Note that this task
 does not rely on retrieve, because the built fileset is made of artifacts directly in Ivy's cache.
 
 Please prefer the use of retrieve + standard Ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
@@ -35,7 +35,7 @@ A `fileset`, in Ant project, requires a base directory from within which the fil
 
 == Alternative task
 
-If `cachefileset` doesn't fit the need of your use case (maybe due to the limitations noted above), the link:../use/resources.html[resources] task could be an alternative task to use in certain cases.
+If `cachefileset` doesn't fit the need of your use case (maybe due to the limitations noted above), the link:../use/resources{outfilesuffix}[resources] task could be an alternative task to use in certain cases.
 
 == Attributes
 

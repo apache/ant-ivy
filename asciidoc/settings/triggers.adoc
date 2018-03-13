@@ -39,7 +39,7 @@ Ivy supports 3 type of triggers out of the box:
      echo a message, usually in a file
 
 
-If you want to use a different trigger, you can link:../extend.html[implement your own].
+If you want to use a different trigger, you can link:../extend{outfilesuffix}[implement your own].
 
 The following events are available in Ivy:
 

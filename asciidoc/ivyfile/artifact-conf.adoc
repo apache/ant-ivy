@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* conf *Parent:* link:../ivyfile/artifact.html[artifact]
+*Tag:* conf *Parent:* link:../ivyfile/artifact{outfilesuffix}[artifact]
 
 Indicates a public configuration in which enclosing artifact is published.
 

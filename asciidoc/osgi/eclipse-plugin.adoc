@@ -91,7 +91,7 @@ NOTE: For resolution to work correctly, Ivy relies on the aggregated metadata of
 
 When building an Eclipse plugin, we are relying on a "target platform", the Eclipse installation we want our plugin to be eventually installed into. For Ivy, this will represent the repository of artifacts.
 
-Ivy needs an aggregation of the OSGi metadata in order to resolve a such repository. The Ant task link:../use/buildobr.html[buildobr] builds a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". In the above example, the file is built in `target/repo-eclipse.xml`.
+Ivy needs an aggregation of the OSGi metadata in order to resolve a such repository. The Ant task link:../use/buildobr{outfilesuffix}[buildobr] builds a OBR (OSGi Bundle Repository) descriptor file from a set of OSGi bundles. So here we are using this Ant task to gather OSGi metadata from the Eclipse plugins in the "target platform". In the above example, the file is built in `target/repo-eclipse.xml`.
 
 The plugin to be built has a `ivy.xml` file describing its dependencies to be used by Ivy. Since the actual dependencies are in the `MANIFEST.MF` file, in the `ivy.xml` file we specify that it extends `META-INF/MANIFEST.MF`. So there are few dependencies specified in the `ivy.xml`. But as Ivy doesn't support the `Bundle-Fragment` OSGi feature, the `ivy.xml` can help specify the missing dependencies.
 

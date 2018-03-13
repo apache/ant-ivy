@@ -162,7 +162,7 @@ So, here are some aspects of this common build file:
 
 ----
 
-This declaration configures Ivy by only setting two properties: the location for the local repository and the location for the shared repository. It's the only settings done here, since Ivy is configured by default to work in a team environment (see link:../tutorial/defaultconf.html[default settings tutorial] for details about this). For sure in a real environment, the shared repository location would rather be in a team shared directory (or in a more complex repository, again see the default settings tutorial to see how to use something really different).
+This declaration configures Ivy by only setting two properties: the location for the local repository and the location for the shared repository. It's the only settings done here, since Ivy is configured by default to work in a team environment (see link:../tutorial/defaultconf{outfilesuffix}[default settings tutorial] for details about this). For sure in a real environment, the shared repository location would rather be in a team shared directory (or in a more complex repository, again see the default settings tutorial to see how to use something really different).
 Commented out you can see how the settings would have been done if the default setting wasn't OK for our purpose.
 
 
@@ -204,7 +204,7 @@ You should begin to be familiar with using Ivy this way. We call __resolve__ exp
 
 ----
 
-This target is used to ask Ivy to find a new version for a module. To get details about the module we are dealing with, we pull information out of the Ivy file by using the ivy:info task. Then the link:../use/buildnumber.html[buildnumber] task is used to get a new revision, based on a prefix we set with a property. By default, it will be 1.0-dev-b (have a look at the default value for `module.version.target` in the `common/build.properties` file). Each module built by this common build file could easily override this by either setting a different `module.version.target` in its module specific `build.properties`, or even overriding `module.version.prefix`. To get the new revision, Ivy scans the repository to find the latest available version with the given prefix, and then increments this version by 1.
+This target is used to ask Ivy to find a new version for a module. To get details about the module we are dealing with, we pull information out of the Ivy file by using the ivy:info task. Then the link:../use/buildnumber{outfilesuffix}[buildnumber] task is used to get a new revision, based on a prefix we set with a property. By default, it will be 1.0-dev-b (have a look at the default value for `module.version.target` in the `common/build.properties` file). Each module built by this common build file could easily override this by either setting a different `module.version.target` in its module specific `build.properties`, or even overriding `module.version.prefix`. To get the new revision, Ivy scans the repository to find the latest available version with the given prefix, and then increments this version by 1.
 
 
 === publish
@@ -273,7 +273,7 @@ This target is used when you don't want to use your local version of a module an
 
 Generates both an HTML report and a GraphML report.
 
-For example, to generate a graph like the one shown at the beginning of this tutorial, you just have to follow the instructions given link:../yed.html[here] with the GraphML file you will find in `projects/console/build` after having called report in the console project, and that's it, you have a clear overview of all your app dependencies!
+For example, to generate a graph like the one shown at the beginning of this tutorial, you just have to follow the instructions given link:../yed{outfilesuffix}[here] with the GraphML file you will find in `projects/console/build` after having called report in the console project, and that's it, you have a clear overview of all your app dependencies!
 
 
 == Playing with the projects
@@ -306,4 +306,4 @@ include::asciidoc/tutorial/log/multi-project-find-antp.txt[]
 
 You can see the targets available, thanks to the import of the `common.xml` build file. Play with the project by calling resolve, and publish, and see what happens when you do the same in other projects. An interesting thing to do, for instance, is to change the dependencies of a project. If the module version now depends on a new commons library, you will see that all other projects depending on that version will get this library as part of their transitive dependencies once the new revision of the version project is published. Very easy! And if a project introduces a change with which the depender isn't compatible yet, you can easily change the dependency in the depender to move from `latest.integration` to a fixed version with which the depender is compatible (probably the latest before the change). Keeping your modules under control is now very easy!
 
-By now, you should be pretty familiar with multi-project development with Ivy. We hope you will appreciate its power and flexibility! And these tutorials are only the beginning of your journey with Ivy, browse the link:../reference.html[reference documentation] to learn more about the features, subscribe to the mailing lists to share your experience and ask questions with the community, browse the source code, open Jira issues, submit patches, join in and help make Ivy the best of dependency management tools!
+By now, you should be pretty familiar with multi-project development with Ivy. We hope you will appreciate its power and flexibility! And these tutorials are only the beginning of your journey with Ivy, browse the link:../reference{outfilesuffix}[reference documentation] to learn more about the features, subscribe to the mailing lists to share your experience and ask questions with the community, browse the source code, open Jira issues, submit patches, join in and help make Ivy the best of dependency management tools!

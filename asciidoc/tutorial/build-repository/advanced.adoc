@@ -28,7 +28,7 @@ We have seen in the previous example, that we could use some public repositories
 
 This problem is pretty normal when you have an existing repository, and want to benefit from large public repositories which do not follow the same naming conventions. It also shows up because many public repositories do not use a  consistent naming scheme. For example, why don't all the Apache Commons modules use the org.apache.commons organization? Well... for historical reasons. But if you set up your own repository, you may not want to suffer from the mistakes of history.
 
-Fortunately, Ivy has a very powerful answer to this problem: link:../../settings/namespaces.html[namespaces].
+Fortunately, Ivy has a very powerful answer to this problem: link:../../settings/namespaces{outfilesuffix}[namespaces].
 
 
 == Using namespaces

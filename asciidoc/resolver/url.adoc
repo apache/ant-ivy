@@ -29,12 +29,12 @@
 
 [ivysettings.resolvers.url]#This resolver is one of the most generic. In fact, most of the previous resolvers can be obtained by a particular configuration of this one.# Indeed it uses URLs to find Ivy files and artifacts. The URLs it uses are defined through Ivy and artifact children, each giving a pattern to find Ivy files or artifacts.
 
-*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
+*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport{outfilesuffix}[repreport] are not available.
 
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

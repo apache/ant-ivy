@@ -21,7 +21,7 @@
 
 Finds the latest revision of a module matching a given version constraint.
 
-A version constraint is what is used when declaring a link:../ivyfile/dependency.html[dependency] on a module.
+A version constraint is what is used when declaring a link:../ivyfile/dependency{outfilesuffix}[dependency] on a module.
 If the module is not found, the property is not set.
 
 == Attributes

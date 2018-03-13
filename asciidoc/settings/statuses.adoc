@@ -50,7 +50,7 @@ NOTE: The statuses order is important, the first is considered the more mature, 
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:../settings/status.html[status]|defines a new status|0..n
+|link:../settings/status{outfilesuffix}[status]|defines a new status|0..n
 |=======
 
 

@@ -85,5 +85,5 @@ The included Ivy settings defines a resolver named default, which is an ivyrep r
 
 ----
 
-with ivysettings-macro.xml being the Ivy settings example given on the link:../settings/macrodef.html[macrodef documentation page].
+with ivysettings-macro.xml being the Ivy settings example given on the link:../settings/macrodef{outfilesuffix}[macrodef documentation page].
 This lets us easily reuse the custom macro resolver.

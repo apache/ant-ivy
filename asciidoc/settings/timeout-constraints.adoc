@@ -21,7 +21,7 @@
 
 [*__since 2.5__*]
 
-Ivy, internally, communicates with various remote systems for dealing with module descriptors and artifacts. This is done through various link:../concept.html[dependency resolvers] that are configured in the Ivy settings. This communication typically involves opening a connection to the target system and reading content from those systems. As with all remote communication, certain systems can sometimes be slow or even unavailable on some occasions. [ivysettings.timeout-constraints]#`timeout-constraints` in Ivy settings allows you to configure timeouts that can then be used by Ivy while communicating with remote systems.#
+Ivy, internally, communicates with various remote systems for dealing with module descriptors and artifacts. This is done through various link:../concept{outfilesuffix}[dependency resolvers] that are configured in the Ivy settings. This communication typically involves opening a connection to the target system and reading content from those systems. As with all remote communication, certain systems can sometimes be slow or even unavailable on some occasions. [ivysettings.timeout-constraints]#`timeout-constraints` in Ivy settings allows you to configure timeouts that can then be used by Ivy while communicating with remote systems.#
 
 NOTE: Although, timeouts are most likely to be used by dependency resolvers, the setting up of timeouts through the use of `timeout-constraints` doesn't really bother about where those timeouts are used. As such, it's _not_ an error to have `timeout-constraints` within a Ivy settings file which may never be referred to by any resolver.
 

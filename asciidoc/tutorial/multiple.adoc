@@ -147,7 +147,7 @@ Also notice that the `run` Ant target succeeded in using both `commons-lang.jar`
 
 == Going further
 
-This very simple example helps us see how to set up two resolvers in a chain. The link:../resolver/chain.html[chain resolver's reference documentation] is available for those who would like to know all the features offered by this resolver.
+This very simple example helps us see how to set up two resolvers in a chain. The link:../resolver/chain{outfilesuffix}[chain resolver's reference documentation] is available for those who would like to know all the features offered by this resolver.
 
 Below are a few more interesting things worth knowing about chain resolvers. After reading them, go ahead and try tweaking this example using your new wealth of knowledge!
 

@@ -19,11 +19,11 @@
 
 [*__since 1.4__*]
 
-The `artifactreport` task generates an XML report of all artifact dependencies resolved by the last link:../use/resolve.html[resolve] task call during the same build.
+The `artifactreport` task generates an XML report of all artifact dependencies resolved by the last link:../use/resolve{outfilesuffix}[resolve] task call during the same build.
 
-(*__since 2.0__*) This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+(*__since 2.0__*) This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
-This report is different from the standard link:../use/report.html[report] which reports all modules and artifacts, while this report is much simpler and focuses only on artifacts, and gives more information on artifacts, such as the original location and the retrieve location.
+This report is different from the standard link:../use/report{outfilesuffix}[report] which reports all modules and artifacts, while this report is much simpler and focuses only on artifacts, and gives more information on artifacts, such as the original location and the retrieve location.
 
 It is thus easy to use to generate things like a classpath file for an IDE.
 

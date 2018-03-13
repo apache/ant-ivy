@@ -33,7 +33,7 @@ The configuration of such a resolver is mainly done through Ivy and artifact pat
 
 (*__since 1.3__*) Using the `m2compatible` attribute, this resolver will convert dots found in organisation into slashes like Maven 2 does for groupId. For instance, it will transform the organisation from `com.company` into `com/company` when replacing the token `[organisation]` in your pattern.
 
-*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport.html[repreport] are not available.
+*Limitation*: in `m2compatible` mode, this resolver is not able list available organizations. It means some features like link:../use/repreport{outfilesuffix}[repreport] are not available.
 
 
 == Atomic publish support
@@ -67,13 +67,13 @@ The `*transactional*` attribute can be used to configure the atomicity behavior:
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
 |m2compatible|True if this resolver should be Maven 2 compatible, false otherwise (*__since 1.3__*)|No, defaults to false
-|local|True if this resolver should be considered local, false otherwise (*__since 1.4__*). See useOrigin attribute on the link:../settings/caches.html[caches] element for details.|No, defaults to true
+|local|True if this resolver should be considered local, false otherwise (*__since 1.4__*). See useOrigin attribute on the link:../settings/caches{outfilesuffix}[caches] element for details.|No, defaults to true
 |transactional|true to force the use of transaction, false to prevent the use of transaction, auto to get transaction when possible (*__since 2.0__*). See above for details.|No, defaults to auto
 |=======
 

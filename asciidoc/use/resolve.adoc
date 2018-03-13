@@ -17,7 +17,7 @@
    under the License.
 ////
 
-The resolve task actually resolves dependencies described in an link:../ivyfile.html[Ivy file], and puts the resolved dependencies in the Ivy cache.
+The resolve task actually resolves dependencies described in an link:../ivyfile{outfilesuffix}[Ivy file], and puts the resolved dependencies in the Ivy cache.
 If configure has not been called before resolve is called, a default configuration will be used (equivalent to calling configure without attributes).
 
 After the call to this task, four properties are set in Ant:
@@ -90,12 +90,12 @@ The resolve mode allows to define how Ivy should use dependency revision constra
 
 Two modes are available:
 
-* `default`: in this mode the default revision constraint (expressed with the `rev` attribute in the link:../ivyfile/dependency.html[dependency] element) is used.
-* `dynamic`: in this mode the dynamic revision constraint (expressed with the `revConstraint` attribute in the link:../ivyfile/dependency.html[dependency] element) is used.
+* `default`: in this mode the default revision constraint (expressed with the `rev` attribute in the link:../ivyfile/dependency{outfilesuffix}[dependency] element) is used.
+* `dynamic`: in this mode the dynamic revision constraint (expressed with the `revConstraint` attribute in the link:../ivyfile/dependency{outfilesuffix}[dependency] element) is used.
 
 == Concurrency
 
-During resolve, Ivy creates a file in the link:../settings/caches.html[resolution cache]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same `resolveId`.
+During resolve, Ivy creates a file in the link:../settings/caches{outfilesuffix}[resolution cache]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same `resolveId`.
 
 __Note for developers__: after the call to this task, a reference to the module descriptor resolved is put in the Ant project under the id `ivy.resolved.descriptor`.
 
@@ -108,14 +108,14 @@ __Note for developers__: after the call to this task, a reference to the module 
 |conf|a comma separated list of the configurations to resolve, or `$$*$$`.
 (*__since 2.0__*) You can also use `$$*(private)$$`, `$$*(public)$$`.  Note that when `inline` is `true`, the configuration `$$*$$` is equivalent as `$$*(public)$$`.|No. Defaults to `${ivy.configurations}`
 |refresh|`true` to force Ivy to resolve dynamic revision in this resolve process, `false` to use cached resolved revision (*__since 2.0__*)|No. defaults to `false`
-|resolveMode|the resolve mode to use for this dependency resolution process (*__since 2.0__*)|No. defaults to using the resolve mode set in the link:../settings.html[settings]
+|resolveMode|the resolve mode to use for this dependency resolution process (*__since 2.0__*)|No. defaults to using the resolve mode set in the link:../settings{outfilesuffix}[settings]
 |inline|`true` to use inline mode, false to resolve an Ivy file (*__since 1.4__*)|No. defaults to `false`
 |keep|`true` to keep the results of the resolve in memory, false to discard them. When this is `false`, the standard Ivy properties won't be set and other post-resolve tasks (like `retrieve` and `cachepath`) won't be able to reuse the results of this resolve!|No. defaults to `false` for an inline resolve and to `true` in any other case
 |organisation|the organisation of the module to resolve in inline mode (*__since 1.4__*)|Yes in inline mode, no otherwise.
 |module|the name of the module to resolve in inline mode (*__since 1.4__*)|Yes in inline mode, no otherwise.
 |revision|the revision constraint to apply to the module to resolve in inline mode (*__since 1.4__*)|No. Defaults to `latest.integration` in inline mode, nothing in standard mode.
 |branch|the name of the branch to resolve in inline mode (*__since 2.1__*)|Defaults to no branch in inline mode, nothing in standard mode.
-|changing|indicates that the module may change when resolving in inline mode. See link:../concept.html#change[cache and change management] for details. Ignored when resolving in standard mode. (*__since 1.4__*)|No. Defaults to `false`.
+|changing|indicates that the module may change when resolving in inline mode. See link:../concept{outfilesuffix}#change[cache and change management] for details. Ignored when resolving in standard mode. (*__since 1.4__*)|No. Defaults to `false`.
 |type|comma separated list of accepted artifact types (*__since 1.2__*)|No. defaults to `${ivy.resolve.default.type.filter}`
 |haltonfailure|`true` to halt the build on Ivy failure, false to continue|No. Defaults to `true`
 |failureproperty|the name of the property to set if the resolve failed (*__since 1.4__*)|No. No property is set by default.
@@ -139,16 +139,16 @@ Available options are: +
 
 [*__since 2.3__*]
 
-These child elements are defining an inlined ivy.xml's link:../ivyfile/dependencies.html[dependencies] elements. Thus these child elements cannot be used together with the `inline` or `file` attributes.
+These child elements are defining an inlined ivy.xml's link:../ivyfile/dependencies{outfilesuffix}[dependencies] elements. Thus these child elements cannot be used together with the `inline` or `file` attributes.
 
-There is one important difference with the ivy.xml's link:../ivyfile/dependencies.html[dependencies]: there is no master configuration to handle here. There is actually only one, the one on which the resolve will run. So every attribute in link:../ivyfile/dependency.html[dependency], link:../ivyfile/exclude.html[exclude],  link:../ivyfile/override.html[override] or link:../ivyfile/conflict.html[conflict] which is about a master configuration is not supported. And every attribute about a mapping of a master configuration on a dependency configuration is now expecting only the dependency configuration.
+There is one important difference with the ivy.xml's link:../ivyfile/dependencies{outfilesuffix}[dependencies]: there is no master configuration to handle here. There is actually only one, the one on which the resolve will run. So every attribute in link:../ivyfile/dependency{outfilesuffix}[dependency], link:../ivyfile/exclude{outfilesuffix}[exclude],  link:../ivyfile/override{outfilesuffix}[override] or link:../ivyfile/conflict{outfilesuffix}[conflict] which is about a master configuration is not supported. And every attribute about a mapping of a master configuration on a dependency configuration is now expecting only the dependency configuration.
 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Element|Description|Cardinality
-|link:../ivyfile/dependency.html[dependency]|declares a dependency to resolve|0..n
-|link:../ivyfile/exclude.html[exclude]|excludes artifacts, modules or whole organizations from the set of dependencies to resolve|0..n
-|link:../ivyfile/override.html[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.0__*)|0..n
+|link:../ivyfile/dependency{outfilesuffix}[dependency]|declares a dependency to resolve|0..n
+|link:../ivyfile/exclude{outfilesuffix}[exclude]|excludes artifacts, modules or whole organizations from the set of dependencies to resolve|0..n
+|link:../ivyfile/override{outfilesuffix}[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.0__*)|0..n
 |=======
 
 == Examples

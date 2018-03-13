@@ -36,5 +36,5 @@ NOTE: You can greatly improve the performance of dependency resolution by config
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|link:../settings/module.html[module]|defines a module set rule|1..n
+|link:../settings/module{outfilesuffix}[module]|defines a module set rule|1..n
 |=======

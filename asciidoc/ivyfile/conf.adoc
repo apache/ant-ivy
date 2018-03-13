@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* conf *Parent:* link:../ivyfile/configurations.html[configurations]
+*Tag:* conf *Parent:* link:../ivyfile/configurations{outfilesuffix}[configurations]
 
 Declares a configuration of this module. As described in the reference page, a configuration is a way to use or construct a module. Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server). Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those different ways to use or build a module are called module configurations in Ivy.
 
@@ -43,7 +43,7 @@ The extends attribute can use the following wildcards:
 A whole configuration can be declared as non transitive, so that all dependencies resolved in this configuration will be resolved with transitivity disabled. Note that the transitivity is disabled for all the configuration dependencies (including those obtained because this conf extends other ones), and only for this configuration (which means that a conf extending this one with transitivity enabled will get transitive dependencies even for dependencies being part of the non transitive configuration).
 This is very useful to build a compile configuration, for instance, forcing the dependency declaration on each direct dependency, with no risk to forget some because of transitivity.
 
-This tag supports link:../concept.html#extra[extra attributes].
+This tag supports link:../concept{outfilesuffix}#extra[extra attributes].
 
 == Attributes
 

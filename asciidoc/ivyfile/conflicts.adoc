@@ -17,13 +17,13 @@
    under the License.
 ////
 
-*Tag:* conflicts *Parent:* link:../ivyfile.html[ivy-module]
+*Tag:* conflicts *Parent:* link:../ivyfile{outfilesuffix}[ivy-module]
 
-(*__since 2.0__*) The conflicts section is deprecated.  Use link:../ivyfile/conflict.html[conflict] instead.
+(*__since 2.0__*) The conflicts section is deprecated.  Use link:../ivyfile/conflict{outfilesuffix}[conflict] instead.
 
 Container for conflict manager elements, used to indicate how conflicts should be resolved for this module.
 
-The list of built-in conflict managers available is listed in the link:../settings/conflict-managers.html[conflict manager settings page].
+The list of built-in conflict managers available is listed in the link:../settings/conflict-managers{outfilesuffix}[conflict manager settings page].
 
 Conflict managers are used during the resolve operation, i.e. when Ivy analyses the graph of dependencies
 and downloads corresponding Ivy files and artifacts. Managing conflict at resolve time
@@ -50,5 +50,5 @@ If this container is not present, a default conflict manager is used for all mod
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
-|link:../ivyfile/manager.html[manager]|declares a conflict manager for this module|1..n
+|link:../ivyfile/manager{outfilesuffix}[manager]|declares a conflict manager for this module|1..n
 |=======

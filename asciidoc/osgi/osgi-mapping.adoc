@@ -79,7 +79,7 @@ a|
 == Ivy configurations
 
 
-Ivy has the concept of link:../terminology.html#configurations[module configurations]. OSGi on the other hand, doesn't have such a concept. However, Ivy defines the following configurations, when it comes to dependency mapping for OSGi:
+Ivy has the concept of link:../terminology{outfilesuffix}#configurations[module configurations]. OSGi on the other hand, doesn't have such a concept. However, Ivy defines the following configurations, when it comes to dependency mapping for OSGi:
 
 
     * `default` : it will contain every required dependency (transitively)
@@ -103,7 +103,7 @@ So OSGi capabilities of bundles in a repo will be gathered directly from the man
 === Export-Package
 
 
-Exported packages are declaring capabilities of the bundle in term of packages. But they also declare dependencies between the declared package via the parameter `use`. These dependencies have to be declared in the ivy.xml. And we will use Ivy link:../terminology.html#configurations[module configurations] for that.
+Exported packages are declaring capabilities of the bundle in term of packages. But they also declare dependencies between the declared package via the parameter `use`. These dependencies have to be declared in the ivy.xml. And we will use Ivy link:../terminology{outfilesuffix}#configurations[module configurations] for that.
 
 First, each exported package will be declared in the ivy.xml as a configuration. The name of the configuration will start will `use_` and will end with the name of that package.
 
@@ -143,7 +143,7 @@ In OSGi there are different kinds of dependencies, which in an OSGi bundle repos
 === Require-Bundle
 
 
-The OSGi `Require-Bundle` is a requirement directly on a specific bundle. To map that, Ivy will just use the `osgi="bundle"` link:../concept.html#extra[extra attribute].
+The OSGi `Require-Bundle` is a requirement directly on a specific bundle. To map that, Ivy will just use the `osgi="bundle"` link:../concept{outfilesuffix}#extra[extra attribute].
 
 If there is the OSGi `resolution` parameter specified to `optional`, then the dependency will be declared in the configuration `optional` and `transitive-optional`. Otherwise it will be declared in the `default` configuration.
 
@@ -174,7 +174,7 @@ a|
 === Import-Package
 
 
-The OSGi `Import-Package` is a requirement on a package of a bundle. Ivy has no notion of package. So we will use the `osgi="pkg"` link:../concept.html#extra[extra attribute].
+The OSGi `Import-Package` is a requirement on a package of a bundle. Ivy has no notion of package. So we will use the `osgi="pkg"` link:../concept{outfilesuffix}#extra[extra attribute].
 
 If there is the OSGi `resolution` parameter specified to `optional`, then the dependency will be declared in the configuration `optional` and `transitive-optional`. Otherwise it will be declared in the `default` configuration.
 

@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* override *Parent:* link:../ivyfile/dependencies.html[dependencies]
+*Tag:* override *Parent:* link:../ivyfile/dependencies{outfilesuffix}[dependencies]
 
 [*__since 2.0__*]
 
@@ -38,5 +38,5 @@ Note that even though no attribute is required, it makes no sense to set no attr
 |module|the name, or an expression matching the name of module to which overriding should be applied (see matcher attribute below)|No, defaults to `$$*$$` (match all)
 |branch|the branch to set for all the overridden dependency descriptors|No, by default branch is not overridden
 |rev|the revision to set for all the overridden dependency descriptors|No, by default revision is not overridden
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to `exact`
+|matcher|the link:../concept{outfilesuffix}#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to `exact`
 |=======

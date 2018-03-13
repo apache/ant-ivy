@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* publications *Parent:* link:../ivyfile.html[ivy-module]
+*Tag:* publications *Parent:* link:../ivyfile{outfilesuffix}[ivy-module]
 
 Container for `artifact` elements, used to describe the artifacts published by this module.
 
@@ -39,5 +39,5 @@ Thus if you have a module which publishes no artifacts (a sort of virtual module
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
-|link:../ivyfile/artifact.html[artifact]|declares a published artifact for this module|0..n
+|link:../ivyfile/artifact{outfilesuffix}[artifact]|declares a published artifact for this module|0..n
 |=======

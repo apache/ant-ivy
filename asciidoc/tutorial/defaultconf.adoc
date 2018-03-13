@@ -21,7 +21,7 @@
 
 Ivy comes bundled with some default settings which makes it pretty simple to use in a typical environment. This tutorial, which is close to a reference document, explains what those default settings are and how they can be adjusted to your needs.
 
-To fully understand the concept of settings and what you can do with them, we suggest reading other tutorials related to settings (like link:../tutorial/multiple.html[Multiple Resolvers] and link:../tutorial/dual.html[Dual Resolver]) or the link:../settings.html[Settings Files] reference documentation.
+To fully understand the concept of settings and what you can do with them, we suggest reading other tutorials related to settings (like link:../tutorial/multiple{outfilesuffix}[Multiple Resolvers] and link:../tutorial/dual{outfilesuffix}[Dual Resolver]) or the link:../settings{outfilesuffix}[Settings Files] reference documentation.
 
 
 == Concept
@@ -146,7 +146,7 @@ By default, the public repository is ibiblio in m2 compatible mode (in other wor
 
 This repository has the advantage of providing a lot of modules, with metadata for most of them. The quality of metadata is not always perfect, but it's a very good start to use a tool like Ivy and benefit from the power of transitive dependency management.
 
-Despite its ease of use, we suggest reading the link:../bestpractices.html[Best practices] to have a good understanding of the pros and cons of using a public unmanaged repository before depending on such a repository for your enterprise build system.
+Despite its ease of use, we suggest reading the link:../bestpractices{outfilesuffix}[Best practices] to have a good understanding of the pros and cons of using a public unmanaged repository before depending on such a repository for your enterprise build system.
 
 NOTE: In `1.4` version, Ivy was using `ivyrep` as the default resolver, if you want to restore this, set `ivy.14.compatible=true` as an Ant property
 
@@ -289,4 +289,4 @@ Now the last thing you will need in order to properly take advantage of the defa
 
 ----
 
-There you go, you should have enough clues to configure Ivy the way you want. Check the link:../settings.html[settings documentation] to see if what you want to do is possible, and go ahead!
+There you go, you should have enough clues to configure Ivy the way you want. Check the link:../settings{outfilesuffix}[settings documentation] to see if what you want to do is possible, and go ahead!

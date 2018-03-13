@@ -32,7 +32,7 @@
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of composite resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of composite resolvers.
 
 
 == Child elements

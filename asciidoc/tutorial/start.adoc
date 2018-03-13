@@ -58,9 +58,9 @@ To know what to put in these attributes, you need to know the exact information 
     ...
 ----
 
-To convert this into an Ivy dependency declaration, all you have to do is use the `groupId` as organization, the `artifactId` as module name, and the version as revision. That's what we did for the dependencies in this tutorial, that is `commons-lang` and `commons-cli`. Note that having `commons-lang` and `commons-cli` as `organization` is not the best example of what the organization should be. It would be better to use `org.apache`, `org.apache.commons` or `org.apache.commons.lang`. However, this is how these specific modules were identified in the Maven 2 repository, so the simplest way to get them is to use the details as is (you will see in link:../tutorial/build-repository.html[Building a repository] that you can use namespaces to redefine these names if you want something cleaner).
+To convert this into an Ivy dependency declaration, all you have to do is use the `groupId` as organization, the `artifactId` as module name, and the version as revision. That's what we did for the dependencies in this tutorial, that is `commons-lang` and `commons-cli`. Note that having `commons-lang` and `commons-cli` as `organization` is not the best example of what the organization should be. It would be better to use `org.apache`, `org.apache.commons` or `org.apache.commons.lang`. However, this is how these specific modules were identified in the Maven 2 repository, so the simplest way to get them is to use the details as is (you will see in link:../tutorial/build-repository{outfilesuffix}[Building a repository] that you can use namespaces to redefine these names if you want something cleaner).
 
-If you want more details on what you can do in Ivy files, you can have a look at the link:../ivyfile.html[Ivy files reference documentation].
+If you want more details on what you can do in Ivy files, you can have a look at the link:../ivyfile{outfilesuffix}[Ivy files reference documentation].
 
 == The build.xml file
 
@@ -84,11 +84,11 @@ You can use the standard `ant -p` command to get the list of available targets. 
 
 ----
 
-As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly link:../install.html[installed] is to define an XML namespace in your Ant file (`xmlns:ivy="antlib:org.apache.ivy.ant"`). Then all the link:../ant.html[Ivy Ant tasks] will be available in this namespace.
+As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly link:../install{outfilesuffix}[installed] is to define an XML namespace in your Ant file (`xmlns:ivy="antlib:org.apache.ivy.ant"`). Then all the link:../ant{outfilesuffix}[Ivy Ant tasks] will be available in this namespace.
 
-Here we use only one task: the link:../use/retrieve.html[retrieve] task. With no attributes, it will use default settings and look for a file named `ivy.xml` for the dependency definitions. That's exactly what we want, so we need nothing more than that.
+Here we use only one task: the link:../use/retrieve{outfilesuffix}[retrieve] task. With no attributes, it will use default settings and look for a file named `ivy.xml` for the dependency definitions. That's exactly what we want, so we need nothing more than that.
 
-Note that in this case we define a `resolve` target and call the `link:../use/retrieve.html[retrieve]` task. This may sound confusing, actually the retrieve task performs a link:../use/resolve.html[resolve] (which resolves dependencies and downloads them to a cache) followed by a retrieve (a copy of those file to a local project directory). Check the link:../principle.html[How does it work ?] page for details about that.
+Note that in this case we define a `resolve` target and call the `link:../use/retrieve{outfilesuffix}[retrieve]` task. This may sound confusing, actually the retrieve task performs a link:../use/resolve{outfilesuffix}[resolve] (which resolves dependencies and downloads them to a cache) followed by a retrieve (a copy of those file to a local project directory). Check the link:../principle{outfilesuffix}[How does it work ?] page for details about that.
 
 == Running the project
 
@@ -107,7 +107,7 @@ include::asciidoc/tutorial/log/hello-ivy-1.txt[]
 == What happened ?
 
 Without any settings, Ivy retrieves files from the Maven 2 repository. That's what happened here.
-The resolve task has found the `commons-lang` and `commons-cli` modules in the Maven 2 central repository, identified that `commons-cli` depends on `commons-logging` and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a `.ivy2/cache` directory). Finally, the retrieve task copies the resolved jars from the Ivy cache to the default library directory of the project: the `lib` dir (you can change this easily by setting the pattern attribute on the link:../use/retrieve.html[retrieve] task).
+The resolve task has found the `commons-lang` and `commons-cli` modules in the Maven 2 central repository, identified that `commons-cli` depends on `commons-logging` and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a `.ivy2/cache` directory). Finally, the retrieve task copies the resolved jars from the Ivy cache to the default library directory of the project: the `lib` dir (you can change this easily by setting the pattern attribute on the link:../use/retrieve{outfilesuffix}[retrieve] task).
 
 You might say that the task took a long time just to write out a "Hello Ivy!" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
 
@@ -121,6 +121,6 @@ include::asciidoc/tutorial/log/hello-ivy-2.txt[]
 
 Great! The cache was used, so no download was needed and the build was instantaneous.
 
-And now, if you want to generate a report detailing all the dependencies of your module, you can call the report target, and check the generated file in the build directory. You should obtain something looking like link:../samples/apache-hello-ivy-default.html[this].
+And now, if you want to generate a report detailing all the dependencies of your module, you can call the report target, and check the generated file in the build directory. You should obtain something looking like link:../samples/apache-hello-ivy-default{outfilesuffix}[this].
 
-As you can see, using Ivy to resolve dependencies stored in the Maven 2 repository is extremely easy. Now you can go on with the other tutorials to learn more about link:../tutorial/conf.html[how to use module configurations] which is a very powerful Ivy specific feature. More tutorials are also available where you will learn how to use Ivy settings to leverage a possibly complex enterprise repository. It may also be a good time to start reading the link:../reference.html[reference documentation], and especially the introduction material which gives a good overview of Ivy. The link:../bestpractices.html[best practices] page is also a must read to start thinking about how to use Ant+Ivy to build a clean and robust build system.
+As you can see, using Ivy to resolve dependencies stored in the Maven 2 repository is extremely easy. Now you can go on with the other tutorials to learn more about link:../tutorial/conf{outfilesuffix}[how to use module configurations] which is a very powerful Ivy specific feature. More tutorials are also available where you will learn how to use Ivy settings to leverage a possibly complex enterprise repository. It may also be a good time to start reading the link:../reference{outfilesuffix}[reference documentation], and especially the introduction material which gives a good overview of Ivy. The link:../bestpractices{outfilesuffix}[best practices] page is also a must read to start thinking about how to use Ant+Ivy to build a clean and robust build system.

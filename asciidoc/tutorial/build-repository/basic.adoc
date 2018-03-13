@@ -17,12 +17,12 @@
    under the License.
 ////
 
-In this first step, we use the link:../../use/install.html[install] Ant task to install modules from the Maven 2 repository to a file system based repository. We first install a module by itself, excluding dependencies, then again with its dependencies.
+In this first step, we use the link:../../use/install{outfilesuffix}[install] Ant task to install modules from the Maven 2 repository to a file system based repository. We first install a module by itself, excluding dependencies, then again with its dependencies.
 
 
 == Basic: ivysettings.xml file used
 
-The Ivy settings file that we will use is very simple here. It defines two resolvers, __libraries__ and __my-repository__. The first one is used as the source, the second one as the destination. In a typical setup, the second one would be configured using an link:../../settings/include.html[include] that included an existing settings file used by the development team.
+The Ivy settings file that we will use is very simple here. It defines two resolvers, __libraries__ and __my-repository__. The first one is used as the source, the second one as the destination. In a typical setup, the second one would be configured using an link:../../settings/include{outfilesuffix}[include] that included an existing settings file used by the development team.
 
 
 [source]
@@ -60,7 +60,7 @@ Let's have a look at the _maven2_ target.
 
 ----
 
-Pretty simple, we call the link:../../use/install.html[ivy:install] task with the settings we have loaded using link:../../use/settings.html[ivy:settings] as usual. We then set the source and destination repositories using the __from__ and __to__ attributes. We used Ant properties for these values here, which helps ease the maintenance of the script, but it's basically the name of our resolvers: 'libraries' for the source and 'my-repository' for the destination.
+Pretty simple, we call the link:../../use/install{outfilesuffix}[ivy:install] task with the settings we have loaded using link:../../use/settings{outfilesuffix}[ivy:settings] as usual. We then set the source and destination repositories using the __from__ and __to__ attributes. We used Ant properties for these values here, which helps ease the maintenance of the script, but it's basically the name of our resolvers: 'libraries' for the source and 'my-repository' for the destination.
 
 Here is the Ant call output :
 
@@ -119,7 +119,7 @@ include::asciidoc/tutorial/log/install-deps.txt[]
 
 As you can see the installation has failed, and if you look at the log you will see that there are missing artifacts in the source repository. This means that you will need to download those artifacts manually, and copy them to your destination repository to complete the installation. Fortunately Ivy uses a best effort algorithm during install, so that everything gets installed except the missing artifacts. (Note: these missing artifacts are not in the public Maven repository due to licensing issues.)
 
-You may also have noticed that Ivy installed 2 different revisions of commons-logging (1.0.2, 1.0.4). This is due to the fact that we used the "no conflict" link:../../settings/conflict-managers.html[conflict manager] in the Ivy settings file.
+You may also have noticed that Ivy installed 2 different revisions of commons-logging (1.0.2, 1.0.4). This is due to the fact that we used the "no conflict" link:../../settings/conflict-managers{outfilesuffix}[conflict manager] in the Ivy settings file.
 
 We do not want to evict any modules because we are building our own repository. Indeed, if we get both commons-logging 1.0.2 and 1.0.4, it's because some modules among the transitive dependencies of hibernate depend on 1.0.2 and others on 1.0.4. If we got only 1.0.4, the module depending on 1.0.2 would be inconsistent in your own repository (depending on a version you did not install). Thus developers using this module directly would run into a problem.
 
@@ -137,4 +137,4 @@ include::asciidoc/tutorial/log/myrepository-content-deps.txt[]
 
 As you can see there is no POM here (POM is the module metadata format used by Maven 2, available in the Maven 2 repository). Instead you can see there's an Ivy file, which is actually the original Hibernate POM converted into an Ivy file. So now you have a true Ivy repository with Ivy files, where you can use the full power of Ivy if you want to adjust the module metadata (module configurations, fine grained exclusions and transitivity control, per module conflict manager, ...).
 
-OK, enough for this simple repository installation, the link:../../tutorial/build-repository/advanced.html[next tutorial] will show how you can deal with more complex cases where your source and destination repositories do not follow the same naming conventions.
+OK, enough for this simple repository installation, the link:../../tutorial/build-repository/advanced{outfilesuffix}[next tutorial] will show how you can deal with more complex cases where your source and destination repositories do not follow the same naming conventions.

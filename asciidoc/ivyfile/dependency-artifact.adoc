@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* artifact *Parent:* link:../ivyfile/dependency.html[dependency]
+*Tag:* artifact *Parent:* link:../ivyfile/dependency{outfilesuffix}[dependency]
 
 This feature gives you more control on a dependency for which you do not control its Ivy file.
 It enables to specify the artifacts required, if the dependency has no Ivy file.
@@ -39,7 +39,7 @@ Example:
 
 (*__since 1.4__*) It's possible to indicate the URL at which the artifact can be found. This is not mandatory, and even not recommended with an enterprise repository. Note that Ivy will always look at the location where the artifact should be and only use the URL if it cannot be found at the standard location in the repository.
 
-(*__since 1.4__*) This tag supports link:../concept.html#extra[extra attributes].
+(*__since 1.4__*) This tag supports link:../concept{outfilesuffix}#extra[extra attributes].
 
 (*__since 2.0__*) This feature can also be used for modules having their own module descriptor, but which doesn't declare an artifact you know that is published. Note that in this case artifacts declared to be published by the dependency will be ignored, so do not forget to include all artifacts you want.
 
@@ -62,7 +62,7 @@ Example:
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
-|link:../ivyfile/dependency-artifact-conf.html[conf]|configuration in which the artifact should be included|0..n
+|link:../ivyfile/dependency-artifact-conf{outfilesuffix}[conf]|configuration in which the artifact should be included|0..n
 |=======
 
 == Examples

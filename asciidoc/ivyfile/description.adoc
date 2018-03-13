@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* description *Parent:* link:../ivyfile/info.html[info]
+*Tag:* description *Parent:* link:../ivyfile/info{outfilesuffix}[info]
 
 Describes the current module. This tag is the only one which can contain free text,
 including HTML. It is used to describe the module itself, usually in a single short phrase

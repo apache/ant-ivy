@@ -155,4 +155,4 @@ So everything seemed to work. The Ivy file was found in the `repository` directo
 
 This kind of setup can be useful if you don't want to rely on the Maven 2 repository for metadata, or if you want to take full advantage of Ivy files for some or all modules. Combining chain and dual resolvers should give you enough flexibility to meet almost any requirement.
 
-For full details about the dual resolver, have a look at the corresponding link:../resolver/dual.html[reference documentation].
+For full details about the dual resolver, have a look at the corresponding link:../resolver/dual{outfilesuffix}[reference documentation].

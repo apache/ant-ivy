@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* repository *Parent:* link:../ivyfile/info.html[info]
+*Tag:* repository *Parent:* link:../ivyfile/info{outfilesuffix}[info]
 
 Gives information about a public repository where the module can be found. This information is given as an indication, repositories being able to be down over time.
 

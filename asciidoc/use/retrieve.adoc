@@ -19,7 +19,7 @@
 
 The `retrieve` task copies resolved dependencies anywhere you want in your file system.
 
-This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 (*__since 1.4__*) This task can even be used to synchronize the destination directory with what should actually be in according to the dependency resolution. This means that by setting `sync="true"`, Ivy will not only copy the necessary files, but it will also remove the files which do not need to be there.
 
@@ -55,7 +55,7 @@ If this option is set to `true` and symbolic link creation fails, then the retri
 |settingsRef|A reference to Ivy settings that must be used by this task (*__since 2.0__*)|No, defaults ot `ivy.instance`.
 |log|the log setting to use during the resolve and retrieve process. (*__since 2.0__*)
 
-Available options are the same as for link:../use/resolve.html[resolve] when used to trigger resolve automatically (see link:../use/postresolvetask.html[postresolvetask]), or the following for the retrieve process only: +
+Available options are the same as for link:../use/resolve{outfilesuffix}[resolve] when used to trigger resolve automatically (see link:../use/postresolvetask{outfilesuffix}[postresolvetask]), or the following for the retrieve process only: +
 * `default`: the default log settings, where all usual messages are output to the console +
 * `quiet`: disable all usual messages, making the whole retrieve process quiet unless errors occur
 |No, defaults to `default`.

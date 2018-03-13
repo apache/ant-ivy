@@ -21,7 +21,7 @@
 
 Sets an Ant property for each dependency artifact previously resolved.
 
-(*__since 2.0__*) This is a link:../use/postresolvetask.html[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
+(*__since 2.0__*) This is a link:../use/postresolvetask{outfilesuffix}[post resolve task], with all the behaviour and attributes common to all post resolve tasks.
 
 Please prefer the use of retrieve + standard Ant path creation, which make your build more independent from Ivy (once artifacts are properly retrieved, Ivy is not required any more).
 

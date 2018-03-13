@@ -17,9 +17,9 @@
    under the License.
 ////
 
-*Tag:* artifact *Parent:* link:../ivyfile/publications.html[publications]
+*Tag:* artifact *Parent:* link:../ivyfile/publications{outfilesuffix}[publications]
 
-Declares an artifact published by this module. This is especially useful for other modules depending on this one. They thus get all published artifacts belonging to the configurations asked. Indeed, each published artifact declares in which public configuration it is published. Thus a module depending on this module only get artifacts marked with the asked configurations, taking into account configurations extension (see link:../ivyfile/conf.html[configuration declaration]).
+Declares an artifact published by this module. This is especially useful for other modules depending on this one. They thus get all published artifacts belonging to the configurations asked. Indeed, each published artifact declares in which public configuration it is published. Thus a module depending on this module only get artifacts marked with the asked configurations, taking into account configurations extension (see link:../ivyfile/conf{outfilesuffix}[configuration declaration]).
 
 The configurations in which an artifact is published can be configured in two ways:
 
@@ -41,9 +41,9 @@ If this is the only artifact declared, then it's equivalent to having no publica
 
 It is possible to give an `url` at which artifacts can be found. This is not mandatory, and even not recommended. This is only a convenient way to deal with an existing repository with a bad layout, but should not be avoided in an enterprise repository.
 
-This tag supports link:../concept.html#extra[extra attributes].
+This tag supports link:../concept{outfilesuffix}#extra[extra attributes].
 
-(*__since 2.4__*) This tag supports the 'packaging' attributes; complete documentation can be found in the link:../concept.html#packaging[concept page].
+(*__since 2.4__*) This tag supports the 'packaging' attributes; complete documentation can be found in the link:../concept{outfilesuffix}#packaging[concept page].
 
 == Attributes
 
@@ -57,7 +57,7 @@ This tag supports link:../concept.html#extra[extra attributes].
 
 `$$*$$` wildcard can be used to designate all public configurations of this module|No, defaults to `defaultconf` attribute value on parent publications element.
 |url|an URL at which this artifact can be found if it isn't located at the standard location in the repository (*__since 1.4__*)|No, defaults to no URL
-|packaging|a comma separated list of link:../concept.html#packaging[packaging] types (*__since 2.4__*)|No, defaults to no packaging
+|packaging|a comma separated list of link:../concept{outfilesuffix}#packaging[packaging] types (*__since 2.4__*)|No, defaults to no packaging
 |=======
 
 == Child elements
@@ -65,7 +65,7 @@ This tag supports link:../concept.html#extra[extra attributes].
 [options="header",cols="20%,60%,20%"]
 |=======
 |Element|Description|Cardinality
-|link:../ivyfile/artifact-conf.html[conf]|indicates a public configuration in which this artifact is published|0..n
+|link:../ivyfile/artifact-conf{outfilesuffix}[conf]|indicates a public configuration in which this artifact is published|0..n
 |=======
 
 == Examples

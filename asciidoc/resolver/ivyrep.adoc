@@ -32,7 +32,7 @@
 [NOTE]
 ====
 
-Since ivyrep is not maintained anymore, the ivyroot attribute is mandatory, and the use of this resolver is not recommended (we recommend using link:../resolver/url.html[url resolver] as replacement in most cases).
+Since ivyrep is not maintained anymore, the ivyroot attribute is mandatory, and the use of this resolver is not recommended (we recommend using link:../resolver/url{outfilesuffix}[url resolver] as replacement in most cases).
 
 ====
 
@@ -40,7 +40,7 @@ Since ivyrep is not maintained anymore, the ivyroot attribute is mandatory, and 
 
 == Attributes
 
-This resolver shares the link:../settings/resolvers.html#common[common attributes] of standard resolvers.
+This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common attributes] of standard resolvers.
 
 [options="header",cols="15%,50%,35%"]
 |=======

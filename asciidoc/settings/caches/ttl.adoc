@@ -25,7 +25,7 @@
 
 [ivysettings.caches.cache.TTL]#Defines a TTL (Time To Live) rule for resolved revision caching.#
 
-When Ivy resolves a dynamic version constraint (like `latest.integration` or a version range), it can store the result of the resolution (like `latest.integration=1.5.1`) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running link:../../use/resolve.html[resolve] in refresh mode.
+When Ivy resolves a dynamic version constraint (like `latest.integration` or a version range), it can store the result of the resolution (like `latest.integration=1.5.1`) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running link:../../use/resolve{outfilesuffix}[resolve] in refresh mode.
 
 This tag lets you define a rule to define a TTL specific to a set of dynamic revision, based on the whole module revision information (organization, module name, revision, ...). The revision considered in the rule is the revision before the resolution (for instance, `latest.integration`) and not the resolved revision (for instance, `1.5.1`).
 
@@ -57,6 +57,6 @@ Using a 0ms TTL disable resolved revision caching for the given rule.
 |module|the module's name to match to apply the rule.|No, defaults to *
 |revision|the module's revision to match to apply the rule. Note that the version is not resolved when evaluating the rule ('latest.integration', for instance).|No, defaults to *
 |_any extra attribute_|an extra attribute to match to apply the rule.|No, defaults to *
-|matcher|the link:../../concept.html#matcher[matcher] to use to match the modules to which the resolver should be applied|No, defaults to exact
+|matcher|the link:../../concept{outfilesuffix}#matcher[matcher] to use to match the modules to which the resolver should be applied|No, defaults to exact
 |duration|the TTL to apply (see above for format)|Yes
 |=======

@@ -17,7 +17,7 @@
    under the License.
 ////
 
-*Tag:* conflict *Parent:* link:../ivyfile/dependencies.html[dependencies]
+*Tag:* conflict *Parent:* link:../ivyfile/dependencies{outfilesuffix}[dependencies]
 
 [*__since 2.0__*]
 
@@ -43,5 +43,5 @@ If no specific conflict manager is defined, a default conflict manager is used f
 |manager|the name of the conflict manager to use
 .2+.^|Exactly one of two
 |rev|a comma separated list of revisions this conflict manager should select
-|matcher|the link:../concept.html#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to `exact`
+|matcher|the link:../concept{outfilesuffix}#matcher[matcher] to use to match the modules for which the conflict manager should be used|No, defaults to `exact`
 |=======

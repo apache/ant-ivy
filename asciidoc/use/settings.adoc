@@ -19,9 +19,9 @@
 
 [*__since 2.0__*]
 
-The settings declaration is used to configure Ivy with a settings XML file. The difference with the link:../use/configure.html[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance, when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
+The settings declaration is used to configure Ivy with a settings XML file. The difference with the link:../use/configure{outfilesuffix}[configure] task is that when using the settings declaration, the configuration of Ivy will be done when the settings are first needed (for instance, when you do a resolve), while the configure task will perform a configuration of Ivy instantly, which makes it easier to see the problem if something goes wrong.
 
-See link:../settings.html[Settings Files] for details about the settings file itself.
+See link:../settings{outfilesuffix}[Settings Files] for details about the settings file itself.
 
 Multiple settings can be defined in a build script. Every task can reference its own settings.
 
@@ -44,7 +44,7 @@ my.variable.yourid=your.value
 |Attribute|Description|Required
 |id|The settings id usable in the `settingsRef` attributes of the Ivy task that needs a setting.|No, defaults to `ivy.instance`
 |file|path to the settings file to use
-.2+.^|No. If a file is provided, URL is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses a link:../tutorial/defaultconf.html[default settings file]
+.2+.^|No. If a file is provided, URL is ignored. If none are provided, then it attempts to find a file at `${ivy.settings.file}`, and if this file does not exist, it uses a link:../tutorial/defaultconf{outfilesuffix}[default settings file]
 |url|URL of the settings file to use
 |host|HTTP authentication host
 .4+.^|No, unless authentication is required
