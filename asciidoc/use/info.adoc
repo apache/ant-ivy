@@ -85,8 +85,7 @@ Given this `ivy.xml` file:
           branch="trunk"
           revision="1.0"
           status="release"
-          e:myextraatt="myvalue"
-    />
+          e:myextraatt="myvalue"/>
     <configurations>
         <conf name="default"/>
         <conf name="test"/>

@@ -174,11 +174,10 @@ An example timestamped snapshot dependency in an Ivy module would look like:
 <ivy-module version="2.4">
     <info organisation="org.apache.ivy"
           module="maven-snapshot-deps-test"
-          revision="1.2.3"
-    />
+          revision="1.2.3"/>
     <dependencies>
 
-        <dependency org="org.apache.ivy.maven-snapshot-test" name="foo-bar" rev="5.6.7-20170911.130943-1" />
+        <dependency org="org.apache.ivy.maven-snapshot-test" name="foo-bar" rev="5.6.7-20170911.130943-1"/>
     </dependencies>
 </ivy-module>
 ----
@@ -189,13 +188,13 @@ Notice the `5.6.7-20170911.130943-1` revision on the `foo-bar` dependency - that
 ----
 <ivysettings>
     <settings defaultResolver="m2"/>
-    <caches defaultCacheDir="${user.home}/.ivy/cache/" />
+    <caches defaultCacheDir="${user.home}/.ivy/cache/"/>
     <version-matchers usedefaults="true">
         <maven-tsnap-vm/>
     </version-matchers>
 
     <resolvers>
-        <ibiblio name="m2" m2compatible="true" useMavenMetadata="true" root="file://${user.home}/.m2" />
+        <ibiblio name="m2" m2compatible="true" useMavenMetadata="true" root="file://${user.home}/.m2"/>
     </resolvers>
 
 </ivysettings>

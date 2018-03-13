@@ -206,8 +206,7 @@ Example: here is an Ivy file with the attribute `color` set to blue:
           module="foo"
           e:color="blue"
           status="integration"
-          revision="1.59"
-    />
+          revision="1.59"/>
 </ivy-module>
 ----
 

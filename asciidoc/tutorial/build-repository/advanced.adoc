@@ -68,8 +68,7 @@ We can even have a look at the commons-lang Ivy file in our repository:
           revision="1.0"
           status="integration"
           publication="20051124062021"
-          namespace="ibiblio-maven2"
-    />
+          namespace="ibiblio-maven2"/>
 
 ...
 
@@ -88,8 +87,7 @@ Actually, Ivy uses the same repository as before for the source repository, with
 <ibiblio name="libraries"
          root="${ibiblio-maven2-root}"
          m2compatible="true"
-         namespace="maven2"
-/>
+         namespace="maven2"/>
 
 ----
 
