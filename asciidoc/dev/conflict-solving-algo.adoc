@@ -21,19 +21,19 @@ Here are some explanations about the conflict management algorithm in Ivy.
 First, one should have a good understanding on how Ivy resolves dependencies, and especially
 transitive dependencies.
 
-During the resolve process, ivy visits each module of the dependency graph. +
+During the resolve process, Ivy visits each module of the dependency graph. +
 Let's call each module a *node*, including the module we are trying to resolve dependencies for.
 
 Each node should be able to give a conflict manager for a particular ModuleId. +
 Let's name it *node.cm(mid)*.
 
-Each node should be able to matain a map from ModuleId to a resolved Collection of nodes.
+Each node should be able to maintain a map from ModuleId to a resolved Collection of nodes.
 This resolved collection will never contain any evicted node FOR the concerned node as far
-as ivy knows, dependening on where it is in graph visit. +
+as Ivy knows, depending on where it is in graph visit. +
 Let's call this map resolved, and the corresponding resolved collection *node.resolved(mid)*.
 
-During the visit, ivy should always know from which node it came to visit another node. Let's call
-the first node from which ivy came *node.parent*. Note that this concept is slightly different from
+During the visit, Ivy should always know from which node it came to visit another node. Let's call
+the first node from which Ivy came *node.parent*. Note that this concept is slightly different from
 node parent, since a node can have several parents in the graph, but there is also one *node.parent*
 during the visit.
 
@@ -44,8 +44,8 @@ Let's call *node.dependencies* the collection of direct dependencies of a node.
 
 Let's call *node.revision* the module revision id of a node.
 
-And now for the algo. This algo attempts to evict nodes on the fly, i.e. during the ivy visit,
-to minimize the number of resolved modules, and thus the number of ivy files to download.
+And now for the algo. This algo attempts to evict nodes on the fly, i.e. during the Ivy visit,
+to minimize the number of resolved modules, and thus the number of Ivy files to download.
 
 It is presented in a very simplified description language, far away from the whole real complexity,
 but giving a good understanding of how it works. In particular, it completely hides some complexity due

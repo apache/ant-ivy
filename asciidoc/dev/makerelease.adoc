@@ -44,7 +44,7 @@ git clean -d -x -f
 
 ==== 3. Add Ivy xsd file.
 
-You need to store the current ivy xml schema in the documentation, so that it will later be accessible on public web site. To do so, run the following command in the directory in which you checked out the release branch:
+You need to store the current Ivy XML schema in the documentation, so that it will later be accessible on public web site. To do so, run the following command in the directory in which you checked out the release branch:
 
 [source,shell]
 ----
