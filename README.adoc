@@ -70,7 +70,7 @@ http://www.jcraft.com/jsch/index.html. +
 The sftp and https resolvers requires the Java Cryptography extensions
 http://java.sun.com/javase/technologies/security/. +
 The PGP signature generator requires the BouncyCastle Java cryptography APIs
-http://www.bouncycastle.org/java.html.
+https://www.bouncycastle.org/java.html.
 
 == How to Get Involved
 
