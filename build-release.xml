@@ -214,14 +214,14 @@
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
                 r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
                 var val = "";
-                while((s = r.readLine()) != null) {
+                while ((s = r.readLine()) != null) {
                     val += s;
                 }
                 r.close();
                 var toc = eval("("+val+")")
 
                 var writeToc = function(o, children, level) {
-                    for(var c in children) {
+                    for (var c in children) {
                         o.write(level + ' link:#' + children[c].id.replace(/\//g, '_') + '[' + children[c].title + ']\n');
                         if (children[c].children && children[c].children.length && children[c].children.length != 0) {
                             writeToc(o, children[c].children, level+'*');
@@ -230,7 +230,7 @@
                 };
 
                 var writeInclude = function(o, children) {
-                    for(var c in children) {
+                    for (var c in children) {
                         o.write('== [[' + children[c].id.replace(/\//g, '_') + ']]' + children[c].title + '\n\n');
                         o.write('include::../asciidoc/' + children[c].id + '.adoc[]\n\n');
                         if (children[c].children && children[c].children.length && children[c].children.length != 0) {
