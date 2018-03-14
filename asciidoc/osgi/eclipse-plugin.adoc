@@ -27,7 +27,7 @@ It should work with a simple configuration but may not with complex ones. If you
 ====
 
 
-This page describes how to build an Eclipse&#153; plugin with Apache Ivy&#153; and its OSGi&#153; capabilities.
+This page describes how to build an Eclipse(TM) plugin with Apache Ivy(TM) and its OSGi(TM) capabilities.
 
 
 == Quick setup

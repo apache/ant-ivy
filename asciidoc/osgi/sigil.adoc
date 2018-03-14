@@ -19,7 +19,7 @@
 
 = Apache Felix Sigil
 
-Another initiative to manage OSGi&#153; dependencies is the project link:https://cwiki.apache.org/confluence/display/FELIX/Apache+Felix+Sigil[Apache Felix Sigil&#153;]. Sigil can also be used together with Ivy. We will try to explain here the different approach taken there compared to the built-in OSGi capabilities of Ivy.
+Another initiative to manage OSGi(TM) dependencies is the project link:https://cwiki.apache.org/confluence/display/FELIX/Apache+Felix+Sigil[Apache Felix Sigil(TM)]. Sigil can also be used together with Ivy. We will try to explain here the different approach taken there compared to the built-in OSGi capabilities of Ivy.
 
 
 == A different approach
@@ -27,7 +27,7 @@ Another initiative to manage OSGi&#153; dependencies is the project link:https:/
 
 Apache Felix Sigil is at its core about managing OSGi dependencies, not directly related to Ivy. Most of its core feature is about the implementation of the not yet released OBR (OSGi Bundle Repository) specification. It then provides integration layers with several tools so that developers can use the OBR API. It provides an Eclipse plugin and there are the Ant/Ivy tasks and resolvers.
 
-On the other hand the built-in OSGi capabilities in Ivy are targeted towards users already familiar with Ivy and link:https://ant.apache.org/ivy/links.html[tools around it] like link:https://ant.apache.org/ivy/ivyde[Apache IvyDE&#153;]. So with a minimum amount of effort, they can get OSGi dependency management.
+On the other hand the built-in OSGi capabilities in Ivy are targeted towards users already familiar with Ivy and link:https://ant.apache.org/ivy/links.html[tools around it] like link:https://ant.apache.org/ivy/ivyde[Apache IvyDE(TM)]. So with a minimum amount of effort, they can get OSGi dependency management.
 
 
 == Resulting differences

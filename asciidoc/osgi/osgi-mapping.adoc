@@ -19,7 +19,7 @@
 
 = OSGi mapping
 
-This page is a description of how OSGi&#153; dependencies are mapped into Apache Ivy&#153; ones
+This page is a description of how OSGi(TM) dependencies are mapped into Apache Ivy(TM) ones
 
 *Goal:* the purpose of this mapping is to transform an OSGi manifest into an ivy.xml, so Ivy can understand OSGi bundles and resolve them. We don't want to do the reverse here.
 

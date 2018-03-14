@@ -29,7 +29,7 @@
 
 [*__since 2.3__*]
 
-[ivysettings.resolvers.updatesite]#This resolver is one of the resolvers which support link:../osgi{outfilesuffix}[OSGi&#153;] dependencies. It resolves modules (OSGi bundles) which are hosted in an Eclipse&#153; update site.#
+[ivysettings.resolvers.updatesite]#This resolver is one of the resolvers which support link:../osgi{outfilesuffix}[OSGi(TM)] dependencies. It resolves modules (OSGi bundles) which are hosted in an Eclipse(TM) update site.#
 
 This resolver supports old style Eclipse updatesite, based on a single file, site.xml. It also supports Eclipse P2 repositories.
 

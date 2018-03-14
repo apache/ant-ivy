@@ -28,7 +28,7 @@ It should work with a simple configuration but may not with complex ones. If you
 ====
 
 
-The concept of "target platform" is a concept introduced by Eclipse&#153; to describe the set of bundles which will run together in an OSGi&#153; environment. Then when developing an OSGi bundle, we expect it to run in such a "target platform".
+The concept of "target platform" is a concept introduced by Eclipse(TM) to describe the set of bundles which will run together in an OSGi(TM) environment. Then when developing an OSGi bundle, we expect it to run in such a "target platform".
 
 When developing a single OSGi bundle, a single `ivy.xml` (together with the use of the link:../use/fixdeps{outfilesuffix}[fixdeps] task) is sufficient to describe precisely the bundle requirements.
 

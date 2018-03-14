@@ -19,7 +19,7 @@
 
 = OSGi
 
-Since Apache Ivy&#153; 2.3, some support for OSGi&#153; dependency management has been introduced.
+Since Apache Ivy(TM) 2.3, some support for OSGi(TM) dependency management has been introduced.
 
 
 
@@ -51,7 +51,7 @@ The descriptor probably being not instantly downloaded, the descriptor is put in
 Here are different use case of using the OSGi capabilities of Ivy:
 
 
-* link:osgi/eclipse-plugin{outfilesuffix}[building an Eclipse&#153; plugin] +
+* link:osgi/eclipse-plugin{outfilesuffix}[building an Eclipse(TM) plugin] +
 
 * link:osgi/standard-osgi{outfilesuffix}[building a standard OSGi bundle] +
 

@@ -29,7 +29,7 @@
 
 [*__since 2.4__*]
 
-This resolver is one of the resolvers which support link:../osgi{outfilesuffix}[OSGi&#153;] dependencies.
+This resolver is one of the resolvers which support link:../osgi{outfilesuffix}[OSGi(TM)] dependencies.
 
 [ivysettings.resolvers.osgi-agg]#This resolver is like a classic link:../resolver/chain{outfilesuffix}[chain] resolver, but with better support for OSGi metadata.#
 
