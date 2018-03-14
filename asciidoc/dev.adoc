@@ -25,7 +25,7 @@ To build Ivy from source it's really easy.
 
 All you need is
 
-* an link:https://git-scm.com/downloads[Git] client +
+* a link:https://git-scm.com/downloads[Git] client +
 _to check out Ivy sources from Apache Git, not required if you build from sources packaged in a release_
 
 * link:https://ant.apache.org/[Apache Ant] 1.9.0 or greater +
@@ -74,7 +74,7 @@ http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.h
 
 This is a work in progress though (see link:https://issues.apache.org/jira/browse/IVY-511[IVY-511]), but patches helping migration to these conventions are welcome.
 
-== Developing with eclipse
+== Developing with Eclipse
 
 Even though you can develop Ivy with your IDE of choice, we support Eclipse development by providing ad hoc metadata.
 

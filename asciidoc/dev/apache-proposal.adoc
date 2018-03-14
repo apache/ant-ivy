@@ -40,7 +40,7 @@ Maarten Coene has joined the committer team in May 2006. He has an experience of
 
 === Alignment ===
 
-Ivy has no mandatory dependencies except Java 1.4. However, it is strongly recommended to be used with Ant. Ivy uses also other Apache projects, especially from Jakarta Commons.
+Ivy has no mandatory dependencies except Java 7. However, it is strongly recommended to be used with Ant. Ivy uses also other Apache projects, especially from Jakarta Commons.
 
 == Known risks ==
 

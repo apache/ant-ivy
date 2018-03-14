@@ -19,7 +19,7 @@
 <project name="go-ivy" default="go" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!--
         this build file is a self contained project: it doesn't require anything else
-        that Ant 1.8 or greater and Java 1.5 or greater properly installed.
+        that Ant 1.8 or greater and Java 5 or greater properly installed.
 
         It is used to showcase how easy and straightforward it can be to use Ivy.
 
