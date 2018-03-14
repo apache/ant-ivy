@@ -1,2 +1,1 @@
-ReleaseInstructions are in /asciidoc/dev/makerelease.adoc.
-
+Release instructions are in link:/asciidoc/dev/makerelease{outfilesuffix}[/asciidoc/dev/makerelease.adoc]
