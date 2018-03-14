@@ -38,7 +38,7 @@ Key features of this 2.5.0 release are:
 
     * The minimum runtime Java version required is now Java 7
     * Ivy now uses BouncyCastle 1.58. Due to the non backward compatibility of that library, earlier versions are not supported.
-    * Ivy now uses HttpComponents HttpClient 4.5.x version when dealing with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient library is no longer used or supported. (jira:IVY-1563[])
+    * Ivy now uses HttpComponents HttpClient 4.5.x version with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient library is no longer used or supported. (jira:IVY-1563[])
 
 
 == List of Changes in this Release
@@ -85,7 +85,7 @@ For details about the following changes, check our JIRA install at link:https://
 - IMPROVEMENT: `symlinkmass` option of retrieve task has been deprecated in this release and will no longer be supported since, starting this version of Ivy, Ivy uses Java standard API(s) for symlink management and as such doesn't spawn a process to execute symlink creation shell commands, like it used to do earlier. The `symlinkmass` option was previously there to launch just one single process instead of multiple processes for symlink creation. Now with the usage of the Java standard API(s), this option no longer is relevant.
 - IMPROVEMENT: Ivy command line now supports passing `overwriteMode` option to `retrieve` task (jira:IVY-1447[])
 - IMPROVEMENT: Support timestamped SNAPSHOT versions from Maven repository (jira:IVY-1476[])
-- IMPROVEMENT: Update Commons VFS to 2.1
+- IMPROVEMENT: Update Commons VFS to 2.2
 - IMPROVEMENT: Ivy now supports activating of Maven profiles, in `pom.xml`, by `jdk`, `os`, `property` and `file` (jira:IVY-1558[]) and (jira:IVY-1577[])
 
 - NEW: Lets SSH-based resolvers use an `~/.ssh/config` file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
