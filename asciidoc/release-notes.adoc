@@ -65,11 +65,11 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Delay the processing of configured cache ttls, until the IvySettings object is usable (jira:IVY-1495[]) (Thanks to Jaikiran Pai)
 - FIX: Including optional ivysettings of type 'file' doesn't work when file doesn't exist (jira:IVY-1555[]) (Thanks to Jaikiran Pai)
 - FIX: Makepom ignores dependency classifiers (jira:IVY-1528[]) (Thanks to Jaikiran Pai)
-- FIX: Infinite loop in dependencytree (jira:IVY-1540[]) (Thanks to Jaikiran Pai)
+- FIX: Infinite loop in dependency tree (jira:IVY-1540[]) (Thanks to Jaikiran Pai)
 - FIX: HTTP issue: Basic authentication is stuck in 401 loop (jira:IVY-1336[])
 - FIX: command line: -types seems to not accept comma [jira:IVY-1355[]]
 - FIX: Mixed use of symlinks leads to cache corruption [jira:IVY-1498[]] (Thanks to Stephen Haberman)
-- FIX: Some cached location are badly stored which results in MalformedURLException [jira:IVY-1566[]] (Thanks to Aur&#233;lien Pupier)
+- FIX: Some cached locations are stored incorrectly resulting in MalformedURLException [jira:IVY-1566[]] (Thanks to Aur&#233;lien Pupier)
 - FIX: defaultconf/mapping attributes ignored when extended/included from parent file [jira:IVY-1315[]] [jira:IVY-1419[]] [jira:IVY-1420[]] [jira:IVY-1437[]] (Thanks to Willem Verstraeten)
 - FIX: ApacheURLLister skips versions with URL encoded characters [jira:IVY-1442[]] [jira:IVY-1573[]]
 - FIX: Configuration lists are sensitive to whitespace; multiple split/merge methods [jira:IVY-309[]] [jira:IVY-1282[]]
