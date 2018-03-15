@@ -24,7 +24,8 @@ import java.util.StringTokenizer;
 
 /**
  * Parser that understands Maven version ranges of the form {@code (,1.0]} and such.
- * More details about such ranges in Maven, can be found {@link https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges here}
+ * More details about such ranges in Maven, can be found
+ * {@link https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges here}
  */
 class MavenVersionRangeParser {
 
@@ -56,10 +57,7 @@ class MavenVersionRangeParser {
             return false;
         }
         final Range parsedRange = parse(range);
-        if (parsedRange == null) {
-            return false;
-        }
-        return parsedRange.accepts(javaVersion);
+        return parsedRange != null && parsedRange.accepts(javaVersion);
     }
 
     /**
@@ -79,10 +77,7 @@ class MavenVersionRangeParser {
             return false;
         }
         final Range parsedRange = parse(range);
-        if (parsedRange == null) {
-            return false;
-        }
-        return parsedRange.accepts(valToCompare);
+        return parsedRange != null && parsedRange.accepts(valToCompare);
     }
 
 
@@ -175,22 +170,9 @@ class MavenVersionRangeParser {
 
         @Override
         public boolean accepts(final DeweyDecimal value) {
-            if (value == null) {
-                return false;
-            }
-            final boolean withinLowerBound;
-            if (this.lowerBound == null) {
-                withinLowerBound = true;
-            } else {
-                withinLowerBound = this.lowerInclusive ? value.isGreaterThanOrEqual(lowerBound) : value.isGreaterThan(lowerBound);
-            }
-            final boolean withinUpperBound;
-            if (this.upperBound == null) {
-                withinUpperBound = true;
-            } else {
-                withinUpperBound = this.upperInclusive ? value.isLessThanOrEqual(upperBound) : value.isLessThan(upperBound);
-            }
-            return withinLowerBound && withinUpperBound;
+            return value != null
+                    && (this.lowerBound == null || (this.lowerInclusive ? value.isGreaterThanOrEqual(lowerBound) : value.isGreaterThan(lowerBound)))
+                    && (this.upperBound == null || (this.upperInclusive ? value.isLessThanOrEqual(upperBound) : value.isLessThan(upperBound)));
         }
     }
 
