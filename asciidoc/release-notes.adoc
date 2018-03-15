@@ -69,7 +69,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: HTTP issue: Basic authentication is stuck in 401 loop (jira:IVY-1336[])
 - FIX: command line: -types seems to not accept comma [jira:IVY-1355[]]
 - FIX: Mixed use of symlinks leads to cache corruption [jira:IVY-1498[]] (Thanks to Stephen Haberman)
-- FIX: Some cached locations are stored incorrectly resulting in MalformedURLException [jira:IVY-1566[]] (Thanks to Aur&#233;lien Pupier)
+- FIX: Some cached locations are stored incorrectly resulting in MalformedURLException [jira:IVY-1566[]] (Thanks to Aur&eacute;lien Pupier)
 - FIX: defaultconf/mapping attributes ignored when extended/included from parent file [jira:IVY-1315[]] [jira:IVY-1419[]] [jira:IVY-1420[]] [jira:IVY-1437[]] (Thanks to Willem Verstraeten)
 - FIX: ApacheURLLister skips versions with URL encoded characters [jira:IVY-1442[]] [jira:IVY-1573[]]
 - FIX: Configuration lists are sensitive to whitespace; multiple split/merge methods [jira:IVY-309[]] [jira:IVY-1282[]]
@@ -80,7 +80,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Fix Maven dependency resolution for dependencies with multiple different classifiers (jira:IVY-1576[])
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
-- IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&#269;ius)
+- IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&ccaron;ius)
 - IMPROVEMENT: Update BouncyCastle to 1.52 (jira:IVY-1521[]) (Thanks to Michal Srb)
 - IMPROVEMENT: `symlinkmass` option of retrieve task has been deprecated in this release and will no longer be supported since, starting this version of Ivy, Ivy uses Java standard API(s) for symlink management and as such doesn't spawn a process to execute symlink creation shell commands, like it used to do earlier. The `symlinkmass` option was previously there to launch just one single process instead of multiple processes for symlink creation. Now with the usage of the Java standard API(s), this option no longer is relevant.
 - IMPROVEMENT: Ivy command line now supports passing `overwriteMode` option to `retrieve` task (jira:IVY-1447[])
@@ -113,7 +113,7 @@ Here is the list of people who have contributed source code and documentation up
 * Charles Duffy
 * Gintautas Grigelionis
 * Xavier Hanin
-* Nicolas Lalev&#233;e
+* Nicolas Lalev&eacute;e
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
@@ -124,7 +124,7 @@ Here is the list of people who have contributed source code and documentation up
 * alex322
 * Mathieu Anquetin
 * Andreas Axelsson
-* St&#233;phane Bailliez
+* St&eacute;phane Bailliez
 * Karl Baum
 * Andrew Bernhagen
 * Mikkel Bjerg
@@ -169,7 +169,7 @@ Here is the list of people who have contributed source code and documentation up
 * Payam Hekmat
 * Tobias Himstedt
 * Achim Huegen
-* Pierre H&#228;gnestrand
+* Pierre H&auml;gnestrand
 * Ilya
 * Matt Inger
 * Anders Jacobsson
@@ -212,7 +212,7 @@ Here is the list of people who have contributed source code and documentation up
 * Carsten Pfeiffer
 * Yanus Poluektovich
 * Roshan Punnoose
-* Aur&#233;lien Pupier
+* Aur&eacute;lien Pupier
 * Jean-Baptiste Quenot
 * Carl Quinn
 * Damon Rand
@@ -238,7 +238,7 @@ Here is the list of people who have contributed source code and documentation up
 * Erwin Tratar
 * Jason Trump
 * David Turner
-* Ernestas Vaiciukevi&#269;ius
+* Ernestas Vaiciukevi&ccaron;ius
 * Tjeerd Verhagen
 * Willem Verstraeten
 * Richard Vowles
