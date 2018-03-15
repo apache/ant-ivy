@@ -44,7 +44,7 @@ public class IvyAuthenticatorTest {
 
     @Before
     public void before() {
-        previousAuthenticator = TestHelper.getCurrentAuthenticator();
+        previousAuthenticator = IvyAuthenticator.getCurrentAuthenticator();
         this.setupTestAuthenticator();
     }
 

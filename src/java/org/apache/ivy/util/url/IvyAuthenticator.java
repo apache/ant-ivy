@@ -51,8 +51,7 @@ public final class IvyAuthenticator extends Authenticator {
         // We will try to use the original authenticator as backup authenticator.
         // Since there is no getter available, so try to use some reflection to
         // obtain it. If that doesn't work, assume there is no original authenticator
-        Authenticator original = (getJavaVersion() < 9) ? getTheAuthenticator()
-                : getDefaultAuthenticator();
+        Authenticator original = getCurrentAuthenticator();
 
         if (original instanceof IvyAuthenticator) {
             return;
@@ -107,6 +106,20 @@ public final class IvyAuthenticator extends Authenticator {
         }
 
         return result;
+    }
+
+    /**
+     * The {@link Authenticator} doesn't have API before Java 9 to get hold of the current system
+     * level {@link Authenticator}. This method does a best-effort attempt to try and get hold of
+     * the current {@link Authenticator} in a way that's specific to the implementation of this
+     * method.  There's no guarantee that this method will return the current authenticator.
+     * <strong>Note: this method is intended to be used exclusively by tests.</strong>
+     *
+     * @return Returns the currently setup system level {@link Authenticator}. In cases where this
+     * method isn't able to get the current authenticator, this method returns null
+     */
+    static Authenticator getCurrentAuthenticator() {
+        return (getJavaVersion() < 9) ? getTheAuthenticator() : getDefaultAuthenticator();
     }
 
     /**
