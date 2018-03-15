@@ -32,7 +32,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * </ul>
  * <p>
  * NOTE: this matcher is available only with
- * <a href="http://jakarta.apache.org/oro">Apache Jakarta Oro 2.0.8</a>
+ * <a href="http://jakarta.apache.org/oro">Apache Jakarta ORO 2.0.8</a>
  * in your classpath.
  * </p>
  *

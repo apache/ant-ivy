@@ -131,11 +131,9 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
         try {
             final IvyContext ivyContext = IvyContext.pushNewCopyContext();
-            @SuppressWarnings("unchecked")
-            HashSet<ModuleRevisionId> parents = (HashSet<ModuleRevisionId>) ivyContext
-                    .get(PARENT_MAP_KEY);
+            HashSet<ModuleRevisionId> parents = ivyContext.get(PARENT_MAP_KEY);
             if (parents == null) {
-                parents = new LinkedHashSet<ModuleRevisionId>();
+                parents = new LinkedHashSet<>();
                 ivyContext.set(PARENT_MAP_KEY, parents);
             }
 

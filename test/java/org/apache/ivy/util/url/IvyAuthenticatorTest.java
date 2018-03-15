@@ -18,7 +18,6 @@
 
 package org.apache.ivy.util.url;
 
-import org.apache.ivy.TestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

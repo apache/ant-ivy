@@ -22,7 +22,7 @@ import java.net.URL;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
-import org.apache.ivy.util.url.URLHandler;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
@@ -95,7 +95,7 @@ public class OnlineXmlSettingsParserTest {
 
     private void configureURLHandler() {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        URLHandler httpHandler = URLHandlerRegistry.getHttp();
+        TimeoutConstrainedURLHandler httpHandler = URLHandlerRegistry.getHttp();
         dispatcher.setDownloader("http", httpHandler);
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);

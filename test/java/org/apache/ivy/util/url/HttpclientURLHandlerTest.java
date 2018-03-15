@@ -102,7 +102,7 @@ public class HttpclientURLHandlerTest {
         URLInfo info = handler.getURLInfo(new URL(DEFAULT_M2_ROOT
                 + "commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
 
-        assertEquals(URLHandler.UNAVAILABLE, info);
+        assertEquals(TimeoutConstrainedURLHandler.UNAVAILABLE, info);
     }
 
     @Test

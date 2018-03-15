@@ -223,7 +223,7 @@ public class HttpClientHandler extends AbstractURLHandler implements TimeoutCons
         CloseableHttpResponse response = null;
         try {
             final String httpMethod;
-            if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
+            if (getRequestMethod() == TimeoutConstrainedURLHandler.REQUEST_METHOD_HEAD) {
                 httpMethod = HttpHead.METHOD_NAME;
                 response = doHead(url, connectionTimeout, readTimeout);
             } else {

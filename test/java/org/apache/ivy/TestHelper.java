@@ -50,8 +50,6 @@ import org.apache.tools.ant.taskdefs.Delete;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.Authenticator;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;

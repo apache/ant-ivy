@@ -47,7 +47,7 @@ import org.apache.ivy.util.Configurator;
 import org.apache.ivy.util.FileResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.CredentialsStore;
-import org.apache.ivy.util.url.URLHandler;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -373,9 +373,9 @@ public class XmlSettingsParser extends DefaultHandler {
 
         String requestMethod = attributes.get("httpRequestMethod");
         if ("head".equalsIgnoreCase(requestMethod)) {
-            URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_HEAD);
+            URLHandlerRegistry.getHttp().setRequestMethod(TimeoutConstrainedURLHandler.REQUEST_METHOD_HEAD);
         } else if ("get".equalsIgnoreCase(requestMethod)) {
-            URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_GET);
+            URLHandlerRegistry.getHttp().setRequestMethod(TimeoutConstrainedURLHandler.REQUEST_METHOD_GET);
         } else if (!isNullOrEmpty(requestMethod)) {
             throw new IllegalArgumentException(
                     "Invalid httpRequestMethod specified, must be one of {'HEAD', 'GET'}");

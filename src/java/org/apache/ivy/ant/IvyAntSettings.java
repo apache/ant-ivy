@@ -31,7 +31,6 @@ import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
-import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;

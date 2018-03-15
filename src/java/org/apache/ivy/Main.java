@@ -58,7 +58,6 @@ import org.apache.ivy.util.cli.ParseException;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
-import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 

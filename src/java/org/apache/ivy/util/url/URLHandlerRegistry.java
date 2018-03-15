@@ -39,7 +39,7 @@ public final class URLHandlerRegistry {
     }
 
     /**
-     * This method is used to get appropriate http downloader depending on Jakarta Commons
+     * This method is used to get appropriate http downloader depending on HttpComponents
      * HttpClient availability in classpath, or simply use jdk url handling in other cases.
      *
      * @return most accurate http downloader

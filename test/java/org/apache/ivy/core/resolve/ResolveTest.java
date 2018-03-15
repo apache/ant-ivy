@@ -6296,7 +6296,7 @@ public class ResolveTest {
      * Tests that if a pom.xml has multiple dependencies for the same module, but for different Maven classifiers,
      * then the resolution of such dependencies, preserves those multiple (Ivy) artifacts against the dependency
      *
-     * @throws Exception
+     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1576">IVY-1576</a> for more details
      */
     @Test

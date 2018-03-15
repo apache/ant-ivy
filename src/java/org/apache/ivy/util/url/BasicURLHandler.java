@@ -92,7 +92,7 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
             con.setRequestProperty("User-Agent", getUserAgent());
             if (con instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) con;
-                if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
+                if (getRequestMethod() == TimeoutConstrainedURLHandler.REQUEST_METHOD_HEAD) {
                     httpCon.setRequestMethod("HEAD");
                 }
                 if (checkStatusCode(normalizedURL, httpCon)) {
