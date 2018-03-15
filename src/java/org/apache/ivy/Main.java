@@ -549,7 +549,7 @@ public final class Main {
         }
 
         URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]),
-                Main.class.getClassLoader());
+                Main.class.getClassLoader().getParent());
 
         try {
             Class<?> c = classLoader.loadClass(mainclass);

@@ -104,6 +104,15 @@ usage: ivy
 java -Dmyivyvar=myvalue org.apache.ivy.Main [parameters]
 ----
 
+(*__since 2.5__*) Additional properties defined in a separate `.properties` file (rather than Ivy settings) can be loaded using `-properties` option like this:
+
+[source,shell]
+----
+java -jar ivy.jar -properties version.properties -main org.apache.tools.ant.Main
+----
+
+NOTE: Prior to 2.5, Ivy `-main` created a classloader that used Ivy classloader as a parent. This is no longer the case; if your usage depended on Ivy classes being available, Ivy must be declared as a dependency of the component that you want to launch.
+
 == Examples
 
 [source,shell]

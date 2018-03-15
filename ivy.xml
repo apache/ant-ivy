@@ -61,6 +61,8 @@
         <dependency org="org.hamcrest" name="hamcrest-library" rev="${hamcrest.version}" conf="test"/>
         <dependency org="org.apache.ant" name="ant-testutil" rev="${apache-ant.version}" conf="test" transitive="false"/>
         <dependency org="org.apache.ant" name="ant-launcher" rev="${apache-ant.version}" conf="test" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-junit" rev="${apache-ant.version}" conf="test" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-junit4" rev="${apache-ant.version}" conf="test" transitive="false"/>
         <dependency org="ant-contrib" name="ant-contrib" rev="${ant-contrib.version}" conf="test" transitive="false"/>
         <dependency org="xmlunit" name="xmlunit" rev="${xmlunit.version}" conf="test" transitive="false"/>
 
