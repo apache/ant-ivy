@@ -118,6 +118,7 @@ public class PomReader {
 
     private final Element parentElement;
 
+    @SuppressWarnings("deprecation")
     public PomReader(final URL descriptorURL, final Resource res) throws IOException, SAXException {
         InputStream stream = new AddDTDFilterInputStream(
                 URLHandlerRegistry.getDefault().openStream(descriptorURL));
@@ -373,6 +374,7 @@ public class PomReader {
 
         /*
          * (non-Javadoc)
+         *
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getGroupId()
          */
         public String getGroupId() {
@@ -382,6 +384,7 @@ public class PomReader {
 
         /*
          * (non-Javadoc)
+         *
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getArtifaceId()
          */
         public String getArtifactId() {
@@ -391,6 +394,7 @@ public class PomReader {
 
         /*
          * (non-Javadoc)
+         *
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getVersion()
          */
         public String getVersion() {
@@ -539,12 +543,17 @@ public class PomReader {
         private static final String ACTIVE_BY_DEFAULT_ELEMENT = "activeByDefault";
 
         private static final String OS = "os";
+
         private static final String FAMILY = "family";
+
         private static final String VERSION = "version";
+
         private static final String ARCH = "arch";
 
         private static final String FILE = "file";
+
         private static final String MISSING = "missing";
+
         private static final String EXISTS = "exists";
 
         private static final String JDK = "jdk";

@@ -101,6 +101,7 @@ public class ApacheURLLister {
      * @throws IOException
      *             If an error occurs retrieving the HTML.
      */
+    @SuppressWarnings("deprecation")
     public List<URL> retrieveListing(URL url, boolean includeFiles, boolean includeDirectories)
             throws IOException {
         List<URL> urlList = new ArrayList<>();

@@ -29,6 +29,7 @@ import java.net.URL;
  * A enhanced version of {@link URLHandler} which respects {@link TimeoutConstraint}s on
  * the operations dealing with download, upload, reachability checks etc...
  */
+@SuppressWarnings("deprecation")
 public interface TimeoutConstrainedURLHandler extends URLHandler {
 
     /**

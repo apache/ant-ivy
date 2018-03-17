@@ -81,11 +81,13 @@ public class AbstractURLHandlerTest {
             throw new UnsupportedOperationException();
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public URLInfo getURLInfo(URL url) {
             throw new UnsupportedOperationException();
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public URLInfo getURLInfo(URL url, int timeout) {
             throw new UnsupportedOperationException();

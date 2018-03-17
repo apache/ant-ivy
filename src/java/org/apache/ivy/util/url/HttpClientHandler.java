@@ -191,31 +191,37 @@ public class HttpClientHandler extends AbstractURLHandler implements TimeoutCons
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public URLInfo getURLInfo(final URL url) {
         return this.getURLInfo(url, null);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public URLInfo getURLInfo(final URL url, final int timeout) {
         return this.getURLInfo(url, createTimeoutConstraints(timeout));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
         return this.getURLInfo(url, timeoutConstraint).isReachable();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
         return this.getURLInfo(url, timeoutConstraint).getContentLength();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
         return this.getURLInfo(url, timeoutConstraint).getLastModified();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
         final int connectionTimeout = (timeoutConstraint == null || timeoutConstraint.getConnectionTimeout() < 0) ? 0 : timeoutConstraint.getConnectionTimeout();

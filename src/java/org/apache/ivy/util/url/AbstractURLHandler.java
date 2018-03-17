@@ -30,9 +30,11 @@ import java.util.zip.DataFormatException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.settings.TimeoutConstraint;
 
+@SuppressWarnings("deprecation")
 public abstract class AbstractURLHandler implements URLHandler {
 
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("%25([0-9a-fA-F][0-9a-fA-F])");
@@ -69,7 +71,6 @@ public abstract class AbstractURLHandler implements URLHandler {
     public long getLastModified(final URL url, final int timeout) {
         return getURLInfo(url, timeout).getLastModified();
     }
-
 
     protected String getUserAgent() {
         return System.getProperty("http.agent", "Apache Ivy/" + Ivy.getIvyVersion());

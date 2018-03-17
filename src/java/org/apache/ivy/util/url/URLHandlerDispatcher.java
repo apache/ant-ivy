@@ -33,8 +33,10 @@ import java.util.Map;
  * general reachability checks
  */
 public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
+    @SuppressWarnings("deprecation")
     private final Map<String, URLHandler> handlers = new HashMap<>();
 
+    @SuppressWarnings("deprecation")
     private URLHandler defaultHandler = new BasicURLHandler();
 
     public URLHandlerDispatcher() {
@@ -50,6 +52,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         return this.isReachable(url, createTimeoutConstraints(timeout));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
         final URLHandler handler = this.getHandler(url.getProtocol());
@@ -69,6 +72,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         return this.getContentLength(url, createTimeoutConstraints(timeout));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
         final URLHandler handler = this.getHandler(url.getProtocol());
@@ -88,6 +92,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         return this.getLastModified(url, createTimeoutConstraints(timeout));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
         final URLHandler handler = this.getHandler(url.getProtocol());
@@ -97,16 +102,19 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         return handler.getLastModified(url, timeoutConstraint != null ? timeoutConstraint.getConnectionTimeout() : 0);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public URLInfo getURLInfo(final URL url) {
         return this.getURLInfo(url, null);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public URLInfo getURLInfo(final URL url, final int timeout) {
         return this.getURLInfo(url, createTimeoutConstraints(timeout));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
         final URLHandler handler = this.getHandler(url.getProtocol());
@@ -121,6 +129,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         return this.openStream(url, null);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint) throws IOException {
         final URLHandler handler = this.getHandler(url.getProtocol());
@@ -135,6 +144,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         this.download(src, dest, l, null);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void download(final URL src, final File dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
         final URLHandler handler = this.getHandler(src.getProtocol());
@@ -150,6 +160,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         this.upload(src, dest, l, null);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void upload(final File src, final URL dest, final CopyProgressListener listener, final TimeoutConstraint timeoutConstraint) throws IOException {
         final URLHandler handler = this.getHandler(dest.getProtocol());
@@ -160,6 +171,7 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         handler.upload(src, dest, listener);
     }
 
+    @SuppressWarnings("deprecation")
     public void setRequestMethod(int requestMethod) {
         defaultHandler.setRequestMethod(requestMethod);
         for (URLHandler handler : handlers.values()) {
@@ -167,19 +179,23 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void setDownloader(String protocol, URLHandler downloader) {
         handlers.put(protocol, downloader);
     }
 
+    @SuppressWarnings("deprecation")
     public URLHandler getHandler(String protocol) {
         URLHandler downloader = handlers.get(protocol);
         return downloader == null ? defaultHandler : downloader;
     }
 
+    @SuppressWarnings("deprecation")
     public URLHandler getDefault() {
         return defaultHandler;
     }
 
+    @SuppressWarnings("deprecation")
     public void setDefault(URLHandler default1) {
         defaultHandler = default1;
     }

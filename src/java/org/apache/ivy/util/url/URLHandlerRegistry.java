@@ -28,12 +28,15 @@ public final class URLHandlerRegistry {
     private URLHandlerRegistry() {
     }
 
+    @SuppressWarnings("deprecation")
     private static URLHandler defaultHandler = new BasicURLHandler();
 
+    @SuppressWarnings("deprecation")
     public static URLHandler getDefault() {
         return defaultHandler;
     }
 
+    @SuppressWarnings("deprecation")
     public static void setDefault(final URLHandler def) {
         defaultHandler = def;
     }

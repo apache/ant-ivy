@@ -148,6 +148,7 @@ public class XmlSettingsParser extends DefaultHandler {
         doParse(settings);
     }
 
+    @SuppressWarnings("deprecation")
     private void doParse(URL settingsUrl) throws IOException, ParseException {
         this.settings = settingsUrl;
         InputStream stream = null;
@@ -319,6 +320,7 @@ public class XmlSettingsParser extends DefaultHandler {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void settingsStarted(String qName, Map<String, String> attributes) {
         if ("conf".equals(qName) && !deprecatedMessagePrinted) {
             Message.deprecated("'conf' is deprecated, use 'settings' instead (" + settings + ")");

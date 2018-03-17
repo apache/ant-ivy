@@ -200,6 +200,7 @@ public final class FileUtil {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     public static void copy(final URL src, final File dest, final CopyProgressListener listener,
                             final TimeoutConstraint timeoutConstraint) throws IOException {
         final URLHandler handler = URLHandlerRegistry.getDefault();
@@ -210,6 +211,7 @@ public final class FileUtil {
         handler.download(src, dest, listener);
     }
 
+    @SuppressWarnings("deprecation")
     public static void copy(final File src, final URL dest, final CopyProgressListener listener,
                             final TimeoutConstraint timeoutConstraint) throws IOException {
         final URLHandler handler = URLHandlerRegistry.getDefault();
@@ -680,6 +682,7 @@ public final class FileUtil {
 
     private static final class DissectedPath {
         private final String root;
+
         private final String remainingPath;
 
         private DissectedPath(final String root, final String remainingPath) {

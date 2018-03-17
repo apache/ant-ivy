@@ -80,7 +80,6 @@ class MavenVersionRangeParser {
         return parsedRange != null && parsedRange.accepts(valToCompare);
     }
 
-
     private static Range parse(final String rangeValue) {
         if (rangeValue == null || rangeValue.trim().isEmpty()) {
             return null;
@@ -156,8 +155,11 @@ class MavenVersionRangeParser {
 
     private static final class BasicRange implements Range {
         private final DeweyDecimal lowerBound;
+
         private final DeweyDecimal upperBound;
+
         private final boolean lowerInclusive;
+
         private final boolean upperInclusive;
 
         private BasicRange(final DeweyDecimal lowerBound, final boolean lowerInclusive,
@@ -216,6 +218,7 @@ class MavenVersionRangeParser {
          *
          * @param components an array of integer components.
          */
+        @SuppressWarnings("unused")
         public DeweyDecimal(final int[] components) {
             this.components = new int[components.length];
             System.arraycopy(components, 0, this.components, 0, components.length);
@@ -242,11 +245,11 @@ class MavenVersionRangeParser {
 
                 components[i] = Integer.parseInt(component);
 
-                //Strip '.' token
+                // Strip '.' token
                 if (tokenizer.hasMoreTokens()) {
                     tokenizer.nextToken();
 
-                    //If it ended in a dot, throw an exception
+                    // If it ended in a dot, throw an exception
                     if (!tokenizer.hasMoreTokens()) {
                         throw new NumberFormatException("DeweyDecimal ended in a '.'");
                     }
@@ -259,6 +262,7 @@ class MavenVersionRangeParser {
          *
          * @return the number of components in dewey decimal
          */
+        @SuppressWarnings("unused")
         public int getSize() {
             return components.length;
         }
@@ -269,6 +273,7 @@ class MavenVersionRangeParser {
          * @param index the index of components
          * @return the value of component at index
          */
+        @SuppressWarnings("unused")
         public int get(final int index) {
             return components[index];
         }
@@ -393,6 +398,7 @@ class MavenVersionRangeParser {
          * @return result
          * @see java.lang.Comparable#compareTo(Object)
          */
+        @SuppressWarnings("unused")
         public int compareTo(DeweyDecimal other) {
             final int max = Math.max(other.components.length, components.length);
             for (int i = 0; i < max; i++) {

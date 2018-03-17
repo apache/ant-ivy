@@ -39,12 +39,15 @@ public class VfsURI {
 
     private static final String SCHEME_FTP = "ftp";
 
+    @SuppressWarnings("unused")
     private static final String SCHEME_HTTP = "http";
 
+    @SuppressWarnings("unused")
     private static final String SCHEME_HTTPS = "https";
 
     private static final String SCHEME_SFTP = "sftp";
 
+    @SuppressWarnings("unused")
     private static final String SCHEME_WEBDAV = "webdav";
 
     public static final String[] SUPPORTED_SCHEMES = new String[] {

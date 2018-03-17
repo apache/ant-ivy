@@ -94,7 +94,7 @@ public class HttpclientURLHandlerTest {
      * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-390">IVY-390</a>
      */
-    @SuppressWarnings("resource")
+    @SuppressWarnings({"resource", "deprecation"})
     @Test
     public void testGetURLInfo() throws Exception {
         final TimeoutConstrainedURLHandler handler = new HttpClientHandler();

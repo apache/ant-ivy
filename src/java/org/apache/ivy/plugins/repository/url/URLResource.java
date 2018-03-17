@@ -74,6 +74,7 @@ public class URLResource implements LocalizableResource {
         return lastModified;
     }
 
+    @SuppressWarnings("deprecation")
     private void init() {
         final URLHandler handler = URLHandlerRegistry.getDefault();
         final URLInfo info;
@@ -114,6 +115,7 @@ public class URLResource implements LocalizableResource {
         return url.getProtocol().equals("file");
     }
 
+    @SuppressWarnings("deprecation")
     public InputStream openStream() throws IOException {
         final URLHandler handler = URLHandlerRegistry.getDefault();
         if (handler instanceof TimeoutConstrainedURLHandler) {

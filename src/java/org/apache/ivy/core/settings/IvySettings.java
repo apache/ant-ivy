@@ -316,6 +316,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      *
      * @param remote boolean
      */
+    @SuppressWarnings("deprecation")
     public synchronized void configureRepositories(boolean remote) {
         if (!repositoriesConfigured) {
             Properties props = new Properties();
