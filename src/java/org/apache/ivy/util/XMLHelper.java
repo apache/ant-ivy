@@ -116,8 +116,8 @@ public abstract class XMLHelper {
         parse(xmlURL, schema, handler, null);
     }
 
-    public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
     @SuppressWarnings("deprecation")
+    public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
         InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
         try {
