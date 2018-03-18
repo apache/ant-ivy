@@ -82,6 +82,9 @@ public final class Main {
                     new OptionBuilder("novalidate").description(
                         "do not validate ivy files against xsd").create())
                 .addOption(
+                        new OptionBuilder("noterminate").description(
+                            "do not terminate - for programmatic use").create())
+                .addOption(
                     new OptionBuilder("m2compatible").description("use maven2 compatibility")
                             .create())
                 .addOption(
@@ -225,19 +228,26 @@ public final class Main {
         }
     }
 
-    static void run(CommandLineParser parser, String[] args) throws Exception {
+    // FIXME - promot upstream - enhancement request
+    public static ResolveReport run(String[] args) throws Exception {
+    	CommandLineParser parser = getParser();
+    	return run(parser, args);
+    }
+
+    // FIXME - promot upstream - enhancement request
+    static ResolveReport run(CommandLineParser parser, String[] args) throws Exception {
         // parse the command line arguments
         CommandLine line = parser.parse(args);
 
         if (line.hasOption("?")) {
             usage(parser, line.hasOption("deprecated"));
-            return;
+            return null;
         }
 
         if (line.hasOption("version")) {
             System.out.println("Apache Ivy " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate()
                     + " :: " + Ivy.getIvyHomeURL());
-            return;
+            return null;
         }
 
         boolean validate = line.hasOption("novalidate") ? false : true;
@@ -309,7 +319,7 @@ public final class Main {
             resolveOptions.setRefresh(true);
         }
         ResolveReport report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions);
-        if (report.hasError()) {
+        if (report.hasError() && !line.hasOption("noterminate")) {
             System.exit(1);
         }
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -385,6 +395,8 @@ public final class Main {
         }
         ivy.getLoggerEngine().popLogger();
         ivy.popContext();
+        
+        return report;
     }
 
     /**
