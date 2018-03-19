@@ -40,6 +40,7 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExtraInfoHolder;
 import org.apache.ivy.core.module.descriptor.License;
@@ -292,12 +293,38 @@ public class PomModuleDescriptorBuilder {
             return;
         }
 
-        DefaultDependencyDescriptor dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor,
-                moduleRevId);
+        // Add "new" dependency, or add new artifact to "existing" dependency
+        // https://issues.apache.org/jira/browse/IVY-1576
+        DefaultDependencyDescriptor dd = null;
+        DependencyDescriptor[] existingDeps = ivyModuleDescriptor.getDependencies();
+
+        for (int i = 0; i < existingDeps.length; ++i) {
+        	DependencyDescriptor ddt = existingDeps[i];
+        	ModuleRevisionId existingModuleId = ddt.getDependencyRevisionId();
+
+        	if (existingModuleId.equals(moduleRevId)) {
+        		// dd = ivyModuleDescriptor.getDependency(mRevId);
+        		dd = (DefaultDependencyDescriptor)ddt;
+        		break;
+        	}
+        }
+
+        if (dd == null) {
+        	// dependency not found create new one
+        	dd = new PomDependencyDescriptor(dep, ivyModuleDescriptor, moduleRevId);
+        }
+
         scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
         ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map extraAtt = new HashMap();
+
+        // If classifier is not null, then potentially its another artifact associated with "this" dependency descriptior.
+        // The way this is processed however a "new" dependency descriptor comes up and therein lies the problem
+        // as 3 artifacts have the same dependency descriptor and the 'resolution' will only solve for 1 dependency - although there are
+        // 3 actual artifacts. So, we should check to see if the DefaultDependencyDescriptor already exists from the
+        // ivyModuleDescriptor. If it does we add the new artifact with the different classifier value ..
+
         if ((dep.getClassifier() != null)
                 || ((dep.getType() != null) && !"jar".equals(dep.getType()))) {
             String type = "jar";
@@ -305,6 +332,8 @@ public class PomModuleDescriptorBuilder {
                 type = dep.getType();
             }
             String ext = type;
+
+            Message.info(" found classifier : " + dep.getClassifier());
 
             // if type is 'test-jar', the extension is 'jar' and the classifier is 'tests'
             // Cfr. http://maven.apache.org/guides/mini/guide-attached-tests.html
@@ -708,7 +737,7 @@ public class PomModuleDescriptorBuilder {
 
         /**
          * Get PomDependencyData.
-         * 
+         *
          * @return PomDependencyData
          */
         public PomDependencyData getPomDependencyData() {
