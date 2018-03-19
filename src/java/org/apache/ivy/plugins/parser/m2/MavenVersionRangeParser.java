@@ -379,13 +379,13 @@ class MavenVersionRangeParser {
          */
         @Override
         public String toString() {
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < components.length; i++) {
-                if (i != 0) {
+            for (int component : components) {
+                if (sb.length() > 0) {
                     sb.append('.');
                 }
-                sb.append(components[i]);
+                sb.append(component);
             }
 
             return sb.toString();
