@@ -44,6 +44,7 @@ import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.resolve.ResolveProcessException;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
@@ -219,31 +220,67 @@ public final class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        CommandLineParser parser = getParser();
         try {
-            run(parser, args);
+            run(args, true);
             System.exit(0);
         } catch (ParseException ex) {
             System.err.println(ex.getMessage());
-            usage(parser, false);
             System.exit(1);
         }
     }
 
-    @SuppressWarnings("deprecation")
-    static void run(CommandLineParser parser, String[] args) throws Exception {
-        // parse the command line arguments
-        CommandLine line = parser.parse(args);
+    /**
+     * A method that allows to run embedded Ivy as if it were launched from CLI
+     * (e.g., for use with REPL in Java 9+).
+     *
+     * @param args an array of command line arguments
+     * @return null if asked for usage or version, or if anything fails during resolve, publish or
+     * launch; a ResolveReport on success
+     * @throws Exception if something goes wrong
+     */
+    public static ResolveReport run(String[] args) throws Exception {
+        return run(args, false);
+    }
 
-        if (line.hasOption("?")) {
-            usage(parser, line.hasOption("deprecated"));
+    /*
+     * For backwards compatibility and testing
+     */
+    static void run(CommandLineParser parser, String[] args) throws Exception {
+        if (Arrays.asList(args).contains("-?")) {
+            usage(parser, false);
             return;
         }
 
+        run(parser.parse(args), true);
+    }
+
+    private static ResolveReport run(String[] args, boolean isCli) throws Exception {
+        CommandLineParser parser = getParser();
+
+        // parse the command line arguments
+        CommandLine line;
+        try {
+            line = parser.parse(args);
+        } catch (ParseException pe) {
+            // display usage and and rethrow
+            usage(parser, false);
+            throw new ParseException(pe.getMessage());
+        }
+
+        if (line.hasOption("?")) {
+            usage(parser, line.hasOption("deprecated"));
+            return null;
+        }
+
+        return run(line, isCli);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static ResolveReport run(CommandLine line, boolean isCli) throws Exception {
         if (line.hasOption("version")) {
             System.out.println("Apache Ivy " + Ivy.getIvyVersion() + " - " + Ivy.getIvyDate()
                     + " :: " + Ivy.getIvyHomeURL());
-            return;
+            return null;
         }
 
         boolean validate = !line.hasOption("novalidate");
@@ -316,7 +353,18 @@ public final class Main {
         }
         ResolveReport report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions);
         if (report.hasError()) {
-            System.exit(1);
+            if (isCli) {
+                System.exit(1);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (String problem : report.getAllProblemMessages()) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
+                sb.append(problem);
+            }
+            throw new ResolveProcessException(sb.toString());
         }
         ModuleDescriptor md = report.getModuleDescriptor();
 
@@ -392,6 +440,8 @@ public final class Main {
         }
         ivy.getLoggerEngine().popLogger();
         ivy.popContext();
+
+        return report;
     }
 
     /**

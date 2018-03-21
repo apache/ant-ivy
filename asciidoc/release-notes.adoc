@@ -79,6 +79,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Allow conditionally activated properties through Maven profiles, to be referenced in the `pom.xml` (jira:IVY-1577[])
 - FIX: Fix Maven dependency resolution for dependencies with multiple different classifiers (jira:IVY-1576[])
 - FIX: Correct parent classloader when lauching resolved artifacts from CLI (jira:IVY-1483[]) (Thanks to Stephan Feder)
+- FIX: Make Main.run() public (usable with REPL) (jira:IVY-1321[] jira:IVY-1578[]) (Thanks to Greg Perry)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&ccaron;ius)
@@ -211,6 +212,7 @@ Here is the list of people who have contributed source code and documentation up
 * Douglas Palmer
 * Jesper Pedersen
 * Emmanuel Pellereau
+* Greg Perry
 * Carsten Pfeiffer
 * Yanus Poluektovich
 * Roshan Punnoose
