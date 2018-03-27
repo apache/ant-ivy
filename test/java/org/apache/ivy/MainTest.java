@@ -18,6 +18,8 @@
 package org.apache.ivy;
 
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.ParseException;
@@ -26,6 +28,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -36,6 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -45,6 +49,9 @@ public class MainTest {
 
     @Rule
     public ExpectedException expExc = ExpectedException.none();
+
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
 
     @Before
     public void setUp() {
@@ -180,6 +187,25 @@ public class MainTest {
         run(args);
         // expect the existing jar to be overwritten
         assertTrue("Content at " + retrieveArtifactPath + " was not overwritten by retrieve task", Files.readAllBytes(retrieveArtifactPath).length > 0);
+    }
+
+    /**
+     * Tests that the {@code makepom} option works as expected
+     *
+     * @throws Exception if something goes wrong
+     */
+    @Test
+    public void testMakePom() throws Exception {
+        final String pomFilePath = this.tempDir.getRoot().getAbsolutePath() + File.separator + "testmakepom.xml";
+        final String[] args = new String[]{"-settings", "test/repositories/ivysettings.xml", "-makepom", pomFilePath,
+                "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"};
+        final CommandLine parsedCommand = Main.getParser().parse(args);
+        final String parsedMakePomPath = parsedCommand.getOptionValue("makepom");
+        assertEquals("Unexpected makepom parsed", pomFilePath, parsedMakePomPath);
+        assertFalse("pom file " + pomFilePath + " already exists", new File(pomFilePath).exists());
+        // run the command
+        run(args);
+        assertTrue("pom file hasn't been generated at " + pomFilePath, new File(pomFilePath).isFile());
     }
 
     private void run(String[] args) throws Exception {

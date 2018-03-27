@@ -93,6 +93,7 @@ For details about the following changes, check our JIRA install at link:https://
 - NEW: Lets SSH-based resolvers use an `~/.ssh/config` file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
 - NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (jira:IVY-1529[])
 - NEW: Add (conditional) support for SHA-256, SHA-512 and SHA-384 checksum algorithms (jira:IVY-1554[]) (Thanks to Jaikiran Pai)
+- NEW: The standalone Ivy jar can now be used to generate a pom file for the resolved module, using the `makepom` option (Thanks to link:https://github.com/aanno[aanno])
 
 
 ////

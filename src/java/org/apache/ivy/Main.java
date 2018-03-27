@@ -47,6 +47,8 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolveProcessException;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
+import org.apache.ivy.plugins.parser.m2.PomWriterOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageLogger;
@@ -174,6 +176,10 @@ public final class Main {
                     new OptionBuilder("overwrite").description(
                         "overwrite files in the repository if they exist").create())
 
+                .addCategory("makepom options")
+                .addOption(new OptionBuilder("makepom").arg("pomfilepath")
+                        .description("Creates a pom file for the module").create())
+
                 .addCategory("http auth options")
                 .addOption(
                     new OptionBuilder("realm").arg("realm")
@@ -198,6 +204,7 @@ public final class Main {
                 .addOption(
                     new OptionBuilder("cp").arg("cp")
                             .description("extra classpath to use when launching process").create())
+
 
                 .addCategory("message options")
                 .addOption(
@@ -418,6 +425,12 @@ public final class Main {
                                     "ivy-[revision].xml")))
                             .setOverwrite(line.hasOption("overwrite")));
             }
+        }
+        if (line.hasOption("makepom")) {
+            final String pomFilePath = line.getOptionValue("makepom", "pom.xml");
+            final File pomFile = new File(pomFilePath);
+            PomModuleDescriptorWriter.write(md, pomFile, new PomWriterOptions());
+            Message.debug("Generated a pom file for module at " + pomFile);
         }
         if (line.hasOption("main")) {
             // check if the option cp has been set
