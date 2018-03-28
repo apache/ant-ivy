@@ -168,9 +168,9 @@ public class XmlSettingsParserTest {
         assertEquals(0, settings.getStatusManager().getPriority("gold"));
         assertEquals(1, settings.getStatusManager().getPriority("silver"));
         assertEquals(2, settings.getStatusManager().getPriority("bronze"));
-        assertEquals(false, settings.getStatusManager().isIntegration("gold"));
-        assertEquals(false, settings.getStatusManager().isIntegration("silver"));
-        assertEquals(true, settings.getStatusManager().isIntegration("bronze"));
+        assertFalse(settings.getStatusManager().isIntegration("gold"));
+        assertFalse(settings.getStatusManager().isIntegration("silver"));
+        assertTrue(settings.getStatusManager().isIntegration("bronze"));
     }
 
     @Test
@@ -221,7 +221,7 @@ public class XmlSettingsParserTest {
         assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]",
                 settings.getDefaultCacheArtifactPattern());
-        assertEquals(true, settings.isDefaultUseOrigin());
+        assertTrue(settings.isDefaultUseOrigin());
 
         DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) settings
                 .getRepositoryCacheManager("mycache");
@@ -237,7 +237,7 @@ public class XmlSettingsParserTest {
         assertEquals(60 * 3600 * 1000, // 2d 12h = 60h
                 c.getTTL(ModuleRevisionId.newInstance("org3", "A", "A")));
         assertEquals(new File("mycache").getCanonicalFile(), c.getBasedir().getCanonicalFile());
-        assertEquals(false, c.isUseOrigin());
+        assertFalse(c.isUseOrigin());
         assertEquals("no-lock", c.getLockStrategy().getName());
 
         assertEquals("[module]/ivy-[revision].xml", c.getIvyPattern());
@@ -253,7 +253,7 @@ public class XmlSettingsParserTest {
         assertEquals("[module]/ivys/ivy-[revision].xml", c2.getIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", c2.getArtifactPattern());
 
-        assertEquals(true, c2.isUseOrigin());
+        assertTrue(c2.isUseOrigin());
 
         assertEquals(c2, settings.getResolver("A").getRepositoryCacheManager());
         assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());

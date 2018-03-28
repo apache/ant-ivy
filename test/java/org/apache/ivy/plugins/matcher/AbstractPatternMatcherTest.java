@@ -46,9 +46,9 @@ public abstract class AbstractPatternMatcherTest {
     public void testIsExact() {
         // '*' is a special matcher
         Matcher matcher = patternMatcher.getMatcher("*");
-        assertEquals(false, matcher.isExact());
+        assertFalse(matcher.isExact());
         matcher.matches("The words aren't what they were.");
-        assertEquals(false, matcher.isExact());
+        assertFalse(matcher.isExact());
 
         // test some exact patterns for this matcher
         String[] expressions = getExactExpressions();

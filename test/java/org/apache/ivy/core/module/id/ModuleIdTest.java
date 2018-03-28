@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -61,9 +62,9 @@ public class ModuleIdTest {
         ModuleId moduleId = new ModuleId(org, name);
         ModuleId moduleId2 = new ModuleId(org, name);
 
-        assertTrue(moduleId.equals(moduleId));
-        assertTrue(moduleId.equals(moduleId2));
-        assertTrue(moduleId2.equals(moduleId));
+        assertEquals(moduleId, moduleId);
+        assertEquals(moduleId, moduleId2);
+        assertEquals(moduleId2, moduleId);
     }
 
     @Test
@@ -75,8 +76,8 @@ public class ModuleIdTest {
 
         assertNotNull(moduleId);
         assertFalse(moduleId.equals(null));
-        assertFalse(moduleId.equals(moduleId2));
-        assertFalse(moduleId2.equals(moduleId));
+        assertNotEquals(moduleId, moduleId2);
+        assertNotEquals(moduleId2, moduleId);
     }
 
     @Test
@@ -112,7 +113,7 @@ public class ModuleIdTest {
         String name = "some-new-module";
         ModuleId moduleId = new ModuleId(org, name);
 
-        assertTrue(moduleId.compareTo(new ModuleId(org, name)) == 0);
+        assertEquals(0, moduleId.compareTo(new ModuleId(org, name)));
     }
 
     @Test

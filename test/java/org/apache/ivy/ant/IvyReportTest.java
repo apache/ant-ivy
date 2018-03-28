@@ -29,6 +29,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class IvyReportTest {
@@ -100,9 +102,9 @@ public class IvyReportTest {
             // check that revision 2.2 of mod1.2 is only present once
             String reportContent = FileUtil.readEntirely(xmlReport);
             int index = reportContent.indexOf("<revision name=\"2.2\"");
-            assertTrue(index != -1);
+            assertNotEquals(index, -1);
             index = reportContent.indexOf("<revision name=\"2.2\"", index + 1);
-            assertTrue(index == -1);
+            assertEquals(index, -1);
         } finally {
             Locale.setDefault(oldLocale);
         }

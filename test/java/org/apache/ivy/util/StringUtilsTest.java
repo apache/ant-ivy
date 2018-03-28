@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class StringUtilsTest {
@@ -39,6 +40,6 @@ public class StringUtilsTest {
             StringUtils.decrypt(StringUtils
                     .encrypt("yet another string with 126 digits and others :;%_-$& characters")));
 
-        assertFalse("apache".equals(StringUtils.encrypt("apache")));
+        assertNotEquals("apache", StringUtils.encrypt("apache"));
     }
 }

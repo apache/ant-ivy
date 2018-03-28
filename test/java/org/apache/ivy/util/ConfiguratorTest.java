@@ -18,6 +18,7 @@
 package org.apache.ivy.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -227,17 +228,17 @@ public class ConfiguratorTest {
         Housing housing = new House();
         conf.setRoot(housing);
         conf.setAttribute("empty", "true");
-        assertEquals(true, housing.isEmpty());
+        assertTrue(housing.isEmpty());
         conf.setAttribute("empty", "false");
-        assertEquals(false, housing.isEmpty());
+        assertFalse(housing.isEmpty());
         conf.setAttribute("empty", "yes");
-        assertEquals(true, housing.isEmpty());
+        assertTrue(housing.isEmpty());
         conf.setAttribute("empty", "no");
-        assertEquals(false, housing.isEmpty());
+        assertFalse(housing.isEmpty());
         conf.setAttribute("empty", "on");
-        assertEquals(true, housing.isEmpty());
+        assertTrue(housing.isEmpty());
         conf.setAttribute("empty", "off");
-        assertEquals(false, housing.isEmpty());
+        assertFalse(housing.isEmpty());
     }
 
     @Test

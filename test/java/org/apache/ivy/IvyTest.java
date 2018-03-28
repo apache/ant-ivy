@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 public class IvyTest {
     private File cache;
@@ -61,8 +62,8 @@ public class IvyTest {
         Ivy ivy = Ivy.newInstance();
         ivy.getLoggerEngine().setDefaultLogger(mockLogger);
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        assertFalse("IvyContext should be cleared and return a default Ivy instance", IvyContext
-                .getContext().getIvy() == ivy);
+        assertNotSame("IvyContext should be cleared and return a default Ivy instance",
+                IvyContext.getContext().getIvy(), ivy);
 
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"),
@@ -70,8 +71,8 @@ public class IvyTest {
         assertNotNull(report);
         assertFalse(report.hasError());
         mockLogger.assertLogContains("mod1.1");
-        assertFalse("IvyContext should be cleared and return a default Ivy instance", IvyContext
-                .getContext().getIvy() == ivy);
+        assertNotSame("IvyContext should be cleared and return a default Ivy instance",
+                IvyContext.getContext().getIvy(), ivy);
 
         // then we load another instance, and use it for another resolution
         MockMessageLogger mockLogger2 = new MockMessageLogger();
@@ -83,8 +84,8 @@ public class IvyTest {
         assertNotNull(report);
         assertFalse(report.hasError());
         mockLogger2.assertLogContains("norev/ivysettings.xml");
-        assertFalse("IvyContext should be cleared and return a default Ivy instance", IvyContext
-                .getContext().getIvy() == ivy2);
+        assertNotSame("IvyContext should be cleared and return a default Ivy instance",
+                IvyContext.getContext().getIvy(), ivy2);
 
         // finally we reuse the first instance to make another resolution
         report = ivy.resolve(new File("test/repositories/1/org6/mod6.1/ivys/ivy-0.3.xml"),
@@ -92,8 +93,8 @@ public class IvyTest {
         assertNotNull(report);
         assertFalse(report.hasError());
         mockLogger.assertLogContains("mod6.1");
-        assertFalse("IvyContext should be cleared and return a default Ivy instance", IvyContext
-                .getContext().getIvy() == ivy);
+        assertNotSame("IvyContext should be cleared and return a default Ivy instance",
+                IvyContext.getContext().getIvy(), ivy);
     }
 
     private ResolveOptions getResolveOptions(Ivy ivy, String[] confs) {

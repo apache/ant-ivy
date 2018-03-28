@@ -653,7 +653,7 @@ public class IvyResolveTest {
         assertEquals("apache", resolve.getProject().getProperty("ivy.parent[0].organisation"));
         assertEquals("resolve-simple", resolve.getProject().getProperty("ivy.parent[0].module"));
         assertEquals("1.0", resolve.getProject().getProperty("ivy.parent[0].revision"));
-        assertEquals(null, resolve.getProject().getProperty("ivy.parent[0].branch"));
+        assertNull(resolve.getProject().getProperty("ivy.parent[0].branch"));
     }
 
 }

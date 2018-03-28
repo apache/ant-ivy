@@ -34,6 +34,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
@@ -246,7 +247,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
             dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].module"));
         assertEquals("1.0",
             dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].revision"));
-        assertEquals(null, dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].branch"));
+        assertNull(dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].branch"));
 
         assertLogContaining("Dependencies updates available :");
         assertLogContaining("org1#mod1.1\t1.1 -> 2.0");

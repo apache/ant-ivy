@@ -216,14 +216,14 @@ public class ResolveTest {
         // verify the origin in the report
         ArtifactOrigin reportOrigin = dReports[0].getArtifactOrigin();
         assertNotNull(reportOrigin);
-        assertEquals("isLocal for artifact not correct", true, reportOrigin.isLocal());
+        assertTrue("isLocal for artifact not correct", reportOrigin.isLocal());
         assertEquals("location for artifact not correct", expectedLocation,
             reportOrigin.getLocation());
 
         // verify the saved origin on disk
         ArtifactOrigin ivyOrigin = getSavedArtifactOrigin(artifact);
         assertNotNull(ivyOrigin);
-        assertEquals("isLocal for artifact not correct", true, ivyOrigin.isLocal());
+        assertTrue("isLocal for artifact not correct", ivyOrigin.isLocal());
         assertEquals("location for artifact not correct", expectedLocation, ivyOrigin.getLocation());
 
         // now resolve the same artifact again and verify the origin of the (not-downloaded)
@@ -240,7 +240,7 @@ public class ResolveTest {
             dReports[0].getDownloadStatus());
         reportOrigin = dReports[0].getArtifactOrigin();
         assertNotNull(reportOrigin);
-        assertEquals("isLocal for artifact not correct", true, reportOrigin.isLocal());
+        assertTrue("isLocal for artifact not correct", reportOrigin.isLocal());
         assertEquals("location for artifact not correct", expectedLocation,
             reportOrigin.getLocation());
     }

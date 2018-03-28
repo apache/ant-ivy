@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class IvyBuildNumberTest {
 
@@ -51,9 +52,9 @@ public class IvyBuildNumberTest {
         buildNumber.setOrganisation("org1");
         buildNumber.setModule("newmod");
         buildNumber.execute();
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.revision"));
+        assertNull(buildNumber.getProject().getProperty("ivy.revision"));
         assertEquals("0", buildNumber.getProject().getProperty("ivy.new.revision"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("0", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
@@ -63,9 +64,9 @@ public class IvyBuildNumberTest {
         buildNumber.setModule("newmod");
         buildNumber.setDefault("1.0-dev-1");
         buildNumber.execute();
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.revision"));
+        assertNull(buildNumber.getProject().getProperty("ivy.revision"));
         assertEquals("1.0-dev-1", buildNumber.getProject().getProperty("ivy.new.revision"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
@@ -75,10 +76,10 @@ public class IvyBuildNumberTest {
         buildNumber.setModule("newmod");
         buildNumber.setDefault("mydefault");
         buildNumber.execute();
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.revision"));
+        assertNull(buildNumber.getProject().getProperty("ivy.revision"));
         assertEquals("mydefault", buildNumber.getProject().getProperty("ivy.new.revision"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.new.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
     @Test
@@ -99,7 +100,7 @@ public class IvyBuildNumberTest {
         buildNumber.execute();
         assertEquals("test", buildNumber.getProject().getProperty("ivy.revision"));
         assertEquals("test.1", buildNumber.getProject().getProperty("ivy.new.revision"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
@@ -147,7 +148,7 @@ public class IvyBuildNumberTest {
         buildNumber.execute();
         assertEquals("1.1", buildNumber.getProject().getProperty("ivy.revision"));
         assertEquals("1.1.1", buildNumber.getProject().getProperty("ivy.new.revision"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 
@@ -157,9 +158,9 @@ public class IvyBuildNumberTest {
         buildNumber.setModule("mod1.1");
         buildNumber.setRevision("3.");
         buildNumber.execute();
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.revision"));
+        assertNull(buildNumber.getProject().getProperty("ivy.revision"));
         assertEquals("3.0", buildNumber.getProject().getProperty("ivy.new.revision"));
-        assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
+        assertNull(buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("0", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
 

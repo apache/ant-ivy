@@ -18,6 +18,7 @@
 package org.apache.ivy.plugins.resolver;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -442,7 +443,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         // the module returned should be the default one found in cache since check modified is
         // false
-        assertEquals(true, rmr.getDescriptor().isDefault());
+        assertTrue(rmr.getDescriptor().isDefault());
     }
 
     /**
@@ -467,7 +468,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
 
         ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
-        assertEquals(false, rmr.getDescriptor().isDefault());
+        assertFalse(rmr.getDescriptor().isDefault());
         assertEquals("2", rmr.getResolver().getName());
     }
 

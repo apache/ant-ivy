@@ -19,6 +19,8 @@ package org.apache.ivy.ant;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -251,7 +253,7 @@ public class IvyConfigureTest {
         configure.execute();
         assertNotNull(getIvyInstance());
 
-        assertTrue(ivy != getIvyInstance());
+        assertNotSame(ivy, getIvyInstance());
     }
 
     @Test
@@ -268,7 +270,7 @@ public class IvyConfigureTest {
         newAntSettings.setFile(new File("test/repositories/ivysettings.xml"));
         newAntSettings.execute();
 
-        assertTrue(ivy == getIvyInstance());
+        assertSame(ivy, getIvyInstance());
     }
 
     /**

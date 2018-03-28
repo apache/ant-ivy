@@ -161,8 +161,7 @@ public class VfsResourceTest {
 
             Collections.sort(actual);
             Collections.sort(expected);
-            assertTrue("\nExpected: " + expected.toString() + "\nActual: " + actual.toString(),
-                    actual.equals(expected));
+            assertEquals("\nExpected: " + expected.toString() + "\nActual: " + actual.toString(), actual, expected);
         }
     }
 

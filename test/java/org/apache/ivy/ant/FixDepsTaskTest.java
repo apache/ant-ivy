@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FixDepsTaskTest {
@@ -82,9 +83,9 @@ public class FixDepsTaskTest {
         assertEquals(1, md.getDependencies().length);
         assertEquals("org1", md.getDependencies()[0].getDependencyId().getOrganisation());
         assertEquals("mod1.2", md.getDependencies()[0].getDependencyId().getName());
-        assertEquals(false, md.getDependencies()[0].isChanging());
-        assertEquals(true, md.getDependencies()[0].isForce());
-        assertEquals(false, md.getDependencies()[0].isTransitive());
+        assertFalse(md.getDependencies()[0].isChanging());
+        assertTrue(md.getDependencies()[0].isForce());
+        assertFalse(md.getDependencies()[0].isTransitive());
         assertEquals("2.0", md.getDependencies()[0].getDependencyRevisionId().getRevision());
     }
 
@@ -114,9 +115,9 @@ public class FixDepsTaskTest {
 
         assertEquals("org1", md.getDependencies()[0].getDependencyId().getOrganisation());
         assertEquals("mod1.2", md.getDependencies()[0].getDependencyId().getName());
-        assertEquals(false, md.getDependencies()[0].isChanging());
-        assertEquals(true, md.getDependencies()[0].isForce());
-        assertEquals(false, md.getDependencies()[0].isTransitive());
+        assertFalse(md.getDependencies()[0].isChanging());
+        assertTrue(md.getDependencies()[0].isForce());
+        assertFalse(md.getDependencies()[0].isTransitive());
         assertEquals("2.0", md.getDependencies()[0].getDependencyRevisionId().getRevision());
         assertEquals(1, md.getDependencies()[0].getModuleConfigurations().length);
         assertEquals("default", md.getDependencies()[0].getModuleConfigurations()[0]);
@@ -125,9 +126,9 @@ public class FixDepsTaskTest {
 
         assertEquals("org1", md.getDependencies()[1].getDependencyId().getOrganisation());
         assertEquals("mod1.1", md.getDependencies()[1].getDependencyId().getName());
-        assertEquals(false, md.getDependencies()[1].isChanging());
-        assertEquals(true, md.getDependencies()[1].isForce());
-        assertEquals(false, md.getDependencies()[1].isTransitive());
+        assertFalse(md.getDependencies()[1].isChanging());
+        assertTrue(md.getDependencies()[1].isForce());
+        assertFalse(md.getDependencies()[1].isTransitive());
         assertEquals("2.0", md.getDependencies()[1].getDependencyRevisionId().getRevision());
         assertEquals(1, md.getDependencies()[1].getModuleConfigurations().length);
         assertEquals("compile", md.getDependencies()[1].getModuleConfigurations()[0]);
@@ -161,9 +162,9 @@ public class FixDepsTaskTest {
 
         assertEquals("org1", md.getDependencies()[0].getDependencyId().getOrganisation());
         assertEquals("mod1.2", md.getDependencies()[0].getDependencyId().getName());
-        assertEquals(false, md.getDependencies()[0].isChanging());
-        assertEquals(true, md.getDependencies()[0].isForce());
-        assertEquals(false, md.getDependencies()[0].isTransitive());
+        assertFalse(md.getDependencies()[0].isChanging());
+        assertTrue(md.getDependencies()[0].isForce());
+        assertFalse(md.getDependencies()[0].isTransitive());
         assertEquals("2.0", md.getDependencies()[0].getDependencyRevisionId().getRevision());
         assertEquals(1, md.getDependencies()[0].getModuleConfigurations().length);
         assertEquals("default", md.getDependencies()[0].getModuleConfigurations()[0]);
@@ -172,9 +173,9 @@ public class FixDepsTaskTest {
 
         assertEquals("org1", md.getDependencies()[1].getDependencyId().getOrganisation());
         assertEquals("mod1.1", md.getDependencies()[1].getDependencyId().getName());
-        assertEquals(false, md.getDependencies()[1].isChanging());
-        assertEquals(true, md.getDependencies()[1].isForce());
-        assertEquals(false, md.getDependencies()[1].isTransitive());
+        assertFalse(md.getDependencies()[1].isChanging());
+        assertTrue(md.getDependencies()[1].isForce());
+        assertFalse(md.getDependencies()[1].isTransitive());
         assertEquals("2.0", md.getDependencies()[1].getDependencyRevisionId().getRevision());
         assertEquals(1, md.getDependencies()[1].getModuleConfigurations().length);
         assertEquals("compile", md.getDependencies()[1].getModuleConfigurations()[0]);
@@ -183,9 +184,9 @@ public class FixDepsTaskTest {
 
         assertEquals("org1", md.getDependencies()[2].getDependencyId().getOrganisation());
         assertEquals("mod1.2", md.getDependencies()[2].getDependencyId().getName());
-        assertEquals(false, md.getDependencies()[2].isChanging());
-        assertEquals(true, md.getDependencies()[2].isForce());
-        assertEquals(false, md.getDependencies()[2].isTransitive());
+        assertFalse(md.getDependencies()[2].isChanging());
+        assertTrue(md.getDependencies()[2].isForce());
+        assertFalse(md.getDependencies()[2].isTransitive());
         assertEquals("2.1", md.getDependencies()[2].getDependencyRevisionId().getRevision());
         assertEquals(1, md.getDependencies()[2].getModuleConfigurations().length);
         assertEquals("compile", md.getDependencies()[2].getModuleConfigurations()[0]);

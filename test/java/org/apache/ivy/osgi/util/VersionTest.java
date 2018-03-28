@@ -47,7 +47,7 @@ public class VersionTest {
 
     @Test
     public void testCompareTo() {
-        assertTrue(new Version("1.2.3").compareTo(new Version("1.2.3")) == 0);
+        assertEquals(0, new Version("1.2.3").compareTo(new Version("1.2.3")));
 
         assertTrue(new Version("1.2.3").compareTo(new Version("1.2.2")) > 0);
         assertTrue(new Version("1.2.3").compareTo(new Version("1.1.3")) > 0);
