@@ -175,7 +175,7 @@ public class IvyMakePomTest {
                 nextChild = nextChild.getNextSibling();
             }
             return new PomDependency(groupId, artifactId, version, scope, classifier,
-                    optional != null && Boolean.parseBoolean(optional));
+                    Boolean.parseBoolean(optional));
         }
 
         private static Node skipIfTextNode(final Node node) {
