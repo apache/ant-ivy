@@ -319,15 +319,8 @@ public class IvyAntSettings extends DataType {
         // this is copy of loadURL code from ant Property task (not available in 1.5.1)
         Properties props = new Properties();
         task.log("Loading " + url, Project.MSG_VERBOSE);
-        try {
-            InputStream is = url.openStream();
-            try {
-                props.load(is);
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
-            }
+        try (InputStream is = url.openStream()) {
+            props.load(is);
         } catch (IOException ex) {
             throw new BuildException(ex);
         }

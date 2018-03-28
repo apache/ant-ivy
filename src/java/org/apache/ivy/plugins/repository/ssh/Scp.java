@@ -325,8 +325,6 @@ public class Scp {
 
                 remain -= trans;
             }
-
-            fis.close();
         }
 
         os.write(0);
