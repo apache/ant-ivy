@@ -34,7 +34,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testExactValue() throws Exception {
+    public void testExactValue() {
         assertTrue("Exact value was expected to match", MavenVersionRangeParser.rangeAccepts("3", "3"));
         assertTrue("Exact value was expected to match", MavenVersionRangeParser.rangeAccepts("1.0", "1.0"));
         assertTrue("Exact value was expected to match", MavenVersionRangeParser.rangeAccepts("2.1.4", "2.1.4"));
@@ -47,7 +47,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testLessThanEqualBoundRange() throws Exception {
+    public void testLessThanEqualBoundRange() {
         final String range = "(,5.0]";
         assertTrue("<= range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1"));
         assertTrue("<= range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "3.41.2"));
@@ -68,7 +68,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testLessThanBoundRange() throws Exception {
+    public void testLessThanBoundRange() {
         final String range = "(,23.0.1)";
         assertTrue("'<' range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1"));
         assertTrue("'<' range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "3.41.2"));
@@ -89,7 +89,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testEqualsBoundRange() throws Exception {
+    public void testEqualsBoundRange() {
         final String range = "[1.0]";
         assertTrue("range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0"));
         assertFalse("range wasn't expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0.1"));
@@ -102,7 +102,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testGreaterThanEqualBoundRange() throws Exception {
+    public void testGreaterThanEqualBoundRange() {
         final String range = "[7.0,)";
         assertTrue(">= range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "7"));
         assertTrue(">= range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "7.41.2"));
@@ -124,7 +124,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testGreaterThanBoundRange() throws Exception {
+    public void testGreaterThanBoundRange() {
         final String range = "(11.0,)";
         assertTrue("'>' range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "12"));
         assertTrue("'>' range was expected to match", MavenVersionRangeParser.rangeAccepts(range, "42.121.1"));
@@ -144,7 +144,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testMultiRange() throws Exception {
+    public void testMultiRange() {
         final String range = "(,1.0],[1.2,)"; // x <= 1.0 or x >= 1.2
         assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0"));
         assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1"));
@@ -165,7 +165,7 @@ public class MavenVersionRangeParserTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testMultiRangeSpecificValue() throws Exception {
+    public void testMultiRangeSpecificValue() {
         final String range = "(,1.1),(1.1,)"; // x != 1.1
         assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0"));
         assertTrue("Range with multiple sets was expected to match", MavenVersionRangeParser.rangeAccepts(range, "1.0.1"));
