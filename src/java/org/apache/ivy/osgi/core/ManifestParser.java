@@ -280,7 +280,7 @@ public class ManifestParser {
                 buffer.append(line);
                 buffer.append('\n');
             } else {
-                buffer.append(line.substring(0, 72));
+                buffer.append(line, 0, 72);
                 buffer.append("\n ");
                 int n = 72;
                 while (n <= line.length() - 1) {
@@ -288,7 +288,7 @@ public class ManifestParser {
                     if (end > line.length()) {
                         end = line.length();
                     }
-                    buffer.append(line.substring(n, end));
+                    buffer.append(line, n, end);
                     buffer.append('\n');
                     if (end != line.length()) {
                         buffer.append(' ');
