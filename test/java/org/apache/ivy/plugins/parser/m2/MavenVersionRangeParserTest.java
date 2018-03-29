@@ -30,8 +30,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when the range
      * and the value being compared are the same exact values
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testExactValue() {
@@ -43,8 +41,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code (,1.0]} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testLessThanEqualBoundRange() {
@@ -64,8 +60,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code (,1.0)} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testLessThanBoundRange() {
@@ -85,8 +79,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code [1.0]} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testEqualsBoundRange() {
@@ -98,8 +90,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code [1.0,)} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testGreaterThanEqualBoundRange() {
@@ -120,8 +110,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code (1.0,)} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testGreaterThanBoundRange() {
@@ -140,8 +128,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code (,1.0],[1.2,)} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testMultiRange() {
@@ -161,8 +147,6 @@ public class MavenVersionRangeParserTest {
     /**
      * Tests the {@link MavenVersionRangeParser#rangeAccepts(String, String)} works correctly when a range of the form
      * {@code (,1.1),(1.1,)} is used to compare against some value.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testMultiRangeSpecificValue() {

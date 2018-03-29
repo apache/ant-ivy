@@ -75,7 +75,7 @@ public class ModuleIdTest {
         ModuleId moduleId2 = new ModuleId(null, name);
 
         assertNotNull(moduleId);
-        assertFalse(moduleId.equals(null));
+        assertNotEquals(null, moduleId);
         assertNotEquals(moduleId, moduleId2);
         assertNotEquals(moduleId2, moduleId);
     }
