@@ -47,6 +47,8 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolveProcessException;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
+import org.apache.ivy.plugins.parser.m2.PomWriterOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageLogger;
@@ -198,6 +200,10 @@ public final class Main {
                 .addOption(
                     new OptionBuilder("cp").arg("cp")
                             .description("extra classpath to use when launching process").create())
+
+                .addCategory("maven compatibility options")
+                .addOption(new OptionBuilder("pomfile").arg("pomfile").countArgs(false)
+                            .description("makepom as standalone tasks").create())
 
                 .addCategory("message options")
                 .addOption(
@@ -418,6 +424,10 @@ public final class Main {
                                     "ivy-[revision].xml")))
                             .setOverwrite(line.hasOption("overwrite")));
             }
+        }
+        if (line.hasOption("pomfile")) {
+            String pomFile = line.getOptionValue("pomfile", "pom.xml");
+            PomModuleDescriptorWriter.write(md, new File(pomFile), new PomWriterOptions());
         }
         if (line.hasOption("main")) {
             // check if the option cp has been set
