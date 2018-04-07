@@ -178,7 +178,7 @@ public final class Main {
 
                 .addCategory("makepom options")
                 .addOption(new OptionBuilder("makepom").arg("pomfilepath")
-                        .description("Creates a pom file for the module").create())
+                        .description("create a POM file for the module").create())
 
                 .addCategory("http auth options")
                 .addOption(

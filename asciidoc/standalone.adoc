@@ -74,6 +74,9 @@ usage: ivy
  -status <status>             use given status to publish the module
  -overwrite                   overwrite files in the repository if they exist
 
+==== makepom options
+ -makepom <pomfilepath>       create a POM file for the module
+
 ==== http auth options
  -realm <realm>               use given realm for HTTP AUTH
  -host <host>                 use given host for HTTP AUTH
@@ -112,6 +115,8 @@ java -jar ivy.jar -properties version.properties -main org.apache.tools.ant.Main
 ----
 
 NOTE: Prior to 2.5, Ivy `-main` created a classloader that used Ivy classloader as a parent. This is no longer the case; if your usage depended on Ivy classes being available, Ivy must be declared as a dependency of the component that you want to launch.
+
+(*__since 2.5__*) Ivy can convert `ivy.xml` files to `pom.xml` files using `-makepom` option.
 
 == Examples
 
