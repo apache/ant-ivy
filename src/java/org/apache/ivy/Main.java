@@ -49,6 +49,7 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
+import org.apache.ivy.util.AbstractMessageLogger;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.cli.CommandLine;
@@ -68,6 +69,8 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  */
 public final class Main {
     private static final int HELP_WIDTH = 80;
+
+    private static AbstractMessageLogger externalLogger = null;
 
     static CommandLineParser getParser() {
         return new CommandLineParser().addCategory("settings options")
@@ -437,16 +440,20 @@ public final class Main {
     }
 
     private static void initMessage(CommandLine line, Ivy ivy) {
-        if (line.hasOption("debug")) {
-            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
-        } else if (line.hasOption("verbose")) {
-            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_VERBOSE));
-        } else if (line.hasOption("warn")) {
-            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_WARN));
-        } else if (line.hasOption("error")) {
-            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_ERR));
+        if (externalLogger != null) {
+            ivy.getLoggerEngine().pushLogger(externalLogger);
         } else {
-            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_INFO));
+            if (line.hasOption("debug")) {
+                ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
+            } else if (line.hasOption("verbose")) {
+                ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_VERBOSE));
+            } else if (line.hasOption("warn")) {
+                ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_WARN));
+            } else if (line.hasOption("error")) {
+                ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_ERR));
+            } else {
+                ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_INFO));
+            }
         }
     }
 
@@ -573,4 +580,14 @@ public final class Main {
 
     private Main() {
     }
+
+    /**
+     * setLogger will send logging to an 'externally' defined logger
+     * 
+     * @param logger
+     */
+    public static void setLogger(AbstractMessageLogger logger) {
+        externalLogger = logger;
+    }
+
 }
