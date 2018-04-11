@@ -493,6 +493,7 @@
                 <exclude name=".ivy2/**/*"/>
                 <exclude name="build/**/*"/>
                 <exclude name="bin/**/*"/>
+                <exclude name="**/*.md5"/>
                 <exclude name="**/*.sha1"/>
                 <exclude name="**/*.sha512"/>
                 <exclude name="**/*.txt"/>
