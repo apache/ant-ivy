@@ -179,11 +179,14 @@
     </target>
 
     <target name="init-asciidoctor" depends="init-asciidoctor-extensions" unless="skip.doc">
-        <ivy:cachepath pathid="asciidoctor.path" organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true"/>
+        <mkdir dir="${build.dir}/asciidoc-lib/jars" />
+        <mkdir dir="${build.dir}/asciidoc-lib/classes" />
+        <ivy:retrieve organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true" pattern="${build.dir}/asciidoc-lib/jars/[artifact].[ext]" conf="default" />
+        <unzip src="${build.dir}/asciidoc-lib/jars/asciidoctor-ant.jar" dest="${build.dir}/asciidoc-lib/classes" />
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml" classpathref="asciidoctor.path">
             <classpath>
                 <pathelement location="${build.dir}/asciidoc-extensions/classes" />
-                <path refid="asciidoctor.path" />
+                <pathelement location="${build.dir}/asciidoc-lib/classes" />
             </classpath>
         </taskdef>
     </target>
