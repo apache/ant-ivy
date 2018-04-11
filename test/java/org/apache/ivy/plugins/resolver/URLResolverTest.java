@@ -223,9 +223,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         settings.addConfigured(extremelyLowTimeout);
 
         // setup a HTTP backed repo
-        // TODO: Right now the port is hard coded, but we need to find a "available" port to which can be bind to.
-        // Else this can lead to occasional bind failures
-        final InetSocketAddress fastServerBindAddr = new InetSocketAddress("localhost", 12345);
+        final InetSocketAddress fastServerBindAddr = new InetSocketAddress("localhost", TestHelper.getMaybeAvailablePort());
         final String contextRoot = "/testTimeouts";
         final Path repoRoot = new File("test/repositories/1").toPath();
         assertTrue(repoRoot + " is not a directory", Files.isDirectory(repoRoot));
@@ -264,7 +262,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         settings.getDefaultRepositoryCacheManager().clean();
         settings.getResolutionCacheManager().clean();
 
-        final InetSocketAddress slowServerAddr = new InetSocketAddress("localhost", 23456);
+        final InetSocketAddress slowServerAddr = new InetSocketAddress("localhost", TestHelper.getMaybeAvailablePort());
         final String ivyPattern = "http://" + slowServerAddr.getHostName() + ":" + slowServerAddr.getPort()
                 + "/testTimeouts/[organisation]/[module]/ivys/ivy-[revision].xml";
         final String artifactPattern = "http://" + slowServerAddr.getHostName() + ":" + slowServerAddr.getPort()

@@ -148,7 +148,7 @@ public class HttpclientURLHandlerTest {
         final String userName = "test-http-user-" + random.nextInt();
         final String password = "pass-" + random.nextInt();
         credentialsStore.addCredentials(realm, host, userName, password);
-        final InetSocketAddress serverBindAddr = new InetSocketAddress("localhost", 12345);
+        final InetSocketAddress serverBindAddr = new InetSocketAddress("localhost", TestHelper.getMaybeAvailablePort());
         final String contextRoot = "/testHttpClientHandler";
         final Path repoRoot = new File("test/repositories").toPath();
         assertTrue(repoRoot + " is not a directory", Files.isDirectory(repoRoot));

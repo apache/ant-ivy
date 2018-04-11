@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -487,5 +488,37 @@ public class TestHelper {
         public String description() {
             return "AuthFilter";
         }
+    }
+
+    /**
+     * Find a TCP/IP port which may continue to be available.
+     * <br />
+     * The returned port is available since a socket has successfully bind to it, but this availability is not ensured
+     * after this method since the associated socket is released and some other process can now use it.
+     */
+    public static int getMaybeAvailablePort() {
+        ServerSocket s = null;
+        try {
+            s = new ServerSocket(0);
+            s.setReuseAddress(true);
+            int port = s.getLocalPort();
+            try {
+                s.close();
+            } catch (IOException e) {
+                // ignore
+            }
+            return port;
+        } catch (IOException e) {
+            // ignore
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+        throw new IllegalStateException("Not TCP/IP port available");
     }
 }
