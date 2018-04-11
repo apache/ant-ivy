@@ -61,7 +61,7 @@ git commit -m "release the ivy.xsd"
 
 ==== 4. Launch the release script
 
-[source]
+[source,shell]
 ----
 ant -f build-release.xml release
 ----
