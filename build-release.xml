@@ -508,7 +508,7 @@
             </fileset>
         </rat:report>
 
-        <fail message="Some files have missing or incorrect license information. Check RAT report for more details!">
+        <fail message="Some files have missing or incorrect license information. Check RAT report for more details: ${rat.report.dir}/rat-report.txt">
             <condition>
                 <and>
                     <not><resourcecontains resource="${rat.report.dir}/rat-report.txt" substring="0 Unknown Licenses" casesensitive="false"/></not>
