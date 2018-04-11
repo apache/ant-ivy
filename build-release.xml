@@ -502,10 +502,6 @@
                 <exclude name="**/*.SHA-512"/>
                 <exclude name="asciidoc/js/jquery.pack.js"/>
                 <exclude name="asciidoc/js/jquery.treeview.js"/>
-                <exclude name="doc/config.js"/>
-                <exclude name="doc/js/jquery.pack.js"/>
-                <exclude name="doc/js/jquery.treeview.js"/>
-                <exclude name="doc/xooki/tiddly/util.js"/>
             </fileset>
         </rat:report>
 
