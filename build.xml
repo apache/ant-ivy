@@ -90,13 +90,7 @@
             <path refid="lib.classpath"/>
         </path>
         <path id="test.classpath">
-            <!-- The element below is used by Jenkins jobs -->
-            <pathelement location="${coverage.classes.dir}"/>
-            <fileset dir="${lib.dir}">
-                <include name="*.jar"/>
-                <exclude name="ant.jar"/>
-                <exclude name="ant-launcher.jar"/>
-            </fileset>
+            <fileset dir="${lib.dir}" />
             <pathelement location="${core.classes.build.dir}"/>
             <pathelement location="${ant.classes.build.dir}"/>
             <pathelement location="${optional.classes.build.dir}"/>
@@ -429,7 +423,7 @@
                 failureproperty="test.failed"
                 showoutput="no"
                 printsummary="yes"
-                includeantruntime="yes"
+                includeantruntime="no"
                 dir="${basedir}"
                 tempdir="${build.dir}"
                 fork="true">
