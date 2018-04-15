@@ -286,12 +286,12 @@
             <arg line="clean -d -x -f"/>
         </exec>
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
-        <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip">
-            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}"/>
+        <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip" defaultexcludes="no">
+            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**" />
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.tar.gz"
-             compression="gzip" longfile="gnu">
-            <zipfileset src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip"/>
+             compression="gzip" longfile="gnu" defaultexcludes="no">
+            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**" />
         </tar>
     </target>
 
