@@ -215,19 +215,11 @@ The just release documentation should be added to the site. To do so, you need t
 }
 ----
 
-. generate the part of the site for the new version:
+. from the distribution just released, install the doc into the site
 +
 [source, shell]
 ----
-ant checkout-history -Dhistory.version=2.0.0-beta1
-ant generate-history -Dhistory.version=2.0.0-beta1
-----
-
-. if the 'latest-milestone' needs to be update too, run:
-+
-[source,shell]
-----
-ant checkout-history -Dhistory.version=2.0.0-beta1 -Dtarget.history.folder=latest-milestone
+ant install-doc -Dhistory.version=2.5.0-rc1 -Divy-dist.zip.url=https://dist.apache.org/repos/dist/release/ant/ivy/2.5.0-rc1/apache-ivy-2.5.0-rc1-bin.zip
 ----
 
 Now let's generate the website with the new toc:
