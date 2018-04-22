@@ -247,6 +247,42 @@ If the Eclipse update site has already been prepared to include that new Ivy rel
 
 Announce the release on the dev@ant.apache.org, ivy-user@ant.apache.org, user@ant.apache.org and announce@apache.org mailing lists. Note that announce@apache.org only accepts emails sent with an @apache.org address.
 
+Suggested template:
+
+[source]
+----
+Subject: [Announce] Release of Apache Ivy ${version}
+
+The Apache Ivy project is pleased to announce its ${version} release.
+
+Apache Ivy is a tool for managing (recording, tracking, resolving and
+reporting) project dependencies, characterized by flexibility,
+configurability, and tight integration with Apache Ant.
+
+Key features of this ${version} release are:
+
+XXXX INCLUDE THE PARAGRAPH FROM THE RELEASE NOTES XXXX
+
+XXXX SUGGESTED PARAGRAPH FOR RC
+As a release candidate version, we strongly encourage the use of this version for
+testing and validation. From now on, features are frozen until final ${version} version,
+only bug fixes will be applied before ${version}. If no outstanding bugs are reported
+with this release candidate, it will promoted to ${version} about three weeks after this
+release candidate.
+
+Issues should be reported to:
+https://issues.apache.org/jira/browse/IVY
+
+Download the release at:
+http://ant.apache.org/ivy/download.cgi
+
+More information can be found on the Ivy website:
+http://ant.apache.org/ivy/
+
+Regards,
+${me}
+----
+
 ==== 17. Update this doc
 
 If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
