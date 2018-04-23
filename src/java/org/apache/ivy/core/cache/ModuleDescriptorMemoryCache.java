@@ -17,15 +17,15 @@
  */
 package org.apache.ivy.core.cache;
 
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.util.Message;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.plugins.parser.ParserSettings;
-import org.apache.ivy.util.Message;
 
 /**
  * Cache ModuleDescriptors so that when the same module is used twice (in multi-module build for
@@ -76,23 +76,25 @@ class ModuleDescriptorMemoryCache {
             // cache is disabled
             return null;
         }
-        CacheEntry entry = valueMap.get(ivyFile);
-        if (entry != null) {
-            if (entry.isStale(validated, ivySettings)) {
-                Message.debug("Entry is found in the ModuleDescriptorCache but entry should be "
-                        + "reevaluated : " + ivyFile);
-                valueMap.remove(ivyFile);
-                return null;
+        synchronized (valueMap) {
+            CacheEntry entry = valueMap.get(ivyFile);
+            if (entry != null) {
+                if (entry.isStale(validated, ivySettings)) {
+                    Message.debug("Entry is found in the ModuleDescriptorCache but entry should be "
+                            + "reevaluated : " + ivyFile);
+                    valueMap.remove(ivyFile);
+                    return null;
+                } else {
+                    // Move the entry at the end of the list
+                    valueMap.remove(ivyFile);
+                    valueMap.put(ivyFile, entry);
+                    Message.debug("Entry is found in the ModuleDescriptorCache : " + ivyFile);
+                    return entry.md;
+                }
             } else {
-                // Move the entry at the end of the list
-                valueMap.remove(ivyFile);
-                valueMap.put(ivyFile, entry);
-                Message.debug("Entry is found in the ModuleDescriptorCache : " + ivyFile);
-                return entry.md;
+                Message.debug("No entry is found in the ModuleDescriptorCache : " + ivyFile);
+                return null;
             }
-        } else {
-            Message.debug("No entry is found in the ModuleDescriptorCache : " + ivyFile);
-            return null;
         }
     }
 
@@ -102,13 +104,15 @@ class ModuleDescriptorMemoryCache {
             // cache is disabled
             return;
         }
-        if (valueMap.size() >= maxSize) {
-            Message.debug("ModuleDescriptorCache is full, remove one entry");
-            Iterator<CacheEntry> it = valueMap.values().iterator();
-            it.next();
-            it.remove();
+        synchronized (valueMap) {
+            if (valueMap.size() >= maxSize) {
+                Message.debug("ModuleDescriptorCache is full, remove one entry");
+                Iterator<CacheEntry> it = valueMap.values().iterator();
+                it.next();
+                it.remove();
+            }
+            valueMap.put(url, new CacheEntry(descriptor, validated, ivySettingsMonitor));
         }
-        valueMap.put(url, new CacheEntry(descriptor, validated, ivySettingsMonitor));
     }
 
     private static class CacheEntry {
