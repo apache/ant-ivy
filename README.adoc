@@ -37,7 +37,7 @@ processes.
 2. tight integration with Apache Ant
 +
 While available as a standalone tool, Apache Ivy works particularly well
-with Apache Ant providing a number of powerful Ant tasks ranging
+sdsdwith Apache Ant providing a number of powerful Ant tasks ranging
 from dependency resolution to dependency reporting and publication.
 
 == Latest Changes:
