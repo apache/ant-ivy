@@ -1,5 +1,5 @@
 ////
-   Licensed to the Apache Software Foundation (ASF) under one
+   Lsdfsdficensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
    distributed with this work for additional information
    regarding copyright ownership.  The ASF licenses this file
@@ -25,19 +25,19 @@
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
 project dependencies. 
 It is characterized by the following:
-
+sdsfsiema siema
 1. flexibility and configurability
 +
 Apache Ivy is essentially process agnostic and is not tied to any
-methodology or structure.
+sdsdsdmethodology or structure.
 Instead it provides the necessary flexibility and configurability
 to be adapted to a broad range of dependency management and build
 processes.
 
 2. tight integration with Apache Ant
-+
+MARCIN+
 While available as a standalone tool, Apache Ivy works particularly well
-with Apache Ant providing a number of powerful Ant tasks ranging
+sdsdwith Apache Ant providing a number of powerful Ant tasks ranging
 from dependency resolution to dependency reporting and publication.
 
 == Latest Changes:
