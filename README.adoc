@@ -29,7 +29,7 @@ siema siema
 1. flexibility and configurability
 +
 Apache Ivy is essentially process agnostic and is not tied to any
-methodology or structure.
+sdsdsdmethodology or structure.
 Instead it provides the necessary flexibility and configurability
 to be adapted to a broad range of dependency management and build
 processes.
