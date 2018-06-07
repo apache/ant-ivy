@@ -86,8 +86,6 @@ public class ResolveEngine {
 
     private SortEngine sortEngine;
 
-    private Set<String> fetchedSet = new HashSet<>();
-
     private DependencyResolver dictatorResolver;
 
     /**
@@ -581,8 +579,6 @@ public class ResolveEngine {
 
             for (String conf : confs) {
                 Message.verbose("resolving dependencies for configuration '" + conf + "'");
-                // for each configuration we clear the cache of what's been fetched
-                fetchedSet.clear();
 
                 ConfigurationResolveReport confReport = null;
                 if (report != null) {
@@ -605,14 +601,13 @@ public class ResolveEngine {
                 boolean fetched = false;
                 while (!fetched) {
                     try {
-                        fetchDependencies(root, conf, false);
+                        fetchDependencies(root, conf, new HashSet<String>(), false);
                         fetched = true;
                     } catch (RestartResolveProcess restart) {
                         Message.verbose("====================================================");
                         Message.verbose("=           RESTARTING RESOLVE PROCESS");
                         Message.verbose("= " + restart.getMessage());
                         Message.verbose("====================================================");
-                        fetchedSet.clear();
                     }
                 }
 
@@ -696,7 +691,7 @@ public class ResolveEngine {
         }
     }
 
-    private void fetchDependencies(VisitNode node, String conf, boolean shouldBePublic) {
+    private void fetchDependencies(VisitNode node, String conf, Set<String> fetchedSet, boolean shouldBePublic) {
         checkInterrupted();
         long start = System.currentTimeMillis();
         if (node.getParent() != null) {
@@ -728,7 +723,7 @@ public class ResolveEngine {
             resolveConflict(node, conf);
             if (!node.isEvicted() && !node.isCircular()) {
                 for (String rconf : node.getRealConfs(conf)) {
-                    doFetchDependencies(node, rconf);
+                    doFetchDependencies(node, rconf, fetchedSet);
                 }
             }
         } else if (!node.hasProblem()) {
@@ -736,7 +731,7 @@ public class ResolveEngine {
             // => we just have to update its dependencies data
             if (!node.isEvicted() && !node.isCircular()) {
                 for (String rconf : node.getRealConfs(conf)) {
-                    doFetchDependencies(node, rconf);
+                    doFetchDependencies(node, rconf, fetchedSet);
                 }
             }
         }
@@ -752,7 +747,7 @@ public class ResolveEngine {
                     } else {
                         // the node has already been loaded, we must fetch its dependencies in the
                         // required conf
-                        fetchDependencies(node.gotoNode(selected), conf, true);
+                        fetchDependencies(node.gotoNode(selected), conf, fetchedSet, true);
                     }
                 }
             }
@@ -764,7 +759,7 @@ public class ResolveEngine {
         data.setCurrentVisitNode(parentVisitNode);
     }
 
-    private void doFetchDependencies(VisitNode node, String conf) {
+    private void doFetchDependencies(VisitNode node, String conf, Set<String> fetchedSet) {
         Configuration c = node.getConfiguration(conf);
         if (c == null) {
             if (!node.isConfRequiredByMergedUsageOnly(conf)) {
@@ -791,16 +786,16 @@ public class ResolveEngine {
             node.updateConfsToFetch(Arrays.asList(extendedConfs));
         }
         for (String extendedConf : extendedConfs) {
-            fetchDependencies(node, extendedConf, false);
+            fetchDependencies(node, extendedConf, fetchedSet, false);
         }
 
         // now we can actually resolve this configuration dependencies
-        if (!isDependenciesFetched(node.getNode(), conf) && node.isTransitive()) {
+        if (!isDependenciesFetched(node.getNode(), conf, fetchedSet) && node.isTransitive()) {
             for (VisitNode dep : node.getDependencies(conf)) {
                 dep.useRealNode(); // the node may have been resolved to another real one while
                 // resolving other deps
                 for (String rconf : dep.getRequiredConfigurations(node, conf)) {
-                    fetchDependencies(dep, rconf, true);
+                    fetchDependencies(dep, rconf, fetchedSet, true);
                 }
                 if (!dep.isEvicted() && !dep.hasProblem()) {
                     // if there are still confs to fetch (usually because they have
@@ -811,11 +806,11 @@ public class ResolveEngine {
                         // Should we keep two list of confs to fetch (private&public)?
                         // I don't think, visibility is already checked, and a change in the
                         // configuration between version might anyway have worse problems.
-                        fetchDependencies(dep, fconf, false);
+                        fetchDependencies(dep, fconf, fetchedSet, false);
                     }
                 }
             }
-            markDependenciesFetched(node.getNode(), conf);
+            markDependenciesFetched(node.getNode(), conf, fetchedSet);
         }
         // we have finished with this configuration, if it was the original requested conf
         // we can clean it now
@@ -834,12 +829,12 @@ public class ResolveEngine {
      *            configuration to check
      * @return true if we've already fetched this dependency
      */
-    private boolean isDependenciesFetched(IvyNode node, String conf) {
+    private boolean isDependenciesFetched(IvyNode node, String conf, Set<String> fetchedSet) {
         String key = getDependenciesFetchedKey(node, conf);
         return fetchedSet.contains(key);
     }
 
-    private void markDependenciesFetched(IvyNode node, String conf) {
+    private void markDependenciesFetched(IvyNode node, String conf, Set<String> fetchedSet) {
         String key = getDependenciesFetchedKey(node, conf);
         fetchedSet.add(key);
     }
