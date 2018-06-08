@@ -558,7 +558,7 @@
     </target>
 
     <target name="init-checkstyle" depends="jar">
-        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="7.8.2"
+        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="6.19"
                        inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
         <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
                  resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
@@ -585,7 +585,7 @@
 
     <target name="checkstyle" depends="checkstyle-internal"
             description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
-        <fail if="checkstyle.failed"
+        <fail if="checkstyle.failed" unless="ignore.checkstyle"
             message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
     </target>
 
