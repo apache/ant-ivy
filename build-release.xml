@@ -479,7 +479,7 @@
 
     <target name="rat" depends="init-ivy">
         <property name="rat.failOnError" value="true"/>
-        <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="0.6"
+        <ivy:cachepath organisation="org.apache.rat" module="apache-rat-tasks" revision="0.12"
                        inline="true" conf="default" pathid="rat.classpath"
                        log="download-only"/>
 
