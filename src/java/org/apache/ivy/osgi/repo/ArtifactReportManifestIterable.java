@@ -94,27 +94,17 @@ public class ArtifactReportManifestIterable implements Iterable<ManifestAndLocat
                     }
                 }
                 if (jar.getUnpackedLocalFile() != null && jar.getUnpackedLocalFile().isDirectory()) {
-                    FileInputStream in = null;
-                    try {
-                        in = new FileInputStream(new File(jar.getUnpackedLocalFile(),
-                                "META-INF/MANIFEST.MF"));
+                    try (FileInputStream in = new FileInputStream(new File(jar.getUnpackedLocalFile(),
+                            "META-INF/MANIFEST.MF"))) {
                         next = new ManifestAndLocation(new Manifest(in), jar.getUnpackedLocalFile()
                                 .toURI(), sourceURI);
                         return true;
                     } catch (FileNotFoundException e) {
                         Message.debug(
-                            "Bundle directory file just removed: " + jar.getUnpackedLocalFile(), e);
+                                "Bundle directory file just removed: " + jar.getUnpackedLocalFile(), e);
                     } catch (IOException e) {
                         Message.debug("The Manifest in the bundle directory could not be read: "
                                 + jar.getUnpackedLocalFile(), e);
-                    } finally {
-                        if (in != null) {
-                            try {
-                                in.close();
-                            } catch (IOException e) {
-                                // ignore
-                            }
-                        }
                     }
                 } else {
                     File artifact;

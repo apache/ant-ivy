@@ -101,9 +101,7 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
                     }
                 } else if (bundleCandidates.hasNext()) {
                     T bundleCandidate = bundleCandidates.next();
-                    JarInputStream in = null;
-                    try {
-                        in = new JarInputStream(getInputStream(bundleCandidate));
+                    try (JarInputStream in = new JarInputStream(getInputStream(bundleCandidate))) {
                         Manifest manifest = in.getManifest();
                         if (manifest != null) {
                             next = new ManifestAndLocation(manifest,
@@ -115,14 +113,6 @@ public abstract class AbstractFSManifestIterable<T> implements Iterable<Manifest
                         Message.debug("Jar file just removed: " + bundleCandidate, e);
                     } catch (IOException e) {
                         Message.warn("Unreadable jar: " + bundleCandidate, e);
-                    } finally {
-                        if (in != null) {
-                            try {
-                                in.close();
-                            } catch (IOException e) {
-                                // Don't care
-                            }
-                        }
                     }
                 } else {
                     // no more candidate on the current directory

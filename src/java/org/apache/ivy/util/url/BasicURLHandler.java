@@ -347,22 +347,12 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
     private void readResponseBody(HttpURLConnection conn) {
         byte[] buffer = new byte[BUFFER_SIZE];
 
-        InputStream inStream = null;
-        try {
-            inStream = conn.getInputStream();
+        try (InputStream inStream = conn.getInputStream()) {
             while (inStream.read(buffer) > 0) {
                 // Skip content
             }
         } catch (IOException e) {
             // ignore
-        } finally {
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
         }
 
         InputStream errStream = conn.getErrorStream();

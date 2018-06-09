@@ -151,9 +151,7 @@ public class XmlSettingsParser extends DefaultHandler {
     @SuppressWarnings("deprecation")
     private void doParse(URL settingsUrl) throws IOException, ParseException {
         this.settings = settingsUrl;
-        InputStream stream = null;
-        try {
-            stream = URLHandlerRegistry.getDefault().openStream(settingsUrl);
+        try (InputStream stream = URLHandlerRegistry.getDefault().openStream(settingsUrl)) {
             InputSource inSrc = new InputSource(stream);
             inSrc.setSystemId(settingsUrl.toExternalForm());
             SAXParserFactory.newInstance().newSAXParser().parse(settingsUrl.toExternalForm(), this);
@@ -165,14 +163,6 @@ public class XmlSettingsParser extends DefaultHandler {
                     + ": " + e.getMessage(), 0);
             pe.initCause(e);
             throw pe;
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    // ignored
-                }
-            }
         }
     }
 

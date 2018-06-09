@@ -308,10 +308,8 @@ public class IvyReport extends IvyTask {
             out = getProject().getBaseDir();
         }
 
-        InputStream xsltStream = null;
-        try {
+        try (InputStream xsltStream = new BufferedInputStream(new FileInputStream(style))) {
             // create stream to stylesheet
-            xsltStream = new BufferedInputStream(new FileInputStream(style));
             Source xsltSource = new StreamSource(xsltStream, JAXPUtils.getSystemId(style));
 
             // create transformer
@@ -372,14 +370,6 @@ public class IvyReport extends IvyTask {
             }
         } catch (TransformerConfigurationException e) {
             throw new BuildException(e);
-        } finally {
-            if (xsltStream != null) {
-                try {
-                    xsltStream.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
         }
     }
 

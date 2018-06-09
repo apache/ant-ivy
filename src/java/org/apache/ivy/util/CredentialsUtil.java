@@ -111,20 +111,10 @@ public final class CredentialsUtil {
                 Properties props = new EncryptedProperties();
                 props.setProperty("username", username);
                 props.setProperty("passwd", passwd);
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(passfile);
+                try (FileOutputStream fos = new FileOutputStream(passfile)) {
                     props.store(fos, "");
                 } catch (Exception e) {
                     Message.warn("error occurred while saving password file " + passfile, e);
-                } finally {
-                    if (fos != null) {
-                        try {
-                            fos.close();
-                        } catch (Exception e) {
-                            // ignored
-                        }
-                    }
                 }
             }
             c = new Credentials(c.getRealm(), c.getHost(), username, passwd);
@@ -135,9 +125,7 @@ public final class CredentialsUtil {
     public static Credentials loadPassfile(Credentials c, File passfile) {
         if (passfile != null && passfile.exists()) {
             Properties props = new EncryptedProperties();
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(passfile);
+            try (FileInputStream fis = new FileInputStream(passfile)) {
                 props.load(fis);
                 String username = c.getUserName();
                 String passwd = c.getPasswd();
@@ -150,14 +138,6 @@ public final class CredentialsUtil {
                 return new Credentials(c.getRealm(), c.getHost(), username, passwd);
             } catch (IOException e) {
                 Message.warn("error occurred while loading password file " + passfile, e);
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        // ignored
-                    }
-                }
             }
         }
         return c;

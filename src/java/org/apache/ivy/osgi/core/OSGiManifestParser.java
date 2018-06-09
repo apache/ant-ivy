@@ -61,16 +61,9 @@ public class OSGiManifestParser implements ModuleDescriptorParser {
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException {
-        final InputStream resourceStream = res.openStream();
         final Manifest manifest;
-        try {
+        try (InputStream resourceStream = res.openStream()) {
             manifest = new Manifest(resourceStream);
-        } finally {
-            try {
-                resourceStream.close();
-            } catch (Exception e) {
-                // ignore
-            }
         }
         BundleInfo bundleInfo = ManifestParser.parseManifest(manifest);
         try {

@@ -73,15 +73,8 @@ public class ZipPacking extends ArchivePacking {
     }
 
     protected void writeFile(InputStream zip, File f) throws IOException {
-        FileOutputStream out = new FileOutputStream(f);
-        try {
+        try (FileOutputStream out = new FileOutputStream(f)) {
             FileUtil.copy(zip, out, null, false);
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                // ignore
-            }
         }
     }
 

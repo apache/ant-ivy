@@ -87,15 +87,8 @@ public class ManifestParser {
     }
 
     public static BundleInfo parseManifest(File manifestFile) throws IOException, ParseException {
-        FileInputStream fis = new FileInputStream(manifestFile);
-        try {
+        try (FileInputStream fis = new FileInputStream(manifestFile)) {
             return parseManifest(fis);
-        } finally {
-            try {
-                fis.close();
-            } catch (IOException e) {
-                // ignore
-            }
         }
     }
 

@@ -119,17 +119,10 @@ public abstract class XMLHelper {
     @SuppressWarnings("deprecation")
     public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
-        InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
-        try {
+        try (InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL)) {
             InputSource inSrc = new InputSource(xmlStream);
             inSrc.setSystemId(toSystemId(xmlURL));
             parse(inSrc, schema, handler, lHandler);
-        } finally {
-            try {
-                xmlStream.close();
-            } catch (IOException e) {
-                // ignored
-            }
         }
     }
 
