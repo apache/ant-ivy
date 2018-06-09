@@ -20,6 +20,8 @@ package org.apache.ivy.plugins.resolver;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -249,9 +251,9 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
         try {
             FileUtil.copy(new ByteArrayInputStream(ChecksumHelper.computeAsString(src, algorithm)
                     .getBytes()), csFile, null);
-            repository.put(
-                DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm, artifact.getExt()
-                        + "." + algorithm), csFile, dest + "." + algorithm, overwrite);
+            repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm,
+                    artifact.getExt() + "." + algorithm), csFile,
+                    chopQuery(dest, algorithm), overwrite);
         } finally {
             csFile.delete();
         }
@@ -269,12 +271,27 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
 
         try {
             gen.sign(src, tempFile);
-            repository.put(
-                DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, gen.getExtension(),
+            repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, gen.getExtension(),
                     artifact.getExt() + "." + gen.getExtension()), tempFile,
-                dest + "." + gen.getExtension(), overwrite);
+                    chopQuery(dest, gen.getExtension()), overwrite);
         } finally {
             tempFile.delete();
+        }
+    }
+
+    private String chopQuery(String dest, String algorithm) {
+        if (!dest.contains("?")) {
+            return dest + "." + algorithm;
+        }
+        try {
+            URL url = new URL(dest);
+            String query = url.getQuery();
+            if (query == null ) {
+                query = "";
+            }
+            return dest.replace("?" + query, "") + "." + algorithm;
+        } catch (MalformedURLException e) {
+           throw new IllegalArgumentException(e);
         }
     }
 
