@@ -118,18 +118,16 @@
 
     <!-- Miscellaneous other checks. -->
     <module name="ArrayTypeStyle"/>
+    <!-- <module name="TodoComment"/> -->
+    <module name="UpperEll"/>
+    <!-- allow comment suppression of checks -->
+    <module name="FileContentsHolder"/>
     <!--
     <module name="GenericIllegalRegexp">
       <property name="format" value="\s+$"/>
       <property name="message" value="Line has trailing spaces."/>
     </module>
     -->
-    <!--
-    <module name="TodoComment"/>
-    -->
-    <module name="UpperEll"/>
-    <!-- allow comment suppression of checks -->
-    <module name="FileContentsHolder"/>
   </module>
 
   <module name="RegexpSingleline">
