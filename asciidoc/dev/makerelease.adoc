@@ -274,10 +274,10 @@ Issues should be reported to:
 https://issues.apache.org/jira/browse/IVY
 
 Download the release at:
-http://ant.apache.org/ivy/download.cgi
+https://ant.apache.org/ivy/download.cgi
 
 More information can be found on the Ivy website:
-http://ant.apache.org/ivy/
+https://ant.apache.org/ivy/
 
 Regards,
 ${me}
