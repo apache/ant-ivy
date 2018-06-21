@@ -124,7 +124,6 @@ Here is the list of people who have contributed source code and documentation up
 *Contributors:*
 
 * Ingo Adler
-* alex322
 * Mathieu Anquetin
 * Andreas Axelsson
 * St&eacute;phane Bailliez
@@ -152,6 +151,7 @@ Here is the list of people who have contributed source code and documentation up
 * Mykhailo Delegan
 * Charles Duffy
 * Martin Eigenbrodt
+* Alexandr Esaulov
 * Stephen Evanchik
 * Stephan Feder
 * Robin Fernandes
