@@ -24,12 +24,6 @@
 
     <import file="build.xml"/>
 
-    <!-- Java 7 runs into TLS protocol issues when dealing with repositories
-        that no longer support older protocols -->
-    <condition property="java.sysprop.https.protocols" value="" else="TLSv1.2">
-        <javaversion atleast="1.8"/>
-    </condition>
-
     <macrodef name="run-tutorial">
         <attribute name="antfile"/>
         <attribute name="output"/>
