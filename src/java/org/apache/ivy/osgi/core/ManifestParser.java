@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.List;
 import java.util.jar.Attributes;
@@ -93,7 +94,7 @@ public class ManifestParser {
     }
 
     public static BundleInfo parseManifest(String manifest) throws IOException, ParseException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(manifest.getBytes("UTF-8"));
+        ByteArrayInputStream bais = new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8));
         BundleInfo parseManifest = parseManifest(bais);
         bais.close();
         return parseManifest;

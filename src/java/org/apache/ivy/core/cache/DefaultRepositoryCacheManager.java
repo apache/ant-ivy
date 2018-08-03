@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -1188,12 +1189,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * @return the hash
      */
     private String computeResourceNameHash(Resource resource) {
-        try {
-            byte[] shaDigest = SHA_DIGEST.digest(resource.getName().getBytes("UTF-8"));
-            return HexEncoder.encode(shaDigest);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not supported", e);
-        }
+        return HexEncoder.encode(SHA_DIGEST.digest(resource.getName().getBytes(StandardCharsets.UTF_8)));
     }
 
     /**

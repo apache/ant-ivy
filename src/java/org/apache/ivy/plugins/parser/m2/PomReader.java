@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -798,7 +799,7 @@ public class PomReader {
             }
 
             int bytesToSkip = 0;
-            LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.in, "UTF-8"),
+            LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.in, StandardCharsets.UTF_8),
                     100);
             String firstLine = reader.readLine();
             if (firstLine != null) {
