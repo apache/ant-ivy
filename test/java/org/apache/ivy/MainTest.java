@@ -18,8 +18,6 @@
 package org.apache.ivy;
 
 import org.apache.ivy.core.retrieve.RetrieveOptions;
-import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.ParseException;
