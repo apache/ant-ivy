@@ -182,9 +182,9 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
      * @return credentials for given host
      **/
     private Credentials requestCredentials(String host) {
-        Object o = credentialsCache.get(host);
-        if (o == null) {
-            Credentials c = CredentialsUtil.promptCredentials(new Credentials(null, host, user,
+        Credentials c = credentialsCache.get(host);
+        if (c == null) {
+            c = CredentialsUtil.promptCredentials(new Credentials(null, host, user,
                     userPassword), getPassFile());
             if (c != null) {
                 if (credentialsCache.size() > MAX_CREDENTIALS_CACHE_SIZE) {
@@ -192,10 +192,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
                 }
                 credentialsCache.put(host, c);
             }
-            return c;
-        } else {
-            return (Credentials) o;
         }
+        return c;
     }
 
     /**

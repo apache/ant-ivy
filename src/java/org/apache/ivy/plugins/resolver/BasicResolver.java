@@ -708,15 +708,14 @@ public abstract class BasicResolver extends AbstractResolver {
                 continue;
             }
             if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
-                ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
+                MDResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
                 if (r == null) {
                     Message.debug("\t" + name + ": impossible to get module descriptor resource: "
                             + rres);
                     rejected.add(rres.getRevision() + " (no or bad MD)");
                     continue;
                 }
-                ModuleDescriptor md = ((MDResolvedResource) r).getResolvedModuleRevision()
-                        .getDescriptor();
+                ModuleDescriptor md = r.getResolvedModuleRevision().getDescriptor();
                 if (md.isDefault()) {
                     Message.debug("\t" + name + ": default md rejected by version matcher"
                             + "requiring module descriptor: " + rres);
