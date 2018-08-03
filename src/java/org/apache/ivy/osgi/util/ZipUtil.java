@@ -48,8 +48,7 @@ public class ZipUtil {
             }
         } else {
             final String strAbsPath = currDir.getPath();
-            final String strZipEntryName = strAbsPath.substring(rootDir.getPath().length() + 1,
-                strAbsPath.length());
+            final String strZipEntryName = strAbsPath.substring(rootDir.getPath().length() + 1);
 
             final byte[] b = new byte[(int) (currDir.length())];
             final FileInputStream fis = new FileInputStream(currDir);
