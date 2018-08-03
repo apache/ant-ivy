@@ -249,6 +249,24 @@ public class IvyResolveTest {
         assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
     }
 
+
+    /**
+     * Test for issue IVY-1104,
+     * which has to do with ${ivy.deps.changed} being always set
+     * dependencies with extra attributes.
+     */
+
+    @Test
+    public void testDepsWithAttributesChanged() {
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-1104.xml"));
+
+        resolve.execute();
+        assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
+
+        resolve.execute();
+        assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
+    }
+
     @Test
     public void testDontCheckIfChanged() {
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));

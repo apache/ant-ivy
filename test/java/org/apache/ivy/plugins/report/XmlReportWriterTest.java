@@ -125,8 +125,8 @@ public class XmlReportWriterTest {
         String orgAttribute = "organisation=\"org1\"";
         String modAttribute = "module=\"mod1\"";
         String revAttribute = "revision=\"1.0\"";
-        String extra1Attribute = "extra-blabla=\"abc\"";
-        String extra2Attribute = "extra-blabla2=\"123\"";
+        String extra1Attribute = "extra-0.blabla=\"abc\"";
+        String extra2Attribute = "extra-0.blabla2=\"123\"";
 
         assertTrue("XML doesn't contain organisation attribute", xml.contains(orgAttribute));
         assertTrue("XML doesn't contain module attribute", xml.contains(modAttribute));

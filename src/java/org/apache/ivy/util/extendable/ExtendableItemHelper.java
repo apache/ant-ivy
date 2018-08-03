@@ -29,11 +29,83 @@ public final class ExtendableItemHelper {
     private ExtendableItemHelper() {
     }
 
+    private static final char separator = '.';
+
+    /**
+     * Decode qualified attribute name from blob.
+     *
+     * @param blob Encoded attribute name
+     * @param prefix Prefix used during encoding
+     * @return String
+     * @see #encodeAttribute(String, String)
+     */
+    public static String decodeAttribute(String blob, String prefix) {
+        // Decoding <qualifier>:<attribute> from 
+        //   <pre><qlen><sep><qualifier><sep><attribute>
+        // where qualifier (with following separator) is optional.
+        StringBuilder builder = new StringBuilder(blob);
+
+        // Skipping prefix
+        int cur = prefix.length();
+
+        // Resolving length of qualifier
+        int sepi = blob.indexOf(separator, cur);
+        int qlen = Integer.parseInt(blob.substring(cur, sepi));
+
+        // Skipping to attribute and reclaiming ':'
+        cur = sepi + 1;
+        if (qlen > 0)
+            builder.setCharAt(cur + qlen, ':');
+
+        return builder.substring(cur);
+    }
+
+    /**
+     * Encode qualified attribute name into blob
+     * to be used in XML report.
+     *
+     * @param attribute Qualified (or unqualified) attribute name
+     * @param prefix Prefix
+     * @return String
+     * @see #decodeAttribute(String, String)
+     */
+    public static String encodeAttribute(String attribute, String prefix) {
+        StringBuilder builder = new StringBuilder(
+            attribute.length() + prefix.length() + 5
+        );
+
+        // Resolving length of qualifier
+        int coloni = attribute.indexOf(':');
+        int qlen = coloni == -1
+            ? 0
+            : coloni;
+
+        // Encoding <qualifier>:<attribute> as
+        //   <pre><qlen><sep><qualifier><sep><attribute>
+        // where qualifier (with following separator) is optional;
+        // e.g. `extra-3.foo.bar` for `foo:bar`, or `extra-0.foo` for `foo`
+        builder.append(prefix);
+        builder.append(qlen);
+        builder.append(separator);
+        builder.append(attribute);
+
+        // Replacing ':' with '.' in order for report XML to not
+        // deal with all those pesky namespaces (c)
+        if (qlen > 0) {
+            int cur = builder.length() - attribute.length();
+            builder.setCharAt(cur + qlen, separator);
+        }
+
+        return builder.toString();
+    }
+
     public static Map<String, String> getExtraAttributes(Attributes attributes, String prefix) {
         Map<String, String> ret = new HashMap<>();
         for (int i = 0; i < attributes.getLength(); i++) {
             if (attributes.getQName(i).startsWith(prefix)) {
-                ret.put(attributes.getQName(i).substring(prefix.length()), attributes.getValue(i));
+                String name = decodeAttribute(attributes.getQName(i), prefix);
+                String value = attributes.getValue(i);
+                ret.put(name, value);
             }
         }
         return ret;

@@ -42,6 +42,7 @@ import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.XMLHelper;
+import org.apache.ivy.util.extendable.ExtendableItemHelper;
 
 import static org.apache.ivy.util.StringUtils.joinArray;
 
@@ -77,7 +78,7 @@ public class XmlReportWriter {
         if (mrid.getBranch() != null) {
             out.println("\t\tbranch=\"" + XMLHelper.escape(mrid.getBranch()) + "\"");
         }
-        out.println(extraToString(mrid.getExtraAttributes(), "\t\t"));
+        out.println(extraToString(mrid.getQualifiedExtraAttributes(), "\t\t"));
         out.println("\t\tconf=\"" + XMLHelper.escape(report.getConfiguration()) + "\"");
         out.println("\t\tconfs=\"" + XMLHelper.escape(joinArray(confs, ", ")) + "\"");
         out.println("\t\tdate=\"" + DateUtil.format(report.getDate()) + "\"/>");
@@ -139,8 +140,9 @@ public class XmlReportWriter {
         if (md != null && md.getHomePage() != null) {
             details.append(" homepage=\"").append(XMLHelper.escape(md.getHomePage())).append("\"");
         }
-        extraAttributes = (md != null) ? md.getExtraAttributes() : dep.getResolvedId()
-                .getExtraAttributes();
+        extraAttributes = (md != null)
+            ? md.getQualifiedExtraAttributes()
+            : dep.getResolvedId().getQualifiedExtraAttributes();
         details.append(extraToString(extraAttributes, SEPARATOR));
         out.println(String.format("\t\t\t<revision name=\"%s\"%s%s downloaded=\"%s\" searched=\"%s\"%s conf=\"%s\" position=\"%d\">",
                 XMLHelper.escape(dep.getResolvedId().getRevision()),
@@ -172,8 +174,12 @@ public class XmlReportWriter {
             if (sb.length() > 0 && !SEPARATOR.equals(prefix)) {
                 sb.append(System.lineSeparator());
             }
-            sb.append(prefix).append("extra-").append(entry.getKey()).append("=\"")
-                    .append(XMLHelper.escape(entry.getValue())).append("\"");
+
+            sb.append(prefix);
+            sb.append(ExtendableItemHelper.encodeAttribute(entry.getKey(), "extra-"));
+            sb.append("=\"");
+            sb.append(XMLHelper.escape(entry.getValue()));
+            sb.append("\"");
         }
         return sb.toString();
     }
@@ -232,7 +238,7 @@ public class XmlReportWriter {
                     XMLHelper.escape(dependencyDescriptor.getDependencyRevisionId().getRevision()),
                     XMLHelper.escape(dependencyDescriptor.getDynamicConstraintDependencyRevisionId().getRevision()),
                     XMLHelper.escape(caller.getModuleRevisionId().getRevision()),
-                    extraToString(dependencyDescriptor.getExtraAttributes(), SEPARATOR)));
+                    extraToString(dependencyDescriptor.getQualifiedExtraAttributes(), SEPARATOR)));
         }
     }
 
@@ -242,7 +248,7 @@ public class XmlReportWriter {
             out.print("\t\t\t\t\t<artifact name=\"" + XMLHelper.escape(adr.getName())
                     + "\" type=\"" + XMLHelper.escape(adr.getType()) + "\" ext=\""
                     + XMLHelper.escape(adr.getExt()) + "\"");
-            out.print(extraToString(adr.getArtifact().getExtraAttributes(), SEPARATOR));
+            out.print(extraToString(adr.getArtifact().getQualifiedExtraAttributes(), SEPARATOR));
             out.print(" status=\"" + XMLHelper.escape(adr.getDownloadStatus().toString()) + "\"");
             out.print(" details=\"" + XMLHelper.escape(adr.getDownloadDetails()) + "\"");
             out.print(" size=\"" + adr.getSize() + "\"");
